@@ -69,7 +69,7 @@ export const lwcContextOf = (
         lwcBundles: readable.map((bundle) => bundle.name),
         lwcMeta: Object.fromEntries(
             readable.map((bundle) => {
-                const meta = bundle.meta && bundle.meta.kind !== 'error' ? bundle.meta : undefined;
+                const meta = bundle.meta ?? undefined;
                 const properties: Record<string, string[]> = {};
                 for (const config of meta?.targetConfigs ?? []) {
                     for (const target of config.targets) {
@@ -212,7 +212,9 @@ export const apexContextOf = (
 /** Apex のトリガーの一覧 (対象オブジェクトが読めないものは除く) */
 export const getApexTriggers = (units: ApexUnitParseResult[]): ApexTriggerInfo[] =>
     classNamesOf(units, 'trigger').flatMap((unit) => {
-        const content = unit.result.base.source?.content as
+        const source = unit.result.base.source;
+        // ソースが読めなかった (fileType: 'error') ときは中身を持たない
+        const content = (source && source.fileType !== 'error' ? source.content : undefined) as
             | { object?: unknown; case?: { kind?: string; actionType?: string; timing?: string }[] }
             | undefined;
         if (!content || typeof content.object !== 'string') return [];

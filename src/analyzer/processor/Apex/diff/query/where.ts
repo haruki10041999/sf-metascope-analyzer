@@ -1,10 +1,4 @@
-import {
-    ErrorJson,
-    JsonType,
-    SingleConditionJson,
-    WhereJson,
-    isErrorJson,
-} from '../../../../types';
+import { JsonType, SingleConditionJson, WhereJson } from '../../../../types';
 
 import {
     ValueDiff,
@@ -23,14 +17,14 @@ type WhereSingleJson =
       })
     | SingleConditionJson;
 export type LogicalCondition = {
-    condition: (WhereSingleJson | LogicalCondition | ErrorJson)[];
+    condition: (WhereSingleJson | LogicalCondition)[];
     operator?: 'AND' | 'OR' | 'NOT';
 };
 
-type ConditionItem = WhereSingleJson | LogicalCondition | ErrorJson;
+type ConditionItem = WhereSingleJson | LogicalCondition;
 
 export type LogicalConditionJsonDiff =
-    | ValueDiff<LogicalCondition | ErrorJson>
+    | ValueDiff<LogicalCondition>
     | {
           status: 'changed';
           operator: import('../../../commons/diff/commons').OptionalDiff<
@@ -47,10 +41,10 @@ const makeConditionItemsDiff = (
 ): TypedListDiff<ConditionItem, never> => makeUnorderedValueListDiff(before, after);
 
 export const makeLogicalConditionDiff = (
-    before: LogicalCondition | ErrorJson,
-    after: LogicalCondition | ErrorJson,
+    before: LogicalCondition,
+    after: LogicalCondition,
 ): LogicalConditionJsonDiff => {
-    if (isErrorJson(before) || isErrorJson(after) || getValueKey(before) === getValueKey(after)) {
+    if (getValueKey(before) === getValueKey(after)) {
         return makeValueDiff(before, after);
     }
 
@@ -64,14 +58,8 @@ export const makeLogicalConditionDiff = (
     };
 };
 
-export type WhereJsonDiff =
-    | { condition: LogicalConditionJsonDiff }
-    | ValueDiff<{ condition: LogicalCondition | ErrorJson } | ErrorJson>;
+export type WhereJsonDiff = { condition: LogicalConditionJsonDiff };
 
-export const makeWhereDiff = (
-    before: WhereJson | ErrorJson,
-    after: WhereJson | ErrorJson,
-): WhereJsonDiff => {
-    if (isErrorJson(before) || isErrorJson(after)) return makeValueDiff(before, after);
-    return { condition: makeLogicalConditionDiff(before.condition, after.condition) };
-};
+export const makeWhereDiff = (before: WhereJson, after: WhereJson): WhereJsonDiff => ({
+    condition: makeLogicalConditionDiff(before.condition, after.condition),
+});

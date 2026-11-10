@@ -1,46 +1,46 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isParenthesizedExpression, type ParenthesizedExpression } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
 
-export type ParenthesizedExpressionFields = {
-    expression: ExpressionTypeClass | LwcErrorTypeClass;
+export type ParenthesizedExpressionFields = TypeField<'parenthesizedExpression'> & {
+    expression: ExpressionTypeClass;
 };
 
-export class ParenthesizedExpressionTypeClass extends LwcCommonTypeClass<'parenthesizedExpression'> {
-    private readonly value: ParenthesizedExpressionFields;
-
-    private constructor(value: ParenthesizedExpressionFields) {
-        super('parenthesizedExpression');
-        this.value = value;
+export class ParenthesizedExpressionTypeClass extends LwcCommonTypeClass<
+    'parenthesizedExpression',
+    ParenthesizedExpressionFields
+> {
+    private constructor(value: FieldsOf<ParenthesizedExpressionFields>, sourceSpan: SourceSpan) {
+        super('parenthesizedExpression', value, sourceSpan);
     }
 
     static create(
         target: ParenthesizedExpression,
         originalSource: string,
     ): ParenthesizedExpressionTypeClass {
-        return new ParenthesizedExpressionTypeClass({
-            expression: visitNode(
-                target.expression,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): ParenthesizedExpressionFields {
-        return this.value;
+        return new ParenthesizedExpressionTypeClass(
+            {
+                expression: visitNode(
+                    target.expression,
+                    originalSource,
+                    expressionVisitorEvaluatePairs(),
+                    'ExpressionVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getExpression(): ParenthesizedExpressionFields['expression'] {
-        return this.value.expression;
+        return this.getFields().expression;
     }
 }
 
@@ -52,5 +52,5 @@ export const parenthesizedExpressionTypePair: EvaluatePair<
 );
 
 export const isParenthesizedExpressionType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ParenthesizedExpressionTypeClass => target instanceof ParenthesizedExpressionTypeClass;

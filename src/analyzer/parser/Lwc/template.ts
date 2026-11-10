@@ -7,7 +7,6 @@ import { parseFragment } from 'parse5';
 import {
     SpanSourceRegistry,
     makeLwcTemplateJson,
-    type ErrorJson,
     type LwcTemplateJson,
     type SpanSourceJson,
 } from '../../types';
@@ -18,8 +17,8 @@ import type { LwcDiagnostic } from './validate/javascript';
 export type LwcTemplateParseResult = {
     /** バンドルのフォルダの親からの相対パス (hello/hello.html) */
     filePath: string;
-    /** ルートの <template> がないときは ErrorJson (kindType: 'lwcTemplate') */
-    template: LwcTemplateJson | ErrorJson;
+    /** ルートの <template> がないときは null (理由は resolvedError の LWC1079 / LWC1075 など) */
+    template: LwcTemplateJson | null;
     sourceObjects: SpanSourceJson[];
     resolvedError: LwcResolvedError[];
 };

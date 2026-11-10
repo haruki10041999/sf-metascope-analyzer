@@ -1,4 +1,4 @@
-import { ErrorJson, LIST_VIEW_SCHEMA, ListViewFilterJson, ListViewJson } from '../../../types';
+import { LIST_VIEW_SCHEMA, ListViewFilterJson, ListViewJson } from '../../../types';
 
 import {
     Match,
@@ -35,8 +35,8 @@ export type ListViewJsonDiff = NodeDiff<
 >;
 
 export const makeListViewDiff = (
-    before: ListViewJson | ErrorJson,
-    after: ListViewJson | ErrorJson,
+    before: ListViewJson,
+    after: ListViewJson,
     match: Match = 'slot',
 ): ListViewJsonDiff =>
     makeNodeDiff('listView', before, after, match, (b, a) => ({

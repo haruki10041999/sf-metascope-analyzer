@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { TSParameterPropertyTypeClass, tSParameterPropertyTypePair } from './tSParameterProperty';
 import {
@@ -633,7 +634,7 @@ export type TypeScriptTypeClass =
     | TSTypeParameterTypeClass;
 
 export const isTypeScriptType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TypeScriptTypeClass => {
     return (
         target instanceof TSParameterPropertyTypeClass ||

@@ -3,7 +3,6 @@ import {
     CoordinateValueJson,
     DateFieldNameJson,
     DistanceValueJson,
-    ErrorJson,
     SoqlFunctionJson,
 } from '../../../../types';
 
@@ -29,9 +28,7 @@ export type DistanceValueJsonDiff = {
 
 export type NestedSoqlFunctionDiff = {
     func: ValueDiff<string>;
-    arg: ValueDiff<
-        Exclude<Extract<SoqlFunctionJson, { func: 'FORMAT' }>['arg'], string[] | ErrorJson>['arg']
-    >;
+    arg: ValueDiff<Exclude<Extract<SoqlFunctionJson, { func: 'FORMAT' }>['arg'], string[]>['arg']>;
 };
 
 export type SoqlFunctionArgDiff =
@@ -72,7 +69,7 @@ const isDistanceValue = (value: unknown): value is DistanceValueJson =>
 
 const isNestedFunction = (
     value: unknown,
-): value is Exclude<Extract<SoqlFunctionJson, { func: 'FORMAT' }>['arg'], string[] | ErrorJson> =>
+): value is Exclude<Extract<SoqlFunctionJson, { func: 'FORMAT' }>['arg'], string[]> =>
     typeof value === 'object' && value !== null && !Array.isArray(value) && 'func' in value;
 
 const makeDistanceValueDiff = (

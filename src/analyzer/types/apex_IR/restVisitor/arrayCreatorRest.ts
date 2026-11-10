@@ -1,62 +1,67 @@
 import { ArrayCreatorRestContext } from '@apexdevtools/apex-parser';
 
-import { RestTypeClass } from '.';
-
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
+import { ArrayInitializerTypeClass } from '../variableVisitor';
 import {
-    ArrayInitializerTypeClass,
-    VariableVisitor,
-    isArrayInitializerType,
-} from '../variableVisitor';
+    ApexCommonTypeClass,
+    createOptionalNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+    visitNode,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitOptionalNode } from '../commonVisitor';
+/**
+ * `new X[n]` (sized: 要素数) と `new X[]{ ... }`・`new X[]` (initialized: 初期化子。なければ null) の 2 通り
+ */
+export type ArrayCreatorRestType = TypeField<'arrayCreatorRest'> &
+    (
+        | { kind: 'sized'; size: BasedExpressionTypeClass }
+        | { kind: 'initialized'; initializer: ArrayInitializerTypeClass | null }
+    );
 
-export class ArrayCreatorRestTypeClass extends RestTypeClass<
+export class ArrayCreatorRestTypeClass extends ApexCommonTypeClass<
     'arrayCreatorRest',
-    ArrayInitializerTypeClass | null
+    ArrayCreatorRestType
 > {
-    private size: BasedExpressionTypeClass | ApexErrorTypeClass | null = null;
-    private constructor(
-        value: ArrayInitializerTypeClass | ApexErrorTypeClass | null,
-        size: BasedExpressionTypeClass | ApexErrorTypeClass | null,
-    ) {
-        super('arrayCreatorRest', value);
-        this.size = size;
+    private constructor(fields: FieldsOf<ArrayCreatorRestType>, sourceSpan: SourceSpan) {
+        super('arrayCreatorRest', fields, sourceSpan);
     }
 
     static create(ctx: ArrayCreatorRestContext): ArrayCreatorRestTypeClass {
-        if (!ctx.expression() && !ctx.arrayInitializer()) {
-            throw new Error('値が異常です。ArrayCreatorRestContext: ' + ctx.getText());
-        }
-
-        const value = visitOptionalNode(
-            new VariableVisitor(),
-            ctx.arrayInitializer(),
-            isArrayInitializerType,
-            'arrayInitializer',
+        return new ArrayCreatorRestTypeClass(
+            ctx.expression()
+                ? {
+                      kind: 'sized',
+                      size: visitNode(
+                          new ExpressionVisitor(),
+                          ctx.expression(),
+                          isBasedExpressionType,
+                          'expression',
+                      ),
+                  }
+                : {
+                      kind: 'initialized',
+                      initializer: createOptionalNode(
+                          ctx.arrayInitializer(),
+                          (c) => ArrayInitializerTypeClass.create(c),
+                          'arrayInitializer',
+                      ),
+                  },
+            getSourceSpan(ctx),
         );
-
-        const size = visitOptionalNode(
-            new ExpressionVisitor(),
-            ctx.expression(),
-            isBasedExpressionType,
-            'expression',
-        );
-
-        return new ArrayCreatorRestTypeClass(value, size);
     }
 
-    getSize(): BasedExpressionTypeClass | ApexErrorTypeClass | null {
-        return this.size;
+    getKind(): ArrayCreatorRestType['kind'] {
+        return this.getFields().kind;
     }
 }
 
 export const isArrayCreatorRestType = (
-    target: ApexCommonTypeClass<string>,
-): target is ArrayCreatorRestTypeClass => {
-    return target instanceof ArrayCreatorRestTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is ArrayCreatorRestTypeClass => isSpicifyApexCommonTypeClass('arrayCreatorRest', target);

@@ -1,15 +1,8 @@
 import { ForControlContext } from '@apexdevtools/apex-parser';
 
-import {
-    EnhancedForControlTypeClass,
-    ForInitTypeClass,
-    ForUpdateTypeClass,
-    ControlTypeClass,
-    ControlVisitor,
-    isEnhancedForControlType,
-    isForInitType,
-    isForUpdateType,
-} from '.';
+import { EnhancedForControlTypeClass } from './enhancedForControl';
+import { ForInitTypeClass } from './forInit';
+import { ForUpdateTypeClass } from './forUpdate';
 
 import {
     BasedExpressionTypeClass,
@@ -17,68 +10,83 @@ import {
     isBasedExpressionType,
 } from '../expressionVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNode,
+    createNode,
+    createOptionalNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
     visitOptionalNode,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class ForControlTypeClass extends ControlTypeClass<
-    'forControl',
-    EnhancedForControlTypeClass | BasedExpressionTypeClass | null
-> {
-    private init: ForInitTypeClass | ApexErrorTypeClass | null;
-    private update: ForUpdateTypeClass | ApexErrorTypeClass | null;
+/**
+ * for の制御部。文法は `enhancedForControl | forInit? ; expression? ; forUpdate?` の 2 通り
+ * - enhanced: 拡張 for (`for (X x : xs)`)
+ * - classic: 通常の for。初期化・条件・更新はどれも省略できる (`for (;;)`)
+ */
+export type ForControlType = TypeField<'forControl'> &
+    (
+        | { kind: 'enhanced'; control: EnhancedForControlTypeClass }
+        | {
+              kind: 'classic';
+              init: ForInitTypeClass | null;
+              condition: BasedExpressionTypeClass | null;
+              update: ForUpdateTypeClass | null;
+          }
+    );
 
-    private constructor(
-        value: EnhancedForControlTypeClass | BasedExpressionTypeClass | ApexErrorTypeClass | null,
-        init: ForInitTypeClass | ApexErrorTypeClass | null,
-        update: ForUpdateTypeClass | ApexErrorTypeClass | null,
-    ) {
-        super('forControl', value);
-        this.init = init;
-        this.update = update;
+export class ForControlTypeClass extends ApexCommonTypeClass<'forControl', ForControlType> {
+    private constructor(fields: FieldsOf<ForControlType>, sourceSpan: SourceSpan) {
+        super('forControl', fields, sourceSpan);
     }
 
-    // `for (;;)` のように初期化・条件・更新はすべて任意
     static create(ctx: ForControlContext): ForControlTypeClass {
-        let value:
-            EnhancedForControlTypeClass | BasedExpressionTypeClass | ApexErrorTypeClass | null =
-            null;
         if (ctx.enhancedForControl()) {
-            value = visitNode(
-                new ControlVisitor(),
-                ctx.enhancedForControl(),
-                isEnhancedForControlType,
-                'enhancedForControl',
-            );
-        } else if (ctx.expression()) {
-            value = visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(),
-                isBasedExpressionType,
-                'expression',
+            return new ForControlTypeClass(
+                {
+                    kind: 'enhanced',
+                    control: createNode(
+                        ctx.enhancedForControl(),
+                        (c) => EnhancedForControlTypeClass.create(c),
+                        'enhancedForControl',
+                    ),
+                },
+                getSourceSpan(ctx),
             );
         }
 
         return new ForControlTypeClass(
-            value,
-            visitOptionalNode(new ControlVisitor(), ctx.forInit(), isForInitType, 'forInit'),
-            visitOptionalNode(new ControlVisitor(), ctx.forUpdate(), isForUpdateType, 'forUpdate'),
+            {
+                kind: 'classic',
+                init: createOptionalNode(
+                    ctx.forInit(),
+                    (c) => ForInitTypeClass.create(c),
+                    'forInit',
+                ),
+                condition: visitOptionalNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+                update: createOptionalNode(
+                    ctx.forUpdate(),
+                    (c) => ForUpdateTypeClass.create(c),
+                    'forUpdate',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getInit(): ForInitTypeClass | ApexErrorTypeClass | null {
-        return this.init;
-    }
-
-    getUpdate(): ForUpdateTypeClass | ApexErrorTypeClass | null {
-        return this.update;
+    getKind(): ForControlType['kind'] {
+        return this.getFields().kind;
     }
 }
 
 export const isForControlType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is ForControlTypeClass => {
-    return target instanceof ForControlTypeClass;
+    return isSpicifyApexCommonTypeClass('forControl', target);
 };

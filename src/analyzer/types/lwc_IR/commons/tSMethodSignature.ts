@@ -1,31 +1,29 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSMethodSignature, type TSMethodSignature } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNode,
     visitNodeList,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
-import {
-    tSTypeAnnotationTypePair,
-    type TSTypeAnnotationTypeClass,
-} from '../typeScriptVisitor/tSTypeAnnotation';
-import {
-    tSTypeParameterDeclarationTypePair,
-    type TSTypeParameterDeclarationTypeClass,
-} from '../typeScriptVisitor/tSTypeParameterDeclaration';
+import { TSTypeAnnotationTypeClass } from '../typeScriptVisitor/tSTypeAnnotation';
+import { TSTypeParameterDeclarationTypeClass } from '../typeScriptVisitor/tSTypeParameterDeclaration';
 import { arrayPatternTypePair, type ArrayPatternTypeClass } from './arrayPattern';
 import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import {
+    createMemberKey,
+    failUnsupported,
+    rejectChild,
+    staticMemberKeyPairs,
+    type MemberKey,
+} from './memberKey';
 import { objectPatternTypePair, type ObjectPatternTypeClass } from './objectPattern';
 import { restElementTypePair, type RestElementTypeClass } from './restElement';
 
-const tSMethodSignatureTypeParametersPairs = lazyPairs(
-    () => [tSTypeParameterDeclarationTypePair] as const,
-);
 const tSMethodSignatureParamsPairs = lazyPairs(
     () =>
         [
@@ -35,95 +33,146 @@ const tSMethodSignatureParamsPairs = lazyPairs(
             restElementTypePair,
         ] as const,
 );
-const tSMethodSignatureReturnTypePairs = lazyPairs(() => [tSTypeAnnotationTypePair] as const);
+const tSMethodSignatureSetterParamPairs = lazyPairs(
+    () => [arrayPatternTypePair, identifierTypePair, objectPatternTypePair] as const,
+);
 
-export type TSMethodSignatureFields = {
-    typeParameters: TSTypeParameterDeclarationTypeClass | LwcErrorTypeClass | null;
-    params: (
-        | ArrayPatternTypeClass
-        | IdentifierTypeClass
-        | ObjectPatternTypeClass
-        | RestElementTypeClass
-        | LwcErrorTypeClass
-    )[];
-    returnType: TSTypeAnnotationTypeClass | LwcErrorTypeClass | null;
-    key: ExpressionTypeClass | LwcErrorTypeClass;
-    computed: TSMethodSignature['computed'];
-    optional: NonNullable<TSMethodSignature['optional']> | null;
-    kind: TSMethodSignature['kind'];
-};
+/** set の引数 (rest は不可) */
+type TSMethodSignatureSetterParam =
+    ArrayPatternTypeClass | IdentifierTypeClass | ObjectPatternTypeClass;
 
-export class TSMethodSignatureTypeClass extends LwcCommonTypeClass<'tSMethodSignature'> {
-    private readonly value: TSMethodSignatureFields;
+/**
+ * key は computed で見分ける。kind ごとに params の数が決まる
+ * (get は 0 個、set はちょうど 1 個で rest は不可。get・set は typeParameters を持たず、set は returnType も持たない)
+ */
+export type TSMethodSignatureFields = TypeField<'tSMethodSignature'> &
+    MemberKey & { optional: boolean } & (
+        | {
+              kind: 'method';
+              typeParameters: TSTypeParameterDeclarationTypeClass | null;
+              params: (TSMethodSignatureSetterParam | RestElementTypeClass)[];
+              returnType: TSTypeAnnotationTypeClass | null;
+          }
+        | { kind: 'get'; params: []; returnType: TSTypeAnnotationTypeClass | null }
+        | { kind: 'set'; params: [TSMethodSignatureSetterParam] }
+    );
 
-    private constructor(value: TSMethodSignatureFields) {
-        super('tSMethodSignature');
-        this.value = value;
+export class TSMethodSignatureTypeClass extends LwcCommonTypeClass<
+    'tSMethodSignature',
+    TSMethodSignatureFields
+> {
+    private constructor(value: FieldsOf<TSMethodSignatureFields>, sourceSpan: SourceSpan) {
+        super('tSMethodSignature', value, sourceSpan);
     }
 
     static create(target: TSMethodSignature, originalSource: string): TSMethodSignatureTypeClass {
-        return new TSMethodSignatureTypeClass({
-            typeParameters: visitOptionalNode(
-                target.typeParameters,
-                originalSource,
-                tSMethodSignatureTypeParametersPairs(),
-                'TSMethodSignature.typeParameters',
-            ),
-            params: visitNodeList(
-                target.params,
-                originalSource,
-                tSMethodSignatureParamsPairs(),
-                'TSMethodSignature.params',
-            ),
-            returnType: visitOptionalNode(
-                target.returnType,
-                originalSource,
-                tSMethodSignatureReturnTypePairs(),
-                'TSMethodSignature.returnType',
-            ),
-            key: visitNode(
-                target.key,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-            computed: target.computed,
-            optional: target.optional ?? null,
-            kind: target.kind,
-        });
-    }
+        const common = {
+            ...createMemberKey(target, originalSource, staticMemberKeyPairs(), 'TSMethodSignature'),
+            optional: target.optional ?? false,
+        };
+        const returnType = (): TSTypeAnnotationTypeClass | null =>
+            target.returnType == null
+                ? null
+                : TSTypeAnnotationTypeClass.create(target.returnType, originalSource);
+        const span = getSourceSpan(target, originalSource);
 
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSMethodSignatureFields {
-        return this.value;
-    }
-
-    getTypeParameters(): TSMethodSignatureFields['typeParameters'] {
-        return this.value.typeParameters;
+        switch (target.kind) {
+            case 'method':
+                return new TSMethodSignatureTypeClass(
+                    {
+                        ...common,
+                        kind: 'method',
+                        typeParameters:
+                            target.typeParameters == null
+                                ? null
+                                : TSTypeParameterDeclarationTypeClass.create(
+                                      target.typeParameters,
+                                      originalSource,
+                                  ),
+                        params: visitNodeList(
+                            target.params,
+                            originalSource,
+                            tSMethodSignatureParamsPairs(),
+                            'TSMethodSignature.params',
+                        ),
+                        returnType: returnType(),
+                    },
+                    span,
+                );
+            case 'get':
+                rejectChild(
+                    target,
+                    target.typeParameters,
+                    originalSource,
+                    'get は型パラメータを持てません',
+                );
+                if (target.params.length !== 0) {
+                    return failUnsupported(
+                        target,
+                        originalSource,
+                        'TSMethodSignature: get の引数は 0 個です',
+                    );
+                }
+                return new TSMethodSignatureTypeClass(
+                    { ...common, kind: 'get', params: [], returnType: returnType() },
+                    span,
+                );
+            case 'set':
+                rejectChild(
+                    target,
+                    target.typeParameters,
+                    originalSource,
+                    'set は型パラメータを持てません',
+                );
+                rejectChild(
+                    target,
+                    target.returnType,
+                    originalSource,
+                    'set は戻り値の型を持てません',
+                );
+                if (target.params.length !== 1) {
+                    return failUnsupported(
+                        target,
+                        originalSource,
+                        'TSMethodSignature: set の引数はちょうど 1 個です',
+                    );
+                }
+                return new TSMethodSignatureTypeClass(
+                    {
+                        ...common,
+                        kind: 'set',
+                        params: [
+                            visitNode(
+                                target.params[0],
+                                originalSource,
+                                tSMethodSignatureSetterParamPairs(),
+                                'TSMethodSignature.params',
+                            ),
+                        ],
+                    },
+                    span,
+                );
+        }
     }
 
     getParams(): TSMethodSignatureFields['params'] {
-        return this.value.params;
-    }
-
-    getReturnType(): TSMethodSignatureFields['returnType'] {
-        return this.value.returnType;
+        return this.getFields().params;
     }
 
     getKey(): TSMethodSignatureFields['key'] {
-        return this.value.key;
+        return this.getFields().key;
     }
 
     getComputed(): TSMethodSignatureFields['computed'] {
-        return this.value.computed;
+        return this.getFields().computed;
     }
 
     getOptional(): TSMethodSignatureFields['optional'] {
-        return this.value.optional;
+        return this.getFields().optional;
     }
 
     getKind(): TSMethodSignatureFields['kind'] {
-        return this.value.kind;
+        return this.getFields().kind;
     }
 }
 
@@ -135,5 +184,5 @@ export const tSMethodSignatureTypePair: EvaluatePair<
 );
 
 export const isTSMethodSignatureType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSMethodSignatureTypeClass => target instanceof TSMethodSignatureTypeClass;

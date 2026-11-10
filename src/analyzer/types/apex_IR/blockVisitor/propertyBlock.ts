@@ -1,64 +1,64 @@
 import { PropertyBlockContext } from '@apexdevtools/apex-parser';
 
-import {
-    GetterTypeClass,
-    SetterTypeClass,
-    BlockTypeClass,
-    BlockVisitor,
-    isGetterType,
-    isSetterType,
-} from '.';
+import { GetterTypeClass } from './getter';
+import { SetterTypeClass } from './setter';
 
-import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '../modifierVisitor';
+import { ModifierTypeClass } from '../modifierVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    isApexValidClass,
-    visitNodeList,
+    createNode,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class PropertyBlockTypeClass extends BlockTypeClass<
+export type PropertyBlockType = TypeField<'propertyBlock'> & {
+    block: GetterTypeClass | SetterTypeClass;
+    modifiers: ModifierTypeClass[];
+};
+
+export class PropertyBlockTypeClass extends ApexCommonTypeClass<
     'propertyBlock',
-    GetterTypeClass | SetterTypeClass
+    PropertyBlockType
 > {
-    private modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[] = [];
-    private constructor(
-        value: GetterTypeClass | SetterTypeClass | ApexErrorTypeClass,
-        modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[],
-    ) {
-        super('propertyBlock', value);
-        this.modifier = modifier;
+    private constructor(fields: FieldsOf<PropertyBlockType>, sourceSpan: SourceSpan) {
+        super('propertyBlock', fields, sourceSpan);
     }
 
     static create(ctx: PropertyBlockContext): PropertyBlockTypeClass {
-        if (!ctx.getter() && !ctx.setter()) {
-            throw new Error('値が異常です。GetterContext: ' + ctx.getText());
-        }
-
         return new PropertyBlockTypeClass(
-            isApexValidClass<GetterTypeClass | SetterTypeClass>(
-                ctx.getter()
-                    ? new BlockVisitor().visit(ctx.getter())
-                    : new BlockVisitor().visit(ctx.setter()),
-                ctx.getter() ? isGetterType : isSetterType,
-                'value',
-            ),
-            visitNodeList(
-                new ModifierVisitor(),
-                ctx.modifier_list(),
-                isNormalModifierType,
-                'modifier',
-            ),
+            {
+                block: ctx.getter()
+                    ? createNode(ctx.getter(), (c) => GetterTypeClass.create(c), 'getter')
+                    : createNode(ctx.setter(), (c) => SetterTypeClass.create(c), 'setter'),
+                modifiers: createNodeList(
+                    ctx.modifier_list(),
+                    (c) => ModifierTypeClass.create(c),
+                    'modifier',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getModifier(): (NormalModifierTypeClass | ApexErrorTypeClass)[] {
-        return this.modifier;
+    getBlock(): PropertyBlockType['block'] {
+        return this.getFields().block;
+    }
+
+    getModifiers(): PropertyBlockType['modifiers'] {
+        return this.getFields().modifiers;
+    }
+
+    /** getModifiers と同じ (v1 の名前) */
+    getModifier(): PropertyBlockType['modifiers'] {
+        return this.getModifiers();
     }
 }
 
 export const isPropertyBlockType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is PropertyBlockTypeClass => {
-    return target instanceof PropertyBlockTypeClass;
+    return isSpicifyApexCommonTypeClass('propertyBlock', target);
 };

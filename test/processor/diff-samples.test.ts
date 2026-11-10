@@ -210,7 +210,7 @@ describe('diff samples (docs/examples/repository)', () => {
                 .map((e) => (e as Node).value.filePath),
             ['Broken.cls', 'Broken.cls', 'Broken.cls-meta.xml'],
         );
-        // IR v2 は壊れた部分を木に残さない (docs/ir-v2-integration.md 2 章)。エラーの JSON は出ず、
+        // IR v2 は壊れた部分を木に残さない (docs/ir-integration.md 2 章)。エラーの JSON は出ず、
         // ANTLR が回復した文 (Integer x = ; と次の行がつながったもの) が変更として出る
         const nodes = contentNodes('class_Broken');
         assert.ok(!nodes.some((n) => n.kind === 'error'));

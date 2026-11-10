@@ -3,7 +3,6 @@ import path from 'path';
 
 import {
     CustomObjectJson,
-    ErrorJson,
     OBJECT_MEMBERS,
     OBJECT_SUFFIX,
     ObjectMemberKey,
@@ -47,14 +46,14 @@ export type ObjectFileStructureType = {
     };
 };
 
-/** object-meta.xml が読めなかったとき */
+/** object-meta.xml が読めなかったとき。中身 (base) は持たず、理由は resolvedError */
 export type ErrorObjectFileStructureType = {
     filePath: string;
     resolvedError: XmlResolvedError[];
     dataType: 'error';
     result: {
         id: string;
-        base: ErrorJson;
+        base: null;
         sourceObject: XmlSourceJson[];
     };
 };
@@ -162,17 +161,12 @@ export class MetadataParser {
         const resolvedError = problems.map(toXmlResolvedError);
 
         // object-meta.xml 自体が読めなければ、オブジェクト全体をエラーにする (Apex のユニットのエラーと同じ)
-        const objectProblem = problems.find((problem) => problem.kindType === 'object');
-        if (objectProblem) {
+        if (problems.some((problem) => problem.kindType === 'object')) {
             return {
                 filePath: apiName,
                 resolvedError,
                 dataType: 'error',
-                result: {
-                    id: apiName,
-                    base: objectProblem.error,
-                    sourceObject: registry.toSourceObjects(),
-                },
+                result: { id: apiName, base: null, sourceObject: [] },
             };
         }
         return {

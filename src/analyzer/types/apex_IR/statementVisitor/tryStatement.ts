@@ -1,73 +1,85 @@
 import { TryStatementContext } from '@apexdevtools/apex-parser';
 
-import { StatementTypeClass } from '.';
-
+import { BlockTypeClass, FinallyBlockTypeClass } from '../blockVisitor';
+import { CatchClauseTypeClass } from '../clauseVisitor';
 import {
-    NormalBlockTypeClass,
-    FinallyBlockTypeClass,
-    BlockVisitor,
-    isNormalBlockType,
-    isFinallyBlockType,
-} from '../blockVisitor';
-import { CatchClauseTypeClass, ClauseVisitor, isCatchClauseType } from '../clauseVisitor';
-import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNodeList,
-    visitNode,
-    visitOptionalNode,
+    createNode,
+    createNodeList,
+    createOptionalNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class TryStatementTypeClass extends StatementTypeClass<
-    'tryStatement',
-    NormalBlockTypeClass
-> {
-    private catchBlock: (CatchClauseTypeClass | ApexErrorTypeClass)[];
-    private finallyBlock: FinallyBlockTypeClass | ApexErrorTypeClass | null = null;
+/** 文法は `TRY block (catchClause+ finallyBlock? | finallyBlock)`。catch か finally の少なくとも一方がある */
+export type TryStatementType = TypeField<'tryStatement'> & { block: BlockTypeClass } & (
+        | {
+              catchClauses: [CatchClauseTypeClass, ...CatchClauseTypeClass[]];
+              finallyBlock: FinallyBlockTypeClass | null;
+          }
+        | { catchClauses: []; finallyBlock: FinallyBlockTypeClass }
+    );
 
-    private constructor(
-        value: NormalBlockTypeClass | ApexErrorTypeClass,
-        catchBlock: (CatchClauseTypeClass | ApexErrorTypeClass)[],
-        finallyBlock: FinallyBlockTypeClass | ApexErrorTypeClass | null = null,
-    ) {
-        super('tryStatement', value);
-        this.catchBlock = catchBlock;
-        this.finallyBlock = finallyBlock;
+export class TryStatementTypeClass extends ApexCommonTypeClass<'tryStatement', TryStatementType> {
+    private constructor(fields: FieldsOf<TryStatementType>, sourceSpan: SourceSpan) {
+        super('tryStatement', fields, sourceSpan);
     }
 
     static create(ctx: TryStatementContext): TryStatementTypeClass {
-        if (!ctx.block() || (ctx.catchClause_list().length === 0 && !ctx.finallyBlock())) {
-            throw new Error('値が異常です。TryStatementContext: ' + ctx.getText());
+        const block = createNode(ctx.block(), (c) => BlockTypeClass.create(c), 'block');
+        const [firstCatch, ...restCatches] = createNodeList(
+            ctx.catchClause_list(),
+            (c) => CatchClauseTypeClass.create(c),
+            'catchClause',
+        );
+
+        if (firstCatch) {
+            return new TryStatementTypeClass(
+                {
+                    block,
+                    catchClauses: [firstCatch, ...restCatches],
+                    finallyBlock: createOptionalNode(
+                        ctx.finallyBlock(),
+                        (c) => FinallyBlockTypeClass.create(c),
+                        'finallyBlock',
+                    ),
+                },
+                getSourceSpan(ctx),
+            );
         }
 
+        // catch がない (または、どれも作れなかった) ときは finally が必須
         return new TryStatementTypeClass(
-            visitNode(new BlockVisitor(), ctx.block(), isNormalBlockType, 'block'),
-            visitNodeList(
-                new ClauseVisitor(),
-                ctx.catchClause_list() || [],
-                isCatchClauseType,
-                'catchClause',
-            ),
-            visitOptionalNode(
-                new BlockVisitor(),
-                ctx.finallyBlock(),
-                isFinallyBlockType,
-                'finallyBlock',
-            ),
+            {
+                block,
+                catchClauses: [],
+                finallyBlock: createNode(
+                    ctx.finallyBlock(),
+                    (c) => FinallyBlockTypeClass.create(c),
+                    'finallyBlock',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getCatchBlock(): (CatchClauseTypeClass | ApexErrorTypeClass)[] {
-        return this.catchBlock;
+    getBlock(): TryStatementType['block'] {
+        return this.getFields().block;
     }
 
-    getFinallyBlock(): FinallyBlockTypeClass | ApexErrorTypeClass | null {
-        return this.finallyBlock;
+    getCatchClauses(): TryStatementType['catchClauses'] {
+        return this.getFields().catchClauses;
+    }
+
+    getFinallyBlock(): TryStatementType['finallyBlock'] {
+        return this.getFields().finallyBlock;
     }
 }
 
 export const isTryStatementType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is TryStatementTypeClass => {
-    return target instanceof TryStatementTypeClass;
+    return isSpicifyApexCommonTypeClass('tryStatement', target);
 };

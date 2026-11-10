@@ -11,7 +11,12 @@ import {
     findUnitTypeBySaveId,
 } from '../unit/unitType';
 
-import { WorkerPool, defaultConcurrency, mapWithConcurrency, registerWorkerTask } from './workerPool';
+import {
+    WorkerPool,
+    defaultConcurrency,
+    mapWithConcurrency,
+    registerWorkerTask,
+} from './workerPool';
 
 export type WorkerOptions = {
     /** 保存先のディレクトリ (本番用の msgpack で <outDir>/<保存名>.msgpack に保存する) */
@@ -29,8 +34,7 @@ export type WorkerOptions = {
 
 /** 一括処理の結果。1 件の失敗で全体を止めないよう、件ごとに成否を返す */
 export type BatchResult<TInput, TResult> =
-    | { input: TInput; ok: true; result: TResult }
-    | { input: TInput; ok: false; error: Error };
+    { input: TInput; ok: true; result: TResult } | { input: TInput; ok: false; error: Error };
 
 // すべての単位の種類を 1 つで扱う worker。タスクは「単位の種類 + 単位の場所」。
 // 保存先は 1 つのフォルダで、読み込みは保存名の接頭辞で種類を選ぶ。方針: docs/analysis-plan.md 2 章

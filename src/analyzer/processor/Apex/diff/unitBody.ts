@@ -1,7 +1,6 @@
 import {
     AnonymousUnitJson,
     CompilationUnitJson,
-    ErrorJson,
     MemberStatementJson,
     TriggerCaseJson,
     TriggerUnitJson,
@@ -87,7 +86,7 @@ export const makeTypeDeclarationDiff = (
 // anonymous / trigger の本文
 // ---------------------------------------------------------------------------
 
-type BlockMemberJson = Exclude<AnonymousUnitJson['block'], ErrorJson>[number];
+type BlockMemberJson = AnonymousUnitJson['block'][number];
 type NonStatementMemberJson = Exclude<BlockMemberJson, MemberStatementJson>;
 /**
  * 本文の文 (`kind: 'statement'` の要素) の差分。文の差分 (BlockDiff の要素) に、文に付いた修飾子の差分を足した形。
@@ -96,7 +95,7 @@ type NonStatementMemberJson = Exclude<BlockMemberJson, MemberStatementJson>;
 export type MemberStatementJsonDiff = BlockDiff[number] & { modifier: ModifiersJsonDiff };
 
 /**
- * 宣言と文が混ざった本文。宣言と ErrorJson はクラス本文と同じ方法 (makeClassBodyDiff)、
+ * 宣言と文が混ざった本文。宣言はクラス本文と同じ方法 (makeClassBodyDiff)、
  * 文 (`kind: 'statement'`) は GumTree で比べる。index はそれぞれのグループの中での位置。
  */
 export type BlockMembersDiff = {
@@ -157,21 +156,9 @@ export const makeBlockMembersDiff = (
     };
 };
 
-type BlockMembersOrErrorDiff = BlockMembersDiff | ValueDiff<BlockMemberJson[] | ErrorJson>;
-
-const makeBlockMembersOrErrorDiff = (
-    before: BlockMemberJson[] | ErrorJson,
-    after: BlockMemberJson[] | ErrorJson,
-    sources?: Sources,
-): BlockMembersOrErrorDiff => {
-    return Array.isArray(before) && Array.isArray(after)
-        ? makeBlockMembersDiff(before, after, sources)
-        : makeValueDiff(before, after);
-};
-
 export type AnonymousUnitJsonDiff = {
     fileType: 'anonymous';
-    block: BlockMembersOrErrorDiff;
+    block: BlockMembersDiff;
 };
 
 export const makeAnonymousUnitDiff = (
@@ -181,20 +168,20 @@ export const makeAnonymousUnitDiff = (
 ): AnonymousUnitJsonDiff => {
     return {
         fileType: 'anonymous',
-        block: makeBlockMembersOrErrorDiff(before.block, after.block, sources),
+        block: makeBlockMembersDiff(before.block, after.block, sources),
     };
 };
 
 /** トリガーの対象イベント (before insert など) は B. 集合 */
 export type TriggerCaseJsonDiff = ListItemDiff<
     'triggerCase',
-    TriggerCaseJson | ErrorJson,
+    TriggerCaseJson,
     NodeDiff<'triggerCase', TriggerCaseJson, undefined>
 >;
 
 export const makeTriggerCasesDiff = (
-    before: (TriggerCaseJson | ErrorJson)[],
-    after: (TriggerCaseJson | ErrorJson)[],
+    before: TriggerCaseJson[],
+    after: TriggerCaseJson[],
     sources?: Sources,
 ): TriggerCaseJsonDiff[] => {
     return makeSetDiff(
@@ -208,10 +195,10 @@ export const makeTriggerCasesDiff = (
 
 export type TriggerUnitJsonDiff = {
     fileType: 'trigger';
-    name: ValueDiff<string | ErrorJson>;
-    object: ValueDiff<string | ErrorJson>;
+    name: ValueDiff<string>;
+    object: ValueDiff<string>;
     case: TriggerCaseJsonDiff[];
-    block: BlockMembersOrErrorDiff;
+    block: BlockMembersDiff;
 };
 
 export const makeTriggerUnitDiff = (
@@ -224,7 +211,7 @@ export const makeTriggerUnitDiff = (
         name: makeValueDiff(before.name, after.name),
         object: makeValueDiff(before.object, after.object),
         case: makeTriggerCasesDiff(before.case, after.case, sources),
-        block: makeBlockMembersOrErrorDiff(before.block, after.block, sources),
+        block: makeBlockMembersDiff(before.block, after.block, sources),
     };
 };
 
@@ -243,7 +230,7 @@ export type UnitContentDiff =
 type UnitResult = { base: unknown; sourceObject?: Sources['before'] | undefined };
 
 /**
- * ファイルの中身の差分。dataType が同じで、どちらもエラーでないときだけ作る。
+ * ファイルの中身の差分。dataType が同じで、どちらも読めたときだけ作る。
  * base は fileType を除いた CompilationUnitJson / TriggerUnitJson / AnonymousUnitJson。
  */
 export const makeUnitContentDiff = (

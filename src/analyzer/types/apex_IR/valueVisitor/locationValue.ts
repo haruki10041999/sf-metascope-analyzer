@@ -1,64 +1,88 @@
 import { LocationValueContext } from '@apexdevtools/apex-parser';
 
-import { CoordinateValueTypeClass, ValueTypeClass, ValueVisitor, isCoordinateValueType } from '.';
+import { CoordinateValueTypeClass } from './coordinateValue';
 
-import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor';
+import { FieldNameTypeClass } from '../nameVisitor';
+import { BoundExpressionTypeClass } from '../expressionVisitor';
 import {
-    BoundExpressionTypeClass,
-    ExpressionVisitor,
-    isBoundExpressionType,
-} from '../expressionVisitor';
-import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNodeList,
-    visitNode,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-type LocationValueValue =
-    | FieldNameTypeClass
-    | BoundExpressionTypeClass
-    | (CoordinateValueTypeClass | ApexErrorTypeClass)[];
+/** 項目名・バインド変数、または GEOLOCATION(緯度, 経度) */
+export type LocationValueType = TypeField<'locationValue'> &
+    (
+        | { kind: 'field'; value: FieldNameTypeClass }
+        | { kind: 'bind'; value: BoundExpressionTypeClass }
+        | {
+              kind: 'geolocation';
+              latitude: CoordinateValueTypeClass;
+              longitude: CoordinateValueTypeClass;
+          }
+    );
 
-export class LocationValueTypeClass extends ValueTypeClass<'locationValue', LocationValueValue> {
-    private constructor(value: LocationValueValue | ApexErrorTypeClass) {
-        super('locationValue', value);
+export class LocationValueTypeClass extends ApexCommonTypeClass<
+    'locationValue',
+    LocationValueType
+> {
+    private constructor(fields: FieldsOf<LocationValueType>, sourceSpan: SourceSpan) {
+        super('locationValue', fields, sourceSpan);
     }
 
     static create(ctx: LocationValueContext): LocationValueTypeClass {
-        if (
-            !ctx.fieldName() &&
-            !ctx.boundExpression() &&
-            (!ctx.GEOLOCATION() || ctx.coordinateValue_list().length !== 2)
-        ) {
-            throw new Error('値が異常です。LocationValueContext: ' + ctx.getText());
-        }
+        return new LocationValueTypeClass(
+            LocationValueTypeClass.createFields(ctx),
+            getSourceSpan(ctx),
+        );
+    }
 
-        let value: LocationValueValue | ApexErrorTypeClass;
+    private static createFields(ctx: LocationValueContext): FieldsOf<LocationValueType> {
         if (ctx.GEOLOCATION()) {
-            value = visitNodeList(
-                new ValueVisitor(),
-                ctx.coordinateValue_list(),
-                isCoordinateValueType,
-                'coordinateValue',
-            );
-        } else {
-            value = ctx.fieldName()
-                ? visitNode(new NameVisitor(), ctx.fieldName(), isFieldNameType, 'fieldName')
-                : visitNode(
-                      new ExpressionVisitor(),
-                      ctx.boundExpression(),
-                      isBoundExpressionType,
-                      'boundExpression',
-                  );
+            const coordinates = ctx.coordinateValue_list();
+            return {
+                kind: 'geolocation',
+                latitude: createNode(
+                    coordinates[0],
+                    (c) => CoordinateValueTypeClass.create(c),
+                    'coordinateValue',
+                ),
+                longitude: createNode(
+                    coordinates[1],
+                    (c) => CoordinateValueTypeClass.create(c),
+                    'coordinateValue',
+                ),
+            };
+        } else if (ctx.fieldName()) {
+            return {
+                kind: 'field',
+                value: createNode(
+                    ctx.fieldName(),
+                    (c) => FieldNameTypeClass.create(c),
+                    'fieldName',
+                ),
+            };
         }
+        return {
+            kind: 'bind',
+            value: createNode(
+                ctx.boundExpression(),
+                (c) => BoundExpressionTypeClass.create(c),
+                'boundExpression',
+            ),
+        };
+    }
 
-        return new LocationValueTypeClass(value);
+    getKind(): LocationValueType['kind'] {
+        return this.getFields().kind;
     }
 }
 
 export const isLocationValueType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is LocationValueTypeClass => {
-    return target instanceof LocationValueTypeClass;
+    return isSpicifyApexCommonTypeClass('locationValue', target);
 };

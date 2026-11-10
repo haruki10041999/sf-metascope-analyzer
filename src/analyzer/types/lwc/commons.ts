@@ -1,40 +1,18 @@
-// LWC の JSON 生成層で共通の部品 (Apex の types/apex/commons に当たる)。
-// 入力は converter の出力 (LwcXxxType。sourceInfo を持ったまま)。ソースの文字列は sourceInfo から読み、
-// JSON を作る段階で sourceInfo を sourceKeys と sourceObject に分ける (Apex は makeConvertType で先に分ける)
-import type { ErrorType } from '../commons/converter';
-import { makeErrorJson, type ConvertKeys, type ErrorJson } from '../commons/json';
-import { hash, isRecord, sortKeys } from '../commons/utils';
+// LWC の JSON 生成層で共通の部品 (Apex の types/apex/commons/node.ts に当たる)。
+// 入力は IR v2 (lwc_IR) のノード。ソースの文字列はノードの位置 (getSpan) から読み、
+// JSON を作る段階でキー (sourceKeys) とソース位置の一覧 (sourceObject) を作る (docs/ir-integration.md 3.2)。
+// v2 の木にはエラーのノードがないので、v1 の convertLwcValue のような、部分木のエラーを調べる処理はない
+import type { ConvertKeys } from '../commons/json';
+import type { TypeField } from '../commons/ir';
+import { hash } from '../commons/utils';
+import { LwcCommonTypeClass } from '../lwc_IR/commonVisitor';
 
-import type { LwcAnyNodeType, LwcSourceInfo } from './converter';
 import type { LwcSourceJson } from './bundle';
 
-/** converter の出力の、任意のノード (IR を作れなかったノード ErrorType を含む) */
-// sourceInfo は、実行時はどれも LwcSourceInfo (ファイルのパスを持つ)
-export type LwcConvertNode = LwcAnyNodeType | ErrorType;
+/** IR v2 の、任意のノード */
+export type LwcNode = LwcCommonTypeClass<string, TypeField<string>>;
 
-const isConvertNode = (value: unknown): value is LwcConvertNode =>
-    isRecord(value) && typeof value.type === 'string' && isRecord(value.sourceInfo);
-
-/** ノードの内容 (sourceInfo を除き、子も同じく除いたもの)。objectKey の元。Apex の makeConvertType と同じ */
-const contentOf = (value: unknown, cache: WeakMap<object, unknown>): unknown => {
-    if (Array.isArray(value)) {
-        return value.map((item) => contentOf(item, cache));
-    }
-    if (!isRecord(value)) {
-        return value;
-    }
-    const cached = cache.get(value);
-    if (cached !== undefined) {
-        return cached;
-    }
-    const content = Object.fromEntries(
-        Object.entries(value)
-            .filter(([key]) => key !== 'sourceInfo')
-            .map(([key, child]) => [key, contentOf(child, cache)]),
-    );
-    cache.set(value, content);
-    return content;
-};
+export const isLwcNode = (value: unknown): value is LwcNode => value instanceof LwcCommonTypeClass;
 
 /**
  * JSON を作るときの情報。ファイルごとに 1 つ作る。
@@ -43,7 +21,6 @@ const contentOf = (value: unknown, cache: WeakMap<object, unknown>): unknown => 
  */
 export class LwcJsonContext {
     readonly filePath: string;
-    private contents = new WeakMap<object, unknown>();
     private keys = new WeakMap<object, ConvertKeys>();
     private sourceObjects = new Map<string, LwcSourceJson>();
 
@@ -52,23 +29,24 @@ export class LwcJsonContext {
     }
 
     /** ノードのソースの文字列 */
-    textOf(node: LwcConvertNode): string {
-        return node.sourceInfo.context;
+    textOf(node: LwcNode): string {
+        return node.getSpan().context;
     }
 
     /**
-     * ノードの sourceKeys。objectKey は内容 (位置を除く) のハッシュ、sourceKey は位置 (ファイルのパスを含む) のハッシュ。
-     * Apex の makeConvertType と同じ作り方 (キーの順序に依らない)
+     * ノードの sourceKeys。objectKey は IR のキー (内容のハッシュ。位置に依らない)。
+     * sourceKey は位置とファイルのパスのハッシュ (バンドルの中の別のファイルの同じ位置と区別するため、パスを含める)
      */
-    keysOf(node: LwcConvertNode): ConvertKeys {
+    keysOf(node: LwcNode): ConvertKeys {
         const cached = this.keys.get(node);
         if (cached) {
             return cached;
         }
-        const { context, ...position } = node.sourceInfo as LwcSourceInfo;
+        const { context, start, end } = node.getSpan();
+        const position = { start, end, filePath: this.filePath };
         const keys: ConvertKeys = {
-            objectKey: `${node.type}_${hash(sortKeys(contentOf(node, this.contents)))}`,
-            sourceKey: `${node.type}_${hash(position)}`,
+            objectKey: node.getSourceKeys().objectKey,
+            sourceKey: `${node.kind}_${hash(position)}`,
         };
         this.keys.set(node, keys);
 
@@ -86,6 +64,22 @@ export class LwcJsonContext {
         return keys;
     }
 
+    /**
+     * StructureJson の sourceKeys。base はノード自身、ほかは { JSON 側の名前: 子ノード }。
+     * 子ノードがない (名前のないクラスなど) ときは、ノード全体の位置にする (v1 と同じ)
+     */
+    structureKeysOf<TKey extends string>(
+        node: LwcNode,
+        children: Readonly<Record<TKey, LwcNode | null | undefined>>,
+    ): { base: ConvertKeys } & Record<TKey, ConvertKeys> {
+        const base = this.keysOf(node);
+        const sourceKeys: Record<string, ConvertKeys> = { base };
+        for (const [name, child] of Object.entries<LwcNode | null | undefined>(children)) {
+            sourceKeys[name] = child ? this.keysOf(child) : base;
+        }
+        return sourceKeys as { base: ConvertKeys } & Record<TKey, ConvertKeys>;
+    }
+
     /** keysOf で登録したソース位置 */
     toSourceObjects(): LwcSourceJson[] {
         return [...this.sourceObjects.values()];
@@ -93,80 +87,14 @@ export class LwcJsonContext {
 }
 
 /** 部分木のすべてのノード (前順で、自身を含む)。enter が false を返したノードの中には入らない */
-export const walkNodes = (root: unknown, enter: (node: LwcConvertNode) => boolean | void): void => {
-    const walk = (value: unknown): void => {
-        if (Array.isArray(value)) {
-            value.forEach(walk);
+export const walkNodes = (root: LwcNode, enter: (node: LwcNode) => boolean | void): void => {
+    const walk = (node: LwcNode): void => {
+        if (enter(node) === false) {
             return;
         }
-        if (!isRecord(value)) {
-            return;
-        }
-        if (isConvertNode(value) && enter(value) === false) {
-            return;
-        }
-        for (const [key, child] of Object.entries(value)) {
-            if (key !== 'sourceInfo') {
-                walk(child);
-            }
-        }
+        node.getChildNodes().forEach((child) => walk(child as LwcNode));
     };
     walk(root);
-};
-
-/** 部分木に IR を作れなかったノードがあるか */
-export const containsErrorNode = (value: unknown): boolean => {
-    let found = false;
-    walkNodes(value, (node) => {
-        if (node.type === 'error') {
-            found = true;
-        }
-        return !found;
-    });
-    return found;
-};
-
-export type LwcConvertValueOptions<TKey extends string = string> = {
-    /**
-     * エラーの検査の対象から外すプロパティ。外したプロパティは子の変換関数がエラーを処理する。
-     * 'children' はノード自身だけを検査する (子はすべて対象外)。Apex の ConvertValueOptions と同じ
-     */
-    exclude?: readonly string[] | 'children';
-    /** StructureJson の sourceKeys に集める子ノード。{ JSON 側の名前: 変換元のプロパティ名 } */
-    record?: Readonly<Record<TKey, string>>;
-};
-
-/**
- * 境界ノードを変換する (Apex の convertValue と同じ)。検査範囲 (既定は部分木全体) に IR を作れなかったノードがあれば
- * ErrorJson を返す。process には、ノードと sourceKeys ({ base, ...record }) を渡す
- */
-export const convertLwcValue = <TNode extends LwcConvertNode, TResult, TKey extends string = never>(
-    target: TNode,
-    kind: string,
-    context: LwcJsonContext,
-    process: (
-        node: TNode,
-        sourceKeys: { base: ConvertKeys } & Record<TKey, ConvertKeys>,
-    ) => TResult,
-    options: LwcConvertValueOptions<TKey> = {},
-): TResult | ErrorJson => {
-    const base = context.keysOf(target);
-    const exclude = options.exclude;
-    const checked = Object.entries(target).filter(([key, value]) => {
-        if (key === 'sourceInfo') return false;
-        if (exclude === 'children') return value === null || typeof value !== 'object';
-        return !exclude?.includes(key);
-    });
-    if (target.type === 'error' || checked.some(([, value]) => containsErrorNode(value))) {
-        return makeErrorJson(base, kind);
-    }
-    // record の子がない (名前のないクラスなど) ときは、ノード全体の位置にする
-    const sourceKeys: Record<string, ConvertKeys> = { base };
-    for (const [name, property] of Object.entries<string>(options.record ?? {})) {
-        const child = (target as Record<string, unknown>)[property];
-        sourceKeys[name] = isConvertNode(child) ? context.keysOf(child) : base;
-    }
-    return process(target, sourceKeys as { base: ConvertKeys } & Record<TKey, ConvertKeys>);
 };
 
 /** 式を包むノード (括弧・TS の型アサーション x as T / x! / <T>x / x satisfies T・Flow の型キャスト) */
@@ -181,32 +109,30 @@ const WRAPPER_TYPES = new Set([
 ]);
 
 /** 式を包むノードを外した、中の式 */
-export const unwrapExpression = (node: LwcConvertNode): LwcConvertNode => {
+export const unwrapExpression = (node: LwcNode): LwcNode => {
     let current = node;
-    while (WRAPPER_TYPES.has(current.type) && 'expression' in current) {
-        current = current.expression as LwcConvertNode;
+    while (WRAPPER_TYPES.has(current.kind)) {
+        const inner = (current.getFields() as { expression?: unknown }).expression;
+        if (!isLwcNode(inner)) break;
+        current = inner;
     }
     return current;
 };
 
 /** 名前 (Identifier / PrivateName / 文字列のキー)。それ以外 (計算されたキーなど) はソースの文字列 */
-export const nameOf = (node: LwcConvertNode, context: LwcJsonContext): string => {
-    switch (node.type) {
+export const nameOf = (node: LwcNode, context: LwcJsonContext): string => {
+    const fields = node.getFields() as Record<string, unknown>;
+    switch (node.kind) {
         case 'identifier':
         case 'jSXIdentifier':
-            return node.name;
-        case 'privateName':
-            return `#${node.id.type === 'identifier' ? node.id.name : context.textOf(node.id)}`;
+            return fields.name as string;
+        case 'privateName': {
+            const id = fields.id as LwcNode;
+            return `#${id.kind === 'identifier' ? (id.getFields() as unknown as { name: string }).name : context.textOf(id)}`;
+        }
         case 'stringLiteral':
-            return node.value;
+            return fields.value as string;
         default:
             return context.textOf(node);
     }
 };
-
-/** IR を作れなかったノード (または kind の JSON を作れなかったところ) の ErrorJson */
-export const makeLwcErrorJson = (
-    node: LwcConvertNode,
-    kind: string,
-    context: LwcJsonContext,
-): ErrorJson => makeErrorJson(context.keysOf(node), kind);

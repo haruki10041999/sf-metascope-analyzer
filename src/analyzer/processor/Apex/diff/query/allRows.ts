@@ -1,4 +1,4 @@
-import { AllRowsJson, ErrorJson } from '../../../../types';
+import { AllRowsJson } from '../../../../types';
 
 import {
     Match,
@@ -11,8 +11,8 @@ import {
 export type AllRowsJsonDiff = NodeDiff<'allRowsClause', AllRowsJson, { value: ValueDiff<string> }>;
 
 export const makeAllRowsDiff = (
-    before: AllRowsJson | ErrorJson,
-    after: AllRowsJson | ErrorJson,
+    before: AllRowsJson,
+    after: AllRowsJson,
     match: Match = 'slot',
 ): AllRowsJsonDiff =>
     makeNodeDiff('allRowsClause', before, after, match, (b, a) => ({

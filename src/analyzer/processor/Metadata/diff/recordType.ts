@@ -1,9 +1,4 @@
-import {
-    ErrorJson,
-    RECORD_TYPE_SCHEMA,
-    RecordTypeJson,
-    RecordTypePicklistJson,
-} from '../../../types';
+import { RECORD_TYPE_SCHEMA, RecordTypeJson, RecordTypePicklistJson } from '../../../types';
 
 import {
     ListItemDiff,
@@ -64,8 +59,8 @@ export type RecordTypeJsonDiff = NodeDiff<
 >;
 
 export const makeRecordTypeDiff = (
-    before: RecordTypeJson | ErrorJson,
-    after: RecordTypeJson | ErrorJson,
+    before: RecordTypeJson,
+    after: RecordTypeJson,
     match: Match = 'slot',
     sources?: Sources,
 ): RecordTypeJsonDiff =>

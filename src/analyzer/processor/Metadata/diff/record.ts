@@ -4,7 +4,6 @@ import type {
     AuraBundleJson,
     AuraDefinitionBundleJson,
     EmailTemplateJson,
-    ErrorJson,
     MarkupDeclarationJson,
     PropertySchema,
     RecordChildJson,
@@ -169,8 +168,8 @@ const makeChildrenDiff = (
 export const makeRecordDiff =
     <S extends RecordSpec>(spec: S) =>
     (
-        before: RecordJson<S> | ErrorJson,
-        after: RecordJson<S> | ErrorJson,
+        before: RecordJson<S>,
+        after: RecordJson<S>,
         match: Match = 'key',
         sources?: Sources,
     ): RecordJsonDiff<S> =>
@@ -237,7 +236,7 @@ export type VisualforceMarkupJsonDiff = NodeDiff<
 >;
 
 type MarkupFieldDiff = {
-    markup?: PresentDiff<VisualforceMarkupJson | ErrorJson, VisualforceMarkupJsonDiff>;
+    markup?: PresentDiff<VisualforceMarkupJson, VisualforceMarkupJsonDiff>;
 };
 
 export type ApexPageJsonDiff = RecordJsonDiff<typeof APEX_PAGE_META_SPEC> & {
@@ -248,8 +247,8 @@ export type ApexComponentJsonDiff = RecordJsonDiff<typeof APEX_COMPONENT_META_SP
 };
 
 const makeMarkupDiff = (
-    before: VisualforceMarkupJson | ErrorJson | undefined,
-    after: VisualforceMarkupJson | ErrorJson | undefined,
+    before: VisualforceMarkupJson | undefined,
+    after: VisualforceMarkupJson | undefined,
     sources?: Sources,
 ) =>
     presentEntry(
@@ -286,8 +285,8 @@ const apexPageMetaDiff = makeRecordDiff(APEX_PAGE_META_SPEC);
 const apexComponentMetaDiff = makeRecordDiff(APEX_COMPONENT_META_SPEC);
 
 export const makeApexPageDiff = (
-    before: ApexPageJson | ErrorJson,
-    after: ApexPageJson | ErrorJson,
+    before: ApexPageJson,
+    after: ApexPageJson,
     match: Match = 'key',
     sources?: Sources,
 ): ApexPageJsonDiff =>
@@ -296,8 +295,8 @@ export const makeApexPageDiff = (
     );
 
 export const makeApexComponentDiff = (
-    before: ApexComponentJson | ErrorJson,
-    after: ApexComponentJson | ErrorJson,
+    before: ApexComponentJson,
+    after: ApexComponentJson,
     match: Match = 'key',
     sources?: Sources,
 ): ApexComponentJsonDiff =>
@@ -316,8 +315,8 @@ export type EmailTemplateJsonDiff = RecordJsonDiff<typeof EMAIL_TEMPLATE_META_SP
 const emailTemplateMetaDiff = makeRecordDiff(EMAIL_TEMPLATE_META_SPEC);
 
 export const makeEmailTemplateDiff = (
-    before: EmailTemplateJson | ErrorJson,
-    after: EmailTemplateJson | ErrorJson,
+    before: EmailTemplateJson,
+    after: EmailTemplateJson,
     match: Match = 'key',
     sources?: Sources,
 ): EmailTemplateJsonDiff =>
@@ -359,7 +358,7 @@ export type AuraBundleJsonDiff = NodeDiff<
         /** B. バンドルの中のファイル */
         files: TypedListDiff<string, never>;
         meta?: PresentDiff<
-            AuraDefinitionBundleJson | ErrorJson,
+            AuraDefinitionBundleJson,
             RecordJsonDiff<typeof AURA_DEFINITION_BUNDLE_SPEC>
         >;
     }
@@ -368,8 +367,8 @@ export type AuraBundleJsonDiff = NodeDiff<
 const SCRIPTS = ['controller', 'helper', 'renderer'] as const;
 
 export const makeAuraBundleDiff = (
-    before: AuraBundleJson | ErrorJson,
-    after: AuraBundleJson | ErrorJson,
+    before: AuraBundleJson,
+    after: AuraBundleJson,
     match: Match = 'key',
     sources?: Sources,
 ): AuraBundleJsonDiff =>

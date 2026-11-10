@@ -1,7 +1,7 @@
 import typia from 'typia';
 
-import { ErrorJson, JsonType } from '../commons';
-import type { AnnotationTypeClass, ElementValueTypeClass, ModifierTypeClass } from '../apex_IR_v2';
+import { JsonType } from '../commons';
+import type { AnnotationTypeClass, ElementValueTypeClass, ModifierTypeClass } from '../apex_IR';
 
 import { makeNodeJson } from './commons/node';
 
@@ -57,7 +57,6 @@ export type ModifiersJson = {
     executionAnnotation?: AnnotationJson[];
     compatibilityAnnotation?: AnnotationJson[];
     otherAnnotation?: AnnotationJson[];
-    error?: ErrorJson[];
 };
 
 export const isModifiersJson = typia.createIs<ModifiersJson>();
@@ -201,7 +200,6 @@ export const makeModifiersJson = (targets: readonly ModifierTypeClass[]): Modifi
         }
     });
 
-    // v2 の木にはエラーのノードがないので、error は作らない (型には今は残す)
     return {
         ...modifiers,
         ...annotations,

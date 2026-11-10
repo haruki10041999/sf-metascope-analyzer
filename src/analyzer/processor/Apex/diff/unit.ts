@@ -14,16 +14,19 @@ import { UnitContentDiff, makeUnitContentDiff } from './unitBody';
 // Apex の単位 (クラス・トリガー・匿名 Apex) の差分。LWC のバンドル・オブジェクトと同じく、id (class_<名前> など) で
 // 対応付ける (processor/commons/diff/unit.ts)。中身はソースと -meta.xml に分けて比べる
 
+/** 読めたソース (読めなかったもの (fileType: 'error') は中身を持たない) */
+type ReadSourceJson = Exclude<ApexSourceJson, { fileType: 'error' }>;
+
 /**
  * ソースの差分。どちらも読めて種類 (cls / trigger / anonymous) が同じなら中身の差分 (makeUnitContentDiff)、
- * そうでなければ (読めなかった・種類が変わった) 値ごと
+ * そうでなければ (読めなかった・種類が変わった) 値ごと (読めなかった理由は resolvedError の差分に出る)
  */
 export type ApexSourceDiff =
     | TypedObjectDiff<
-          ApexSourceJson,
+          ReadSourceJson,
           {
               fileName: ValueDiff<string>;
-              fileType: ValueDiff<ApexSourceJson['fileType']>;
+              fileType: ValueDiff<ReadSourceJson['fileType']>;
               content: UnitContentDiff;
           }
       >
@@ -34,7 +37,11 @@ const makeSourceDiff = (
     after: ApexSourceJson,
     sources: Sources,
 ): ApexSourceDiff => {
-    if (before.fileType === 'error' || before.fileType !== after.fileType) {
+    if (
+        before.fileType === 'error' ||
+        after.fileType === 'error' ||
+        before.fileType !== after.fileType
+    ) {
         return makeValueDiff(before, after);
     }
     const fileType = before.fileType;
@@ -49,7 +56,10 @@ const makeSourceDiff = (
     }));
 };
 
-/** -meta.xml の差分。どちらも読めて種類が同じなら中身の差分、そうでなければ値ごと */
+/**
+ * -meta.xml の差分。どちらも読めて種類が同じなら中身の差分、そうでなければ値ごと
+ * (読めなかった -meta.xml の meta は null。理由は resolvedError の差分に出る)
+ */
 export type ApexMetaFileDiff = TypedObjectDiff<
     ApexMetaFileJson,
     {
@@ -62,7 +72,7 @@ const makeMetaFileDiff = (before: ApexMetaFileJson, after: ApexMetaFileJson): Ap
     makeTypedObjectDiff(before, after, (b, a) => ({
         fileName: makeValueDiff(b.fileName, a.fileName),
         meta:
-            b.meta.kind !== 'error' && b.meta.kind === a.meta.kind
+            b.meta && a.meta && b.meta.kind === a.meta.kind
                 ? makeUnitContentDiff(b.meta.kind, { base: b.meta }, { base: a.meta })!
                 : makeValueDiff(b.meta, a.meta),
     }));

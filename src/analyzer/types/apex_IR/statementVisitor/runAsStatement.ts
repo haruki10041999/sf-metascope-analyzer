@@ -1,48 +1,56 @@
 import { RunAsStatementContext } from '@apexdevtools/apex-parser';
 
-import { StatementTypeClass } from '../statementVisitor';
+import { BlockTypeClass } from '../blockVisitor';
+import { ExpressionListTypeClass } from '../listVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    createOptionalNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { NormalBlockTypeClass, BlockVisitor, isNormalBlockType } from '../blockVisitor';
-import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type RunAsStatementType = TypeField<'runAsStatement'> & {
+    /** 文法上 `System.runAs()` の引数は省略できる */
+    value: ExpressionListTypeClass | null;
+    block: BlockTypeClass;
+};
 
-export class RunAsStatementTypeClass extends StatementTypeClass<
+export class RunAsStatementTypeClass extends ApexCommonTypeClass<
     'runAsStatement',
-    ExpressionListTypeClass
+    RunAsStatementType
 > {
-    private block: NormalBlockTypeClass | ApexErrorTypeClass;
-
-    private constructor(
-        value: ExpressionListTypeClass | ApexErrorTypeClass,
-        block: NormalBlockTypeClass | ApexErrorTypeClass,
-    ) {
-        super('runAsStatement', value);
-        this.block = block;
+    private constructor(fields: FieldsOf<RunAsStatementType>, sourceSpan: SourceSpan) {
+        super('runAsStatement', fields, sourceSpan);
     }
 
-    static create(ctx: RunAsStatementContext) {
-        if (!ctx.block() || !ctx.expressionList()) {
-            throw new Error('値が異常です。RunAsStatementContext: ' + ctx.getText());
-        }
-
+    static create(ctx: RunAsStatementContext): RunAsStatementTypeClass {
         return new RunAsStatementTypeClass(
-            visitNode(
-                new ListVisitor(),
-                ctx.expressionList(),
-                isExpressionListType,
-                'expressionList',
-            ),
-            visitNode(new BlockVisitor(), ctx.block(), isNormalBlockType, 'block'),
+            {
+                value: createOptionalNode(
+                    ctx.expressionList(),
+                    (c) => ExpressionListTypeClass.create(c),
+                    'expressionList',
+                ),
+                block: createNode(ctx.block(), (c) => BlockTypeClass.create(c), 'block'),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getBlock(): NormalBlockTypeClass | ApexErrorTypeClass {
-        return this.block;
+    getValue(): RunAsStatementType['value'] {
+        return this.getFields().value;
+    }
+
+    getBlock(): RunAsStatementType['block'] {
+        return this.getFields().block;
     }
 }
 
 export const isRunAsStatementType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is RunAsStatementTypeClass => {
-    return target instanceof RunAsStatementTypeClass;
+    return isSpicifyApexCommonTypeClass('runAsStatement', target);
 };

@@ -1,62 +1,62 @@
 import { FormalParameterContext } from '@apexdevtools/apex-parser';
 
-import { ParameterTypeClass } from '../parameterVisitor';
-
-import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
-import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '../modifierVisitor';
-import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
+import { IdTypeClass } from '../idVisitor';
+import { ModifierTypeClass } from '../modifierVisitor';
+import { TypeRefTypeClass } from '../typeVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNodeList,
-    visitNode,
+    createNode,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class FormalParameterTypeClass extends ParameterTypeClass<
+export type FormalParameterType = TypeField<'formalParameter'> & {
+    modifiers: ModifierTypeClass[];
+    valueType: TypeRefTypeClass;
+    name: IdTypeClass;
+};
+
+export class FormalParameterTypeClass extends ApexCommonTypeClass<
     'formalParameter',
-    NormalIdTypeClass
+    FormalParameterType
 > {
-    private valueType: TypeRefTypeClass | ApexErrorTypeClass;
-    private modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[] = [];
-
-    private constructor(
-        value: NormalIdTypeClass | ApexErrorTypeClass,
-        valueType: TypeRefTypeClass | ApexErrorTypeClass,
-        modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[],
-    ) {
-        super('formalParameter', value);
-        this.valueType = valueType;
-        this.modifier = modifier;
+    private constructor(fields: FieldsOf<FormalParameterType>, sourceSpan: SourceSpan) {
+        super('formalParameter', fields, sourceSpan);
     }
 
     static create(ctx: FormalParameterContext): FormalParameterTypeClass {
-        if (!ctx.id() || !ctx.typeRef()) {
-            throw new Error('値が異常です。FormalParameterContext: ' + ctx.getText());
-        }
-
         return new FormalParameterTypeClass(
-            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
-            visitNode(new TypeVisitor(), ctx.typeRef(), isTypeRefType, 'typeRef'),
-            visitNodeList(
-                new ModifierVisitor(),
-                ctx.modifier_list() || [],
-                isNormalModifierType,
-                'modifier',
-            ),
+            {
+                modifiers: createNodeList(
+                    ctx.modifier_list(),
+                    (c) => ModifierTypeClass.create(c),
+                    'modifier',
+                ),
+                valueType: createNode(ctx.typeRef(), (c) => TypeRefTypeClass.create(c), 'typeRef'),
+                name: createNode(ctx.id(), (c) => IdTypeClass.create(c), 'id'),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getValueType(): TypeRefTypeClass | ApexErrorTypeClass {
-        return this.valueType;
+    getModifiers(): FormalParameterType['modifiers'] {
+        return this.getFields().modifiers;
     }
 
-    getModifier(): (NormalModifierTypeClass | ApexErrorTypeClass)[] {
-        return this.modifier;
+    getValueType(): FormalParameterType['valueType'] {
+        return this.getFields().valueType;
+    }
+
+    getName(): FormalParameterType['name'] {
+        return this.getFields().name;
     }
 }
 
 export const isFormalParameterType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is FormalParameterTypeClass => {
-    return target instanceof FormalParameterTypeClass;
+    return isSpicifyApexCommonTypeClass('formalParameter', target);
 };

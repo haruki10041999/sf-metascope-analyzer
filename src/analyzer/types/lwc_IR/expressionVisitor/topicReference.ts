@@ -1,13 +1,25 @@
+import { type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTopicReference, type TopicReference } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export class TopicReferenceTypeClass extends LwcCommonTypeClass<'topicReference'> {
-    private constructor() {
-        super('topicReference');
+export type TopicReferenceFields = TypeField<'topicReference'>;
+
+export class TopicReferenceTypeClass extends LwcCommonTypeClass<
+    'topicReference',
+    TopicReferenceFields
+> {
+    private constructor(sourceSpan: SourceSpan) {
+        super('topicReference', {}, sourceSpan);
     }
 
-    static create(_target: TopicReference, _originalSource: string): TopicReferenceTypeClass {
-        return new TopicReferenceTypeClass();
+    static create(target: TopicReference, originalSource: string): TopicReferenceTypeClass {
+        return new TopicReferenceTypeClass(getSourceSpan(target, originalSource));
     }
 }
 
@@ -17,5 +29,5 @@ export const topicReferenceTypePair: EvaluatePair<TopicReference, TopicReference
     );
 
 export const isTopicReferenceType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TopicReferenceTypeClass => target instanceof TopicReferenceTypeClass;

@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { StringLiteralTypeClass, stringLiteralTypePair } from '../commons/stringLiteral';
 import { NumericLiteralTypeClass, numericLiteralTypePair } from '../commons/numericLiteral';
@@ -73,7 +74,9 @@ export type LiteralTypeClass =
     | TemplateLiteralTypeClass
     | BigIntLiteralTypeClass;
 
-export const isLiteralType = (target: LwcCommonTypeClass<string>): target is LiteralTypeClass => {
+export const isLiteralType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is LiteralTypeClass => {
     return (
         target instanceof StringLiteralTypeClass ||
         target instanceof NumericLiteralTypeClass ||

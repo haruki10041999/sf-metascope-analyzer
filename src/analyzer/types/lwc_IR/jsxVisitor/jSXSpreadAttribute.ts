@@ -1,43 +1,43 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isJSXSpreadAttribute, type JSXSpreadAttribute } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
 
-export type JSXSpreadAttributeFields = {
-    argument: ExpressionTypeClass | LwcErrorTypeClass;
+export type JSXSpreadAttributeFields = TypeField<'jSXSpreadAttribute'> & {
+    argument: ExpressionTypeClass;
 };
 
-export class JSXSpreadAttributeTypeClass extends LwcCommonTypeClass<'jSXSpreadAttribute'> {
-    private readonly value: JSXSpreadAttributeFields;
-
-    private constructor(value: JSXSpreadAttributeFields) {
-        super('jSXSpreadAttribute');
-        this.value = value;
+export class JSXSpreadAttributeTypeClass extends LwcCommonTypeClass<
+    'jSXSpreadAttribute',
+    JSXSpreadAttributeFields
+> {
+    private constructor(value: FieldsOf<JSXSpreadAttributeFields>, sourceSpan: SourceSpan) {
+        super('jSXSpreadAttribute', value, sourceSpan);
     }
 
     static create(target: JSXSpreadAttribute, originalSource: string): JSXSpreadAttributeTypeClass {
-        return new JSXSpreadAttributeTypeClass({
-            argument: visitNode(
-                target.argument,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): JSXSpreadAttributeFields {
-        return this.value;
+        return new JSXSpreadAttributeTypeClass(
+            {
+                argument: visitNode(
+                    target.argument,
+                    originalSource,
+                    expressionVisitorEvaluatePairs(),
+                    'ExpressionVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getArgument(): JSXSpreadAttributeFields['argument'] {
-        return this.value.argument;
+        return this.getFields().argument;
     }
 }
 
@@ -49,5 +49,5 @@ export const jSXSpreadAttributeTypePair: EvaluatePair<
 );
 
 export const isJSXSpreadAttributeType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is JSXSpreadAttributeTypeClass => target instanceof JSXSpreadAttributeTypeClass;

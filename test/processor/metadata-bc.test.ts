@@ -203,7 +203,7 @@ describe('優先度 B: 本体のファイルを伴う種類・バンドル', () 
         );
     });
 
-    it('Visualforce: 本体が XML として読めなければ markup が error (-meta.xml の値は読む)', () => {
+    it('Visualforce: 本体が XML として読めなければ markup を持たない (-meta.xml の値は読む。理由は resolvedError)', () => {
         const result = ApexPageParser.parseSource(
             'pages/Bad.page-meta.xml',
             `<ApexPage ${NS}><apiVersion>61.0</apiVersion></ApexPage>`,
@@ -218,7 +218,7 @@ describe('優先度 B: 本体のファイルを伴う種類・バンドル', () 
             },
         );
         assert.equal(result.dataType, 'apexPage');
-        assert.equal((result.result.base as ApexPageJson).markup!.kind, 'error');
+        assert.equal((result.result.base as ApexPageJson).markup, undefined);
         assert.equal(result.resolvedError[0]!.filePath, 'pages/Bad.page');
     });
 

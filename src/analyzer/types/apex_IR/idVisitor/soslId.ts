@@ -1,48 +1,48 @@
 import { SoslIdContext } from '@apexdevtools/apex-parser';
 
-import { IdListTypeClass, NormalIdTypeClass, IdVisitor, isNormalIdType } from '.';
-
+import { IdTypeClass } from './id';
 import {
     ApexCommonTypeClass,
-    ApexErrorTypeClass,
-    visitNodeList,
-    visitNode,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class SoslIdTypeClass extends IdListTypeClass<'soslId', NormalIdTypeClass> {
-    private constructor(value: (NormalIdTypeClass | ApexErrorTypeClass)[]) {
-        super('soslId', value);
+export type SoslIdType = TypeField<'soslId'> & {
+    /** `a.b.c` を平坦化した id の並び */
+    value: IdTypeClass[];
+};
+
+export class SoslIdTypeClass extends ApexCommonTypeClass<'soslId', SoslIdType> {
+    private constructor(fields: FieldsOf<SoslIdType>, sourceSpan: SourceSpan) {
+        super('soslId', fields, sourceSpan);
     }
 
     static create(ctx: SoslIdContext): SoslIdTypeClass {
-        if (!ctx.id()) {
-            throw new Error('値が異常です。SoslIdContext: ' + ctx.getText());
-        }
+        const value: SoslIdType['value'] = [
+            createNode(ctx.id(), (c) => IdTypeClass.create(c), 'id'),
+        ];
 
-        const value: (NormalIdTypeClass | ApexErrorTypeClass)[] = [];
-        value.push(visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'));
+        // 入れ子の soslId は平坦化する
+        ctx.soslId_list().forEach((nestedCtx) => {
+            const nested = createNode(nestedCtx, (c) => SoslIdTypeClass.create(c), 'soslId');
+            if (isSoslIdType(nested)) {
+                value.push(...nested.getValue());
+            } else {
+                value.push(nested);
+            }
+        });
 
-        if (ctx.soslId_list() && ctx.soslId_list().length > 0) {
-            const idTypeClassList = visitNodeList(
-                new IdVisitor(),
-                ctx.soslId_list(),
-                isSoslIdType,
-                'soslId',
-            );
+        return new SoslIdTypeClass({ value }, getSourceSpan(ctx));
+    }
 
-            idTypeClassList.forEach((idTypeClass) => {
-                if (isSoslIdType(idTypeClass)) {
-                    value.push(...idTypeClass.getValue());
-                } else {
-                    value.push(idTypeClass);
-                }
-            });
-        }
-
-        return new SoslIdTypeClass(value);
+    getValue(): SoslIdType['value'] {
+        return this.getFields().value;
     }
 }
 
-export const isSoslIdType = (target: ApexCommonTypeClass<string>): target is SoslIdTypeClass => {
-    return target instanceof SoslIdTypeClass;
-};
+export const isSoslIdType = (
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is SoslIdTypeClass => isSpicifyApexCommonTypeClass('soslId', target);

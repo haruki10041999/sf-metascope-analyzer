@@ -1,6 +1,6 @@
-// JSON 層が IR v2 (apex_IR_v2) のノードを読むときの道具 (docs/ir-v2-integration.md 3.1)。
+// JSON 層が IR v2 (apex_IR) のノードを読むときの道具 (docs/ir-integration.md 3.1)。
 // v2 の木にはエラーのノードがないので、v1 の convertValue / excludeError のような、部分木のエラーを調べる処理はない
-import { ApexCommonTypeClass } from '../../apex_IR_v2/commonVisitor';
+import { ApexCommonTypeClass } from '../../apex_IR/commonVisitor';
 import { ConvertKeys, JsonType, makeJsonType } from '../../commons/json';
 import type { TypeField } from '../../commons/ir';
 

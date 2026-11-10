@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import {
     FunctionDeclarationTypeClass,
@@ -277,7 +278,7 @@ export type DeclarationTypeClass =
     | TSImportEqualsDeclarationTypeClass;
 
 export const isDeclarationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is DeclarationTypeClass => {
     return (
         target instanceof FunctionDeclarationTypeClass ||

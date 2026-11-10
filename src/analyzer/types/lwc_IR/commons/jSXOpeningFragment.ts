@@ -1,16 +1,25 @@
+import { type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isJSXOpeningFragment, type JSXOpeningFragment } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export class JSXOpeningFragmentTypeClass extends LwcCommonTypeClass<'jSXOpeningFragment'> {
-    private constructor() {
-        super('jSXOpeningFragment');
+export type JSXOpeningFragmentFields = TypeField<'jSXOpeningFragment'>;
+
+export class JSXOpeningFragmentTypeClass extends LwcCommonTypeClass<
+    'jSXOpeningFragment',
+    JSXOpeningFragmentFields
+> {
+    private constructor(sourceSpan: SourceSpan) {
+        super('jSXOpeningFragment', {}, sourceSpan);
     }
 
-    static create(
-        _target: JSXOpeningFragment,
-        _originalSource: string,
-    ): JSXOpeningFragmentTypeClass {
-        return new JSXOpeningFragmentTypeClass();
+    static create(target: JSXOpeningFragment, originalSource: string): JSXOpeningFragmentTypeClass {
+        return new JSXOpeningFragmentTypeClass(getSourceSpan(target, originalSource));
     }
 }
 
@@ -22,5 +31,5 @@ export const jSXOpeningFragmentTypePair: EvaluatePair<
 );
 
 export const isJSXOpeningFragmentType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is JSXOpeningFragmentTypeClass => target instanceof JSXOpeningFragmentTypeClass;

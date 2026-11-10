@@ -10,7 +10,7 @@ import type { CustomLabelsParseResult } from '../../../parser/Metadata/customLab
 import type { FlowParseResult } from '../../../parser/Metadata/flow';
 import type { FlexiPageParseResult, LayoutParseResult } from '../../../parser/Metadata/page';
 import type * as Records from '../../../parser/Metadata/record';
-import { RECORD_METADATA_SPECS, type ErrorJson, type RecordSpec } from '../../../types';
+import { RECORD_METADATA_SPECS, type RecordSpec } from '../../../types';
 
 import { Match, Sources } from '../../commons/diff/commons';
 import { IdUnitDiff, makeIdUnitDiffs } from '../../commons/diff/unit';
@@ -52,12 +52,7 @@ export type MetadataFileUnitDiff<R extends FileResult, Content> = IdUnitDiff<R, 
 const makeUnitDiffs =
     <R extends FileResult, J, Content>(
         dataType: Exclude<R['dataType'], 'error'>,
-        makeDiff: (
-            before: J | ErrorJson,
-            after: J | ErrorJson,
-            match: Match,
-            sources: Sources,
-        ) => Content,
+        makeDiff: (before: J, after: J, match: Match, sources: Sources) => Content,
     ) =>
     (before: R[], after: R[]): MetadataFileUnitDiff<R, Content>[] =>
         makeIdUnitDiffs(before, after, {
@@ -230,6 +225,23 @@ export const makeRoleUnitDiffs = recordUnitDiffs<Records.RoleParseResult, typeof
     S.role,
 );
 
+export const makeLightningMessageChannelUnitDiffs = recordUnitDiffs<
+    Records.LightningMessageChannelParseResult,
+    typeof S.messageChannel
+>('messageChannel', S.messageChannel);
+export const makeExternalCredentialUnitDiffs = recordUnitDiffs<
+    Records.ExternalCredentialParseResult,
+    typeof S.externalCredential
+>('externalCredential', S.externalCredential);
+export const makeCustomNotificationTypeUnitDiffs = recordUnitDiffs<
+    Records.CustomNotificationTypeParseResult,
+    typeof S.customNotificationType
+>('customNotificationType', S.customNotificationType);
+export const makeReportTypeUnitDiffs = recordUnitDiffs<
+    Records.ReportTypeParseResult,
+    typeof S.reportType
+>('reportType', S.reportType);
+
 export const makeApexPageUnitDiffs = makeUnitDiffs<
     Records.ApexPageParseResult,
     Parameters<typeof makeApexPageDiff>[0],
@@ -290,4 +302,8 @@ export const METADATA_UNIT_DIFFS: Record<string, AnyUnitDiffs> = {
     queue: makeQueueUnitDiffs,
     group: makeGroupUnitDiffs,
     role: makeRoleUnitDiffs,
+    messageChannel: makeLightningMessageChannelUnitDiffs,
+    externalCredential: makeExternalCredentialUnitDiffs,
+    customNotificationType: makeCustomNotificationTypeUnitDiffs,
+    reportType: makeReportTypeUnitDiffs,
 } as Record<string, unknown> as Record<string, AnyUnitDiffs>;

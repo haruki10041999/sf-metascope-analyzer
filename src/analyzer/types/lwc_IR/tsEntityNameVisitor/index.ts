@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { IdentifierTypeClass, identifierTypePair } from '../commons/identifier';
 import { ThisExpressionTypeClass, thisExpressionTypePair } from '../commons/thisExpression';
@@ -31,7 +32,7 @@ export type TSEntityNameTypeClass =
     IdentifierTypeClass | ThisExpressionTypeClass | TSQualifiedNameTypeClass;
 
 export const isTSEntityNameType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSEntityNameTypeClass => {
     return (
         target instanceof IdentifierTypeClass ||

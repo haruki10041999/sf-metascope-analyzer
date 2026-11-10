@@ -2,7 +2,6 @@ import {
     BUSINESS_PROCESS_SCHEMA,
     BusinessProcessJson,
     BusinessProcessValue,
-    ErrorJson,
     SHARING_REASON_SCHEMA,
     SharingReasonJson,
 } from '../../../types';
@@ -35,8 +34,8 @@ export type BusinessProcessJsonDiff = NodeDiff<
 >;
 
 export const makeBusinessProcessDiff = (
-    before: BusinessProcessJson | ErrorJson,
-    after: BusinessProcessJson | ErrorJson,
+    before: BusinessProcessJson,
+    after: BusinessProcessJson,
     match: Match = 'slot',
 ): BusinessProcessJsonDiff =>
     makeNodeDiff('businessProcess', before, after, match, (b, a) => ({
@@ -52,8 +51,8 @@ export type SharingReasonJsonDiff = NodeDiff<
 >;
 
 export const makeSharingReasonDiff = (
-    before: SharingReasonJson | ErrorJson,
-    after: SharingReasonJson | ErrorJson,
+    before: SharingReasonJson,
+    after: SharingReasonJson,
     match: Match = 'slot',
 ): SharingReasonJsonDiff =>
     makeNodeDiff('sharingReason', before, after, match, (b, a) => ({

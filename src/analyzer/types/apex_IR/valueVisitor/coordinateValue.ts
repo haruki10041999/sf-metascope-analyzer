@@ -1,50 +1,54 @@
 import { CoordinateValueContext } from '@apexdevtools/apex-parser';
 
-import { ValueTypeClass } from '.';
-
+import { BoundExpressionTypeClass } from '../expressionVisitor';
+import { SignedNumberTypeClass } from '../literalVisitor';
 import {
-    BoundExpressionTypeClass,
-    ExpressionVisitor,
-    isBoundExpressionType,
-} from '../expressionVisitor';
-import { SignedNumberTypeClass, LiteralVisitor, isSignedNumberType } from '../literalVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class CoordinateValueTypeClass extends ValueTypeClass<
+export type CoordinateValueType = TypeField<'coordinateValue'> & {
+    value: SignedNumberTypeClass | BoundExpressionTypeClass;
+};
+
+export class CoordinateValueTypeClass extends ApexCommonTypeClass<
     'coordinateValue',
-    SignedNumberTypeClass | BoundExpressionTypeClass
+    CoordinateValueType
 > {
-    private constructor(
-        value: SignedNumberTypeClass | BoundExpressionTypeClass | ApexErrorTypeClass,
-    ) {
-        super('coordinateValue', value);
+    private constructor(fields: FieldsOf<CoordinateValueType>, sourceSpan: SourceSpan) {
+        super('coordinateValue', fields, sourceSpan);
     }
 
     static create(ctx: CoordinateValueContext): CoordinateValueTypeClass {
-        if (!ctx.signedNumber() && !ctx.boundExpression()) {
-            throw new Error('値が異常です。CoordinateValueContext: ' + ctx.getText());
-        }
-
         return new CoordinateValueTypeClass(
-            ctx.signedNumber()
-                ? visitNode(
-                      new LiteralVisitor(),
-                      ctx.signedNumber(),
-                      isSignedNumberType,
-                      'signedNumber',
-                  )
-                : visitNode(
-                      new ExpressionVisitor(),
-                      ctx.boundExpression(),
-                      isBoundExpressionType,
-                      'boundExpression',
-                  ),
+            {
+                value: ctx.signedNumber()
+                    ? createNode(
+                          ctx.signedNumber(),
+                          (c) => SignedNumberTypeClass.create(c),
+                          'signedNumber',
+                      )
+                    : createNode(
+                          ctx.boundExpression(),
+                          (c) => BoundExpressionTypeClass.create(c),
+                          'boundExpression',
+                      ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): CoordinateValueType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isCoordinateValueType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is CoordinateValueTypeClass => {
-    return target instanceof CoordinateValueTypeClass;
+    return isSpicifyApexCommonTypeClass('coordinateValue', target);
 };

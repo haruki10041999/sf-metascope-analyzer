@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { ObjectPropertyTypeClass, objectPropertyTypePair } from '../commons/objectProperty';
 import { ClassPropertyTypeClass, classPropertyTypePair } from '../commons/classProperty';
@@ -55,7 +56,9 @@ export type PropertyTypeClass =
     | ClassPrivatePropertyTypeClass
     | ClassAccessorPropertyTypeClass;
 
-export const isPropertyType = (target: LwcCommonTypeClass<string>): target is PropertyTypeClass => {
+export const isPropertyType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is PropertyTypeClass => {
     return (
         target instanceof ObjectPropertyTypeClass ||
         target instanceof ClassPropertyTypeClass ||

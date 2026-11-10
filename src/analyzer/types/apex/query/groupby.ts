@@ -1,7 +1,7 @@
 import typia from 'typia';
 
-import { ErrorJson, JsonType } from '../../commons';
-import type { FieldGroupByTypeClass, GroupByClauseTypeClass } from '../../apex_IR_v2';
+import { JsonType } from '../../commons';
+import type { FieldGroupByTypeClass, GroupByClauseTypeClass } from '../../apex_IR';
 
 import { makeNodeJson } from '../commons/node';
 import { LogicalConditionJson, makeLogicalConditionJson } from './commons';
@@ -21,7 +21,7 @@ const makeGroupByFieldJson = (target: FieldGroupByTypeClass): FieldJson | SoqlFu
 export type GroupByJson = JsonType<'groupBy'> & {
     field: (FieldJson | SoqlFunctionJson)[];
     mode?: 'ROLLUP' | 'CUBE';
-    having?: LogicalConditionJson | ErrorJson;
+    having?: LogicalConditionJson;
 };
 
 export const isGroupByJson = typia.createIs<GroupByJson>();

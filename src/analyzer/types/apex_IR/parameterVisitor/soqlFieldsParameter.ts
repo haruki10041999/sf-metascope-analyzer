@@ -1,32 +1,46 @@
 import { SoqlFieldsParameterContext } from '@apexdevtools/apex-parser';
 
-import { ParameterValueTypeClass } from '.';
+import { ApexCommonTypeClass, getSourceSpan, isSpicifyApexCommonTypeClass } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { ApexCommonTypeClass, ApexErrorTypeClass } from '../commonVisitor';
+export type SoqlFieldsParameterValue = 'ALL' | 'CUSTOM' | 'STANDARD';
 
-type SoqlFieldsParameterValueType = 'ALL' | 'CUSTOM' | 'STANDARD';
+export type SoqlFieldsParameterType = TypeField<'soqlFieldsParameter'> & {
+    value: SoqlFieldsParameterValue;
+};
 
-export class SoqlFieldsParameterTypeClass extends ParameterValueTypeClass<
+export class SoqlFieldsParameterTypeClass extends ApexCommonTypeClass<
     'soqlFieldsParameter',
-    SoqlFieldsParameterValueType
+    SoqlFieldsParameterType
 > {
-    private constructor(value: SoqlFieldsParameterValueType) {
-        super('soqlFieldsParameter', value);
+    private constructor(fields: FieldsOf<SoqlFieldsParameterType>, sourceSpan: SourceSpan) {
+        super('soqlFieldsParameter', fields, sourceSpan);
     }
 
     static create(ctx: SoqlFieldsParameterContext): SoqlFieldsParameterTypeClass {
-        if (!ctx.ALL() && !ctx.CUSTOM() && !ctx.STANDARD()) {
+        let value: SoqlFieldsParameterValue;
+        if (ctx.ALL()) {
+            value = 'ALL';
+        } else if (ctx.CUSTOM()) {
+            value = 'CUSTOM';
+        } else if (ctx.STANDARD()) {
+            value = 'STANDARD';
+        } else {
+            // createNode を通して呼ばれるので、EXCEPTION のエラーノードになる
             throw new Error('値が異常です。SoqlFieldsParameterContext: ' + ctx.getText());
         }
 
-        return new SoqlFieldsParameterTypeClass(
-            ctx.ALL() ? 'ALL' : ctx.CUSTOM() ? 'CUSTOM' : 'STANDARD',
-        );
+        return new SoqlFieldsParameterTypeClass({ value }, getSourceSpan(ctx));
+    }
+
+    getValue(): SoqlFieldsParameterType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isSoqlFieldsParameterType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is SoqlFieldsParameterTypeClass => {
-    return target instanceof SoqlFieldsParameterTypeClass;
+    return isSpicifyApexCommonTypeClass('soqlFieldsParameter', target);
 };

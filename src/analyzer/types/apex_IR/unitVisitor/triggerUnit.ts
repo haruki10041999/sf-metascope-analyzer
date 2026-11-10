@@ -1,60 +1,69 @@
 import { TriggerUnitContext } from '@apexdevtools/apex-parser';
 
-import { TriggerCaseTypeClass, UnitListTypeClass, UnitVisitor, isTriggerCaseType } from '.';
-
-import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
-import { TriggerBlockTypeClass, BlockVisitor, isTriggerBlockType } from '../blockVisitor';
+import { TriggerCaseTypeClass } from './triggerCase';
+import { IdTypeClass } from '../idVisitor';
+import { TriggerBlockTypeClass } from '../blockVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNodeList,
-    visitNode,
+    createNode,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class TriggerUnitTypeClass extends UnitListTypeClass<'triggerUnit', NormalIdTypeClass> {
-    private triggerCase: (TriggerCaseTypeClass | ApexErrorTypeClass)[];
-    private block: TriggerBlockTypeClass | ApexErrorTypeClass;
+export type TriggerUnitType = TypeField<'triggerUnit'> & {
+    /** トリガー名 */
+    name: IdTypeClass;
+    /** 対象のオブジェクト (`on Account`) */
+    object: IdTypeClass;
+    triggerCase: TriggerCaseTypeClass[];
+    block: TriggerBlockTypeClass;
+};
 
-    private constructor(
-        value: (NormalIdTypeClass | ApexErrorTypeClass)[],
-        triggerCase: (TriggerCaseTypeClass | ApexErrorTypeClass)[],
-        block: TriggerBlockTypeClass | ApexErrorTypeClass,
-    ) {
-        super('triggerUnit', value);
-        this.triggerCase = triggerCase;
-        this.block = block;
+export class TriggerUnitTypeClass extends ApexCommonTypeClass<'triggerUnit', TriggerUnitType> {
+    private constructor(fields: FieldsOf<TriggerUnitType>, sourceSpan: SourceSpan) {
+        super('triggerUnit', fields, sourceSpan);
     }
 
     static create(ctx: TriggerUnitContext): TriggerUnitTypeClass {
-        if (
-            (!ctx.id_list() || ctx.id_list().length === 0) &&
-            (!ctx.triggerCase_list() || ctx.triggerCase_list().length === 0) &&
-            !ctx.triggerBlock()
-        ) {
-            throw new Error('値が異常です。TriggerUnitContext: ' + ctx.getText());
-        }
-
         return new TriggerUnitTypeClass(
-            visitNodeList(new IdVisitor(), ctx.id_list(), isNormalIdType, 'id'),
-            visitNodeList(
-                new UnitVisitor(),
-                ctx.triggerCase_list(),
-                isTriggerCaseType,
-                'triggerCase',
-            ),
-            visitNode(new BlockVisitor(), ctx.triggerBlock(), isTriggerBlockType, 'triggerBlock'),
+            {
+                name: createNode(ctx.id(0), (c) => IdTypeClass.create(c), 'id'),
+                object: createNode(ctx.id(1), (c) => IdTypeClass.create(c), 'id'),
+                triggerCase: createNodeList(
+                    ctx.triggerCase_list(),
+                    (c) => TriggerCaseTypeClass.create(c),
+                    'triggerCase',
+                ),
+                block: createNode(
+                    ctx.triggerBlock(),
+                    (c) => TriggerBlockTypeClass.create(c),
+                    'triggerBlock',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getTriggerCase(): (TriggerCaseTypeClass | ApexErrorTypeClass)[] {
-        return this.triggerCase;
+    getName(): TriggerUnitType['name'] {
+        return this.getFields().name;
     }
 
-    getBlock(): TriggerBlockTypeClass | ApexErrorTypeClass {
-        return this.block;
+    getObject(): TriggerUnitType['object'] {
+        return this.getFields().object;
+    }
+
+    getTriggerCase(): TriggerUnitType['triggerCase'] {
+        return this.getFields().triggerCase;
+    }
+
+    getBlock(): TriggerUnitType['block'] {
+        return this.getFields().block;
     }
 }
 
-export const isTriggerUnitType = (value: any): value is TriggerUnitTypeClass => {
-    return value instanceof TriggerUnitTypeClass;
-};
+export const isTriggerUnitType = (
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is TriggerUnitTypeClass => isSpicifyApexCommonTypeClass('triggerUnit', target);

@@ -1,11 +1,6 @@
 import { DeleteStatementContext } from '@apexdevtools/apex-parser';
 
-import {
-    AccessLevelTypeClass,
-    DmlStatementTypeClass,
-    StatementVisitor,
-    isAccessLevelType,
-} from '.';
+import { AccessLevelTypeClass } from './accessLevel';
 
 import {
     BasedExpressionTypeClass,
@@ -13,47 +8,58 @@ import {
     isBasedExpressionType,
 } from '../expressionVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
+    createOptionalNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
     visitNode,
-    visitOptionalNode,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class DeleteStatementTypeClass extends DmlStatementTypeClass<
+export type DeleteStatementType = TypeField<'deleteStatement'> & {
+    value: BasedExpressionTypeClass;
+    accessLevel: AccessLevelTypeClass | null;
+};
+
+export class DeleteStatementTypeClass extends ApexCommonTypeClass<
     'deleteStatement',
-    BasedExpressionTypeClass
+    DeleteStatementType
 > {
-    private constructor(
-        value: BasedExpressionTypeClass | ApexErrorTypeClass,
-        accessLevel: AccessLevelTypeClass | ApexErrorTypeClass | null,
-    ) {
-        super('deleteStatement', value, accessLevel);
+    private constructor(fields: FieldsOf<DeleteStatementType>, sourceSpan: SourceSpan) {
+        super('deleteStatement', fields, sourceSpan);
     }
 
     static create(ctx: DeleteStatementContext): DeleteStatementTypeClass {
-        if (!ctx.expression()) {
-            throw new Error('値が異常です。DeleteStatementContext: ' + ctx.getText());
-        }
-
         return new DeleteStatementTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(),
-                isBasedExpressionType,
-                'expression',
-            ),
-            visitOptionalNode(
-                new StatementVisitor(),
-                ctx.accessLevel(),
-                isAccessLevelType,
-                'accessLevel',
-            ),
+            {
+                value: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+                accessLevel: createOptionalNode(
+                    ctx.accessLevel(),
+                    (c) => AccessLevelTypeClass.create(c),
+                    'accessLevel',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): DeleteStatementType['value'] {
+        return this.getFields().value;
+    }
+
+    getAccessLevel(): DeleteStatementType['accessLevel'] {
+        return this.getFields().accessLevel;
     }
 }
 
 export const isDeleteStatementType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is DeleteStatementTypeClass => {
-    return target instanceof DeleteStatementTypeClass;
+    return isSpicifyApexCommonTypeClass('deleteStatement', target);
 };

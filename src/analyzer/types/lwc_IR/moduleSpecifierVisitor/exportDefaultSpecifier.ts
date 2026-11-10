@@ -1,49 +1,40 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isExportDefaultSpecifier, type ExportDefaultSpecifier } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { identifierTypePair, type IdentifierTypeClass } from '../commons/identifier';
+import { IdentifierTypeClass } from '../commons/identifier';
 
-const exportDefaultSpecifierExportedPairs = lazyPairs(() => [identifierTypePair] as const);
-
-export type ExportDefaultSpecifierFields = {
-    exported: IdentifierTypeClass | LwcErrorTypeClass;
+export type ExportDefaultSpecifierFields = TypeField<'exportDefaultSpecifier'> & {
+    exported: IdentifierTypeClass;
 };
 
-export class ExportDefaultSpecifierTypeClass extends LwcCommonTypeClass<'exportDefaultSpecifier'> {
-    private readonly value: ExportDefaultSpecifierFields;
-
-    private constructor(value: ExportDefaultSpecifierFields) {
-        super('exportDefaultSpecifier');
-        this.value = value;
+export class ExportDefaultSpecifierTypeClass extends LwcCommonTypeClass<
+    'exportDefaultSpecifier',
+    ExportDefaultSpecifierFields
+> {
+    private constructor(value: FieldsOf<ExportDefaultSpecifierFields>, sourceSpan: SourceSpan) {
+        super('exportDefaultSpecifier', value, sourceSpan);
     }
 
     static create(
         target: ExportDefaultSpecifier,
         originalSource: string,
     ): ExportDefaultSpecifierTypeClass {
-        return new ExportDefaultSpecifierTypeClass({
-            exported: visitNode(
-                target.exported,
-                originalSource,
-                exportDefaultSpecifierExportedPairs(),
-                'ExportDefaultSpecifier.exported',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): ExportDefaultSpecifierFields {
-        return this.value;
+        return new ExportDefaultSpecifierTypeClass(
+            {
+                exported: IdentifierTypeClass.create(target.exported, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getExported(): ExportDefaultSpecifierFields['exported'] {
-        return this.value.exported;
+        return this.getFields().exported;
     }
 }
 
@@ -55,5 +46,5 @@ export const exportDefaultSpecifierTypePair: EvaluatePair<
 );
 
 export const isExportDefaultSpecifierType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ExportDefaultSpecifierTypeClass => target instanceof ExportDefaultSpecifierTypeClass;

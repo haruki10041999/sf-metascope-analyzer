@@ -1,74 +1,73 @@
 import { FieldNameContext, FromNameListContext, SoqlIdContext } from '@apexdevtools/apex-parser';
 
-import { ListTypeClass } from '../listVisitor';
-
-import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor';
-import { SoqlIdTypeClass, IdVisitor, isSoqlIdType } from '../idVisitor';
+import { FieldNameTypeClass } from '../nameVisitor';
+import { SoqlIdTypeClass } from '../idVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
+    createNode,
+    createOptionalNode,
     getSourceSpan,
-    visitNode,
-    visitOptionalNode,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-// FROM 句の 1 オブジェクト（`Account a` の Account と a の組）
-export class FromNameTypeClass extends ApexCommonTypeClass<'fromName'> {
-    private value: FieldNameTypeClass | ApexErrorTypeClass;
-    private alias: SoqlIdTypeClass | ApexErrorTypeClass | null;
+export type FromNameType = TypeField<'fromName'> & {
+    value: FieldNameTypeClass;
+    alias: SoqlIdTypeClass | null;
+};
 
-    private constructor(
-        value: FieldNameTypeClass | ApexErrorTypeClass,
-        alias: SoqlIdTypeClass | ApexErrorTypeClass | null,
-    ) {
-        super('fromName');
-        this.value = value;
-        this.alias = alias;
+// FROM 句の 1 オブジェクト（`Account a` の Account と a の組）。文法上のルールはない
+export class FromNameTypeClass extends ApexCommonTypeClass<'fromName', FromNameType> {
+    private constructor(fields: FieldsOf<FromNameType>, sourceSpan: SourceSpan) {
+        super('fromName', fields, sourceSpan);
     }
 
     static create(fieldName: FieldNameContext, alias: SoqlIdContext | null): FromNameTypeClass {
-        const fromName = new FromNameTypeClass(
-            visitNode(new NameVisitor(), fieldName, isFieldNameType, 'fieldName'),
-            visitOptionalNode(new IdVisitor(), alias, isSoqlIdType, 'soqlId'),
-        );
         const start = getSourceSpan(fieldName);
         const end = alias ? getSourceSpan(alias) : start;
-        fromName.setSpan(
-            start && end
-                ? { context: fieldName.getText(), start: start.start, end: end.end }
-                : null,
+        const stop = alias?.stop ?? fieldName.stop;
+        const context =
+            alias && fieldName.start && stop
+                ? (fieldName.start.getInputStream()?.getText(fieldName.start.start, stop.stop) ??
+                  `${start.context} ${end.context}`)
+                : start.context;
+
+        return new FromNameTypeClass(
+            {
+                value: createNode(fieldName, (c) => FieldNameTypeClass.create(c), 'fieldName'),
+                alias: createOptionalNode(alias, (c) => SoqlIdTypeClass.create(c), 'soqlId'),
+            },
+            { context, start: start.start, end: end.end },
         );
-        return fromName;
     }
 
-    getValue(): FieldNameTypeClass | ApexErrorTypeClass {
-        return this.value;
+    getValue(): FromNameType['value'] {
+        return this.getFields().value;
     }
 
-    getAlias(): SoqlIdTypeClass | ApexErrorTypeClass | null {
-        return this.alias;
+    getAlias(): FromNameType['alias'] {
+        return this.getFields().alias;
     }
 }
 
 export const isFromNameType = (
-    target: ApexCommonTypeClass<string>,
-): target is FromNameTypeClass => {
-    return target instanceof FromNameTypeClass;
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is FromNameTypeClass => isSpicifyApexCommonTypeClass('fromName', target);
+
+export type FromNameListType = TypeField<'fromNameList'> & {
+    value: FromNameTypeClass[];
 };
 
-export class FromNameListTypeClass extends ListTypeClass<'fromNameList', FromNameTypeClass> {
-    private constructor(value: (FromNameTypeClass | ApexErrorTypeClass)[]) {
-        super('fromNameList', value);
+export class FromNameListTypeClass extends ApexCommonTypeClass<'fromNameList', FromNameListType> {
+    private constructor(fields: FieldsOf<FromNameListType>, sourceSpan: SourceSpan) {
+        super('fromNameList', fields, sourceSpan);
     }
 
     static create(ctx: FromNameListContext): FromNameListTypeClass {
-        if (ctx.fieldName_list().length === 0) {
-            throw new Error('値が異常です。FromNameListContext: ' + ctx.getText());
-        }
-
         // 文法は `fieldName soqlId? (COMMA fieldName soqlId?)*` なので、直後の soqlId を別名として組にする
         const children = ctx.children ?? [];
-        const value: FromNameTypeClass[] = [];
+        const value: FromNameListType['value'] = [];
         children.forEach((child, index) => {
             if (child instanceof FieldNameContext) {
                 const next = children[index + 1];
@@ -78,12 +77,14 @@ export class FromNameListTypeClass extends ListTypeClass<'fromNameList', FromNam
             }
         });
 
-        return new FromNameListTypeClass(value);
+        return new FromNameListTypeClass({ value }, getSourceSpan(ctx));
+    }
+
+    getValue(): FromNameListType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isFromNameListType = (
-    target: ApexCommonTypeClass<string>,
-): target is FromNameListTypeClass => {
-    return target instanceof FromNameListTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is FromNameListTypeClass => isSpicifyApexCommonTypeClass('fromNameList', target);

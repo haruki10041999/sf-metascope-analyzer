@@ -1,16 +1,28 @@
+import { type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isMixedTypeAnnotation, type MixedTypeAnnotation } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export class MixedTypeAnnotationTypeClass extends LwcCommonTypeClass<'mixedTypeAnnotation'> {
-    private constructor() {
-        super('mixedTypeAnnotation');
+export type MixedTypeAnnotationFields = TypeField<'mixedTypeAnnotation'>;
+
+export class MixedTypeAnnotationTypeClass extends LwcCommonTypeClass<
+    'mixedTypeAnnotation',
+    MixedTypeAnnotationFields
+> {
+    private constructor(sourceSpan: SourceSpan) {
+        super('mixedTypeAnnotation', {}, sourceSpan);
     }
 
     static create(
-        _target: MixedTypeAnnotation,
-        _originalSource: string,
+        target: MixedTypeAnnotation,
+        originalSource: string,
     ): MixedTypeAnnotationTypeClass {
-        return new MixedTypeAnnotationTypeClass();
+        return new MixedTypeAnnotationTypeClass(getSourceSpan(target, originalSource));
     }
 }
 
@@ -22,5 +34,5 @@ export const mixedTypeAnnotationTypePair: EvaluatePair<
 );
 
 export const isMixedTypeAnnotationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is MixedTypeAnnotationTypeClass => target instanceof MixedTypeAnnotationTypeClass;

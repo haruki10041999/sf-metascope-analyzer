@@ -1,4 +1,4 @@
-import { ErrorJson, LimitJson } from '../../../../types';
+import { LimitJson } from '../../../../types';
 
 import {
     Match,
@@ -14,8 +14,8 @@ export type LimitFieldsDiff =
 export type LimitJsonDiff = NodeDiff<'limitClause', LimitJson, LimitFieldsDiff>;
 
 export const makeLimitDiff = (
-    before: LimitJson | ErrorJson,
-    after: LimitJson | ErrorJson,
+    before: LimitJson,
+    after: LimitJson,
     match: Match = 'slot',
 ): LimitJsonDiff =>
     makeNodeDiff('limitClause', before, after, match, (b, a) => {

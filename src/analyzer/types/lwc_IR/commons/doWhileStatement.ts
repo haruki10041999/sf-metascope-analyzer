@@ -1,55 +1,55 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isDoWhileStatement, type DoWhileStatement } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
 import { statementVisitorEvaluatePairs, type StatementTypeClass } from '../statementVisitor';
 
-export type DoWhileStatementFields = {
-    test: ExpressionTypeClass | LwcErrorTypeClass;
-    body: StatementTypeClass | LwcErrorTypeClass;
+export type DoWhileStatementFields = TypeField<'doWhileStatement'> & {
+    test: ExpressionTypeClass;
+    body: StatementTypeClass;
 };
 
-export class DoWhileStatementTypeClass extends LwcCommonTypeClass<'doWhileStatement'> {
-    private readonly value: DoWhileStatementFields;
-
-    private constructor(value: DoWhileStatementFields) {
-        super('doWhileStatement');
-        this.value = value;
+export class DoWhileStatementTypeClass extends LwcCommonTypeClass<
+    'doWhileStatement',
+    DoWhileStatementFields
+> {
+    private constructor(value: FieldsOf<DoWhileStatementFields>, sourceSpan: SourceSpan) {
+        super('doWhileStatement', value, sourceSpan);
     }
 
     static create(target: DoWhileStatement, originalSource: string): DoWhileStatementTypeClass {
-        return new DoWhileStatementTypeClass({
-            test: visitNode(
-                target.test,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-            body: visitNode(
-                target.body,
-                originalSource,
-                statementVisitorEvaluatePairs(),
-                'StatementVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): DoWhileStatementFields {
-        return this.value;
+        return new DoWhileStatementTypeClass(
+            {
+                test: visitNode(
+                    target.test,
+                    originalSource,
+                    expressionVisitorEvaluatePairs(),
+                    'ExpressionVisitor',
+                ),
+                body: visitNode(
+                    target.body,
+                    originalSource,
+                    statementVisitorEvaluatePairs(),
+                    'StatementVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getTest(): DoWhileStatementFields['test'] {
-        return this.value.test;
+        return this.getFields().test;
     }
 
     getBody(): DoWhileStatementFields['body'] {
-        return this.value.body;
+        return this.getFields().body;
     }
 }
 
@@ -59,5 +59,5 @@ export const doWhileStatementTypePair: EvaluatePair<DoWhileStatement, DoWhileSta
     );
 
 export const isDoWhileStatementType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is DoWhileStatementTypeClass => target instanceof DoWhileStatementTypeClass;

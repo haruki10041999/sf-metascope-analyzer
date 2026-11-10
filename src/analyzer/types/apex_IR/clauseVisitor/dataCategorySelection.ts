@@ -1,66 +1,66 @@
 import { DataCategorySelectionContext } from '@apexdevtools/apex-parser';
 
+import { FilteringSelectorTypeClass } from './filteringSelector';
+
+import { SoqlIdTypeClass } from '../idVisitor';
+import { DataCategoryNameTypeClass } from '../nameVisitor';
 import {
-    FilteringSelectorTypeClass,
-    ClauseTypeClass,
-    ClauseVisitor,
-    isFilteringSelectorType,
-} from '.';
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { SoqlIdTypeClass, IdVisitor, isSoqlIdType } from '../idVisitor';
-import { DataCategoryNameTypeClass, NameVisitor, isDataCategoryNameType } from '../nameVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type DataCategorySelectionType = TypeField<'dataCategorySelection'> & {
+    value: SoqlIdTypeClass;
+    selector: FilteringSelectorTypeClass;
+    category: DataCategoryNameTypeClass;
+};
 
-export class DataCategorySelectionTypeClass extends ClauseTypeClass<
+export class DataCategorySelectionTypeClass extends ApexCommonTypeClass<
     'dataCategorySelection',
-    SoqlIdTypeClass
+    DataCategorySelectionType
 > {
-    private selector: FilteringSelectorTypeClass | ApexErrorTypeClass;
-    private category: DataCategoryNameTypeClass | ApexErrorTypeClass;
-
-    private constructor(
-        value: SoqlIdTypeClass | ApexErrorTypeClass,
-        selector: FilteringSelectorTypeClass | ApexErrorTypeClass,
-        category: DataCategoryNameTypeClass | ApexErrorTypeClass,
-    ) {
-        super('dataCategorySelection', value);
-        this.selector = selector;
-        this.category = category;
+    private constructor(fields: FieldsOf<DataCategorySelectionType>, sourceSpan: SourceSpan) {
+        super('dataCategorySelection', fields, sourceSpan);
     }
 
     static create(ctx: DataCategorySelectionContext): DataCategorySelectionTypeClass {
-        if (!ctx.soqlId() || !ctx.filteringSelector() || !ctx.dataCategoryName()) {
-            throw new Error('値が異常です。DataCategorySelectionContext: ' + ctx.getText());
-        }
-
         return new DataCategorySelectionTypeClass(
-            visitNode(new IdVisitor(), ctx.soqlId(), isSoqlIdType, 'soqlId'),
-            visitNode(
-                new ClauseVisitor(),
-                ctx.filteringSelector(),
-                isFilteringSelectorType,
-                'filteringSelector',
-            ),
-            visitNode(
-                new NameVisitor(),
-                ctx.dataCategoryName(),
-                isDataCategoryNameType,
-                'dataCategoryName',
-            ),
+            {
+                value: createNode(ctx.soqlId(), (c) => SoqlIdTypeClass.create(c), 'soqlId'),
+                selector: createNode(
+                    ctx.filteringSelector(),
+                    (c) => FilteringSelectorTypeClass.create(c),
+                    'filteringSelector',
+                ),
+                category: createNode(
+                    ctx.dataCategoryName(),
+                    (c) => DataCategoryNameTypeClass.create(c),
+                    'dataCategoryName',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getSelector(): FilteringSelectorTypeClass | ApexErrorTypeClass {
-        return this.selector;
+    getValue(): DataCategorySelectionType['value'] {
+        return this.getFields().value;
     }
 
-    getCategory(): DataCategoryNameTypeClass | ApexErrorTypeClass {
-        return this.category;
+    getSelector(): DataCategorySelectionType['selector'] {
+        return this.getFields().selector;
+    }
+
+    getCategory(): DataCategorySelectionType['category'] {
+        return this.getFields().category;
     }
 }
 
 export const isDataCategorySelectionType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is DataCategorySelectionTypeClass => {
-    return target instanceof DataCategorySelectionTypeClass;
+    return isSpicifyApexCommonTypeClass('dataCategorySelection', target);
 };

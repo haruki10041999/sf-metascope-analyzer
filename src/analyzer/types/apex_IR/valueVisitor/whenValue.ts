@@ -1,63 +1,64 @@
 import { WhenValueContext } from '@apexdevtools/apex-parser';
 
-import { ValueTypeClass } from '.';
-
-import { WhenLiteralTypeClass, LiteralVisitor, isWhenLiteralType } from '../literalVisitor';
-import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
-import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
+import { WhenLiteralTypeClass } from '../literalVisitor';
+import { TypeRefTypeClass } from '../typeVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNodeList,
-    visitNode,
+    createNode,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { IdTypeClass } from '../idVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-type WhenValueValueType =
-    (WhenLiteralTypeClass | ApexErrorTypeClass)[] | NormalIdTypeClass | 'else';
+/** `when else`・`when 値, 値`・`when 型 変数` (sObject の型の振り分け) の 3 通り */
+export type WhenValueType = TypeField<'whenValue'> &
+    (
+        | { kind: 'else' }
+        | { kind: 'literals'; values: WhenLiteralTypeClass[] }
+        | { kind: 'type'; typeRef: TypeRefTypeClass; variable: IdTypeClass }
+    );
 
-export class WhenValueTypeClass extends ValueTypeClass<'whenValue', WhenValueValueType> {
-    private valueType: TypeRefTypeClass | ApexErrorTypeClass | null = null;
-
-    private constructor(
-        value: WhenValueValueType | ApexErrorTypeClass,
-        valueType: TypeRefTypeClass | ApexErrorTypeClass | null,
-    ) {
-        super('whenValue', value);
-        this.valueType = valueType;
+export class WhenValueTypeClass extends ApexCommonTypeClass<'whenValue', WhenValueType> {
+    private constructor(fields: FieldsOf<WhenValueType>, sourceSpan: SourceSpan) {
+        super('whenValue', fields, sourceSpan);
     }
 
     static create(ctx: WhenValueContext): WhenValueTypeClass {
-        if (!ctx.ELSE() && ctx.whenLiteral_list().length === 0 && (!ctx.typeRef() || !ctx.id())) {
-            throw new Error('値が異常です。WhenValueContext: ' + ctx.getText());
-        }
-
-        let value: WhenValueValueType | ApexErrorTypeClass;
-        let valueType: TypeRefTypeClass | ApexErrorTypeClass | null = null;
-
         if (ctx.ELSE()) {
-            value = 'else';
-        } else if (ctx.whenLiteral_list().length > 0) {
-            value = visitNodeList(
-                new LiteralVisitor(),
-                ctx.whenLiteral_list(),
-                isWhenLiteralType,
-                'whenLiteral',
+            return new WhenValueTypeClass({ kind: 'else' }, getSourceSpan(ctx));
+        } else if (ctx.whenLiteral_list()?.length > 0) {
+            return new WhenValueTypeClass(
+                {
+                    kind: 'literals',
+                    values: createNodeList(
+                        ctx.whenLiteral_list(),
+                        (c) => WhenLiteralTypeClass.create(c),
+                        'whenLiteral',
+                    ),
+                },
+                getSourceSpan(ctx),
             );
-        } else {
-            value = visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id');
-            valueType = visitNode(new TypeVisitor(), ctx.typeRef(), isTypeRefType, 'typeRef');
         }
-
-        return new WhenValueTypeClass(value, valueType);
+        return new WhenValueTypeClass(
+            {
+                kind: 'type',
+                typeRef: createNode(ctx.typeRef(), (c) => TypeRefTypeClass.create(c), 'typeRef'),
+                variable: createNode(ctx.id(), (c) => IdTypeClass.create(c), 'id'),
+            },
+            getSourceSpan(ctx),
+        );
     }
 
-    getValueType(): TypeRefTypeClass | ApexErrorTypeClass | null {
-        return this.valueType;
+    getKind(): WhenValueType['kind'] {
+        return this.getFields().kind;
     }
 }
 
 export const isWhenValueType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is WhenValueTypeClass => {
-    return target instanceof WhenValueTypeClass;
+    return isSpicifyApexCommonTypeClass('whenValue', target);
 };

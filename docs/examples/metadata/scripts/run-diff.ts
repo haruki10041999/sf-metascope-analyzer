@@ -60,7 +60,7 @@ export const ALL_KINDS = [
     'webLinkTranslation',
     'fieldSetTranslation',
     'layoutTranslation',
-    'error',
+    // 読めなかったファイルは JSON に持たない (エラーのノードはない。理由は resolvedError)
 ];
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>

@@ -1,50 +1,62 @@
 import { MapCreatorRestPairContext } from '@apexdevtools/apex-parser';
 
-import { PairTypeClass } from '.';
-
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+import {
+    ApexCommonTypeClass,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+    visitNode,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class MapCreatorRestPairTypeClass extends PairTypeClass<
+export type MapCreatorRestPairType = TypeField<'mapCreatorRestPair'> & {
+    left: BasedExpressionTypeClass;
+    right: BasedExpressionTypeClass;
+};
+
+export class MapCreatorRestPairTypeClass extends ApexCommonTypeClass<
     'mapCreatorRestPair',
-    BasedExpressionTypeClass,
-    BasedExpressionTypeClass
+    MapCreatorRestPairType
 > {
-    private constructor(
-        left: BasedExpressionTypeClass | ApexErrorTypeClass,
-        right: BasedExpressionTypeClass | ApexErrorTypeClass,
-    ) {
-        super('mapCreatorRestPair', left, right);
+    private constructor(fields: FieldsOf<MapCreatorRestPairType>, sourceSpan: SourceSpan) {
+        super('mapCreatorRestPair', fields, sourceSpan);
     }
 
     static create(ctx: MapCreatorRestPairContext): MapCreatorRestPairTypeClass {
-        if (!ctx.expression_list() || ctx.expression_list().length !== 2) {
-            throw new Error('値が異常です。MapCreatorRestPairContext: ' + ctx.getText());
-        }
-
         return new MapCreatorRestPairTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(0),
-                isBasedExpressionType,
-                'expression',
-            ),
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(1),
-                isBasedExpressionType,
-                'expression',
-            ),
+            {
+                left: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(0),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+                right: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(1),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getLeft(): MapCreatorRestPairType['left'] {
+        return this.getFields().left;
+    }
+
+    getRight(): MapCreatorRestPairType['right'] {
+        return this.getFields().right;
     }
 }
 
 export const isMapCreatorRestPairType = (
-    target: ApexCommonTypeClass<string>,
-): target is MapCreatorRestPairTypeClass => {
-    return target instanceof MapCreatorRestPairTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is MapCreatorRestPairTypeClass =>
+    isSpicifyApexCommonTypeClass('mapCreatorRestPair', target);

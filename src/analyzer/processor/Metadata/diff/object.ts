@@ -2,7 +2,6 @@ import {
     CompactLayoutJson,
     CustomFieldJson,
     CustomObjectJson,
-    ErrorJson,
     FieldSetJson,
     ListViewJson,
     NameFieldJson,
@@ -58,13 +57,13 @@ import { makeOrderedNamesDiff } from '../../commons/diff/present';
 
 /** 子の配列の差分。フォルダにも object-meta.xml の中にもない側は added / removed (配列ごと) */
 type MembersDiff<K extends string, T extends JsonNode, D> = PresentDiff<
-    (T | ErrorJson)[],
-    ListItemDiff<K, T | ErrorJson, D>[]
+    T[],
+    ListItemDiff<K, T, D>[]
 >;
 
 /**
  * オブジェクトの子はどれも名前 (項目は API 名、それ以外は fullName) で同一性が決まるので D. キー対応。
- * 読めなかったファイル (ErrorJson) はキーを持たないので B. 集合。並び順の変化は報告しない。
+ * 並び順の変化は報告しない (読めなかったファイルは JSON に持たず、理由は resolvedError)。
  * 両方にない値・子の配列は、プロパティごと持たない
  */
 export type CustomObjectJsonDiff = NodeDiff<
@@ -111,23 +110,22 @@ export type CustomObjectJsonDiff = NodeDiff<
     } & PropertiesDiff<typeof OBJECT_SCHEMA>
 >;
 
-/** 子の識別キー。ErrorJson はキーを持たない */
-const byName = (member: { fullName: string } | ErrorJson): string | undefined =>
-    'fullName' in member ? member.fullName : undefined;
+/** 子の識別キー */
+const byName = (member: { fullName: string }): string => member.fullName;
 
 /** 子の配列を名前で対応付ける (片方にしかなければ配列ごと added / removed) */
 const makeMembersDiff = <K extends string, T extends JsonNode, D>(
     kind: K,
-    before: (T | ErrorJson)[] | undefined,
-    after: (T | ErrorJson)[] | undefined,
-    makeDiff: (before: T | ErrorJson, after: T | ErrorJson, match: Match) => D,
-    getId: (member: T | ErrorJson) => string | undefined,
+    before: T[] | undefined,
+    after: T[] | undefined,
+    makeDiff: (before: T, after: T, match: Match) => D,
+    getId: (member: T) => string | undefined,
     sources: Sources | undefined,
 ) => makePresentDiff(before, after, (b, a) => makeKeyedDiff(kind, b, a, makeDiff, getId, sources));
 
 export const makeCustomObjectDiff = (
-    before: CustomObjectJson | ErrorJson,
-    after: CustomObjectJson | ErrorJson,
+    before: CustomObjectJson,
+    after: CustomObjectJson,
     match: Match = 'slot',
     sources?: Sources,
 ): CustomObjectJsonDiff =>
@@ -143,7 +141,7 @@ export const makeCustomObjectDiff = (
                 b.fields,
                 a.fields,
                 (bf, af, m) => makeCustomFieldDiff(bf, af, m, sources),
-                (field) => (field.kind === 'error' ? undefined : field.apiName),
+                (field) => field.apiName,
                 sources,
             ),
         ),

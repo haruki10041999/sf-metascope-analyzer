@@ -1,4 +1,4 @@
-import { ErrorJson, JsonType } from '../commons/json';
+import { JsonType } from '../commons/json';
 import {
     ParsedXmlFile,
     PropertiesOf,
@@ -50,17 +50,17 @@ export const getApexMetaSuffix = (fileName: string): ApexMetaSuffix | undefined 
         fileName.toLowerCase().endsWith(suffix),
     );
 
-/** 読み込んだ -meta.xml を JSON にする。読めない・ルート要素が違うときは ErrorJson (理由は problems) */
+/** 読み込んだ -meta.xml を JSON にする。読めない・ルート要素が違うときは null (理由は problems) */
 export const makeApexMetaJson = (
     suffix: ApexMetaSuffix,
     file: ParsedXmlFile,
     registry: XmlSourceRegistry,
     problems: XmlReadProblem[],
-): ApexMetaJson | ErrorJson => {
+): ApexMetaJson | null => {
     const { kind, root } = APEX_META_FILES[suffix];
-    const element = readXmlRoot(file, root, kind, registry, problems);
-    if (!('name' in element)) {
-        return element;
+    const element = readXmlRoot(file, root, kind, problems);
+    if (!element) {
+        return null;
     }
     return makeXmlJson<ApexMetaJson>(
         kind,

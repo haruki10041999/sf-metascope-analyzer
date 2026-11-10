@@ -1,56 +1,58 @@
 import { ArrayExpressionContext } from '@apexdevtools/apex-parser';
 
+import { BasedExpressionTypeClass, ExpressionVisitor, isBasedExpressionType } from '.';
+
 import {
-    ExpressionTypeClass,
-    BasedExpressionTypeClass,
-    ExpressionVisitor,
-    isBasedExpressionType,
-} from '.';
+    ApexCommonTypeClass,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+    visitNode,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-import { ApexCommonTypeClass, ApexErrorTypeClass, visitNode } from '../commonVisitor';
+/** `value[index]` */
+export type ArrayExpressionType = TypeField<'arrayExpression'> & {
+    value: BasedExpressionTypeClass;
+    index: BasedExpressionTypeClass;
+};
 
-export class ArrayExpressionTypeClass extends ExpressionTypeClass<
+export class ArrayExpressionTypeClass extends ApexCommonTypeClass<
     'arrayExpression',
-    BasedExpressionTypeClass
+    ArrayExpressionType
 > {
-    private index: BasedExpressionTypeClass | ApexErrorTypeClass;
-
-    private constructor(
-        value: BasedExpressionTypeClass | ApexErrorTypeClass,
-        index: BasedExpressionTypeClass | ApexErrorTypeClass,
-    ) {
-        super('arrayExpression', value);
-        this.index = index;
+    private constructor(fields: FieldsOf<ArrayExpressionType>, sourceSpan: SourceSpan) {
+        super('arrayExpression', fields, sourceSpan);
     }
 
     static create(ctx: ArrayExpressionContext): ArrayExpressionTypeClass {
-        if (!ctx.expression_list() || ctx.expression_list().length !== 2) {
-            throw new Error('値が異常です。ArrayExpressionContext: ' + ctx.getText());
-        }
-
         return new ArrayExpressionTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(0),
-                isBasedExpressionType,
-                'expression',
-            ),
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(1),
-                isBasedExpressionType,
-                'expression',
-            ),
+            {
+                value: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(0),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+                index: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(1),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getIndex(): BasedExpressionTypeClass | ApexErrorTypeClass {
-        return this.index;
+    getValue(): ArrayExpressionType['value'] {
+        return this.getFields().value;
+    }
+
+    getIndex(): ArrayExpressionType['index'] {
+        return this.getFields().index;
     }
 }
 
 export const isArrayExpressionType = (
-    target: ApexCommonTypeClass<string>,
-): target is ArrayExpressionTypeClass => {
-    return target instanceof ArrayExpressionTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is ArrayExpressionTypeClass => isSpicifyApexCommonTypeClass('arrayExpression', target);

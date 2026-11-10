@@ -1,13 +1,25 @@
+import { type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSBooleanKeyword, type TSBooleanKeyword } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export class TSBooleanKeywordTypeClass extends LwcCommonTypeClass<'tSBooleanKeyword'> {
-    private constructor() {
-        super('tSBooleanKeyword');
+export type TSBooleanKeywordFields = TypeField<'tSBooleanKeyword'>;
+
+export class TSBooleanKeywordTypeClass extends LwcCommonTypeClass<
+    'tSBooleanKeyword',
+    TSBooleanKeywordFields
+> {
+    private constructor(sourceSpan: SourceSpan) {
+        super('tSBooleanKeyword', {}, sourceSpan);
     }
 
-    static create(_target: TSBooleanKeyword, _originalSource: string): TSBooleanKeywordTypeClass {
-        return new TSBooleanKeywordTypeClass();
+    static create(target: TSBooleanKeyword, originalSource: string): TSBooleanKeywordTypeClass {
+        return new TSBooleanKeywordTypeClass(getSourceSpan(target, originalSource));
     }
 }
 
@@ -17,5 +29,5 @@ export const tSBooleanKeywordTypePair: EvaluatePair<TSBooleanKeyword, TSBooleanK
     );
 
 export const isTSBooleanKeywordType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSBooleanKeywordTypeClass => target instanceof TSBooleanKeywordTypeClass;

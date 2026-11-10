@@ -1,28 +1,25 @@
 // Apex のソース (.cls / .trigger / .apex) 1 つの解析。ファイルシステムには触らない (読み込みは folder.ts)。
-// 流れ: ANTLR (リスナーで構文エラーを集める) → apex_IR_v2 (作れなかったところはリスナーの resolvedError へ) → JSON
-// (docs/ir-v2-integration.md)
+// 流れ: ANTLR (リスナーで構文エラーを集める) → apex_IR (作れなかったところはリスナーの resolvedError へ) → JSON
+// (docs/ir-integration.md)
 import { ApexParserFactory } from '@apexdevtools/apex-parser';
 
 import {
     AnonymousUnitJson,
     CompilationUnitJson,
-    ErrorJson,
     SourceJson,
     TriggerUnitJson,
     makeAnonymousUnitJson,
     makeCompilationUnitJson,
-    makeErrorJson,
     makeTriggerUnitJson,
     regenerateSourceObjects,
 } from '../../types';
-import { buildApexIr } from '../../types/apex_IR_v2/commonVisitor';
+import { buildApexIr } from '../../types/apex_IR/commonVisitor';
 import {
     AnonymousUnitTypeClass,
     CompilationUnitTypeClass,
     TriggerUnitTypeClass,
-} from '../../types/apex_IR_v2/unitVisitor';
+} from '../../types/apex_IR/unitVisitor';
 import { collectSourceObjects } from '../../types/commons/ir';
-import { hash } from '../../types/commons/utils';
 
 import { ApexCommonErrorListener, type ApexResolvedErrorEntry } from './errorListener';
 
@@ -31,7 +28,7 @@ export type ApexSourceFileType = 'cls' | 'trigger' | 'anonymous';
 
 type UnitJson = CompilationUnitJson | TriggerUnitJson | AnonymousUnitJson;
 
-/** ソースの JSON。読めなかったとき (IR・JSON を作れなかった) は fileType: 'error' */
+/** ソースの JSON。読めなかったとき (IR・JSON を作れなかった) は fileType: 'error' で中身を持たない (理由は resolvedError) */
 export type ApexSourceJson =
     | {
           /** ファイル名 (Foo.cls) */
@@ -40,7 +37,7 @@ export type ApexSourceJson =
           /** fileType を除いた CompilationUnitJson / TriggerUnitJson / AnonymousUnitJson */
           content: Omit<UnitJson, 'fileType'>;
       }
-    | { fileName: string; fileType: 'error'; content: ErrorJson };
+    | { fileName: string; fileType: 'error' };
 
 /** ソースの構文エラー・IR を作れなかったところ。単位の中で区別できるよう filePath (ファイル名) を持つ */
 export type ApexSourceResolvedError = ApexResolvedErrorEntry & { filePath: string };
@@ -100,15 +97,11 @@ export const parseApexSource = async (
         .getResolvedErrors()
         .map((error) => ({ ...error, filePath: fileName }));
 
-    // unit を作れなかった (ファイル全体が読めない) ときは、最初のエラーのキーで ErrorJson にする
+    // unit を作れなかった (ファイル全体が読めない) ときは、中身を持たない (理由は resolvedError)
     const unitNode = built.result;
     if (!unitNode) {
-        const keys = resolvedError[0]?.sourceKeys ?? {
-            objectKey: `error_${hash(fileName)}`,
-            sourceKey: `error_${hash(fileName)}`,
-        };
         return {
-            source: { fileName, fileType: 'error', content: makeErrorJson(keys, 'unit') },
+            source: { fileName, fileType: 'error' },
             sourceObject: [],
             resolvedError,
         };

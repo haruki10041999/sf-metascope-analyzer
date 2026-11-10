@@ -1,27 +1,35 @@
 import { ArraySubscriptsContext } from '@apexdevtools/apex-parser';
 
-import { TypeValueTypeClass } from '.';
+import { ApexCommonTypeClass, getSourceSpan, isSpicifyApexCommonTypeClass } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { ApexCommonTypeClass } from '../commonVisitor';
+export type ArraySubscriptsType = TypeField<'arraySubscripts'> & {
+    /** `[]` の数。配列でなければ null */
+    dimention: number | null;
+};
 
-export class ArraySubscriptsTypeClass extends TypeValueTypeClass<'arraySubscripts', number | null> {
-    private constructor(value: number | null) {
-        super('arraySubscripts', value);
+export class ArraySubscriptsTypeClass extends ApexCommonTypeClass<
+    'arraySubscripts',
+    ArraySubscriptsType
+> {
+    private constructor(fields: FieldsOf<ArraySubscriptsType>, sourceSpan: SourceSpan) {
+        super('arraySubscripts', fields, sourceSpan);
     }
 
     static create(ctx: ArraySubscriptsContext): ArraySubscriptsTypeClass {
-        if (ctx.LBRACK_list().length !== ctx.RBRACK_list().length) {
-            throw new Error('値が異常です。ArraySubscriptsContext: ' + ctx.getText());
-        }
-
+        const dimention = ctx.LBRACK_list().length;
         return new ArraySubscriptsTypeClass(
-            ctx.LBRACK_list().length > 0 ? ctx.LBRACK_list().length : null,
+            { dimention: dimention > 0 ? dimention : null },
+            getSourceSpan(ctx),
         );
+    }
+
+    getDimention(): ArraySubscriptsType['dimention'] {
+        return this.getFields().dimention;
     }
 }
 
 export const isArraySubscriptsType = (
-    target: ApexCommonTypeClass<string>,
-): target is ArraySubscriptsTypeClass => {
-    return target instanceof ArraySubscriptsTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is ArraySubscriptsTypeClass => isSpicifyApexCommonTypeClass('arraySubscripts', target);

@@ -2,7 +2,6 @@ import {
     ArrayTypeContentJson,
     ConvertKeys,
     CustomTypeContentJson,
-    ErrorJson,
     ListTypeContentJson,
     MapTypeContentJson,
     PrimitiveTypeContentJson,
@@ -235,8 +234,8 @@ export const makeTypeContentDiff = (
 export type TypeJsonDiff = NodeDiff<'type', TypeJson, TypeShapeDiff>;
 
 export const makeTypeDiff = (
-    before: TypeJson | ErrorJson,
-    after: TypeJson | ErrorJson,
+    before: TypeJson,
+    after: TypeJson,
     match: Match = 'slot',
 ): TypeJsonDiff => {
     return makeNodeDiff('type', before, after, match, (b, a) =>
@@ -252,13 +251,13 @@ export type TypeWithVoidDiff =
           sourceKeys: { before?: ConvertKeys; after?: ConvertKeys };
           status: 'changed';
           match: Match;
-          before: Body<TypeJson | ErrorJson> | 'void';
-          after: Body<TypeJson | ErrorJson> | 'void';
+          before: Body<TypeJson> | 'void';
+          after: Body<TypeJson> | 'void';
       };
 
 export const makeTypeWithVoidDiff = (
-    before: 'void' | TypeJson | ErrorJson,
-    after: 'void' | TypeJson | ErrorJson,
+    before: 'void' | TypeJson,
+    after: 'void' | TypeJson,
     match: Match = 'slot',
 ): TypeWithVoidDiff => {
     if (before === 'void' && after === 'void') {
@@ -283,11 +282,11 @@ export const makeTypeWithVoidDiff = (
 };
 
 /** 型の並び (implements / interface の extends)。順序は意味を持たないので B. 集合 */
-export type TypesDiff = ListItemDiff<'type', TypeJson | ErrorJson, TypeJsonDiff>;
+export type TypesDiff = ListItemDiff<'type', TypeJson, TypeJsonDiff>;
 
 export const makeTypesDiff = (
-    before: (TypeJson | ErrorJson)[],
-    after: (TypeJson | ErrorJson)[],
+    before: TypeJson[],
+    after: TypeJson[],
     sources?: Sources,
 ): TypesDiff[] => {
     return makeSetDiff('type', before, after, makeTypeDiff, sources);
@@ -311,6 +310,6 @@ export type SetTypeContentJsonDiff = TypeContentDiffOf<SetTypeContentJson, SetTy
 export type MapTypeContentJsonDiff = TypeContentDiffOf<MapTypeContentJson, MapTypeShapeDiff>;
 
 /** オーバーロードの識別などに使う、型の比較用キー */
-export const getTypeKey = (target: TypeJson | ErrorJson): string => {
-    return target.kind === 'error' ? 'error' : getValueKey(toBody(target));
+export const getTypeKey = (target: TypeJson): string => {
+    return getValueKey(toBody(target));
 };

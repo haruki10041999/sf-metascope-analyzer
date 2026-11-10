@@ -1,4 +1,4 @@
-import type { ErrorJson, JsonType } from '../commons/json';
+import type { JsonType } from '../commons/json';
 import { childrenOf } from '../commons/xml';
 import {
     makeMetadataJson,
@@ -40,9 +40,9 @@ export const makeCustomLabelsJson = (
     file: ParsedXmlFile,
     registry: XmlSourceRegistry,
     problems: XmlReadProblem[],
-): CustomLabelsJson | ErrorJson => {
-    const element = readXmlRoot(file, 'CustomLabels', 'customLabels', registry, problems);
-    if (!('name' in element)) return element;
+): CustomLabelsJson | null => {
+    const element = readXmlRoot(file, 'CustomLabels', 'customLabels', problems);
+    if (!element) return null;
     const labels = childrenOf(element, 'labels').map((label) => {
         const categories = (readText(label, 'categories') ?? '')
             .split(',')

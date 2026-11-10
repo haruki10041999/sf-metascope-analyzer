@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import {
     FunctionDeclarationTypeClass,
@@ -94,7 +95,7 @@ export type FunctionParentTypeClass =
     | TSModuleBlockTypeClass;
 
 export const isFunctionParentType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is FunctionParentTypeClass => {
     return (
         target instanceof FunctionDeclarationTypeClass ||

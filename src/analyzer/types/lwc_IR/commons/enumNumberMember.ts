@@ -1,59 +1,44 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isEnumNumberMember, type EnumNumberMember } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
-import { numericLiteralTypePair, type NumericLiteralTypeClass } from './numericLiteral';
+import { IdentifierTypeClass } from './identifier';
+import { NumericLiteralTypeClass } from './numericLiteral';
 
-const enumNumberMemberIdPairs = lazyPairs(() => [identifierTypePair] as const);
-const enumNumberMemberInitPairs = lazyPairs(() => [numericLiteralTypePair] as const);
-
-export type EnumNumberMemberFields = {
-    id: IdentifierTypeClass | LwcErrorTypeClass;
-    init: NumericLiteralTypeClass | LwcErrorTypeClass;
+export type EnumNumberMemberFields = TypeField<'enumNumberMember'> & {
+    id: IdentifierTypeClass;
+    init: NumericLiteralTypeClass;
 };
 
-export class EnumNumberMemberTypeClass extends LwcCommonTypeClass<'enumNumberMember'> {
-    private readonly value: EnumNumberMemberFields;
-
-    private constructor(value: EnumNumberMemberFields) {
-        super('enumNumberMember');
-        this.value = value;
+export class EnumNumberMemberTypeClass extends LwcCommonTypeClass<
+    'enumNumberMember',
+    EnumNumberMemberFields
+> {
+    private constructor(value: FieldsOf<EnumNumberMemberFields>, sourceSpan: SourceSpan) {
+        super('enumNumberMember', value, sourceSpan);
     }
 
     static create(target: EnumNumberMember, originalSource: string): EnumNumberMemberTypeClass {
-        return new EnumNumberMemberTypeClass({
-            id: visitNode(
-                target.id,
-                originalSource,
-                enumNumberMemberIdPairs(),
-                'EnumNumberMember.id',
-            ),
-            init: visitNode(
-                target.init,
-                originalSource,
-                enumNumberMemberInitPairs(),
-                'EnumNumberMember.init',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): EnumNumberMemberFields {
-        return this.value;
+        return new EnumNumberMemberTypeClass(
+            {
+                id: IdentifierTypeClass.create(target.id, originalSource),
+                init: NumericLiteralTypeClass.create(target.init, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getId(): EnumNumberMemberFields['id'] {
-        return this.value.id;
+        return this.getFields().id;
     }
 
     getInit(): EnumNumberMemberFields['init'] {
-        return this.value.init;
+        return this.getFields().init;
     }
 }
 
@@ -63,5 +48,5 @@ export const enumNumberMemberTypePair: EvaluatePair<EnumNumberMember, EnumNumber
     );
 
 export const isEnumNumberMemberType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is EnumNumberMemberTypeClass => target instanceof EnumNumberMemberTypeClass;

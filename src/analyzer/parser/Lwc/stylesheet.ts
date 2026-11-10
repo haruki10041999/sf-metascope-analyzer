@@ -8,8 +8,6 @@ import postcss, { type Root } from 'postcss';
 import {
     SpanSourceRegistry,
     makeLwcStylesheetJson,
-    makeSpanErrorJson,
-    type ErrorJson,
     type LwcStylesheetJson,
     type SpanSourceJson,
 } from '../../types';
@@ -20,8 +18,8 @@ export type LwcStylesheetParseResult = {
     /** バンドルのフォルダの親からの相対パス (hello/hello.css) */
     filePath: string;
     scoped: boolean;
-    /** 構文エラーで読めなかったときは ErrorJson (kindType: 'lwcStylesheet') */
-    stylesheet: LwcStylesheetJson | ErrorJson;
+    /** 構文エラーで読めなかったときは null (JSON にエラーのノードは置かない。理由は resolvedError の CSS_SYNTAX) */
+    stylesheet: LwcStylesheetJson | null;
     sourceObjects: SpanSourceJson[];
     resolvedError: LwcResolvedError[];
 };
@@ -76,26 +74,18 @@ export const parseStylesheet = (
     const registry = new SpanSourceRegistry();
     const file = { filePath, source };
 
-    // ① 構文解析。構文エラーはファイル全体をエラーにする (postcss は回復しない)
+    // ① 構文解析。postcss は回復しないので、構文エラーのときは JSON を作らず、resolvedError にだけ出す
     let root: Root;
     try {
         root = postcss.parse(source, { from: undefined });
     } catch (error) {
         const cssError = isCssError(error) ? error : { message: String(error) };
         listener.cssError('syntax', 'CSS_SYNTAX', 'CssSyntaxError', cssError);
-        const [reported] = listener.getResolvedErrors(filePath);
-        const stylesheet = makeSpanErrorJson(
-            'lwcStylesheet',
-            cssError.reason ?? cssError.message,
-            reported?.start ?? { offset: 0, line: 1, column: 0 },
-            file,
-            registry,
-        );
         return {
             filePath,
             scoped,
-            stylesheet,
-            sourceObjects: registry.toSourceObjects(),
+            stylesheet: null,
+            sourceObjects: [],
             resolvedError: listener.getResolvedErrors(filePath),
         };
     }

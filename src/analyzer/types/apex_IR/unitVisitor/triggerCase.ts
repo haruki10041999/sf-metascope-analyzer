@@ -1,46 +1,48 @@
 import { TriggerCaseContext } from '@apexdevtools/apex-parser';
 
-import { UnitValueTypeClass } from '.';
+import { ApexCommonTypeClass, getSourceSpan, isSpicifyApexCommonTypeClass } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass } from '../commonVisitor';
+export type TriggerCaseType = TypeField<'triggerCase'> & {
+    actionType: 'INSERT' | 'UPDATE' | 'DELETE' | 'UNDELETE';
+    timing: 'BEFORE' | 'AFTER';
+};
 
-export class TriggerCaseTypeClass extends UnitValueTypeClass<'triggerCase', 'BEFORE' | 'AFTER'> {
-    private triggerCaseType: 'INSERT' | 'UPDATE' | 'DELETE' | 'UNDELETE';
-    private constructor(
-        value: 'BEFORE' | 'AFTER',
-        triggerCaseType: 'INSERT' | 'UPDATE' | 'DELETE' | 'UNDELETE',
-    ) {
-        super('triggerCase', value);
-        this.triggerCaseType = triggerCaseType;
+export class TriggerCaseTypeClass extends ApexCommonTypeClass<'triggerCase', TriggerCaseType> {
+    private constructor(fields: FieldsOf<TriggerCaseType>, sourceSpan: SourceSpan) {
+        super('triggerCase', fields, sourceSpan);
     }
 
     static create(ctx: TriggerCaseContext): TriggerCaseTypeClass {
-        if (
-            (!ctx.BEFORE() && !ctx.AFTER()) ||
-            (!ctx.INSERT() && !ctx.UPDATE() && !ctx.DELETE() && !ctx.UNDELETE())
-        ) {
+        let actionType: TriggerCaseType['actionType'];
+        if (ctx.INSERT()) {
+            actionType = 'INSERT';
+        } else if (ctx.UPDATE()) {
+            actionType = 'UPDATE';
+        } else if (ctx.DELETE()) {
+            actionType = 'DELETE';
+        } else if (ctx.UNDELETE()) {
+            actionType = 'UNDELETE';
+        } else {
             throw new Error('値が異常です。TriggerCaseContext: ' + ctx.getText());
         }
 
         return new TriggerCaseTypeClass(
-            ctx.BEFORE() ? 'BEFORE' : 'AFTER',
-            ctx.INSERT()
-                ? 'INSERT'
-                : ctx.UPDATE()
-                  ? 'UPDATE'
-                  : ctx.DELETE()
-                    ? 'DELETE'
-                    : 'UNDELETE',
+            { actionType, timing: ctx.BEFORE() ? 'BEFORE' : 'AFTER' },
+            getSourceSpan(ctx),
         );
     }
 
-    getTriggerCaseType(): 'INSERT' | 'UPDATE' | 'DELETE' | 'UNDELETE' {
-        return this.triggerCaseType;
+    getActionType(): TriggerCaseType['actionType'] {
+        return this.getFields().actionType;
+    }
+
+    getTiming(): TriggerCaseType['timing'] {
+        return this.getFields().timing;
     }
 }
 
 export const isTriggerCaseType = (
-    target: ApexCommonTypeClass<string>,
-): target is TriggerCaseTypeClass => {
-    return target instanceof TriggerCaseTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is TriggerCaseTypeClass => isSpicifyApexCommonTypeClass('triggerCase', target);

@@ -1,43 +1,40 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isStaticBlock, type StaticBlock } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
 import { statementVisitorEvaluatePairs, type StatementTypeClass } from '../statementVisitor';
 
-export type StaticBlockFields = {
-    body: (StatementTypeClass | LwcErrorTypeClass)[];
+export type StaticBlockFields = TypeField<'staticBlock'> & {
+    body: StatementTypeClass[];
 };
 
-export class StaticBlockTypeClass extends LwcCommonTypeClass<'staticBlock'> {
-    private readonly value: StaticBlockFields;
-
-    private constructor(value: StaticBlockFields) {
-        super('staticBlock');
-        this.value = value;
+export class StaticBlockTypeClass extends LwcCommonTypeClass<'staticBlock', StaticBlockFields> {
+    private constructor(value: FieldsOf<StaticBlockFields>, sourceSpan: SourceSpan) {
+        super('staticBlock', value, sourceSpan);
     }
 
     static create(target: StaticBlock, originalSource: string): StaticBlockTypeClass {
-        return new StaticBlockTypeClass({
-            body: visitNodeList(
-                target.body,
-                originalSource,
-                statementVisitorEvaluatePairs(),
-                'StatementVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): StaticBlockFields {
-        return this.value;
+        return new StaticBlockTypeClass(
+            {
+                body: visitNodeList(
+                    target.body,
+                    originalSource,
+                    statementVisitorEvaluatePairs(),
+                    'StatementVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getBody(): StaticBlockFields['body'] {
-        return this.value.body;
+        return this.getFields().body;
     }
 }
 
@@ -47,5 +44,5 @@ export const staticBlockTypePair: EvaluatePair<StaticBlock, StaticBlockTypeClass
     );
 
 export const isStaticBlockType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is StaticBlockTypeClass => target instanceof StaticBlockTypeClass;

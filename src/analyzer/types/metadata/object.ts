@@ -1,5 +1,5 @@
 import type { SourcePosition } from '../commons/source';
-import { ErrorJson, JsonType } from '../commons/json';
+import { JsonType } from '../commons/json';
 
 import {
     XmlFile,
@@ -58,6 +58,9 @@ export const OBJECT_SCHEMA = {
     enableSearch: 'boolean',
     enableSharing: 'boolean',
     enableStreamingApi: 'boolean',
+    // カスタム設定 (objectType は custom のまま。この値 (List / Hierarchy) で普通のオブジェクトと区別する)
+    customSettingsType: 'string',
+    customSettingsVisibility: 'string',
 } as const;
 
 /** 検索レイアウト (`<searchLayouts>`)。どれも項目・ボタンの API 名の並び (表示順) */
@@ -101,15 +104,15 @@ export type CustomObjectJson = JsonType<'object'> & {
     objectType: ObjectType;
     nameField?: NameFieldJson;
     // 子は、フォルダにも object-meta.xml の中にもなければ持たない
-    fields?: (CustomFieldJson | ErrorJson)[];
-    validationRules?: (ValidationRuleJson | ErrorJson)[];
-    recordTypes?: (RecordTypeJson | ErrorJson)[];
-    listViews?: (ListViewJson | ErrorJson)[];
-    fieldSets?: (FieldSetJson | ErrorJson)[];
-    compactLayouts?: (CompactLayoutJson | ErrorJson)[];
-    webLinks?: (WebLinkJson | ErrorJson)[];
-    businessProcesses?: (BusinessProcessJson | ErrorJson)[];
-    sharingReasons?: (SharingReasonJson | ErrorJson)[];
+    fields?: CustomFieldJson[];
+    validationRules?: ValidationRuleJson[];
+    recordTypes?: RecordTypeJson[];
+    listViews?: ListViewJson[];
+    fieldSets?: FieldSetJson[];
+    compactLayouts?: CompactLayoutJson[];
+    webLinks?: WebLinkJson[];
+    businessProcesses?: BusinessProcessJson[];
+    sharingReasons?: SharingReasonJson[];
     /** object-meta.xml の中の検索レイアウト */
     searchLayouts?: SearchLayoutsJson;
     /** object-meta.xml の中のアクションの上書き */
@@ -257,7 +260,7 @@ export const makeCustomObjectJson = (
 ): { object: CustomObjectJson; problems: XmlReadProblem[] } => {
     const problems: XmlReadProblem[] = [];
     const rootOf = (file: ParsedXmlFile, root: string, kindType: string) =>
-        readXmlRoot(file, root, kindType, registry, problems);
+        readXmlRoot(file, root, kindType, problems);
 
     const objectFile: XmlFile = source.objectFile ?? {
         filePath: `${source.apiName}/${source.apiName}${OBJECT_SUFFIX}`,
@@ -266,7 +269,7 @@ export const makeCustomObjectJson = (
     const objectRoot = source.objectFile
         ? rootOf(source.objectFile, 'CustomObject', 'object')
         : undefined;
-    const objectElement = objectRoot && 'name' in objectRoot ? objectRoot : undefined;
+    const objectElement = objectRoot ?? undefined;
 
     const members = Object.fromEntries(
         (Object.keys(OBJECT_MEMBERS) as ObjectMemberKey[]).flatMap((key) => {
@@ -278,12 +281,10 @@ export const makeCustomObjectJson = (
                       make_(child, '', objectFile, registry),
                   )
                 : [];
-            // sfdx の形式: フォルダの中のファイル
-            const files = source.members[key].map((file) => {
+            // sfdx の形式: フォルダの中のファイル。読めないファイルは持たない (理由は problems → resolvedError)
+            const files = source.members[key].flatMap((file) => {
                 const memberRoot = rootOf(file, root, kind);
-                return 'name' in memberRoot
-                    ? make_(memberRoot, file.name, file, registry)
-                    : memberRoot;
+                return memberRoot ? [make_(memberRoot, file.name, file, registry)] : [];
             });
             const items = [...embedded, ...files];
             return items.length === 0 ? [] : [[key, items] as const];

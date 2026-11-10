@@ -1,28 +1,34 @@
 import { ContinueStatementContext } from '@apexdevtools/apex-parser';
 
-import { StatementValueTypeClass } from '.';
+import { ApexCommonTypeClass, getSourceSpan, isSpicifyApexCommonTypeClass } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { ApexCommonTypeClass } from '../commonVisitor';
+export type ContinueStatementType = TypeField<'continueStatement'> & {
+    value: 'continue';
+};
+/** @deprecated 綴りの誤り。ContinueStatementType を使う */
+export type ContinueStatamentType = ContinueStatementType;
 
-export class ContinueStatementTypeClass extends StatementValueTypeClass<
+export class ContinueStatementTypeClass extends ApexCommonTypeClass<
     'continueStatement',
-    string
+    ContinueStatementType
 > {
-    private constructor(value: string) {
-        super('continueStatement', value);
+    private constructor(fields: FieldsOf<ContinueStatementType>, sourceSpan: SourceSpan) {
+        super('continueStatement', fields, sourceSpan);
     }
 
-    static create(ctx: ContinueStatementContext) {
-        if (!ctx.CONTINUE()) {
-            throw new Error('値が異常です。ContinueStatementContext: ' + ctx.getText());
-        }
+    static create(ctx: ContinueStatementContext): ContinueStatementTypeClass {
+        return new ContinueStatementTypeClass({ value: 'continue' }, getSourceSpan(ctx));
+    }
 
-        return new ContinueStatementTypeClass(ctx.CONTINUE().getText());
+    getValue(): ContinueStatementType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isContinueStatementType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is ContinueStatementTypeClass => {
-    return target instanceof ContinueStatementTypeClass;
+    return isSpicifyApexCommonTypeClass('continueStatement', target);
 };

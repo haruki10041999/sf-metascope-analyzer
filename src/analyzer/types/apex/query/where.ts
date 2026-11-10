@@ -1,11 +1,11 @@
 import typia from 'typia';
 
-import { ErrorJson, JsonType } from '../../commons';
+import { JsonType } from '../../commons';
 import type {
     WhereClauseTypeClass,
     WhereFieldExpressionTypeClass,
     WhereLogicalExpressionTypeClass,
-} from '../../apex_IR_v2';
+} from '../../apex_IR';
 
 import { makeNodeJson } from '../commons/node';
 import {
@@ -57,7 +57,7 @@ export const makeWhereSingleConditionJson = (
 };
 
 type WhereLogicalExpressionJson = {
-    condition: (WhereSingleConditionJson | WhereLogicalExpressionJson | ErrorJson)[];
+    condition: (WhereSingleConditionJson | WhereLogicalExpressionJson)[];
     operator?: 'AND' | 'OR' | 'NOT';
 };
 
@@ -69,8 +69,8 @@ export const makeWhereLogicalExpressionJson = (
     const fields = target.getFields();
     // AND・OR は 2 つ以上、NOT と演算子なし (条件が 1 つだけ) は 1 つの被演算子
     const operands = 'operands' in fields ? fields.operands : [fields.operand];
-    const condition: (WhereSingleConditionJson | WhereLogicalExpressionJson | ErrorJson)[] =
-        operands.map((v) => {
+    const condition: (WhereSingleConditionJson | WhereLogicalExpressionJson)[] = operands.map(
+        (v) => {
             const value = v.getFields().value;
             switch (value.kind) {
                 case 'whereLogicalExpression':
@@ -78,7 +78,8 @@ export const makeWhereLogicalExpressionJson = (
                 case 'whereFieldExpression':
                     return makeWhereSingleConditionJson(value);
             }
-        });
+        },
+    );
     return {
         condition: condition,
         ...(fields.operator !== null ? { operator: fields.operator } : {}),
@@ -86,7 +87,7 @@ export const makeWhereLogicalExpressionJson = (
 };
 
 export type WhereJson = {
-    condition: WhereLogicalExpressionJson | ErrorJson;
+    condition: WhereLogicalExpressionJson;
 };
 
 export const isWhereJson = typia.createIs<WhereJson>();

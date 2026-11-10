@@ -1,8 +1,8 @@
 import { ComparisonOperatorContext } from '@apexdevtools/apex-parser';
 
-import { QueryValueTypeClass } from './index';
-
-import { ApexCommonTypeClass, ApexErrorTypeClass } from '../commonVisitor';
+import { ApexCommonTypeClass, getSourceSpan, isSpicifyApexCommonTypeClass } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
 type ComparisonOperatorValueType =
     | '='
@@ -18,12 +18,16 @@ type ComparisonOperatorValueType =
     | 'INCLUDES'
     | 'EXCLUDES';
 
-export class ComparisonOperatorTypeClass extends QueryValueTypeClass<
+export type ComparisonOperatorType = TypeField<'comparisonOperator'> & {
+    value: ComparisonOperatorValueType;
+};
+
+export class ComparisonOperatorTypeClass extends ApexCommonTypeClass<
     'comparisonOperator',
-    ComparisonOperatorValueType
+    ComparisonOperatorType
 > {
-    private constructor(value: ComparisonOperatorValueType) {
-        super('comparisonOperator', value);
+    private constructor(fields: FieldsOf<ComparisonOperatorType>, sourceSpan: SourceSpan) {
+        super('comparisonOperator', fields, sourceSpan);
     }
 
     static create(ctx: ComparisonOperatorContext): ComparisonOperatorTypeClass {
@@ -64,12 +68,16 @@ export class ComparisonOperatorTypeClass extends QueryValueTypeClass<
             value = 'EXCLUDES';
         }
 
-        return new ComparisonOperatorTypeClass(value);
+        return new ComparisonOperatorTypeClass({ value }, getSourceSpan(ctx));
+    }
+
+    getValue(): ComparisonOperatorType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isComparisonOperatorType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is ComparisonOperatorTypeClass => {
-    return target instanceof ComparisonOperatorTypeClass;
+    return isSpicifyApexCommonTypeClass('comparisonOperator', target);
 };

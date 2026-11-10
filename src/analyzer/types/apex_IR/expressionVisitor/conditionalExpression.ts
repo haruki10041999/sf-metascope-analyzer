@@ -1,51 +1,53 @@
 import { ConditionalExpressionContext } from '@apexdevtools/apex-parser';
 
+import { LogicalExpressionTypeClass, FieldExpressionTypeClass } from '.';
+
 import {
-    LogicalExpressionTypeClass,
-    FieldExpressionTypeClass,
-    ExpressionTypeClass,
-    ExpressionVisitor,
-    isLogicalExpressionType,
-    isFieldExpressionType,
-} from '.';
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-import { ApexCommonTypeClass, ApexErrorTypeClass, visitNode } from '../commonVisitor';
+/** SOQL の条件 `( logicalExpression )` か `fieldExpression` */
+export type ConditionalExpressionType = TypeField<'conditionalExpression'> & {
+    value: LogicalExpressionTypeClass | FieldExpressionTypeClass;
+};
 
-export class ConditionalExpressionTypeClass extends ExpressionTypeClass<
+export class ConditionalExpressionTypeClass extends ApexCommonTypeClass<
     'conditionalExpression',
-    LogicalExpressionTypeClass | FieldExpressionTypeClass
+    ConditionalExpressionType
 > {
-    private constructor(
-        value: LogicalExpressionTypeClass | FieldExpressionTypeClass | ApexErrorTypeClass,
-    ) {
-        super('conditionalExpression', value);
+    private constructor(fields: FieldsOf<ConditionalExpressionType>, sourceSpan: SourceSpan) {
+        super('conditionalExpression', fields, sourceSpan);
     }
 
     static create(ctx: ConditionalExpressionContext): ConditionalExpressionTypeClass {
-        if (!ctx.logicalExpression() && !ctx.fieldExpression()) {
-            throw new Error('値が異常です。ConditionalExpressionContext: ' + ctx.getText());
-        }
-
         return new ConditionalExpressionTypeClass(
-            ctx.logicalExpression()
-                ? visitNode(
-                      new ExpressionVisitor(),
-                      ctx.logicalExpression(),
-                      isLogicalExpressionType,
-                      'logicalExpression',
-                  )
-                : visitNode(
-                      new ExpressionVisitor(),
-                      ctx.fieldExpression(),
-                      isFieldExpressionType,
-                      'fieldExpression',
-                  ),
+            {
+                value: ctx.logicalExpression()
+                    ? createNode(
+                          ctx.logicalExpression(),
+                          (c) => LogicalExpressionTypeClass.create(c),
+                          'logicalExpression',
+                      )
+                    : createNode(
+                          ctx.fieldExpression(),
+                          (c) => FieldExpressionTypeClass.create(c),
+                          'fieldExpression',
+                      ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): ConditionalExpressionType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isConditionalExpressionType = (
-    target: ApexCommonTypeClass<string>,
-): target is ConditionalExpressionTypeClass => {
-    return target instanceof ConditionalExpressionTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is ConditionalExpressionTypeClass =>
+    isSpicifyApexCommonTypeClass('conditionalExpression', target);

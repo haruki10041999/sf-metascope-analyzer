@@ -1,5 +1,4 @@
 import {
-    ErrorJson,
     FLOW_SCHEMA,
     FlowEdge,
     FlowElementJson,
@@ -253,8 +252,8 @@ export type FlowJsonDiff = NodeDiff<
 >;
 
 export const makeFlowDiff = (
-    before: FlowJson | ErrorJson,
-    after: FlowJson | ErrorJson,
+    before: FlowJson,
+    after: FlowJson,
     match: Match = 'key',
     sources?: Sources,
 ): FlowJsonDiff =>

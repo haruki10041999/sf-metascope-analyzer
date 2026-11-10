@@ -110,22 +110,4 @@ describe('declaration diff', () => {
             ['unchanged', 'changed', 'unchanged'],
         );
     });
-
-    it('compares the whole value when members becomes an error', () => {
-        const error = { kind: 'error' as const, sourceKeys: keys('err'), kindType: 'declaration' };
-        const before: EnumDeclarationJson = {
-            kind: 'enum',
-            sourceKeys: structureKeys('e1'),
-            name: 'Color',
-            members: [constant('red', 'RED')],
-        };
-        const diff = makeEnumDiff(before, {
-            ...before,
-            sourceKeys: structureKeys('e2'),
-            members: error,
-        });
-        assert.ok(diff.status === 'changed' && 'fields' in diff);
-        assert.ok(!Array.isArray(diff.fields.members));
-        assert.equal(diff.fields.members.status, 'changed');
-    });
 });

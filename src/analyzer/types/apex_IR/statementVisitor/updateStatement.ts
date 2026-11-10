@@ -1,11 +1,6 @@
 import { UpdateStatementContext } from '@apexdevtools/apex-parser';
 
-import {
-    AccessLevelTypeClass,
-    DmlStatementTypeClass,
-    StatementVisitor,
-    isAccessLevelType,
-} from '.';
+import { AccessLevelTypeClass } from './accessLevel';
 
 import {
     BasedExpressionTypeClass,
@@ -13,47 +8,58 @@ import {
     isBasedExpressionType,
 } from '../expressionVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
+    createOptionalNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
     visitNode,
-    visitOptionalNode,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class UpdateStatementTypeClass extends DmlStatementTypeClass<
+export type UpdateStatementType = TypeField<'updateStatement'> & {
+    value: BasedExpressionTypeClass;
+    accessLevel: AccessLevelTypeClass | null;
+};
+
+export class UpdateStatementTypeClass extends ApexCommonTypeClass<
     'updateStatement',
-    BasedExpressionTypeClass
+    UpdateStatementType
 > {
-    private constructor(
-        value: BasedExpressionTypeClass | ApexErrorTypeClass,
-        accessLevel: AccessLevelTypeClass | ApexErrorTypeClass | null,
-    ) {
-        super('updateStatement', value, accessLevel);
+    private constructor(fields: FieldsOf<UpdateStatementType>, sourceSpan: SourceSpan) {
+        super('updateStatement', fields, sourceSpan);
     }
 
     static create(ctx: UpdateStatementContext): UpdateStatementTypeClass {
-        if (!ctx.expression()) {
-            throw new Error('値が異常です。UpdateStatementContext: ' + ctx.getText());
-        }
-
         return new UpdateStatementTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(),
-                isBasedExpressionType,
-                'expression',
-            ),
-            visitOptionalNode(
-                new StatementVisitor(),
-                ctx.accessLevel(),
-                isAccessLevelType,
-                'accessLevel',
-            ),
+            {
+                value: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+                accessLevel: createOptionalNode(
+                    ctx.accessLevel(),
+                    (c) => AccessLevelTypeClass.create(c),
+                    'accessLevel',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): UpdateStatementType['value'] {
+        return this.getFields().value;
+    }
+
+    getAccessLevel(): UpdateStatementType['accessLevel'] {
+        return this.getFields().accessLevel;
     }
 }
 
 export const isUpdateStatementType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is UpdateStatementTypeClass => {
-    return target instanceof UpdateStatementTypeClass;
+    return isSpicifyApexCommonTypeClass('updateStatement', target);
 };

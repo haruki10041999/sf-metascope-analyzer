@@ -62,6 +62,10 @@ describe('dependency references (単位ごとの定義と参照)', () => {
         assert.ok(all.includes('calls apexMethod:AccountController.getAccounts (import)'));
         assert.ok(all.includes('uses field:Account.Name (import)'));
         assert.ok(all.some((r) => r.startsWith('places lwc:') || r.startsWith('imports lwc:')));
+        // @api のプロパティ (デコレーターは modifier.decorator)
+        const banner = refsOf('lwc', 'newBanner').definitions.map((d) => `${d.defType}:${d.name}`);
+        assert.ok(banner.includes('lwcProperty:newBanner.message'), banner.join(', '));
+        assert.ok(banner.includes('lwcProperty:newBanner.variant'));
     });
 
     it('extracts object references (formulas, layouts of members)', () => {

@@ -1,29 +1,21 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSFunctionType, type TSFunctionType } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNodeList,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import {
-    tSTypeAnnotationTypePair,
-    type TSTypeAnnotationTypeClass,
-} from '../typeScriptVisitor/tSTypeAnnotation';
-import {
-    tSTypeParameterDeclarationTypePair,
-    type TSTypeParameterDeclarationTypeClass,
-} from '../typeScriptVisitor/tSTypeParameterDeclaration';
+import { TSTypeAnnotationTypeClass } from '../typeScriptVisitor/tSTypeAnnotation';
+import { TSTypeParameterDeclarationTypeClass } from '../typeScriptVisitor/tSTypeParameterDeclaration';
 import { arrayPatternTypePair, type ArrayPatternTypeClass } from './arrayPattern';
 import { identifierTypePair, type IdentifierTypeClass } from './identifier';
 import { objectPatternTypePair, type ObjectPatternTypeClass } from './objectPattern';
 import { restElementTypePair, type RestElementTypeClass } from './restElement';
 
-const tSFunctionTypeTypeParametersPairs = lazyPairs(
-    () => [tSTypeParameterDeclarationTypePair] as const,
-);
 const tSFunctionTypeParamsPairs = lazyPairs(
     () =>
         [
@@ -33,66 +25,58 @@ const tSFunctionTypeParamsPairs = lazyPairs(
             restElementTypePair,
         ] as const,
 );
-const tSFunctionTypeReturnTypePairs = lazyPairs(() => [tSTypeAnnotationTypePair] as const);
 
-export type TSFunctionTypeFields = {
-    typeParameters: TSTypeParameterDeclarationTypeClass | LwcErrorTypeClass | null;
+export type TSFunctionTypeFields = TypeField<'tSFunctionType'> & {
+    typeParameters: TSTypeParameterDeclarationTypeClass | null;
     params: (
-        | ArrayPatternTypeClass
-        | IdentifierTypeClass
-        | ObjectPatternTypeClass
-        | RestElementTypeClass
-        | LwcErrorTypeClass
+        ArrayPatternTypeClass | IdentifierTypeClass | ObjectPatternTypeClass | RestElementTypeClass
     )[];
-    returnType: TSTypeAnnotationTypeClass | LwcErrorTypeClass | null;
+    returnType: TSTypeAnnotationTypeClass | null;
 };
 
-export class TSFunctionTypeTypeClass extends LwcCommonTypeClass<'tSFunctionType'> {
-    private readonly value: TSFunctionTypeFields;
-
-    private constructor(value: TSFunctionTypeFields) {
-        super('tSFunctionType');
-        this.value = value;
+export class TSFunctionTypeTypeClass extends LwcCommonTypeClass<
+    'tSFunctionType',
+    TSFunctionTypeFields
+> {
+    private constructor(value: FieldsOf<TSFunctionTypeFields>, sourceSpan: SourceSpan) {
+        super('tSFunctionType', value, sourceSpan);
     }
 
     static create(target: TSFunctionType, originalSource: string): TSFunctionTypeTypeClass {
-        return new TSFunctionTypeTypeClass({
-            typeParameters: visitOptionalNode(
-                target.typeParameters,
-                originalSource,
-                tSFunctionTypeTypeParametersPairs(),
-                'TSFunctionType.typeParameters',
-            ),
-            params: visitNodeList(
-                target.params,
-                originalSource,
-                tSFunctionTypeParamsPairs(),
-                'TSFunctionType.params',
-            ),
-            returnType: visitOptionalNode(
-                target.returnType,
-                originalSource,
-                tSFunctionTypeReturnTypePairs(),
-                'TSFunctionType.returnType',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSFunctionTypeFields {
-        return this.value;
+        return new TSFunctionTypeTypeClass(
+            {
+                typeParameters:
+                    target.typeParameters == null
+                        ? null
+                        : TSTypeParameterDeclarationTypeClass.create(
+                              target.typeParameters,
+                              originalSource,
+                          ),
+                params: visitNodeList(
+                    target.params,
+                    originalSource,
+                    tSFunctionTypeParamsPairs(),
+                    'TSFunctionType.params',
+                ),
+                returnType:
+                    target.returnType == null
+                        ? null
+                        : TSTypeAnnotationTypeClass.create(target.returnType, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getTypeParameters(): TSFunctionTypeFields['typeParameters'] {
-        return this.value.typeParameters;
+        return this.getFields().typeParameters;
     }
 
     getParams(): TSFunctionTypeFields['params'] {
-        return this.value.params;
+        return this.getFields().params;
     }
 
     getReturnType(): TSFunctionTypeFields['returnType'] {
-        return this.value.returnType;
+        return this.getFields().returnType;
     }
 }
 
@@ -102,5 +86,5 @@ export const tSFunctionTypeTypePair: EvaluatePair<TSFunctionType, TSFunctionType
     );
 
 export const isTSFunctionTypeType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSFunctionTypeTypeClass => target instanceof TSFunctionTypeTypeClass;

@@ -36,7 +36,9 @@ export type ReferenceTargetType =
     | 'globalValueSet'
     | 'role'
     | 'group'
-    | 'queue';
+    | 'queue'
+    | 'externalCredential'
+    | 'reportType';
 
 /** 参照 1 つ */
 export type MetadataReference = {
@@ -323,8 +325,11 @@ const EXTRACTORS: Record<string, (json: Json) => Ref[]> = {
         const object = reportType?.startsWith('CustomEntity$')
             ? reportType.slice('CustomEntity$'.length)
             : undefined;
+        // カスタムレポートタイプは <名前>__c (定義の名前は __c なし)
+        const custom = reportType?.match(/^(\w+?)__c$/)?.[1];
         return [
             ...ref('object', object, 'reportType', json),
+            ...ref('reportType', custom, 'reportType', json),
             ...rows(json, 'columns').flatMap((column) => {
                 const field = String(column.field);
                 const [owner] = field.split('.');
@@ -403,6 +408,15 @@ const EXTRACTORS: Record<string, (json: Json) => Ref[]> = {
         ...principalRefs(json.queueMembers, 'queueMembers', json),
     ],
     role: (json) => ref('role', str(json.parentRole), 'parentRole', json),
+    namedCredential: (json) =>
+        rows(json, 'namedCredentialParameters').flatMap((row) =>
+            ref(
+                'externalCredential',
+                str(row.externalCredential),
+                'namedCredentialParameters.externalCredential',
+                row,
+            ),
+        ),
 };
 
 /** 権限セット・Profile のうち、A の解析で確かめていない参照 (カスタム権限・タブ・アプリ・Visualforce ページ) */
@@ -441,7 +455,7 @@ function overrideContentRefs(override: Json, via: string): Ref[] {
 /** Visualforce: コントローラー・拡張 (Apex)、標準コントローラー (オブジェクト)、c: の部品、差し込み */
 function visualforceRefs(json: Json): Ref[] {
     const markup = json.markup as Json | undefined;
-    if (!markup || markup.kind === 'error') return [];
+    if (!markup) return [];
     const attributes = (markup.attributes as Record<string, string> | undefined) ?? {};
     const standardController = attributes.standardController;
     return [
@@ -505,6 +519,8 @@ const TARGET_OF_DATA_TYPE: Partial<Record<string, ReferenceTargetType>> = {
     group: 'group',
     queue: 'queue',
     aura: 'aura',
+    externalCredential: 'externalCredential',
+    reportType: 'reportType',
 };
 
 /** 名前空間付きの名前 (ns__Name。カスタムの接尾辞 __c などは除く) */

@@ -1,13 +1,14 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isFunctionExpression, type FunctionExpression } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
-    visitNode,
     visitNodeList,
     visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import {
     flowPredicateVisitorEvaluatePairs,
@@ -33,8 +34,8 @@ import {
     tSTypeParameterDeclarationTypePair,
     type TSTypeParameterDeclarationTypeClass,
 } from '../typeScriptVisitor/tSTypeParameterDeclaration';
-import { blockStatementTypePair, type BlockStatementTypeClass } from './blockStatement';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { BlockStatementTypeClass } from './blockStatement';
+import { IdentifierTypeClass } from './identifier';
 
 const functionExpressionReturnTypePairs = lazyPairs(
     () => [typeAnnotationTypePair, tSTypeAnnotationTypePair] as const,
@@ -42,110 +43,95 @@ const functionExpressionReturnTypePairs = lazyPairs(
 const functionExpressionTypeParametersPairs = lazyPairs(
     () => [typeParameterDeclarationTypePair, tSTypeParameterDeclarationTypePair] as const,
 );
-const functionExpressionIdPairs = lazyPairs(() => [identifierTypePair] as const);
-const functionExpressionBodyPairs = lazyPairs(() => [blockStatementTypePair] as const);
 
-export type FunctionExpressionFields = {
-    params: (FunctionParameterTypeClass | LwcErrorTypeClass)[];
+export type FunctionExpressionFields = TypeField<'functionExpression'> & {
+    params: FunctionParameterTypeClass[];
     generator: FunctionExpression['generator'];
     async: FunctionExpression['async'];
-    returnType: TypeAnnotationTypeClass | TSTypeAnnotationTypeClass | LwcErrorTypeClass | null;
-    typeParameters:
-        | TypeParameterDeclarationTypeClass
-        | TSTypeParameterDeclarationTypeClass
-        | LwcErrorTypeClass
-        | null;
-    id: IdentifierTypeClass | LwcErrorTypeClass | null;
-    body: BlockStatementTypeClass | LwcErrorTypeClass;
-    predicate: FlowPredicateTypeClass | LwcErrorTypeClass | null;
+    returnType: TypeAnnotationTypeClass | TSTypeAnnotationTypeClass | null;
+    typeParameters: TypeParameterDeclarationTypeClass | TSTypeParameterDeclarationTypeClass | null;
+    id: IdentifierTypeClass | null;
+    body: BlockStatementTypeClass;
+    predicate: FlowPredicateTypeClass | null;
 };
 
-export class FunctionExpressionTypeClass extends LwcCommonTypeClass<'functionExpression'> {
-    private readonly value: FunctionExpressionFields;
-
-    private constructor(value: FunctionExpressionFields) {
-        super('functionExpression');
-        this.value = value;
+export class FunctionExpressionTypeClass extends LwcCommonTypeClass<
+    'functionExpression',
+    FunctionExpressionFields
+> {
+    private constructor(value: FieldsOf<FunctionExpressionFields>, sourceSpan: SourceSpan) {
+        super('functionExpression', value, sourceSpan);
     }
 
     static create(target: FunctionExpression, originalSource: string): FunctionExpressionTypeClass {
-        return new FunctionExpressionTypeClass({
-            params: visitNodeList(
-                target.params,
-                originalSource,
-                functionParameterVisitorEvaluatePairs(),
-                'FunctionParameterVisitor',
-            ),
-            generator: target.generator,
-            async: target.async,
-            returnType: visitOptionalNode(
-                target.returnType,
-                originalSource,
-                functionExpressionReturnTypePairs(),
-                'FunctionExpression.returnType',
-            ),
-            typeParameters: visitOptionalNode(
-                target.typeParameters,
-                originalSource,
-                functionExpressionTypeParametersPairs(),
-                'FunctionExpression.typeParameters',
-            ),
-            id: visitOptionalNode(
-                target.id,
-                originalSource,
-                functionExpressionIdPairs(),
-                'FunctionExpression.id',
-            ),
-            body: visitNode(
-                target.body,
-                originalSource,
-                functionExpressionBodyPairs(),
-                'FunctionExpression.body',
-            ),
-            predicate: visitOptionalNode(
-                target.predicate,
-                originalSource,
-                flowPredicateVisitorEvaluatePairs(),
-                'FlowPredicateVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): FunctionExpressionFields {
-        return this.value;
+        return new FunctionExpressionTypeClass(
+            {
+                params: visitNodeList(
+                    target.params,
+                    originalSource,
+                    functionParameterVisitorEvaluatePairs(),
+                    'FunctionParameterVisitor',
+                ),
+                generator: target.generator,
+                async: target.async,
+                returnType: visitOptionalNode(
+                    target.returnType,
+                    originalSource,
+                    functionExpressionReturnTypePairs(),
+                    'FunctionExpression.returnType',
+                ),
+                typeParameters: visitOptionalNode(
+                    target.typeParameters,
+                    originalSource,
+                    functionExpressionTypeParametersPairs(),
+                    'FunctionExpression.typeParameters',
+                ),
+                id:
+                    target.id == null
+                        ? null
+                        : IdentifierTypeClass.create(target.id, originalSource),
+                body: BlockStatementTypeClass.create(target.body, originalSource),
+                predicate: visitOptionalNode(
+                    target.predicate,
+                    originalSource,
+                    flowPredicateVisitorEvaluatePairs(),
+                    'FlowPredicateVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getParams(): FunctionExpressionFields['params'] {
-        return this.value.params;
+        return this.getFields().params;
     }
 
     getGenerator(): FunctionExpressionFields['generator'] {
-        return this.value.generator;
+        return this.getFields().generator;
     }
 
     getAsync(): FunctionExpressionFields['async'] {
-        return this.value.async;
+        return this.getFields().async;
     }
 
     getReturnType(): FunctionExpressionFields['returnType'] {
-        return this.value.returnType;
+        return this.getFields().returnType;
     }
 
     getTypeParameters(): FunctionExpressionFields['typeParameters'] {
-        return this.value.typeParameters;
+        return this.getFields().typeParameters;
     }
 
     getId(): FunctionExpressionFields['id'] {
-        return this.value.id;
+        return this.getFields().id;
     }
 
     getBody(): FunctionExpressionFields['body'] {
-        return this.value.body;
+        return this.getFields().body;
     }
 
     getPredicate(): FunctionExpressionFields['predicate'] {
-        return this.value.predicate;
+        return this.getFields().predicate;
     }
 }
 
@@ -157,5 +143,5 @@ export const functionExpressionTypePair: EvaluatePair<
 );
 
 export const isFunctionExpressionType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is FunctionExpressionTypeClass => target instanceof FunctionExpressionTypeClass;

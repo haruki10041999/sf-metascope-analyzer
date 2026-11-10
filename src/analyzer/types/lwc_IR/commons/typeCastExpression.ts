@@ -1,61 +1,53 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTypeCastExpression, type TypeCastExpression } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
-import {
-    typeAnnotationTypePair,
-    type TypeAnnotationTypeClass,
-} from '../flowVisitor/typeAnnotation';
+import { TypeAnnotationTypeClass } from '../flowVisitor/typeAnnotation';
 
-const typeCastExpressionTypeAnnotationPairs = lazyPairs(() => [typeAnnotationTypePair] as const);
-
-export type TypeCastExpressionFields = {
-    expression: ExpressionTypeClass | LwcErrorTypeClass;
-    typeAnnotation: TypeAnnotationTypeClass | LwcErrorTypeClass;
+export type TypeCastExpressionFields = TypeField<'typeCastExpression'> & {
+    expression: ExpressionTypeClass;
+    typeAnnotation: TypeAnnotationTypeClass;
 };
 
-export class TypeCastExpressionTypeClass extends LwcCommonTypeClass<'typeCastExpression'> {
-    private readonly value: TypeCastExpressionFields;
-
-    private constructor(value: TypeCastExpressionFields) {
-        super('typeCastExpression');
-        this.value = value;
+export class TypeCastExpressionTypeClass extends LwcCommonTypeClass<
+    'typeCastExpression',
+    TypeCastExpressionFields
+> {
+    private constructor(value: FieldsOf<TypeCastExpressionFields>, sourceSpan: SourceSpan) {
+        super('typeCastExpression', value, sourceSpan);
     }
 
     static create(target: TypeCastExpression, originalSource: string): TypeCastExpressionTypeClass {
-        return new TypeCastExpressionTypeClass({
-            expression: visitNode(
-                target.expression,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-            typeAnnotation: visitNode(
-                target.typeAnnotation,
-                originalSource,
-                typeCastExpressionTypeAnnotationPairs(),
-                'TypeCastExpression.typeAnnotation',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TypeCastExpressionFields {
-        return this.value;
+        return new TypeCastExpressionTypeClass(
+            {
+                expression: visitNode(
+                    target.expression,
+                    originalSource,
+                    expressionVisitorEvaluatePairs(),
+                    'ExpressionVisitor',
+                ),
+                typeAnnotation: TypeAnnotationTypeClass.create(
+                    target.typeAnnotation,
+                    originalSource,
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getExpression(): TypeCastExpressionFields['expression'] {
-        return this.value.expression;
+        return this.getFields().expression;
     }
 
     getTypeAnnotation(): TypeCastExpressionFields['typeAnnotation'] {
-        return this.value.typeAnnotation;
+        return this.getFields().typeAnnotation;
     }
 }
 
@@ -67,5 +59,5 @@ export const typeCastExpressionTypePair: EvaluatePair<
 );
 
 export const isTypeCastExpressionType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TypeCastExpressionTypeClass => target instanceof TypeCastExpressionTypeClass;

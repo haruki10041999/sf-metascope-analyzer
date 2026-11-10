@@ -3,7 +3,6 @@ import path from 'path';
 
 import {
     CustomObjectTranslationJson,
-    ErrorJson,
     FIELD_TRANSLATION_SUFFIX,
     SourceText,
     OBJECT_TRANSLATION_SUFFIX,
@@ -39,14 +38,14 @@ export type ObjectTranslationFileStructureType = {
     };
 };
 
-/** objectTranslation-meta.xml が読めなかったとき */
+/** objectTranslation-meta.xml が読めなかったとき。中身 (base) は持たず、理由は resolvedError */
 export type ErrorObjectTranslationFileStructureType = {
     filePath: string;
     resolvedError: XmlResolvedError[];
     dataType: 'error';
     result: {
         id: string;
-        base: ErrorJson;
+        base: null;
         sourceObject: XmlSourceJson[];
     };
 };
@@ -177,13 +176,12 @@ export class ObjectTranslationParser {
         const sourceObject = registry.toSourceObjects();
 
         // objectTranslation-meta.xml 自体が読めなければ、翻訳全体をエラーにする (オブジェクトと同じ)
-        const objectProblem = problems.find((problem) => problem.kindType === 'objectTranslation');
-        if (objectProblem) {
+        if (problems.some((problem) => problem.kindType === 'objectTranslation')) {
             return {
                 filePath: directory,
                 resolvedError,
                 dataType: 'error',
-                result: { id: name, base: objectProblem.error, sourceObject },
+                result: { id: name, base: null, sourceObject: [] },
             };
         }
         return {

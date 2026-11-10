@@ -1,0 +1,256 @@
+{
+  "module": {
+    "fileType": "ts",
+    "imports": [
+      {
+        "kind": "lwcImport",
+        "sourceKeys": {},
+        "source": "lwc",
+        "category": "lwc",
+        "specifiers": [
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "named",
+            "local": "LightningElement",
+            "imported": "LightningElement",
+            "typeOnly": false
+          },
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "named",
+            "local": "api",
+            "imported": "api",
+            "typeOnly": false
+          },
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "named",
+            "local": "track",
+            "imported": "track",
+            "typeOnly": false
+          }
+        ],
+        "typeOnly": false
+      }
+    ],
+    "component": {
+      "kind": "lwcComponent",
+      "sourceKeys": {
+        "base": {},
+        "name": {}
+      },
+      "name": "Broken",
+      "extend": "LightningElement",
+      "mixins": [],
+      "block": [
+        {
+          "kind": "lwcField",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "value",
+          "variantType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "string",
+            "type": "primitive",
+            "primitiveType": "string"
+          },
+          "init": "''",
+          "references": [],
+          "optional": false,
+          "modifier": {
+            "decorator": [
+              {
+                "kind": "lwcDecorator",
+                "sourceKeys": {},
+                "name": "api",
+                "arg": []
+              },
+              {
+                "kind": "lwcDecorator",
+                "sourceKeys": {},
+                "name": "track",
+                "arg": []
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "otherExports": [],
+    "declarations": [],
+    "typeDeclarations": []
+  },
+  "sourceObject": [
+    {
+      "context": "@api @track value: string = '';",
+      "start": {
+        "offset": 112,
+        "line": 4,
+        "column": 4
+      },
+      "end": {
+        "offset": 143,
+        "line": 4,
+        "column": 35
+      }
+    },
+    {
+      "context": "@api",
+      "start": {
+        "offset": 112,
+        "line": 4,
+        "column": 4
+      },
+      "end": {
+        "offset": 116,
+        "line": 4,
+        "column": 8
+      }
+    },
+    {
+      "context": "@track",
+      "start": {
+        "offset": 117,
+        "line": 4,
+        "column": 9
+      },
+      "end": {
+        "offset": 123,
+        "line": 4,
+        "column": 15
+      }
+    },
+    {
+      "context": "Broken",
+      "start": {
+        "offset": 74,
+        "line": 3,
+        "column": 21
+      },
+      "end": {
+        "offset": 80,
+        "line": 3,
+        "column": 27
+      }
+    },
+    {
+      "context": "LightningElement",
+      "start": {
+        "offset": 9,
+        "line": 1,
+        "column": 9
+      },
+      "end": {
+        "offset": 25,
+        "line": 1,
+        "column": 25
+      }
+    },
+    {
+      "context": "api",
+      "start": {
+        "offset": 27,
+        "line": 1,
+        "column": 27
+      },
+      "end": {
+        "offset": 30,
+        "line": 1,
+        "column": 30
+      }
+    },
+    {
+      "context": "class Broken extends LightningElement {\n    @api @track value: string = '';\n}",
+      "start": {
+        "offset": 68,
+        "line": 3,
+        "column": 15
+      },
+      "end": {
+        "offset": 145,
+        "line": 5,
+        "column": 1
+      }
+    },
+    {
+      "context": "import { LightningElement, api, track } from 'lwc';",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 51,
+        "line": 1,
+        "column": 51
+      }
+    },
+    {
+      "context": "string",
+      "start": {
+        "offset": 131,
+        "line": 4,
+        "column": 23
+      },
+      "end": {
+        "offset": 137,
+        "line": 4,
+        "column": 29
+      }
+    },
+    {
+      "context": "track",
+      "start": {
+        "offset": 32,
+        "line": 1,
+        "column": 32
+      },
+      "end": {
+        "offset": 37,
+        "line": 1,
+        "column": 37
+      }
+    },
+    {
+      "context": "value",
+      "start": {
+        "offset": 124,
+        "line": 4,
+        "column": 16
+      },
+      "end": {
+        "offset": 129,
+        "line": 4,
+        "column": 21
+      }
+    }
+  ],
+  "resolvedError": [
+    {
+      "sourceKeys": {},
+      "phase": "lwc",
+      "code": "LWC1093",
+      "level": "error",
+      "contextType": "LWC1093",
+      "errorMessage": "@api method or property cannot be used with @track",
+      "context": "@api",
+      "start": {
+        "offset": 112,
+        "line": 4,
+        "column": 4
+      },
+      "end": {
+        "offset": 116,
+        "line": 4,
+        "column": 8
+      },
+      "filePath": "broken/broken.ts"
+    }
+  ]
+}

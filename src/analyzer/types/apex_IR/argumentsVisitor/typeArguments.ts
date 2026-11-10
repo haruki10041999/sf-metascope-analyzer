@@ -1,32 +1,46 @@
 import { TypeArgumentsContext } from '@apexdevtools/apex-parser';
 
-import { ArgumentsTypeClass } from '.';
+import { TypeListTypeClass } from '../listVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
+export type TypeArgumentsType = TypeField<'typeArguments'> & {
+    /** 文法上 `<typeList>` の typeList は必須 */
+    elements: TypeListTypeClass;
+};
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
-
-export class TypeArgumentsTypeClass extends ArgumentsTypeClass<'typeArguments', TypeListTypeClass> {
-    private constructor(value: TypeListTypeClass | ApexErrorTypeClass | null) {
-        super('typeArguments', value);
+export class TypeArgumentsTypeClass extends ApexCommonTypeClass<
+    'typeArguments',
+    TypeArgumentsType
+> {
+    private constructor(fields: FieldsOf<TypeArgumentsType>, sourceSpan: SourceSpan) {
+        super('typeArguments', fields, sourceSpan);
     }
 
     static create(ctx: TypeArgumentsContext): TypeArgumentsTypeClass {
-        if (!ctx.LT() || !ctx.GT()) {
-            throw new Error('値が異常です。TypeArgumentsContext: ' + ctx.getText());
-        }
+        return new TypeArgumentsTypeClass(
+            {
+                elements: createNode(
+                    ctx.typeList(),
+                    (c) => TypeListTypeClass.create(c),
+                    'typeList',
+                ),
+            },
+            getSourceSpan(ctx),
+        );
+    }
 
-        let value: TypeListTypeClass | ApexErrorTypeClass | null = null;
-        if (ctx.typeList()) {
-            value = visitNode(new ListVisitor(), ctx.typeList(), isTypeListType, 'typeList');
-        }
-
-        return new TypeArgumentsTypeClass(value);
+    getElements(): TypeArgumentsType['elements'] {
+        return this.getFields().elements;
     }
 }
 
 export const isTypeArgumentsType = (
-    target: ApexCommonTypeClass<string>,
-): target is TypeArgumentsTypeClass => {
-    return target instanceof TypeArgumentsTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is TypeArgumentsTypeClass => isSpicifyApexCommonTypeClass('typeArguments', target);

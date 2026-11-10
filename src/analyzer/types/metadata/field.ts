@@ -1,4 +1,4 @@
-import { ErrorJson, JsonType } from '../commons/json';
+import { JsonType } from '../commons/json';
 
 import {
     XmlFile,
@@ -31,7 +31,7 @@ export type ValueSetJson = {
     sorted?: boolean;
     valueSetName?: string;
     controllingField?: string;
-    values?: (PicklistValueJson | ErrorJson)[];
+    values?: PicklistValueJson[];
 };
 
 export const FIELD_SCHEMA = {

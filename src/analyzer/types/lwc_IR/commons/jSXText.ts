@@ -1,31 +1,33 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isJSXText, type JSXText } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export type JSXTextFields = {
+export type JSXTextFields = TypeField<'jSXText'> & {
     value: JSXText['value'];
 };
 
-export class JSXTextTypeClass extends LwcCommonTypeClass<'jSXText'> {
-    private readonly value: JSXTextFields;
-
-    private constructor(value: JSXTextFields) {
-        super('jSXText');
-        this.value = value;
+export class JSXTextTypeClass extends LwcCommonTypeClass<'jSXText', JSXTextFields> {
+    private constructor(value: FieldsOf<JSXTextFields>, sourceSpan: SourceSpan) {
+        super('jSXText', value, sourceSpan);
     }
 
     static create(target: JSXText, originalSource: string): JSXTextTypeClass {
-        return new JSXTextTypeClass({
-            value: target.value,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): JSXTextFields {
-        return this.value;
+        return new JSXTextTypeClass(
+            {
+                value: target.value,
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getValue(): JSXTextFields['value'] {
-        return this.value.value;
+        return this.getFields().value;
     }
 }
 
@@ -34,5 +36,6 @@ export const jSXTextTypePair: EvaluatePair<JSXText, JSXTextTypeClass> = makeEval
     (target, originalSource) => JSXTextTypeClass.create(target, originalSource),
 );
 
-export const isJSXTextType = (target: LwcCommonTypeClass<string>): target is JSXTextTypeClass =>
-    target instanceof JSXTextTypeClass;
+export const isJSXTextType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is JSXTextTypeClass => target instanceof JSXTextTypeClass;

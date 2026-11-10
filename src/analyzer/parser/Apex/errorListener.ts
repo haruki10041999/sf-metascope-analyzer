@@ -1,14 +1,9 @@
 // Apex のエラーを集めるリスナー (LWC の parser/Lwc/errorListener.ts と同じ置き場所・同じ形)。
-// 構文エラーは ANTLR のリスナーとして受け取り、IR を作れなかったもの (ApexErrorTypeClass) は analyzerError で受け取る
+// 構文エラーは ANTLR のリスナーとして受け取り、IR を作れなかったもの (buildApexIr の IrError) は irErrors で受け取る
 import { ApexErrorListener } from '@apexdevtools/apex-parser';
 
-import {
-    ApexErrorTypeClass,
-    type ConvertKeys,
-    type SourcePosition,
-    type SourceSpan,
-} from '../../types';
-import type { IrErrorLike } from '../../types/commons/ir';
+import { type ConvertKeys, type SourcePosition, type SourceSpan } from '../../types';
+import { IrError, type IrErrorLike } from '../../types/commons/ir';
 import { toApexResolvedError, type ApexErrorPhase, type ApexResolvedError } from '../commons';
 
 export type ApexResolvedErrorEntry = { sourceKeys: ConvertKeys } & ApexResolvedError & SourceSpan;
@@ -61,19 +56,17 @@ export class ApexCommonErrorListener extends ApexErrorListener {
             column: column + (hasCharacter ? 1 : 0),
         };
 
-        const errorTypeClass = ApexErrorTypeClass.create('UNRESOLVED', 'unknown', sourceCode, msg);
-
-        errorTypeClass.setSpan({
+        const error = new IrError('UNRESOLVED', 'unknown', sourceCode, msg, {
             context: sourceCode,
             start,
             end,
         });
 
-        this.errors.push({ phase: 'syntax', error: errorTypeClass });
+        this.errors.push({ phase: 'syntax', error });
     }
 
     /**
-     * IR を作れなかったところ (v1 は collectErrorTypeClasses で集めた ApexErrorTypeClass、v2 は buildApexIr の IrError)。
+     * IR を作れなかったところ (buildApexIr の IrError)。
      * 構文エラーの位置を含むもの (エラー回復で中身のない Context になったもの) は、構文エラーとして報告済みなので除く。
      * 先に構文解析を終えておく (構文エラーは解析中に集まる)
      */
@@ -95,7 +88,7 @@ export class ApexCommonErrorListener extends ApexErrorListener {
         }
     }
 
-    /** 構文エラー (と analyzerError で受け取ったもの) の ApexErrorTypeClass */
+    /** 構文エラー (と analyzerError で受け取ったもの) */
     getErrors(): IrErrorLike[] {
         return this.errors.map(({ error }) => error);
     }
@@ -103,7 +96,7 @@ export class ApexCommonErrorListener extends ApexErrorListener {
     /**
      * IR v2 (buildApexIr・buildLwcIr) で IR を作れなかったところ。解析木には残らず、ここで resolvedError にする。
      * 構文エラーがあれば、IR のエラーはその結果 (壊したソースで、構文エラーなしで IR のエラーだけ出たものは 0 件) なので
-     * 出さず、構文エラーだけを出す。構文エラーがなければ、IR の足りないところなので出す (docs/ir-v2.md 4 章)
+     * 出さず、構文エラーだけを出す。構文エラーがなければ、IR の足りないところなので出す (docs/ir.md 4 章)
      */
     irErrors(errors: readonly IrErrorLike[]): void {
         if (this.hasSyntaxError()) return;

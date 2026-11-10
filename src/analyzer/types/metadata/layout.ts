@@ -1,4 +1,4 @@
-import type { ErrorJson, JsonType } from '../commons/json';
+import type { JsonType } from '../commons/json';
 import { childrenOf, type XmlElement } from '../commons/xml';
 import {
     makeMetadataJson,
@@ -147,9 +147,9 @@ export const makeLayoutJson = (
     file: ParsedXmlFile,
     registry: XmlSourceRegistry,
     problems: XmlReadProblem[],
-): LayoutJson | ErrorJson => {
-    const root = readXmlRoot(file, 'Layout', 'layout', registry, problems);
-    if (!('name' in root)) return root;
+): LayoutJson | null => {
+    const root = readXmlRoot(file, 'Layout', 'layout', problems);
+    if (!root) return null;
 
     const sectionElements = childrenOf(root, 'layoutSections');
     const sections = sectionElements.map((section) =>

@@ -1,5 +1,4 @@
 import {
-    ErrorJson,
     LOGIN_HOURS_SCHEMA,
     LoginHoursJson,
     MUTING_PERMISSION_SET_SCHEMA,
@@ -151,8 +150,8 @@ export type ProfileJsonDiff = NodeDiff<
 >;
 
 export const makePermissionSetDiff = (
-    before: PermissionSetJson | ErrorJson,
-    after: PermissionSetJson | ErrorJson,
+    before: PermissionSetJson,
+    after: PermissionSetJson,
     match: Match = 'key',
     sources?: Sources,
 ): PermissionSetJsonDiff =>
@@ -164,8 +163,8 @@ export const makePermissionSetDiff = (
     }));
 
 export const makeMutingPermissionSetDiff = (
-    before: MutingPermissionSetJson | ErrorJson,
-    after: MutingPermissionSetJson | ErrorJson,
+    before: MutingPermissionSetJson,
+    after: MutingPermissionSetJson,
     match: Match = 'key',
     sources?: Sources,
 ): MutingPermissionSetJsonDiff =>
@@ -177,8 +176,8 @@ export const makeMutingPermissionSetDiff = (
     }));
 
 export const makeProfileDiff = (
-    before: ProfileJson | ErrorJson,
-    after: ProfileJson | ErrorJson,
+    before: ProfileJson,
+    after: ProfileJson,
     match: Match = 'key',
     sources?: Sources,
 ): ProfileJsonDiff =>
@@ -209,8 +208,8 @@ export type PermissionSetGroupJsonDiff = NodeDiff<
 >;
 
 export const makePermissionSetGroupDiff = (
-    before: PermissionSetGroupJson | ErrorJson,
-    after: PermissionSetGroupJson | ErrorJson,
+    before: PermissionSetGroupJson,
+    after: PermissionSetGroupJson,
     match: Match = 'key',
 ): PermissionSetGroupJsonDiff =>
     makeNodeDiff('permissionSetGroup', before, after, match, (b, a) => ({

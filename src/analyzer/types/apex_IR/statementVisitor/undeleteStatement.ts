@@ -1,11 +1,6 @@
 import { UndeleteStatementContext } from '@apexdevtools/apex-parser';
 
-import {
-    AccessLevelTypeClass,
-    DmlStatementTypeClass,
-    StatementVisitor,
-    isAccessLevelType,
-} from '.';
+import { AccessLevelTypeClass } from './accessLevel';
 
 import {
     BasedExpressionTypeClass,
@@ -13,47 +8,58 @@ import {
     isBasedExpressionType,
 } from '../expressionVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
+    createOptionalNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
     visitNode,
-    visitOptionalNode,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class UndeleteStatementTypeClass extends DmlStatementTypeClass<
+export type UndeleteStatementType = TypeField<'undeleteStatement'> & {
+    value: BasedExpressionTypeClass;
+    accessLevel: AccessLevelTypeClass | null;
+};
+
+export class UndeleteStatementTypeClass extends ApexCommonTypeClass<
     'undeleteStatement',
-    BasedExpressionTypeClass
+    UndeleteStatementType
 > {
-    private constructor(
-        value: BasedExpressionTypeClass | ApexErrorTypeClass,
-        accessLevel: AccessLevelTypeClass | ApexErrorTypeClass | null,
-    ) {
-        super('undeleteStatement', value, accessLevel);
+    private constructor(fields: FieldsOf<UndeleteStatementType>, sourceSpan: SourceSpan) {
+        super('undeleteStatement', fields, sourceSpan);
     }
 
     static create(ctx: UndeleteStatementContext): UndeleteStatementTypeClass {
-        if (!ctx.expression()) {
-            throw new Error('値が異常です。UndeleteStatementContext: ' + ctx.getText());
-        }
-
         return new UndeleteStatementTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(),
-                isBasedExpressionType,
-                'expression',
-            ),
-            visitOptionalNode(
-                new StatementVisitor(),
-                ctx.accessLevel(),
-                isAccessLevelType,
-                'accessLevel',
-            ),
+            {
+                value: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+                accessLevel: createOptionalNode(
+                    ctx.accessLevel(),
+                    (c) => AccessLevelTypeClass.create(c),
+                    'accessLevel',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): UndeleteStatementType['value'] {
+        return this.getFields().value;
+    }
+
+    getAccessLevel(): UndeleteStatementType['accessLevel'] {
+        return this.getFields().accessLevel;
     }
 }
 
 export const isUndeleteStatementType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is UndeleteStatementTypeClass => {
-    return target instanceof UndeleteStatementTypeClass;
+    return isSpicifyApexCommonTypeClass('undeleteStatement', target);
 };

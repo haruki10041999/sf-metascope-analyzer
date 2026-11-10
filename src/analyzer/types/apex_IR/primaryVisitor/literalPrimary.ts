@@ -1,31 +1,40 @@
 import { LiteralPrimaryContext } from '@apexdevtools/apex-parser';
 
-import { PrimaryTypeClass } from '.';
+import { LiteralTypeClass } from '../literalVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-import { NormalLiteralTypeClass, LiteralVisitor, isNormalLiteralType } from '../literalVisitor';
-import { ApexCommonTypeClass, ApexErrorTypeClass, visitNode } from '../commonVisitor';
+export type LiteralPrimaryType = TypeField<'literalPrimary'> & {
+    value: LiteralTypeClass;
+};
 
-export class LiteralPrimaryTypeClass extends PrimaryTypeClass<
+export class LiteralPrimaryTypeClass extends ApexCommonTypeClass<
     'literalPrimary',
-    NormalLiteralTypeClass
+    LiteralPrimaryType
 > {
-    private constructor(value: NormalLiteralTypeClass | ApexErrorTypeClass) {
-        super('literalPrimary', value);
+    private constructor(fields: FieldsOf<LiteralPrimaryType>, sourceSpan: SourceSpan) {
+        super('literalPrimary', fields, sourceSpan);
     }
 
     static create(ctx: LiteralPrimaryContext): LiteralPrimaryTypeClass {
-        if (!ctx.literal()) {
-            throw new Error('値が異常です。LiteralPrimaryContext: ' + ctx.getText());
-        }
-
         return new LiteralPrimaryTypeClass(
-            visitNode(new LiteralVisitor(), ctx.literal(), isNormalLiteralType, 'literal'),
+            {
+                value: createNode(ctx.literal(), (c) => LiteralTypeClass.create(c), 'literal'),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): LiteralPrimaryType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isLiteralPrimaryType = (
-    target: ApexCommonTypeClass<string>,
-): target is LiteralPrimaryTypeClass => {
-    return target instanceof LiteralPrimaryTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is LiteralPrimaryTypeClass => isSpicifyApexCommonTypeClass('literalPrimary', target);

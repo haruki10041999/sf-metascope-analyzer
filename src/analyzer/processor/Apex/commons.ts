@@ -1,13 +1,11 @@
 import {
     ConvertKeys,
-    ErrorJson,
     JsonType,
-    SourceInfo,
+    SourceSpan as SourceInfo,
     SourceJson,
     StructureJsonType,
     isJsonType,
     isStructureJsonType,
-    makeJsonType,
 } from '../../types';
 import { makeConvertKeys } from '../commons/source';
 
@@ -194,18 +192,6 @@ export const findJson = <
     }
 
     return targetJson;
-};
-
-export const findErrorJsons = (
-    target: unknown,
-    extractConvert: unknown,
-    errorKind: Set<string>,
-): ErrorJson[] => {
-    const convertKeys: ConvertKeys[] = findConvertKeys(extractConvert, new Set<string>('error'));
-
-    return convertKeys
-        .map((key) => findJson(target, makeJsonType('error', key, {})) as ErrorJson)
-        .filter((e) => errorKind.has(e.kindType));
 };
 
 const _matchedObjectJson = <

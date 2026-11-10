@@ -105,7 +105,7 @@ const GLOBAL_PROPERTIES = new Set([
 const isGlobalProperty = (name: string) => GLOBAL_PROPERTIES.has(name) || /^aria[A-Z]/.test(name);
 
 const hasApi = (modifier: LwcModifiersJson | undefined) =>
-    (modifier?.decorator ?? []).some((d) => d.kind === 'lwcDecorator' && d.name === 'api');
+    (modifier?.decorator ?? []).some((d) => d.name === 'api');
 
 const isApiProperty = (member: LwcMemberJson) => {
     if (member.kind === 'lwcField') return hasApi(member.modifier);
@@ -115,12 +115,9 @@ const isApiProperty = (member: LwcMemberJson) => {
     return false;
 };
 
-const mainComponentOf = (bundle: LwcBundleJson): LwcComponentJson | undefined => {
-    const main = bundle.modules.find((m) => m.main)?.module;
-    return main && !('kind' in main) && main.component?.kind === 'lwcComponent'
-        ? main.component
-        : undefined;
-};
+/** メインのモジュールのコンポーネント (モジュールが読めなかった (null) ときはない) */
+const mainComponentOf = (bundle: LwcBundleJson): LwcComponentJson | undefined =>
+    bundle.modules.find((m) => m.main)?.module?.component;
 
 /** テンプレートのすべての要素 (分岐・繰り返しの中も) を、祖先の要素とともにたどる */
 const walkElements = (
@@ -141,7 +138,7 @@ const walkElements = (
 };
 
 const templatesOf = (bundle: LwcBundleJson) =>
-    bundle.templates.flatMap((t) => (t.template.kind === 'lwcTemplate' ? [t.template] : []));
+    bundle.templates.flatMap((t) => (t.template ? [t.template] : []));
 
 /** バンドル 1 つの、ほかのバンドルから見える情報 */
 export const analyzeLwcComponent = (bundle: LwcBundleJson): LwcComponentInfo => {
@@ -211,9 +208,9 @@ const resolveSchema = (
 const schemaImportsOf = (bundle: LwcBundleJson) => {
     const imports = new Map<string, LwcImportReferenceJson>();
     for (const { module } of bundle.modules) {
-        if ('kind' in module) continue;
+        if (!module) continue;
         for (const item of module.imports) {
-            if (item.kind !== 'lwcImport' || !item.schema) continue;
+            if (!item.schema) continue;
             for (const specifier of item.specifiers) {
                 if (specifier.specifierType !== 'default') continue;
                 imports.set(specifier.local, {
@@ -323,9 +320,9 @@ export const analyzeLwcBundles = (
 
         // JS の @salesforce/schema の import
         for (const { module } of bundle.modules) {
-            if ('kind' in module) continue;
+            if (!module) continue;
             for (const item of module.imports) {
-                if (item.kind !== 'lwcImport' || !item.schema) continue;
+                if (!item.schema) continue;
                 const value = schemaValue({ local: '', source: item.source, schema: item.schema })!;
                 dependencies.push({
                     refType: item.schema.fieldApiName ? 'field' : 'object',

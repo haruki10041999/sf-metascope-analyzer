@@ -1,71 +1,62 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSTypeQuery, type TSTypeQuery } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNode,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import {
     tSEntityNameVisitorEvaluatePairs,
     type TSEntityNameTypeClass,
 } from '../tsEntityNameVisitor';
-import {
-    tSTypeParameterInstantiationTypePair,
-    type TSTypeParameterInstantiationTypeClass,
-} from '../typeScriptVisitor/tSTypeParameterInstantiation';
+import { TSTypeParameterInstantiationTypeClass } from '../typeScriptVisitor/tSTypeParameterInstantiation';
 import { tSImportTypeTypePair, type TSImportTypeTypeClass } from './tSImportType';
 
 const tSTypeQueryExprNamePairs = lazyPairs(
     () => [...tSEntityNameVisitorEvaluatePairs(), tSImportTypeTypePair] as const,
 );
-const tSTypeQueryTypeArgumentsPairs = lazyPairs(
-    () => [tSTypeParameterInstantiationTypePair] as const,
-);
 
-export type TSTypeQueryFields = {
-    exprName: TSEntityNameTypeClass | TSImportTypeTypeClass | LwcErrorTypeClass;
-    typeArguments: TSTypeParameterInstantiationTypeClass | LwcErrorTypeClass | null;
+export type TSTypeQueryFields = TypeField<'tSTypeQuery'> & {
+    exprName: TSEntityNameTypeClass | TSImportTypeTypeClass;
+    typeArguments: TSTypeParameterInstantiationTypeClass | null;
 };
 
-export class TSTypeQueryTypeClass extends LwcCommonTypeClass<'tSTypeQuery'> {
-    private readonly value: TSTypeQueryFields;
-
-    private constructor(value: TSTypeQueryFields) {
-        super('tSTypeQuery');
-        this.value = value;
+export class TSTypeQueryTypeClass extends LwcCommonTypeClass<'tSTypeQuery', TSTypeQueryFields> {
+    private constructor(value: FieldsOf<TSTypeQueryFields>, sourceSpan: SourceSpan) {
+        super('tSTypeQuery', value, sourceSpan);
     }
 
     static create(target: TSTypeQuery, originalSource: string): TSTypeQueryTypeClass {
-        return new TSTypeQueryTypeClass({
-            exprName: visitNode(
-                target.exprName,
-                originalSource,
-                tSTypeQueryExprNamePairs(),
-                'TSTypeQuery.exprName',
-            ),
-            typeArguments: visitOptionalNode(
-                target.typeArguments,
-                originalSource,
-                tSTypeQueryTypeArgumentsPairs(),
-                'TSTypeQuery.typeArguments',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSTypeQueryFields {
-        return this.value;
+        return new TSTypeQueryTypeClass(
+            {
+                exprName: visitNode(
+                    target.exprName,
+                    originalSource,
+                    tSTypeQueryExprNamePairs(),
+                    'TSTypeQuery.exprName',
+                ),
+                typeArguments:
+                    target.typeArguments == null
+                        ? null
+                        : TSTypeParameterInstantiationTypeClass.create(
+                              target.typeArguments,
+                              originalSource,
+                          ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getExprName(): TSTypeQueryFields['exprName'] {
-        return this.value.exprName;
+        return this.getFields().exprName;
     }
 
     getTypeArguments(): TSTypeQueryFields['typeArguments'] {
-        return this.value.typeArguments;
+        return this.getFields().typeArguments;
     }
 }
 
@@ -75,5 +66,5 @@ export const tSTypeQueryTypePair: EvaluatePair<TSTypeQuery, TSTypeQueryTypeClass
     );
 
 export const isTSTypeQueryType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSTypeQueryTypeClass => target instanceof TSTypeQueryTypeClass;

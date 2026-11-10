@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { DoWhileStatementTypeClass, doWhileStatementTypePair } from '../commons/doWhileStatement';
 import { ForInStatementTypeClass, forInStatementTypePair } from '../commons/forInStatement';
@@ -57,7 +58,9 @@ export type LoopTypeClass =
     | WhileStatementTypeClass
     | ForOfStatementTypeClass;
 
-export const isLoopType = (target: LwcCommonTypeClass<string>): target is LoopTypeClass => {
+export const isLoopType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is LoopTypeClass => {
     return (
         target instanceof DoWhileStatementTypeClass ||
         target instanceof ForInStatementTypeClass ||

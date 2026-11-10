@@ -1,51 +1,67 @@
 import { BitAndExpressionContext } from '@apexdevtools/apex-parser';
 
+import { BasedExpressionTypeClass, ExpressionVisitor, isBasedExpressionType } from '.';
+
 import {
-    DoubleStringOperatorExpressionTypeClass,
-    BasedExpressionTypeClass,
-    ExpressionVisitor,
-    isBasedExpressionType,
-} from '.';
+    ApexCommonTypeClass,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+    visitNode,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type BitAndExpressionType = TypeField<'bitAndExpression'> & {
+    left: BasedExpressionTypeClass;
+    operator: '&';
+    right: BasedExpressionTypeClass;
+};
 
-export class BitAndExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
+export class BitAndExpressionTypeClass extends ApexCommonTypeClass<
     'bitAndExpression',
-    BasedExpressionTypeClass,
-    '&',
-    BasedExpressionTypeClass
+    BitAndExpressionType
 > {
-    private constructor(
-        left: BasedExpressionTypeClass | ApexErrorTypeClass,
-        right: BasedExpressionTypeClass | ApexErrorTypeClass,
-    ) {
-        super('bitAndExpression', left, right, '&');
+    private constructor(fields: FieldsOf<BitAndExpressionType>, sourceSpan: SourceSpan) {
+        super('bitAndExpression', fields, sourceSpan);
     }
 
     static create(ctx: BitAndExpressionContext): BitAndExpressionTypeClass {
-        if (!ctx.expression_list() || ctx.expression_list().length !== 2 || !ctx.BITAND()) {
+        if (!ctx.BITAND()) {
             throw new Error('値が異常です。BitAndExpressionContext: ' + ctx.getText());
         }
 
         return new BitAndExpressionTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(0),
-                isBasedExpressionType,
-                'expression',
-            ),
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(1),
-                isBasedExpressionType,
-                'expression',
-            ),
+            {
+                left: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(0),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+                operator: '&',
+                right: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(1),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getLeft(): BitAndExpressionType['left'] {
+        return this.getFields().left;
+    }
+
+    getOperator(): BitAndExpressionType['operator'] {
+        return this.getFields().operator;
+    }
+
+    getRight(): BitAndExpressionType['right'] {
+        return this.getFields().right;
     }
 }
 
 export const isBitAndExpressionType = (
-    target: ApexCommonTypeClass<string>,
-): target is BitAndExpressionTypeClass => {
-    return target instanceof BitAndExpressionTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is BitAndExpressionTypeClass => isSpicifyApexCommonTypeClass('bitAndExpression', target);

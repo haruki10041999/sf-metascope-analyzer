@@ -1,64 +1,56 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSClassImplements, type TSClassImplements } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
     visitNode,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
-import {
-    tSTypeParameterInstantiationTypePair,
-    type TSTypeParameterInstantiationTypeClass,
-} from '../typeScriptVisitor/tSTypeParameterInstantiation';
+import { TSTypeParameterInstantiationTypeClass } from '../typeScriptVisitor/tSTypeParameterInstantiation';
 
-const tSClassImplementsTypeArgumentsPairs = lazyPairs(
-    () => [tSTypeParameterInstantiationTypePair] as const,
-);
-
-export type TSClassImplementsFields = {
-    expression: ExpressionTypeClass | LwcErrorTypeClass;
-    typeArguments: TSTypeParameterInstantiationTypeClass | LwcErrorTypeClass | null;
+export type TSClassImplementsFields = TypeField<'tSClassImplements'> & {
+    expression: ExpressionTypeClass;
+    typeArguments: TSTypeParameterInstantiationTypeClass | null;
 };
 
-export class TSClassImplementsTypeClass extends LwcCommonTypeClass<'tSClassImplements'> {
-    private readonly value: TSClassImplementsFields;
-
-    private constructor(value: TSClassImplementsFields) {
-        super('tSClassImplements');
-        this.value = value;
+export class TSClassImplementsTypeClass extends LwcCommonTypeClass<
+    'tSClassImplements',
+    TSClassImplementsFields
+> {
+    private constructor(value: FieldsOf<TSClassImplementsFields>, sourceSpan: SourceSpan) {
+        super('tSClassImplements', value, sourceSpan);
     }
 
     static create(target: TSClassImplements, originalSource: string): TSClassImplementsTypeClass {
-        return new TSClassImplementsTypeClass({
-            expression: visitNode(
-                target.expression,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-            typeArguments: visitOptionalNode(
-                target.typeArguments,
-                originalSource,
-                tSClassImplementsTypeArgumentsPairs(),
-                'TSClassImplements.typeArguments',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSClassImplementsFields {
-        return this.value;
+        return new TSClassImplementsTypeClass(
+            {
+                expression: visitNode(
+                    target.expression,
+                    originalSource,
+                    expressionVisitorEvaluatePairs(),
+                    'ExpressionVisitor',
+                ),
+                typeArguments:
+                    target.typeArguments == null
+                        ? null
+                        : TSTypeParameterInstantiationTypeClass.create(
+                              target.typeArguments,
+                              originalSource,
+                          ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getExpression(): TSClassImplementsFields['expression'] {
-        return this.value.expression;
+        return this.getFields().expression;
     }
 
     getTypeArguments(): TSClassImplementsFields['typeArguments'] {
-        return this.value.typeArguments;
+        return this.getFields().typeArguments;
     }
 }
 
@@ -70,5 +62,5 @@ export const tSClassImplementsTypePair: EvaluatePair<
 );
 
 export const isTSClassImplementsType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSClassImplementsTypeClass => target instanceof TSClassImplementsTypeClass;

@@ -11,7 +11,6 @@ import {
 } from '../../../src/analyzer/processor/Apex/diff/query';
 import { makeValueDiff } from '../../../src/analyzer/processor/commons/diff/commons';
 import type {
-    ErrorJson,
     FieldOrderJson,
     SelectEntryJson,
     SoqlJson,
@@ -182,12 +181,7 @@ describe('SOQL and SOSL diff', () => {
         }
     });
 
-    it('compares SOSL query terms and retains errors as values', () => {
-        const error: ErrorJson = {
-            kind: 'error',
-            sourceKeys: keys('find-error'),
-            kindType: 'sosl',
-        };
+    it('compares SOSL query terms as values', () => {
         const before: SoslJson = {
             kind: 'sosl',
             sourceKeys: keys('sosl-before'),
@@ -197,19 +191,16 @@ describe('SOQL and SOSL diff', () => {
         const after: SoslJson = {
             ...before,
             sourceKeys: keys('sosl-after'),
-            find: error,
+            find: 'Globex',
         };
 
         const diff = makeSoslDiff(before, after);
         assert.equal(diff.status, 'changed');
         if (diff.status === 'changed' && 'fields' in diff) {
-            // エラーの kind / sourceKeys は中身から分け、エラー側だけを持つ
             assert.deepEqual(diff.fields.find, {
-                kind: { after: 'error' },
-                sourceKeys: { after: error.sourceKeys },
                 status: 'changed',
                 before: 'Acme',
-                after: { kindType: 'sosl' },
+                after: 'Globex',
             });
         } else {
             assert.fail('Expected a field-level SOSL diff');

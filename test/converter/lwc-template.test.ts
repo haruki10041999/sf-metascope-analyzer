@@ -197,9 +197,9 @@ describe('LWC のテンプレート (JSON)', () => {
 });
 
 describe('LWC のテンプレート (検証)', () => {
-    it('ルートが <template> でなければ ErrorJson。診断は phase syntax', () => {
+    it('ルートが <template> でなければ template は null。理由は resolvedError (phase syntax)', () => {
         const result = parseTemplate('x/x.html', '<div>{a}</div>');
-        assert.equal(result.template.kind, 'error');
+        assert.equal(result.template, null);
         assert.deepEqual(
             result.resolvedError.map((e) => [e.phase, e.code]),
             [['syntax', 'LWC1079']],
@@ -208,7 +208,7 @@ describe('LWC のテンプレート (検証)', () => {
 
     it('HTML の構文エラーは LWC1058 (parse5 のコードを contextType に持つ)。JSON は作る', () => {
         const result = parseTemplate('x/x.html', '<template><c-foo/></template>');
-        assert.equal(result.template.kind, 'lwcTemplate');
+        assert.equal(result.template?.kind, 'lwcTemplate');
         assert.deepEqual(result.resolvedError[0]!.phase, 'syntax');
         assert.deepEqual(result.resolvedError[0]!.code, 'LWC1058');
         assert.equal(
@@ -250,7 +250,7 @@ describe('LWC のテンプレート (検証)', () => {
         );
         if (result.dataType === 'lwcBundle') {
             assert.deepEqual(
-                result.result.base.templates.map((t) => [t.fileName, t.main, t.template.kind]),
+                result.result.base.templates.map((t) => [t.fileName, t.main, t.template?.kind]),
                 [['broken.html', true, 'lwcTemplate']],
             );
         }

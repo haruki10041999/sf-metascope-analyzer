@@ -1,13 +1,25 @@
+import { type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSNeverKeyword, type TSNeverKeyword } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export class TSNeverKeywordTypeClass extends LwcCommonTypeClass<'tSNeverKeyword'> {
-    private constructor() {
-        super('tSNeverKeyword');
+export type TSNeverKeywordFields = TypeField<'tSNeverKeyword'>;
+
+export class TSNeverKeywordTypeClass extends LwcCommonTypeClass<
+    'tSNeverKeyword',
+    TSNeverKeywordFields
+> {
+    private constructor(sourceSpan: SourceSpan) {
+        super('tSNeverKeyword', {}, sourceSpan);
     }
 
-    static create(_target: TSNeverKeyword, _originalSource: string): TSNeverKeywordTypeClass {
-        return new TSNeverKeywordTypeClass();
+    static create(target: TSNeverKeyword, originalSource: string): TSNeverKeywordTypeClass {
+        return new TSNeverKeywordTypeClass(getSourceSpan(target, originalSource));
     }
 }
 
@@ -17,5 +29,5 @@ export const tSNeverKeywordTypePair: EvaluatePair<TSNeverKeyword, TSNeverKeyword
     );
 
 export const isTSNeverKeywordType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSNeverKeywordTypeClass => target instanceof TSNeverKeywordTypeClass;

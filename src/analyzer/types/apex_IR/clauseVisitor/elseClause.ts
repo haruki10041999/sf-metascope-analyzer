@@ -1,28 +1,44 @@
 import { ElseClauseContext } from '@apexdevtools/apex-parser';
 
-import { ClauseTypeClass } from '.';
+import { FieldNameListTypeClass } from '../listVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { FieldNameListTypeClass, ListVisitor, isFieldNameListType } from '../listVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type ElseClauseType = TypeField<'elseClause'> & {
+    value: FieldNameListTypeClass;
+};
 
-export class ElseClauseTypeClass extends ClauseTypeClass<'elseClause', FieldNameListTypeClass> {
-    private constructor(value: FieldNameListTypeClass | ApexErrorTypeClass) {
-        super('elseClause', value);
+export class ElseClauseTypeClass extends ApexCommonTypeClass<'elseClause', ElseClauseType> {
+    private constructor(fields: FieldsOf<ElseClauseType>, sourceSpan: SourceSpan) {
+        super('elseClause', fields, sourceSpan);
     }
 
     static create(ctx: ElseClauseContext): ElseClauseTypeClass {
-        if (!ctx.fieldNameList()) {
-            throw new Error('値が異常です。ElseClauseContext: ' + ctx.getText());
-        }
-
         return new ElseClauseTypeClass(
-            visitNode(new ListVisitor(), ctx.fieldNameList(), isFieldNameListType, 'fieldNameList'),
+            {
+                value: createNode(
+                    ctx.fieldNameList(),
+                    (c) => FieldNameListTypeClass.create(c),
+                    'fieldNameList',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): ElseClauseType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isElseClauseType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is ElseClauseTypeClass => {
-    return target instanceof ElseClauseTypeClass;
+    return isSpicifyApexCommonTypeClass('elseClause', target);
 };

@@ -1,25 +1,41 @@
 import { SoqlPrimaryContext } from '@apexdevtools/apex-parser';
 
-import { PrimaryTypeClass } from '.';
+import { SoqlLiteralTypeClass } from '../literalVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-import { SoqlLiteralTypeClass, LiteralVisitor, isSoqlLiteralType } from '../literalVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, isApexValidClass } from '../commonVisitor';
+export type SoqlPrimaryType = TypeField<'soqlPrimary'> & {
+    value: SoqlLiteralTypeClass;
+};
 
-export class SoqlPrimaryTypeClass extends PrimaryTypeClass<'soqlPrimary', SoqlLiteralTypeClass> {
-    private constructor(value: SoqlLiteralTypeClass | ApexErrorTypeClass) {
-        super('soqlPrimary', value);
+export class SoqlPrimaryTypeClass extends ApexCommonTypeClass<'soqlPrimary', SoqlPrimaryType> {
+    private constructor(fields: FieldsOf<SoqlPrimaryType>, sourceSpan: SourceSpan) {
+        super('soqlPrimary', fields, sourceSpan);
     }
 
     static create(ctx: SoqlPrimaryContext): SoqlPrimaryTypeClass {
-        const primary = new LiteralVisitor().visit(ctx.soqlLiteral());
         return new SoqlPrimaryTypeClass(
-            isApexValidClass(primary, isSoqlLiteralType, 'soqlLiteral'),
+            {
+                value: createNode(
+                    ctx.soqlLiteral(),
+                    (c) => SoqlLiteralTypeClass.create(c),
+                    'soqlLiteral',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): SoqlPrimaryType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isSoqlPrimaryType = (
-    target: ApexCommonTypeClass<string>,
-): target is SoqlPrimaryTypeClass => {
-    return target instanceof SoqlPrimaryTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is SoqlPrimaryTypeClass => isSpicifyApexCommonTypeClass('soqlPrimary', target);

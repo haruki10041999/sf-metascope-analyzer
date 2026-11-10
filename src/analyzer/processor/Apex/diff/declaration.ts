@@ -5,7 +5,6 @@ import {
     ConvertKeys,
     EnumConstantJson,
     EnumDeclarationJson,
-    ErrorJson,
     FieldDeclarationJson,
     InitializerBlockJson,
     InterfaceDeclarationJson,
@@ -24,7 +23,6 @@ import {
     Identity,
     JsonNode,
     ListItemDiff,
-    ListOrErrorDiff,
     Match,
     NodeDiff,
     OptionalDiff,
@@ -36,11 +34,9 @@ import {
     getValueKey,
     makeDistance,
     makeKeyedDiff,
-    makeListOrErrorDiff,
     makeNodeDiff,
     makeOptionalDiff,
     makeSequenceDiff,
-    makeSetDiff,
     makeSourceKeysDiff,
     makeValueDiff,
     orderUnorderedPairings,
@@ -84,64 +80,33 @@ import {
 // 識別キー
 // ---------------------------------------------------------------------------
 
-/** パラメータ型の並び。パラメータリストがエラーならキーを持たない */
-export const getParamTypesKey = (
-    param: (ParameterJson | ErrorJson)[] | ErrorJson | undefined,
-): string | undefined => {
-    const list = param ?? [];
-    if (!Array.isArray(list)) {
-        return undefined;
-    }
-
-    return list.map((p) => (p.kind === 'error' ? 'error' : getTypeKey(p.variantType))).join(',');
-};
+/** パラメータ型の並び */
+export const getParamTypesKey = (param: ParameterJson[] | undefined): string =>
+    (param ?? []).map((p) => getTypeKey(p.variantType)).join(',');
 
 /** メソッドの識別キー `名前(型,型,...)`。オーバーロードを区別するため、パラメータ名は含めない */
-export const getSignatureKey = (
-    name: string | ErrorJson,
-    param: (ParameterJson | ErrorJson)[] | ErrorJson | undefined,
-): string | undefined => {
-    const paramTypes = getParamTypesKey(param);
-    if (typeof name !== 'string' || paramTypes === undefined) {
-        return undefined;
-    }
-
-    return `${name}(${paramTypes})`;
-};
+export const getSignatureKey = (name: string, param: ParameterJson[] | undefined): string =>
+    `${name}(${getParamTypesKey(param)})`;
 
 export type ClassBodyItemJson = ClassDeclarationJson['block'][number];
 
 /** クラス本文のうち、名前で対応付けるメンバー */
-export type ClassMemberJson = Exclude<
-    ClassBodyItemJson,
-    InitializerBlockJson | NotSetBlockJson | ErrorJson
->;
+export type ClassMemberJson = Exclude<ClassBodyItemJson, InitializerBlockJson | NotSetBlockJson>;
 
 /** クラスメンバーの識別キー。kind を先頭に付けるので、対応付いた組は必ず同じ kind になる */
-export const getMemberKey = (member: ClassMemberJson): string | undefined => {
-    const withKind = (key: string | undefined) =>
-        key === undefined ? undefined : `${member.kind}:${key}`;
+export const getMemberKey = (member: ClassMemberJson): string => {
+    const withKind = (key: string) => `${member.kind}:${key}`;
 
     switch (member.kind) {
         case 'method':
             return withKind(getSignatureKey(member.name, member.param));
-        case 'constructor': {
+        case 'constructor':
             // 名前はクラス名と同じはずなのでキーに入れない
-            const paramTypes = getParamTypesKey(member.param);
-            return withKind(paramTypes === undefined ? undefined : `(${paramTypes})`);
-        }
-        case 'field': {
-            const variants = member.variants;
-            if (!Array.isArray(variants)) {
-                return undefined;
-            }
-            const names = variants.map((v) =>
-                'name' in v && typeof v.name === 'string' ? v.name : undefined,
-            );
-            return names.every((n) => n !== undefined) ? withKind(names.join(',')) : undefined;
-        }
+            return withKind(`(${getParamTypesKey(member.param)})`);
+        case 'field':
+            return withKind(member.variants.map((v) => v.name).join(','));
         default:
-            return typeof member.name === 'string' ? withKind(member.name) : undefined;
+            return withKind(member.name);
     }
 };
 
@@ -173,8 +138,8 @@ export type EnumConstantJsonDiff = NodeDiff<
 >;
 
 export const makeEnumConstantDiff = (
-    before: EnumConstantJson | ErrorJson,
-    after: EnumConstantJson | ErrorJson,
+    before: EnumConstantJson,
+    after: EnumConstantJson,
     match: Match = 'slot',
 ): EnumConstantJsonDiff => {
     return makeNodeDiff('enumConstant', before, after, match, (b, a) => ({
@@ -185,13 +150,13 @@ export const makeEnumConstantDiff = (
 /** enum 定数は ordinal() が並び順で決まるので C. 順序付き列 */
 export type EnumConstantsDiff = ListItemDiff<
     'enumConstant',
-    EnumConstantJson | ErrorJson,
+    EnumConstantJson,
     EnumConstantJsonDiff
 >;
 
 export const makeEnumConstantsDiff = (
-    before: (EnumConstantJson | ErrorJson)[],
-    after: (EnumConstantJson | ErrorJson)[],
+    before: EnumConstantJson[],
+    after: EnumConstantJson[],
     sources?: Sources,
 ): EnumConstantsDiff[] => {
     return makeSequenceDiff('enumConstant', before, after, makeEnumConstantDiff, { sources });
@@ -201,17 +166,17 @@ export type EnumDeclarationJsonDiff = NodeDiff<
     'enum',
     EnumDeclarationJson,
     {
-        name: ValueDiff<string | ErrorJson>;
-        members: ListOrErrorDiff<EnumConstantsDiff, EnumConstantJson | ErrorJson>;
+        name: ValueDiff<string>;
+        members: EnumConstantsDiff[];
     }
 >;
 
 export const makeEnumDiff = (
-    before: EnumDeclarationJson | ErrorJson,
-    after: EnumDeclarationJson | ErrorJson,
+    before: EnumDeclarationJson,
+    after: EnumDeclarationJson,
     match: Match = 'slot',
     sources?: Sources,
-    identity?: Identity<EnumDeclarationJson | ErrorJson>,
+    identity?: Identity<EnumDeclarationJson>,
 ): EnumDeclarationJsonDiff => {
     return makeNodeDiff(
         'enum',
@@ -220,15 +185,12 @@ export const makeEnumDiff = (
         match,
         (b, a) => ({
             name: makeValueDiff(b.name, a.name),
-            members: makeListOrErrorDiff(b.members, a.members, (bm, am) =>
-                makeEnumConstantsDiff(bm, am, sources),
-            ),
+            members: makeEnumConstantsDiff(b.members ?? [], a.members ?? [], sources),
         }),
         identity,
     );
 };
 
-type Variant = VariantJson | ErrorJson;
 type Init = NonNullable<VariantJson['init']>;
 
 /**
@@ -236,31 +198,24 @@ type Init = NonNullable<VariantJson['init']>;
  * 初期値の式は makeExpressionDiff で比べる。対応付けの判定キーには式を木にした hash を使う。
  */
 export type FieldVariantDiff = TypedListItemDiff<
-    Variant,
+    VariantJson,
     {
         status: 'changed';
-        name: ValueDiff<string | ErrorJson>;
+        name: ValueDiff<string>;
         init: OptionalDiff<Init, BaseExpressionJsonDiff>;
     }
 >;
 
-const isErrorJson = (variant: Variant): variant is ErrorJson => 'kind' in variant;
+// 式は kind を持たないものが多く、JSON のままだと中の sourceKeys (位置) が入るので木の hash を使う
+const getVariantKey = (variant: VariantJson): string =>
+    `${getValueKey(variant.name)}=${variant.init === undefined ? '' : makeBlockTree([variant.init]).hash}`;
 
-const getVariantKey = (variant: Variant): string => {
-    return isErrorJson(variant)
-        ? getObjectKey(variant)
-        : // 式は kind を持たないものが多く、JSON のままだと中の sourceKeys (位置) が入るので木の hash を使う
-          `${getValueKey(variant.name)}=${variant.init === undefined ? '' : makeBlockTree([variant.init]).hash}`;
-};
-
-const getVariantId = (variant: Variant): string | undefined => {
-    return isErrorJson(variant) || typeof variant.name !== 'string' ? undefined : variant.name;
-};
+const getVariantId = (variant: VariantJson): string => variant.name;
 
 /** 変数は D. キー対応 (キー: 変数名) */
 const makeVariantsDiff = (
-    before: Variant[],
-    after: Variant[],
+    before: VariantJson[],
+    after: VariantJson[],
     sources?: Sources,
 ): FieldVariantDiff[] => {
     const pairings = pairByKey(
@@ -281,8 +236,7 @@ const makeVariantsDiff = (
         const b = before[p.before]!;
         const a = after[p.after]!;
         const index = { before: p.before, after: p.after };
-        // 名前で対応付くのは VariantJson 同士だけ。ErrorJson 同士は集合なので unchanged になる
-        if (p.status !== 'changed' || isErrorJson(b) || isErrorJson(a)) {
+        if (p.status !== 'changed') {
             return makeUnchangedItem(b, a, p.match, index);
         }
         return makePairedItem(
@@ -305,16 +259,16 @@ export type FieldDeclarationJsonDiff = NodeDiff<
     FieldDeclarationJson,
     {
         variantType: TypeJsonDiff;
-        variants: ListOrErrorDiff<FieldVariantDiff, Variant>;
+        variants: FieldVariantDiff[];
     }
 >;
 
 export const makeFieldDeclarationDiff = (
-    before: FieldDeclarationJson | ErrorJson,
-    after: FieldDeclarationJson | ErrorJson,
+    before: FieldDeclarationJson,
+    after: FieldDeclarationJson,
     match: Match = 'slot',
     sources?: Sources,
-    identity?: Identity<FieldDeclarationJson | ErrorJson>,
+    identity?: Identity<FieldDeclarationJson>,
 ): FieldDeclarationJsonDiff => {
     return makeNodeDiff(
         'field',
@@ -323,9 +277,7 @@ export const makeFieldDeclarationDiff = (
         match,
         (b, a) => ({
             variantType: makeTypeDiff(b.variantType, a.variantType),
-            variants: makeListOrErrorDiff(b.variants, a.variants, (bv, av) =>
-                makeVariantsDiff(bv, av, sources),
-            ),
+            variants: makeVariantsDiff(b.variants, a.variants, sources),
         }),
         identity,
     );
@@ -335,49 +287,41 @@ export type InterfaceMethodJsonDiff = NodeDiff<
     'interfaceMethod',
     InterfaceMethodJson,
     {
-        name: ValueDiff<string | ErrorJson>;
+        name: ValueDiff<string>;
         returnType: TypeWithVoidDiff;
-        param: ListOrErrorDiff<ParametersDiff, ParameterJson | ErrorJson>;
+        param: ParametersDiff[];
         modifier: ModifiersJsonDiff;
     }
 >;
 
 export const makeInterfaceMethodDiff = (
-    before: InterfaceMethodJson | ErrorJson,
-    after: InterfaceMethodJson | ErrorJson,
+    before: InterfaceMethodJson,
+    after: InterfaceMethodJson,
     match: Match = 'slot',
     sources?: Sources,
 ): InterfaceMethodJsonDiff => {
     return makeNodeDiff('interfaceMethod', before, after, match, (b, a) => ({
         name: makeValueDiff(b.name, a.name),
         returnType: makeTypeWithVoidDiff(b.returnType, a.returnType),
-        param: makeListOrErrorDiff(b.param, a.param, (bp, ap) =>
-            makeParametersDiff(bp, ap, sources),
-        ),
+        param: makeParametersDiff(b.param ?? [], a.param ?? [], sources),
         modifier: makeModifierDiff(b.modifier, a.modifier),
     }));
 };
 
-/**
- * interface のメソッドの識別キー。オーバーロードを区別するため、名前とパラメータ型の並びを使う。
- * 名前やパラメータリストがエラーのものはキーを持たない (集合として比べる)。
- */
-export const getInterfaceMethodKey = (
-    target: InterfaceMethodJson | ErrorJson,
-): string | undefined => {
-    return target.kind === 'error' ? undefined : getSignatureKey(target.name, target.param);
-};
+/** interface のメソッドの識別キー。オーバーロードを区別するため、名前とパラメータ型の並びを使う */
+export const getInterfaceMethodKey = (target: InterfaceMethodJson): string =>
+    getSignatureKey(target.name, target.param);
 
 /** interface の本文は D. キー対応 */
 export type InterfaceMethodsDiff = ListItemDiff<
     'interfaceMethod',
-    InterfaceMethodJson | ErrorJson,
+    InterfaceMethodJson,
     InterfaceMethodJsonDiff
 >;
 
 export const makeInterfaceMethodsDiff = (
-    before: (InterfaceMethodJson | ErrorJson)[],
-    after: (InterfaceMethodJson | ErrorJson)[],
+    before: InterfaceMethodJson[],
+    after: InterfaceMethodJson[],
     sources?: Sources,
 ): InterfaceMethodsDiff[] => {
     return makeKeyedDiff(
@@ -394,18 +338,18 @@ export type InterfaceDeclarationJsonDiff = NodeDiff<
     'interface',
     InterfaceDeclarationJson,
     {
-        name: ValueDiff<string | ErrorJson>;
-        extend: ListOrErrorDiff<TypesDiff, TypeJson | ErrorJson>;
-        block: ListOrErrorDiff<InterfaceMethodsDiff, InterfaceMethodJson | ErrorJson>;
+        name: ValueDiff<string>;
+        extend: TypesDiff[];
+        block: InterfaceMethodsDiff[];
     }
 >;
 
 export const makeInterfaceDiff = (
-    before: InterfaceDeclarationJson | ErrorJson,
-    after: InterfaceDeclarationJson | ErrorJson,
+    before: InterfaceDeclarationJson,
+    after: InterfaceDeclarationJson,
     match: Match = 'slot',
     sources?: Sources,
-    identity?: Identity<InterfaceDeclarationJson | ErrorJson>,
+    identity?: Identity<InterfaceDeclarationJson>,
 ): InterfaceDeclarationJsonDiff => {
     return makeNodeDiff(
         'interface',
@@ -414,12 +358,8 @@ export const makeInterfaceDiff = (
         match,
         (b, a) => ({
             name: makeValueDiff(b.name, a.name),
-            extend: makeListOrErrorDiff(b.extend, a.extend, (be, ae) =>
-                makeTypesDiff(be, ae, sources),
-            ),
-            block: makeListOrErrorDiff(b.block, a.block, (bb, ab) =>
-                makeInterfaceMethodsDiff(bb, ab, sources),
-            ),
+            extend: makeTypesDiff(b.extend ?? [], a.extend ?? [], sources),
+            block: makeInterfaceMethodsDiff(b.block ?? [], a.block ?? [], sources),
         }),
         identity,
     );
@@ -430,19 +370,19 @@ export type MethodDeclarationJsonDiff = NodeDiff<
     'method',
     MethodDeclarationJson,
     {
-        name: ValueDiff<string | ErrorJson>;
+        name: ValueDiff<string>;
         returnType: TypeWithVoidDiff;
-        param: ListOrErrorDiff<ParametersDiff, ParameterJson | ErrorJson>;
+        param: ParametersDiff[];
         block: OptionalDiff<Statement[], BlockDiff>;
     }
 >;
 
 export const makeMethodDiff = (
-    before: MethodDeclarationJson | ErrorJson,
-    after: MethodDeclarationJson | ErrorJson,
+    before: MethodDeclarationJson,
+    after: MethodDeclarationJson,
     match: Match = 'slot',
     sources?: Sources,
-    identity?: Identity<MethodDeclarationJson | ErrorJson>,
+    identity?: Identity<MethodDeclarationJson>,
 ): MethodDeclarationJsonDiff => {
     return makeNodeDiff(
         'method',
@@ -452,9 +392,7 @@ export const makeMethodDiff = (
         (b, a) => ({
             name: makeValueDiff(b.name, a.name),
             returnType: makeTypeWithVoidDiff(b.returnType, a.returnType),
-            param: makeListOrErrorDiff(b.param, a.param, (bp, ap) =>
-                makeParametersDiff(bp, ap, sources),
-            ),
+            param: makeParametersDiff(b.param ?? [], a.param ?? [], sources),
             block: makeOptionalDiff(b.block, a.block, (bb, ab) => makeBlockDiff(bb, ab, sources)),
         }),
         identity,
@@ -466,17 +404,17 @@ export type ConstructorDeclarationJsonDiff = NodeDiff<
     ConstructorDeclarationJson,
     {
         name: ValueDiff<ConstructorDeclarationJson['name']>;
-        param: ListOrErrorDiff<ParametersDiff, ParameterJson | ErrorJson>;
+        param: ParametersDiff[];
         block: BlockDiff;
     }
 >;
 
 export const makeConstructorDiff = (
-    before: ConstructorDeclarationJson | ErrorJson,
-    after: ConstructorDeclarationJson | ErrorJson,
+    before: ConstructorDeclarationJson,
+    after: ConstructorDeclarationJson,
     match: Match = 'slot',
     sources?: Sources,
-    identity?: Identity<ConstructorDeclarationJson | ErrorJson>,
+    identity?: Identity<ConstructorDeclarationJson>,
 ): ConstructorDeclarationJsonDiff => {
     return makeNodeDiff(
         'constructor',
@@ -486,9 +424,7 @@ export const makeConstructorDiff = (
         (b, a) => ({
             // 修飾名は配列ごと値として比べる
             name: makeValueDiff(b.name, a.name),
-            param: makeListOrErrorDiff(b.param, a.param, (bp, ap) =>
-                makeParametersDiff(bp, ap, sources),
-            ),
+            param: makeParametersDiff(b.param ?? [], a.param ?? [], sources),
             block: makeBlockDiff(b.block, a.block, sources),
         }),
         identity,
@@ -514,34 +450,24 @@ export const makeAccessorContentDiff = (
     };
 };
 
-/** 取り出せなかった get / set。B. 集合なので unchanged / added / removed だけ */
-export type ErrorsDiff = ListItemDiff<'error', ErrorJson, NodeDiff<'error', ErrorJson, undefined>>;
-
-export const makeErrorsDiff = (before: ErrorJson[], after: ErrorJson[]): ErrorsDiff[] => {
-    return makeSetDiff('error', before, after, (b, a, match) =>
-        makeNodeDiff('error', b, a, match, () => undefined),
-    );
-};
-
 /** isGetter / isSetter は getterContent / setterContent の有無と同じ情報なので持たない */
 export type PropertyDeclarationJsonDiff = NodeDiff<
     'property',
     PropertyDeclarationJson,
     {
-        name: ValueDiff<string | ErrorJson>;
+        name: ValueDiff<string>;
         variantType: TypeJsonDiff;
         getterContent: OptionalDiff<AccessorContentJson, AccessorContentJsonDiff>;
         setterContent: OptionalDiff<AccessorContentJson, AccessorContentJsonDiff>;
-        error: ErrorsDiff[];
     }
 >;
 
 export const makePropertyDiff = (
-    before: PropertyDeclarationJson | ErrorJson,
-    after: PropertyDeclarationJson | ErrorJson,
+    before: PropertyDeclarationJson,
+    after: PropertyDeclarationJson,
     match: Match = 'slot',
     sources?: Sources,
-    identity?: Identity<PropertyDeclarationJson | ErrorJson>,
+    identity?: Identity<PropertyDeclarationJson>,
 ): PropertyDeclarationJsonDiff => {
     return makeNodeDiff(
         'property',
@@ -557,7 +483,6 @@ export const makePropertyDiff = (
             setterContent: makeOptionalDiff(b.setterContent, a.setterContent, (bs, as) =>
                 makeAccessorContentDiff(bs, as, sources),
             ),
-            error: makeErrorsDiff(b.error ?? [], a.error ?? []),
         }),
         identity,
     );
@@ -683,12 +608,12 @@ export const makeClassMemberDiff = (
 
 type Index = { before: number; after: number };
 
-/** ErrorJson / notSet は集合なので unchanged だけ */
+/** notSet は集合なので unchanged だけ */
 type UnchangedOtherDiff = {
-    kind: (NotSetBlockJson | ErrorJson)['kind'];
+    kind: NotSetBlockJson['kind'];
     status: 'unchanged';
     sourceKeys: SourceKeysDiff<ConvertKeys>;
-    value: Body<NotSetBlockJson | ErrorJson>;
+    value: Body<NotSetBlockJson>;
 };
 
 export type ClassBodyDiff =
@@ -718,7 +643,7 @@ const getGroup = (item: ClassBodyItemJson): Group => {
     if (item.kind === 'initializer') {
         return 'initializer';
     }
-    return item.kind === 'notSet' || item.kind === 'error' ? 'other' : 'member';
+    return item.kind === 'notSet' ? 'other' : 'member';
 };
 
 const splitItem = (item: ClassBodyItemJson) => {
@@ -730,7 +655,7 @@ const splitItem = (item: ClassBodyItemJson) => {
 };
 
 /**
- * クラス本文。名前のあるメンバーは D (キー: getMemberKey)、初期化ブロックは C、ErrorJson / notSet は B で比べ、
+ * クラス本文。名前のあるメンバーは D (キー: getMemberKey)、初期化ブロックは C、notSet は B で比べ、
  * before の index 順のあとに added を置いて 1 つの配列にまとめる。メンバーの並び順の変化は報告しない。
  */
 export const makeClassBodyDiff = (
@@ -758,8 +683,8 @@ export const makeClassBodyDiff = (
     };
     const otherIndex = { before: indexOf(before, 'other'), after: indexOf(after, 'other') };
     const others = {
-        before: pick<NotSetBlockJson | ErrorJson>(before, otherIndex.before),
-        after: pick<NotSetBlockJson | ErrorJson>(after, otherIndex.after),
+        before: pick<NotSetBlockJson>(before, otherIndex.before),
+        after: pick<NotSetBlockJson>(after, otherIndex.after),
     };
 
     const pairings: Pairing[] = orderUnorderedPairings([
@@ -816,7 +741,7 @@ export const makeClassBodyDiff = (
         }
 
         if (getGroup(b) === 'other') {
-            const other = b as NotSetBlockJson | ErrorJson;
+            const other = b as NotSetBlockJson;
             return {
                 kind: other.kind,
                 status: 'unchanged',
@@ -842,9 +767,9 @@ export const makeClassBodyDiff = (
 
 // ClassBodyDiff が ClassDeclarationJsonDiff を含むので、循環を interface で切る
 export interface ClassFields {
-    name: ValueDiff<string | ErrorJson>;
-    extend: OptionalDiff<TypeJson | ErrorJson, TypeJsonDiff>;
-    implement: ListOrErrorDiff<TypesDiff, TypeJson | ErrorJson>;
+    name: ValueDiff<string>;
+    extend: OptionalDiff<TypeJson, TypeJsonDiff>;
+    implement: TypesDiff[];
     block: ClassBodyDiff[];
 }
 
@@ -854,11 +779,11 @@ export type ClassDeclarationJsonDiff = NodeDiff<'class', ClassDeclarationJson, C
 export type NotSetBlockJsonDiff = NodeDiff<'notSet', NotSetBlockJson, undefined>;
 
 export const makeClassDiff = (
-    before: ClassDeclarationJson | ErrorJson,
-    after: ClassDeclarationJson | ErrorJson,
+    before: ClassDeclarationJson,
+    after: ClassDeclarationJson,
     match: Match = 'slot',
     sources?: Sources,
-    identity?: Identity<ClassDeclarationJson | ErrorJson>,
+    identity?: Identity<ClassDeclarationJson>,
 ): ClassDeclarationJsonDiff => {
     return makeNodeDiff(
         'class',
@@ -868,9 +793,7 @@ export const makeClassDiff = (
         (b, a): ClassFields => ({
             name: makeValueDiff(b.name, a.name),
             extend: makeOptionalDiff(b.extend, a.extend, (be, ae) => makeTypeDiff(be, ae)),
-            implement: makeListOrErrorDiff(b.implement, a.implement, (bi, ai) =>
-                makeTypesDiff(bi, ai, sources),
-            ),
+            implement: makeTypesDiff(b.implement ?? [], a.implement ?? [], sources),
             block: makeClassBodyDiff(b.block, a.block, sources),
         }),
         identity,

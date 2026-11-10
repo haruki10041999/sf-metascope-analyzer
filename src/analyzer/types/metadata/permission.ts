@@ -1,4 +1,4 @@
-import type { ErrorJson, JsonType } from '../commons/json';
+import type { JsonType } from '../commons/json';
 import { childOf, childrenOf, type XmlElement } from '../commons/xml';
 import {
     makeMetadataJson,
@@ -291,7 +291,7 @@ type MakeJson<J> = (
     file: ParsedXmlFile,
     registry: XmlSourceRegistry,
     problems: XmlReadProblem[],
-) => J | ErrorJson;
+) => J | null;
 
 const makePermissionsJson =
     <K extends string, S extends PropertySchema, R extends Record<string, PermissionRowSpec>>(
@@ -301,8 +301,8 @@ const makePermissionsJson =
         rows: R,
     ): MakeJson<PermissionsRootJson<K, S, R>> =>
     (file, registry, problems) => {
-        const element = readXmlRoot(file, root, kind, registry, problems);
-        if (!('name' in element)) return element;
+        const element = readXmlRoot(file, root, kind, problems);
+        if (!element) return null;
         return makeMetadataJson<JsonType<K>>(
             kind,
             {
@@ -335,8 +335,8 @@ export const makeMutingPermissionSetJson: MakeJson<MutingPermissionSetJson> = ma
 
 /** profiles/<名前>.profile-meta.xml。すべての要素を読み、表にない要素は skippedElements に残す */
 export const makeProfileJson: MakeJson<ProfileJson> = (file, registry, problems) => {
-    const element = readXmlRoot(file, 'Profile', 'profile', registry, problems);
-    if (!('name' in element)) return element;
+    const element = readXmlRoot(file, 'Profile', 'profile', problems);
+    if (!element) return null;
     const loginHours = childOf(element, 'loginHours');
     return makeMetadataJson<ProfileJson>(
         'profile',
@@ -373,14 +373,8 @@ export const makePermissionSetGroupJson: MakeJson<PermissionSetGroupJson> = (
     registry,
     problems,
 ) => {
-    const element = readXmlRoot(
-        file,
-        'PermissionSetGroup',
-        'permissionSetGroup',
-        registry,
-        problems,
-    );
-    if (!('name' in element)) return element;
+    const element = readXmlRoot(file, 'PermissionSetGroup', 'permissionSetGroup', problems);
+    if (!element) return null;
     return makeMetadataJson<PermissionSetGroupJson>(
         'permissionSetGroup',
         {

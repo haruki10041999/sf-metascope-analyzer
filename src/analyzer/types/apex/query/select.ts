@@ -1,13 +1,13 @@
 import typia from 'typia';
 
-import { ErrorJson, JsonType } from '../../commons';
+import { JsonType } from '../../commons';
 import type {
     FieldNameTypeClass,
     SelectEntryTypeClass,
     SelectListTypeClass,
     SubFieldEntryTypeClass,
     SubFieldListTypeClass,
-} from '../../apex_IR_v2';
+} from '../../apex_IR';
 
 import { makeNodeJson } from '../commons/node';
 import { SoqlFunctionJson, makeSoqlFunctionJson } from './soqlFunction';
@@ -73,7 +73,7 @@ const makeSelectEntryJson = (
 };
 
 export type SelectJson = {
-    field: (SelectEntryJson | ErrorJson)[];
+    field: SelectEntryJson[];
 };
 
 export const isSelectJson = typia.createIs<SelectJson>();

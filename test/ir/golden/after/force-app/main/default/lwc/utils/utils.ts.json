@@ -1,0 +1,532 @@
+{
+  "module": {
+    "fileType": "ts",
+    "imports": [],
+    "otherExports": [
+      "formatAmount",
+      "toRows"
+    ],
+    "declarations": [
+      {
+        "kind": "lwcDeclaration",
+        "sourceKeys": {
+          "base": {},
+          "name": {}
+        },
+        "name": "formatter",
+        "declarationType": "variable",
+        "exported": false,
+        "variableKind": "const",
+        "init": "new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' })",
+        "references": [],
+        "calls": [],
+        "events": []
+      },
+      {
+        "kind": "lwcDeclaration",
+        "sourceKeys": {
+          "base": {},
+          "name": {}
+        },
+        "name": "formatAmount",
+        "declarationType": "function",
+        "exported": true,
+        "variableKind": "const",
+        "init": "(value: number): string => formatter.format(value)",
+        "references": [],
+        "param": [
+          {
+            "kind": "lwcParameter",
+            "sourceKeys": {},
+            "variant": "value",
+            "variantType": {
+              "kind": "lwcType",
+              "sourceKeys": {},
+              "text": "number",
+              "type": "primitive",
+              "primitiveType": "number"
+            },
+            "optional": false,
+            "modifier": {}
+          }
+        ],
+        "returnType": {
+          "kind": "lwcType",
+          "sourceKeys": {},
+          "text": "string",
+          "type": "primitive",
+          "primitiveType": "string"
+        },
+        "async": false,
+        "calls": [],
+        "events": []
+      },
+      {
+        "kind": "lwcDeclaration",
+        "sourceKeys": {
+          "base": {},
+          "name": {}
+        },
+        "name": "toRows",
+        "declarationType": "function",
+        "exported": true,
+        "references": [],
+        "param": [
+          {
+            "kind": "lwcParameter",
+            "sourceKeys": {},
+            "variant": "records",
+            "variantType": {
+              "kind": "lwcType",
+              "sourceKeys": {},
+              "text": "unknown[]",
+              "type": "array",
+              "elementType": {
+                "type": "primitive",
+                "primitiveType": "unknown"
+              }
+            },
+            "optional": false,
+            "modifier": {}
+          },
+          {
+            "kind": "lwcParameter",
+            "sourceKeys": {},
+            "variant": "limit",
+            "variantType": {
+              "kind": "lwcType",
+              "sourceKeys": {},
+              "text": "number",
+              "type": "primitive",
+              "primitiveType": "number"
+            },
+            "optional": true,
+            "modifier": {}
+          }
+        ],
+        "returnType": {
+          "kind": "lwcType",
+          "sourceKeys": {},
+          "text": "Row[]",
+          "type": "array",
+          "elementType": {
+            "type": "custom",
+            "customType": "Row"
+          }
+        },
+        "async": false,
+        "body": {
+          "kind": "lwcBody",
+          "sourceKeys": {},
+          "statements": 1
+        },
+        "calls": [],
+        "events": []
+      }
+    ],
+    "typeDeclarations": [
+      {
+        "kind": "lwcTypeDeclaration",
+        "sourceKeys": {
+          "base": {},
+          "name": {}
+        },
+        "name": "SortDirection",
+        "exported": true,
+        "declarationType": "type",
+        "variantType": {
+          "kind": "lwcType",
+          "sourceKeys": {},
+          "text": "'asc' | 'desc' | 'none'",
+          "type": "union",
+          "types": [
+            {
+              "type": "literal",
+              "value": "'asc'"
+            },
+            {
+              "type": "literal",
+              "value": "'desc'"
+            },
+            {
+              "type": "literal",
+              "value": "'none'"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "lwcTypeDeclaration",
+        "sourceKeys": {
+          "base": {},
+          "name": {}
+        },
+        "name": "Row",
+        "exported": true,
+        "declarationType": "interface",
+        "members": [
+          {
+            "name": "id",
+            "memberType": {
+              "type": "primitive",
+              "primitiveType": "string"
+            },
+            "optional": false,
+            "method": false
+          },
+          {
+            "name": "name",
+            "memberType": {
+              "type": "primitive",
+              "primitiveType": "string"
+            },
+            "optional": false,
+            "method": false
+          },
+          {
+            "name": "amount",
+            "memberType": {
+              "type": "primitive",
+              "primitiveType": "number"
+            },
+            "optional": true,
+            "method": false
+          },
+          {
+            "name": "industry",
+            "memberType": {
+              "type": "primitive",
+              "primitiveType": "string"
+            },
+            "optional": true,
+            "method": false
+          }
+        ]
+      },
+      {
+        "kind": "lwcTypeDeclaration",
+        "sourceKeys": {
+          "base": {},
+          "name": {}
+        },
+        "name": "ViewKind",
+        "exported": true,
+        "declarationType": "enum",
+        "enumMembers": [
+          "Table",
+          "Tile"
+        ]
+      }
+    ]
+  },
+  "sourceObject": [
+    {
+      "context": "'asc' | 'desc' | 'none'",
+      "start": {
+        "offset": 28,
+        "line": 1,
+        "column": 28
+      },
+      "end": {
+        "offset": 51,
+        "line": 1,
+        "column": 51
+      }
+    },
+    {
+      "context": "Row",
+      "start": {
+        "offset": 71,
+        "line": 3,
+        "column": 17
+      },
+      "end": {
+        "offset": 74,
+        "line": 3,
+        "column": 20
+      }
+    },
+    {
+      "context": "Row[]",
+      "start": {
+        "offset": 441,
+        "line": 19,
+        "column": 64
+      },
+      "end": {
+        "offset": 446,
+        "line": 19,
+        "column": 69
+      }
+    },
+    {
+      "context": "SortDirection",
+      "start": {
+        "offset": 12,
+        "line": 1,
+        "column": 12
+      },
+      "end": {
+        "offset": 25,
+        "line": 1,
+        "column": 25
+      }
+    },
+    {
+      "context": "ViewKind",
+      "start": {
+        "offset": 170,
+        "line": 10,
+        "column": 12
+      },
+      "end": {
+        "offset": 178,
+        "line": 10,
+        "column": 20
+      }
+    },
+    {
+      "context": "enum ViewKind {\n    Table,\n    Tile,\n}",
+      "start": {
+        "offset": 165,
+        "line": 10,
+        "column": 7
+      },
+      "end": {
+        "offset": 203,
+        "line": 13,
+        "column": 1
+      }
+    },
+    {
+      "context": "formatAmount = (value: number): string => formatter.format(value)",
+      "start": {
+        "offset": 309,
+        "line": 17,
+        "column": 13
+      },
+      "end": {
+        "offset": 374,
+        "line": 17,
+        "column": 78
+      }
+    },
+    {
+      "context": "formatAmount",
+      "start": {
+        "offset": 309,
+        "line": 17,
+        "column": 13
+      },
+      "end": {
+        "offset": 321,
+        "line": 17,
+        "column": 25
+      }
+    },
+    {
+      "context": "formatter = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' })",
+      "start": {
+        "offset": 211,
+        "line": 15,
+        "column": 6
+      },
+      "end": {
+        "offset": 293,
+        "line": 15,
+        "column": 88
+      }
+    },
+    {
+      "context": "formatter",
+      "start": {
+        "offset": 211,
+        "line": 15,
+        "column": 6
+      },
+      "end": {
+        "offset": 220,
+        "line": 15,
+        "column": 15
+      }
+    },
+    {
+      "context": "function toRows(records: unknown[], limit: number = 50): Row[] {\n    return records.slice(0, limit).map((record) => record as Row);\n}",
+      "start": {
+        "offset": 384,
+        "line": 19,
+        "column": 7
+      },
+      "end": {
+        "offset": 517,
+        "line": 21,
+        "column": 1
+      }
+    },
+    {
+      "context": "interface Row {\n    id: string;\n    name: string;\n    amount?: number;\n    industry?: string;\n}",
+      "start": {
+        "offset": 61,
+        "line": 3,
+        "column": 7
+      },
+      "end": {
+        "offset": 156,
+        "line": 8,
+        "column": 1
+      }
+    },
+    {
+      "context": "limit: number = 50",
+      "start": {
+        "offset": 420,
+        "line": 19,
+        "column": 43
+      },
+      "end": {
+        "offset": 438,
+        "line": 19,
+        "column": 61
+      }
+    },
+    {
+      "context": "number",
+      "start": {
+        "offset": 332,
+        "line": 17,
+        "column": 36
+      },
+      "end": {
+        "offset": 338,
+        "line": 17,
+        "column": 42
+      }
+    },
+    {
+      "context": "number",
+      "start": {
+        "offset": 427,
+        "line": 19,
+        "column": 50
+      },
+      "end": {
+        "offset": 433,
+        "line": 19,
+        "column": 56
+      }
+    },
+    {
+      "context": "records: unknown[]",
+      "start": {
+        "offset": 400,
+        "line": 19,
+        "column": 23
+      },
+      "end": {
+        "offset": 418,
+        "line": 19,
+        "column": 41
+      }
+    },
+    {
+      "context": "string",
+      "start": {
+        "offset": 341,
+        "line": 17,
+        "column": 45
+      },
+      "end": {
+        "offset": 347,
+        "line": 17,
+        "column": 51
+      }
+    },
+    {
+      "context": "toRows",
+      "start": {
+        "offset": 393,
+        "line": 19,
+        "column": 16
+      },
+      "end": {
+        "offset": 399,
+        "line": 19,
+        "column": 22
+      }
+    },
+    {
+      "context": "type SortDirection = 'asc' | 'desc' | 'none';",
+      "start": {
+        "offset": 7,
+        "line": 1,
+        "column": 7
+      },
+      "end": {
+        "offset": 52,
+        "line": 1,
+        "column": 52
+      }
+    },
+    {
+      "context": "unknown[]",
+      "start": {
+        "offset": 409,
+        "line": 19,
+        "column": 32
+      },
+      "end": {
+        "offset": 418,
+        "line": 19,
+        "column": 41
+      }
+    },
+    {
+      "context": "value: number",
+      "start": {
+        "offset": 325,
+        "line": 17,
+        "column": 29
+      },
+      "end": {
+        "offset": 338,
+        "line": 17,
+        "column": 42
+      }
+    },
+    {
+      "context": "{\n    return records.slice(0, limit).map((record) => record as Row);\n}",
+      "start": {
+        "offset": 447,
+        "line": 19,
+        "column": 70
+      },
+      "end": {
+        "offset": 517,
+        "line": 21,
+        "column": 1
+      }
+    }
+  ],
+  "resolvedError": [
+    {
+      "sourceKeys": {},
+      "phase": "lwc",
+      "code": "TS_UNSUPPORTED",
+      "level": "error",
+      "contextType": "enum",
+      "errorMessage": "enum は型を空白にできないため、LWC の検証をしていません",
+      "context": "enum ViewKind {\n    Table,\n    Tile,\n}",
+      "start": {
+        "offset": 165,
+        "line": 10,
+        "column": 7
+      },
+      "end": {
+        "offset": 203,
+        "line": 13,
+        "column": 1
+      },
+      "filePath": "utils/utils.ts"
+    }
+  ]
+}

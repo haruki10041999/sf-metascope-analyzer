@@ -1,7 +1,7 @@
 import typia from 'typia';
 
-import { ErrorJson, JsonType } from '../commons';
-import type { FormalParameterTypeClass } from '../apex_IR_v2';
+import { JsonType } from '../commons';
+import type { FormalParameterTypeClass } from '../apex_IR';
 
 import { makeNodeJson } from './commons/node';
 import { TypeJson, makeTypeJson } from './type';
@@ -9,7 +9,7 @@ import { ModifiersJson, makeModifiersJson } from './modifier';
 
 export type ParameterJson = JsonType<'parameter'> & {
     variant: string;
-    variantType: TypeJson | ErrorJson;
+    variantType: TypeJson;
     modifier: ModifiersJson;
 };
 

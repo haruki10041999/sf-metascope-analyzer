@@ -15,7 +15,7 @@ import type { LwcDiagnostic } from './validate/javascript';
 
 /**
  * syntax: 構文エラー / lwc: LWC の仕様違反 / analyzer: IR を作れなかった /
- * bundle: 同じバンドルの中の突き合わせ (テンプレートと JS など。validate/bundle.ts)
+ * bundle: 同じバンドルの中の突き合わせ (テンプレートと JS など。validate/bundle.ts)・バンドルそのものを読めなかった
  */
 export type LwcErrorPhase = 'syntax' | 'lwc' | 'analyzer' | 'bundle';
 
@@ -36,6 +36,9 @@ export type LwcResolvedError = {
     start: SourcePosition;
     end: SourcePosition;
 };
+
+/** バンドルそのものを読めなかった理由 (bundleProblem) */
+export type LwcBundleProblemCode = 'BUNDLE_UNREADABLE' | 'MAIN_MODULE_NOT_FOUND';
 
 type ReportedError = Omit<LwcResolvedError, 'sourceKeys' | 'filePath'>;
 
@@ -153,6 +156,21 @@ export class LwcCommonErrorListener {
     }
 
     /**
+     * バンドルそのものを読めなかった (フォルダが読めない・メインのモジュールがない)。
+     * 結果の中身 (base) は持たないので、理由はここだけに出る。位置はソースの先頭
+     */
+    bundleProblem(code: LwcBundleProblemCode, message: string): void {
+        this.errors.push({
+            phase: 'bundle',
+            code,
+            level: 'error',
+            contextType: 'lwcBundle',
+            errorMessage: message,
+            ...this.spanOf(0, 0),
+        });
+    }
+
+    /**
      * IR を作れなかったところ (v1 は LwcErrorTypeClass、v2 は buildLwcIr の IrError)。構文エラーの位置を含むもの (回復した構文エラーで型の合わないノードになったもの。
      * 1 = 2 の 1 など) は、構文エラーとして報告済みなので除く。先に構文エラーを渡しておく
      */
@@ -182,7 +200,7 @@ export class LwcCommonErrorListener {
     /**
      * IR v2 (buildApexIr・buildLwcIr) で IR を作れなかったところ。解析木には残らず、ここで resolvedError にする。
      * 構文エラーがあれば、IR のエラーはその結果 (壊したソースで、構文エラーなしで IR のエラーだけ出たものは 0 件) なので
-     * 出さず、構文エラーだけを出す。構文エラーがなければ、IR の足りないところなので出す (docs/ir-v2.md 4 章)
+     * 出さず、構文エラーだけを出す。構文エラーがなければ、IR の足りないところなので出す (docs/ir.md 4 章)
      */
     irErrors(errors: readonly IrErrorLike[]): void {
         if (this.hasSyntaxError()) return;

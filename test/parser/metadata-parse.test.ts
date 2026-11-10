@@ -161,19 +161,35 @@ describe('MetadataParser.parseObject', () => {
         );
     });
 
-    it('turns unreadable files into ErrorJson and resolvedError', async () => {
+    it('reads customSettingsType / customSettingsVisibility of custom settings', () => {
+        const result = MetadataParser.parseObjectSource('Billing_Config__c', [
+            {
+                fileName: 'Billing_Config__c.object-meta.xml',
+                filePath: 'Billing_Config__c/Billing_Config__c.object-meta.xml',
+                source: [
+                    '<?xml version="1.0" encoding="UTF-8"?>',
+                    '<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">',
+                    '    <customSettingsType>Hierarchy</customSettingsType>',
+                    '    <customSettingsVisibility>Protected</customSettingsVisibility>',
+                    '    <label>Billing Config</label>',
+                    '    <visibility>Public</visibility>',
+                    '</CustomObject>',
+                ].join('\n'),
+            },
+        ]) as ObjectFileStructureType;
+        const object = result.result.base;
+        // objectType は接尾辞で決めたまま (custom)。カスタム設定かは customSettingsType で分かる
+        assert.equal(object.objectType, 'custom');
+        assert.equal(object.customSettingsType, 'Hierarchy');
+        assert.equal(object.customSettingsVisibility, 'Protected');
+        assert.equal(object.skippedElements, undefined);
+    });
+
+    it('drops unreadable files from the JSON and reports them in resolvedError', async () => {
         const result = await parseAfter('Broken__c');
         assert.equal(result.dataType, 'object');
-        assert.deepEqual(
-            result.result.base.fields!.map((field) => [
-                field.kind,
-                field.kind === 'error' && field.kindType,
-            ]),
-            [
-                ['error', 'field'],
-                ['error', 'field'],
-            ],
-        );
+        // 読めない項目は JSON に持たない (ほかに項目がないので fields ごと持たない)
+        assert.equal(result.result.base.fields, undefined);
         assert.deepEqual(
             result.resolvedError.map((error) => [error.code, error.filePath, error.start.line]),
             [

@@ -1,6 +1,5 @@
 import typia from 'typia';
 
-import { ErrorJson } from '../../commons';
 import type {
     CoordinateValueTypeClass,
     DateFieldNameTypeClass,
@@ -9,7 +8,7 @@ import type {
     SoqlFieldsParameterTypeClass,
     SoqlFunctionType,
     SoqlFunctionTypeClass,
-} from '../../apex_IR_v2';
+} from '../../apex_IR';
 
 import { BaseExpressionJson, makeExpressionJsonConvert } from '../expression';
 
@@ -40,7 +39,7 @@ const makeSoqlFieldParameterJson = (
 export type CoordinateElementJson =
     | {
           type: 'bind';
-          value: BaseExpressionJson | ErrorJson;
+          value: BaseExpressionJson;
       }
     | {
           type: 'literal';
@@ -90,11 +89,11 @@ type LocationValueElementJson =
       }
     | {
           type: 'bind';
-          field: BaseExpressionJson | ErrorJson;
+          field: BaseExpressionJson;
       }
     | {
           type: 'coordinate';
-          field: CoordinateValueJson | ErrorJson;
+          field: CoordinateValueJson;
       };
 
 const makeLocationValueElementJson = (target: LocationValueTypeClass): LocationValueElementJson => {
@@ -177,7 +176,7 @@ export type SoqlFunctionJson = { type: 'soqlFunction' } & (
       }
     | {
           func: 'FORMAT';
-          arg: string[] | Omit<SoqlFunctionJson, 'type'> | ErrorJson;
+          arg: string[] | Omit<SoqlFunctionJson, 'type'>;
       }
     | {
           func: 'FIELDS';
@@ -185,7 +184,7 @@ export type SoqlFunctionJson = { type: 'soqlFunction' } & (
       }
     | {
           func: 'DISTANCE';
-          arg: DistanceValueJson | ErrorJson;
+          arg: DistanceValueJson;
       }
 );
 

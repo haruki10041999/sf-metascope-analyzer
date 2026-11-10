@@ -56,9 +56,10 @@ describe('Apex の単位とメタデータ (-meta.xml)', () => {
         ]);
     });
 
-    it('読めない -meta.xml は ErrorJson にし、単位の resolvedError に filePath 付きで入れる', async () => {
+    it('読めない -meta.xml は meta を null にし、単位の resolvedError に filePath 付きで入れる', async () => {
         const broken = await parseUnit('after', 'Broken.cls');
-        assert.equal(broken.result.base.meta?.meta.kind, 'error');
+        assert.equal(broken.result.base.meta?.fileName, 'Broken.cls-meta.xml');
+        assert.equal(broken.result.base.meta?.meta, null);
         assert.deepEqual(
             broken.resolvedError
                 .filter((e) => e.filePath === 'Broken.cls-meta.xml')
@@ -126,7 +127,9 @@ describe('Apex のメタデータの Diff (makeApexUnitDiffs)', () => {
     it('読めなくなった -meta.xml は値ごとの変更', () => {
         const broken = metaDiff('class_Broken');
         assert.equal(broken.status, 'changed');
-        // JSON ノードの kind は中身から分けて持つ (ほかの値ごとの差分と同じ)
-        assert.deepEqual(broken.kind, { before: 'apexClassMeta', after: 'error' });
+        // JSON ノードの kind は中身から分けて持つ (ほかの値ごとの差分と同じ)。
+        // 読めなくなった側は meta が null (エラーのノードは持たない。理由は resolvedError の差分)
+        assert.deepEqual(broken.kind, { before: 'apexClassMeta' });
+        assert.equal(broken.after, null);
     });
 });

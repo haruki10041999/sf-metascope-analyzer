@@ -3,7 +3,6 @@ import {
     ApexClassMetaJson,
     ApexMetaJson,
     ApexTriggerMetaJson,
-    ErrorJson,
     PackageVersionJson,
 } from '../../../types';
 
@@ -69,14 +68,14 @@ const makeApexMetaFields = (before: ApexMetaJson, after: ApexMetaJson): ApexMeta
 });
 
 export const makeApexClassMetaDiff = (
-    before: ApexClassMetaJson | ErrorJson,
-    after: ApexClassMetaJson | ErrorJson,
+    before: ApexClassMetaJson,
+    after: ApexClassMetaJson,
     match: Match = 'slot',
 ): ApexClassMetaJsonDiff => makeNodeDiff('apexClassMeta', before, after, match, makeApexMetaFields);
 
 export const makeApexTriggerMetaDiff = (
-    before: ApexTriggerMetaJson | ErrorJson,
-    after: ApexTriggerMetaJson | ErrorJson,
+    before: ApexTriggerMetaJson,
+    after: ApexTriggerMetaJson,
     match: Match = 'slot',
 ): ApexTriggerMetaJsonDiff =>
     makeNodeDiff('apexTriggerMeta', before, after, match, makeApexMetaFields);

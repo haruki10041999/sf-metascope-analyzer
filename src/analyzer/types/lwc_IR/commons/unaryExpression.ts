@@ -1,55 +1,80 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isUnaryExpression, type UnaryExpression } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
+    lazyPairs,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
+import { memberExpressionTypePair, type MemberExpressionTypeClass } from './memberExpression';
+import {
+    optionalMemberExpressionTypePair,
+    type OptionalMemberExpressionTypeClass,
+} from './optionalMemberExpression';
 
-export type UnaryExpressionFields = {
-    prefix: UnaryExpression['prefix'];
-    argument: ExpressionTypeClass | LwcErrorTypeClass;
-    operator: UnaryExpression['operator'];
-};
+const unaryExpressionDeleteArgumentPairs = lazyPairs(
+    () => [memberExpressionTypePair, optionalMemberExpressionTypePair] as const,
+);
 
-export class UnaryExpressionTypeClass extends LwcCommonTypeClass<'unaryExpression'> {
-    private readonly value: UnaryExpressionFields;
+/**
+ * 単項演算 (いつも前置)。LWC はモジュール (strict) なので、delete の対象はプロパティの参照だけ
+ * (`delete x` は書けない)
+ */
+export type UnaryExpressionFields = TypeField<'unaryExpression'> &
+    (
+        | {
+              operator: 'delete';
+              argument: MemberExpressionTypeClass | OptionalMemberExpressionTypeClass;
+          }
+        | {
+              operator: Exclude<UnaryExpression['operator'], 'delete'>;
+              argument: ExpressionTypeClass;
+          }
+    );
 
-    private constructor(value: UnaryExpressionFields) {
-        super('unaryExpression');
-        this.value = value;
+export class UnaryExpressionTypeClass extends LwcCommonTypeClass<
+    'unaryExpression',
+    UnaryExpressionFields
+> {
+    private constructor(value: FieldsOf<UnaryExpressionFields>, sourceSpan: SourceSpan) {
+        super('unaryExpression', value, sourceSpan);
     }
 
     static create(target: UnaryExpression, originalSource: string): UnaryExpressionTypeClass {
-        return new UnaryExpressionTypeClass({
-            prefix: target.prefix,
-            argument: visitNode(
-                target.argument,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-            operator: target.operator,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): UnaryExpressionFields {
-        return this.value;
-    }
-
-    getPrefix(): UnaryExpressionFields['prefix'] {
-        return this.value.prefix;
+        return new UnaryExpressionTypeClass(
+            target.operator === 'delete'
+                ? {
+                      operator: target.operator,
+                      argument: visitNode(
+                          target.argument,
+                          originalSource,
+                          unaryExpressionDeleteArgumentPairs(),
+                          'UnaryExpression.argument (delete)',
+                      ),
+                  }
+                : {
+                      operator: target.operator,
+                      argument: visitNode(
+                          target.argument,
+                          originalSource,
+                          expressionVisitorEvaluatePairs(),
+                          'ExpressionVisitor',
+                      ),
+                  },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getArgument(): UnaryExpressionFields['argument'] {
-        return this.value.argument;
+        return this.getFields().argument;
     }
 
     getOperator(): UnaryExpressionFields['operator'] {
-        return this.value.operator;
+        return this.getFields().operator;
     }
 }
 
@@ -59,5 +84,5 @@ export const unaryExpressionTypePair: EvaluatePair<UnaryExpression, UnaryExpress
     );
 
 export const isUnaryExpressionType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is UnaryExpressionTypeClass => target instanceof UnaryExpressionTypeClass;

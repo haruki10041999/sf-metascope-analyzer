@@ -1,40 +1,46 @@
 import { FormalParameterListContext } from '@apexdevtools/apex-parser';
 
-import { ListTypeClass } from '../listVisitor';
-
+import { FormalParameterTypeClass } from '../parameterVisitor';
 import {
-    FormalParameterTypeClass,
-    ParameterVisitor,
-    isFormalParameterType,
-} from '../parameterVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
+    ApexCommonTypeClass,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class FormalParameterListTypeClass extends ListTypeClass<
+export type FormalParameterListType = TypeField<'formalParameterList'> & {
+    value: FormalParameterTypeClass[];
+};
+
+export class FormalParameterListTypeClass extends ApexCommonTypeClass<
     'formalParameterList',
-    FormalParameterTypeClass
+    FormalParameterListType
 > {
-    private constructor(value: (FormalParameterTypeClass | ApexErrorTypeClass)[]) {
-        super('formalParameterList', value);
+    private constructor(fields: FieldsOf<FormalParameterListType>, sourceSpan: SourceSpan) {
+        super('formalParameterList', fields, sourceSpan);
     }
 
     static create(ctx: FormalParameterListContext): FormalParameterListTypeClass {
-        if (!ctx.formalParameter_list() || ctx.formalParameter_list().length === 0) {
-            throw new Error('値が異常です。FormalParameterListContext: ' + ctx.getText());
-        }
-
         return new FormalParameterListTypeClass(
-            visitNodeList(
-                new ParameterVisitor(),
-                ctx.formalParameter_list(),
-                isFormalParameterType,
-                'formalParameter',
-            ),
+            {
+                value: createNodeList(
+                    ctx.formalParameter_list(),
+                    (c) => FormalParameterTypeClass.create(c),
+                    'formalParameter',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): FormalParameterListType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isFormalParameterListType = (
-    target: ApexCommonTypeClass<string>,
-): target is FormalParameterListTypeClass => {
-    return target instanceof FormalParameterListTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is FormalParameterListTypeClass =>
+    isSpicifyApexCommonTypeClass('formalParameterList', target);

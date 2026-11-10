@@ -1,4 +1,4 @@
-import { CompactLayoutJson, ErrorJson } from '../../../types';
+import { CompactLayoutJson } from '../../../types';
 
 import {
     Match,
@@ -27,8 +27,8 @@ export type CompactLayoutJsonDiff = NodeDiff<
 >;
 
 export const makeCompactLayoutDiff = (
-    before: CompactLayoutJson | ErrorJson,
-    after: CompactLayoutJson | ErrorJson,
+    before: CompactLayoutJson,
+    after: CompactLayoutJson,
     match: Match = 'slot',
 ): CompactLayoutJsonDiff =>
     makeNodeDiff('compactLayout', before, after, match, (b, a) => ({

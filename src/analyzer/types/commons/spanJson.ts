@@ -1,5 +1,5 @@
 import type { SourcePosition } from './source';
-import { ConvertKeys, ErrorJson, JsonType } from './json';
+import { ConvertKeys, JsonType } from './json';
 import { hash, isRecord, sortKeys } from './utils';
 
 // 位置の範囲 (start / end) を持つ木から、kind / sourceKeys 付きの JSON を直接作る部品。
@@ -100,30 +100,6 @@ export const makeSpanJson = <T extends JsonType<string>>(
         end,
     });
     return { kind, sourceKeys, ...properties } as unknown as T;
-};
-
-/**
- * 読めなかったファイル・要素の ErrorJson。kindType は何として読もうとしたか (field / lwcStylesheet など)。
- * ソースの文字列はファイル全体、位置はエラーの位置
- */
-export const makeSpanErrorJson = (
-    kindType: string,
-    message: string,
-    position: SourcePosition,
-    file: SourceFile,
-    registry: SpanSourceRegistry,
-): ErrorJson => {
-    const sourceKeys: ConvertKeys = {
-        objectKey: `error_${hash({ kindType, message })}`,
-        sourceKey: `error_${hash({ filePath: file.filePath, position })}`,
-    };
-    registry.register(sourceKeys, {
-        context: file.source,
-        filePath: file.filePath,
-        start: position,
-        end: position,
-    });
-    return { kind: 'error', sourceKeys, kindType };
 };
 
 /** ソース位置を引く。見つからなければ例外 */

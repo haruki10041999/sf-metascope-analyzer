@@ -5,7 +5,7 @@ import { isLogicalConditionJson } from '../../src/analyzer/types/apex/query/comm
 
 import { find, toJson, unitRules } from './helpers';
 
-// WHERE の論理条件 (makeLogicalConditionJson)。IR v2 の木から作る (docs/ir-v2-integration.md)
+// WHERE の論理条件 (makeLogicalConditionJson)。IR v2 の木から作る (docs/ir-integration.md)
 
 const whereOf = async (where: string) => {
     const { json, irErrors } = await toJson(

@@ -1,11 +1,6 @@
 import { MergeStatementContext } from '@apexdevtools/apex-parser';
 
-import {
-    AccessLevelTypeClass,
-    StatementListTypeClass,
-    StatementVisitor,
-    isAccessLevelType,
-} from '.';
+import { AccessLevelTypeClass } from './accessLevel';
 
 import {
     BasedExpressionTypeClass,
@@ -13,53 +8,72 @@ import {
     isBasedExpressionType,
 } from '../expressionVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNodeList,
-    visitOptionalNode,
+    createOptionalNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+    visitNode,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class MergeStatementTypeClass extends StatementListTypeClass<
+/** `MERGE accessLevel? 統合先 統合元;` */
+export type MergeStatementType = TypeField<'mergeStatement'> & {
+    /** 統合先 (1 つ目の式) */
+    master: BasedExpressionTypeClass;
+    /** 統合元 (2 つ目の式) */
+    merged: BasedExpressionTypeClass;
+    accessLevel: AccessLevelTypeClass | null;
+};
+
+export class MergeStatementTypeClass extends ApexCommonTypeClass<
     'mergeStatement',
-    BasedExpressionTypeClass
+    MergeStatementType
 > {
-    private accessLevel: AccessLevelTypeClass | ApexErrorTypeClass | null = null;
-    private constructor(
-        value: (BasedExpressionTypeClass | ApexErrorTypeClass)[],
-        accessLevel: AccessLevelTypeClass | ApexErrorTypeClass | null,
-    ) {
-        super('mergeStatement', value);
-        this.accessLevel = accessLevel;
+    private constructor(fields: FieldsOf<MergeStatementType>, sourceSpan: SourceSpan) {
+        super('mergeStatement', fields, sourceSpan);
     }
 
     static create(ctx: MergeStatementContext): MergeStatementTypeClass {
-        if (!ctx.expression_list() || ctx.expression_list().length !== 2) {
-            throw new Error('値が異常です。MergeStatementContext: ' + ctx.getText());
-        }
-
         return new MergeStatementTypeClass(
-            visitNodeList(
-                new ExpressionVisitor(),
-                ctx.expression_list(),
-                isBasedExpressionType,
-                'expression',
-            ),
-            visitOptionalNode(
-                new StatementVisitor(),
-                ctx.accessLevel(),
-                isAccessLevelType,
-                'accessLevel',
-            ),
+            {
+                master: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(0),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+                merged: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(1),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+                accessLevel: createOptionalNode(
+                    ctx.accessLevel(),
+                    (c) => AccessLevelTypeClass.create(c),
+                    'accessLevel',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getAccessLevel(): AccessLevelTypeClass | ApexErrorTypeClass | null {
-        return this.accessLevel;
+    getMaster(): MergeStatementType['master'] {
+        return this.getFields().master;
+    }
+
+    getMerged(): MergeStatementType['merged'] {
+        return this.getFields().merged;
+    }
+
+    getAccessLevel(): MergeStatementType['accessLevel'] {
+        return this.getFields().accessLevel;
     }
 }
 
 export const isMergeStatementType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is MergeStatementTypeClass => {
-    return target instanceof MergeStatementTypeClass;
+    return isSpicifyApexCommonTypeClass('mergeStatement', target);
 };

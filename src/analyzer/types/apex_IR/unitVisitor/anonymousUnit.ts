@@ -1,36 +1,45 @@
 import { AnonymousUnitContext } from '@apexdevtools/apex-parser';
 
-import { UnitTypeClass } from '.';
+import { AnonymousBlockTypeClass } from '../blockVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { AnonymousBlockTypeClass, BlockVisitor, isAnonymousBlockType } from '../blockVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type AnonymousUnitType = TypeField<'anonymousUnit'> & {
+    block: AnonymousBlockTypeClass;
+};
 
-export class AnonymousUnitTypeClass extends UnitTypeClass<
+export class AnonymousUnitTypeClass extends ApexCommonTypeClass<
     'anonymousUnit',
-    AnonymousBlockTypeClass
+    AnonymousUnitType
 > {
-    private constructor(value: AnonymousBlockTypeClass | ApexErrorTypeClass) {
-        super('anonymousUnit', value);
+    private constructor(fields: FieldsOf<AnonymousUnitType>, sourceSpan: SourceSpan) {
+        super('anonymousUnit', fields, sourceSpan);
     }
 
     static create(ctx: AnonymousUnitContext): AnonymousUnitTypeClass {
-        if (!ctx.anonymousBlock()) {
-            throw new Error('値が異常です。AnonymousUnitContext: ' + ctx.getText());
-        }
-
         return new AnonymousUnitTypeClass(
-            visitNode(
-                new BlockVisitor(),
-                ctx.anonymousBlock(),
-                isAnonymousBlockType,
-                'anonymousUnit',
-            ),
+            {
+                block: createNode(
+                    ctx.anonymousBlock(),
+                    (c) => AnonymousBlockTypeClass.create(c),
+                    'anonymousBlock',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getBlock(): AnonymousUnitType['block'] {
+        return this.getFields().block;
     }
 }
 
 export const isAnonymousUnitType = (
-    target: ApexCommonTypeClass<string>,
-): target is AnonymousUnitTypeClass => {
-    return target instanceof AnonymousUnitTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is AnonymousUnitTypeClass => isSpicifyApexCommonTypeClass('anonymousUnit', target);

@@ -1,55 +1,55 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isWhileStatement, type WhileStatement } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
 import { statementVisitorEvaluatePairs, type StatementTypeClass } from '../statementVisitor';
 
-export type WhileStatementFields = {
-    test: ExpressionTypeClass | LwcErrorTypeClass;
-    body: StatementTypeClass | LwcErrorTypeClass;
+export type WhileStatementFields = TypeField<'whileStatement'> & {
+    test: ExpressionTypeClass;
+    body: StatementTypeClass;
 };
 
-export class WhileStatementTypeClass extends LwcCommonTypeClass<'whileStatement'> {
-    private readonly value: WhileStatementFields;
-
-    private constructor(value: WhileStatementFields) {
-        super('whileStatement');
-        this.value = value;
+export class WhileStatementTypeClass extends LwcCommonTypeClass<
+    'whileStatement',
+    WhileStatementFields
+> {
+    private constructor(value: FieldsOf<WhileStatementFields>, sourceSpan: SourceSpan) {
+        super('whileStatement', value, sourceSpan);
     }
 
     static create(target: WhileStatement, originalSource: string): WhileStatementTypeClass {
-        return new WhileStatementTypeClass({
-            test: visitNode(
-                target.test,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-            body: visitNode(
-                target.body,
-                originalSource,
-                statementVisitorEvaluatePairs(),
-                'StatementVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): WhileStatementFields {
-        return this.value;
+        return new WhileStatementTypeClass(
+            {
+                test: visitNode(
+                    target.test,
+                    originalSource,
+                    expressionVisitorEvaluatePairs(),
+                    'ExpressionVisitor',
+                ),
+                body: visitNode(
+                    target.body,
+                    originalSource,
+                    statementVisitorEvaluatePairs(),
+                    'StatementVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getTest(): WhileStatementFields['test'] {
-        return this.value.test;
+        return this.getFields().test;
     }
 
     getBody(): WhileStatementFields['body'] {
-        return this.value.body;
+        return this.getFields().body;
     }
 }
 
@@ -59,5 +59,5 @@ export const whileStatementTypePair: EvaluatePair<WhileStatement, WhileStatement
     );
 
 export const isWhileStatementType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is WhileStatementTypeClass => target instanceof WhileStatementTypeClass;

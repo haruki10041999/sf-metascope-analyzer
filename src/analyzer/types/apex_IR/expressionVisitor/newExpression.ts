@@ -1,28 +1,39 @@
 import { NewExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionTypeClass } from '.';
+import { CreatorTypeClass } from '../restVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-import { CreatorTypeClass, RestVisitor, isCreatorType } from '../restVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+/** `new creator` */
+export type NewExpressionType = TypeField<'newExpression'> & {
+    value: CreatorTypeClass;
+};
 
-export class NewExpressionTypeClass extends ExpressionTypeClass<'newExpression', CreatorTypeClass> {
-    private constructor(value: CreatorTypeClass | ApexErrorTypeClass) {
-        super('newExpression', value);
+export class NewExpressionTypeClass extends ApexCommonTypeClass<
+    'newExpression',
+    NewExpressionType
+> {
+    private constructor(fields: FieldsOf<NewExpressionType>, sourceSpan: SourceSpan) {
+        super('newExpression', fields, sourceSpan);
     }
 
     static create(ctx: NewExpressionContext): NewExpressionTypeClass {
-        if (!ctx.creator()) {
-            throw new Error('値が異常です。NewExpressionContext: ' + ctx.getText());
-        }
-
         return new NewExpressionTypeClass(
-            visitNode(new RestVisitor(), ctx.creator(), isCreatorType, 'creator'),
+            { value: createNode(ctx.creator(), (c) => CreatorTypeClass.create(c), 'creator') },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): NewExpressionType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isNewExpressionType = (
-    target: ApexCommonTypeClass<string>,
-): target is NewExpressionTypeClass => {
-    return target instanceof NewExpressionTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is NewExpressionTypeClass => isSpicifyApexCommonTypeClass('newExpression', target);

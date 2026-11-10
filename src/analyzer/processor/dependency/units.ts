@@ -187,7 +187,6 @@ export const getObjectUnitDependencies = (unit: ObjectParseResult): UnitDependen
     ];
     for (const [key, defType] of memberDefs) {
         for (const member of rows(object, key)) {
-            if (member.kind === 'error') continue;
             const name = `${apiName}.${String(member.fullName)}`;
             def(defType, name, member);
             const site = { member: name, statement: keysOf(member) };
@@ -325,8 +324,17 @@ export const getLwcDependencies = (unit: LwcBundleParseResult): UnitDependencies
         if (node.kind === 'lwcComponent' && Array.isArray(node.block)) {
             for (const member of node.block) {
                 if (!isRecord(member)) continue;
-                const decorators = JSON.stringify(member.decorators ?? member.decorator ?? '');
-                if (/"api"/.test(decorators) && typeof member.name === 'string') {
+                // デコレーターは modifier.decorator (getter / setter は getterContent・setterContent の modifier)
+                const decorators = [member, member.getterContent, member.setterContent].flatMap(
+                    (owner) =>
+                        isRecord(owner) && isRecord(owner.modifier)
+                            ? rows(owner.modifier, 'decorator')
+                            : [],
+                );
+                if (
+                    decorators.some((decorator) => decorator.name === 'api') &&
+                    typeof member.name === 'string'
+                ) {
                     const sourceKeys = keysOf(member);
                     definitions.push({
                         defType: 'lwcProperty',

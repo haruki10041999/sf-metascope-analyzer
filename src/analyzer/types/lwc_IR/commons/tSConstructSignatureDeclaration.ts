@@ -1,3 +1,5 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import {
     isTSConstructSignatureDeclaration,
     type TSConstructSignatureDeclaration,
@@ -5,28 +7,18 @@ import {
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNodeList,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import {
-    tSTypeAnnotationTypePair,
-    type TSTypeAnnotationTypeClass,
-} from '../typeScriptVisitor/tSTypeAnnotation';
-import {
-    tSTypeParameterDeclarationTypePair,
-    type TSTypeParameterDeclarationTypeClass,
-} from '../typeScriptVisitor/tSTypeParameterDeclaration';
+import { TSTypeAnnotationTypeClass } from '../typeScriptVisitor/tSTypeAnnotation';
+import { TSTypeParameterDeclarationTypeClass } from '../typeScriptVisitor/tSTypeParameterDeclaration';
 import { arrayPatternTypePair, type ArrayPatternTypeClass } from './arrayPattern';
 import { identifierTypePair, type IdentifierTypeClass } from './identifier';
 import { objectPatternTypePair, type ObjectPatternTypeClass } from './objectPattern';
 import { restElementTypePair, type RestElementTypeClass } from './restElement';
 
-const tSConstructSignatureDeclarationTypeParametersPairs = lazyPairs(
-    () => [tSTypeParameterDeclarationTypePair] as const,
-);
 const tSConstructSignatureDeclarationParamsPairs = lazyPairs(
     () =>
         [
@@ -36,71 +28,64 @@ const tSConstructSignatureDeclarationParamsPairs = lazyPairs(
             restElementTypePair,
         ] as const,
 );
-const tSConstructSignatureDeclarationReturnTypePairs = lazyPairs(
-    () => [tSTypeAnnotationTypePair] as const,
-);
 
-export type TSConstructSignatureDeclarationFields = {
-    typeParameters: TSTypeParameterDeclarationTypeClass | LwcErrorTypeClass | null;
+export type TSConstructSignatureDeclarationFields = TypeField<'tSConstructSignatureDeclaration'> & {
+    typeParameters: TSTypeParameterDeclarationTypeClass | null;
     params: (
-        | ArrayPatternTypeClass
-        | IdentifierTypeClass
-        | ObjectPatternTypeClass
-        | RestElementTypeClass
-        | LwcErrorTypeClass
+        ArrayPatternTypeClass | IdentifierTypeClass | ObjectPatternTypeClass | RestElementTypeClass
     )[];
-    returnType: TSTypeAnnotationTypeClass | LwcErrorTypeClass | null;
+    returnType: TSTypeAnnotationTypeClass | null;
 };
 
-export class TSConstructSignatureDeclarationTypeClass extends LwcCommonTypeClass<'tSConstructSignatureDeclaration'> {
-    private readonly value: TSConstructSignatureDeclarationFields;
-
-    private constructor(value: TSConstructSignatureDeclarationFields) {
-        super('tSConstructSignatureDeclaration');
-        this.value = value;
+export class TSConstructSignatureDeclarationTypeClass extends LwcCommonTypeClass<
+    'tSConstructSignatureDeclaration',
+    TSConstructSignatureDeclarationFields
+> {
+    private constructor(
+        value: FieldsOf<TSConstructSignatureDeclarationFields>,
+        sourceSpan: SourceSpan,
+    ) {
+        super('tSConstructSignatureDeclaration', value, sourceSpan);
     }
 
     static create(
         target: TSConstructSignatureDeclaration,
         originalSource: string,
     ): TSConstructSignatureDeclarationTypeClass {
-        return new TSConstructSignatureDeclarationTypeClass({
-            typeParameters: visitOptionalNode(
-                target.typeParameters,
-                originalSource,
-                tSConstructSignatureDeclarationTypeParametersPairs(),
-                'TSConstructSignatureDeclaration.typeParameters',
-            ),
-            params: visitNodeList(
-                target.params,
-                originalSource,
-                tSConstructSignatureDeclarationParamsPairs(),
-                'TSConstructSignatureDeclaration.params',
-            ),
-            returnType: visitOptionalNode(
-                target.returnType,
-                originalSource,
-                tSConstructSignatureDeclarationReturnTypePairs(),
-                'TSConstructSignatureDeclaration.returnType',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSConstructSignatureDeclarationFields {
-        return this.value;
+        return new TSConstructSignatureDeclarationTypeClass(
+            {
+                typeParameters:
+                    target.typeParameters == null
+                        ? null
+                        : TSTypeParameterDeclarationTypeClass.create(
+                              target.typeParameters,
+                              originalSource,
+                          ),
+                params: visitNodeList(
+                    target.params,
+                    originalSource,
+                    tSConstructSignatureDeclarationParamsPairs(),
+                    'TSConstructSignatureDeclaration.params',
+                ),
+                returnType:
+                    target.returnType == null
+                        ? null
+                        : TSTypeAnnotationTypeClass.create(target.returnType, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getTypeParameters(): TSConstructSignatureDeclarationFields['typeParameters'] {
-        return this.value.typeParameters;
+        return this.getFields().typeParameters;
     }
 
     getParams(): TSConstructSignatureDeclarationFields['params'] {
-        return this.value.params;
+        return this.getFields().params;
     }
 
     getReturnType(): TSConstructSignatureDeclarationFields['returnType'] {
-        return this.value.returnType;
+        return this.getFields().returnType;
     }
 }
 
@@ -112,6 +97,6 @@ export const tSConstructSignatureDeclarationTypePair: EvaluatePair<
 );
 
 export const isTSConstructSignatureDeclarationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSConstructSignatureDeclarationTypeClass =>
     target instanceof TSConstructSignatureDeclarationTypeClass;

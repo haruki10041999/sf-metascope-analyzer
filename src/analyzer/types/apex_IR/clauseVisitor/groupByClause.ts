@@ -1,71 +1,67 @@
 import { GroupByClauseContext } from '@apexdevtools/apex-parser';
 
-import { ClauseTypeClass } from '.';
-
+import { LogicalExpressionTypeClass } from '../expressionVisitor';
+import { FieldGroupByListTypeClass } from '../listVisitor';
 import {
-    LogicalExpressionTypeClass,
-    ExpressionVisitor,
-    isLogicalExpressionType,
-} from '../expressionVisitor';
-import { FieldGroupByListTypeClass, ListVisitor, isFieldGroupByListType } from '../listVisitor';
-import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNode,
-    visitOptionalNode,
+    createNode,
+    createOptionalNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class GroupByClauseTypeClass extends ClauseTypeClass<
+export type GroupByClauseType = TypeField<'groupByClause'> & {
+    value: FieldGroupByListTypeClass;
+    mode: 'ROLLUP' | 'CUBE' | null;
+    having: LogicalExpressionTypeClass | null;
+};
+
+export class GroupByClauseTypeClass extends ApexCommonTypeClass<
     'groupByClause',
-    FieldGroupByListTypeClass
+    GroupByClauseType
 > {
-    private mode: 'ROLLUP' | 'CUBE' | null = null;
-    private having: LogicalExpressionTypeClass | ApexErrorTypeClass | null = null;
-
-    private constructor(
-        value: FieldGroupByListTypeClass | ApexErrorTypeClass,
-        mode: 'ROLLUP' | 'CUBE' | null,
-        having: LogicalExpressionTypeClass | ApexErrorTypeClass | null,
-    ) {
-        super('groupByClause', value);
-        this.mode = mode;
-        this.having = having;
+    private constructor(fields: FieldsOf<GroupByClauseType>, sourceSpan: SourceSpan) {
+        super('groupByClause', fields, sourceSpan);
     }
 
     static create(ctx: GroupByClauseContext): GroupByClauseTypeClass {
-        if (!ctx.fieldGroupByList()) {
-            throw new Error('値が異常です。GroupByClauseContext: ' + ctx.getText());
-        }
-
         return new GroupByClauseTypeClass(
-            visitNode(
-                new ListVisitor(),
-                ctx.fieldGroupByList(),
-                isFieldGroupByListType,
-                'fieldGroupByList',
-            ),
-            ctx.ROLLUP() ? 'ROLLUP' : ctx.CUBE() ? 'CUBE' : null,
-            ctx.HAVING() &&
-                visitOptionalNode(
-                    new ExpressionVisitor(),
-                    ctx.logicalExpression(),
-                    isLogicalExpressionType,
-                    'logicalExpression',
+            {
+                value: createNode(
+                    ctx.fieldGroupByList(),
+                    (c) => FieldGroupByListTypeClass.create(c),
+                    'fieldGroupByList',
                 ),
+                mode: ctx.ROLLUP() ? 'ROLLUP' : ctx.CUBE() ? 'CUBE' : null,
+                having: ctx.HAVING()
+                    ? createOptionalNode(
+                          ctx.logicalExpression(),
+                          (c) => LogicalExpressionTypeClass.create(c),
+                          'logicalExpression',
+                      )
+                    : null,
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getMode(): 'ROLLUP' | 'CUBE' | null {
-        return this.mode;
+    getValue(): GroupByClauseType['value'] {
+        return this.getFields().value;
     }
 
-    getHaving(): LogicalExpressionTypeClass | ApexErrorTypeClass | null {
-        return this.having;
+    getMode(): GroupByClauseType['mode'] {
+        return this.getFields().mode;
+    }
+
+    getHaving(): GroupByClauseType['having'] {
+        return this.getFields().having;
     }
 }
 
 export const isGroupByClauseType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is GroupByClauseTypeClass => {
-    return target instanceof GroupByClauseTypeClass;
+    return isSpicifyApexCommonTypeClass('groupByClause', target);
 };

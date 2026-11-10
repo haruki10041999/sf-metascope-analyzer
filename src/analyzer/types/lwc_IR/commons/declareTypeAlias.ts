@@ -1,77 +1,63 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isDeclareTypeAlias, type DeclareTypeAlias } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
     visitNode,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { flowTypeVisitorEvaluatePairs, type FlowTypeTypeClass } from '../flowTypeVisitor';
-import {
-    typeParameterDeclarationTypePair,
-    type TypeParameterDeclarationTypeClass,
-} from '../flowVisitor/typeParameterDeclaration';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { TypeParameterDeclarationTypeClass } from '../flowVisitor/typeParameterDeclaration';
+import { IdentifierTypeClass } from './identifier';
 
-const declareTypeAliasIdPairs = lazyPairs(() => [identifierTypePair] as const);
-const declareTypeAliasTypeParametersPairs = lazyPairs(
-    () => [typeParameterDeclarationTypePair] as const,
-);
-
-export type DeclareTypeAliasFields = {
-    id: IdentifierTypeClass | LwcErrorTypeClass;
-    typeParameters: TypeParameterDeclarationTypeClass | LwcErrorTypeClass | null;
-    right: FlowTypeTypeClass | LwcErrorTypeClass;
+export type DeclareTypeAliasFields = TypeField<'declareTypeAlias'> & {
+    id: IdentifierTypeClass;
+    typeParameters: TypeParameterDeclarationTypeClass | null;
+    right: FlowTypeTypeClass;
 };
 
-export class DeclareTypeAliasTypeClass extends LwcCommonTypeClass<'declareTypeAlias'> {
-    private readonly value: DeclareTypeAliasFields;
-
-    private constructor(value: DeclareTypeAliasFields) {
-        super('declareTypeAlias');
-        this.value = value;
+export class DeclareTypeAliasTypeClass extends LwcCommonTypeClass<
+    'declareTypeAlias',
+    DeclareTypeAliasFields
+> {
+    private constructor(value: FieldsOf<DeclareTypeAliasFields>, sourceSpan: SourceSpan) {
+        super('declareTypeAlias', value, sourceSpan);
     }
 
     static create(target: DeclareTypeAlias, originalSource: string): DeclareTypeAliasTypeClass {
-        return new DeclareTypeAliasTypeClass({
-            id: visitNode(
-                target.id,
-                originalSource,
-                declareTypeAliasIdPairs(),
-                'DeclareTypeAlias.id',
-            ),
-            typeParameters: visitOptionalNode(
-                target.typeParameters,
-                originalSource,
-                declareTypeAliasTypeParametersPairs(),
-                'DeclareTypeAlias.typeParameters',
-            ),
-            right: visitNode(
-                target.right,
-                originalSource,
-                flowTypeVisitorEvaluatePairs(),
-                'FlowTypeVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): DeclareTypeAliasFields {
-        return this.value;
+        return new DeclareTypeAliasTypeClass(
+            {
+                id: IdentifierTypeClass.create(target.id, originalSource),
+                typeParameters:
+                    target.typeParameters == null
+                        ? null
+                        : TypeParameterDeclarationTypeClass.create(
+                              target.typeParameters,
+                              originalSource,
+                          ),
+                right: visitNode(
+                    target.right,
+                    originalSource,
+                    flowTypeVisitorEvaluatePairs(),
+                    'FlowTypeVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getId(): DeclareTypeAliasFields['id'] {
-        return this.value.id;
+        return this.getFields().id;
     }
 
     getTypeParameters(): DeclareTypeAliasFields['typeParameters'] {
-        return this.value.typeParameters;
+        return this.getFields().typeParameters;
     }
 
     getRight(): DeclareTypeAliasFields['right'] {
-        return this.value.right;
+        return this.getFields().right;
     }
 }
 
@@ -81,5 +67,5 @@ export const declareTypeAliasTypePair: EvaluatePair<DeclareTypeAlias, DeclareTyp
     );
 
 export const isDeclareTypeAliasType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is DeclareTypeAliasTypeClass => target instanceof DeclareTypeAliasTypeClass;

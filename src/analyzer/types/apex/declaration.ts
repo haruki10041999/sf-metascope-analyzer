@@ -1,6 +1,6 @@
 import typia from 'typia';
 
-import { ConvertKeys, ErrorJson, JsonType, StructureJsonType, makeStructureJson } from '../commons';
+import { ConvertKeys, JsonType, StructureJsonType, makeStructureJson } from '../commons';
 
 import type {
     AnonymousMemberDeclarationTypeClass,
@@ -20,7 +20,7 @@ import type {
     TypeListTypeClass,
     TypeRefTypeClass,
     VariableDeclaratorsTypeClass,
-} from '../apex_IR_v2';
+} from '../apex_IR';
 
 import { keysOf, makeNodeJson, structureKeysOf } from './commons/node';
 import { BaseExpressionJson, makeExpressionJsonConvert } from './expression';
@@ -53,8 +53,8 @@ const makeReturnTypeJson = (target: TypeRefTypeClass | 'void'): 'void' | TypeJso
 /** 変数 (1 つの宣言に複数あるので kind を持たない値)。使われていない変数などの位置のために sourceKeys を持つ */
 export type VariantJson = {
     sourceKeys: ConvertKeys;
-    name: string | ErrorJson;
-    init?: BaseExpressionJson | ErrorJson;
+    name: string;
+    init?: BaseExpressionJson;
 };
 
 const makeVariantsJson = (target: VariableDeclaratorsTypeClass): VariantJson[] =>
@@ -68,10 +68,10 @@ const makeVariantsJson = (target: VariableDeclaratorsTypeClass): VariantJson[] =
     });
 
 export type MethodDeclarationJson = StructureJsonType<'method', DeclarationKeys> & {
-    name: string | ErrorJson;
-    returnType: 'void' | TypeJson | ErrorJson;
-    param?: (ParameterJson | ErrorJson)[] | ErrorJson;
-    block?: (StatementJson | ErrorJson)[];
+    name: string;
+    returnType: 'void' | TypeJson;
+    param?: ParameterJson[];
+    block?: StatementJson[];
 };
 
 export const isMethodDeclarationJson = typia.createIs<MethodDeclarationJson>();
@@ -91,9 +91,9 @@ export const makeMethodDeclarationJson = (
 };
 
 export type InterfaceMethodJson = StructureJsonType<'interfaceMethod', DeclarationKeys> & {
-    name: string | ErrorJson;
-    returnType: 'void' | TypeJson | ErrorJson;
-    param?: (ParameterJson | ErrorJson)[] | ErrorJson;
+    name: string;
+    returnType: 'void' | TypeJson;
+    param?: ParameterJson[];
     modifier: ModifiersJson;
 };
 
@@ -115,9 +115,9 @@ const makeInterfaceMethodJson = (
 };
 
 export type InterfaceDeclarationJson = StructureJsonType<'interface', DeclarationKeys> & {
-    name: string | ErrorJson;
-    block?: (InterfaceMethodJson | ErrorJson)[] | ErrorJson;
-    extend?: (TypeJson | ErrorJson)[] | ErrorJson;
+    name: string;
+    block?: InterfaceMethodJson[];
+    extend?: TypeJson[];
 };
 
 export const isInterfaceDeclarationJson = typia.createIs<InterfaceDeclarationJson>();
@@ -135,7 +135,7 @@ export const makeInterfaceDeclarationJson = (
 
 export type InitializerBlockJson = {
     kind: 'initializer';
-    block: (StatementJson | ErrorJson)[];
+    block: StatementJson[];
     modifier: ModifiersJson;
     isStatic: boolean;
 };
@@ -151,14 +151,13 @@ type ClassBlockJson =
     | (InterfaceDeclarationJson & { modifier: ModifiersJson })
     | (ConstructorDeclarationJson & { modifier: ModifiersJson })
     | (ClassDeclarationJson & { modifier: ModifiersJson })
-    | NotSetBlockJson
-    | ErrorJson;
+    | NotSetBlockJson;
 
 export type ClassDeclarationJson = StructureJsonType<'class', DeclarationKeys> & {
-    name: string | ErrorJson;
+    name: string;
     block: ClassBlockJson[];
-    extend?: TypeJson | ErrorJson;
-    implement?: (TypeJson | ErrorJson)[] | ErrorJson;
+    extend?: TypeJson;
+    implement?: TypeJson[];
 };
 
 export const isClassDeclarationJson = typia.createIs<ClassDeclarationJson>();
@@ -205,8 +204,8 @@ const makeEnumConstantJson = (target: IdTypeClass): EnumConstantJson =>
     makeNodeJson<EnumConstantJson>('enumConstant', target, { name: makeNameJson(target) });
 
 export type EnumDeclarationJson = StructureJsonType<'enum', DeclarationKeys> & {
-    name: string | ErrorJson;
-    members?: (EnumConstantJson | ErrorJson)[] | ErrorJson;
+    name: string;
+    members?: EnumConstantJson[];
 };
 
 export const isEnumDeclarationJson = typia.createIs<EnumDeclarationJson>();
@@ -223,19 +222,17 @@ export const makeEnumDeclarationJson = (target: EnumDeclarationTypeClass): EnumD
 };
 
 export type AccessorContentJson = {
-    block?: (StatementJson | ErrorJson)[];
+    block?: StatementJson[];
     modifier: ModifiersJson;
 };
 
 export type PropertyDeclarationJson = StructureJsonType<'property', DeclarationKeys> & {
-    name: string | ErrorJson;
-    variantType: TypeJson | ErrorJson;
+    name: string;
+    variantType: TypeJson;
     isGetter: boolean;
     getterContent?: AccessorContentJson;
     isSetter: boolean;
     setterContent?: AccessorContentJson;
-    // 取り出せなかった getter / setter (v2 の木にはエラーのノードがないので、今は出てこない)
-    error?: ErrorJson[];
 };
 
 export const isPropertyDeclarationJson = typia.createIs<PropertyDeclarationJson>();
@@ -275,8 +272,8 @@ export const makePropertyDeclarationJson = (
 
 // field は本体を持たないので StructureJsonType にしない (ローカル変数の文と同じ扱い)
 export type FieldDeclarationJson = JsonType<'field'> & {
-    variants: (VariantJson | ErrorJson)[] | ErrorJson;
-    variantType: TypeJson | ErrorJson;
+    variants: VariantJson[];
+    variantType: TypeJson;
 };
 
 export const isFieldDeclarationJson = typia.createIs<FieldDeclarationJson>();
@@ -292,9 +289,9 @@ export const makeFieldDeclarationJson = (
 };
 
 export type ConstructorDeclarationJson = StructureJsonType<'constructor', DeclarationKeys> & {
-    name: (string | ErrorJson)[] | ErrorJson;
-    param?: (ParameterJson | ErrorJson)[] | ErrorJson;
-    block: (StatementJson | ErrorJson)[];
+    name: string[];
+    param?: ParameterJson[];
+    block: StatementJson[];
 };
 
 export const isConstructorDeclarationJson = typia.createIs<ConstructorDeclarationJson>();
@@ -313,8 +310,8 @@ export const makeConstructorDeclarationJson = (
 };
 
 export type LocalVariableDeclarationJson = {
-    variants: (VariantJson | ErrorJson)[] | ErrorJson;
-    variantsType: TypeJson | ErrorJson;
+    variants: VariantJson[];
+    variantsType: TypeJson;
     modifier: ModifiersJson;
 };
 

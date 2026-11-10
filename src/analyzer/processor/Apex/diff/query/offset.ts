@@ -1,4 +1,4 @@
-import { ErrorJson, OffsetJson } from '../../../../types';
+import { OffsetJson } from '../../../../types';
 
 import {
     Match,
@@ -14,8 +14,8 @@ export type OffsetFieldsDiff =
 export type OffsetJsonDiff = NodeDiff<'offsetClause', OffsetJson, OffsetFieldsDiff>;
 
 export const makeOffsetDiff = (
-    before: OffsetJson | ErrorJson,
-    after: OffsetJson | ErrorJson,
+    before: OffsetJson,
+    after: OffsetJson,
     match: Match = 'slot',
 ): OffsetJsonDiff =>
     makeNodeDiff('offsetClause', before, after, match, (b, a) => {

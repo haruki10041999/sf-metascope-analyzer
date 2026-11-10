@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { BlockStatementTypeClass, blockStatementTypePair } from '../commons/blockStatement';
 import { CatchClauseTypeClass, catchClauseTypePair } from '../commons/catchClause';
@@ -177,7 +178,9 @@ export type ScopableTypeClass =
     | StaticBlockTypeClass
     | TSModuleBlockTypeClass;
 
-export const isScopableType = (target: LwcCommonTypeClass<string>): target is ScopableTypeClass => {
+export const isScopableType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is ScopableTypeClass => {
     return (
         target instanceof BlockStatementTypeClass ||
         target instanceof CatchClauseTypeClass ||

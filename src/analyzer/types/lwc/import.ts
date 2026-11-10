@@ -1,13 +1,9 @@
-// import の JSON (docs/lwc-implementation.md)。LWC だけのもの
-import { makeJsonType, type ErrorJson, type JsonType } from '../commons/json';
+// import の JSON (docs/lwc-implementation.md)。LWC だけのもの。
+// 入力は IR v2 (lwc_IR) のノード。v2 の木にはエラーのノードがないので、部分木の検査はしない
+import { makeJsonType, type JsonType } from '../commons/json';
+import type { commons } from '../lwc_IR';
 
-import { nameOf, type LwcJsonContext, convertLwcValue } from './commons';
-import type {
-    LwcImportDeclarationType,
-    LwcImportDefaultSpecifierType,
-    LwcImportNamespaceSpecifierType,
-    LwcImportSpecifierType,
-} from './converter';
+import { nameOf, type LwcJsonContext } from './commons';
 
 export type LwcImportCategory =
     | 'lwc'
@@ -98,19 +94,22 @@ const makeDetail = (
 
 const makeSpecifierJson = (
     specifier:
-        LwcImportSpecifierType | LwcImportDefaultSpecifierType | LwcImportNamespaceSpecifierType,
+        | commons.ImportSpecifierTypeClass
+        | commons.ImportDefaultSpecifierTypeClass
+        | commons.ImportNamespaceSpecifierTypeClass,
     context: LwcJsonContext,
 ): LwcImportSpecifierJson => {
-    const local = nameOf(specifier.local, context);
-    if (specifier.type === 'importSpecifier') {
+    const local = nameOf(specifier.getFields().local, context);
+    if (specifier.kind === 'importSpecifier') {
+        const fields = (specifier as commons.ImportSpecifierTypeClass).getFields();
         return makeJsonType<'lwcImportSpecifier', LwcImportSpecifierJson>(
             'lwcImportSpecifier',
             context.keysOf(specifier),
             {
                 specifierType: 'named',
                 local,
-                imported: nameOf(specifier.imported, context),
-                typeOnly: specifier.importKind === 'type',
+                imported: nameOf(fields.imported, context),
+                typeOnly: fields.importKind === 'type',
             },
         );
     }
@@ -118,34 +117,46 @@ const makeSpecifierJson = (
         'lwcImportSpecifier',
         context.keysOf(specifier),
         {
-            specifierType: specifier.type === 'importDefaultSpecifier' ? 'default' : 'namespace',
+            specifierType: specifier.kind === 'importDefaultSpecifier' ? 'default' : 'namespace',
             local,
             typeOnly: false,
         },
     );
 };
 
-/** ImportDeclaration → lwcImport。境界ノードで、部分木に IR を作れなかったノードがあれば ErrorJson */
+/** import の specifier を、ソースの順 (default → named / namespace) に並べたもの */
+const specifiersOf = (
+    fields: commons.ImportDeclarationFields,
+): (
+    | commons.ImportSpecifierTypeClass
+    | commons.ImportDefaultSpecifierTypeClass
+    | commons.ImportNamespaceSpecifierTypeClass
+)[] => {
+    const bindings = fields.bindings;
+    return [
+        ...(fields.default ? [fields.default] : []),
+        ...(!bindings
+            ? []
+            : bindings.kind === 'named'
+              ? bindings.specifiers
+              : [bindings.specifier]),
+    ];
+};
+
+/** ImportDeclaration → lwcImport (境界ノード) */
 export const makeLwcImportJson = (
-    target: LwcImportDeclarationType,
+    declaration: commons.ImportDeclarationTypeClass,
     context: LwcJsonContext,
-): LwcImportJson | ErrorJson =>
-    convertLwcValue(
-        target,
-        'lwcImport',
-        context,
-        (declaration: LwcImportDeclarationType, targetRecords) => {
-            const source = nameOf(declaration.source, context);
-            const category = getImportCategory(source);
-            return makeJsonType<'lwcImport', LwcImportJson>('lwcImport', targetRecords.base, {
-                source,
-                category,
-                // 検査を通っているので、IR を作れなかったノードはない
-                specifiers: declaration.specifiers.flatMap((s) =>
-                    s.type === 'error' ? [] : [makeSpecifierJson(s, context)],
-                ),
-                typeOnly: declaration.importKind === 'type',
-                ...makeDetail(source, category),
-            });
-        },
-    );
+): LwcImportJson => {
+    const sourceKeys = context.keysOf(declaration);
+    const fields = declaration.getFields();
+    const source = nameOf(fields.source, context);
+    const category = getImportCategory(source);
+    return makeJsonType<'lwcImport', LwcImportJson>('lwcImport', sourceKeys, {
+        source,
+        category,
+        specifiers: specifiersOf(fields).map((s) => makeSpecifierJson(s, context)),
+        typeOnly: fields.importKind === 'type',
+        ...makeDetail(source, category),
+    });
+};

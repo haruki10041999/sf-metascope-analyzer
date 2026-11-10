@@ -1,13 +1,25 @@
+import { type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSObjectKeyword, type TSObjectKeyword } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export class TSObjectKeywordTypeClass extends LwcCommonTypeClass<'tSObjectKeyword'> {
-    private constructor() {
-        super('tSObjectKeyword');
+export type TSObjectKeywordFields = TypeField<'tSObjectKeyword'>;
+
+export class TSObjectKeywordTypeClass extends LwcCommonTypeClass<
+    'tSObjectKeyword',
+    TSObjectKeywordFields
+> {
+    private constructor(sourceSpan: SourceSpan) {
+        super('tSObjectKeyword', {}, sourceSpan);
     }
 
-    static create(_target: TSObjectKeyword, _originalSource: string): TSObjectKeywordTypeClass {
-        return new TSObjectKeywordTypeClass();
+    static create(target: TSObjectKeyword, originalSource: string): TSObjectKeywordTypeClass {
+        return new TSObjectKeywordTypeClass(getSourceSpan(target, originalSource));
     }
 }
 
@@ -17,5 +29,5 @@ export const tSObjectKeywordTypePair: EvaluatePair<TSObjectKeyword, TSObjectKeyw
     );
 
 export const isTSObjectKeywordType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSObjectKeywordTypeClass => target instanceof TSObjectKeywordTypeClass;

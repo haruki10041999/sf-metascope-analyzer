@@ -1,4 +1,4 @@
-import { ErrorJson, VALIDATION_RULE_SCHEMA, ValidationRuleJson } from '../../../types';
+import { VALIDATION_RULE_SCHEMA, ValidationRuleJson } from '../../../types';
 
 import {
     Match,
@@ -16,8 +16,8 @@ export type ValidationRuleJsonDiff = NodeDiff<
 >;
 
 export const makeValidationRuleDiff = (
-    before: ValidationRuleJson | ErrorJson,
-    after: ValidationRuleJson | ErrorJson,
+    before: ValidationRuleJson,
+    after: ValidationRuleJson,
     match: Match = 'slot',
 ): ValidationRuleJsonDiff =>
     makeNodeDiff('validationRule', before, after, match, (b, a) => ({

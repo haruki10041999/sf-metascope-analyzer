@@ -1,52 +1,40 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isDoExpression, type DoExpression } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { blockStatementTypePair, type BlockStatementTypeClass } from '../commons/blockStatement';
+import { BlockStatementTypeClass } from '../commons/blockStatement';
 
-const doExpressionBodyPairs = lazyPairs(() => [blockStatementTypePair] as const);
-
-export type DoExpressionFields = {
-    body: BlockStatementTypeClass | LwcErrorTypeClass;
+export type DoExpressionFields = TypeField<'doExpression'> & {
+    body: BlockStatementTypeClass;
     async: DoExpression['async'];
 };
 
-export class DoExpressionTypeClass extends LwcCommonTypeClass<'doExpression'> {
-    private readonly value: DoExpressionFields;
-
-    private constructor(value: DoExpressionFields) {
-        super('doExpression');
-        this.value = value;
+export class DoExpressionTypeClass extends LwcCommonTypeClass<'doExpression', DoExpressionFields> {
+    private constructor(value: FieldsOf<DoExpressionFields>, sourceSpan: SourceSpan) {
+        super('doExpression', value, sourceSpan);
     }
 
     static create(target: DoExpression, originalSource: string): DoExpressionTypeClass {
-        return new DoExpressionTypeClass({
-            body: visitNode(
-                target.body,
-                originalSource,
-                doExpressionBodyPairs(),
-                'DoExpression.body',
-            ),
-            async: target.async,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): DoExpressionFields {
-        return this.value;
+        return new DoExpressionTypeClass(
+            {
+                body: BlockStatementTypeClass.create(target.body, originalSource),
+                async: target.async,
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getBody(): DoExpressionFields['body'] {
-        return this.value.body;
+        return this.getFields().body;
     }
 
     getAsync(): DoExpressionFields['async'] {
-        return this.value.async;
+        return this.getFields().async;
     }
 }
 
@@ -56,5 +44,5 @@ export const doExpressionTypePair: EvaluatePair<DoExpression, DoExpressionTypeCl
     );
 
 export const isDoExpressionType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is DoExpressionTypeClass => target instanceof DoExpressionTypeClass;

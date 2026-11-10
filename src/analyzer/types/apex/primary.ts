@@ -1,7 +1,7 @@
 import typia from 'typia';
 
 import { ConvertKeys } from '../commons';
-import type { BasedPrimaryTypeClass, LiteralPrimaryTypeClass } from '../apex_IR_v2';
+import type { BasedPrimaryTypeClass, LiteralPrimaryTypeClass } from '../apex_IR';
 
 import { keysOf } from './commons/node';
 import { makeTypeJson, TypeJson } from './type';

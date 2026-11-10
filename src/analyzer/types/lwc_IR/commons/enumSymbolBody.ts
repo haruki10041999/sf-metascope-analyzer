@@ -1,55 +1,45 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isEnumSymbolBody, type EnumSymbolBody } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
-import {
-    enumDefaultedMemberTypePair,
-    type EnumDefaultedMemberTypeClass,
-} from './enumDefaultedMember';
+import { EnumDefaultedMemberTypeClass } from './enumDefaultedMember';
 
-const enumSymbolBodyMembersPairs = lazyPairs(() => [enumDefaultedMemberTypePair] as const);
-
-export type EnumSymbolBodyFields = {
-    members: (EnumDefaultedMemberTypeClass | LwcErrorTypeClass)[];
+export type EnumSymbolBodyFields = TypeField<'enumSymbolBody'> & {
+    members: EnumDefaultedMemberTypeClass[];
     hasUnknownMembers: EnumSymbolBody['hasUnknownMembers'];
 };
 
-export class EnumSymbolBodyTypeClass extends LwcCommonTypeClass<'enumSymbolBody'> {
-    private readonly value: EnumSymbolBodyFields;
-
-    private constructor(value: EnumSymbolBodyFields) {
-        super('enumSymbolBody');
-        this.value = value;
+export class EnumSymbolBodyTypeClass extends LwcCommonTypeClass<
+    'enumSymbolBody',
+    EnumSymbolBodyFields
+> {
+    private constructor(value: FieldsOf<EnumSymbolBodyFields>, sourceSpan: SourceSpan) {
+        super('enumSymbolBody', value, sourceSpan);
     }
 
     static create(target: EnumSymbolBody, originalSource: string): EnumSymbolBodyTypeClass {
-        return new EnumSymbolBodyTypeClass({
-            members: visitNodeList(
-                target.members,
-                originalSource,
-                enumSymbolBodyMembersPairs(),
-                'EnumSymbolBody.members',
-            ),
-            hasUnknownMembers: target.hasUnknownMembers,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): EnumSymbolBodyFields {
-        return this.value;
+        return new EnumSymbolBodyTypeClass(
+            {
+                members: target.members.map((child) =>
+                    EnumDefaultedMemberTypeClass.create(child, originalSource),
+                ),
+                hasUnknownMembers: target.hasUnknownMembers,
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getMembers(): EnumSymbolBodyFields['members'] {
-        return this.value.members;
+        return this.getFields().members;
     }
 
     getHasUnknownMembers(): EnumSymbolBodyFields['hasUnknownMembers'] {
-        return this.value.hasUnknownMembers;
+        return this.getFields().hasUnknownMembers;
     }
 }
 
@@ -59,5 +49,5 @@ export const enumSymbolBodyTypePair: EvaluatePair<EnumSymbolBody, EnumSymbolBody
     );
 
 export const isEnumSymbolBodyType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is EnumSymbolBodyTypeClass => target instanceof EnumSymbolBodyTypeClass;

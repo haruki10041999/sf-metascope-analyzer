@@ -5,7 +5,6 @@ import {
     CustomObjectJson,
     CustomObjectTranslationJson,
     TranslationMemberJson,
-    isErrorJson,
 } from '../../types';
 
 // 方針: docs/object-translation.md 4 章
@@ -75,12 +74,10 @@ const collectSources = (
     };
 
     (object.fields ?? []).forEach((field) => {
-        if (isErrorJson(field)) return;
         add('fieldLabel', field.apiName, field.label, field.sourceKeys);
         add('fieldHelp', field.apiName, field.inlineHelpText, field.sourceKeys);
         add('relationshipLabel', field.apiName, field.relationshipLabel, field.sourceKeys);
         (field.valueSet?.values ?? []).forEach((value) => {
-            if (isErrorJson(value)) return;
             add(
                 'picklistValue',
                 `${field.apiName}.${value.fullName}`,
@@ -91,16 +88,14 @@ const collectSources = (
     });
     const named = (
         kind: TranslationItemKind,
-        members: { kind: string; sourceKeys: ConvertKeys }[] | undefined,
+        members: { fullName: string; sourceKeys: ConvertKeys }[] | undefined,
         textKey: string,
     ) =>
         (members ?? []).forEach((member) => {
-            if (!('fullName' in member)) return;
-            const record = member as unknown as Record<string, unknown>;
-            const text = record[textKey];
+            const text = (member as unknown as Record<string, unknown>)[textKey];
             add(
                 kind,
-                String(record.fullName),
+                member.fullName,
                 typeof text === 'string' ? text : undefined,
                 member.sourceKeys,
             );
@@ -138,14 +133,11 @@ const collectTranslations = (
         });
 
     const objectFields = new Map(
-        (object?.fields ?? [])
-            .filter((field): field is CustomFieldJson => !isErrorJson(field))
-            .map((field) => [field.apiName, field]),
+        (object?.fields ?? []).map((field): [string, CustomFieldJson] => [field.apiName, field]),
     );
 
     (translation.fields ?? []).forEach((field) => {
-        if (isErrorJson(field)) return;
-        const fieldTranslation = field as CustomFieldTranslationJson;
+        const fieldTranslation: CustomFieldTranslationJson = field;
         const name = fieldTranslation.name;
         add('fieldLabel', name, fieldTranslation.label, fieldTranslation.sourceKeys);
         if (fieldTranslation.help !== undefined) {
@@ -159,9 +151,8 @@ const collectTranslations = (
                 fieldTranslation.sourceKeys,
             );
         }
-        const values = (objectFields.get(name)?.valueSet?.values ?? []).filter(
-            (value) => !isErrorJson(value),
-        ) as { fullName: string; label?: string }[];
+        const values: { fullName: string; label?: string }[] =
+            objectFields.get(name)?.valueSet?.values ?? [];
         (fieldTranslation.picklistValues ?? []).forEach((value) => {
             const matched = values.find(
                 (v) =>

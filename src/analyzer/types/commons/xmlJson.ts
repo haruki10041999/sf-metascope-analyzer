@@ -1,12 +1,11 @@
 import type { SourcePosition } from './source';
-import { ErrorJson, JsonType } from './json';
+import { JsonType } from './json';
 import {
     SourceFile,
     SpanSourceInfo,
     SpanSourceJson,
     SpanSourceRegistry,
     findSpanSourceInfo,
-    makeSpanErrorJson,
     makeSpanJson,
 } from './spanJson';
 
@@ -43,15 +42,6 @@ export const makeXmlJson = <T extends JsonType<string>>(
     file: XmlFile,
     registry: XmlSourceRegistry,
 ): T => makeSpanJson<T>(kind, properties, element, element?.file ?? file, registry);
-
-/** 読めなかったファイル・要素の ErrorJson。kindType は何として読もうとしたか (field など) */
-export const makeXmlErrorJson = (
-    kindType: string,
-    message: string,
-    position: SourcePosition,
-    file: XmlFile,
-    registry: XmlSourceRegistry,
-): ErrorJson => makeSpanErrorJson(kindType, message, position, file, registry);
 
 // ---------------------------------------------------------------------------
 // 子要素の値を読む
@@ -119,28 +109,26 @@ export type XmlReadProblem = {
     kindType: string;
     message: string;
     position: SourcePosition;
-    error: ErrorJson;
 };
 
 /**
- * ファイルを読めたか、ルート要素が root かを確かめる。読めなければ ErrorJson を返し、problems に理由を足す。
- * kindType は何として読もうとしたか (field / apexClassMeta など)
+ * ファイルを読めたか、ルート要素が root かを確かめる。読めなければ null を返し、problems に理由を足す
+ * (JSON にはエラーのノードを置かない。理由は resolvedError に出す)。
+ * kindType は何として読もうとしたか (field / apexClassMeta など)。
  */
 export const readXmlRoot = (
     file: ParsedXmlFile,
     root: string,
     kindType: string,
-    registry: XmlSourceRegistry,
     problems: XmlReadProblem[],
-): XmlElement | ErrorJson => {
-    const toError = (
+): XmlElement | null => {
+    const toProblem = (
         code: XmlReadProblem['code'],
         message: string,
         position: SourcePosition,
-    ): ErrorJson => {
-        const error = makeXmlErrorJson(kindType, message, position, file, registry);
-        problems.push({ code, file, kindType, message, position, error });
-        return error;
+    ): null => {
+        problems.push({ code, file, kindType, message, position });
+        return null;
     };
 
     if (!file.root) {
@@ -148,10 +136,10 @@ export const readXmlRoot = (
             message: 'XML cannot be read',
             position: { offset: 0, line: 1, column: 0 },
         };
-        return toError('XML_SYNTAX', error.message, error.position);
+        return toProblem('XML_SYNTAX', error.message, error.position);
     }
     if (file.root.name !== root) {
-        return toError(
+        return toProblem(
             'UNEXPECTED_ROOT',
             `<${root}> expected but <${file.root.name}> found`,
             file.root.start,

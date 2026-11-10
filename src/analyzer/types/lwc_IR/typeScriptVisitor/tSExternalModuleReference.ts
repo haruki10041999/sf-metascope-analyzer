@@ -1,49 +1,40 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSExternalModuleReference, type TSExternalModuleReference } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { stringLiteralTypePair, type StringLiteralTypeClass } from '../commons/stringLiteral';
+import { StringLiteralTypeClass } from '../commons/stringLiteral';
 
-const tSExternalModuleReferenceExpressionPairs = lazyPairs(() => [stringLiteralTypePair] as const);
-
-export type TSExternalModuleReferenceFields = {
-    expression: StringLiteralTypeClass | LwcErrorTypeClass;
+export type TSExternalModuleReferenceFields = TypeField<'tSExternalModuleReference'> & {
+    expression: StringLiteralTypeClass;
 };
 
-export class TSExternalModuleReferenceTypeClass extends LwcCommonTypeClass<'tSExternalModuleReference'> {
-    private readonly value: TSExternalModuleReferenceFields;
-
-    private constructor(value: TSExternalModuleReferenceFields) {
-        super('tSExternalModuleReference');
-        this.value = value;
+export class TSExternalModuleReferenceTypeClass extends LwcCommonTypeClass<
+    'tSExternalModuleReference',
+    TSExternalModuleReferenceFields
+> {
+    private constructor(value: FieldsOf<TSExternalModuleReferenceFields>, sourceSpan: SourceSpan) {
+        super('tSExternalModuleReference', value, sourceSpan);
     }
 
     static create(
         target: TSExternalModuleReference,
         originalSource: string,
     ): TSExternalModuleReferenceTypeClass {
-        return new TSExternalModuleReferenceTypeClass({
-            expression: visitNode(
-                target.expression,
-                originalSource,
-                tSExternalModuleReferenceExpressionPairs(),
-                'TSExternalModuleReference.expression',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSExternalModuleReferenceFields {
-        return this.value;
+        return new TSExternalModuleReferenceTypeClass(
+            {
+                expression: StringLiteralTypeClass.create(target.expression, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getExpression(): TSExternalModuleReferenceFields['expression'] {
-        return this.value.expression;
+        return this.getFields().expression;
     }
 }
 
@@ -55,6 +46,6 @@ export const tSExternalModuleReferenceTypePair: EvaluatePair<
 );
 
 export const isTSExternalModuleReferenceType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSExternalModuleReferenceTypeClass =>
     target instanceof TSExternalModuleReferenceTypeClass;

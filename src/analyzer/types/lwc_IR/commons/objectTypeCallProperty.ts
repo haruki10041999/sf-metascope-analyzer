@@ -1,52 +1,52 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isObjectTypeCallProperty, type ObjectTypeCallProperty } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { flowTypeVisitorEvaluatePairs, type FlowTypeTypeClass } from '../flowTypeVisitor';
 
-export type ObjectTypeCallPropertyFields = {
-    value: FlowTypeTypeClass | LwcErrorTypeClass;
+export type ObjectTypeCallPropertyFields = TypeField<'objectTypeCallProperty'> & {
+    value: FlowTypeTypeClass;
     static: ObjectTypeCallProperty['static'];
 };
 
-export class ObjectTypeCallPropertyTypeClass extends LwcCommonTypeClass<'objectTypeCallProperty'> {
-    private readonly value: ObjectTypeCallPropertyFields;
-
-    private constructor(value: ObjectTypeCallPropertyFields) {
-        super('objectTypeCallProperty');
-        this.value = value;
+export class ObjectTypeCallPropertyTypeClass extends LwcCommonTypeClass<
+    'objectTypeCallProperty',
+    ObjectTypeCallPropertyFields
+> {
+    private constructor(value: FieldsOf<ObjectTypeCallPropertyFields>, sourceSpan: SourceSpan) {
+        super('objectTypeCallProperty', value, sourceSpan);
     }
 
     static create(
         target: ObjectTypeCallProperty,
         originalSource: string,
     ): ObjectTypeCallPropertyTypeClass {
-        return new ObjectTypeCallPropertyTypeClass({
-            value: visitNode(
-                target.value,
-                originalSource,
-                flowTypeVisitorEvaluatePairs(),
-                'FlowTypeVisitor',
-            ),
-            static: target.static,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): ObjectTypeCallPropertyFields {
-        return this.value;
+        return new ObjectTypeCallPropertyTypeClass(
+            {
+                value: visitNode(
+                    target.value,
+                    originalSource,
+                    flowTypeVisitorEvaluatePairs(),
+                    'FlowTypeVisitor',
+                ),
+                static: target.static,
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getValue(): ObjectTypeCallPropertyFields['value'] {
-        return this.value.value;
+        return this.getFields().value;
     }
 
     getStatic(): ObjectTypeCallPropertyFields['static'] {
-        return this.value.static;
+        return this.getFields().static;
     }
 }
 
@@ -58,5 +58,5 @@ export const objectTypeCallPropertyTypePair: EvaluatePair<
 );
 
 export const isObjectTypeCallPropertyType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ObjectTypeCallPropertyTypeClass => target instanceof ObjectTypeCallPropertyTypeClass;

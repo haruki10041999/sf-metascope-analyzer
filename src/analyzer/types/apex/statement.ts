@@ -1,6 +1,6 @@
 import typia from 'typia';
 
-import { ErrorJson, JsonType, StructureJsonType, makeStructureJson, ConvertKeys } from '../commons';
+import { JsonType, StructureJsonType, makeStructureJson, ConvertKeys } from '../commons';
 import type {
     AccessLevelTypeClass,
     BasedExpressionTypeClass,
@@ -31,7 +31,7 @@ import type {
     WhenLiteralTypeClass,
     WhenValueTypeClass,
     WhileStatementTypeClass,
-} from '../apex_IR_v2';
+} from '../apex_IR';
 
 import { keysOf, makeNodeJson, structureKeysOf } from './commons/node';
 import { BaseExpressionJson, makeExpressionJsonConvert } from './expression';
@@ -75,7 +75,7 @@ export const makeContinueStatementJson = (
 };
 
 export type DeleteStatementJson = JsonType<'delete'> & {
-    field: BaseExpressionJson | ErrorJson;
+    field: BaseExpressionJson;
     accessLevel?: 'SYSTEM' | 'USER';
 };
 export const isDeleteStatementJson = typia.createIs<DeleteStatementJson>();
@@ -89,7 +89,7 @@ export const makeDeleteStatementJson = (target: DeleteStatementTypeClass): Delet
 };
 
 export type DoWhileConditionJson = JsonType<'doWhileCondition'> & {
-    condition: BaseExpressionJson | ErrorJson;
+    condition: BaseExpressionJson;
 };
 export const isDoWhileConditionJson = typia.createIs<DoWhileConditionJson>();
 
@@ -101,8 +101,8 @@ const makeDoWhileConditionJson = (target: ParExpressionTypeClass): DoWhileCondit
 
 // 複合文は文全体の位置を持つ境界ノード
 export type DoWhileStatementJson = JsonType<'doWhile'> & {
-    condition: DoWhileConditionJson | ErrorJson;
-    body: (StatementJson | ErrorJson)[];
+    condition: DoWhileConditionJson;
+    body: StatementJson[];
 };
 export const isDoWhileStatementJson = typia.createIs<DoWhileStatementJson>();
 
@@ -115,7 +115,7 @@ const makeDoWhileStatementJson = (target: DoWhileStatementTypeClass): DoWhileSta
 };
 
 export type ExpressionStatementJson = JsonType<'expression'> & {
-    value: BaseExpressionJson | ErrorJson;
+    value: BaseExpressionJson;
 };
 
 export const isExpressionStatementJson = typia.createIs<ExpressionStatementJson>();
@@ -132,13 +132,13 @@ export type ForConditionJson = JsonType<'forCondition'> &
     (
         | {
               initializer: string;
-              initializeType: TypeJson | ErrorJson;
-              baseObject: BaseExpressionJson | ErrorJson;
+              initializeType: TypeJson;
+              baseObject: BaseExpressionJson;
           }
         | {
-              initializer?: LocalVariableDeclarationJson | (BaseExpressionJson | ErrorJson)[];
-              condition?: BaseExpressionJson | ErrorJson;
-              update?: (BaseExpressionJson | ErrorJson)[];
+              initializer?: LocalVariableDeclarationJson | BaseExpressionJson[];
+              condition?: BaseExpressionJson;
+              update?: BaseExpressionJson[];
           }
     );
 
@@ -179,8 +179,8 @@ const makeForConditionJson = (target: ForControlTypeClass): ForConditionJson => 
 };
 
 export type ForStatementJson = JsonType<'for'> & {
-    condition: ForConditionJson | ErrorJson;
-    block: StatementJson | ErrorJson;
+    condition: ForConditionJson;
+    block: StatementJson;
 };
 
 export const isForStatementJson = typia.createIs<ForStatementJson>();
@@ -194,7 +194,7 @@ const makeForStatementJson = (target: ForStatementTypeClass): ForStatementJson =
 };
 
 export type IfConditionJson = JsonType<'ifCondition'> & {
-    condition: BaseExpressionJson | ErrorJson;
+    condition: BaseExpressionJson;
 };
 export const isIfConditionJson = typia.createIs<IfConditionJson>();
 
@@ -205,12 +205,10 @@ const makeIfConditionJson = (target: ParExpressionTypeClass): IfConditionJson =>
 };
 
 export type IfStatementJson = JsonType<'if'> & {
-    conditionBlock:
-        | {
-              condition: 'else' | IfConditionJson | ErrorJson;
-              block: StatementJson | ErrorJson;
-          }[]
-        | ErrorJson;
+    conditionBlock: {
+        condition: 'else' | IfConditionJson;
+        block: StatementJson;
+    }[];
 };
 
 export const isIfStatementJson = typia.createIs<IfStatementJson>();
@@ -232,7 +230,7 @@ const makeIfStatementJson = (target: IfStatementTypeClass): IfStatementJson => {
 };
 
 export type InsertStatementJson = JsonType<'insert'> & {
-    field: BaseExpressionJson | ErrorJson;
+    field: BaseExpressionJson;
     accessLevel?: 'SYSTEM' | 'USER';
 };
 export const isInsertStatementJson = typia.createIs<InsertStatementJson>();
@@ -259,7 +257,7 @@ export const makeLocalVariableStatementJson = (
 };
 
 export type MergeStatementJson = JsonType<'merge'> & {
-    field: (BaseExpressionJson | ErrorJson)[];
+    field: BaseExpressionJson[];
     accessLevel?: 'SYSTEM' | 'USER';
 };
 export const isMergeStatementJson = typia.createIs<MergeStatementJson>();
@@ -274,7 +272,7 @@ export const makeMergeStatementJson = (target: MergeStatementTypeClass): MergeSt
 };
 
 export type ReturnStatementJson = JsonType<'return'> & {
-    field?: BaseExpressionJson | ErrorJson;
+    field?: BaseExpressionJson;
 };
 export const isReturnStatementJson = typia.createIs<ReturnStatementJson>();
 
@@ -286,7 +284,7 @@ export const makeReturnStatementJson = (target: ReturnStatementTypeClass): Retur
 };
 
 export type RunAsConditionJson = JsonType<'runAsCondition'> & {
-    field: (BaseExpressionJson | ErrorJson)[];
+    field: BaseExpressionJson[];
 };
 export const isRunAsConditionJson = typia.createIs<RunAsConditionJson>();
 
@@ -304,8 +302,8 @@ const makeRunAsConditionJson = (
 };
 
 export type RunAsStatementJson = JsonType<'runAs'> & {
-    condition: ErrorJson | RunAsConditionJson;
-    block: (StatementJson | ErrorJson)[];
+    condition: RunAsConditionJson;
+    block: StatementJson[];
 };
 
 export const isRunAsStatementJson = typia.createIs<RunAsStatementJson>();
@@ -319,7 +317,7 @@ export const makeRunAsStatementJson = (target: RunAsStatementTypeClass): RunAsSt
 };
 
 export type WhenVariantJson = JsonType<'switchVariant'> & {
-    variant: BaseExpressionJson | ErrorJson;
+    variant: BaseExpressionJson;
 };
 
 export const isWhenVariantJson = typia.createIs<WhenVariantJson>();
@@ -349,15 +347,12 @@ export type WhenConditionJson = JsonType<'switchCondition'> & {
                     valueType: 'id';
                 }
           )[]
-        | { value: string; valueType: TypeJson | ErrorJson };
+        | { value: string; valueType: TypeJson };
 };
 
 const makeWhenLiteralJson = (
     target: WhenLiteralTypeClass,
-): Exclude<
-    WhenConditionJson['condition'],
-    'else' | { valueType: TypeJson | ErrorJson }
->[number] => {
+): Exclude<WhenConditionJson['condition'], 'else' | { valueType: TypeJson }>[number] => {
     const literal = target.getFields();
     switch (literal.kind) {
         case 'id':
@@ -377,7 +372,7 @@ const makeWhenLiteralJson = (
         case 'longText':
             return { value: literal.value, valueType: literal.kind };
         case 'null':
-            // キーワードは大文字・小文字を区別しないので、'null' にそろえる (docs/ir-v2-integration.md 4 章)
+            // キーワードは大文字・小文字を区別しないので、'null' にそろえる (docs/ir-integration.md 4 章)
             return { value: 'null', valueType: literal.kind };
     }
 };
@@ -404,14 +399,11 @@ export const makeWhenConditionJson = (target: WhenValueTypeClass): WhenCondition
 };
 
 export type SwitchStatementJson = JsonType<'switch'> & {
-    variant: WhenVariantJson | ErrorJson;
-    block: (
-        | {
-              condition: WhenConditionJson | ErrorJson;
-              block: (StatementJson | ErrorJson)[];
-          }
-        | ErrorJson
-    )[];
+    variant: WhenVariantJson;
+    block: {
+        condition: WhenConditionJson;
+        block: StatementJson[];
+    }[];
 };
 
 export const isSwitchStatementJson = typia.createIs<SwitchStatementJson>();
@@ -431,7 +423,7 @@ const makeSwitchStatementJson = (target: SwitchStatementTypeClass): SwitchStatem
 };
 
 export type ThrowStatementJson = JsonType<'throw'> & {
-    value: BaseExpressionJson | ErrorJson;
+    value: BaseExpressionJson;
 };
 
 export const isThrowStatementJson = typia.createIs<ThrowStatementJson>();
@@ -451,7 +443,7 @@ export type CatchConditionJson = StructureJsonType<
 > & {
     exception: string;
     exceptionType: string[];
-    modifier: (ModifierJson | AnnotationJson | ErrorJson)[];
+    modifier: (ModifierJson | AnnotationJson)[];
 };
 
 export const isCatchConditionJson = typia.createIs<CatchConditionJson>();
@@ -477,18 +469,17 @@ export type TryStatementJson = JsonType<'try'> & {
     block: (
         | {
               condition: 'try';
-              block: (StatementJson | ErrorJson)[];
+              block: StatementJson[];
           }
         | {
               condition: 'catch';
-              catchCondition: CatchConditionJson | ErrorJson;
-              block: (StatementJson | ErrorJson)[];
+              catchCondition: CatchConditionJson;
+              block: StatementJson[];
           }
         | {
               condition: 'finally';
-              block: (StatementJson | ErrorJson)[];
+              block: StatementJson[];
           }
-        | ErrorJson
     )[];
 };
 
@@ -527,7 +518,7 @@ const makeTryStatementJson = (target: TryStatementTypeClass): TryStatementJson =
 };
 
 export type UndeleteStatementJson = JsonType<'undelete'> & {
-    field: BaseExpressionJson | ErrorJson;
+    field: BaseExpressionJson;
     accessLevel?: 'SYSTEM' | 'USER';
 };
 export const isUndeleteStatementJson = typia.createIs<UndeleteStatementJson>();
@@ -543,7 +534,7 @@ export const makeUndeleteStatementJson = (
 };
 
 export type UpdateStatementJson = JsonType<'update'> & {
-    field: BaseExpressionJson | ErrorJson;
+    field: BaseExpressionJson;
     accessLevel?: 'SYSTEM' | 'USER';
 };
 export const isUpdateStatementJson = typia.createIs<UpdateStatementJson>();
@@ -557,7 +548,7 @@ export const makeUpdateStatementJson = (target: UpdateStatementTypeClass): Updat
 };
 
 export type UpsertStatementJson = JsonType<'upsert'> & {
-    field: BaseExpressionJson | ErrorJson;
+    field: BaseExpressionJson;
     accessLevel?: 'SYSTEM' | 'USER';
     key?: string[];
 };
@@ -573,7 +564,7 @@ export const makeUpsertStatementJson = (target: UpsertStatementTypeClass): Upser
 };
 
 export type WhileConditionJson = JsonType<'whileCondition'> & {
-    condition: BaseExpressionJson | ErrorJson;
+    condition: BaseExpressionJson;
 };
 export const isWhileConditionJson = typia.createIs<WhileConditionJson>();
 
@@ -584,8 +575,8 @@ const makeWhileConditionJson = (target: ParExpressionTypeClass): WhileConditionJ
 };
 
 export type WhileStatementJson = JsonType<'while'> & {
-    condition: WhileConditionJson | ErrorJson;
-    body: StatementJson | ErrorJson;
+    condition: WhileConditionJson;
+    body: StatementJson;
 };
 export const isWhileStatementJson = typia.createIs<WhileStatementJson>();
 
@@ -598,7 +589,7 @@ const makeWhileStatementJson = (target: WhileStatementTypeClass): WhileStatement
 };
 
 export type StatementJson =
-    | (StatementJson | ErrorJson)[]
+    | StatementJson[]
     | BreakStatementJson
     | ContinueStatementJson
     | DeleteStatementJson

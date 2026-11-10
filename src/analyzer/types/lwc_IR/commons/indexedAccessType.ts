@@ -1,54 +1,54 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isIndexedAccessType, type IndexedAccessType } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { flowTypeVisitorEvaluatePairs, type FlowTypeTypeClass } from '../flowTypeVisitor';
 
-export type IndexedAccessTypeFields = {
-    objectType: FlowTypeTypeClass | LwcErrorTypeClass;
-    indexType: FlowTypeTypeClass | LwcErrorTypeClass;
+export type IndexedAccessTypeFields = TypeField<'indexedAccessType'> & {
+    objectType: FlowTypeTypeClass;
+    indexType: FlowTypeTypeClass;
 };
 
-export class IndexedAccessTypeTypeClass extends LwcCommonTypeClass<'indexedAccessType'> {
-    private readonly value: IndexedAccessTypeFields;
-
-    private constructor(value: IndexedAccessTypeFields) {
-        super('indexedAccessType');
-        this.value = value;
+export class IndexedAccessTypeTypeClass extends LwcCommonTypeClass<
+    'indexedAccessType',
+    IndexedAccessTypeFields
+> {
+    private constructor(value: FieldsOf<IndexedAccessTypeFields>, sourceSpan: SourceSpan) {
+        super('indexedAccessType', value, sourceSpan);
     }
 
     static create(target: IndexedAccessType, originalSource: string): IndexedAccessTypeTypeClass {
-        return new IndexedAccessTypeTypeClass({
-            objectType: visitNode(
-                target.objectType,
-                originalSource,
-                flowTypeVisitorEvaluatePairs(),
-                'FlowTypeVisitor',
-            ),
-            indexType: visitNode(
-                target.indexType,
-                originalSource,
-                flowTypeVisitorEvaluatePairs(),
-                'FlowTypeVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): IndexedAccessTypeFields {
-        return this.value;
+        return new IndexedAccessTypeTypeClass(
+            {
+                objectType: visitNode(
+                    target.objectType,
+                    originalSource,
+                    flowTypeVisitorEvaluatePairs(),
+                    'FlowTypeVisitor',
+                ),
+                indexType: visitNode(
+                    target.indexType,
+                    originalSource,
+                    flowTypeVisitorEvaluatePairs(),
+                    'FlowTypeVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getObjectType(): IndexedAccessTypeFields['objectType'] {
-        return this.value.objectType;
+        return this.getFields().objectType;
     }
 
     getIndexType(): IndexedAccessTypeFields['indexType'] {
-        return this.value.indexType;
+        return this.getFields().indexType;
     }
 }
 
@@ -60,5 +60,5 @@ export const indexedAccessTypeTypePair: EvaluatePair<
 );
 
 export const isIndexedAccessTypeType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is IndexedAccessTypeTypeClass => target instanceof IndexedAccessTypeTypeClass;

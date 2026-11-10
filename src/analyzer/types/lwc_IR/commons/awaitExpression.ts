@@ -1,43 +1,43 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isAwaitExpression, type AwaitExpression } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
 
-export type AwaitExpressionFields = {
-    argument: ExpressionTypeClass | LwcErrorTypeClass;
+export type AwaitExpressionFields = TypeField<'awaitExpression'> & {
+    argument: ExpressionTypeClass;
 };
 
-export class AwaitExpressionTypeClass extends LwcCommonTypeClass<'awaitExpression'> {
-    private readonly value: AwaitExpressionFields;
-
-    private constructor(value: AwaitExpressionFields) {
-        super('awaitExpression');
-        this.value = value;
+export class AwaitExpressionTypeClass extends LwcCommonTypeClass<
+    'awaitExpression',
+    AwaitExpressionFields
+> {
+    private constructor(value: FieldsOf<AwaitExpressionFields>, sourceSpan: SourceSpan) {
+        super('awaitExpression', value, sourceSpan);
     }
 
     static create(target: AwaitExpression, originalSource: string): AwaitExpressionTypeClass {
-        return new AwaitExpressionTypeClass({
-            argument: visitNode(
-                target.argument,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): AwaitExpressionFields {
-        return this.value;
+        return new AwaitExpressionTypeClass(
+            {
+                argument: visitNode(
+                    target.argument,
+                    originalSource,
+                    expressionVisitorEvaluatePairs(),
+                    'ExpressionVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getArgument(): AwaitExpressionFields['argument'] {
-        return this.value.argument;
+        return this.getFields().argument;
     }
 }
 
@@ -47,5 +47,5 @@ export const awaitExpressionTypePair: EvaluatePair<AwaitExpression, AwaitExpress
     );
 
 export const isAwaitExpressionType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is AwaitExpressionTypeClass => target instanceof AwaitExpressionTypeClass;

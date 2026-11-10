@@ -1,52 +1,55 @@
 import { TypeRefContext } from '@apexdevtools/apex-parser';
 
+import { ArraySubscriptsTypeClass } from './arraySubscripts';
+import { TypeNameTypeClass } from '../nameVisitor';
 import {
-    TypeListBaseTypeClass,
-    ArraySubscriptsTypeClass,
-    TypeVisitor,
-    isArraySubscriptsType,
-} from '.';
-
-import { TypeNameTypeClass, NameVisitor, isTypeNameType } from '../nameVisitor';
-import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNodeList,
-    visitNode,
+    createNode,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class TypeRefTypeClass extends TypeListBaseTypeClass<'typeRef', TypeNameTypeClass> {
-    private dimension: ArraySubscriptsTypeClass | ApexErrorTypeClass;
+export type TypeRefType = TypeField<'typeRef'> & {
+    /** `a.b.C` の各部分 */
+    element: TypeNameTypeClass[];
+    dimention: ArraySubscriptsTypeClass;
+};
 
-    private constructor(
-        value: (TypeNameTypeClass | ApexErrorTypeClass)[],
-        dimension: ArraySubscriptsTypeClass | ApexErrorTypeClass,
-    ) {
-        super('typeRef', value);
-        this.dimension = dimension;
+export class TypeRefTypeClass extends ApexCommonTypeClass<'typeRef', TypeRefType> {
+    private constructor(fields: FieldsOf<TypeRefType>, sourceSpan: SourceSpan) {
+        super('typeRef', fields, sourceSpan);
     }
 
     static create(ctx: TypeRefContext): TypeRefTypeClass {
-        if (ctx.typeName_list().length === 0 || !ctx.arraySubscripts()) {
-            throw new Error('値が異常です。TypeRefContext: ' + ctx.getText());
-        }
-
         return new TypeRefTypeClass(
-            visitNodeList(new NameVisitor(), ctx.typeName_list(), isTypeNameType, 'typeName'),
-            visitNode(
-                new TypeVisitor(),
-                ctx.arraySubscripts(),
-                isArraySubscriptsType,
-                'arraySubscripts',
-            ),
+            {
+                element: createNodeList(
+                    ctx.typeName_list(),
+                    (c) => TypeNameTypeClass.create(c),
+                    'typeName',
+                ),
+                dimention: createNode(
+                    ctx.arraySubscripts(),
+                    (c) => ArraySubscriptsTypeClass.create(c),
+                    'arraySubscripts',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getDimension(): ArraySubscriptsTypeClass | ApexErrorTypeClass {
-        return this.dimension;
+    getElement(): TypeRefType['element'] {
+        return this.getFields().element;
+    }
+
+    getDimention(): TypeRefType['dimention'] {
+        return this.getFields().dimention;
     }
 }
 
-export const isTypeRefType = (target: ApexCommonTypeClass<string>): target is TypeRefTypeClass => {
-    return target instanceof TypeRefTypeClass;
-};
+export const isTypeRefType = (
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is TypeRefTypeClass => isSpicifyApexCommonTypeClass('typeRef', target);

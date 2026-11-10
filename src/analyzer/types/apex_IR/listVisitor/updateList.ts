@@ -1,32 +1,36 @@
 import { UpdateListContext } from '@apexdevtools/apex-parser';
 
-import { ListTypeClass, ListVisitor } from '.';
+import { UpdateTypeTypeClass } from '../clauseVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { UpdateTypeTypeClass, ClauseVisitor, isUpdateTypeType } from '../clauseVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type UpdateListType = TypeField<'updateList'> & {
+    value: UpdateTypeTypeClass[];
+};
 
-export class UpdateListTypeClass extends ListTypeClass<'updateList', UpdateTypeTypeClass> {
-    private constructor(value: (UpdateTypeTypeClass | ApexErrorTypeClass)[]) {
-        super('updateList', value);
+export class UpdateListTypeClass extends ApexCommonTypeClass<'updateList', UpdateListType> {
+    private constructor(fields: FieldsOf<UpdateListType>, sourceSpan: SourceSpan) {
+        super('updateList', fields, sourceSpan);
     }
 
     static create(ctx: UpdateListContext): UpdateListTypeClass {
-        if (!ctx.updateType()) {
-            throw new Error('値が異常です。UpdateListContext: ' + ctx.getText());
-        }
-
-        const value: (UpdateTypeTypeClass | ApexErrorTypeClass)[] = [
-            visitNode(new ClauseVisitor(), ctx.updateType(), isUpdateTypeType, 'updateType'),
+        const value: UpdateListType['value'] = [
+            createNode(ctx.updateType(), (c) => UpdateTypeTypeClass.create(c), 'updateType'),
         ];
 
+        // 入れ子の updateList は平坦化する
         if (ctx.updateList()) {
-            const nested = visitNode(
-                new ListVisitor(),
+            const nested = createNode(
                 ctx.updateList(),
-                isUpdateListType,
+                (c) => UpdateListTypeClass.create(c),
                 'updateList',
             );
-
             if (isUpdateListType(nested)) {
                 value.push(...nested.getValue());
             } else {
@@ -34,12 +38,14 @@ export class UpdateListTypeClass extends ListTypeClass<'updateList', UpdateTypeT
             }
         }
 
-        return new UpdateListTypeClass(value);
+        return new UpdateListTypeClass({ value }, getSourceSpan(ctx));
+    }
+
+    getValue(): UpdateListType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isUpdateListType = (
-    target: ApexCommonTypeClass<string>,
-): target is UpdateListTypeClass => {
-    return target instanceof UpdateListTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is UpdateListTypeClass => isSpicifyApexCommonTypeClass('updateList', target);

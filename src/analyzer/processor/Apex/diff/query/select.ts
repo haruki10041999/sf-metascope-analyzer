@@ -1,4 +1,4 @@
-import { ErrorJson, FieldJson, SelectEntryJson } from '../../../../types';
+import { FieldJson, SelectEntryJson } from '../../../../types';
 
 import {
     ListItemDiff,
@@ -75,14 +75,9 @@ type SelectEntryNode = Extract<SelectEntryJson, { kind: 'selectEntry' }>;
 export type SelectEntryJsonDiff =
     NodeDiff<'selectEntry', SelectEntryNode, SelectEntryFieldsDiff> | SubQueryJsonDiff;
 
-export type SelectEntriesDiff = ListItemDiff<
-    'selectEntry',
-    SelectEntryJson | ErrorJson,
-    SelectEntryJsonDiff
->;
+export type SelectEntriesDiff = ListItemDiff<'selectEntry', SelectEntryJson, SelectEntryJsonDiff>;
 
-const selectEntryIdentity = (entry: SelectEntryJson | ErrorJson): string => {
-    if (entry.kind === 'error') return entry.sourceKeys.objectKey;
+const selectEntryIdentity = (entry: SelectEntryJson): string => {
     if (entry.kind === 'subQuery') {
         return getValueKey({
             kind: entry.kind,
@@ -94,8 +89,8 @@ const selectEntryIdentity = (entry: SelectEntryJson | ErrorJson): string => {
 };
 
 export const makeSelectEntryDiff = (
-    before: SelectEntryJson | ErrorJson,
-    after: SelectEntryJson | ErrorJson,
+    before: SelectEntryJson,
+    after: SelectEntryJson,
     match: Match = 'slot',
 ): SelectEntryJsonDiff => {
     if (before.kind === 'subQuery' && after.kind === 'subQuery') {
@@ -106,8 +101,8 @@ export const makeSelectEntryDiff = (
 
     return makeNodeDiff(
         'selectEntry',
-        before as SelectEntryNode | ErrorJson,
-        after as SelectEntryNode | ErrorJson,
+        before as SelectEntryNode,
+        after as SelectEntryNode,
         match,
         (b, a) => {
             if (b.type !== a.type) return undefined;
@@ -138,22 +133,16 @@ export const makeSelectEntryDiff = (
 };
 
 export const makeSelectEntriesDiff = (
-    before: (SelectEntryJson | ErrorJson)[],
-    after: (SelectEntryJson | ErrorJson)[],
+    before: SelectEntryJson[],
+    after: SelectEntryJson[],
     sources?: Sources,
 ): SelectEntriesDiff[] =>
     makeSetDiff('selectEntry', before, after, makeSelectEntryDiff, sources, selectEntryIdentity);
 
-export type SelectJsonDiff =
-    { field: SelectEntriesDiff[] } | ValueDiff<(SelectEntryJson | ErrorJson)[] | ErrorJson>;
+export type SelectJsonDiff = { field: SelectEntriesDiff[] };
 
 export const makeSelectDiff = (
-    before: (SelectEntryJson | ErrorJson)[] | ErrorJson,
-    after: (SelectEntryJson | ErrorJson)[] | ErrorJson,
+    before: SelectEntryJson[],
+    after: SelectEntryJson[],
     sources?: Sources,
-): SelectJsonDiff => {
-    if (Array.isArray(before) && Array.isArray(after)) {
-        return { field: makeSelectEntriesDiff(before, after, sources) };
-    }
-    return makeValueDiff(before, after);
-};
+): SelectJsonDiff => ({ field: makeSelectEntriesDiff(before, after, sources) });

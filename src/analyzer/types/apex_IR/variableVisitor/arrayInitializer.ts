@@ -1,36 +1,52 @@
 import { ArrayInitializerContext } from '@apexdevtools/apex-parser';
 
-import { VariableListTypeClass } from '.';
-
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
+import {
+    ApexCommonTypeClass,
+    visitNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class ArrayInitializerTypeClass extends VariableListTypeClass<
+export type ArrayInitializerType = TypeField<'arrayInitializer'> & {
+    element: BasedExpressionTypeClass[];
+};
+
+export class ArrayInitializerTypeClass extends ApexCommonTypeClass<
     'arrayInitializer',
-    BasedExpressionTypeClass
+    ArrayInitializerType
 > {
-    private constructor(value: (BasedExpressionTypeClass | ApexErrorTypeClass)[]) {
-        super('arrayInitializer', value);
+    private constructor(fields: FieldsOf<ArrayInitializerType>, sourceSpan: SourceSpan) {
+        super('arrayInitializer', fields, sourceSpan);
     }
 
-    public static create(ctx: ArrayInitializerContext) {
+    static create(ctx: ArrayInitializerContext): ArrayInitializerTypeClass {
         return new ArrayInitializerTypeClass(
-            visitNodeList(
-                new ExpressionVisitor(),
-                ctx.expression_list(),
-                isBasedExpressionType,
-                'expression',
-            ),
+            {
+                element: visitNodeList(
+                    new ExpressionVisitor(),
+                    ctx.expression_list(),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getElement(): ArrayInitializerType['element'] {
+        return this.getFields().element;
     }
 }
 
 export const isArrayInitializerType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is ArrayInitializerTypeClass => {
-    return target instanceof ArrayInitializerTypeClass;
+    return isSpicifyApexCommonTypeClass('arrayInitializer', target);
 };

@@ -1,32 +1,46 @@
 import { PrimaryExpressionContext } from '@apexdevtools/apex-parser';
 
-import { ExpressionTypeClass } from '.';
-
 import { BasedPrimaryTypeClass, PrimaryVisitor, isBasedPrimaryType } from '../primaryVisitor';
+import {
+    ApexCommonTypeClass,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+    visitNode,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-import { ApexCommonTypeClass, ApexErrorTypeClass, visitNode } from '../commonVisitor';
+export type PrimaryExpressionType = TypeField<'primaryExpression'> & {
+    value: BasedPrimaryTypeClass;
+};
 
-export class PrimaryExpressionTypeClass extends ExpressionTypeClass<
+export class PrimaryExpressionTypeClass extends ApexCommonTypeClass<
     'primaryExpression',
-    BasedPrimaryTypeClass
+    PrimaryExpressionType
 > {
-    private constructor(value: BasedPrimaryTypeClass | ApexErrorTypeClass) {
-        super('primaryExpression', value);
+    private constructor(fields: FieldsOf<PrimaryExpressionType>, sourceSpan: SourceSpan) {
+        super('primaryExpression', fields, sourceSpan);
     }
 
     static create(ctx: PrimaryExpressionContext): PrimaryExpressionTypeClass {
-        if (!ctx.primary()) {
-            throw new Error('値が異常です。PrimaryExpressionContext: ' + ctx.getText());
-        }
-
         return new PrimaryExpressionTypeClass(
-            visitNode(new PrimaryVisitor(), ctx.primary(), isBasedPrimaryType, 'primary'),
+            {
+                value: visitNode(
+                    new PrimaryVisitor(),
+                    ctx.primary(),
+                    isBasedPrimaryType,
+                    'primary',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): PrimaryExpressionType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isPrimaryExpressionType = (
-    target: ApexCommonTypeClass<string>,
-): target is PrimaryExpressionTypeClass => {
-    return target instanceof PrimaryExpressionTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is PrimaryExpressionTypeClass =>
+    isSpicifyApexCommonTypeClass('primaryExpression', target);

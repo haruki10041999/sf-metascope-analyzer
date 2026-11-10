@@ -268,7 +268,12 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
                 });
             }
         }
-        const found = lookup(refType, target);
+        const found =
+            lookup(refType, target) ??
+            // c:<名前> の部品 (Aura・FlexiPage・Flow の画面から) は LWC か Aura のどちらか。LWC の import・テンプレートは LWC だけ
+            (refType === 'lwc' && reference.via !== 'import' && reference.via !== 'template'
+                ? lookup('aura', target)
+                : undefined);
         if (found) return found;
 
         // リポジトリにないもの
@@ -298,6 +303,8 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
 
     const originOf = (refType: string, target: string): NodeOrigin => {
         if (refType === 'globalVariable' || refType === 'apexType') return 'standard';
+        // c 以外の名前空間の部品 (Flow の画面の forceContent:fileUpload など) は標準
+        if (refType === 'aura' && /^\w+:/.test(target) && !/^c:/i.test(target)) return 'standard';
         const [head] = target.split('.');
         if (isNamespaced(head ?? target) || isNamespaced(target.split('.').pop() ?? ''))
             return 'managed';
@@ -751,6 +758,10 @@ const METADATA_TYPE_NAMES: Record<string, string> = {
     apexPage: 'ApexPage',
     apexComponent: 'ApexComponent',
     emailTemplate: 'EmailTemplate',
+    messageChannel: 'LightningMessageChannel',
+    externalCredential: 'ExternalCredential',
+    customNotificationType: 'CustomNotificationType',
+    reportType: 'ReportType',
 };
 
 /** ノード (単位・項目など) の package.xml。種類ごとに名前の順。apiVersion は sfdx-project.json の sourceApiVersion など */

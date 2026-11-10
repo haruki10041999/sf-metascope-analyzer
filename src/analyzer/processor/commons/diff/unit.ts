@@ -1,6 +1,6 @@
-import type { ConvertKeys, ErrorJson } from '../../../types';
+import type { ConvertKeys } from '../../../types';
 
-import { ErrorJsonDiff, Pair, Sources, makeErrorJsonDiff, pairAsSet } from './commons';
+import { Pair, Sources, pairAsSet } from './commons';
 import { TypedListDiff, makeTypedListDiff } from './list';
 import { hasChange } from './change';
 
@@ -17,7 +17,7 @@ export type IdParseResult = {
 
 /**
  * 解析の単位 1 つの差分。id で対応付ける。
- * 中身は、どちらも読めたら Content、どちらも読めなかったら ErrorJson 同士の差分
+ * 中身は、どちらも読めたら Content。読めなかった方があれば中身の差分はなく、理由は resolvedError の差分に出る
  */
 export type IdUnitDiff<R extends IdParseResult, Content> = {
     id: string;
@@ -27,7 +27,7 @@ export type IdUnitDiff<R extends IdParseResult, Content> = {
     dataType: Pair<R['dataType']> | { before: R['dataType'] } | { after: R['dataType'] };
     /** 診断・読めなかったファイル。B. 集合 (objectKey で対応付ける) */
     resolvedError: TypedListDiff<R['resolvedError'][number], never>;
-    content?: Content | ErrorJsonDiff;
+    content?: Content;
 };
 
 const pair = <T>(before: T, after: T): Pair<T> => (before === after ? before : { before, after });
@@ -46,7 +46,7 @@ const makeResolvedErrorDiff = <E extends { sourceKeys: ConvertKeys }>(
         () => undefined as never,
     );
 
-/** 読めた結果の dataType (それ以外は 'error') と、中身の差分の作り方 */
+/** 読めた結果の dataType (読めなかったものは 'error'。中身 (base) はなく、理由は resolvedError) と、中身の差分の作り方 */
 export type ContentMaker<R extends IdParseResult, Content> = {
     dataType: Exclude<R['dataType'], 'error'>;
     make: (before: R['result']['base'], after: R['result']['base'], sources: Sources) => Content;
@@ -61,9 +61,7 @@ const makeIdUnitDiff = <R extends IdParseResult, Content>(
     const diff =
         before.dataType === content.dataType && after.dataType === content.dataType
             ? content.make(before.result.base, after.result.base, sources)
-            : before.dataType === 'error' && after.dataType === 'error'
-              ? makeErrorJsonDiff(before.result.base as ErrorJson, after.result.base as ErrorJson)
-              : undefined;
+            : undefined;
     const resolvedError = makeResolvedErrorDiff(before.resolvedError, after.resolvedError);
     const changed =
         before.dataType !== after.dataType || hasChange(diff) || hasChange(resolvedError);

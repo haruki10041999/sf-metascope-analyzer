@@ -68,6 +68,13 @@ const RECORD_FOLDERS: Record<
     queue: { folder: 'queues', suffix: '.queue-meta.xml' },
     group: { folder: 'groups', suffix: '.group-meta.xml' },
     role: { folder: 'roles', suffix: '.role-meta.xml' },
+    messageChannel: { folder: 'messageChannels', suffix: '.messageChannel-meta.xml' },
+    externalCredential: {
+        folder: 'externalCredentials',
+        suffix: '.externalCredential-meta.xml',
+    },
+    customNotificationType: { folder: 'notificationtypes', suffix: '.notiftype-meta.xml' },
+    reportType: { folder: 'reportTypes', suffix: '.reportType-meta.xml' },
 };
 
 const recordParser = <T extends RecordMetadataType>(type: T) =>
@@ -96,6 +103,10 @@ export const ApprovalProcessParser = recordParser('approvalProcess');
 export const QueueParser = recordParser('queue');
 export const GroupParser = recordParser('group');
 export const RoleParser = recordParser('role');
+export const LightningMessageChannelParser = recordParser('messageChannel');
+export const ExternalCredentialParser = recordParser('externalCredential');
+export const CustomNotificationTypeParser = recordParser('customNotificationType');
+export const ReportTypeParser = recordParser('reportType');
 
 /** Visualforce ページ (pages/<名前>.page-meta.xml と <名前>.page) */
 export const ApexPageParser = new MetadataFolderParser({
@@ -154,6 +165,12 @@ export type ApprovalProcessParseResult = ParseResultOf<typeof ApprovalProcessPar
 export type QueueParseResult = ParseResultOf<typeof QueueParser>;
 export type GroupParseResult = ParseResultOf<typeof GroupParser>;
 export type RoleParseResult = ParseResultOf<typeof RoleParser>;
+export type LightningMessageChannelParseResult = ParseResultOf<
+    typeof LightningMessageChannelParser
+>;
+export type ExternalCredentialParseResult = ParseResultOf<typeof ExternalCredentialParser>;
+export type CustomNotificationTypeParseResult = ParseResultOf<typeof CustomNotificationTypeParser>;
+export type ReportTypeParseResult = ParseResultOf<typeof ReportTypeParser>;
 export type ApexPageParseResult = ParseResultOf<typeof ApexPageParser>;
 export type ApexComponentParseResult = ParseResultOf<typeof ApexComponentParser>;
 export type EmailTemplateParseResult = ParseResultOf<typeof EmailTemplateParser>;

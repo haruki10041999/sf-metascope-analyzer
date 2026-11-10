@@ -1,4 +1,4 @@
-import { ErrorJson, UsingScopeJson } from '../../../../types';
+import { UsingScopeJson } from '../../../../types';
 
 import {
     Match,
@@ -15,8 +15,8 @@ export type UsingScopeJsonDiff = NodeDiff<
 >;
 
 export const makeUsingScopeDiff = (
-    before: UsingScopeJson | ErrorJson,
-    after: UsingScopeJson | ErrorJson,
+    before: UsingScopeJson,
+    after: UsingScopeJson,
     match: Match = 'slot',
 ): UsingScopeJsonDiff =>
     makeNodeDiff('usingScopeClause', before, after, match, (b, a) => ({

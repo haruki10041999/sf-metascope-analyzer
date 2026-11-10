@@ -1,4 +1,4 @@
-import { ErrorJson, JsonType } from '../commons/json';
+import { JsonType } from '../commons/json';
 
 import {
     ParsedXmlFile,
@@ -248,7 +248,7 @@ export const OBJECT_TRANSLATION_SCHEMA = {
 export type CustomObjectTranslationJson = JsonType<'objectTranslation'> & {
     objectApiName: string;
     locale: string;
-    fields?: (CustomFieldTranslationJson | ErrorJson)[];
+    fields?: CustomFieldTranslationJson[];
     caseValues?: CaseValueJson[];
 } & { [K in TranslationMemberKey]?: TranslationMemberJson<K>[] } & PropertiesOf<
         typeof OBJECT_TRANSLATION_SCHEMA
@@ -276,15 +276,9 @@ export const makeCustomObjectTranslationJson = (
         source: '',
     };
     const objectRoot = source.objectFile
-        ? readXmlRoot(
-              source.objectFile,
-              'CustomObjectTranslation',
-              'objectTranslation',
-              registry,
-              problems,
-          )
+        ? readXmlRoot(source.objectFile, 'CustomObjectTranslation', 'objectTranslation', problems)
         : undefined;
-    const objectElement = objectRoot && 'name' in objectRoot ? objectRoot : undefined;
+    const objectElement = objectRoot ?? undefined;
 
     // 項目: object-meta.xml の中のもの (メタデータ API の形式) のあとに、ファイル名の順
     const fields = [
@@ -293,17 +287,10 @@ export const makeCustomObjectTranslationJson = (
                   makeCustomFieldTranslationJson(element, '', objectFile, registry),
               )
             : []),
-        ...source.fieldFiles.map((file) => {
-            const root = readXmlRoot(
-                file,
-                'CustomFieldTranslation',
-                'fieldTranslation',
-                registry,
-                problems,
-            );
-            return 'children' in root
-                ? makeCustomFieldTranslationJson(root, file.name, file, registry)
-                : root;
+        // 読めないファイルは持たない (理由は problems → resolvedError)
+        ...source.fieldFiles.flatMap((file) => {
+            const root = readXmlRoot(file, 'CustomFieldTranslation', 'fieldTranslation', problems);
+            return root ? [makeCustomFieldTranslationJson(root, file.name, file, registry)] : [];
         }),
     ];
 

@@ -1,58 +1,61 @@
 import { VariableDeclaratorContext } from '@apexdevtools/apex-parser';
 
-import { VariableTypeClass } from '.';
-
-import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNode,
+    createNode,
     visitOptionalNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { IdTypeClass } from '../idVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class VariableDeclaratorTypeClass extends VariableTypeClass<
+export type VariableDeclaratorType = TypeField<'variableDeclarator'> & {
+    variant: IdTypeClass;
+    /** 初期化子は任意 (`String name;`) */
+    init: BasedExpressionTypeClass | null;
+};
+
+export class VariableDeclaratorTypeClass extends ApexCommonTypeClass<
     'variableDeclarator',
-    NormalIdTypeClass
+    VariableDeclaratorType
 > {
-    private content: BasedExpressionTypeClass | ApexErrorTypeClass | null;
-
-    private constructor(
-        value: NormalIdTypeClass | ApexErrorTypeClass,
-        content: BasedExpressionTypeClass | ApexErrorTypeClass | null,
-    ) {
-        super('variableDeclarator', value);
-        this.content = content;
+    private constructor(fields: FieldsOf<VariableDeclaratorType>, sourceSpan: SourceSpan) {
+        super('variableDeclarator', fields, sourceSpan);
     }
 
-    static create(ctx: VariableDeclaratorContext) {
-        if (!ctx.id()) {
-            throw new Error('値が異常です。VariableDeclaratorContext: ' + ctx.getText());
-        }
-
+    static create(ctx: VariableDeclaratorContext): VariableDeclaratorTypeClass {
         return new VariableDeclaratorTypeClass(
-            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
-            // 初期化子は任意（`String name;`）
-            visitOptionalNode(
-                new ExpressionVisitor(),
-                ctx.expression(),
-                isBasedExpressionType,
-                'expression',
-            ),
+            {
+                variant: createNode(ctx.id(), (c) => IdTypeClass.create(c), 'id'),
+                init: visitOptionalNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getContent(): BasedExpressionTypeClass | ApexErrorTypeClass | null {
-        return this.content;
+    getVariant(): VariableDeclaratorType['variant'] {
+        return this.getFields().variant;
+    }
+
+    getInit(): VariableDeclaratorType['init'] {
+        return this.getFields().init;
     }
 }
 
 export const isVariableDeclaratorType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is VariableDeclaratorTypeClass => {
-    return target instanceof VariableDeclaratorTypeClass;
+    return isSpicifyApexCommonTypeClass('variableDeclarator', target);
 };

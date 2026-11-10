@@ -1,13 +1,22 @@
+import { type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isSuper, type Super } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export class SuperTypeClass extends LwcCommonTypeClass<'super'> {
-    private constructor() {
-        super('super');
+export type SuperFields = TypeField<'super'>;
+
+export class SuperTypeClass extends LwcCommonTypeClass<'super', SuperFields> {
+    private constructor(sourceSpan: SourceSpan) {
+        super('super', {}, sourceSpan);
     }
 
-    static create(_target: Super, _originalSource: string): SuperTypeClass {
-        return new SuperTypeClass();
+    static create(target: Super, originalSource: string): SuperTypeClass {
+        return new SuperTypeClass(getSourceSpan(target, originalSource));
     }
 }
 
@@ -16,5 +25,6 @@ export const superTypePair: EvaluatePair<Super, SuperTypeClass> = makeEvaluatePa
     (target, originalSource) => SuperTypeClass.create(target, originalSource),
 );
 
-export const isSuperType = (target: LwcCommonTypeClass<string>): target is SuperTypeClass =>
-    target instanceof SuperTypeClass;
+export const isSuperType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is SuperTypeClass => target instanceof SuperTypeClass;

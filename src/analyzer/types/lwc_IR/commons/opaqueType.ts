@@ -1,81 +1,72 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isOpaqueType, type OpaqueType } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
     visitNode,
     visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { flowTypeVisitorEvaluatePairs, type FlowTypeTypeClass } from '../flowTypeVisitor';
-import {
-    typeParameterDeclarationTypePair,
-    type TypeParameterDeclarationTypeClass,
-} from '../flowVisitor/typeParameterDeclaration';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { TypeParameterDeclarationTypeClass } from '../flowVisitor/typeParameterDeclaration';
+import { IdentifierTypeClass } from './identifier';
 
-const opaqueTypeIdPairs = lazyPairs(() => [identifierTypePair] as const);
-const opaqueTypeTypeParametersPairs = lazyPairs(() => [typeParameterDeclarationTypePair] as const);
-
-export type OpaqueTypeFields = {
-    id: IdentifierTypeClass | LwcErrorTypeClass;
-    typeParameters: TypeParameterDeclarationTypeClass | LwcErrorTypeClass | null;
-    supertype: FlowTypeTypeClass | LwcErrorTypeClass | null;
-    impltype: FlowTypeTypeClass | LwcErrorTypeClass;
+export type OpaqueTypeFields = TypeField<'opaqueType'> & {
+    id: IdentifierTypeClass;
+    typeParameters: TypeParameterDeclarationTypeClass | null;
+    supertype: FlowTypeTypeClass | null;
+    impltype: FlowTypeTypeClass;
 };
 
-export class OpaqueTypeTypeClass extends LwcCommonTypeClass<'opaqueType'> {
-    private readonly value: OpaqueTypeFields;
-
-    private constructor(value: OpaqueTypeFields) {
-        super('opaqueType');
-        this.value = value;
+export class OpaqueTypeTypeClass extends LwcCommonTypeClass<'opaqueType', OpaqueTypeFields> {
+    private constructor(value: FieldsOf<OpaqueTypeFields>, sourceSpan: SourceSpan) {
+        super('opaqueType', value, sourceSpan);
     }
 
     static create(target: OpaqueType, originalSource: string): OpaqueTypeTypeClass {
-        return new OpaqueTypeTypeClass({
-            id: visitNode(target.id, originalSource, opaqueTypeIdPairs(), 'OpaqueType.id'),
-            typeParameters: visitOptionalNode(
-                target.typeParameters,
-                originalSource,
-                opaqueTypeTypeParametersPairs(),
-                'OpaqueType.typeParameters',
-            ),
-            supertype: visitOptionalNode(
-                target.supertype,
-                originalSource,
-                flowTypeVisitorEvaluatePairs(),
-                'FlowTypeVisitor',
-            ),
-            impltype: visitNode(
-                target.impltype,
-                originalSource,
-                flowTypeVisitorEvaluatePairs(),
-                'FlowTypeVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): OpaqueTypeFields {
-        return this.value;
+        return new OpaqueTypeTypeClass(
+            {
+                id: IdentifierTypeClass.create(target.id, originalSource),
+                typeParameters:
+                    target.typeParameters == null
+                        ? null
+                        : TypeParameterDeclarationTypeClass.create(
+                              target.typeParameters,
+                              originalSource,
+                          ),
+                supertype: visitOptionalNode(
+                    target.supertype,
+                    originalSource,
+                    flowTypeVisitorEvaluatePairs(),
+                    'FlowTypeVisitor',
+                ),
+                impltype: visitNode(
+                    target.impltype,
+                    originalSource,
+                    flowTypeVisitorEvaluatePairs(),
+                    'FlowTypeVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getId(): OpaqueTypeFields['id'] {
-        return this.value.id;
+        return this.getFields().id;
     }
 
     getTypeParameters(): OpaqueTypeFields['typeParameters'] {
-        return this.value.typeParameters;
+        return this.getFields().typeParameters;
     }
 
     getSupertype(): OpaqueTypeFields['supertype'] {
-        return this.value.supertype;
+        return this.getFields().supertype;
     }
 
     getImpltype(): OpaqueTypeFields['impltype'] {
-        return this.value.impltype;
+        return this.getFields().impltype;
     }
 }
 
@@ -85,5 +76,5 @@ export const opaqueTypeTypePair: EvaluatePair<OpaqueType, OpaqueTypeTypeClass> =
 );
 
 export const isOpaqueTypeType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is OpaqueTypeTypeClass => target instanceof OpaqueTypeTypeClass;

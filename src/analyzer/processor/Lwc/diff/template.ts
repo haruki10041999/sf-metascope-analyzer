@@ -1,5 +1,4 @@
 import type {
-    ErrorJson,
     LwcAttributeValueJson,
     LwcMetadataRefJson,
     LwcTemplateJson,
@@ -147,8 +146,8 @@ export type LwcTemplateJsonDiff = NodeDiff<
 >;
 
 export const makeLwcTemplateDiff = (
-    before: LwcTemplateJson | ErrorJson,
-    after: LwcTemplateJson | ErrorJson,
+    before: LwcTemplateJson,
+    after: LwcTemplateJson,
     sources?: Sources,
 ): LwcTemplateJsonDiff =>
     makeNodeDiff('lwcTemplate', before, after, 'slot', (b, a) => ({

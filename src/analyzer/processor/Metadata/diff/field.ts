@@ -1,6 +1,5 @@
 import {
     CustomFieldJson,
-    ErrorJson,
     FIELD_SCHEMA,
     PICKLIST_VALUE_SCHEMA,
     PicklistValueJson,
@@ -35,8 +34,8 @@ export type PicklistValueJsonDiff = NodeDiff<
 >;
 
 export const makePicklistValueDiff = (
-    before: PicklistValueJson | ErrorJson,
-    after: PicklistValueJson | ErrorJson,
+    before: PicklistValueJson,
+    after: PicklistValueJson,
     match: Match = 'slot',
 ): PicklistValueJsonDiff =>
     makeNodeDiff('picklistValue', before, after, match, (b, a) => ({
@@ -47,7 +46,7 @@ export const makePicklistValueDiff = (
 /** 選択リスト値は D. キー対応 (キー: fullName)。並び順の変化は報告しない */
 export type PicklistValuesDiff = ListItemDiff<
     'picklistValue',
-    PicklistValueJson | ErrorJson,
+    PicklistValueJson,
     PicklistValueJsonDiff
 >;
 
@@ -57,7 +56,7 @@ export type ValueSetJsonDiff = {
     sorted?: PresentDiff<boolean, ValueDiff<boolean>>;
     valueSetName?: PresentDiff<string, ValueDiff<string>>;
     controllingField?: PresentDiff<string, ValueDiff<string>>;
-    values?: PresentDiff<(PicklistValueJson | ErrorJson)[], PicklistValuesDiff[]>;
+    values?: PresentDiff<PicklistValueJson[], PicklistValuesDiff[]>;
 };
 
 export const makeValueSetDiff = (
@@ -86,7 +85,7 @@ export const makeValueSetDiff = (
                 bv,
                 av,
                 makePicklistValueDiff,
-                (value) => (value.kind === 'error' ? undefined : value.fullName),
+                (value) => value.fullName,
                 sources,
             ),
         ),
@@ -107,8 +106,8 @@ export type CustomFieldJsonDiff = NodeDiff<
 >;
 
 export const makeCustomFieldDiff = (
-    before: CustomFieldJson | ErrorJson,
-    after: CustomFieldJson | ErrorJson,
+    before: CustomFieldJson,
+    after: CustomFieldJson,
     match: Match = 'slot',
     sources?: Sources,
 ): CustomFieldJsonDiff =>

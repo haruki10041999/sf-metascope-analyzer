@@ -1,27 +1,39 @@
 import { FinallyBlockContext } from '@apexdevtools/apex-parser';
 
-import { NormalBlockTypeClass, BlockTypeClass, BlockVisitor, isNormalBlockType } from '.';
+import { BlockTypeClass } from './block';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class FinallyBlockTypeClass extends BlockTypeClass<'finallyBlock', NormalBlockTypeClass> {
-    private constructor(value: NormalBlockTypeClass | ApexErrorTypeClass) {
-        super('finallyBlock', value);
+export type FinallyBlockType = TypeField<'finallyBlock'> & {
+    block: BlockTypeClass;
+};
+
+export class FinallyBlockTypeClass extends ApexCommonTypeClass<'finallyBlock', FinallyBlockType> {
+    private constructor(fields: FieldsOf<FinallyBlockType>, sourceSpan: SourceSpan) {
+        super('finallyBlock', fields, sourceSpan);
     }
 
     static create(ctx: FinallyBlockContext): FinallyBlockTypeClass {
-        if (!ctx.block()) {
-            throw new Error('値が異常です。FinallyBlockContext: ' + ctx.getText());
-        }
-
         return new FinallyBlockTypeClass(
-            visitNode(new BlockVisitor(), ctx.block(), isNormalBlockType, 'block'),
+            { block: createNode(ctx.block(), (c) => BlockTypeClass.create(c), 'block') },
+            getSourceSpan(ctx),
         );
+    }
+
+    getBlock(): FinallyBlockType['block'] {
+        return this.getFields().block;
     }
 }
 
 export const isFinallyBlockType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is FinallyBlockTypeClass => {
-    return target instanceof FinallyBlockTypeClass;
+    return isSpicifyApexCommonTypeClass('finallyBlock', target);
 };

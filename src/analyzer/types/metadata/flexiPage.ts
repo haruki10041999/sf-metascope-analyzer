@@ -1,4 +1,4 @@
-import type { ErrorJson, JsonType } from '../commons/json';
+import type { JsonType } from '../commons/json';
 import { childOf, childrenOf, type XmlElement } from '../commons/xml';
 import {
     makeMetadataJson,
@@ -167,9 +167,9 @@ export const makeFlexiPageJson = (
     file: ParsedXmlFile,
     registry: XmlSourceRegistry,
     problems: XmlReadProblem[],
-): FlexiPageJson | ErrorJson => {
-    const root = readXmlRoot(file, 'FlexiPage', 'flexiPage', registry, problems);
-    if (!('name' in root)) return root;
+): FlexiPageJson | null => {
+    const root = readXmlRoot(file, 'FlexiPage', 'flexiPage', problems);
+    if (!root) return null;
 
     const regionElements = childrenOf(root, 'flexiPageRegions');
     const items = regionElements.map((region) =>

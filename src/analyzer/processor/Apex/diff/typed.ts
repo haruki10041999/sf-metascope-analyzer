@@ -1,5 +1,3 @@
-import { ErrorJson } from '../../../types';
-
 import { JsonNode, Match, Sources } from '../../commons/diff/commons';
 import {
     MovedFrom,
@@ -10,7 +8,7 @@ import {
 } from '../../commons/diff/list';
 import { GumTreeDiff } from '../../commons/diff/gumtree';
 
-type DiffNode = JsonNode | ErrorJson;
+type DiffNode = JsonNode;
 type DiffObject = Record<string, unknown>;
 
 // ---------------------------------------------------------------------------

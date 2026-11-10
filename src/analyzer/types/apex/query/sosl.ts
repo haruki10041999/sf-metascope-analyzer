@@ -1,4 +1,4 @@
-import { ErrorJson, JsonType } from '../../commons';
+import { JsonType } from '../../commons';
 import type {
     FieldSpecTypeClass,
     SoslClausesTypeClass,
@@ -6,7 +6,7 @@ import type {
     SoslIdTypeClass,
     SoslLiteralAltTypeClass,
     SoslLiteralTypeClass,
-} from '../../apex_IR_v2';
+} from '../../apex_IR';
 
 import { makeNodeJson } from '../commons/node';
 import { SoqlFunctionJson, makeSoqlFunctionJson } from './soqlFunction';
@@ -51,13 +51,13 @@ const makeSoslFieldJson = (target: SoslFieldTypeClass): SoslFieldJson => {
 };
 
 export type FieldSpecJson = {
-    object: (string | ErrorJson)[] | ErrorJson;
-    field?: (SoslFieldJson | ErrorJson)[] | ErrorJson;
-    where?: LogicalConditionJson | ErrorJson;
-    orderBy?: (FieldOrderJson | ErrorJson)[] | ErrorJson;
-    listView?: (string | ErrorJson)[] | ErrorJson;
-    limit?: LimitJson | ErrorJson;
-    offset?: OffsetJson | ErrorJson;
+    object: string[];
+    field?: SoslFieldJson[];
+    where?: LogicalConditionJson;
+    orderBy?: FieldOrderJson[];
+    listView?: string[];
+    limit?: LimitJson;
+    offset?: OffsetJson;
 };
 
 const makeFieldSpecJson = (target: FieldSpecTypeClass): FieldSpecJson => {
@@ -81,19 +81,19 @@ const makeFieldSpecJson = (target: FieldSpecTypeClass): FieldSpecJson => {
     };
 };
 
-// SOSL 全体の位置を持つノード。`| ErrorJson` は v1 の木の中のエラーの名残 (v2 では出てこない)
+// SOSL 全体の位置を持つノード
 export type SoslJson = JsonType<'sosl'> & {
-    find: string | BaseExpressionJson | ErrorJson;
+    find: string | BaseExpressionJson;
     group?: 'ALL' | 'EMAIL' | 'NAME' | 'PHONE' | 'SIDEBAR';
-    fieldSpec?: (FieldSpecJson | ErrorJson)[] | ErrorJson;
-    with?: (SoslWithJson | ErrorJson)[];
-    limit?: LimitJson | ErrorJson;
-    update?: UpdateListJson | ErrorJson;
+    fieldSpec?: FieldSpecJson[];
+    with?: SoslWithJson[];
+    limit?: LimitJson;
+    update?: UpdateListJson;
 };
 
 // soslPrimary から来るのは soslLiteral だけ (soslLiteralAlt は v1 と同じく、文法にはあるが今は通らない)
 export const makeSoslJson = (target: SoslLiteralTypeClass | SoslLiteralAltTypeClass): SoslJson => {
-    let find: string | BaseExpressionJson | ErrorJson;
+    let find: string | BaseExpressionJson;
     let clauses: SoslClausesTypeClass;
     switch (target.kind) {
         case 'soslLiteral': {

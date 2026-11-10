@@ -5,7 +5,7 @@ import { regenerateSourceObjects } from '../../src/analyzer/types/apex/commons';
 
 import { find, toJson, unitRules } from './helpers';
 
-// JSON 層の、省略できるところ・取り出し・SourceJson の再生成 (IR v2 の木から作る。docs/ir-v2-integration.md)。
+// JSON 層の、省略できるところ・取り出し・SourceJson の再生成 (IR v2 の木から作る。docs/ir-integration.md)。
 // v1 の「エラーのノードを ErrorJson にする」テストは、v2 の木にエラーのノードがないのでなくした
 
 const anonymous = async (source: string) => {

@@ -1,4 +1,4 @@
-import { ErrorJson, LimitJson, OffsetJson, SoqlJson, isErrorJson } from '../../../../types';
+import { LimitJson, OffsetJson, SoqlJson } from '../../../../types';
 
 import {
     Match,
@@ -31,8 +31,8 @@ export type SoqlFieldsDiff = {
     with: OptionalDiff<SoqlJson['with'], WithJsonDiff>;
     groupBy: OptionalDiff<SoqlJson['groupBy'], GroupByJsonDiff>;
     orderBy: OptionalDiff<SoqlJson['orderBy'], OrderByJsonDiff>;
-    limit: OptionalDiff<LimitJson | ErrorJson, LimitJsonDiff>;
-    offset: OptionalDiff<OffsetJson | ErrorJson, OffsetJsonDiff>;
+    limit: OptionalDiff<LimitJson, LimitJsonDiff>;
+    offset: OptionalDiff<OffsetJson, OffsetJsonDiff>;
     allRows: OptionalDiff<SoqlJson['allRows'], AllRowsJsonDiff>;
     updateList: OptionalDiff<SoqlJson['updateList'], UpdateListJsonDiff>;
 };
@@ -40,17 +40,13 @@ export type SoqlFieldsDiff = {
 export type SoqlJsonDiff = NodeDiff<'soql', SoqlJson, SoqlFieldsDiff>;
 
 export const makeSoqlDiff = (
-    before: SoqlJson | ErrorJson,
-    after: SoqlJson | ErrorJson,
+    before: SoqlJson,
+    after: SoqlJson,
     sources?: Sources,
     match: Match = 'slot',
 ): SoqlJsonDiff =>
     makeNodeDiff('soql', before, after, match, (b, a) => ({
-        select: makeSelectDiff(
-            isErrorJson(b.select) ? b.select : b.select.field,
-            isErrorJson(a.select) ? a.select : a.select.field,
-            sources,
-        ),
+        select: makeSelectDiff(b.select.field, a.select.field, sources),
         from: makeFromDiff(b.from, a.from, sources),
         where: makeOptionalDiff(b.where, a.where, makeWhereDiff),
         for: makeOptionalDiff(b.for, a.for, makeForDiff),

@@ -3,7 +3,6 @@ import type {
     CssDeclarationJson,
     CssRuleJson,
     CssStatementJson,
-    ErrorJson,
     LwcStylesheetJson,
 } from '../../../types';
 
@@ -117,8 +116,8 @@ const makeStatementsDiff = (
     );
 
 const makeRuleDiff = (
-    before: CssRuleJson | ErrorJson,
-    after: CssRuleJson | ErrorJson,
+    before: CssRuleJson,
+    after: CssRuleJson,
     match: Match,
     sources?: Sources,
 ): CssRuleJsonDiff =>
@@ -134,8 +133,8 @@ const makeRuleDiff = (
     }));
 
 const makeAtRuleDiff = (
-    before: CssAtRuleJson | ErrorJson,
-    after: CssAtRuleJson | ErrorJson,
+    before: CssAtRuleJson,
+    after: CssAtRuleJson,
     match: Match,
     sources?: Sources,
 ): CssAtRuleJsonDiff =>
@@ -175,8 +174,8 @@ export type LwcStylesheetJsonDiff = NodeDiff<
 >;
 
 export const makeLwcStylesheetDiff = (
-    before: LwcStylesheetJson | ErrorJson,
-    after: LwcStylesheetJson | ErrorJson,
+    before: LwcStylesheetJson,
+    after: LwcStylesheetJson,
     sources?: Sources,
 ): LwcStylesheetJsonDiff =>
     makeNodeDiff('lwcStylesheet', before, after, 'slot', (b, a) => ({

@@ -1,41 +1,34 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isPrivateName, type PrivateName } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { IdentifierTypeClass } from './identifier';
 
-const privateNameIdPairs = lazyPairs(() => [identifierTypePair] as const);
-
-export type PrivateNameFields = {
-    id: IdentifierTypeClass | LwcErrorTypeClass;
+export type PrivateNameFields = TypeField<'privateName'> & {
+    id: IdentifierTypeClass;
 };
 
-export class PrivateNameTypeClass extends LwcCommonTypeClass<'privateName'> {
-    private readonly value: PrivateNameFields;
-
-    private constructor(value: PrivateNameFields) {
-        super('privateName');
-        this.value = value;
+export class PrivateNameTypeClass extends LwcCommonTypeClass<'privateName', PrivateNameFields> {
+    private constructor(value: FieldsOf<PrivateNameFields>, sourceSpan: SourceSpan) {
+        super('privateName', value, sourceSpan);
     }
 
     static create(target: PrivateName, originalSource: string): PrivateNameTypeClass {
-        return new PrivateNameTypeClass({
-            id: visitNode(target.id, originalSource, privateNameIdPairs(), 'PrivateName.id'),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): PrivateNameFields {
-        return this.value;
+        return new PrivateNameTypeClass(
+            {
+                id: IdentifierTypeClass.create(target.id, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getId(): PrivateNameFields['id'] {
-        return this.value.id;
+        return this.getFields().id;
     }
 }
 
@@ -45,5 +38,5 @@ export const privateNameTypePair: EvaluatePair<PrivateName, PrivateNameTypeClass
     );
 
 export const isPrivateNameType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is PrivateNameTypeClass => target instanceof PrivateNameTypeClass;

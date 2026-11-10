@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import {
     FunctionDeclarationTypeClass,
@@ -77,7 +78,9 @@ export type FunctionTypeClass =
     | ClassMethodTypeClass
     | ClassPrivateMethodTypeClass;
 
-export const isFunctionType = (target: LwcCommonTypeClass<string>): target is FunctionTypeClass => {
+export const isFunctionType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is FunctionTypeClass => {
     return (
         target instanceof FunctionDeclarationTypeClass ||
         target instanceof FunctionExpressionTypeClass ||

@@ -1,47 +1,53 @@
 import { DotMethodCallContext } from '@apexdevtools/apex-parser';
 
-import { CallTypeClass } from '.';
-
-import { AnyIdTypeClass, IdVisitor, isAnyIdType } from '../idVisitor';
-import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
+import { AnyIdTypeClass } from '../idVisitor';
+import { ExpressionListTypeClass } from '../listVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNode,
-    visitOptionalNode,
+    createNode,
+    createOptionalNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class DotMethodCallTypeClass extends CallTypeClass<
+export type DotMethodCallType = TypeField<'dotMethodCall'> & {
+    value: AnyIdTypeClass;
+    param: ExpressionListTypeClass | null;
+};
+
+export class DotMethodCallTypeClass extends ApexCommonTypeClass<
     'dotMethodCall',
-    AnyIdTypeClass,
-    ExpressionListTypeClass
+    DotMethodCallType
 > {
-    private constructor(
-        value: AnyIdTypeClass | ApexErrorTypeClass,
-        param: ExpressionListTypeClass | ApexErrorTypeClass | null,
-    ) {
-        super('dotMethodCall', value, param);
+    private constructor(fields: FieldsOf<DotMethodCallType>, sourceSpan: SourceSpan) {
+        super('dotMethodCall', fields, sourceSpan);
     }
 
     static create(ctx: DotMethodCallContext): DotMethodCallTypeClass {
-        if (!ctx.anyId()) {
-            throw new Error('値が異常です。DotMethodCallContext: ' + ctx.getText());
-        }
-
         return new DotMethodCallTypeClass(
-            visitNode(new IdVisitor(), ctx.anyId(), isAnyIdType, 'anyId'),
-            visitOptionalNode(
-                new ListVisitor(),
-                ctx.expressionList(),
-                isExpressionListType,
-                'expressionList',
-            ),
+            {
+                value: createNode(ctx.anyId(), (c) => AnyIdTypeClass.create(c), 'anyId'),
+                param: createOptionalNode(
+                    ctx.expressionList(),
+                    (c) => ExpressionListTypeClass.create(c),
+                    'expressionList',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): DotMethodCallType['value'] {
+        return this.getFields().value;
+    }
+
+    getParam(): DotMethodCallType['param'] {
+        return this.getFields().param;
     }
 }
 
 export const isDotMethodCallType = (
-    target: ApexCommonTypeClass<string>,
-): target is DotMethodCallTypeClass => {
-    return target instanceof DotMethodCallTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is DotMethodCallTypeClass => isSpicifyApexCommonTypeClass('dotMethodCall', target);

@@ -1,0 +1,597 @@
+{
+  "module": {
+    "fileType": "ts",
+    "imports": [
+      {
+        "kind": "lwcImport",
+        "sourceKeys": {},
+        "source": "lwc",
+        "category": "lwc",
+        "specifiers": [
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "named",
+            "local": "LightningElement",
+            "imported": "LightningElement",
+            "typeOnly": false
+          },
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "named",
+            "local": "api",
+            "imported": "api",
+            "typeOnly": false
+          }
+        ],
+        "typeOnly": false
+      },
+      {
+        "kind": "lwcImport",
+        "sourceKeys": {},
+        "source": "c/utils",
+        "category": "component",
+        "specifiers": [
+          {
+            "kind": "lwcImportSpecifier",
+            "sourceKeys": {},
+            "specifierType": "named",
+            "local": "formatAmount",
+            "imported": "formatAmount",
+            "typeOnly": false
+          }
+        ],
+        "typeOnly": false,
+        "component": "c/utils"
+      }
+    ],
+    "component": {
+      "kind": "lwcComponent",
+      "sourceKeys": {
+        "base": {},
+        "name": {}
+      },
+      "name": "AccountRow",
+      "extend": "LightningElement",
+      "mixins": [],
+      "block": [
+        {
+          "kind": "lwcField",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "recordId",
+          "variantType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "string",
+            "type": "primitive",
+            "primitiveType": "string"
+          },
+          "references": [],
+          "optional": false,
+          "modifier": {
+            "decorator": [
+              {
+                "kind": "lwcDecorator",
+                "sourceKeys": {},
+                "name": "api",
+                "arg": []
+              }
+            ]
+          }
+        },
+        {
+          "kind": "lwcField",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "name",
+          "variantType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "string",
+            "type": "primitive",
+            "primitiveType": "string"
+          },
+          "init": "''",
+          "references": [],
+          "optional": false,
+          "modifier": {
+            "decorator": [
+              {
+                "kind": "lwcDecorator",
+                "sourceKeys": {},
+                "name": "api",
+                "arg": []
+              }
+            ]
+          }
+        },
+        {
+          "kind": "lwcField",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "amount",
+          "variantType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "number",
+            "type": "primitive",
+            "primitiveType": "number"
+          },
+          "references": [],
+          "optional": true,
+          "modifier": {
+            "decorator": [
+              {
+                "kind": "lwcDecorator",
+                "sourceKeys": {},
+                "name": "api",
+                "arg": []
+              }
+            ]
+          }
+        },
+        {
+          "kind": "lwcProperty",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "formattedAmount",
+          "isGetter": true,
+          "isSetter": false,
+          "getterContent": {
+            "modifier": {},
+            "body": {
+              "kind": "lwcBody",
+              "sourceKeys": {},
+              "statements": 1
+            },
+            "calls": [],
+            "events": []
+          },
+          "variantType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "string",
+            "type": "primitive",
+            "primitiveType": "string"
+          }
+        },
+        {
+          "kind": "lwcMethod",
+          "sourceKeys": {
+            "base": {},
+            "name": {}
+          },
+          "name": "handleClick",
+          "returnType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
+            "text": "void",
+            "type": "primitive",
+            "primitiveType": "void"
+          },
+          "param": [],
+          "async": false,
+          "modifier": {},
+          "body": {
+            "kind": "lwcBody",
+            "sourceKeys": {},
+            "statements": 1
+          },
+          "calls": [
+            {
+              "kind": "lwcCall",
+              "sourceKeys": {},
+              "callType": "dispatchEvent",
+              "target": "CustomEvent",
+              "arg": [
+                "new CustomEvent('select', { detail: { recordId: this.recordId } })"
+              ],
+              "references": []
+            }
+          ],
+          "events": [
+            {
+              "kind": "lwcEvent",
+              "sourceKeys": {},
+              "name": "select",
+              "detail": "{ recordId: this.recordId }"
+            }
+          ]
+        }
+      ]
+    },
+    "otherExports": [],
+    "declarations": [],
+    "typeDeclarations": []
+  },
+  "sourceObject": [
+    {
+      "context": "@api amount?: number;",
+      "start": {
+        "offset": 205,
+        "line": 7,
+        "column": 4
+      },
+      "end": {
+        "offset": 226,
+        "line": 7,
+        "column": 25
+      }
+    },
+    {
+      "context": "@api name: string = '';",
+      "start": {
+        "offset": 177,
+        "line": 6,
+        "column": 4
+      },
+      "end": {
+        "offset": 200,
+        "line": 6,
+        "column": 27
+      }
+    },
+    {
+      "context": "@api recordId!: string;",
+      "start": {
+        "offset": 149,
+        "line": 5,
+        "column": 4
+      },
+      "end": {
+        "offset": 172,
+        "line": 5,
+        "column": 27
+      }
+    },
+    {
+      "context": "@api",
+      "start": {
+        "offset": 149,
+        "line": 5,
+        "column": 4
+      },
+      "end": {
+        "offset": 153,
+        "line": 5,
+        "column": 8
+      }
+    },
+    {
+      "context": "@api",
+      "start": {
+        "offset": 177,
+        "line": 6,
+        "column": 4
+      },
+      "end": {
+        "offset": 181,
+        "line": 6,
+        "column": 8
+      }
+    },
+    {
+      "context": "@api",
+      "start": {
+        "offset": 205,
+        "line": 7,
+        "column": 4
+      },
+      "end": {
+        "offset": 209,
+        "line": 7,
+        "column": 8
+      }
+    },
+    {
+      "context": "AccountRow",
+      "start": {
+        "offset": 107,
+        "line": 4,
+        "column": 21
+      },
+      "end": {
+        "offset": 117,
+        "line": 4,
+        "column": 31
+      }
+    },
+    {
+      "context": "LightningElement",
+      "start": {
+        "offset": 9,
+        "line": 1,
+        "column": 9
+      },
+      "end": {
+        "offset": 25,
+        "line": 1,
+        "column": 25
+      }
+    },
+    {
+      "context": "amount",
+      "start": {
+        "offset": 210,
+        "line": 7,
+        "column": 9
+      },
+      "end": {
+        "offset": 216,
+        "line": 7,
+        "column": 15
+      }
+    },
+    {
+      "context": "api",
+      "start": {
+        "offset": 27,
+        "line": 1,
+        "column": 27
+      },
+      "end": {
+        "offset": 30,
+        "line": 1,
+        "column": 30
+      }
+    },
+    {
+      "context": "class AccountRow extends LightningElement {\n    @api recordId!: string;\n    @api name: string = '';\n    @api amount?: number;\n\n    get formattedAmount(): string {\n        return formatAmount(this.amount ?? 0);\n    }\n\n    handleClick(): void {\n        this.dispatchEvent(new CustomEvent('select', { detail: { recordId: this.recordId } }));\n    }\n}",
+      "start": {
+        "offset": 101,
+        "line": 4,
+        "column": 15
+      },
+      "end": {
+        "offset": 447,
+        "line": 16,
+        "column": 1
+      }
+    },
+    {
+      "context": "formatAmount",
+      "start": {
+        "offset": 54,
+        "line": 2,
+        "column": 9
+      },
+      "end": {
+        "offset": 66,
+        "line": 2,
+        "column": 21
+      }
+    },
+    {
+      "context": "formattedAmount",
+      "start": {
+        "offset": 236,
+        "line": 9,
+        "column": 8
+      },
+      "end": {
+        "offset": 251,
+        "line": 9,
+        "column": 23
+      }
+    },
+    {
+      "context": "get formattedAmount(): string {\n        return formatAmount(this.amount ?? 0);\n    }",
+      "start": {
+        "offset": 232,
+        "line": 9,
+        "column": 4
+      },
+      "end": {
+        "offset": 316,
+        "line": 11,
+        "column": 5
+      }
+    },
+    {
+      "context": "handleClick",
+      "start": {
+        "offset": 322,
+        "line": 13,
+        "column": 4
+      },
+      "end": {
+        "offset": 333,
+        "line": 13,
+        "column": 15
+      }
+    },
+    {
+      "context": "handleClick(): void {\n        this.dispatchEvent(new CustomEvent('select', { detail: { recordId: this.recordId } }));\n    }",
+      "start": {
+        "offset": 322,
+        "line": 13,
+        "column": 4
+      },
+      "end": {
+        "offset": 445,
+        "line": 15,
+        "column": 5
+      }
+    },
+    {
+      "context": "import { LightningElement, api } from 'lwc';",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 44,
+        "line": 1,
+        "column": 44
+      }
+    },
+    {
+      "context": "import { formatAmount } from 'c/utils';",
+      "start": {
+        "offset": 45,
+        "line": 2,
+        "column": 0
+      },
+      "end": {
+        "offset": 84,
+        "line": 2,
+        "column": 39
+      }
+    },
+    {
+      "context": "name",
+      "start": {
+        "offset": 182,
+        "line": 6,
+        "column": 9
+      },
+      "end": {
+        "offset": 186,
+        "line": 6,
+        "column": 13
+      }
+    },
+    {
+      "context": "new CustomEvent('select', { detail: { recordId: this.recordId } })",
+      "start": {
+        "offset": 371,
+        "line": 14,
+        "column": 27
+      },
+      "end": {
+        "offset": 437,
+        "line": 14,
+        "column": 93
+      }
+    },
+    {
+      "context": "number",
+      "start": {
+        "offset": 219,
+        "line": 7,
+        "column": 18
+      },
+      "end": {
+        "offset": 225,
+        "line": 7,
+        "column": 24
+      }
+    },
+    {
+      "context": "recordId",
+      "start": {
+        "offset": 154,
+        "line": 5,
+        "column": 9
+      },
+      "end": {
+        "offset": 162,
+        "line": 5,
+        "column": 17
+      }
+    },
+    {
+      "context": "string",
+      "start": {
+        "offset": 165,
+        "line": 5,
+        "column": 20
+      },
+      "end": {
+        "offset": 171,
+        "line": 5,
+        "column": 26
+      }
+    },
+    {
+      "context": "string",
+      "start": {
+        "offset": 188,
+        "line": 6,
+        "column": 15
+      },
+      "end": {
+        "offset": 194,
+        "line": 6,
+        "column": 21
+      }
+    },
+    {
+      "context": "string",
+      "start": {
+        "offset": 255,
+        "line": 9,
+        "column": 27
+      },
+      "end": {
+        "offset": 261,
+        "line": 9,
+        "column": 33
+      }
+    },
+    {
+      "context": "this.dispatchEvent(new CustomEvent('select', { detail: { recordId: this.recordId } }))",
+      "start": {
+        "offset": 352,
+        "line": 14,
+        "column": 8
+      },
+      "end": {
+        "offset": 438,
+        "line": 14,
+        "column": 94
+      }
+    },
+    {
+      "context": "void",
+      "start": {
+        "offset": 337,
+        "line": 13,
+        "column": 19
+      },
+      "end": {
+        "offset": 341,
+        "line": 13,
+        "column": 23
+      }
+    },
+    {
+      "context": "{\n        return formatAmount(this.amount ?? 0);\n    }",
+      "start": {
+        "offset": 262,
+        "line": 9,
+        "column": 34
+      },
+      "end": {
+        "offset": 316,
+        "line": 11,
+        "column": 5
+      }
+    },
+    {
+      "context": "{\n        this.dispatchEvent(new CustomEvent('select', { detail: { recordId: this.recordId } }));\n    }",
+      "start": {
+        "offset": 342,
+        "line": 13,
+        "column": 24
+      },
+      "end": {
+        "offset": 445,
+        "line": 15,
+        "column": 5
+      }
+    }
+  ],
+  "resolvedError": []
+}

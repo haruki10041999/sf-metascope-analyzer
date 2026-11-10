@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningMessageChannel xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>請求書の選択</description>
+    <isExposed>true</isExposed>
+    <lightningMessageFields>
+        <description>選択した請求書の Id (レコードページから)</description>
+        <fieldName>invoiceId</fieldName>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <description>選択した部品の名前</description>
+        <fieldName>source</fieldName>
+    </lightningMessageFields>
+    <masterLabel>Invoice Selected</masterLabel>
+</LightningMessageChannel>

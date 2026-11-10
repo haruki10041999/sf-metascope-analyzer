@@ -1,46 +1,40 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isContinueStatement, type ContinueStatement } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { IdentifierTypeClass } from './identifier';
 
-const continueStatementLabelPairs = lazyPairs(() => [identifierTypePair] as const);
-
-export type ContinueStatementFields = {
-    label: IdentifierTypeClass | LwcErrorTypeClass | null;
+export type ContinueStatementFields = TypeField<'continueStatement'> & {
+    label: IdentifierTypeClass | null;
 };
 
-export class ContinueStatementTypeClass extends LwcCommonTypeClass<'continueStatement'> {
-    private readonly value: ContinueStatementFields;
-
-    private constructor(value: ContinueStatementFields) {
-        super('continueStatement');
-        this.value = value;
+export class ContinueStatementTypeClass extends LwcCommonTypeClass<
+    'continueStatement',
+    ContinueStatementFields
+> {
+    private constructor(value: FieldsOf<ContinueStatementFields>, sourceSpan: SourceSpan) {
+        super('continueStatement', value, sourceSpan);
     }
 
     static create(target: ContinueStatement, originalSource: string): ContinueStatementTypeClass {
-        return new ContinueStatementTypeClass({
-            label: visitOptionalNode(
-                target.label,
-                originalSource,
-                continueStatementLabelPairs(),
-                'ContinueStatement.label',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): ContinueStatementFields {
-        return this.value;
+        return new ContinueStatementTypeClass(
+            {
+                label:
+                    target.label == null
+                        ? null
+                        : IdentifierTypeClass.create(target.label, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getLabel(): ContinueStatementFields['label'] {
-        return this.value.label;
+        return this.getFields().label;
     }
 }
 
@@ -52,5 +46,5 @@ export const continueStatementTypePair: EvaluatePair<
 );
 
 export const isContinueStatementType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ContinueStatementTypeClass => target instanceof ContinueStatementTypeClass;

@@ -3,7 +3,6 @@ import {
     ModifierJson,
     AnnotationArgJson,
     AnnotationJson,
-    ErrorJson,
     ConvertKeys,
 } from '../../../types';
 
@@ -23,7 +22,7 @@ import {
 
 export type ModifierValue = {
     modifierType: string;
-} & (ModifierJson | AnnotationJson | ErrorJson);
+} & (ModifierJson | AnnotationJson);
 
 /** キーを持つ引数の差分 (`@RestResource(urlMapping='/a')` の urlMapping など) */
 export type AnnotationArgJsonDiff = { key: string } & OptionalDiff<
@@ -34,7 +33,7 @@ export type AnnotationArgJsonDiff = { key: string } & OptionalDiff<
 /** 引数がすべてキーを持てばキーで対応付け、そうでなければ値を丸ごと比べる */
 export type AnnotationArgsDiff = AnnotationArgJsonDiff[] | ValueDiff<AnnotationJson['arg'] | null>;
 
-/** 修飾子・アノテーション・エラーのどれか 1 つの、集合の要素としての差分。値には分類キー (modifierType) を足す */
+/** 修飾子・アノテーションのどちらか 1 つの、集合の要素としての差分。値には分類キー (modifierType) を足す */
 type ModifierItemDiff<K extends string, T> = { kind: K } & (
     | {
           status: 'added' | 'removed';
@@ -64,9 +63,7 @@ export type AnnotationJsonDiff =
       };
 
 /** 修飾子・アノテーションは B. 集合 (分類キーをまたいで 1 つの集合にする) */
-export type ModifiersJsonDiff = (
-    ModifierJsonDiff | AnnotationJsonDiff | ModifierItemDiff<'error', ErrorJson>
-)[];
+export type ModifiersJsonDiff = (ModifierJsonDiff | AnnotationJsonDiff)[];
 
 export const makeTypedModifierJsons = (target: ModifiersJson): ModifierValue[] => {
     const modifiers: ModifierValue[] = [];

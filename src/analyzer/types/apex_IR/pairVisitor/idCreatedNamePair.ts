@@ -1,43 +1,55 @@
 import { IdCreatedNamePairContext } from '@apexdevtools/apex-parser';
 
-import { PairTypeClass } from '.';
-
-import { AnyIdTypeClass, IdVisitor, isAnyIdType } from '../idVisitor';
-import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
+import { AnyIdTypeClass } from '../idVisitor';
+import { TypeListTypeClass } from '../listVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNode,
-    visitOptionalNode,
+    createNode,
+    createOptionalNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class IdCreatedNamePairTypeClass extends PairTypeClass<
+export type IdCreatedNamePairType = TypeField<'idCreatedNamePair'> & {
+    left: AnyIdTypeClass;
+    right: TypeListTypeClass | null;
+};
+
+export class IdCreatedNamePairTypeClass extends ApexCommonTypeClass<
     'idCreatedNamePair',
-    AnyIdTypeClass,
-    TypeListTypeClass | null
+    IdCreatedNamePairType
 > {
-    private constructor(
-        left: AnyIdTypeClass | ApexErrorTypeClass,
-        right: TypeListTypeClass | ApexErrorTypeClass | null,
-    ) {
-        super('idCreatedNamePair', left, right);
+    private constructor(fields: FieldsOf<IdCreatedNamePairType>, sourceSpan: SourceSpan) {
+        super('idCreatedNamePair', fields, sourceSpan);
     }
 
     static create(ctx: IdCreatedNamePairContext): IdCreatedNamePairTypeClass {
-        if (!ctx.anyId()) {
-            throw new Error('値が異常です。IdCreatedNamePairContext: ' + ctx.getText());
-        }
-
         return new IdCreatedNamePairTypeClass(
-            visitNode(new IdVisitor(), ctx.anyId(), isAnyIdType, 'anyId'),
-            // 型引数 `<...>` は任意（`new Account()`）
-            visitOptionalNode(new ListVisitor(), ctx.typeList(), isTypeListType, 'typeList'),
+            {
+                left: createNode(ctx.anyId(), (c) => AnyIdTypeClass.create(c), 'anyId'),
+                // 型引数 `<...>` は任意（`new Account()`）
+                right: createOptionalNode(
+                    ctx.typeList(),
+                    (c) => TypeListTypeClass.create(c),
+                    'typeList',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getLeft(): IdCreatedNamePairType['left'] {
+        return this.getFields().left;
+    }
+
+    getRight(): IdCreatedNamePairType['right'] {
+        return this.getFields().right;
     }
 }
 
 export const isIdCreatedNamePairType = (
-    target: ApexCommonTypeClass<string>,
-): target is IdCreatedNamePairTypeClass => {
-    return target instanceof IdCreatedNamePairTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is IdCreatedNamePairTypeClass =>
+    isSpicifyApexCommonTypeClass('idCreatedNamePair', target);

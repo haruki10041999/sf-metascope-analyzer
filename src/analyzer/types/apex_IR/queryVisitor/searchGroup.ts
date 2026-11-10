@@ -1,14 +1,18 @@
 import { SearchGroupContext } from '@apexdevtools/apex-parser';
 
-import { QueryValueTypeClass } from '.';
-
-import { ApexErrorTypeClass, ApexCommonTypeClass } from '../commonVisitor';
+import { ApexCommonTypeClass, getSourceSpan, isSpicifyApexCommonTypeClass } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
 type SearchGroupValueType = 'ALL' | 'EMAIL' | 'NAME' | 'PHONE' | 'SIDEBAR';
 
-export class SearchGroupTypeClass extends QueryValueTypeClass<'searchGroup', SearchGroupValueType> {
-    private constructor(value: SearchGroupValueType) {
-        super('searchGroup', value);
+export type SearchGroupType = TypeField<'searchGroup'> & {
+    value: SearchGroupValueType;
+};
+
+export class SearchGroupTypeClass extends ApexCommonTypeClass<'searchGroup', SearchGroupType> {
+    private constructor(fields: FieldsOf<SearchGroupType>, sourceSpan: SourceSpan) {
+        super('searchGroup', fields, sourceSpan);
     }
 
     static create(ctx: SearchGroupContext): SearchGroupTypeClass {
@@ -30,12 +34,16 @@ export class SearchGroupTypeClass extends QueryValueTypeClass<'searchGroup', Sea
             value = 'SIDEBAR';
         }
 
-        return new SearchGroupTypeClass(value);
+        return new SearchGroupTypeClass({ value }, getSourceSpan(ctx));
+    }
+
+    getValue(): SearchGroupType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isSearchGroupType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is SearchGroupTypeClass => {
-    return target instanceof SearchGroupTypeClass;
+    return isSpicifyApexCommonTypeClass('searchGroup', target);
 };

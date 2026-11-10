@@ -112,12 +112,10 @@ describe('ObjectTranslationParser', () => {
         assert.ok(files.includes('Account-ja/Account-ja.objectTranslation-meta.xml'));
     });
 
-    it('turns unreadable files into ErrorJson and resolvedError', async () => {
+    it('drops unreadable files from the JSON and reports them in resolvedError', async () => {
         const { result, resolvedError } = await parse('Broken__c-ja');
-        assert.deepEqual(
-            result.base.fields?.map((f) => [f.kind, 'kindType' in f && f.kindType]),
-            [['error', 'fieldTranslation']],
-        );
+        // 読めない項目の翻訳は JSON に持たない (ほかに項目がないので fields ごと持たない)
+        assert.equal(result.base.fields, undefined);
         assert.deepEqual(
             resolvedError.map((e) => [e.code, e.filePath, e.start.line]),
             [['XML_SYNTAX', 'Broken__c-ja/Code__c.fieldTranslation-meta.xml', 3]],
@@ -133,7 +131,12 @@ describe('ObjectTranslationParser', () => {
         );
         const result = await ObjectTranslationParser.parseObjectTranslation(directory);
         assert.equal(result.dataType, 'error');
-        assert.equal(result.result.base.kind, 'error');
+        // 中身は持たない (理由は resolvedError)
+        assert.equal(result.result.base, null);
+        assert.deepEqual(
+            result.resolvedError.map((e) => [e.code, e.contextType]),
+            [['XML_SYNTAX', 'objectTranslation']],
+        );
     });
 
     it('keeps the keys when only the position or the line endings change', async () => {
@@ -157,11 +160,10 @@ describe('ObjectTranslationParser', () => {
             );
             await writeFile(path.join(directory, name), text.replace(/\n/g, '\r\n'));
         }
-        const lf = await ObjectTranslationParser.parseObjectTranslation(
-            path.join(translationsDir('after'), 'Account-ja'),
-        );
+        const lf = await parse('Account-ja');
         const crlf = await ObjectTranslationParser.parseObjectTranslation(directory);
-        assert.deepEqual(crlf.result.base.sourceKeys, lf.result.base.sourceKeys);
+        assert.equal(crlf.dataType, 'objectTranslation');
+        assert.deepEqual(crlf.result.base?.sourceKeys, lf.result.base.sourceKeys);
     });
 
     it('saves translations with a prefix, separately from objects in the same folder', async () => {

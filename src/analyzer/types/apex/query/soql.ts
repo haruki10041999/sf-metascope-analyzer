@@ -1,7 +1,7 @@
 import typia from 'typia';
 
-import { ErrorJson, JsonType } from '../../commons';
-import type { QueryTypeClass } from '../../apex_IR_v2';
+import { JsonType } from '../../commons';
+import type { QueryTypeClass } from '../../apex_IR';
 
 import { makeNodeJson } from '../commons/node';
 import { SelectJson, makeSelectJson } from './select';
@@ -17,20 +17,20 @@ import { OffsetJson, makeOffsetJson } from './offset';
 import { AllRowsJson, makeAllRowsJson } from './allRows';
 import { UpdateListJson, makeUpdateListJson } from './updateList';
 
-// クエリ全体の位置を持つノード。句の `| ErrorJson` は v1 の木の中のエラーの名残 (v2 では出てこない)
+// クエリ全体の位置を持つノード
 export type SoqlJson = JsonType<'soql'> & {
-    select: SelectJson | ErrorJson;
-    from: FromJson | ErrorJson;
-    where?: WhereJson | ErrorJson;
-    for?: ForJson | ErrorJson;
-    usingScope?: UsingScopeJson | ErrorJson;
-    with?: WithJson | ErrorJson;
-    groupBy?: GroupByJson | ErrorJson;
-    orderBy?: OrderByJson | ErrorJson;
-    limit?: LimitJson | ErrorJson;
-    offset?: OffsetJson | ErrorJson;
-    allRows?: AllRowsJson | ErrorJson;
-    updateList?: UpdateListJson | ErrorJson;
+    select: SelectJson;
+    from: FromJson;
+    where?: WhereJson;
+    for?: ForJson;
+    usingScope?: UsingScopeJson;
+    with?: WithJson;
+    groupBy?: GroupByJson;
+    orderBy?: OrderByJson;
+    limit?: LimitJson;
+    offset?: OffsetJson;
+    allRows?: AllRowsJson;
+    updateList?: UpdateListJson;
 };
 
 export const isSoqlJson = typia.createIs<SoqlJson>();

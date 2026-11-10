@@ -1,33 +1,42 @@
 import { ClassBodyContext } from '@apexdevtools/apex-parser';
 
-import { BodyTypeClass } from '.';
-
+import { ClassBodyDeclarationTypeClass } from '../declarationVisitor';
 import {
-    ClassBodyDeclarationTypeClass,
-    DeclarationVisitor,
-    isClassBodyDeclarationType,
-} from '../declarationVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
+    ApexCommonTypeClass,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class ClassBodyTypeClass extends BodyTypeClass<'classBody', ClassBodyDeclarationTypeClass> {
-    private constructor(value: (ClassBodyDeclarationTypeClass | ApexErrorTypeClass)[]) {
-        super('classBody', value);
+export type ClassBodyType = TypeField<'classBody'> & {
+    declaration: ClassBodyDeclarationTypeClass[];
+};
+
+export class ClassBodyTypeClass extends ApexCommonTypeClass<'classBody', ClassBodyType> {
+    private constructor(fields: FieldsOf<ClassBodyType>, sourceSpan: SourceSpan) {
+        super('classBody', fields, sourceSpan);
     }
 
     static create(ctx: ClassBodyContext): ClassBodyTypeClass {
         return new ClassBodyTypeClass(
-            visitNodeList(
-                new DeclarationVisitor(),
-                ctx.classBodyDeclaration_list(),
-                isClassBodyDeclarationType,
-                'classBodyDeclaration',
-            ),
+            {
+                declaration: createNodeList(
+                    ctx.classBodyDeclaration_list(),
+                    (c) => ClassBodyDeclarationTypeClass.create(c),
+                    'classBodyDeclaration',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getDeclaration(): ClassBodyType['declaration'] {
+        return this.getFields().declaration;
     }
 }
 
 export const isClassBodyType = (
-    target: ApexCommonTypeClass<string>,
-): target is ClassBodyTypeClass => {
-    return target instanceof ClassBodyTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is ClassBodyTypeClass => isSpicifyApexCommonTypeClass('classBody', target);

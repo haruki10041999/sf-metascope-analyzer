@@ -1,48 +1,57 @@
 import { ForInitContext } from '@apexdevtools/apex-parser';
 
-import { ControlTypeClass } from '.';
-
+import { LocalVariableDeclarationTypeClass } from '../declarationVisitor';
+import { ExpressionListTypeClass } from '../listVisitor';
 import {
-    LocalVariableDeclarationTypeClass,
-    DeclarationVisitor,
-    isLocalVariableDeclarationType,
-} from '../declarationVisitor';
-import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class ForInitTypeClass extends ControlTypeClass<
-    'forInit',
-    LocalVariableDeclarationTypeClass | ExpressionListTypeClass
-> {
-    private constructor(
-        value: LocalVariableDeclarationTypeClass | ExpressionListTypeClass | ApexErrorTypeClass,
-    ) {
-        super('forInit', value);
+export type ForInitType = TypeField<'forInit'> & {
+    value: LocalVariableDeclarationTypeClass | ExpressionListTypeClass;
+};
+
+export class ForInitTypeClass extends ApexCommonTypeClass<'forInit', ForInitType> {
+    private constructor(fields: FieldsOf<ForInitType>, sourceSpan: SourceSpan) {
+        super('forInit', fields, sourceSpan);
     }
 
     static create(ctx: ForInitContext): ForInitTypeClass {
-        if (!ctx.localVariableDeclaration() && !ctx.expressionList()) {
-            throw new Error('値が異常です。ForInitContext: ' + ctx.getText());
+        if (ctx.localVariableDeclaration()) {
+            return new ForInitTypeClass(
+                {
+                    value: createNode(
+                        ctx.localVariableDeclaration(),
+                        (c) => LocalVariableDeclarationTypeClass.create(c),
+                        'localVariableDeclaration',
+                    ),
+                },
+                getSourceSpan(ctx),
+            );
         }
-
         return new ForInitTypeClass(
-            ctx.localVariableDeclaration()
-                ? visitNode(
-                      new DeclarationVisitor(),
-                      ctx.localVariableDeclaration(),
-                      isLocalVariableDeclarationType,
-                      'localVariableDeclaration',
-                  )
-                : visitNode(
-                      new ListVisitor(),
-                      ctx.expressionList(),
-                      isExpressionListType,
-                      'expressionList',
-                  ),
+            {
+                value: createNode(
+                    ctx.expressionList(),
+                    (c) => ExpressionListTypeClass.create(c),
+                    'expressionList',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): ForInitType['value'] {
+        return this.getFields().value;
     }
 }
 
-export const isForInitType = (target: ApexCommonTypeClass<string>): target is ForInitTypeClass => {
-    return target instanceof ForInitTypeClass;
+export const isForInitType = (
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is ForInitTypeClass => {
+    return isSpicifyApexCommonTypeClass('forInit', target);
 };

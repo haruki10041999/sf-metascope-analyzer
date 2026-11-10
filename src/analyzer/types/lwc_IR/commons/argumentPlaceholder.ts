@@ -1,16 +1,28 @@
+import { type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isArgumentPlaceholder, type ArgumentPlaceholder } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export class ArgumentPlaceholderTypeClass extends LwcCommonTypeClass<'argumentPlaceholder'> {
-    private constructor() {
-        super('argumentPlaceholder');
+export type ArgumentPlaceholderFields = TypeField<'argumentPlaceholder'>;
+
+export class ArgumentPlaceholderTypeClass extends LwcCommonTypeClass<
+    'argumentPlaceholder',
+    ArgumentPlaceholderFields
+> {
+    private constructor(sourceSpan: SourceSpan) {
+        super('argumentPlaceholder', {}, sourceSpan);
     }
 
     static create(
-        _target: ArgumentPlaceholder,
-        _originalSource: string,
+        target: ArgumentPlaceholder,
+        originalSource: string,
     ): ArgumentPlaceholderTypeClass {
-        return new ArgumentPlaceholderTypeClass();
+        return new ArgumentPlaceholderTypeClass(getSourceSpan(target, originalSource));
     }
 }
 
@@ -22,5 +34,5 @@ export const argumentPlaceholderTypePair: EvaluatePair<
 );
 
 export const isArgumentPlaceholderType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ArgumentPlaceholderTypeClass => target instanceof ArgumentPlaceholderTypeClass;

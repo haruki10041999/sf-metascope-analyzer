@@ -6,7 +6,7 @@ import type {
     FieldNameTypeClass,
     TypeOfTypeClass,
     WhenClauseTypeClass,
-} from '../../apex_IR_v2';
+} from '../../apex_IR';
 
 export type TypeOfBlockJson =
     | {

@@ -1,5 +1,5 @@
 import typia from 'typia';
-import { ErrorJson, JsonType } from '../commons';
+import { JsonType } from '../commons';
 
 import type {
     AnonymousBlockMemberTypeClass,
@@ -8,7 +8,7 @@ import type {
     TriggerBlockMemberTypeClass,
     TriggerCaseTypeClass,
     TriggerUnitTypeClass,
-} from '../apex_IR_v2';
+} from '../apex_IR';
 import { makeNodeJson } from './commons/node';
 import { StatementJson, makeStatementJson } from './statement';
 import {
@@ -25,17 +25,16 @@ import {
 import { ModifiersJson, makeModifiersJson } from './modifier';
 
 // unit は境界ノードにしない（unit ごとに JSON ファイルを保存する）。
-// v2 の木にはエラーのノードがないので、unit の中に ErrorJson は出てこない (型には今は残す)。
+// IR の木にはエラーのノードがないので、unit の中にエラーのノードは出てこない (エラーは resolvedError に出る)。
 // ファイル全体を読めなかったとき (buildApexIr が木を返さなかったとき) は、呼び出す側 (parser/Apex/source.ts) が扱う
 
 export type MemberStatementJson = {
     kind: 'statement';
-    statement: StatementJson | ErrorJson;
+    statement: StatementJson;
     modifier: ModifiersJson;
 };
 
-type BlockMemberJson =
-    (MemberDeclarationJson & { modifier: ModifiersJson }) | MemberStatementJson | ErrorJson;
+type BlockMemberJson = (MemberDeclarationJson & { modifier: ModifiersJson }) | MemberStatementJson;
 
 const makeBlockMemberJson = (
     target: AnonymousBlockMemberTypeClass | TriggerBlockMemberTypeClass,
@@ -59,7 +58,7 @@ const makeBlockMemberJson = (
 
 export type AnonymousUnitJson = {
     fileType: 'anonymous';
-    block: BlockMemberJson[] | ErrorJson;
+    block: BlockMemberJson[];
 };
 
 export const isAnonymousUnitJson = typia.createIs<AnonymousUnitJson>();
@@ -89,10 +88,10 @@ const makeTriggerCaseJson = (target: TriggerCaseTypeClass): TriggerCaseJson => {
 
 export type TriggerUnitJson = {
     fileType: 'trigger';
-    name: string | ErrorJson;
-    object: string | ErrorJson;
-    case: (TriggerCaseJson | ErrorJson)[];
-    block: BlockMemberJson[] | ErrorJson;
+    name: string;
+    object: string;
+    case: TriggerCaseJson[];
+    block: BlockMemberJson[];
 };
 
 export const isTriggerUnitJson = typia.createIs<TriggerUnitJson>();

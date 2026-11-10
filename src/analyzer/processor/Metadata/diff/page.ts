@@ -1,5 +1,4 @@
 import {
-    ErrorJson,
     FLEXI_PAGE_SCHEMA,
     FlexiPageComponentJson,
     FlexiPageFieldJson,
@@ -174,8 +173,8 @@ export type LayoutJsonDiff = NodeDiff<
 >;
 
 export const makeLayoutDiff = (
-    before: LayoutJson | ErrorJson,
-    after: LayoutJson | ErrorJson,
+    before: LayoutJson,
+    after: LayoutJson,
     match: Match = 'key',
     sources?: Sources,
 ): LayoutJsonDiff =>
@@ -346,8 +345,8 @@ export type FlexiPageJsonDiff = NodeDiff<
 >;
 
 export const makeFlexiPageDiff = (
-    before: FlexiPageJson | ErrorJson,
-    after: FlexiPageJson | ErrorJson,
+    before: FlexiPageJson,
+    after: FlexiPageJson,
     match: Match = 'key',
     sources?: Sources,
 ): FlexiPageJsonDiff =>

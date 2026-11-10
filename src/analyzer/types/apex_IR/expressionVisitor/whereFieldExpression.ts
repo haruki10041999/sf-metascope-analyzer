@@ -1,70 +1,81 @@
 import { WhereFieldExpressionContext } from '@apexdevtools/apex-parser';
 
-import {
-    FieldExpressionTypeClass,
-    DoubleOperatorExpressionTypeClass,
-    ExpressionVisitor,
-    isFieldExpressionType,
-} from '.';
+import { FieldExpressionTypeClass } from '.';
 
+import { ComparisonOperatorTypeClass } from '../queryVisitor';
+import { ValueTypeClass } from '../valueVisitor';
 import {
-    ComparisonOperatorTypeClass,
-    QueryVisitor,
-    isComparisonOperatorType,
-} from '../queryVisitor';
-import { NormalValueTypeClass, ValueVisitor, isNormalValueType } from '../valueVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-export class WhereFieldExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+/**
+ * WHERE の条件 1 つ。文法は `fieldExpression | FORMULA ( StringLiteral ) comparisonOperator value` の 2 通り
+ * - field: fieldExpression (演算子と値は fieldExpression の中にある)
+ * - formula: `FORMULA('...') 演算子 値`。formula は StringLiteral のソースの文字列 (引用符を含む)
+ */
+export type WhereFieldExpressionType = TypeField<'whereFieldExpression'> &
+    (
+        | { kind: 'field'; value: FieldExpressionTypeClass }
+        | {
+              kind: 'formula';
+              formula: string;
+              operator: ComparisonOperatorTypeClass;
+              right: ValueTypeClass;
+          }
+    );
+
+export class WhereFieldExpressionTypeClass extends ApexCommonTypeClass<
     'whereFieldExpression',
-    FieldExpressionTypeClass | string,
-    ComparisonOperatorTypeClass | null,
-    NormalValueTypeClass | null
+    WhereFieldExpressionType
 > {
-    private constructor(
-        left: FieldExpressionTypeClass | string | ApexErrorTypeClass,
-        operator: ComparisonOperatorTypeClass | ApexErrorTypeClass | null,
-        right: NormalValueTypeClass | ApexErrorTypeClass | null,
-    ) {
-        super('whereFieldExpression', left, right, operator);
+    private constructor(fields: FieldsOf<WhereFieldExpressionType>, sourceSpan: SourceSpan) {
+        super('whereFieldExpression', fields, sourceSpan);
     }
 
-    // 文法は `fieldExpression | FORMULA ( StringLiteral ) comparisonOperator value` の 2 択。
-    // 前者は fieldExpression 自体が演算子と値を持つため operator / right は null
     static create(ctx: WhereFieldExpressionContext): WhereFieldExpressionTypeClass {
-        const fieldExpression = ctx.fieldExpression();
-        if (fieldExpression) {
+        if (ctx.fieldExpression()) {
             return new WhereFieldExpressionTypeClass(
-                visitNode(
-                    new ExpressionVisitor(),
-                    fieldExpression,
-                    isFieldExpressionType,
-                    'fieldExpression',
-                ),
-                null,
-                null,
+                {
+                    kind: 'field',
+                    value: createNode(
+                        ctx.fieldExpression(),
+                        (c) => FieldExpressionTypeClass.create(c),
+                        'fieldExpression',
+                    ),
+                },
+                getSourceSpan(ctx),
             );
         }
 
-        if (!ctx.FORMULA() || !ctx.StringLiteral() || !ctx.comparisonOperator() || !ctx.value()) {
+        if (!ctx.FORMULA() || !ctx.StringLiteral()) {
             throw new Error('値が異常です。WhereFieldExpressionContext: ' + ctx.getText());
         }
 
         return new WhereFieldExpressionTypeClass(
-            ctx.FORMULA().getText() + '(' + ctx.StringLiteral().getText() + ')',
-            visitNode(
-                new QueryVisitor(),
-                ctx.comparisonOperator(),
-                isComparisonOperatorType,
-                'comparisonOperator',
-            ),
-            visitNode(new ValueVisitor(), ctx.value(), isNormalValueType, 'value'),
+            {
+                kind: 'formula',
+                formula: ctx.StringLiteral().getText(),
+                operator: createNode(
+                    ctx.comparisonOperator(),
+                    (c) => ComparisonOperatorTypeClass.create(c),
+                    'comparisonOperator',
+                ),
+                right: createNode(ctx.value(), (c) => ValueTypeClass.create(c), 'value'),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getKind(): WhereFieldExpressionType['kind'] {
+        return this.getFields().kind;
     }
 }
 
 export const isWhereFieldExpressionType = (
-    target: ApexCommonTypeClass<string>,
-): target is WhereFieldExpressionTypeClass => {
-    return target instanceof WhereFieldExpressionTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is WhereFieldExpressionTypeClass =>
+    isSpicifyApexCommonTypeClass('whereFieldExpression', target);

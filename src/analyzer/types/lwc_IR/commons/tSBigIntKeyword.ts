@@ -1,13 +1,25 @@
+import { type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSBigIntKeyword, type TSBigIntKeyword } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export class TSBigIntKeywordTypeClass extends LwcCommonTypeClass<'tSBigIntKeyword'> {
-    private constructor() {
-        super('tSBigIntKeyword');
+export type TSBigIntKeywordFields = TypeField<'tSBigIntKeyword'>;
+
+export class TSBigIntKeywordTypeClass extends LwcCommonTypeClass<
+    'tSBigIntKeyword',
+    TSBigIntKeywordFields
+> {
+    private constructor(sourceSpan: SourceSpan) {
+        super('tSBigIntKeyword', {}, sourceSpan);
     }
 
-    static create(_target: TSBigIntKeyword, _originalSource: string): TSBigIntKeywordTypeClass {
-        return new TSBigIntKeywordTypeClass();
+    static create(target: TSBigIntKeyword, originalSource: string): TSBigIntKeywordTypeClass {
+        return new TSBigIntKeywordTypeClass(getSourceSpan(target, originalSource));
     }
 }
 
@@ -17,5 +29,5 @@ export const tSBigIntKeywordTypePair: EvaluatePair<TSBigIntKeyword, TSBigIntKeyw
     );
 
 export const isTSBigIntKeywordType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSBigIntKeywordTypeClass => target instanceof TSBigIntKeywordTypeClass;

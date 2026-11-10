@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomNotificationType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customNotifTypeName>Invoice Overdue</customNotifTypeName>
+    <description>支払期限を過ぎた請求書の通知</description>
+    <desktop>true</desktop>
+    <masterLabel>Invoice Overdue</masterLabel>
+    <mobile>true</mobile>
+</CustomNotificationType>

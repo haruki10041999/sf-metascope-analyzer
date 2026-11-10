@@ -3,7 +3,6 @@
 import {
     XmlSourceRegistry,
     makeLwcBundleMetaJson,
-    type ErrorJson,
     type LwcBundleMetaJson,
     type SpanSourceJson,
     type XmlReadProblem,
@@ -16,8 +15,8 @@ import { LWC_META_SUFFIX } from './folder';
 export type LwcBundleMetaParseResult = {
     /** バンドルのフォルダの親からの相対パス (hello/hello.js-meta.xml) */
     filePath: string;
-    /** XML として読めない・ルート要素が LightningComponentBundle でないときは ErrorJson */
-    meta: LwcBundleMetaJson | ErrorJson;
+    /** XML として読めない・ルート要素が LightningComponentBundle でないときは null (理由は resolvedError) */
+    meta: LwcBundleMetaJson | null;
     sourceObjects: SpanSourceJson[];
     resolvedError: LwcResolvedError[];
 };
@@ -42,10 +41,8 @@ export const parseBundleMeta = (filePath: string, source: string): LwcBundleMeta
 };
 
 /** API バージョンを数値にする (61.0 → 61)。読めなければ undefined */
-export const apiVersionOf = (
-    meta: LwcBundleMetaJson | ErrorJson | undefined,
-): number | undefined => {
-    if (!meta || meta.kind !== 'lwcBundleMeta' || meta.apiVersion === undefined) return undefined;
+export const apiVersionOf = (meta: LwcBundleMetaJson | null | undefined): number | undefined => {
+    if (!meta || meta.apiVersion === undefined) return undefined;
     const version = Number(meta.apiVersion);
     return Number.isFinite(version) ? Math.trunc(version) : undefined;
 };

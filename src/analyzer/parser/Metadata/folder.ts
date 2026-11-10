@@ -2,7 +2,6 @@ import fs from 'node:fs/promises';
 import path from 'path';
 
 import {
-    ErrorJson,
     JsonType,
     ParsedXmlFile,
     SourceText,
@@ -46,13 +45,13 @@ export type MetadataFolderSpec<T extends string, J extends JsonType<string>> = {
     bundleMain?: readonly string[];
     /** 分解された形式 (decomposed) でも置けるもの。組み立て方 (decomposed.ts) */
     decomposed?: DecomposedSpec;
-    /** 読み込んだ XML を JSON にする。読めない・ルート要素が違うときは ErrorJson (理由は problems) */
+    /** 読み込んだ XML を JSON にする。読めない・ルート要素が違うときは null (理由は problems) */
     make: (
         file: ParsedXmlFile,
         registry: XmlSourceRegistry,
         problems: XmlReadProblem[],
         extras: SourceText[],
-    ) => J | ErrorJson;
+    ) => J | null;
 };
 
 /** parseSource の追加の入力 */
@@ -77,14 +76,14 @@ export type MetadataFileStructureType<T extends string, J> = {
     };
 };
 
-/** XML として読めなかった・ルート要素が違ったとき */
+/** XML として読めなかった・ルート要素が違ったとき。中身 (base) は持たず、理由は resolvedError */
 export type ErrorMetadataFileStructureType = {
     filePath: string;
     resolvedError: XmlResolvedError[];
     dataType: 'error';
     result: {
         id: string;
-        base: ErrorJson;
+        base: null;
         sourceObject: XmlSourceJson[];
     };
 };
@@ -282,20 +281,19 @@ export class MetadataFolderParser<T extends string, J extends JsonType<string>> 
         }));
         const base = this.spec.make(file, registry, problems, extras);
         const resolvedError = problems.map(toXmlResolvedError);
-        const sourceObject = registry.toSourceObjects();
-        if (base.kind === 'error') {
+        if (base === null) {
             return {
                 filePath,
                 resolvedError,
                 dataType: 'error',
-                result: { id, base: base as ErrorJson, sourceObject },
+                result: { id, base: null, sourceObject: [] },
             };
         }
         return {
             filePath,
             resolvedError,
             dataType: this.spec.type,
-            result: { id, base: base as J, sourceObject },
+            result: { id, base, sourceObject: registry.toSourceObjects() },
         };
     }
 

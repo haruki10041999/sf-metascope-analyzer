@@ -3,7 +3,7 @@ import { describe, it } from 'node:test';
 
 import { find, toJson, unitRules } from './helpers';
 
-// 修飾子の JSON (makeModifiersJson)。IR v2 の木から作る (docs/ir-v2-integration.md)
+// 修飾子の JSON (makeModifiersJson)。IR v2 の木から作る (docs/ir-integration.md)
 
 /** クラスの最初のメンバーの修飾子の JSON */
 const memberModifier = async (member: string) => {

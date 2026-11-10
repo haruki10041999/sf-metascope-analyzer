@@ -25,7 +25,7 @@ src/analyzer/processor/Apex/
 ```
 
 - 解析は Diff に依存しない（1 つの時点の JSON だけを入力にする）。Diff と組み合わせる処理は `impact.ts` に分ける（5 章）。
-- 解析結果には、元のノードの `sourceKeys` を必ず持たせる。位置は `findSourceInfo` で後から引く（Diff と同じ）。
+- 解析結果には、元のノードの `sourceKeys` を必ず持たせる。位置は `findNodeSourceInfo` で後から引く（Diff と同じ）。
 
 ## 2. 解析の共通部品
 
@@ -92,7 +92,6 @@ type Finding = Located & { rule: string; severity: 'info' | 'warning' | 'error';
 | `initializer`     | static か、文の数                                                                                                                                            | static 初期化ブロックの中の SOQL / DML                                                  |
 | `notSet`          | 数（空の宣言 `;`）                                                                                                                                           | 空の宣言                                                                                |
 | `triggerCase`     | イベント（before insert など）の一覧。トリガーの対象 SObject と組にする                                                                                      | 同じ SObject に複数のトリガー、トリガー本体に処理が直接書かれている（ハンドラーがない） |
-| `error`           | 解析できなかった位置と `kindType`                                                                                                                            | 構文エラーで解析できなかった範囲（解析結果の欠けとして明示する）                        |
 
 メソッド・コンストラクタ・アクセサ・初期化ブロックのメトリクス:
 
@@ -192,7 +191,7 @@ before / after をそれぞれ解析し、Diff の結果と組み合わせる。
 | `modifier` / `annotation`                                                                                                 | `ModifierDiff`（annotation の引数の変化を含む）                                   | 2 つで 1 つ     |
 | `parameter` / `type`                                                                                                      | `ParameterDiff` / `TypeDiff`                                                      | はい            |
 | `triggerCase`                                                                                                             | `NodeDiff<'triggerCase', TriggerCaseJson, undefined>`（fields なし）              | 形だけ          |
-| `notSet` / `error`                                                                                                        | クラス本文の中の `added` / `removed` / `unchanged` だけ                           | いいえ          |
+| `notSet`                                                                                                                  | クラス本文の中の `added` / `removed` / `unchanged` だけ                           | いいえ          |
 | 文・文の補助ノード・式・SOQL / SOSL                                                                                       | `GumTreeDiff`（`label` / `role` の文字列と、`fields: Record<string, …>`）         | **いいえ**      |
 
 `GumTreeDiff` は型からは「どの kind の、どのプロパティが変わったか」が分からない（`fields` は `Record<string, …>`、子は `children` の配列）。利用側が `label` の文字列で分岐する必要がある。
@@ -233,7 +232,7 @@ type KindDiff<T extends JsonNode> = NodeDiff<T['kind'], T, FieldsOf<T>> & {
 };
 ```
 
-- `T | ErrorJson` のプロパティは、`NodeDiff` の「値を丸ごと before / after に持つ」形（apex-implementation.md 3.2）で表す。
+- JSON の木にはエラーのノードがない（読めなかったところは resolvedError だけに出る）。エラーのノードの Diff 型は作らない。
 - 親をまたいで移動したノード（GumTree の `moved`）は、移動先の `fields` の中に `status: 'moved'` と `from` を持たせて出す。移動元には出さない（apex-implementation.md 5.3 と同じ）。
 - 再帰する型（`StatementJson` の中の `StatementJson`）は、TypeScript の型の深さの上限に当たらないよう、文の型は `interface` で切る（[declaration.ts](../src/analyzer/processor/Apex/diff/declaration.ts) の `ClassFields` と同じやり方）。
 
@@ -248,7 +247,7 @@ type KindDiff<T extends JsonNode> = NodeDiff<T['kind'], T, FieldsOf<T>> & {
 | `interfaceMethod`                                        | `InterfaceMethodJson`                                           | `InterfaceMethodDiff`                                               | `param`: C                                                            | 済                                                            |
 | `enum` / `enumConstant`                                  | `EnumDeclarationJson` / `EnumConstantJson`                      | `EnumDiff` / `EnumConstantDiff`                                     | `members`: C                                                          | 済                                                            |
 | `method` / `constructor`                                 | `MethodDeclarationJson` / `ConstructorDeclarationJson`          | `MethodDiff` / `ConstructorDiff`                                    | `param`: C、`block`: 文の Diff                                        | 済（`block` は `GumTreeDiff[]` → `StatementDiff[]` に変える） |
-| `property`                                               | `PropertyDeclarationJson`                                       | `PropertyDiff`                                                      | `error`: B                                                            | 済（同上）                                                    |
+| `property`                                               | `PropertyDeclarationJson`                                       | `PropertyDiff`                                                      | -                                                                     | 済（同上）                                                    |
 | `field`                                                  | `FieldDeclarationJson`                                          | `FieldDiff`                                                         | `variants`: D                                                         | 済（`init` は `GumTreeDiff[]` → `ExpressionDiff` に変える）   |
 | `notSet`                                                 | `NotSetBlockJson`                                               | `NotSetDiff`                                                        | -                                                                     | 未                                                            |
 | `triggerCase`                                            | `TriggerCaseJson`                                               | `TriggerCaseDiff`                                                   | -（`actionType` / `timing` を `fields` に持たせる）                   | 未                                                            |
@@ -277,15 +276,14 @@ type KindDiff<T extends JsonNode> = NodeDiff<T['kind'], T, FieldsOf<T>> & {
 | `allRowsClause` / `usingScopeClause`                     | `AllRowsJson` / `UsingScopeJson`                                | `AllRowsDiff` / `UsingScopeDiff`                                    | -                                                                     | 未                                                            |
 | `categoryCondition`                                      | `DataCategorySelectionJson`                                     | `DataCategorySelectionDiff`                                         | `category`: B                                                         | 未                                                            |
 | `sosl` / `soslField`                                     | `SoslJson` / `SoslFieldJson`                                    | `SoslDiff` / `SoslFieldDiff`                                        | `fieldSpec`: C、`with`: B                                             | 未                                                            |
-| `error`                                                  | `ErrorJson`                                                     | `ErrorDiff`                                                         | -                                                                     | 未                                                            |
 
 まとめの union:
 
 ```ts
 /** 文の Diff。BlockDiff はこの配列にする */
-type StatementDiff = IfStatementDiff | ForStatementDiff | … | ErrorDiff;
+type StatementDiff = IfStatementDiff | ForStatementDiff | …;
 /** すべての kind の Diff。kind で絞り込める */
-type ApexNodeDiff = ClassDiff | … | SoslFieldDiff | ErrorDiff;
+type ApexNodeDiff = ClassDiff | … | SoslFieldDiff;
 ```
 
 ### 6.5 実装の手順
@@ -293,7 +291,7 @@ type ApexNodeDiff = ClassDiff | … | SoslFieldDiff | ErrorDiff;
 1. `diff/types/` に `DiffOf` / `FieldsOf` / `KindDiff` を作り、6.4 の型を別名として定義する（置き場所は types/apex と同じ分け方: declaration.ts / statement.ts / expression.ts / query/*.ts）。
 2. `GumTreeDiff` → kind ごとの型に変換する `toTypedDiff` を作る。`role` で `fields` に振り分け、配列のプロパティは 6.4 の分類どおりに並べる。
 3. `BlockDiff` を `StatementDiff[]` に、field の `init` を `ExpressionDiff` に差し替える。宣言側の呼び出しは変えない。
-4. `triggerCase` / `notSet` / `error` / `annotation` の Diff を、6.4 の型に揃える。
+4. `triggerCase` / `notSet` / `annotation` の Diff を、6.4 の型に揃える。
 5. テスト: [docs/examples/apex/](./examples/apex/README.md) のサンプルの全 Diff を `typia.is<ApexNodeDiff>` で検査し、実行時の値が型どおりであることを確かめる（[test/processor/diff-samples.test.ts](../test/processor/diff-samples.test.ts) に追加）。
 
 ### 6.6 解析との関係

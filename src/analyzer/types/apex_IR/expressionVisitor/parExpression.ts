@@ -1,40 +1,47 @@
 import { ParExpressionContext } from '@apexdevtools/apex-parser';
 
+import { BasedExpressionTypeClass, ExpressionVisitor, isBasedExpressionType } from '.';
+
 import {
-    BasedExpressionTypeClass,
-    ExpressionTypeClass,
-    ExpressionVisitor,
-    isBasedExpressionType,
-} from '.';
+    ApexCommonTypeClass,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+    visitNode,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-import { ApexCommonTypeClass, ApexErrorTypeClass, visitNode } from '../commonVisitor';
+/** `(expression)` (if / while などの条件) */
+export type ParExpressionType = TypeField<'parExpression'> & {
+    value: BasedExpressionTypeClass;
+};
 
-export class ParExpressionTypeClass extends ExpressionTypeClass<
+export class ParExpressionTypeClass extends ApexCommonTypeClass<
     'parExpression',
-    BasedExpressionTypeClass
+    ParExpressionType
 > {
-    private constructor(value: BasedExpressionTypeClass | ApexErrorTypeClass) {
-        super('parExpression', value);
+    private constructor(fields: FieldsOf<ParExpressionType>, sourceSpan: SourceSpan) {
+        super('parExpression', fields, sourceSpan);
     }
 
     static create(ctx: ParExpressionContext): ParExpressionTypeClass {
-        if (!ctx.expression()) {
-            throw new Error('値が異常です。ParExpressionContext: ' + ctx.getText());
-        }
-
         return new ParExpressionTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(),
-                isBasedExpressionType,
-                'expression',
-            ),
+            {
+                value: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): ParExpressionType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isParExpressionType = (
-    target: ApexCommonTypeClass<string>,
-): target is ParExpressionTypeClass => {
-    return target instanceof ParExpressionTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is ParExpressionTypeClass => isSpicifyApexCommonTypeClass('parExpression', target);

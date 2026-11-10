@@ -1,65 +1,73 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTemplateLiteral, type TemplateLiteral } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNodeList,
+    visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
+import { failIrBuild } from '../buildFailure';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
-import {
-    templateElementTypePair,
-    type TemplateElementTypeClass,
-} from '../standardizedVisitor/templateElement';
-import { tSTypeVisitorEvaluatePairs, type TSTypeTypeClass } from '../tsTypeVisitor';
+import { TemplateElementTypeClass } from '../standardizedVisitor/templateElement';
 
-const templateLiteralQuasisPairs = lazyPairs(() => [templateElementTypePair] as const);
-const templateLiteralExpressionsPairs = lazyPairs(
-    () => [...expressionVisitorEvaluatePairs(), ...tSTypeVisitorEvaluatePairs()] as const,
-);
-
-export type TemplateLiteralFields = {
-    quasis: (TemplateElementTypeClass | LwcErrorTypeClass)[];
-    expressions: (ExpressionTypeClass | TSTypeTypeClass | LwcErrorTypeClass)[];
+/** `${expression}` とそのあとの文字列 */
+export type TemplateLiteralSpan = {
+    expression: ExpressionTypeClass;
+    tail: TemplateElementTypeClass;
 };
 
-export class TemplateLiteralTypeClass extends LwcCommonTypeClass<'templateLiteral'> {
-    private readonly value: TemplateLiteralFields;
+/**
+ * テンプレート文字列。先頭の文字列 (head) と、式とそのあとの文字列の組 (spans) に分ける
+ * (Babel の quasis は expressions より 1 個多い)
+ */
+export type TemplateLiteralFields = TypeField<'templateLiteral'> & {
+    head: TemplateElementTypeClass;
+    spans: TemplateLiteralSpan[];
+};
 
-    private constructor(value: TemplateLiteralFields) {
-        super('templateLiteral');
-        this.value = value;
+export class TemplateLiteralTypeClass extends LwcCommonTypeClass<
+    'templateLiteral',
+    TemplateLiteralFields
+> {
+    private constructor(value: FieldsOf<TemplateLiteralFields>, sourceSpan: SourceSpan) {
+        super('templateLiteral', value, sourceSpan);
     }
 
     static create(target: TemplateLiteral, originalSource: string): TemplateLiteralTypeClass {
-        return new TemplateLiteralTypeClass({
-            quasis: visitNodeList(
-                target.quasis,
+        const [head, ...tails] = target.quasis;
+        if (head == null || tails.length !== target.expressions.length) {
+            return failIrBuild(
+                'TYPE_MISMATCH',
+                target,
                 originalSource,
-                templateLiteralQuasisPairs(),
-                'TemplateLiteral.quasis',
-            ),
-            expressions: visitNodeList(
-                target.expressions,
-                originalSource,
-                templateLiteralExpressionsPairs(),
-                'TemplateLiteral.expressions',
-            ),
-        });
+                'テンプレート文字列の quasis は expressions より 1 個多くなければなりません',
+            );
+        }
+        return new TemplateLiteralTypeClass(
+            {
+                head: TemplateElementTypeClass.create(head, originalSource),
+                spans: target.expressions.map((expression, index) => ({
+                    expression: visitNode(
+                        expression,
+                        originalSource,
+                        expressionVisitorEvaluatePairs(),
+                        'ExpressionVisitor',
+                    ),
+                    tail: TemplateElementTypeClass.create(tails[index]!, originalSource),
+                })),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TemplateLiteralFields {
-        return this.value;
+    getHead(): TemplateLiteralFields['head'] {
+        return this.getFields().head;
     }
 
-    getQuasis(): TemplateLiteralFields['quasis'] {
-        return this.value.quasis;
-    }
-
-    getExpressions(): TemplateLiteralFields['expressions'] {
-        return this.value.expressions;
+    getSpans(): TemplateLiteralFields['spans'] {
+        return this.getFields().spans;
     }
 }
 
@@ -69,5 +77,5 @@ export const templateLiteralTypePair: EvaluatePair<TemplateLiteral, TemplateLite
     );
 
 export const isTemplateLiteralType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TemplateLiteralTypeClass => target instanceof TemplateLiteralTypeClass;

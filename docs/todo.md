@@ -16,8 +16,8 @@
 
 ## 2. 解析（高〜中。詳しくは [analysis-plan.md](./analysis-plan.md)）
 
-- [ ] IR v2 の型の見直し（ありえない組み合わせを書ける型を判別 union などにする。[ir-v2-types.md](./ir-v2-types.md)。先に 3 章の決めることと 4 章の不具合）
-- [ ] IR v2（`apex_IR_v2`・`lwc_IR_v2`）を parser につないで、v1 と置き換える（[ir-v2-integration.md](./ir-v2-integration.md)。Apex は済み、LWC と v1 の削除が残り）
+- [ ] IR の型の見直し（ありえない組み合わせを書ける型を判別 union などにする。[ir-types.md](./ir-types.md)。先に 3 章の決めることと 4 章の不具合）
+- [x] IR v2 を parser につないで、v1 と置き換える（[ir-integration.md](./ir-integration.md)。2026-11-10 に Apex・LWC とも済み。v1・converter・ErrorJson を消し、v2 のフォルダを `apex_IR`・`lwc_IR` にした）
 
 - [x] 単位の種類（`UnitType`）と `Repository` で、parser・worker・Diff・解析の流れを 1 つにする（analysis-plan 2 章）
 - [x] 保存データの版。オブジェクト・翻訳のキー（書いた順の objectKey）と保存名（接頭辞なし）をそろえる（analysis-plan 1.1・1.2・5.2）

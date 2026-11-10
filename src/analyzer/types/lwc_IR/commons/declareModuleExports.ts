@@ -1,52 +1,43 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isDeclareModuleExports, type DeclareModuleExports } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import {
-    typeAnnotationTypePair,
-    type TypeAnnotationTypeClass,
-} from '../flowVisitor/typeAnnotation';
+import { TypeAnnotationTypeClass } from '../flowVisitor/typeAnnotation';
 
-const declareModuleExportsTypeAnnotationPairs = lazyPairs(() => [typeAnnotationTypePair] as const);
-
-export type DeclareModuleExportsFields = {
-    typeAnnotation: TypeAnnotationTypeClass | LwcErrorTypeClass;
+export type DeclareModuleExportsFields = TypeField<'declareModuleExports'> & {
+    typeAnnotation: TypeAnnotationTypeClass;
 };
 
-export class DeclareModuleExportsTypeClass extends LwcCommonTypeClass<'declareModuleExports'> {
-    private readonly value: DeclareModuleExportsFields;
-
-    private constructor(value: DeclareModuleExportsFields) {
-        super('declareModuleExports');
-        this.value = value;
+export class DeclareModuleExportsTypeClass extends LwcCommonTypeClass<
+    'declareModuleExports',
+    DeclareModuleExportsFields
+> {
+    private constructor(value: FieldsOf<DeclareModuleExportsFields>, sourceSpan: SourceSpan) {
+        super('declareModuleExports', value, sourceSpan);
     }
 
     static create(
         target: DeclareModuleExports,
         originalSource: string,
     ): DeclareModuleExportsTypeClass {
-        return new DeclareModuleExportsTypeClass({
-            typeAnnotation: visitNode(
-                target.typeAnnotation,
-                originalSource,
-                declareModuleExportsTypeAnnotationPairs(),
-                'DeclareModuleExports.typeAnnotation',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): DeclareModuleExportsFields {
-        return this.value;
+        return new DeclareModuleExportsTypeClass(
+            {
+                typeAnnotation: TypeAnnotationTypeClass.create(
+                    target.typeAnnotation,
+                    originalSource,
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getTypeAnnotation(): DeclareModuleExportsFields['typeAnnotation'] {
-        return this.value.typeAnnotation;
+        return this.getFields().typeAnnotation;
     }
 }
 
@@ -58,5 +49,5 @@ export const declareModuleExportsTypePair: EvaluatePair<
 );
 
 export const isDeclareModuleExportsType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is DeclareModuleExportsTypeClass => target instanceof DeclareModuleExportsTypeClass;

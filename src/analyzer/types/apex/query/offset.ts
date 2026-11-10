@@ -1,7 +1,7 @@
 import typia from 'typia';
 
-import { ErrorJson, JsonType } from '../../commons';
-import type { OffsetClauseTypeClass } from '../../apex_IR_v2';
+import { JsonType } from '../../commons';
+import type { OffsetClauseTypeClass } from '../../apex_IR';
 
 import { makeNodeJson } from '../commons/node';
 import { BaseExpressionJson, makeExpressionJsonConvert } from '../expression';
@@ -14,7 +14,7 @@ export type OffsetJson = JsonType<'offsetClause'> &
           }
         | {
               type: 'bind';
-              value: BaseExpressionJson | ErrorJson;
+              value: BaseExpressionJson;
           }
     );
 

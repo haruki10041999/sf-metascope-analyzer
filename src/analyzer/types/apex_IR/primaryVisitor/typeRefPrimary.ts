@@ -1,28 +1,38 @@
 import { TypeRefPrimaryContext } from '@apexdevtools/apex-parser';
 
-import { PrimaryTypeClass } from '.';
+import { TypeRefTypeClass } from '../typeVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type TypeRefPrimaryType = TypeField<'typeRefPrimary'> & {
+    value: TypeRefTypeClass;
+};
 
-export class TypeRefPrimaryTypeClass extends PrimaryTypeClass<'typeRefPrimary', TypeRefTypeClass> {
-    private constructor(value: TypeRefTypeClass | ApexErrorTypeClass) {
-        super('typeRefPrimary', value);
+export class TypeRefPrimaryTypeClass extends ApexCommonTypeClass<
+    'typeRefPrimary',
+    TypeRefPrimaryType
+> {
+    private constructor(fields: FieldsOf<TypeRefPrimaryType>, sourceSpan: SourceSpan) {
+        super('typeRefPrimary', fields, sourceSpan);
     }
 
     static create(ctx: TypeRefPrimaryContext): TypeRefPrimaryTypeClass {
-        if (!ctx.typeRef()) {
-            throw new Error('値が異常です。TypeRefPrimaryContext: ' + ctx.getText());
-        }
-
         return new TypeRefPrimaryTypeClass(
-            visitNode(new TypeVisitor(), ctx.typeRef(), isTypeRefType, 'typeRef'),
+            { value: createNode(ctx.typeRef(), (c) => TypeRefTypeClass.create(c), 'typeRef') },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): TypeRefPrimaryType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isTypeRefPrimaryType = (
-    target: ApexCommonTypeClass<string>,
-): target is TypeRefPrimaryTypeClass => {
-    return target instanceof TypeRefPrimaryTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is TypeRefPrimaryTypeClass => isSpicifyApexCommonTypeClass('typeRefPrimary', target);

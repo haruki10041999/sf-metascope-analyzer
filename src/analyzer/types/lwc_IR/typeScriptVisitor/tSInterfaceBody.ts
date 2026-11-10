@@ -1,46 +1,46 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSInterfaceBody, type TSInterfaceBody } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
 import {
     tSTypeElementVisitorEvaluatePairs,
     type TSTypeElementTypeClass,
 } from '../tsTypeElementVisitor';
 
-export type TSInterfaceBodyFields = {
-    body: (TSTypeElementTypeClass | LwcErrorTypeClass)[];
+export type TSInterfaceBodyFields = TypeField<'tSInterfaceBody'> & {
+    body: TSTypeElementTypeClass[];
 };
 
-export class TSInterfaceBodyTypeClass extends LwcCommonTypeClass<'tSInterfaceBody'> {
-    private readonly value: TSInterfaceBodyFields;
-
-    private constructor(value: TSInterfaceBodyFields) {
-        super('tSInterfaceBody');
-        this.value = value;
+export class TSInterfaceBodyTypeClass extends LwcCommonTypeClass<
+    'tSInterfaceBody',
+    TSInterfaceBodyFields
+> {
+    private constructor(value: FieldsOf<TSInterfaceBodyFields>, sourceSpan: SourceSpan) {
+        super('tSInterfaceBody', value, sourceSpan);
     }
 
     static create(target: TSInterfaceBody, originalSource: string): TSInterfaceBodyTypeClass {
-        return new TSInterfaceBodyTypeClass({
-            body: visitNodeList(
-                target.body,
-                originalSource,
-                tSTypeElementVisitorEvaluatePairs(),
-                'TSTypeElementVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSInterfaceBodyFields {
-        return this.value;
+        return new TSInterfaceBodyTypeClass(
+            {
+                body: visitNodeList(
+                    target.body,
+                    originalSource,
+                    tSTypeElementVisitorEvaluatePairs(),
+                    'TSTypeElementVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getBody(): TSInterfaceBodyFields['body'] {
-        return this.value.body;
+        return this.getFields().body;
     }
 }
 
@@ -50,5 +50,5 @@ export const tSInterfaceBodyTypePair: EvaluatePair<TSInterfaceBody, TSInterfaceB
     );
 
 export const isTSInterfaceBodyType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSInterfaceBodyTypeClass => target instanceof TSInterfaceBodyTypeClass;

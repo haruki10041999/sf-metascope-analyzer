@@ -1,4 +1,4 @@
-import { ErrorJson, FieldOrderJson, OrderByJson, isErrorJson } from '../../../../types';
+import { FieldOrderJson, OrderByJson } from '../../../../types';
 
 import {
     ListItemDiff,
@@ -25,8 +25,8 @@ export type FieldOrderJsonDiff = NodeDiff<
 >;
 
 export const makeOrderFieldDiff = (
-    before: FieldOrderJson | ErrorJson,
-    after: FieldOrderJson | ErrorJson,
+    before: FieldOrderJson,
+    after: FieldOrderJson,
     match: Match = 'slot',
 ): FieldOrderJsonDiff =>
     makeNodeDiff('orderField', before, after, match, (b, a) => ({
@@ -35,16 +35,15 @@ export const makeOrderFieldDiff = (
         nulls: makeOptionalDiff(b.nulls, a.nulls, makeValueDiff),
     }));
 
-export type OrderByJsonDiff =
-    | { orderBy: ListItemDiff<'orderField', FieldOrderJson | ErrorJson, FieldOrderJsonDiff>[] }
-    | ValueDiff<OrderByJson | ErrorJson>;
+export type OrderByJsonDiff = {
+    orderBy: ListItemDiff<'orderField', FieldOrderJson, FieldOrderJsonDiff>[];
+};
 
 export const makeOrderByDiff = (
-    before: OrderByJson | ErrorJson,
-    after: OrderByJson | ErrorJson,
+    before: OrderByJson,
+    after: OrderByJson,
     sources?: Sources,
 ): OrderByJsonDiff => {
-    if (isErrorJson(before) || isErrorJson(after)) return makeValueDiff(before, after);
     return {
         orderBy: makeSequenceDiff('orderField', before.orderBy, after.orderBy, makeOrderFieldDiff, {
             sources,

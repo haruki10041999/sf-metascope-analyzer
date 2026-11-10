@@ -1,58 +1,43 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isJSXNamespacedName, type JSXNamespacedName } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { jSXIdentifierTypePair, type JSXIdentifierTypeClass } from './jSXIdentifier';
+import { JSXIdentifierTypeClass } from './jSXIdentifier';
 
-const jSXNamespacedNameNamespacePairs = lazyPairs(() => [jSXIdentifierTypePair] as const);
-const jSXNamespacedNameNamePairs = lazyPairs(() => [jSXIdentifierTypePair] as const);
-
-export type JSXNamespacedNameFields = {
-    namespace: JSXIdentifierTypeClass | LwcErrorTypeClass;
-    name: JSXIdentifierTypeClass | LwcErrorTypeClass;
+export type JSXNamespacedNameFields = TypeField<'jSXNamespacedName'> & {
+    namespace: JSXIdentifierTypeClass;
+    name: JSXIdentifierTypeClass;
 };
 
-export class JSXNamespacedNameTypeClass extends LwcCommonTypeClass<'jSXNamespacedName'> {
-    private readonly value: JSXNamespacedNameFields;
-
-    private constructor(value: JSXNamespacedNameFields) {
-        super('jSXNamespacedName');
-        this.value = value;
+export class JSXNamespacedNameTypeClass extends LwcCommonTypeClass<
+    'jSXNamespacedName',
+    JSXNamespacedNameFields
+> {
+    private constructor(value: FieldsOf<JSXNamespacedNameFields>, sourceSpan: SourceSpan) {
+        super('jSXNamespacedName', value, sourceSpan);
     }
 
     static create(target: JSXNamespacedName, originalSource: string): JSXNamespacedNameTypeClass {
-        return new JSXNamespacedNameTypeClass({
-            namespace: visitNode(
-                target.namespace,
-                originalSource,
-                jSXNamespacedNameNamespacePairs(),
-                'JSXNamespacedName.namespace',
-            ),
-            name: visitNode(
-                target.name,
-                originalSource,
-                jSXNamespacedNameNamePairs(),
-                'JSXNamespacedName.name',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): JSXNamespacedNameFields {
-        return this.value;
+        return new JSXNamespacedNameTypeClass(
+            {
+                namespace: JSXIdentifierTypeClass.create(target.namespace, originalSource),
+                name: JSXIdentifierTypeClass.create(target.name, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getNamespace(): JSXNamespacedNameFields['namespace'] {
-        return this.value.namespace;
+        return this.getFields().namespace;
     }
 
     getName(): JSXNamespacedNameFields['name'] {
-        return this.value.name;
+        return this.getFields().name;
     }
 }
 
@@ -64,5 +49,5 @@ export const jSXNamespacedNameTypePair: EvaluatePair<
 );
 
 export const isJSXNamespacedNameType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is JSXNamespacedNameTypeClass => target instanceof JSXNamespacedNameTypeClass;

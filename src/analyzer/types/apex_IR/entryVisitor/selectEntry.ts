@@ -1,73 +1,66 @@
 import { SelectEntryContext } from '@apexdevtools/apex-parser';
 
-import { EntryTypeClass } from '../entryVisitor';
-
-import { SoqlIdTypeClass, IdVisitor, isSoqlIdType } from '../idVisitor';
-import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor';
-import { TypeOfTypeClass, ClauseVisitor, isTypeOfType } from '../clauseVisitor';
+import { SoqlIdTypeClass } from '../idVisitor';
+import { FieldNameTypeClass } from '../nameVisitor';
+import { TypeOfTypeClass } from '../clauseVisitor';
+import { SubQueryTypeClass, SoqlFunctionTypeClass } from '../queryVisitor';
 import {
-    SubQueryTypeClass,
-    SoqlFunctionTypeClass,
-    QueryVisitor,
-    isSubQueryType,
-    isSoqlFunctionType,
-} from '../queryVisitor';
-import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNode,
-    visitOptionalNode,
+    createNode,
+    createOptionalNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-type SelectEntryTypeClassType =
-    FieldNameTypeClass | SoqlFunctionTypeClass | SubQueryTypeClass | TypeOfTypeClass;
+/** 別名 (alias) を書けるのは typeOf 以外のとき。value の種類は子のノードの kind で見分ける */
+export type SelectEntryType = TypeField<'selectEntry'> &
+    (
+        | {
+              value: FieldNameTypeClass | SoqlFunctionTypeClass | SubQueryTypeClass;
+              /** 文法上 soqlId は常に別名（`COUNT(Id) total`） */
+              alias: SoqlIdTypeClass | null;
+          }
+        | { value: TypeOfTypeClass }
+    );
 
-export class SelectEntryTypeClass extends EntryTypeClass<'selectEntry', SelectEntryTypeClassType> {
-    private alias: SoqlIdTypeClass | ApexErrorTypeClass | null;
-
-    private constructor(
-        value: SelectEntryTypeClassType | ApexErrorTypeClass,
-        alias: SoqlIdTypeClass | ApexErrorTypeClass | null,
-    ) {
-        super('selectEntry', value);
-        this.alias = alias;
+export class SelectEntryTypeClass extends ApexCommonTypeClass<'selectEntry', SelectEntryType> {
+    private constructor(fields: FieldsOf<SelectEntryType>, sourceSpan: SourceSpan) {
+        super('selectEntry', fields, sourceSpan);
     }
 
     static create(ctx: SelectEntryContext): SelectEntryTypeClass {
-        if (!ctx.fieldName() && !ctx.soqlFunction() && !ctx.subQuery() && !ctx.typeOf()) {
-            throw new Error('値が異常です。SelectEntryContext: ' + ctx.getText());
-        }
+        return new SelectEntryTypeClass(SelectEntryTypeClass.createFields(ctx), getSourceSpan(ctx));
+    }
 
-        let value: SelectEntryTypeClassType | ApexErrorTypeClass;
+    private static createFields(ctx: SelectEntryContext): FieldsOf<SelectEntryType> {
+        let value: FieldNameTypeClass | SoqlFunctionTypeClass | SubQueryTypeClass;
         if (ctx.fieldName()) {
-            value = visitNode(new NameVisitor(), ctx.fieldName(), isFieldNameType, 'fieldName');
+            value = createNode(ctx.fieldName(), (c) => FieldNameTypeClass.create(c), 'fieldName');
         } else if (ctx.soqlFunction()) {
-            value = visitNode(
-                new QueryVisitor(),
+            value = createNode(
                 ctx.soqlFunction(),
-                isSoqlFunctionType,
+                (c) => SoqlFunctionTypeClass.create(c),
                 'soqlFunction',
             );
         } else if (ctx.subQuery()) {
-            value = visitNode(new QueryVisitor(), ctx.subQuery(), isSubQueryType, 'subQuery');
+            value = createNode(ctx.subQuery(), (c) => SubQueryTypeClass.create(c), 'subQuery');
         } else {
-            value = visitNode(new ClauseVisitor(), ctx.typeOf(), isTypeOfType, 'typeOf');
+            return { value: createNode(ctx.typeOf(), (c) => TypeOfTypeClass.create(c), 'typeOf') };
         }
 
-        // 文法上 soqlId は常に別名（`COUNT(Id) total`）
-        return new SelectEntryTypeClass(
+        return {
             value,
-            visitOptionalNode(new IdVisitor(), ctx.soqlId(), isSoqlIdType, 'soqlId'),
-        );
+            alias: createOptionalNode(ctx.soqlId(), (c) => SoqlIdTypeClass.create(c), 'soqlId'),
+        };
     }
 
-    getAlias(): SoqlIdTypeClass | ApexErrorTypeClass | null {
-        return this.alias;
+    getValue(): SelectEntryType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isSelectEntryType = (
-    target: ApexCommonTypeClass<string>,
-): target is SelectEntryTypeClass => {
-    return target instanceof SelectEntryTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is SelectEntryTypeClass => isSpicifyApexCommonTypeClass('selectEntry', target);

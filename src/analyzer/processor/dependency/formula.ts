@@ -12,7 +12,8 @@ export type FormulaReference =
     | { refType: 'customPermission'; name: string }
     /** $Setup.<カスタム設定>.<項目>・$CustomMetadata.<型>.<レコード>.<項目>・$ObjectType.<オブジェクト>.Fields.<項目> */
     | { refType: 'object'; name: string }
-    | { refType: 'customMetadataRecord'; name: string };
+    /** カスタムメタデータのレコード。名前は定義 (customMetadata の単位) と同じ <型 (__mdt なし)>.<レコード> */
+    | { refType: 'customMetadata'; name: string };
 
 type Token =
     | { type: 'name'; value: string; start: number }
@@ -133,8 +134,8 @@ const globalReferences = (head: string, rest: string[], object?: string): Formul
                       ...(second
                           ? [
                                 {
-                                    refType: 'customMetadataRecord' as const,
-                                    name: `${first}.${second}`,
+                                    refType: 'customMetadata' as const,
+                                    name: `${first.replace(/__mdt$/i, '')}.${second}`,
                                 },
                             ]
                           : []),

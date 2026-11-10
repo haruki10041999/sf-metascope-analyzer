@@ -1,87 +1,82 @@
 import { TypeDeclarationContext } from '@apexdevtools/apex-parser';
 
-import {
-    ClassDeclarationTypeClass,
-    EnumDeclarationTypeClass,
-    InterfaceDeclarationTypeClass,
-    DeclarationTypeClass,
-    DeclarationVisitor,
-    isClassDeclarationType,
-    isEnumDeclarationType,
-    isInterfaceDeclarationType,
-} from '.';
+import { ClassDeclarationTypeClass } from './classDeclaration';
+import { EnumDeclarationTypeClass } from './enumDeclaration';
+import { InterfaceDeclarationTypeClass } from './interfaceDeclaration';
 
-import { NormalModifierTypeClass, ModifierVisitor, isNormalModifierType } from '../modifierVisitor';
+import { ModifierTypeClass } from '../modifierVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNodeList,
-    visitNode,
+    createNode,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
 export type TypeDeclarationClassType =
     ClassDeclarationTypeClass | EnumDeclarationTypeClass | InterfaceDeclarationTypeClass;
 
-export class TypeDeclarationTypeClass extends DeclarationTypeClass<
+export type TypeDeclarationType = TypeField<'typeDeclaration'> & {
+    declaration: TypeDeclarationClassType;
+    modifiers: ModifierTypeClass[];
+};
+
+export class TypeDeclarationTypeClass extends ApexCommonTypeClass<
     'typeDeclaration',
-    TypeDeclarationClassType
+    TypeDeclarationType
 > {
-    private modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[];
-    private constructor(
-        value: TypeDeclarationClassType | ApexErrorTypeClass,
-        modifier: (NormalModifierTypeClass | ApexErrorTypeClass)[],
-    ) {
-        super('typeDeclaration', value);
-        this.modifier = modifier;
+    private constructor(fields: FieldsOf<TypeDeclarationType>, sourceSpan: SourceSpan) {
+        super('typeDeclaration', fields, sourceSpan);
     }
 
     static create(ctx: TypeDeclarationContext): TypeDeclarationTypeClass {
-        if (!ctx.classDeclaration() && !ctx.enumDeclaration() && !ctx.interfaceDeclaration()) {
-            throw new Error('値が異常です。TypeDeclarationType: ' + ctx.getText());
-        }
-
-        let value: TypeDeclarationClassType | ApexErrorTypeClass;
+        let declaration: TypeDeclarationType['declaration'];
         if (ctx.classDeclaration()) {
-            value = visitNode(
-                new DeclarationVisitor(),
+            declaration = createNode(
                 ctx.classDeclaration(),
-                isClassDeclarationType,
+                (c) => ClassDeclarationTypeClass.create(c),
                 'classDeclaration',
             );
         } else if (ctx.enumDeclaration()) {
-            value = visitNode(
-                new DeclarationVisitor(),
+            declaration = createNode(
                 ctx.enumDeclaration(),
-                isEnumDeclarationType,
+                (c) => EnumDeclarationTypeClass.create(c),
                 'enumDeclaration',
             );
         } else {
-            value = visitNode(
-                new DeclarationVisitor(),
+            declaration = createNode(
                 ctx.interfaceDeclaration(),
-                isInterfaceDeclarationType,
+                (c) => InterfaceDeclarationTypeClass.create(c),
                 'interfaceDeclaration',
             );
         }
 
         return new TypeDeclarationTypeClass(
-            value,
-            visitNodeList(
-                new ModifierVisitor(),
-                ctx.modifier_list(),
-                isNormalModifierType,
-                'modifier',
-            ),
+            {
+                declaration,
+                modifiers: createNodeList(
+                    ctx.modifier_list(),
+                    (c) => ModifierTypeClass.create(c),
+                    'modifier',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getModifier(): (NormalModifierTypeClass | ApexErrorTypeClass)[] {
-        return this.modifier;
+    getDeclaration(): TypeDeclarationType['declaration'] {
+        return this.getFields().declaration;
+    }
+
+    getModifiers(): TypeDeclarationType['modifiers'] {
+        return this.getFields().modifiers;
     }
 }
 
 export const isTypeDeclarationType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is TypeDeclarationTypeClass => {
-    return target instanceof TypeDeclarationTypeClass;
+    return isSpicifyApexCommonTypeClass('typeDeclaration', target);
 };

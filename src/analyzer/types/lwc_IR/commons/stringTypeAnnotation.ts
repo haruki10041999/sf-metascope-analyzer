@@ -1,16 +1,28 @@
+import { type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isStringTypeAnnotation, type StringTypeAnnotation } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export class StringTypeAnnotationTypeClass extends LwcCommonTypeClass<'stringTypeAnnotation'> {
-    private constructor() {
-        super('stringTypeAnnotation');
+export type StringTypeAnnotationFields = TypeField<'stringTypeAnnotation'>;
+
+export class StringTypeAnnotationTypeClass extends LwcCommonTypeClass<
+    'stringTypeAnnotation',
+    StringTypeAnnotationFields
+> {
+    private constructor(sourceSpan: SourceSpan) {
+        super('stringTypeAnnotation', {}, sourceSpan);
     }
 
     static create(
-        _target: StringTypeAnnotation,
-        _originalSource: string,
+        target: StringTypeAnnotation,
+        originalSource: string,
     ): StringTypeAnnotationTypeClass {
-        return new StringTypeAnnotationTypeClass();
+        return new StringTypeAnnotationTypeClass(getSourceSpan(target, originalSource));
     }
 }
 
@@ -22,5 +34,5 @@ export const stringTypeAnnotationTypePair: EvaluatePair<
 );
 
 export const isStringTypeAnnotationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is StringTypeAnnotationTypeClass => target instanceof StringTypeAnnotationTypeClass;

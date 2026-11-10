@@ -1,42 +1,50 @@
 import { LimitClauseContext } from '@apexdevtools/apex-parser';
 
-import { ClauseTypeClass } from '.';
-
+import { BoundExpressionTypeClass } from '../expressionVisitor';
 import {
-    BoundExpressionTypeClass,
-    ExpressionVisitor,
-    isBoundExpressionType,
-} from '../expressionVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class LimitClauseTypeClass extends ClauseTypeClass<
-    'limitClause',
-    string | BoundExpressionTypeClass
-> {
-    private constructor(value: string | BoundExpressionTypeClass | ApexErrorTypeClass) {
-        super('limitClause', value);
+export type LimitClauseType = TypeField<'limitClause'> & {
+    /** 整数リテラル (literal) かバインド式 (bind) */
+    value: { kind: 'literal'; value: string } | { kind: 'bind'; value: BoundExpressionTypeClass };
+};
+
+export class LimitClauseTypeClass extends ApexCommonTypeClass<'limitClause', LimitClauseType> {
+    private constructor(fields: FieldsOf<LimitClauseType>, sourceSpan: SourceSpan) {
+        super('limitClause', fields, sourceSpan);
     }
 
     static create(ctx: LimitClauseContext): LimitClauseTypeClass {
-        if (!ctx.IntegerLiteral() && !ctx.boundExpression()) {
-            throw new Error('値が異常です。LimitClauseContext: ' + ctx.getText());
-        }
-
         return new LimitClauseTypeClass(
-            ctx.IntegerLiteral()
-                ? ctx.IntegerLiteral().getText()
-                : visitNode(
-                      new ExpressionVisitor(),
-                      ctx.boundExpression(),
-                      isBoundExpressionType,
-                      'boundExpression',
-                  ),
+            {
+                value: ctx.IntegerLiteral()
+                    ? { kind: 'literal', value: ctx.IntegerLiteral().getText() }
+                    : {
+                          kind: 'bind',
+                          value: createNode(
+                              ctx.boundExpression(),
+                              (c) => BoundExpressionTypeClass.create(c),
+                              'boundExpression',
+                          ),
+                      },
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): LimitClauseType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isLimitClauseType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is LimitClauseTypeClass => {
-    return target instanceof LimitClauseTypeClass;
+    return isSpicifyApexCommonTypeClass('limitClause', target);
 };

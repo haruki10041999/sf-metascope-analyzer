@@ -1,25 +1,32 @@
 import { BreakStatementContext } from '@apexdevtools/apex-parser';
 
-import { StatementValueTypeClass } from '.';
+import { ApexCommonTypeClass, getSourceSpan, isSpicifyApexCommonTypeClass } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { ApexCommonTypeClass } from '../commonVisitor';
+export type BreakStatementType = TypeField<'breakStatement'> & {
+    value: 'break';
+};
 
-export class BreakStatementTypeClass extends StatementValueTypeClass<'breakStatement', string> {
-    private constructor(value: string) {
-        super('breakStatement', value);
+export class BreakStatementTypeClass extends ApexCommonTypeClass<
+    'breakStatement',
+    BreakStatementType
+> {
+    private constructor(fields: FieldsOf<BreakStatementType>, sourceSpan: SourceSpan) {
+        super('breakStatement', fields, sourceSpan);
     }
 
-    static create(ctx: BreakStatementContext) {
-        if (!ctx.BREAK()) {
-            throw new Error('値が異常です。BreakStatementContext: ' + ctx.getText());
-        }
+    static create(ctx: BreakStatementContext): BreakStatementTypeClass {
+        return new BreakStatementTypeClass({ value: 'break' }, getSourceSpan(ctx));
+    }
 
-        return new BreakStatementTypeClass(ctx.BREAK().getText());
+    getValue(): BreakStatementType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isBreakStatementType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is BreakStatementTypeClass => {
-    return target instanceof BreakStatementTypeClass;
+    return isSpicifyApexCommonTypeClass('breakStatement', target);
 };

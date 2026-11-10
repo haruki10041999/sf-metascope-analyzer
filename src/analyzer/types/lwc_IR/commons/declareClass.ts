@@ -1,130 +1,89 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isDeclareClass, type DeclareClass } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
-    visitNodeList,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import {
-    classImplementsTypePair,
-    type ClassImplementsTypeClass,
-} from '../flowVisitor/classImplements';
-import {
-    interfaceExtendsTypePair,
-    type InterfaceExtendsTypeClass,
-} from '../flowVisitor/interfaceExtends';
-import {
-    typeParameterDeclarationTypePair,
-    type TypeParameterDeclarationTypeClass,
-} from '../flowVisitor/typeParameterDeclaration';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
-import {
-    objectTypeAnnotationTypePair,
-    type ObjectTypeAnnotationTypeClass,
-} from './objectTypeAnnotation';
+import { ClassImplementsTypeClass } from '../flowVisitor/classImplements';
+import { InterfaceExtendsTypeClass } from '../flowVisitor/interfaceExtends';
+import { TypeParameterDeclarationTypeClass } from '../flowVisitor/typeParameterDeclaration';
+import { IdentifierTypeClass } from './identifier';
+import { ObjectTypeAnnotationTypeClass } from './objectTypeAnnotation';
 
-const declareClassIdPairs = lazyPairs(() => [identifierTypePair] as const);
-const declareClassTypeParametersPairs = lazyPairs(
-    () => [typeParameterDeclarationTypePair] as const,
-);
-const declareClassExtendsPairs = lazyPairs(() => [interfaceExtendsTypePair] as const);
-const declareClassMixinsPairs = lazyPairs(() => [interfaceExtendsTypePair] as const);
-const declareClassImplementsPairs = lazyPairs(() => [classImplementsTypePair] as const);
-const declareClassBodyPairs = lazyPairs(() => [objectTypeAnnotationTypePair] as const);
-
-export type DeclareClassFields = {
-    id: IdentifierTypeClass | LwcErrorTypeClass;
-    typeParameters: TypeParameterDeclarationTypeClass | LwcErrorTypeClass | null;
-    extends: (InterfaceExtendsTypeClass | LwcErrorTypeClass)[] | null;
-    mixins: (InterfaceExtendsTypeClass | LwcErrorTypeClass)[] | null;
-    implements: (ClassImplementsTypeClass | LwcErrorTypeClass)[] | null;
-    body: ObjectTypeAnnotationTypeClass | LwcErrorTypeClass;
+export type DeclareClassFields = TypeField<'declareClass'> & {
+    id: IdentifierTypeClass;
+    typeParameters: TypeParameterDeclarationTypeClass | null;
+    extends: InterfaceExtendsTypeClass[] | null;
+    mixins: InterfaceExtendsTypeClass[] | null;
+    implements: ClassImplementsTypeClass[] | null;
+    body: ObjectTypeAnnotationTypeClass;
 };
 
-export class DeclareClassTypeClass extends LwcCommonTypeClass<'declareClass'> {
-    private readonly value: DeclareClassFields;
-
-    private constructor(value: DeclareClassFields) {
-        super('declareClass');
-        this.value = value;
+export class DeclareClassTypeClass extends LwcCommonTypeClass<'declareClass', DeclareClassFields> {
+    private constructor(value: FieldsOf<DeclareClassFields>, sourceSpan: SourceSpan) {
+        super('declareClass', value, sourceSpan);
     }
 
     static create(target: DeclareClass, originalSource: string): DeclareClassTypeClass {
-        return new DeclareClassTypeClass({
-            id: visitNode(target.id, originalSource, declareClassIdPairs(), 'DeclareClass.id'),
-            typeParameters: visitOptionalNode(
-                target.typeParameters,
-                originalSource,
-                declareClassTypeParametersPairs(),
-                'DeclareClass.typeParameters',
-            ),
-            extends:
-                target.extends == null
-                    ? null
-                    : visitNodeList(
-                          target.extends,
-                          originalSource,
-                          declareClassExtendsPairs(),
-                          'DeclareClass.extends',
-                      ),
-            mixins:
-                target.mixins == null
-                    ? null
-                    : visitNodeList(
-                          target.mixins,
-                          originalSource,
-                          declareClassMixinsPairs(),
-                          'DeclareClass.mixins',
-                      ),
-            implements:
-                target.implements == null
-                    ? null
-                    : visitNodeList(
-                          target.implements,
-                          originalSource,
-                          declareClassImplementsPairs(),
-                          'DeclareClass.implements',
-                      ),
-            body: visitNode(
-                target.body,
-                originalSource,
-                declareClassBodyPairs(),
-                'DeclareClass.body',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): DeclareClassFields {
-        return this.value;
+        return new DeclareClassTypeClass(
+            {
+                id: IdentifierTypeClass.create(target.id, originalSource),
+                typeParameters:
+                    target.typeParameters == null
+                        ? null
+                        : TypeParameterDeclarationTypeClass.create(
+                              target.typeParameters,
+                              originalSource,
+                          ),
+                extends:
+                    target.extends == null
+                        ? null
+                        : target.extends.map((child) =>
+                              InterfaceExtendsTypeClass.create(child, originalSource),
+                          ),
+                mixins:
+                    target.mixins == null
+                        ? null
+                        : target.mixins.map((child) =>
+                              InterfaceExtendsTypeClass.create(child, originalSource),
+                          ),
+                implements:
+                    target.implements == null
+                        ? null
+                        : target.implements.map((child) =>
+                              ClassImplementsTypeClass.create(child, originalSource),
+                          ),
+                body: ObjectTypeAnnotationTypeClass.create(target.body, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getId(): DeclareClassFields['id'] {
-        return this.value.id;
+        return this.getFields().id;
     }
 
     getTypeParameters(): DeclareClassFields['typeParameters'] {
-        return this.value.typeParameters;
+        return this.getFields().typeParameters;
     }
 
     getExtends(): DeclareClassFields['extends'] {
-        return this.value.extends;
+        return this.getFields().extends;
     }
 
     getMixins(): DeclareClassFields['mixins'] {
-        return this.value.mixins;
+        return this.getFields().mixins;
     }
 
     getImplements(): DeclareClassFields['implements'] {
-        return this.value.implements;
+        return this.getFields().implements;
     }
 
     getBody(): DeclareClassFields['body'] {
-        return this.value.body;
+        return this.getFields().body;
     }
 }
 
@@ -134,5 +93,5 @@ export const declareClassTypePair: EvaluatePair<DeclareClass, DeclareClassTypeCl
     );
 
 export const isDeclareClassType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is DeclareClassTypeClass => target instanceof DeclareClassTypeClass;

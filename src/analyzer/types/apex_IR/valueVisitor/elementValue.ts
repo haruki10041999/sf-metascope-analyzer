@@ -1,28 +1,40 @@
 import { ElementValueContext } from '@apexdevtools/apex-parser';
 
-import { ValueTypeClass } from '.';
+import { LiteralTypeClass } from '../literalVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { NormalLiteralTypeClass, LiteralVisitor, isNormalLiteralType } from '../literalVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type ElementValueType = TypeField<'elementValue'> & {
+    value: LiteralTypeClass;
+};
 
-export class ElementValueTypeClass extends ValueTypeClass<'elementValue', NormalLiteralTypeClass> {
-    private constructor(value: NormalLiteralTypeClass | ApexErrorTypeClass) {
-        super('elementValue', value);
+export class ElementValueTypeClass extends ApexCommonTypeClass<'elementValue', ElementValueType> {
+    private constructor(fields: FieldsOf<ElementValueType>, sourceSpan: SourceSpan) {
+        super('elementValue', fields, sourceSpan);
     }
 
-    static create(ctx: ElementValueContext) {
-        if (!ctx.literal()) {
-            throw new Error('値が異常です。ElementValueContext: ' + ctx.getText());
-        }
-
+    static create(ctx: ElementValueContext): ElementValueTypeClass {
         return new ElementValueTypeClass(
-            visitNode(new LiteralVisitor(), ctx.literal(), isNormalLiteralType, 'literal'),
+            {
+                value: createNode(ctx.literal(), (c) => LiteralTypeClass.create(c), 'literal'),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): ElementValueType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isElementValueType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is ElementValueTypeClass => {
-    return target instanceof ElementValueTypeClass;
+    return isSpicifyApexCommonTypeClass('elementValue', target);
 };

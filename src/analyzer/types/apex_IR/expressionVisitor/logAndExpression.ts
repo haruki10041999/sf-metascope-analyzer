@@ -1,51 +1,67 @@
 import { LogAndExpressionContext } from '@apexdevtools/apex-parser';
 
+import { BasedExpressionTypeClass, ExpressionVisitor, isBasedExpressionType } from '.';
+
 import {
-    DoubleStringOperatorExpressionTypeClass,
-    BasedExpressionTypeClass,
-    ExpressionVisitor,
-    isBasedExpressionType,
-} from '.';
+    ApexCommonTypeClass,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+    visitNode,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type LogAndExpressionType = TypeField<'logAndExpression'> & {
+    left: BasedExpressionTypeClass;
+    operator: '&&';
+    right: BasedExpressionTypeClass;
+};
 
-export class LogAndExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
+export class LogAndExpressionTypeClass extends ApexCommonTypeClass<
     'logAndExpression',
-    BasedExpressionTypeClass,
-    '&&',
-    BasedExpressionTypeClass
+    LogAndExpressionType
 > {
-    private constructor(
-        left: BasedExpressionTypeClass | ApexErrorTypeClass,
-        right: BasedExpressionTypeClass | ApexErrorTypeClass,
-    ) {
-        super('logAndExpression', left, right, '&&');
+    private constructor(fields: FieldsOf<LogAndExpressionType>, sourceSpan: SourceSpan) {
+        super('logAndExpression', fields, sourceSpan);
     }
 
     static create(ctx: LogAndExpressionContext): LogAndExpressionTypeClass {
-        if (!ctx.expression_list() || ctx.expression_list().length !== 2 || !ctx.AND()) {
+        if (!ctx.AND()) {
             throw new Error('値が異常です。LogAndExpressionContext: ' + ctx.getText());
         }
 
         return new LogAndExpressionTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(0),
-                isBasedExpressionType,
-                'expression',
-            ),
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(1),
-                isBasedExpressionType,
-                'expression',
-            ),
+            {
+                left: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(0),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+                operator: '&&',
+                right: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(1),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getLeft(): LogAndExpressionType['left'] {
+        return this.getFields().left;
+    }
+
+    getOperator(): LogAndExpressionType['operator'] {
+        return this.getFields().operator;
+    }
+
+    getRight(): LogAndExpressionType['right'] {
+        return this.getFields().right;
     }
 }
 
 export const isLogAndExpressionType = (
-    target: ApexCommonTypeClass<string>,
-): target is LogAndExpressionTypeClass => {
-    return target instanceof LogAndExpressionTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is LogAndExpressionTypeClass => isSpicifyApexCommonTypeClass('logAndExpression', target);

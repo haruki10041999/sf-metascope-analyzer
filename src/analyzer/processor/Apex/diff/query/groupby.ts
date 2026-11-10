@@ -1,4 +1,4 @@
-import { ErrorJson, GroupByJson } from '../../../../types';
+import { GroupByJson } from '../../../../types';
 
 import {
     Match,
@@ -19,13 +19,13 @@ export type GroupByJsonDiff = NodeDiff<
     {
         field: TypedListDiff<FieldTerm, FieldTermDiff>;
         mode: OptionalDiff<'ROLLUP' | 'CUBE', ValueDiff<'ROLLUP' | 'CUBE'>>;
-        having: OptionalDiff<LogicalCondition | ErrorJson, LogicalConditionJsonDiff>;
+        having: OptionalDiff<LogicalCondition, LogicalConditionJsonDiff>;
     }
 >;
 
 export const makeGroupByDiff = (
-    before: GroupByJson | ErrorJson,
-    after: GroupByJson | ErrorJson,
+    before: GroupByJson,
+    after: GroupByJson,
     match: Match = 'slot',
 ): GroupByJsonDiff =>
     makeNodeDiff('groupBy', before, after, match, (b, a) => ({

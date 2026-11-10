@@ -10,8 +10,7 @@ import { UnitWorker, runUnitTask } from '../../src/analyzer/worker';
 
 /** UnitWorker (メインスレッドで処理) で、サンプルの単位を種類ごとに解析・保存・読み込みする */
 
-const repository = (side: 'before' | 'after') =>
-    path.resolve('docs/examples/repository', side);
+const repository = (side: 'before' | 'after') => path.resolve('docs/examples/repository', side);
 
 let tmp: string;
 before(async () => {

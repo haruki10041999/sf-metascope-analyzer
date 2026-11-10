@@ -1,56 +1,59 @@
 import { WhileStatementContext } from '@apexdevtools/apex-parser';
 
-import {
-    NormalStatementTypeClass,
-    StatementTypeClass,
-    StatementVisitor,
-    isNormalStatementType,
-} from '.';
+import { StatementTypeClass } from './statement';
 
+import { ParExpressionTypeClass } from '../expressionVisitor';
 import {
-    ParExpressionTypeClass,
-    ExpressionVisitor,
-    isParExpressionType,
-} from '../expressionVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class WhileStatementTypeClass extends StatementTypeClass<
+export type WhileStatementType = TypeField<'whileStatement'> & {
+    value: ParExpressionTypeClass;
+    block: StatementTypeClass;
+};
+
+export class WhileStatementTypeClass extends ApexCommonTypeClass<
     'whileStatement',
-    ParExpressionTypeClass
+    WhileStatementType
 > {
-    private block: NormalStatementTypeClass | ApexErrorTypeClass;
-
-    private constructor(
-        value: ParExpressionTypeClass | ApexErrorTypeClass,
-        block: NormalStatementTypeClass | ApexErrorTypeClass,
-    ) {
-        super('whileStatement', value);
-        this.block = block;
+    private constructor(fields: FieldsOf<WhileStatementType>, sourceSpan: SourceSpan) {
+        super('whileStatement', fields, sourceSpan);
     }
 
     static create(ctx: WhileStatementContext): WhileStatementTypeClass {
-        if (!ctx.parExpression() || !ctx.statement()) {
-            throw new Error('値が異常です。WhileStatementContext: ' + ctx.getText());
-        }
-
         return new WhileStatementTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.parExpression(),
-                isParExpressionType,
-                'parExpression',
-            ),
-            visitNode(new StatementVisitor(), ctx.statement(), isNormalStatementType, 'statement'),
+            {
+                value: createNode(
+                    ctx.parExpression(),
+                    (c) => ParExpressionTypeClass.create(c),
+                    'parExpression',
+                ),
+                block: createNode(
+                    ctx.statement(),
+                    (c) => StatementTypeClass.create(c),
+                    'statement',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getBlock() {
-        return this.block;
+    getValue(): WhileStatementType['value'] {
+        return this.getFields().value;
+    }
+
+    getBlock(): WhileStatementType['block'] {
+        return this.getFields().block;
     }
 }
 
 export const isWhileStatementType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is WhileStatementTypeClass => {
-    return target instanceof WhileStatementTypeClass;
+    return isSpicifyApexCommonTypeClass('whileStatement', target);
 };

@@ -101,11 +101,7 @@ const collectTemplate = (nodes: LwcTemplateNodeJson[]) => {
 const memberNamesOf = (component: LwcComponentJson) =>
     new Set(
         component.block.flatMap((member) =>
-            member.kind !== 'error' &&
-            member.kind !== 'lwcConstructor' &&
-            typeof member.name === 'string'
-                ? [member.name]
-                : [],
+            member.kind !== 'lwcConstructor' ? [member.name] : [],
         ),
     );
 
@@ -163,20 +159,15 @@ const toResolvedError = (
 
 /**
  * バンドルの中の突き合わせ。メインのモジュールのコンポーネントと、すべてのテンプレート
- * (render() で切り替えるものも) を比べる。どちらかが読めなければ (ErrorJson) 見ない
+ * (render() で切り替えるものも) を比べる。どちらかが読めなければ (null) 見ない
  */
 export const validateBundle = (
     bundle: LwcBundleJson,
     sourceObject: LwcSourceJson[],
 ): LwcResolvedError[] => {
     const main = bundle.modules.find((m) => m.main)?.module;
-    const component =
-        main && !('kind' in main) && main.component?.kind === 'lwcComponent'
-            ? main.component
-            : undefined;
-    const templates = bundle.templates.flatMap((t) =>
-        t.template.kind === 'lwcTemplate' ? [t.template] : [],
-    );
+    const component = main?.component;
+    const templates = bundle.templates.flatMap((t) => (t.template ? [t.template] : []));
     if (!component || templates.length === 0) return [];
 
     const collected = templates.map((template) => collectTemplate(template.children));
@@ -205,9 +196,9 @@ export const validateBundle = (
             );
         }
 
-        const capabilities =
-            bundle.meta?.kind === 'lwcBundleMeta' ? (bundle.meta.capabilities ?? []) : [];
-        if (bundle.meta?.kind !== 'error' && !capabilities.includes(DYNAMIC_COMPONENT_CAPABILITY)) {
+        // js-meta.xml が読めなかった (null) ときは見ない
+        const capabilities = bundle.meta?.capabilities ?? [];
+        if (bundle.meta !== null && !capabilities.includes(DYNAMIC_COMPONENT_CAPABILITY)) {
             dynamics.forEach((sourceKeys) =>
                 findings.push({
                     code: 'TEMPLATE_DYNAMIC_DISABLED',

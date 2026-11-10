@@ -1,11 +1,13 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isExportNamespaceSpecifier, type ExportNamespaceSpecifier } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { identifierTypePair, type IdentifierTypeClass } from './identifier';
 import { stringLiteralTypePair, type StringLiteralTypeClass } from './stringLiteral';
@@ -14,39 +16,37 @@ const exportNamespaceSpecifierExportedPairs = lazyPairs(
     () => [identifierTypePair, stringLiteralTypePair] as const,
 );
 
-export type ExportNamespaceSpecifierFields = {
-    exported: IdentifierTypeClass | StringLiteralTypeClass | LwcErrorTypeClass;
+export type ExportNamespaceSpecifierFields = TypeField<'exportNamespaceSpecifier'> & {
+    exported: IdentifierTypeClass | StringLiteralTypeClass;
 };
 
-export class ExportNamespaceSpecifierTypeClass extends LwcCommonTypeClass<'exportNamespaceSpecifier'> {
-    private readonly value: ExportNamespaceSpecifierFields;
-
-    private constructor(value: ExportNamespaceSpecifierFields) {
-        super('exportNamespaceSpecifier');
-        this.value = value;
+export class ExportNamespaceSpecifierTypeClass extends LwcCommonTypeClass<
+    'exportNamespaceSpecifier',
+    ExportNamespaceSpecifierFields
+> {
+    private constructor(value: FieldsOf<ExportNamespaceSpecifierFields>, sourceSpan: SourceSpan) {
+        super('exportNamespaceSpecifier', value, sourceSpan);
     }
 
     static create(
         target: ExportNamespaceSpecifier,
         originalSource: string,
     ): ExportNamespaceSpecifierTypeClass {
-        return new ExportNamespaceSpecifierTypeClass({
-            exported: visitNode(
-                target.exported,
-                originalSource,
-                exportNamespaceSpecifierExportedPairs(),
-                'ExportNamespaceSpecifier.exported',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): ExportNamespaceSpecifierFields {
-        return this.value;
+        return new ExportNamespaceSpecifierTypeClass(
+            {
+                exported: visitNode(
+                    target.exported,
+                    originalSource,
+                    exportNamespaceSpecifierExportedPairs(),
+                    'ExportNamespaceSpecifier.exported',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getExported(): ExportNamespaceSpecifierFields['exported'] {
-        return this.value.exported;
+        return this.getFields().exported;
     }
 }
 
@@ -58,6 +58,6 @@ export const exportNamespaceSpecifierTypePair: EvaluatePair<
 );
 
 export const isExportNamespaceSpecifierType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ExportNamespaceSpecifierTypeClass =>
     target instanceof ExportNamespaceSpecifierTypeClass;

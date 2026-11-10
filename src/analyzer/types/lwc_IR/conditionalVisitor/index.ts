@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import {
     ConditionalExpressionTypeClass,
@@ -31,7 +32,7 @@ export class ConditionalVisitor extends LwcCommonVisitor<
 export type ConditionalTypeClass = ConditionalExpressionTypeClass | IfStatementTypeClass;
 
 export const isConditionalType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ConditionalTypeClass => {
     return (
         target instanceof ConditionalExpressionTypeClass || target instanceof IfStatementTypeClass

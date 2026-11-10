@@ -1,5 +1,5 @@
-import { ErrorJson, JsonType } from '../../commons';
-import type { FieldOrderTypeClass, OrderByClauseTypeClass } from '../../apex_IR_v2';
+import { JsonType } from '../../commons';
+import type { FieldOrderTypeClass, OrderByClauseTypeClass } from '../../apex_IR';
 
 import { makeNodeJson } from '../commons/node';
 import { FieldJson, makeFieldJson } from './select';
@@ -29,7 +29,7 @@ export const makeFieldOrderJson = (target: FieldOrderTypeClass): FieldOrderJson 
 };
 
 export type OrderByJson = {
-    orderBy: (FieldOrderJson | ErrorJson)[];
+    orderBy: FieldOrderJson[];
 };
 
 export const makeOrderByJson = (target: OrderByClauseTypeClass): OrderByJson => {

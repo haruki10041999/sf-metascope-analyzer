@@ -1,36 +1,45 @@
 import { InterfaceBodyContext } from '@apexdevtools/apex-parser';
 
-import { BodyTypeClass } from '.';
-
+import { InterfaceMethodDeclarationTypeClass } from '../declarationVisitor';
 import {
-    InterfaceMethodDeclarationTypeClass,
-    DeclarationVisitor,
-    isInterfaceMethodDeclarationType,
-} from '../declarationVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
+    ApexCommonTypeClass,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class InterfaceBodyTypeClass extends BodyTypeClass<
+export type InterfaceBodyType = TypeField<'interfaceBody'> & {
+    declaration: InterfaceMethodDeclarationTypeClass[];
+};
+
+export class InterfaceBodyTypeClass extends ApexCommonTypeClass<
     'interfaceBody',
-    InterfaceMethodDeclarationTypeClass
+    InterfaceBodyType
 > {
-    private constructor(value: (InterfaceMethodDeclarationTypeClass | ApexErrorTypeClass)[]) {
-        super('interfaceBody', value);
+    private constructor(fields: FieldsOf<InterfaceBodyType>, sourceSpan: SourceSpan) {
+        super('interfaceBody', fields, sourceSpan);
     }
 
     static create(ctx: InterfaceBodyContext): InterfaceBodyTypeClass {
         return new InterfaceBodyTypeClass(
-            visitNodeList(
-                new DeclarationVisitor(),
-                ctx.interfaceMethodDeclaration_list(),
-                isInterfaceMethodDeclarationType,
-                'interfaceMethodDeclaration',
-            ),
+            {
+                declaration: createNodeList(
+                    ctx.interfaceMethodDeclaration_list(),
+                    (c) => InterfaceMethodDeclarationTypeClass.create(c),
+                    'interfaceMethodDeclaration',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getDeclaration(): InterfaceBodyType['declaration'] {
+        return this.getFields().declaration;
     }
 }
 
 export const isInterfaceBodyType = (
-    target: ApexCommonTypeClass<string>,
-): target is InterfaceBodyTypeClass => {
-    return target instanceof InterfaceBodyTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is InterfaceBodyTypeClass => isSpicifyApexCommonTypeClass('interfaceBody', target);

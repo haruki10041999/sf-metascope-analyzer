@@ -1,19 +1,21 @@
 import { SignedIntegerContext } from '@apexdevtools/apex-parser';
 
-import { PrimitiveLiteralTypeClass } from '.';
+import { ApexCommonTypeClass, getSourceSpan, isSpicifyApexCommonTypeClass } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { ApexCommonTypeClass } from '../commonVisitor';
+export type SignedIntegerType = TypeField<'signedInteger'> & {
+    value: string;
+    valueType: 'integer';
+    operator: '+' | '-' | null;
+};
 
-export class SignedIntegerTypeClass extends PrimitiveLiteralTypeClass<
+export class SignedIntegerTypeClass extends ApexCommonTypeClass<
     'signedInteger',
-    string,
-    'integer'
+    SignedIntegerType
 > {
-    private operator: '+' | '-' | null;
-
-    private constructor(value: string, operator: '+' | '-' | null) {
-        super('signedInteger', value, 'integer');
-        this.operator = operator;
+    private constructor(fields: FieldsOf<SignedIntegerType>, sourceSpan: SourceSpan) {
+        super('signedInteger', fields, sourceSpan);
     }
 
     static create(ctx: SignedIntegerContext): SignedIntegerTypeClass {
@@ -21,24 +23,29 @@ export class SignedIntegerTypeClass extends PrimitiveLiteralTypeClass<
             throw new Error('値が異常です。SignedIntegerContext: ' + ctx.getText());
         }
 
-        let operator: '+' | '-' | null = null;
-        if (ctx.ADD()) {
-            operator = '+';
-        } else if (ctx.SUB()) {
-            operator = '-';
-        }
-        const value = ctx.IntegerLiteral().getText();
-
-        return new SignedIntegerTypeClass(value, operator);
+        return new SignedIntegerTypeClass(
+            {
+                value: ctx.IntegerLiteral().getText(),
+                valueType: 'integer',
+                operator: ctx.ADD() ? '+' : ctx.SUB() ? '-' : null,
+            },
+            getSourceSpan(ctx),
+        );
     }
 
-    getOperator(): '+' | '-' | null {
-        return this.operator;
+    getValue(): SignedIntegerType['value'] {
+        return this.getFields().value;
+    }
+
+    getValueType(): SignedIntegerType['valueType'] {
+        return this.getFields().valueType;
+    }
+
+    getOperator(): SignedIntegerType['operator'] {
+        return this.getFields().operator;
     }
 }
 
 export const isSignedIntegerType = (
-    target: ApexCommonTypeClass<string>,
-): target is SignedIntegerTypeClass => {
-    return target instanceof SignedIntegerTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is SignedIntegerTypeClass => isSpicifyApexCommonTypeClass('signedInteger', target);

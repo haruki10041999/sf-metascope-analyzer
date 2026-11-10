@@ -1,13 +1,22 @@
+import { type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isImport, type Import } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export class ImportTypeClass extends LwcCommonTypeClass<'import'> {
-    private constructor() {
-        super('import');
+export type ImportFields = TypeField<'import'>;
+
+export class ImportTypeClass extends LwcCommonTypeClass<'import', ImportFields> {
+    private constructor(sourceSpan: SourceSpan) {
+        super('import', {}, sourceSpan);
     }
 
-    static create(_target: Import, _originalSource: string): ImportTypeClass {
-        return new ImportTypeClass();
+    static create(target: Import, originalSource: string): ImportTypeClass {
+        return new ImportTypeClass(getSourceSpan(target, originalSource));
     }
 }
 
@@ -16,5 +25,6 @@ export const importTypePair: EvaluatePair<Import, ImportTypeClass> = makeEvaluat
     (target, originalSource) => ImportTypeClass.create(target, originalSource),
 );
 
-export const isImportType = (target: LwcCommonTypeClass<string>): target is ImportTypeClass =>
-    target instanceof ImportTypeClass;
+export const isImportType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is ImportTypeClass => target instanceof ImportTypeClass;

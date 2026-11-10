@@ -1,24 +1,36 @@
 import { SoqlLiteralContext } from '@apexdevtools/apex-parser';
 
-import { LiteralTypeClass } from '.';
+import { QueryTypeClass } from '../queryVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { NormalQueryTypeClass, QueryVisitor, isNormalQueryType } from '../queryVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type SoqlLiteralType = TypeField<'soqlLiteral'> & {
+    value: QueryTypeClass;
+};
 
-export class SoqlLiteralTypeClass extends LiteralTypeClass<'soqlLiteral', NormalQueryTypeClass> {
-    private constructor(value: NormalQueryTypeClass | ApexErrorTypeClass) {
-        super('soqlLiteral', value);
+export class SoqlLiteralTypeClass extends ApexCommonTypeClass<'soqlLiteral', SoqlLiteralType> {
+    private constructor(fields: FieldsOf<SoqlLiteralType>, sourceSpan: SourceSpan) {
+        super('soqlLiteral', fields, sourceSpan);
     }
 
     static create(ctx: SoqlLiteralContext): SoqlLiteralTypeClass {
         return new SoqlLiteralTypeClass(
-            visitNode(new QueryVisitor(), ctx.query(), isNormalQueryType, 'query'),
+            { value: createNode(ctx.query(), (c) => QueryTypeClass.create(c), 'query') },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): SoqlLiteralType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isSoqlLiteralType = (
-    target: ApexCommonTypeClass<string>,
-): target is SoqlLiteralTypeClass => {
-    return target instanceof SoqlLiteralTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is SoqlLiteralTypeClass => isSpicifyApexCommonTypeClass('soqlLiteral', target);

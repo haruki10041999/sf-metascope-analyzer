@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { BlockStatementTypeClass, blockStatementTypePair } from '../commons/blockStatement';
 import { ProgramTypeClass, programTypePair } from '../commons/program';
@@ -29,7 +30,9 @@ export class BlockVisitor extends LwcCommonVisitor<
 
 export type BlockTypeClass = BlockStatementTypeClass | ProgramTypeClass | TSModuleBlockTypeClass;
 
-export const isBlockType = (target: LwcCommonTypeClass<string>): target is BlockTypeClass => {
+export const isBlockType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is BlockTypeClass => {
     return (
         target instanceof BlockStatementTypeClass ||
         target instanceof ProgramTypeClass ||

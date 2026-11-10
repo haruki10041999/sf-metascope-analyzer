@@ -1,11 +1,13 @@
-import { isForInStatement, type ForInStatement } from '@babel/types';
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
+import { isForInStatement, isVariableDeclaration, type ForInStatement } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
 import { statementVisitorEvaluatePairs, type StatementTypeClass } from '../statementVisitor';
@@ -23,15 +25,11 @@ import {
     type TSSatisfiesExpressionTypeClass,
 } from './tSSatisfiesExpression';
 import { tSTypeAssertionTypePair, type TSTypeAssertionTypeClass } from './tSTypeAssertion';
-import {
-    variableDeclarationTypePair,
-    type VariableDeclarationTypeClass,
-} from './variableDeclaration';
+import { ForHeadDeclarationTypeClass, type ForInHeadKind } from './variableDeclaration';
 
 const forInStatementLeftPairs = lazyPairs(
     () =>
         [
-            variableDeclarationTypePair,
             identifierTypePair,
             memberExpressionTypePair,
             arrayPatternTypePair,
@@ -43,9 +41,9 @@ const forInStatementLeftPairs = lazyPairs(
         ] as const,
 );
 
-export type ForInStatementFields = {
+export type ForInStatementFields = TypeField<'forInStatement'> & {
     left:
-        | VariableDeclarationTypeClass
+        | ForHeadDeclarationTypeClass<ForInHeadKind>
         | IdentifierTypeClass
         | MemberExpressionTypeClass
         | ArrayPatternTypeClass
@@ -53,58 +51,57 @@ export type ForInStatementFields = {
         | TSAsExpressionTypeClass
         | TSSatisfiesExpressionTypeClass
         | TSTypeAssertionTypeClass
-        | TSNonNullExpressionTypeClass
-        | LwcErrorTypeClass;
-    right: ExpressionTypeClass | LwcErrorTypeClass;
-    body: StatementTypeClass | LwcErrorTypeClass;
+        | TSNonNullExpressionTypeClass;
+    right: ExpressionTypeClass;
+    body: StatementTypeClass;
 };
 
-export class ForInStatementTypeClass extends LwcCommonTypeClass<'forInStatement'> {
-    private readonly value: ForInStatementFields;
-
-    private constructor(value: ForInStatementFields) {
-        super('forInStatement');
-        this.value = value;
+export class ForInStatementTypeClass extends LwcCommonTypeClass<
+    'forInStatement',
+    ForInStatementFields
+> {
+    private constructor(value: FieldsOf<ForInStatementFields>, sourceSpan: SourceSpan) {
+        super('forInStatement', value, sourceSpan);
     }
 
     static create(target: ForInStatement, originalSource: string): ForInStatementTypeClass {
-        return new ForInStatementTypeClass({
-            left: visitNode(
-                target.left,
-                originalSource,
-                forInStatementLeftPairs(),
-                'ForInStatement.left',
-            ),
-            right: visitNode(
-                target.right,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-            body: visitNode(
-                target.body,
-                originalSource,
-                statementVisitorEvaluatePairs(),
-                'StatementVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): ForInStatementFields {
-        return this.value;
+        return new ForInStatementTypeClass(
+            {
+                left: isVariableDeclaration(target.left)
+                    ? ForHeadDeclarationTypeClass.createForIn(target.left, originalSource)
+                    : visitNode(
+                          target.left,
+                          originalSource,
+                          forInStatementLeftPairs(),
+                          'ForInStatement.left',
+                      ),
+                right: visitNode(
+                    target.right,
+                    originalSource,
+                    expressionVisitorEvaluatePairs(),
+                    'ExpressionVisitor',
+                ),
+                body: visitNode(
+                    target.body,
+                    originalSource,
+                    statementVisitorEvaluatePairs(),
+                    'StatementVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getLeft(): ForInStatementFields['left'] {
-        return this.value.left;
+        return this.getFields().left;
     }
 
     getRight(): ForInStatementFields['right'] {
-        return this.value.right;
+        return this.getFields().right;
     }
 
     getBody(): ForInStatementFields['body'] {
-        return this.value.body;
+        return this.getFields().body;
     }
 }
 
@@ -114,5 +111,5 @@ export const forInStatementTypePair: EvaluatePair<ForInStatement, ForInStatement
     );
 
 export const isForInStatementType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ForInStatementTypeClass => target instanceof ForInStatementTypeClass;

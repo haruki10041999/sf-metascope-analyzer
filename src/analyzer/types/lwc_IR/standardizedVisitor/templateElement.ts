@@ -1,37 +1,42 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTemplateElement, type TemplateElement } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export type TemplateElementFields = {
+export type TemplateElementFields = TypeField<'templateElement'> & {
     value: TemplateElement['value'];
     tail: TemplateElement['tail'];
 };
 
-export class TemplateElementTypeClass extends LwcCommonTypeClass<'templateElement'> {
-    private readonly value: TemplateElementFields;
-
-    private constructor(value: TemplateElementFields) {
-        super('templateElement');
-        this.value = value;
+export class TemplateElementTypeClass extends LwcCommonTypeClass<
+    'templateElement',
+    TemplateElementFields
+> {
+    private constructor(value: FieldsOf<TemplateElementFields>, sourceSpan: SourceSpan) {
+        super('templateElement', value, sourceSpan);
     }
 
     static create(target: TemplateElement, originalSource: string): TemplateElementTypeClass {
-        return new TemplateElementTypeClass({
-            value: target.value,
-            tail: target.tail,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TemplateElementFields {
-        return this.value;
+        return new TemplateElementTypeClass(
+            {
+                value: target.value,
+                tail: target.tail,
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getValue(): TemplateElementFields['value'] {
-        return this.value.value;
+        return this.getFields().value;
     }
 
     getTail(): TemplateElementFields['tail'] {
-        return this.value.tail;
+        return this.getFields().tail;
     }
 }
 
@@ -41,5 +46,5 @@ export const templateElementTypePair: EvaluatePair<TemplateElement, TemplateElem
     );
 
 export const isTemplateElementType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TemplateElementTypeClass => target instanceof TemplateElementTypeClass;

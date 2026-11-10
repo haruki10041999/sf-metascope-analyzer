@@ -1,4 +1,4 @@
-import type { ErrorJson, JsonType } from '../commons/json';
+import type { JsonType } from '../commons/json';
 import { childOf, childrenOf, type XmlElement } from '../commons/xml';
 import { type ValueTreeOptions, toValueTree, toValueTreeProperties } from '../commons/valueTree';
 import {
@@ -525,9 +525,9 @@ export const makeFlowJson = (
     file: ParsedXmlFile,
     registry: XmlSourceRegistry,
     problems: XmlReadProblem[],
-): FlowJson | ErrorJson => {
-    const root = readXmlRoot(file, 'Flow', 'flow', registry, problems);
-    if (!('name' in root)) return root;
+): FlowJson | null => {
+    const root = readXmlRoot(file, 'Flow', 'flow', problems);
+    if (!root) return null;
 
     const startElement = childOf(root, 'start');
     const startObject = startElement ? readText(startElement, 'object') : undefined;

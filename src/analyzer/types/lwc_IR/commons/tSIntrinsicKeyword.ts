@@ -1,16 +1,25 @@
+import { type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSIntrinsicKeyword, type TSIntrinsicKeyword } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export class TSIntrinsicKeywordTypeClass extends LwcCommonTypeClass<'tSIntrinsicKeyword'> {
-    private constructor() {
-        super('tSIntrinsicKeyword');
+export type TSIntrinsicKeywordFields = TypeField<'tSIntrinsicKeyword'>;
+
+export class TSIntrinsicKeywordTypeClass extends LwcCommonTypeClass<
+    'tSIntrinsicKeyword',
+    TSIntrinsicKeywordFields
+> {
+    private constructor(sourceSpan: SourceSpan) {
+        super('tSIntrinsicKeyword', {}, sourceSpan);
     }
 
-    static create(
-        _target: TSIntrinsicKeyword,
-        _originalSource: string,
-    ): TSIntrinsicKeywordTypeClass {
-        return new TSIntrinsicKeywordTypeClass();
+    static create(target: TSIntrinsicKeyword, originalSource: string): TSIntrinsicKeywordTypeClass {
+        return new TSIntrinsicKeywordTypeClass(getSourceSpan(target, originalSource));
     }
 }
 
@@ -22,5 +31,5 @@ export const tSIntrinsicKeywordTypePair: EvaluatePair<
 );
 
 export const isTSIntrinsicKeywordType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSIntrinsicKeywordTypeClass => target instanceof TSIntrinsicKeywordTypeClass;

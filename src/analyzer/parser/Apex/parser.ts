@@ -16,7 +16,6 @@ import {
 import { getApexUnitPath, locateApexUnit, readApexUnit, searchApexUnits } from './folder';
 import { APEX_UNIT_PREFIXES, parseApexUnitFiles, type ApexUnitParseResult } from './unit';
 
-
 /** Apex の保存名 (class_ / trigger_ / anonymous_ で始まる) か */
 export const isApexSaveId = (id: string): boolean =>
     Object.values(APEX_UNIT_PREFIXES).some((prefix) => id.startsWith(prefix));

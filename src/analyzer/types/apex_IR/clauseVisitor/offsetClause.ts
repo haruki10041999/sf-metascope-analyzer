@@ -1,42 +1,50 @@
 import { OffsetClauseContext } from '@apexdevtools/apex-parser';
 
-import { ClauseTypeClass } from '.';
-
+import { BoundExpressionTypeClass } from '../expressionVisitor';
 import {
-    BoundExpressionTypeClass,
-    ExpressionVisitor,
-    isBoundExpressionType,
-} from '../expressionVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class OffsetClauseTypeClass extends ClauseTypeClass<
-    'offsetClause',
-    string | BoundExpressionTypeClass
-> {
-    private constructor(value: string | BoundExpressionTypeClass | ApexErrorTypeClass) {
-        super('offsetClause', value);
+export type OffsetClauseType = TypeField<'offsetClause'> & {
+    /** 整数リテラル (literal) かバインド式 (bind) */
+    value: { kind: 'literal'; value: string } | { kind: 'bind'; value: BoundExpressionTypeClass };
+};
+
+export class OffsetClauseTypeClass extends ApexCommonTypeClass<'offsetClause', OffsetClauseType> {
+    private constructor(fields: FieldsOf<OffsetClauseType>, sourceSpan: SourceSpan) {
+        super('offsetClause', fields, sourceSpan);
     }
 
     static create(ctx: OffsetClauseContext): OffsetClauseTypeClass {
-        if (!ctx.IntegerLiteral() && !ctx.boundExpression()) {
-            throw new Error('値が異常です。OffsetClauseContext: ' + ctx.getText());
-        }
-
         return new OffsetClauseTypeClass(
-            ctx.IntegerLiteral()
-                ? ctx.IntegerLiteral().getText()
-                : visitNode(
-                      new ExpressionVisitor(),
-                      ctx.boundExpression(),
-                      isBoundExpressionType,
-                      'boundExpression',
-                  ),
+            {
+                value: ctx.IntegerLiteral()
+                    ? { kind: 'literal', value: ctx.IntegerLiteral().getText() }
+                    : {
+                          kind: 'bind',
+                          value: createNode(
+                              ctx.boundExpression(),
+                              (c) => BoundExpressionTypeClass.create(c),
+                              'boundExpression',
+                          ),
+                      },
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): OffsetClauseType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isOffsetClauseType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is OffsetClauseTypeClass => {
-    return target instanceof OffsetClauseTypeClass;
+    return isSpicifyApexCommonTypeClass('offsetClause', target);
 };

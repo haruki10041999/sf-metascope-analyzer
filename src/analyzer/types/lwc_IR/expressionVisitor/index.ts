@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { ArrayExpressionTypeClass, arrayExpressionTypePair } from '../commons/arrayExpression';
 import {
@@ -400,7 +401,7 @@ export type ExpressionTypeClass =
     | TSNonNullExpressionTypeClass;
 
 export const isExpressionType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ExpressionTypeClass => {
     return (
         target instanceof ArrayExpressionTypeClass ||

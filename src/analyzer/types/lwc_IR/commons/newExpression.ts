@@ -1,13 +1,15 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isNewExpression, type NewExpression } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNode,
     visitNodeList,
     visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
 import {
@@ -43,67 +45,57 @@ const newExpressionTypeArgumentsPairs = lazyPairs(
     () => [typeParameterInstantiationTypePair, tSTypeParameterInstantiationTypePair] as const,
 );
 
-export type NewExpressionFields = {
-    callee: ExpressionTypeClass | V8IntrinsicIdentifierTypeClass | LwcErrorTypeClass;
-    arguments: (
-        | ExpressionTypeClass
-        | SpreadElementTypeClass
-        | ArgumentPlaceholderTypeClass
-        | LwcErrorTypeClass
-    )[];
+export type NewExpressionFields = TypeField<'newExpression'> & {
+    callee: ExpressionTypeClass | V8IntrinsicIdentifierTypeClass;
+    arguments: (ExpressionTypeClass | SpreadElementTypeClass | ArgumentPlaceholderTypeClass)[];
     typeArguments:
-        | TypeParameterInstantiationTypeClass
-        | TSTypeParameterInstantiationTypeClass
-        | LwcErrorTypeClass
-        | null;
+        TypeParameterInstantiationTypeClass | TSTypeParameterInstantiationTypeClass | null;
 };
 
-export class NewExpressionTypeClass extends LwcCommonTypeClass<'newExpression'> {
-    private readonly value: NewExpressionFields;
-
-    private constructor(value: NewExpressionFields) {
-        super('newExpression');
-        this.value = value;
+export class NewExpressionTypeClass extends LwcCommonTypeClass<
+    'newExpression',
+    NewExpressionFields
+> {
+    private constructor(value: FieldsOf<NewExpressionFields>, sourceSpan: SourceSpan) {
+        super('newExpression', value, sourceSpan);
     }
 
     static create(target: NewExpression, originalSource: string): NewExpressionTypeClass {
-        return new NewExpressionTypeClass({
-            callee: visitNode(
-                target.callee,
-                originalSource,
-                newExpressionCalleePairs(),
-                'NewExpression.callee',
-            ),
-            arguments: visitNodeList(
-                target.arguments,
-                originalSource,
-                newExpressionArgumentsPairs(),
-                'NewExpression.arguments',
-            ),
-            typeArguments: visitOptionalNode(
-                target.typeArguments,
-                originalSource,
-                newExpressionTypeArgumentsPairs(),
-                'NewExpression.typeArguments',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): NewExpressionFields {
-        return this.value;
+        return new NewExpressionTypeClass(
+            {
+                callee: visitNode(
+                    target.callee,
+                    originalSource,
+                    newExpressionCalleePairs(),
+                    'NewExpression.callee',
+                ),
+                arguments: visitNodeList(
+                    target.arguments,
+                    originalSource,
+                    newExpressionArgumentsPairs(),
+                    'NewExpression.arguments',
+                ),
+                typeArguments: visitOptionalNode(
+                    target.typeArguments,
+                    originalSource,
+                    newExpressionTypeArgumentsPairs(),
+                    'NewExpression.typeArguments',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getCallee(): NewExpressionFields['callee'] {
-        return this.value.callee;
+        return this.getFields().callee;
     }
 
     getArguments(): NewExpressionFields['arguments'] {
-        return this.value.arguments;
+        return this.getFields().arguments;
     }
 
     getTypeArguments(): NewExpressionFields['typeArguments'] {
-        return this.value.typeArguments;
+        return this.getFields().typeArguments;
     }
 }
 
@@ -113,5 +105,5 @@ export const newExpressionTypePair: EvaluatePair<NewExpression, NewExpressionTyp
     );
 
 export const isNewExpressionType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is NewExpressionTypeClass => target instanceof NewExpressionTypeClass;

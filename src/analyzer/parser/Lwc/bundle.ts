@@ -2,15 +2,13 @@
 // 入力は folder.ts で読んだフォルダの中身だけで、ファイルシステムには触らない。
 // JS / TS (module.ts)・js-meta.xml (meta.ts)・HTML (template.ts)・CSS (stylesheet.ts) を読み、
 // 最後に同じバンドルの中の突き合わせ (validate/bundle.ts) をする
-import {
-    hash,
-    makeErrorJson,
-    type ErrorJson,
-    type LwcBundleJson,
-    type LwcSourceJson,
-} from '../../types';
+import type { LwcBundleJson, LwcSourceJson } from '../../types';
 
-import type { LwcResolvedError } from './errorListener';
+import {
+    LwcCommonErrorListener,
+    type LwcBundleProblemCode,
+    type LwcResolvedError,
+} from './errorListener';
 import type { LwcBundleFile, LwcBundleFolder } from './folder';
 import { apiVersionOf, parseBundleMeta } from './meta';
 import { convertLwcModule, parseLwcModule } from './module';
@@ -38,39 +36,44 @@ export type LwcBundleStructureType = {
     };
 };
 
-/** フォルダが読めない・メインのモジュールがないとき */
+/** フォルダが読めない・メインのモジュールがないとき。中身 (base) はなく、理由は resolvedError */
 export type ErrorLwcBundleStructureType = {
     filePath: string;
     resolvedError: LwcResolvedError[];
     dataType: 'error';
     result: {
         id: string;
-        base: ErrorJson;
+        base: null;
         sourceObject: LwcSourceJson[];
     };
 };
 
 export type LwcBundleParseResult = LwcBundleStructureType | ErrorLwcBundleStructureType;
 
-/** フォルダが読めない・メインのモジュールがないときの結果 */
+/**
+ * フォルダが読めない・メインのモジュールがないときの結果。中身 (base) は null で、
+ * 理由 (code・reason) は resolvedError に足す (filePath はバンドル名。バンドルのフォルダの親からの相対パス)
+ */
 export const makeErrorBundleResult = (
     bundleDir: string,
     name: string,
+    code: LwcBundleProblemCode,
     reason: string,
     resolvedError: LwcResolvedError[] = [],
-): ErrorLwcBundleStructureType => ({
-    filePath: bundleDir,
-    resolvedError,
-    dataType: 'error',
-    result: {
-        id: name,
-        base: makeErrorJson(
-            { objectKey: `error_${hash(reason)}`, sourceKey: `error_${hash(bundleDir)}` },
-            'lwcBundle',
-        ),
-        sourceObject: [],
-    },
-});
+): ErrorLwcBundleStructureType => {
+    const listener = new LwcCommonErrorListener('');
+    listener.bundleProblem(code, reason);
+    return {
+        filePath: bundleDir,
+        resolvedError: [...resolvedError, ...listener.getResolvedErrors(name)],
+        dataType: 'error',
+        result: {
+            id: name,
+            base: null,
+            sourceObject: [],
+        },
+    };
+};
 
 /** メインのファイル (<バンドル名>.ts / .js / .html) か */
 const isMainFile = (file: LwcBundleFile, bundleName: string, extensions: string[]) => {
@@ -95,7 +98,13 @@ export const parseLwcBundleFolder = (
     }));
     const resolvedError: LwcResolvedError[] = scripts.flatMap(({ parsed }) => parsed.resolvedError);
     if (!scripts.some(({ file }) => isMainFile(file, name, ['.js', '.ts']))) {
-        return makeErrorBundleResult(bundleDir, name, 'main module not found', resolvedError);
+        return makeErrorBundleResult(
+            bundleDir,
+            name,
+            'MAIN_MODULE_NOT_FOUND',
+            'main module not found',
+            resolvedError,
+        );
     }
 
     const sourceObject: LwcSourceJson[] = [];

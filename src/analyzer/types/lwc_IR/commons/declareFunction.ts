@@ -1,62 +1,53 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isDeclareFunction, type DeclareFunction } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
     visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import {
     flowPredicateVisitorEvaluatePairs,
     type FlowPredicateTypeClass,
 } from '../flowPredicateVisitor';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { IdentifierTypeClass } from './identifier';
 
-const declareFunctionIdPairs = lazyPairs(() => [identifierTypePair] as const);
-
-export type DeclareFunctionFields = {
-    id: IdentifierTypeClass | LwcErrorTypeClass;
-    predicate: FlowPredicateTypeClass | LwcErrorTypeClass | null;
+export type DeclareFunctionFields = TypeField<'declareFunction'> & {
+    id: IdentifierTypeClass;
+    predicate: FlowPredicateTypeClass | null;
 };
 
-export class DeclareFunctionTypeClass extends LwcCommonTypeClass<'declareFunction'> {
-    private readonly value: DeclareFunctionFields;
-
-    private constructor(value: DeclareFunctionFields) {
-        super('declareFunction');
-        this.value = value;
+export class DeclareFunctionTypeClass extends LwcCommonTypeClass<
+    'declareFunction',
+    DeclareFunctionFields
+> {
+    private constructor(value: FieldsOf<DeclareFunctionFields>, sourceSpan: SourceSpan) {
+        super('declareFunction', value, sourceSpan);
     }
 
     static create(target: DeclareFunction, originalSource: string): DeclareFunctionTypeClass {
-        return new DeclareFunctionTypeClass({
-            id: visitNode(
-                target.id,
-                originalSource,
-                declareFunctionIdPairs(),
-                'DeclareFunction.id',
-            ),
-            predicate: visitOptionalNode(
-                target.predicate,
-                originalSource,
-                flowPredicateVisitorEvaluatePairs(),
-                'FlowPredicateVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): DeclareFunctionFields {
-        return this.value;
+        return new DeclareFunctionTypeClass(
+            {
+                id: IdentifierTypeClass.create(target.id, originalSource),
+                predicate: visitOptionalNode(
+                    target.predicate,
+                    originalSource,
+                    flowPredicateVisitorEvaluatePairs(),
+                    'FlowPredicateVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getId(): DeclareFunctionFields['id'] {
-        return this.value.id;
+        return this.getFields().id;
     }
 
     getPredicate(): DeclareFunctionFields['predicate'] {
-        return this.value.predicate;
+        return this.getFields().predicate;
     }
 }
 
@@ -66,5 +57,5 @@ export const declareFunctionTypePair: EvaluatePair<DeclareFunction, DeclareFunct
     );
 
 export const isDeclareFunctionType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is DeclareFunctionTypeClass => target instanceof DeclareFunctionTypeClass;

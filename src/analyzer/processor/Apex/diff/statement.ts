@@ -6,7 +6,6 @@ import {
     DeleteStatementJson,
     DoWhileConditionJson,
     DoWhileStatementJson,
-    ErrorJson,
     ExpressionStatementJson,
     ForConditionJson,
     ForStatementJson,
@@ -35,7 +34,6 @@ import {
 } from '../../../types';
 
 import {
-    ErrorJsonDiff,
     Match,
     NodeDiff,
     OptionalDiff,
@@ -45,7 +43,6 @@ import {
     ValueDiff,
     getObjectKey,
     getValueKey,
-    makeErrorJsonDiff,
     makeNodeDiff,
     makeOptionalDiff,
     makeReplacementDiff,
@@ -78,8 +75,8 @@ import {
     makeTypedListDiff,
 } from '../../commons/diff/list';
 
-export type Statement = StatementJson | ErrorJson;
-export type StatementValue = Statement | ErrorJson;
+export type Statement = StatementJson;
+export type StatementValue = Statement;
 export type BreakStatementJsonDiff = NodeDiff<
     'break',
     BreakStatementJson,
@@ -107,10 +104,7 @@ export type DoWhileStatementJsonDiff = NodeDiff<
     'doWhile',
     DoWhileStatementJson,
     {
-        condition:
-            | DoWhileConditionJsonDiff
-            | ErrorJsonDiff
-            | ReplacementDiff<DoWhileConditionJson | ErrorJson>;
+        condition: DoWhileConditionJsonDiff;
         body: BlockDiff;
     }
 >;
@@ -124,21 +118,15 @@ export type LocalVariableDeclarationJsonDiff = TypedObjectDiff<
     LocalVariableDeclarationFieldsDiff
 >;
 export type LocalVariableDeclarationFieldsDiff = {
-    variants:
-        | TypedListDiff<
-              VariantJson | ErrorJson,
-              VariantJsonDiff | ErrorJsonDiff | ReplacementDiff<VariantJson | ErrorJson>
-          >
-        | ErrorJsonDiff
-        | ReplacementDiff<(VariantJson | ErrorJson)[] | ErrorJson>;
+    variants: TypedListDiff<VariantJson, VariantJsonDiff>;
     variantsType: TypeJsonDiff;
     modifier: ModifiersJsonDiff;
 };
 export type VariantJsonDiff = TypedObjectDiff<
     VariantJson,
     {
-        name: ValueDiff<string | ErrorJson>;
-        init: OptionalDiff<BaseExpressionJson | ErrorJson, BaseExpressionJsonDiff>;
+        name: ValueDiff<string>;
+        init: OptionalDiff<BaseExpressionJson, BaseExpressionJsonDiff>;
     }
 >;
 type ForEnhancedConditionJson = Extract<ForConditionJson, { initializeType: unknown }>;
@@ -156,34 +144,26 @@ export type ForConditionJsonDiff = NodeDiff<
               NonNullable<ForClassicConditionJson['initializer']>,
               LocalVariableDeclarationJsonDiff | ExpressionListDiff
           >;
-          condition: OptionalDiff<BaseExpressionJson | ErrorJson, BaseExpressionJsonDiff>;
-          update: OptionalDiff<(BaseExpressionJson | ErrorJson)[], ExpressionListDiff>;
+          condition: OptionalDiff<BaseExpressionJson, BaseExpressionJsonDiff>;
+          update: OptionalDiff<BaseExpressionJson[], ExpressionListDiff>;
       }
 >;
-export type ForConditionValueDiff =
-    ForConditionJsonDiff | ErrorJsonDiff | ReplacementDiff<ForConditionJson | ErrorJson>;
 export type ForStatementJsonDiff = NodeDiff<
     'for',
     ForStatementJson,
-    { condition: ForConditionValueDiff; block: StatementValueDiff }
+    { condition: ForConditionJsonDiff; block: StatementValueDiff }
 >;
 export type IfConditionJsonDiff = NodeDiff<
     'ifCondition',
     IfConditionJson,
     { condition: BaseExpressionJsonDiff }
 >;
-export type IfConditionBlockJson = Exclude<
-    NonNullable<IfStatementJson['conditionBlock']>,
-    ErrorJson
->[number];
+export type IfConditionBlockJson = IfStatementJson['conditionBlock'][number];
 export type IfConditionBlockDiff = TypedObjectDiff<
     IfConditionBlockJson,
     {
         condition:
-            | ValueDiff<'else'>
-            | IfConditionJsonDiff
-            | ErrorJsonDiff
-            | ReplacementDiff<IfConditionJson | ErrorJson | 'else'>;
+            ValueDiff<'else'> | IfConditionJsonDiff | ReplacementDiff<IfConditionJson | 'else'>;
         block: StatementValueDiff;
     }
 >;
@@ -191,15 +171,10 @@ export type IfStatementJsonDiff = NodeDiff<
     'if',
     IfStatementJson,
     {
-        conditionBlock:
-            | TypedListDiff<
-                  IfConditionBlockJson | ErrorJson,
-                  | IfConditionBlockDiff
-                  | ErrorJsonDiff
-                  | ReplacementDiff<IfConditionBlockJson | ErrorJson>
-              >
-            | ErrorJsonDiff
-            | ReplacementDiff<(IfConditionBlockJson | ErrorJson)[] | ErrorJson>;
+        conditionBlock: TypedListDiff<
+            IfConditionBlockJson,
+            IfConditionBlockDiff | ReplacementDiff<IfConditionBlockJson>
+        >;
     }
 >;
 export type InsertStatementJsonDiff = NodeDiff<
@@ -226,19 +201,17 @@ export type MergeStatementJsonDiff = NodeDiff<
 export type ReturnStatementJsonDiff = NodeDiff<
     'return',
     ReturnStatementJson,
-    { field: OptionalDiff<BaseExpressionJson | ErrorJson, BaseExpressionJsonDiff> }
+    { field: OptionalDiff<BaseExpressionJson, BaseExpressionJsonDiff> }
 >;
 export type RunAsConditionJsonDiff = NodeDiff<
     'runAsCondition',
     RunAsConditionJson,
     { field: ExpressionListDiff }
 >;
-export type RunAsConditionValueDiff =
-    RunAsConditionJsonDiff | ErrorJsonDiff | ReplacementDiff<RunAsConditionJson | ErrorJson>;
 export type RunAsStatementJsonDiff = NodeDiff<
     'runAs',
     RunAsStatementJson,
-    { condition: RunAsConditionValueDiff; block: BlockDiff }
+    { condition: RunAsConditionJsonDiff; block: BlockDiff }
 >;
 export type WhenVariantJsonDiff = NodeDiff<
     'switchVariant',
@@ -257,7 +230,7 @@ export type WhenConditionEntryDiff = TypedObjectDiff<
         operator: OptionalDiff<string, ValueDiff<string>>;
     }
 >;
-export type WhenConditionTypedValueJson = { value: string; valueType: TypeJson | ErrorJson };
+export type WhenConditionTypedValueJson = { value: string; valueType: TypeJson };
 /** when のリテラルの並び (`when 1, 2`) は順序が意味を持たないので B. 集合 (changed は作らない) */
 export type WhenConditionValueDiff =
     | ValueDiff<'else'>
@@ -273,16 +246,12 @@ export type WhenConditionJsonDiff = NodeDiff<
     WhenConditionJson,
     { condition: WhenConditionValueDiff }
 >;
-export type SwitchBlockJson = Exclude<SwitchStatementJson['block'][number], ErrorJson>;
-export type SwitchBlockListDiff = TypedListDiff<
-    SwitchBlockJson | ErrorJson,
-    SwitchBlockDiff | ErrorJsonDiff | ReplacementDiff<SwitchBlockJson | ErrorJson>
->;
+export type SwitchBlockJson = SwitchStatementJson['block'][number];
+export type SwitchBlockListDiff = TypedListDiff<SwitchBlockJson, SwitchBlockDiff>;
 export type SwitchBlockDiff = TypedObjectDiff<
     SwitchBlockJson,
     {
-        condition:
-            WhenConditionJsonDiff | ErrorJsonDiff | ReplacementDiff<WhenConditionJson | ErrorJson>;
+        condition: WhenConditionJsonDiff;
         block: BlockDiff;
     }
 >;
@@ -290,7 +259,7 @@ export type SwitchStatementJsonDiff = NodeDiff<
     'switch',
     SwitchStatementJson,
     {
-        variant: WhenVariantJsonDiff | ErrorJsonDiff | ReplacementDiff<WhenVariantJson | ErrorJson>;
+        variant: WhenVariantJsonDiff;
         block: SwitchBlockListDiff;
     }
 >;
@@ -309,22 +278,17 @@ export type CatchConditionJsonDiff = NodeDiff<
         modifier: ModifiersJsonDiff;
     }
 >;
-export type TryBlockJson = Exclude<TryStatementJson['block'][number], ErrorJson>;
+export type TryBlockJson = TryStatementJson['block'][number];
 export type TryBlockFieldsDiff =
     | { block: BlockDiff }
     | {
           block: BlockDiff;
-          catchCondition: OptionalDiff<
-              CatchConditionJson | ErrorJson,
-              | CatchConditionJsonDiff
-              | ErrorJsonDiff
-              | ReplacementDiff<CatchConditionJson | ErrorJson>
-          >;
+          catchCondition: OptionalDiff<CatchConditionJson, CatchConditionJsonDiff>;
       };
 export type TryBlockDiff = TypedObjectDiff<TryBlockJson, TryBlockFieldsDiff>;
 export type TryBlockListDiff = TypedListDiff<
-    TryBlockJson | ErrorJson,
-    TryBlockDiff | ErrorJsonDiff | ReplacementDiff<TryBlockJson | ErrorJson>
+    TryBlockJson,
+    TryBlockDiff | ReplacementDiff<TryBlockJson>
 >;
 export type TryStatementJsonDiff = NodeDiff<'try', TryStatementJson, { block: TryBlockListDiff }>;
 export type UndeleteStatementJsonDiff = NodeDiff<
@@ -357,19 +321,16 @@ export type WhileConditionJsonDiff = NodeDiff<
     WhileConditionJson,
     { condition: BaseExpressionJsonDiff }
 >;
-export type WhileConditionValueDiff =
-    WhileConditionJsonDiff | ErrorJsonDiff | ReplacementDiff<WhileConditionJson | ErrorJson>;
 export type WhileStatementJsonDiff = NodeDiff<
     'while',
     WhileStatementJson,
     {
-        condition: WhileConditionValueDiff;
+        condition: WhileConditionJsonDiff;
         body: StatementValueDiff;
     }
 >;
 /** 文の kind と、その差分の型の対応 */
 type StatementDiffByKind = {
-    error: ErrorJsonDiff;
     break: BreakStatementJsonDiff;
     continue: ContinueStatementJsonDiff;
     delete: DeleteStatementJsonDiff;
@@ -607,19 +568,6 @@ export const makeDoWhileConditionDiff = (
         condition: makeExpressionValueDiff(b.condition, a.condition, sources),
     }));
 
-const makeDoWhileConditionValueDiff = (
-    before: DoWhileConditionJson | ErrorJson,
-    after: DoWhileConditionJson | ErrorJson,
-    sources?: Sources,
-): DoWhileConditionJsonDiff | ErrorJsonDiff | ReplacementDiff<DoWhileConditionJson | ErrorJson> => {
-    if (before.kind === 'error' || after.kind === 'error') {
-        return before.kind === 'error' && after.kind === 'error'
-            ? makeErrorJsonDiff(before, after)
-            : makeReplacementDiff(before, after);
-    }
-    return makeDoWhileConditionDiff(before, after, sources);
-};
-
 export const makeDoWhileStatementDiff = (
     before: DoWhileStatementJson,
     after: DoWhileStatementJson,
@@ -627,7 +575,7 @@ export const makeDoWhileStatementDiff = (
     context?: TypedDiffContext,
 ): DoWhileStatementJsonDiff =>
     makeNodeDiff('doWhile', before, after, 'slot', (b, a) => ({
-        condition: makeDoWhileConditionValueDiff(b.condition, a.condition, sources),
+        condition: makeDoWhileConditionDiff(b.condition, a.condition, sources),
         body: makeBlockDiffWithContext(b.body, a.body, sources, context),
     })) as unknown as DoWhileStatementJsonDiff;
 
@@ -651,27 +599,17 @@ export const makeVariantDiff = (
     }));
 
 const makeVariantListDiff = (
-    before: (VariantJson | ErrorJson)[] | ErrorJson,
-    after: (VariantJson | ErrorJson)[] | ErrorJson,
+    before: VariantJson[],
+    after: VariantJson[],
     sources?: Sources,
-): LocalVariableDeclarationFieldsDiff['variants'] => {
-    if (!Array.isArray(before) || !Array.isArray(after)) {
-        return makeReplacementDiff(before, after);
-    }
-    // 変数は D. キー対応 (キー: 変数名)。名前がエラーの変数は集合として比べる
-    const getId = (variant: VariantJson | ErrorJson) =>
-        'kind' in variant || typeof variant.name !== 'string' ? undefined : variant.name;
-    const makeDiff = (b: VariantJson | ErrorJson, a: VariantJson | ErrorJson) => {
-        if (!('kind' in b) && !('kind' in a)) return makeVariantDiff(b, a, sources);
-        return 'kind' in b && 'kind' in a ? makeErrorJsonDiff(b, a) : makeReplacementDiff(b, a);
-    };
-    return makeStatementKeyedDiff(
+): LocalVariableDeclarationFieldsDiff['variants'] =>
+    // 変数は D. キー対応 (キー: 変数名)
+    makeStatementKeyedDiff(
         before,
         after,
-        getId,
-        makeDiff,
-    ) as LocalVariableDeclarationFieldsDiff['variants'];
-};
+        (variant) => variant.name,
+        (b, a) => makeVariantDiff(b, a, sources),
+    );
 
 export const makeLocalVariableDeclarationDiff = (
     before: LocalVariableDeclarationJson,
@@ -694,15 +632,10 @@ export const makeLocalVariableStatementDiff = (
     }));
 
 const makeForConditionDiff = (
-    before: ForConditionJson | ErrorJson,
-    after: ForConditionJson | ErrorJson,
+    before: ForConditionJson,
+    after: ForConditionJson,
     sources?: Sources,
-): ForConditionValueDiff => {
-    if (before.kind === 'error' || after.kind === 'error') {
-        if (before.kind === 'error' && after.kind === 'error')
-            return makeErrorJsonDiff(before, after);
-        return makeReplacementDiff(before, after);
-    }
+): ForConditionJsonDiff => {
     return makeNodeDiff('forCondition', before, after, 'slot', (b, a) => {
         if ('initializeType' in b && 'initializeType' in a) {
             return {
@@ -753,15 +686,11 @@ export const makeIfConditionDiff = (
     }));
 
 const makeIfConditionBlockDiff = (
-    before: IfConditionBlockJson | ErrorJson,
-    after: IfConditionBlockJson | ErrorJson,
+    before: IfConditionBlockJson,
+    after: IfConditionBlockJson,
     sources?: Sources,
     context?: TypedDiffContext,
-): IfConditionBlockDiff | ErrorJsonDiff | ReplacementDiff<IfConditionBlockJson | ErrorJson> => {
-    if ('kind' in before || 'kind' in after) {
-        if ('kind' in before && 'kind' in after) return makeErrorJsonDiff(before, after);
-        return makeReplacementDiff(before, after);
-    }
+): IfConditionBlockDiff | ReplacementDiff<IfConditionBlockJson> => {
     if (typeof before.condition === 'string' || typeof after.condition === 'string') {
         if (before.condition === after.condition) {
             return makeStatementObjectDiff(before, after, (b, a) => ({
@@ -789,13 +718,12 @@ export const makeIfStatementDiff = (
 ): IfStatementJsonDiff =>
     makeNodeDiff('if', before, after, 'slot', (b, a) => ({
         conditionBlock: makeOptionalDiff(b.conditionBlock, a.conditionBlock, (x, y) => {
-            if (!Array.isArray(x) || !Array.isArray(y)) return makeValueDiff(x, y);
             // 条件は上から順に評価されるので C。else の節は条件のある節と組にしない
             return makeStatementSequenceDiff(
                 x,
                 y,
                 (left, right) => makeIfConditionBlockDiff(left, right, sources, context),
-                (left, right) => 'kind' in left || 'kind' in right || isSameElseness(left, right),
+                (left, right) => isSameElseness(left, right),
             );
         }),
     })) as unknown as IfStatementJsonDiff;
@@ -839,19 +767,6 @@ export const makeRunAsConditionDiff = (
         field: makeExpressionListDiff(b.field, a.field, sources),
     }));
 
-const makeRunAsConditionValueDiff = (
-    before: RunAsConditionJson | ErrorJson,
-    after: RunAsConditionJson | ErrorJson,
-    sources?: Sources,
-): RunAsConditionValueDiff => {
-    if (before.kind === 'error' || after.kind === 'error') {
-        return before.kind === 'error' && after.kind === 'error'
-            ? makeErrorJsonDiff(before, after)
-            : makeReplacementDiff(before, after);
-    }
-    return makeRunAsConditionDiff(before, after, sources);
-};
-
 export const makeRunAsStatementDiff = (
     before: RunAsStatementJson,
     after: RunAsStatementJson,
@@ -859,7 +774,7 @@ export const makeRunAsStatementDiff = (
     context?: TypedDiffContext,
 ): RunAsStatementJsonDiff =>
     makeNodeDiff('runAs', before, after, 'slot', (b, a) => ({
-        condition: makeRunAsConditionValueDiff(b.condition, a.condition, sources),
+        condition: makeRunAsConditionDiff(b.condition, a.condition, sources),
         block: makeBlockDiffWithContext(b.block, a.block, sources, context),
     })) as unknown as RunAsStatementJsonDiff;
 
@@ -902,18 +817,6 @@ const makeWhenConditionValueDiff = (
     return makeReplacementDiff(before, after);
 };
 
-const makeWhenConditionNodeValueDiff = (
-    before: WhenConditionJson | ErrorJson,
-    after: WhenConditionJson | ErrorJson,
-): WhenConditionJsonDiff | ErrorJsonDiff | ReplacementDiff<WhenConditionJson | ErrorJson> => {
-    if (before.kind === 'error' || after.kind === 'error') {
-        return before.kind === 'error' && after.kind === 'error'
-            ? makeErrorJsonDiff(before, after)
-            : makeReplacementDiff(before, after);
-    }
-    return makeWhenConditionDiff(before, after);
-};
-
 export const makeWhenConditionDiff = (
     before: WhenConditionJson,
     after: WhenConditionJson,
@@ -923,32 +826,15 @@ export const makeWhenConditionDiff = (
     })) as unknown as WhenConditionJsonDiff;
 
 const makeSwitchBlockDiff = (
-    before: SwitchBlockJson | ErrorJson,
-    after: SwitchBlockJson | ErrorJson,
+    before: SwitchBlockJson,
+    after: SwitchBlockJson,
     sources?: Sources,
     context?: TypedDiffContext,
-): SwitchBlockDiff | ErrorJsonDiff | ReplacementDiff<SwitchBlockJson | ErrorJson> => {
-    if ('kind' in before || 'kind' in after) {
-        if ('kind' in before && 'kind' in after) return makeErrorJsonDiff(before, after);
-        return makeReplacementDiff(before, after);
-    }
+): SwitchBlockDiff => {
     return makeStatementObjectDiff(before, after, (b, a) => ({
-        condition: makeWhenConditionNodeValueDiff(b.condition, a.condition),
+        condition: makeWhenConditionDiff(b.condition, a.condition),
         block: makeBlockDiffWithContext(b.block, a.block, sources, context),
     })) as SwitchBlockDiff;
-};
-
-const makeWhenVariantValueDiff = (
-    before: WhenVariantJson | ErrorJson,
-    after: WhenVariantJson | ErrorJson,
-    sources?: Sources,
-): WhenVariantJsonDiff | ErrorJsonDiff | ReplacementDiff<WhenVariantJson | ErrorJson> => {
-    if (before.kind === 'error' || after.kind === 'error') {
-        return before.kind === 'error' && after.kind === 'error'
-            ? makeErrorJsonDiff(before, after)
-            : makeReplacementDiff(before, after);
-    }
-    return makeWhenVariantDiff(before, after, sources);
 };
 
 export const makeSwitchStatementDiff = (
@@ -958,18 +844,13 @@ export const makeSwitchStatementDiff = (
     context?: TypedDiffContext,
 ): SwitchStatementJsonDiff =>
     makeNodeDiff('switch', before, after, 'slot', (b, a) => ({
-        variant: makeWhenVariantValueDiff(b.variant, a.variant, sources),
+        variant: makeWhenVariantDiff(b.variant, a.variant, sources),
         // when else は最後に置く必要があるので C。when else は値のある when と組にしない
         block: makeStatementSequenceDiff(
             b.block,
             a.block,
             (x, y) => makeSwitchBlockDiff(x, y, sources, context),
-            (x, y) =>
-                'kind' in x ||
-                'kind' in y ||
-                (x.condition.kind === 'switchCondition' && y.condition.kind === 'switchCondition'
-                    ? isSameElseness(x.condition, y.condition)
-                    : true),
+            (x, y) => isSameElseness(x.condition, y.condition),
         ) as SwitchBlockListDiff,
     })) as unknown as SwitchStatementJsonDiff;
 
@@ -996,25 +877,19 @@ export const makeCatchConditionDiff = (
     })) as unknown as CatchConditionJsonDiff;
 
 const makeTryBlockDiff = (
-    before: TryBlockJson | ErrorJson,
-    after: TryBlockJson | ErrorJson,
+    before: TryBlockJson,
+    after: TryBlockJson,
     sources?: Sources,
     context?: TypedDiffContext,
-): TryBlockDiff | ErrorJsonDiff | ReplacementDiff<TryBlockJson | ErrorJson> => {
-    if ('kind' in before || 'kind' in after) {
-        if ('kind' in before && 'kind' in after) return makeErrorJsonDiff(before, after);
-        return makeReplacementDiff(before, after);
-    }
+): TryBlockDiff | ReplacementDiff<TryBlockJson> => {
     if (before.condition !== after.condition) return makeReplacementDiff(before, after);
     if (before.condition === 'catch' && after.condition === 'catch') {
         return makeStatementObjectDiff(before, after, (b, a) => ({
             block: makeBlockDiffWithContext(b.block, a.block, sources, context),
-            catchCondition: makeOptionalDiff(b.catchCondition, a.catchCondition, (x, y) =>
-                x.kind === 'error' || y.kind === 'error'
-                    ? x.kind === 'error' && y.kind === 'error'
-                        ? makeErrorJsonDiff(x, y)
-                        : makeReplacementDiff(x, y)
-                    : makeCatchConditionDiff(x, y),
+            catchCondition: makeOptionalDiff(
+                b.catchCondition,
+                a.catchCondition,
+                makeCatchConditionDiff,
             ),
         })) as TryBlockDiff;
     }
@@ -1035,7 +910,7 @@ export const makeTryStatementDiff = (
             b.block,
             a.block,
             (x, y) => makeTryBlockDiff(x, y, sources, context),
-            (x, y) => 'kind' in x || 'kind' in y || x.condition === y.condition,
+            (x, y) => x.condition === y.condition,
         ) as TryBlockListDiff,
     })) as unknown as TryStatementJsonDiff;
 
@@ -1079,19 +954,6 @@ export const makeWhileConditionDiff = (
         condition: makeExpressionValueDiff(b.condition, a.condition, sources),
     }));
 
-const makeWhileConditionValueDiff = (
-    before: WhileConditionJson | ErrorJson,
-    after: WhileConditionJson | ErrorJson,
-    sources?: Sources,
-): WhileConditionValueDiff => {
-    if (before.kind === 'error' || after.kind === 'error') {
-        return before.kind === 'error' && after.kind === 'error'
-            ? makeErrorJsonDiff(before, after)
-            : makeReplacementDiff(before, after);
-    }
-    return makeWhileConditionDiff(before, after, sources);
-};
-
 export const makeWhileStatementDiff = (
     before: WhileStatementJson,
     after: WhileStatementJson,
@@ -1099,7 +961,7 @@ export const makeWhileStatementDiff = (
     context?: TypedDiffContext,
 ): WhileStatementJsonDiff =>
     makeNodeDiff('while', before, after, 'slot', (b, a) => ({
-        condition: makeWhileConditionValueDiff(b.condition, a.condition, sources),
+        condition: makeWhileConditionDiff(b.condition, a.condition, sources),
         body: makeStatementValueDiff(b.body, a.body, sources, context),
     })) as unknown as WhileStatementJsonDiff;
 
@@ -1113,11 +975,6 @@ export const makeStatementValueDiff = (
         return makeBlockDiffWithContext(before, after, sources, context);
     }
     if (Array.isArray(before) || Array.isArray(after)) return makeReplacementDiff(before, after);
-    if (before.kind === 'error' || after.kind === 'error') {
-        return before.kind === 'error' && after.kind === 'error'
-            ? makeErrorJsonDiff(before, after)
-            : makeReplacementDiff(before, after);
-    }
     if (before.kind !== after.kind) return makeReplacementDiff(before, after);
     switch (before.kind) {
         case 'break':

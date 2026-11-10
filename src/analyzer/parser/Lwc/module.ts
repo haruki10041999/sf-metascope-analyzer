@@ -1,24 +1,16 @@
 // LWC の JS / TS のモジュールの parse と JSON への変換 (docs/lwc-implementation.md)。
-// Apex の parseApexSource (parser/Apex/source.ts) と同じ流れ: ソース → lwc_IR → converter (CommonType。sourceInfo を持つ) →
-// JSON (sourceInfo を sourceKeys / sourceObject に分ける)
+// Apex の parseApexSource (parser/Apex/source.ts) と同じ流れ: ソース → lwc_IR (作れなかったところはリスナーの resolvedError へ) →
+// JSON (キーとソース位置の一覧は JSON を作るときに LwcJsonContext が作る。docs/ir-integration.md)
 import path from 'node:path';
 
 import {
     LwcJsonContext,
-    convertLwcFile,
-    hash,
-    makeErrorJson,
     makeLwcModuleJson,
-    type ErrorJson,
     type LwcModuleJson,
     type LwcSourceJson,
 } from '../../types';
-import { collectErrorTypeClasses, visitWithPairs } from '../../types/lwc_IR/commonVisitor';
-import {
-    fileTypePair,
-    isFileType,
-    type FileTypeClass,
-} from '../../types/lwc_IR/standardizedVisitor/file';
+import { buildLwcIr } from '../../types/lwc_IR/commonVisitor';
+import { fileTypePair, type FileTypeClass } from '../../types/lwc_IR/standardizedVisitor/file';
 
 import { LwcCommonErrorListener, type LwcResolvedError } from './errorListener';
 import { getScriptLanguage, parseScript, type ScriptLanguage } from './script';
@@ -39,7 +31,8 @@ export type LwcModuleParseResult = {
 };
 
 export type LwcModuleConvertResult = {
-    module: LwcModuleJson | ErrorJson;
+    /** 回復できない構文エラーで IR がないときは null (理由は resolvedError) */
+    module: LwcModuleJson | null;
     /** JSON に残った objectKey / sourceKey だけのソース位置 (filePath 付き) */
     sourceObjects: LwcSourceJson[];
 };
@@ -69,10 +62,10 @@ export const parseLwcModule = (
         };
     }
 
-    // ノードの IR。構文エラーの位置に重なる LwcErrorTypeClass はリスナーが除く
-    const visited = visitWithPairs(ast, source, [fileTypePair], 'LwcParser');
-    const ir = isFileType(visited) ? visited : null;
-    collectErrorTypeClasses(visited).forEach((error) => listener.analyzerError(error));
+    // ノードの IR。作れなかったところは木に残さず、リスナーに渡す (構文エラーがあるファイルでは、リスナーは構文エラーだけを出す)
+    const built = buildLwcIr(ast, source, [fileTypePair], 'LwcParser');
+    const ir = built.result;
+    listener.irErrors(built.errors);
 
     // ② 仕様の検証。構文エラーがあると LWC Compiler (errorRecovery なし) は同じ構文エラーを LWC1007 にするだけなので、しない
     if (!listener.hasSyntaxError()) {
@@ -90,19 +83,14 @@ export const parseLwcModule = (
 
 /**
  * parseLwcModule の結果を JSON にする (Apex の parseApexSource の後半と同じ)。
- * IR → CommonType (convertLwcFile。sourceInfo を持つ) → JSON (makeLwcModuleJson。sourceInfo を sourceKeys / sourceObject に分ける)。
- * 回復できない構文エラーで IR がないときは、その構文エラーのキーで ErrorJson にする
+ * IR v2 → JSON (makeLwcModuleJson。キーとソース位置の一覧は LwcJsonContext が作る)。
+ * 回復できない構文エラーで IR がないときは null (JSON にエラーのノードは置かない。構文エラーは parse の resolvedError にある)
  */
 export const convertLwcModule = (parsed: LwcModuleParseResult): LwcModuleConvertResult => {
     if (!parsed.ir) {
-        const keys = parsed.resolvedError[0]?.sourceKeys ?? {
-            objectKey: `error_${hash(parsed.filePath)}`,
-            sourceKey: `error_${hash(parsed.filePath)}`,
-        };
-        return { module: makeErrorJson(keys, 'lwcModule'), sourceObjects: [] };
+        return { module: null, sourceObjects: [] };
     }
-    const commonType = convertLwcFile(parsed.ir, parsed.filePath);
     const context = new LwcJsonContext(parsed.filePath);
-    const module = makeLwcModuleJson(commonType, parsed.language, context);
+    const module = makeLwcModuleJson(parsed.ir, parsed.language, context);
     return { module, sourceObjects: context.toSourceObjects() };
 };

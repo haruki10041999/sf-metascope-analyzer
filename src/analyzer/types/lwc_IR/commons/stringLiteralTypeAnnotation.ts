@@ -1,34 +1,42 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isStringLiteralTypeAnnotation, type StringLiteralTypeAnnotation } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export type StringLiteralTypeAnnotationFields = {
+export type StringLiteralTypeAnnotationFields = TypeField<'stringLiteralTypeAnnotation'> & {
     value: StringLiteralTypeAnnotation['value'];
 };
 
-export class StringLiteralTypeAnnotationTypeClass extends LwcCommonTypeClass<'stringLiteralTypeAnnotation'> {
-    private readonly value: StringLiteralTypeAnnotationFields;
-
-    private constructor(value: StringLiteralTypeAnnotationFields) {
-        super('stringLiteralTypeAnnotation');
-        this.value = value;
+export class StringLiteralTypeAnnotationTypeClass extends LwcCommonTypeClass<
+    'stringLiteralTypeAnnotation',
+    StringLiteralTypeAnnotationFields
+> {
+    private constructor(
+        value: FieldsOf<StringLiteralTypeAnnotationFields>,
+        sourceSpan: SourceSpan,
+    ) {
+        super('stringLiteralTypeAnnotation', value, sourceSpan);
     }
 
     static create(
         target: StringLiteralTypeAnnotation,
         originalSource: string,
     ): StringLiteralTypeAnnotationTypeClass {
-        return new StringLiteralTypeAnnotationTypeClass({
-            value: target.value,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): StringLiteralTypeAnnotationFields {
-        return this.value;
+        return new StringLiteralTypeAnnotationTypeClass(
+            {
+                value: target.value,
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getValue(): StringLiteralTypeAnnotationFields['value'] {
-        return this.value.value;
+        return this.getFields().value;
     }
 }
 
@@ -40,6 +48,6 @@ export const stringLiteralTypeAnnotationTypePair: EvaluatePair<
 );
 
 export const isStringLiteralTypeAnnotationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is StringLiteralTypeAnnotationTypeClass =>
     target instanceof StringLiteralTypeAnnotationTypeClass;

@@ -1,46 +1,34 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isDirective, type Directive } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { directiveLiteralTypePair, type DirectiveLiteralTypeClass } from './directiveLiteral';
+import { DirectiveLiteralTypeClass } from './directiveLiteral';
 
-const directiveValuePairs = lazyPairs(() => [directiveLiteralTypePair] as const);
-
-export type DirectiveFields = {
-    value: DirectiveLiteralTypeClass | LwcErrorTypeClass;
+export type DirectiveFields = TypeField<'directive'> & {
+    value: DirectiveLiteralTypeClass;
 };
 
-export class DirectiveTypeClass extends LwcCommonTypeClass<'directive'> {
-    private readonly value: DirectiveFields;
-
-    private constructor(value: DirectiveFields) {
-        super('directive');
-        this.value = value;
+export class DirectiveTypeClass extends LwcCommonTypeClass<'directive', DirectiveFields> {
+    private constructor(value: FieldsOf<DirectiveFields>, sourceSpan: SourceSpan) {
+        super('directive', value, sourceSpan);
     }
 
     static create(target: Directive, originalSource: string): DirectiveTypeClass {
-        return new DirectiveTypeClass({
-            value: visitNode(
-                target.value,
-                originalSource,
-                directiveValuePairs(),
-                'Directive.value',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): DirectiveFields {
-        return this.value;
+        return new DirectiveTypeClass(
+            {
+                value: DirectiveLiteralTypeClass.create(target.value, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getValue(): DirectiveFields['value'] {
-        return this.value.value;
+        return this.getFields().value;
     }
 }
 
@@ -49,5 +37,6 @@ export const directiveTypePair: EvaluatePair<Directive, DirectiveTypeClass> = ma
     (target, originalSource) => DirectiveTypeClass.create(target, originalSource),
 );
 
-export const isDirectiveType = (target: LwcCommonTypeClass<string>): target is DirectiveTypeClass =>
-    target instanceof DirectiveTypeClass;
+export const isDirectiveType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is DirectiveTypeClass => target instanceof DirectiveTypeClass;

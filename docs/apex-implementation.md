@@ -14,7 +14,8 @@ classes/Foo.cls + Foo.cls-meta.xml / triggers/Bar.trigger + Bar.trigger-meta.xml
    ▼
 parseApexUnitFiles (unit.ts。ファイルシステムに触らない)
    ├─ ソース      ANTLR (@apexdevtools/apex-parser。リスナーで構文エラーを集める)
-   │              → apex_IR (UnitVisitor) → converter (convertApexUnit) → JSON (make*Json)   (source.ts)
+   │              → apex_IR (buildApexIr。作れなかったところはリスナーの resolvedError へ)
+   │              → JSON (make*Json。IR のノードを直接読む)                                     (source.ts)
    └─ -meta.xml   parseXml → JSON (makeApexMetaJson)                                            (meta.ts)
    ▼
 ApexUnitParseResult (1 単位 = 1 解析結果 = 1 保存ファイル class_<名前> / trigger_<名前> / anonymous_<名前>)
@@ -30,7 +31,7 @@ ApexUnitParseResult (1 単位 = 1 解析結果 = 1 保存ファイル class_<名
 | 匿名 Apex | `script.apex`（1 ファイル）            | `anonymous_script` |
 
 - 同じフォルダの中で、名前でソースと `-meta.xml` を組にする。どちらか片方だけの単位もある。`ApexParser.parseApexUnit` には、単位のどちらのファイルを渡しても同じ結果になる。
-- `result.base`（`ApexUnitJson`）は `{ name, unitType, source?, meta? }`。`source` は `{ fileName, fileType: 'cls' | 'trigger' | 'anonymous' | 'error', content }`、`meta` は `{ fileName, meta: ApexMetaJson | ErrorJson }`。
+- `result.base`（`ApexUnitJson`）は `{ name, unitType, source?, meta? }`。`source` は `{ fileName, fileType: 'cls' | 'trigger' | 'anonymous', content }`。IR を作れなかったソースは `{ fileName, fileType: 'error' }`（`content` なし）。`meta` は `{ fileName, meta: ApexMetaJson | null }`（読めないときは null）。読めなかった理由は `resolvedError` にだけ出る。
 - `resolvedError` は、ソースの構文エラー・IR を作れなかったところ（`phase: 'syntax' | 'analyzer'`）と、`-meta.xml` を読めなかったもの（`XML_SYNTAX` / `UNEXPECTED_ROOT`）をまとめて持ち、`filePath`（ファイル名）で区別する。
 - -meta.xml の `<status>`（Active / Inactive）は、差分の `status`（unchanged / changed …）と同じ名前になる。差分の木をたどるときは、`status` が差分の語彙のときだけ差分のノードとみなし、ノードの `value`（元の JSON）には入らないこと。
 - ソースは LF にそろえてから読む（CRLF / LF の違いで `sourceKey` が変わらないように）。
@@ -39,10 +40,10 @@ ApexUnitParseResult (1 単位 = 1 解析結果 = 1 保存ファイル class_<名
 
 ```text
 src/analyzer/
-├── types/apex_IR/           ANTLR の文脈から作る IR (<分類>Visitor/ の TypeClass)。作れなかったところは ApexErrorTypeClass
-├── types/apex/converter/    IR → CommonType。nodes.ts (出力の型) と generic.ts (1 つの変換。名前の違いだけ APEX_CONVERT_OVERRIDES)
-├── types/apex/              JSON の型と make*Json (unit / declaration / statement / expression / query / modifier / param / type / meta)
-│   └── commons/             makeConvertType (objectKey / sourceKey と sourceObject)、regenerateSourceObjects (JSON に残った位置だけにする)
+├── types/commons/ir.ts      IR の基底クラス (CommonTypeClass)・IrError・collectSourceObjects (木のソース位置の一覧)
+├── types/apex_IR/           ANTLR の文脈から作る IR (<分類>Visitor/ の TypeClass)。入口は buildApexIr (commonVisitor.ts)。木にエラーのノードはない
+├── types/apex/              JSON の型と make*Json (unit / declaration / statement / expression / query / modifier / param / type / meta)。IR のノードを getFields()・kind で読む
+│   └── commons/             node.ts: keysOf / structureKeysOf / makeNodeJson (キー)、source.ts: regenerateSourceObjects (JSON に残った位置だけにする)
 ├── parser/Apex/
 │   ├── parser.ts            ApexParser: searchApexUnits / parseApexUnit / parseApexUnits / saveApexUnit / readApexMsgPack / readSavedApexUnits
 │   ├── folder.ts            フォルダごとに単位にまとめて読む
@@ -76,10 +77,10 @@ src/analyzer/
 
 ## 5. サンプルとテスト
 
-| 内容                           | 場所                                                                                        |
-| ------------------------------ | ------------------------------------------------------------------------------------------- |
-| サンプル・生成スクリプト・出力 | [examples/apex/](./examples/apex/)（[examples/README.md](./examples/README.md)）            |
-| テスト                         | `test/apex_IR/`、`test/converter/`、`test/parser/apex-*.test.ts`、`test/processor/`（Diff） |
+| 内容                           | 場所                                                                                                              |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| サンプル・生成スクリプト・出力 | [examples/apex/](./examples/apex/)（[examples/README.md](./examples/README.md)）                                  |
+| テスト                         | `test/ir/`（IR のエラー・ゴールデン）、`test/converter/`、`test/parser/apex-*.test.ts`、`test/processor/`（Diff） |
 
 ## 6. 未実装
 

@@ -1,46 +1,46 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isArrayTypeAnnotation, type ArrayTypeAnnotation } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { flowTypeVisitorEvaluatePairs, type FlowTypeTypeClass } from '../flowTypeVisitor';
 
-export type ArrayTypeAnnotationFields = {
-    elementType: FlowTypeTypeClass | LwcErrorTypeClass;
+export type ArrayTypeAnnotationFields = TypeField<'arrayTypeAnnotation'> & {
+    elementType: FlowTypeTypeClass;
 };
 
-export class ArrayTypeAnnotationTypeClass extends LwcCommonTypeClass<'arrayTypeAnnotation'> {
-    private readonly value: ArrayTypeAnnotationFields;
-
-    private constructor(value: ArrayTypeAnnotationFields) {
-        super('arrayTypeAnnotation');
-        this.value = value;
+export class ArrayTypeAnnotationTypeClass extends LwcCommonTypeClass<
+    'arrayTypeAnnotation',
+    ArrayTypeAnnotationFields
+> {
+    private constructor(value: FieldsOf<ArrayTypeAnnotationFields>, sourceSpan: SourceSpan) {
+        super('arrayTypeAnnotation', value, sourceSpan);
     }
 
     static create(
         target: ArrayTypeAnnotation,
         originalSource: string,
     ): ArrayTypeAnnotationTypeClass {
-        return new ArrayTypeAnnotationTypeClass({
-            elementType: visitNode(
-                target.elementType,
-                originalSource,
-                flowTypeVisitorEvaluatePairs(),
-                'FlowTypeVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): ArrayTypeAnnotationFields {
-        return this.value;
+        return new ArrayTypeAnnotationTypeClass(
+            {
+                elementType: visitNode(
+                    target.elementType,
+                    originalSource,
+                    flowTypeVisitorEvaluatePairs(),
+                    'FlowTypeVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getElementType(): ArrayTypeAnnotationFields['elementType'] {
-        return this.value.elementType;
+        return this.getFields().elementType;
     }
 }
 
@@ -52,5 +52,5 @@ export const arrayTypeAnnotationTypePair: EvaluatePair<
 );
 
 export const isArrayTypeAnnotationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ArrayTypeAnnotationTypeClass => target instanceof ArrayTypeAnnotationTypeClass;

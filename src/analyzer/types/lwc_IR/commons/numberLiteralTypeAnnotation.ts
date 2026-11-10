@@ -1,34 +1,42 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isNumberLiteralTypeAnnotation, type NumberLiteralTypeAnnotation } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export type NumberLiteralTypeAnnotationFields = {
+export type NumberLiteralTypeAnnotationFields = TypeField<'numberLiteralTypeAnnotation'> & {
     value: NumberLiteralTypeAnnotation['value'];
 };
 
-export class NumberLiteralTypeAnnotationTypeClass extends LwcCommonTypeClass<'numberLiteralTypeAnnotation'> {
-    private readonly value: NumberLiteralTypeAnnotationFields;
-
-    private constructor(value: NumberLiteralTypeAnnotationFields) {
-        super('numberLiteralTypeAnnotation');
-        this.value = value;
+export class NumberLiteralTypeAnnotationTypeClass extends LwcCommonTypeClass<
+    'numberLiteralTypeAnnotation',
+    NumberLiteralTypeAnnotationFields
+> {
+    private constructor(
+        value: FieldsOf<NumberLiteralTypeAnnotationFields>,
+        sourceSpan: SourceSpan,
+    ) {
+        super('numberLiteralTypeAnnotation', value, sourceSpan);
     }
 
     static create(
         target: NumberLiteralTypeAnnotation,
         originalSource: string,
     ): NumberLiteralTypeAnnotationTypeClass {
-        return new NumberLiteralTypeAnnotationTypeClass({
-            value: target.value,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): NumberLiteralTypeAnnotationFields {
-        return this.value;
+        return new NumberLiteralTypeAnnotationTypeClass(
+            {
+                value: target.value,
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getValue(): NumberLiteralTypeAnnotationFields['value'] {
-        return this.value.value;
+        return this.getFields().value;
     }
 }
 
@@ -40,6 +48,6 @@ export const numberLiteralTypeAnnotationTypePair: EvaluatePair<
 );
 
 export const isNumberLiteralTypeAnnotationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is NumberLiteralTypeAnnotationTypeClass =>
     target instanceof NumberLiteralTypeAnnotationTypeClass;

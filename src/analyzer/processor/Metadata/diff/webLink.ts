@@ -1,4 +1,4 @@
-import { ErrorJson, WEB_LINK_SCHEMA, WebLinkJson } from '../../../types';
+import { WEB_LINK_SCHEMA, WebLinkJson } from '../../../types';
 
 import {
     Match,
@@ -16,8 +16,8 @@ export type WebLinkJsonDiff = NodeDiff<
 >;
 
 export const makeWebLinkDiff = (
-    before: WebLinkJson | ErrorJson,
-    after: WebLinkJson | ErrorJson,
+    before: WebLinkJson,
+    after: WebLinkJson,
     match: Match = 'slot',
 ): WebLinkJsonDiff =>
     makeNodeDiff('webLink', before, after, match, (b, a) => ({

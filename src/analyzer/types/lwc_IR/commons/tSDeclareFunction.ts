@@ -1,114 +1,132 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSDeclareFunction, type TSDeclareFunction } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
     visitNodeList,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
+import { failIrBuild } from '../buildFailure';
 import {
     functionParameterVisitorEvaluatePairs,
     type FunctionParameterTypeClass,
 } from '../functionParameterVisitor';
-import {
-    tSTypeAnnotationTypePair,
-    type TSTypeAnnotationTypeClass,
-} from '../typeScriptVisitor/tSTypeAnnotation';
-import {
-    tSTypeParameterDeclarationTypePair,
-    type TSTypeParameterDeclarationTypeClass,
-} from '../typeScriptVisitor/tSTypeParameterDeclaration';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { TSTypeAnnotationTypeClass } from '../typeScriptVisitor/tSTypeAnnotation';
+import { TSTypeParameterDeclarationTypeClass } from '../typeScriptVisitor/tSTypeParameterDeclaration';
+import { IdentifierTypeClass } from './identifier';
 
-const tSDeclareFunctionIdPairs = lazyPairs(() => [identifierTypePair] as const);
-const tSDeclareFunctionReturnTypePairs = lazyPairs(() => [tSTypeAnnotationTypePair] as const);
-const tSDeclareFunctionTypeParametersPairs = lazyPairs(
-    () => [tSTypeParameterDeclarationTypePair] as const,
-);
+/**
+ * 名前のない関数の宣言 (オーバーロード・declare)を書けるのは export default だけなので、id は既定で null にしない。
+ * export default の側では TSDeclareFunctionTypeClass<IdentifierTypeClass | null> を使う
+ */
+export type TSDeclareFunctionFields<TId extends IdentifierTypeClass | null = IdentifierTypeClass> =
+    TypeField<'tSDeclareFunction'> & {
+        params: FunctionParameterTypeClass[];
+        generator: TSDeclareFunction['generator'];
+        async: TSDeclareFunction['async'];
+        declare: boolean;
+        id: TId;
+        returnType: TSTypeAnnotationTypeClass | null;
+        typeParameters: TSTypeParameterDeclarationTypeClass | null;
+    };
 
-export type TSDeclareFunctionFields = {
-    params: (FunctionParameterTypeClass | LwcErrorTypeClass)[];
-    generator: TSDeclareFunction['generator'];
-    async: TSDeclareFunction['async'];
-    declare: NonNullable<TSDeclareFunction['declare']> | null;
-    id: IdentifierTypeClass | LwcErrorTypeClass | null;
-    returnType: TSTypeAnnotationTypeClass | LwcErrorTypeClass | null;
-    typeParameters: TSTypeParameterDeclarationTypeClass | LwcErrorTypeClass | null;
-};
-
-export class TSDeclareFunctionTypeClass extends LwcCommonTypeClass<'tSDeclareFunction'> {
-    private readonly value: TSDeclareFunctionFields;
-
-    private constructor(value: TSDeclareFunctionFields) {
-        super('tSDeclareFunction');
-        this.value = value;
+export class TSDeclareFunctionTypeClass<
+    TId extends IdentifierTypeClass | null = IdentifierTypeClass,
+> extends LwcCommonTypeClass<'tSDeclareFunction', TSDeclareFunctionFields<TId>> {
+    private constructor(value: FieldsOf<TSDeclareFunctionFields<TId>>, sourceSpan: SourceSpan) {
+        super('tSDeclareFunction', value, sourceSpan);
     }
 
+    /** 名前のある関数の宣言 (オーバーロード・declare) (export default のほか)。名前がなければ IrBuildError */
     static create(target: TSDeclareFunction, originalSource: string): TSDeclareFunctionTypeClass {
-        return new TSDeclareFunctionTypeClass({
-            params: visitNodeList(
-                target.params,
+        if (target.id == null) {
+            return failIrBuild(
+                'TYPE_MISMATCH',
+                target,
                 originalSource,
-                functionParameterVisitorEvaluatePairs(),
-                'FunctionParameterVisitor',
-            ),
-            generator: target.generator,
-            async: target.async,
-            declare: target.declare ?? null,
-            id: visitOptionalNode(
-                target.id,
-                originalSource,
-                tSDeclareFunctionIdPairs(),
-                'TSDeclareFunction.id',
-            ),
-            returnType: visitOptionalNode(
-                target.returnType,
-                originalSource,
-                tSDeclareFunctionReturnTypePairs(),
-                'TSDeclareFunction.returnType',
-            ),
-            typeParameters: visitOptionalNode(
-                target.typeParameters,
-                originalSource,
-                tSDeclareFunctionTypeParametersPairs(),
-                'TSDeclareFunction.typeParameters',
-            ),
-        });
+                '名前のない関数の宣言 (オーバーロード・declare)は export default でしか書けません',
+            );
+        }
+        return TSDeclareFunctionTypeClass.build(
+            target,
+            IdentifierTypeClass.create(target.id, originalSource),
+            originalSource,
+        );
     }
 
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSDeclareFunctionFields {
-        return this.value;
+    /** export default の関数の宣言 (オーバーロード・declare) (名前を省略できる) */
+    static createDefaultExport(
+        target: TSDeclareFunction,
+        originalSource: string,
+    ): TSDeclareFunctionTypeClass<IdentifierTypeClass | null> {
+        return TSDeclareFunctionTypeClass.build(
+            target,
+            target.id == null ? null : IdentifierTypeClass.create(target.id, originalSource),
+            originalSource,
+        );
     }
 
-    getParams(): TSDeclareFunctionFields['params'] {
-        return this.value.params;
+    private static build<TId extends IdentifierTypeClass | null>(
+        target: TSDeclareFunction,
+        id: TId,
+        originalSource: string,
+    ): TSDeclareFunctionTypeClass<TId> {
+        return new TSDeclareFunctionTypeClass<TId>(
+            {
+                params: visitNodeList(
+                    target.params,
+                    originalSource,
+                    functionParameterVisitorEvaluatePairs(),
+                    'FunctionParameterVisitor',
+                ),
+                generator: target.generator,
+                async: target.async,
+                declare: target.declare ?? false,
+                id,
+                returnType:
+                    target.returnType == null
+                        ? null
+                        : TSTypeAnnotationTypeClass.create(target.returnType, originalSource),
+                typeParameters:
+                    target.typeParameters == null
+                        ? null
+                        : TSTypeParameterDeclarationTypeClass.create(
+                              target.typeParameters,
+                              originalSource,
+                          ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
-    getGenerator(): TSDeclareFunctionFields['generator'] {
-        return this.value.generator;
+    getParams(): TSDeclareFunctionFields<TId>['params'] {
+        return this.getFields().params;
     }
 
-    getAsync(): TSDeclareFunctionFields['async'] {
-        return this.value.async;
+    getGenerator(): TSDeclareFunctionFields<TId>['generator'] {
+        return this.getFields().generator;
     }
 
-    getDeclare(): TSDeclareFunctionFields['declare'] {
-        return this.value.declare;
+    getAsync(): TSDeclareFunctionFields<TId>['async'] {
+        return this.getFields().async;
     }
 
-    getId(): TSDeclareFunctionFields['id'] {
-        return this.value.id;
+    getDeclare(): TSDeclareFunctionFields<TId>['declare'] {
+        return this.getFields().declare;
     }
 
-    getReturnType(): TSDeclareFunctionFields['returnType'] {
-        return this.value.returnType;
+    getId(): TSDeclareFunctionFields<TId>['id'] {
+        return this.getFields().id;
     }
 
-    getTypeParameters(): TSDeclareFunctionFields['typeParameters'] {
-        return this.value.typeParameters;
+    getReturnType(): TSDeclareFunctionFields<TId>['returnType'] {
+        return this.getFields().returnType;
+    }
+
+    getTypeParameters(): TSDeclareFunctionFields<TId>['typeParameters'] {
+        return this.getFields().typeParameters;
     }
 }
 
@@ -120,5 +138,6 @@ export const tSDeclareFunctionTypePair: EvaluatePair<
 );
 
 export const isTSDeclareFunctionType = (
-    target: LwcCommonTypeClass<string>,
-): target is TSDeclareFunctionTypeClass => target instanceof TSDeclareFunctionTypeClass;
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is TSDeclareFunctionTypeClass<IdentifierTypeClass | null> =>
+    target instanceof TSDeclareFunctionTypeClass;

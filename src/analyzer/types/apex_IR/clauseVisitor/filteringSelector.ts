@@ -1,17 +1,21 @@
 import { FilteringSelectorContext } from '@apexdevtools/apex-parser';
 
-import { ClauseValueTypeClass } from '.';
-
-import { ApexErrorTypeClass, ApexCommonTypeClass } from '../commonVisitor';
+import { ApexCommonTypeClass, getSourceSpan, isSpicifyApexCommonTypeClass } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
 type FilteringSelectorField = 'AT' | 'ABOVE' | 'BELOW' | 'ABOVE_OR_BELOW';
 
-export class FilteringSelectorTypeClass extends ClauseValueTypeClass<
+export type FilteringSelectorType = TypeField<'filteringSelector'> & {
+    value: FilteringSelectorField;
+};
+
+export class FilteringSelectorTypeClass extends ApexCommonTypeClass<
     'filteringSelector',
-    FilteringSelectorField
+    FilteringSelectorType
 > {
-    private constructor(value: FilteringSelectorField) {
-        super('filteringSelector', value);
+    private constructor(fields: FieldsOf<FilteringSelectorType>, sourceSpan: SourceSpan) {
+        super('filteringSelector', fields, sourceSpan);
     }
 
     static create(ctx: FilteringSelectorContext): FilteringSelectorTypeClass {
@@ -30,12 +34,16 @@ export class FilteringSelectorTypeClass extends ClauseValueTypeClass<
             value = 'ABOVE_OR_BELOW';
         }
 
-        return new FilteringSelectorTypeClass(value);
+        return new FilteringSelectorTypeClass({ value }, getSourceSpan(ctx));
+    }
+
+    getValue(): FilteringSelectorType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isFilteringSelectorType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is FilteringSelectorTypeClass => {
-    return target instanceof FilteringSelectorTypeClass;
+    return isSpicifyApexCommonTypeClass('filteringSelector', target);
 };

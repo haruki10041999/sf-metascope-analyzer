@@ -2,7 +2,7 @@ import { AriaAttrNameToPropNameMap, SPECIAL_PROPERTY_ATTRIBUTE_MAPPING } from '@
 import { toPropertyName } from '@lwc/template-compiler';
 import type { DefaultTreeAdapterTypes } from 'parse5';
 
-import type { ErrorJson, JsonType } from '../commons/json';
+import type { JsonType } from '../commons/json';
 import { makePositionOf } from '../commons/source';
 import {
     getLightningComponentSpec,
@@ -10,7 +10,6 @@ import {
     type LwcMetadataRefType,
 } from './lightning';
 import {
-    makeSpanErrorJson,
     makeSpanJson,
     type SourceFile,
     type Span,
@@ -215,14 +214,14 @@ const childNodesOf = (element: P5Element): P5ChildNode[] =>
 
 /**
  * parse5 の木 (parseFragment の結果) → LwcTemplateJson。
- * ルートの要素が <template> でなければ ErrorJson (診断は template-compiler の LWC1079 / LWC1075)
+ * ルートの要素が <template> でなければ null (JSON にエラーのノードは置かない。理由は template-compiler の LWC1079 / LWC1075 の診断)
  */
 export const makeLwcTemplateJson = (
     fragment: DefaultTreeAdapterTypes.DocumentFragment,
     file: SourceFile,
     registry: SpanSourceRegistry,
     options: LwcTemplateOptions = {},
-): LwcTemplateJson | ErrorJson => {
+): LwcTemplateJson | null => {
     const positionOf = makePositionOf(file.source);
     const namespace = options.namespace ?? 'c';
 
@@ -564,15 +563,7 @@ export const makeLwcTemplateJson = (
 
     const root = fragment.childNodes.find(isElement);
     if (!root || root.tagName !== 'template') {
-        return makeSpanErrorJson(
-            'lwcTemplate',
-            root ? `<template> expected but <${root.tagName}> found` : 'root <template> not found',
-            root?.sourceCodeLocation
-                ? positionOf(root.sourceCodeLocation.startOffset)
-                : positionOf(0),
-            file,
-            registry,
-        );
+        return null;
     }
 
     const renderMode = attributeOf(root, 'lwc:render-mode')?.value;

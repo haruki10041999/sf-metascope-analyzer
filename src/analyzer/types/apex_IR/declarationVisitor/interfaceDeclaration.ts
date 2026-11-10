@@ -1,57 +1,63 @@
 import { InterfaceDeclarationContext } from '@apexdevtools/apex-parser';
 
-import { DeclarationTypeClass } from '.';
-
-import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
-import { InterfaceBodyTypeClass, BodyVisitor, isInterfaceBodyType } from '../bodyVisitor';
-import { TypeListTypeClass, ListVisitor, isTypeListType } from '../listVisitor';
+import { IdTypeClass } from '../idVisitor';
+import { InterfaceBodyTypeClass } from '../bodyVisitor';
+import { TypeListTypeClass } from '../listVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNode,
-    visitOptionalNode,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class InterfaceDeclarationTypeClass extends DeclarationTypeClass<
+export type InterfaceDeclarationType = TypeField<'interfaceDeclaration'> & {
+    name: IdTypeClass;
+    extend: TypeListTypeClass | null;
+    body: InterfaceBodyTypeClass;
+};
+
+export class InterfaceDeclarationTypeClass extends ApexCommonTypeClass<
     'interfaceDeclaration',
-    NormalIdTypeClass
+    InterfaceDeclarationType
 > {
-    private body: InterfaceBodyTypeClass | ApexErrorTypeClass;
-    private extend: TypeListTypeClass | ApexErrorTypeClass | null = null;
-    private constructor(
-        value: NormalIdTypeClass | ApexErrorTypeClass,
-        body: InterfaceBodyTypeClass | ApexErrorTypeClass,
-        extend: TypeListTypeClass | ApexErrorTypeClass | null,
-    ) {
-        super('interfaceDeclaration', value);
-        this.body = body;
-        this.extend = extend;
+    private constructor(fields: FieldsOf<InterfaceDeclarationType>, sourceSpan: SourceSpan) {
+        super('interfaceDeclaration', fields, sourceSpan);
     }
 
     static create(ctx: InterfaceDeclarationContext): InterfaceDeclarationTypeClass {
-        if (!ctx.id() || !ctx.interfaceBody()) {
-            throw new Error('値が異常です。InterfaceDeclarationContext: ' + ctx.getText());
-        }
-
         return new InterfaceDeclarationTypeClass(
-            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
-            visitNode(new BodyVisitor(), ctx.interfaceBody(), isInterfaceBodyType, 'body'),
-            ctx.EXTENDS() &&
-                visitOptionalNode(new ListVisitor(), ctx.typeList(), isTypeListType, 'extend'),
+            {
+                name: createNode(ctx.id(), (c) => IdTypeClass.create(c), 'id'),
+                extend: ctx.EXTENDS()
+                    ? createNode(ctx.typeList(), (c) => TypeListTypeClass.create(c), 'typeList')
+                    : null,
+                body: createNode(
+                    ctx.interfaceBody(),
+                    (c) => InterfaceBodyTypeClass.create(c),
+                    'interfaceBody',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getBody(): InterfaceBodyTypeClass | ApexErrorTypeClass {
-        return this.body;
+    getName(): InterfaceDeclarationType['name'] {
+        return this.getFields().name;
     }
 
-    getExtend(): TypeListTypeClass | ApexErrorTypeClass | null {
-        return this.extend;
+    getExtend(): InterfaceDeclarationType['extend'] {
+        return this.getFields().extend;
+    }
+
+    getBody(): InterfaceDeclarationType['body'] {
+        return this.getFields().body;
     }
 }
 
 export const isInterfaceDeclarationType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is InterfaceDeclarationTypeClass => {
-    return target instanceof InterfaceDeclarationTypeClass;
+    return isSpicifyApexCommonTypeClass('interfaceDeclaration', target);
 };

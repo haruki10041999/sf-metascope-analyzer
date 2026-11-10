@@ -25,8 +25,8 @@ const parseBundle = async (name: string): Promise<LwcBundleStructureType> => {
 
 const mainModule = (bundle: LwcBundleStructureType): LwcModuleJson => {
     const entry = bundle.result.base.modules.find((m) => m.main);
-    assert.ok(entry && 'fileType' in entry.module);
-    return entry.module as LwcModuleJson;
+    assert.ok(entry?.module);
+    return entry.module;
 };
 
 const componentOf = (module: LwcModuleJson): LwcComponentJson => {
@@ -343,7 +343,7 @@ export default class Hello extends LightningElement {
             if (!value || typeof value !== 'object') return;
             const record = value as Record<string, unknown>;
             const keys = record.sourceKeys as Record<string, unknown> | undefined;
-            if (keys && record.kind !== 'error') {
+            if (keys) {
                 const list = 'objectKey' in keys ? [keys] : Object.values(keys);
                 for (const k of list as { objectKey: string; sourceKey: string }[]) {
                     if (!sourceKeys.has(`${k.objectKey}/${k.sourceKey}`)) missing.push(k.objectKey);
@@ -390,7 +390,7 @@ export default class Hello extends LightningElement {
         });
     });
 
-    it('回復できない構文エラーのモジュールは ErrorJson、メインのモジュールがなければバンドルが error', async () => {
+    it('回復できない構文エラーのモジュールは null (理由は resolvedError)、メインのモジュールがなければバンドルが error', async () => {
         await withBundle(
             'hello',
             {
@@ -401,29 +401,33 @@ export default class Hello extends LightningElement {
                 const result = (await LwcParser.parseLwcBundle(dir)) as LwcBundleStructureType;
                 assert.equal(result.dataType, 'lwcBundle');
                 const hello = result.result.base.modules.find((m) => m.fileName === 'hello.js');
-                assert.ok(hello && 'kind' in hello.module && hello.module.kind === 'error');
+                assert.ok(hello && hello.module === null);
                 assert.equal(result.resolvedError[0]?.code, 'JS_SYNTAX');
                 const shared = result.result.base.modules.find((m) => m.fileName === 'shared.js');
-                assert.ok(shared && 'fileType' in shared.module);
+                assert.ok(shared?.module);
             },
         );
         await withBundle('hello', { 'other.js': 'export const x = 1;\n' }, async (dir) => {
             const result = await LwcParser.parseLwcBundle(dir);
             assert.equal(result.dataType, 'error');
-            assert.equal(result.result.base.kind, 'error');
+            // 中身 (base) はなく、理由は resolvedError にだけ出る
+            assert.equal(result.result.base, null);
+            assert.deepEqual(
+                result.resolvedError.map((e) => [e.phase, e.code, e.filePath]),
+                [['bundle', 'MAIN_MODULE_NOT_FOUND', 'hello']],
+            );
         });
     });
 
-    it('IR を作れなかったノードは境界で止める (field は部分木全体、メソッドは自身だけを検査)', async () => {
+    it('IR を作れなかったメンバーは木から落ち、エラーは resolvedError だけに出る (docs/ir-integration.md)', async () => {
         const source = `import { LightningElement, api } from 'lwc';\nexport default class Hello extends LightningElement {\n    @api a = 1;\n    b = (1 = 2);\n    run() { 1 = 3; this.refs.r; }\n}\n`;
         await withBundle('hello', { 'hello.js': source }, async (dir) => {
             const result = (await LwcParser.parseLwcBundle(dir)) as LwcBundleStructureType;
             const component = componentOf(mainModule(result));
             assert.deepEqual(
-                component.block.map((m) =>
-                    m.kind === 'error' ? `error:${m.kindType}` : `${m.kind}:${m.name}`,
-                ),
-                ['lwcField:a', 'error:lwcField', 'lwcMethod:run'],
+                component.block.map((m) => `${m.kind}:${m.name}`),
+                // b = (1 = 2) は作れないので落ちる (エラーのノードにはならない)
+                ['lwcField:a', 'lwcMethod:run'],
             );
             const run = memberOf<LwcMethodJson>(component, 'lwcMethod', 'run');
             assert.deepEqual(

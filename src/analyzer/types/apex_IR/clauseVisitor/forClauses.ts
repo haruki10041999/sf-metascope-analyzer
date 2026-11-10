@@ -1,17 +1,18 @@
 import { ForClausesContext } from '@apexdevtools/apex-parser';
 
-import { ClauseValueListTypeClass } from '.';
-
-import { ApexErrorTypeClass, ApexCommonTypeClass } from '../commonVisitor';
+import { ApexCommonTypeClass, getSourceSpan, isSpicifyApexCommonTypeClass } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
 type ForClauseValueType = 'VIEW' | 'UPDATE' | 'REFERENCE';
 
-export class ForClausesTypeClass extends ClauseValueListTypeClass<
-    'forClauses',
-    ForClauseValueType
-> {
-    private constructor(value: ForClauseValueType[]) {
-        super('forClauses', value);
+export type ForClausesType = TypeField<'forClauses'> & {
+    value: ForClauseValueType[];
+};
+
+export class ForClausesTypeClass extends ApexCommonTypeClass<'forClauses', ForClausesType> {
+    private constructor(fields: FieldsOf<ForClausesType>, sourceSpan: SourceSpan) {
+        super('forClauses', fields, sourceSpan);
     }
 
     static create(ctx: ForClausesContext): ForClausesTypeClass {
@@ -31,12 +32,19 @@ export class ForClausesTypeClass extends ClauseValueListTypeClass<
                 .map((n): [ForClauseValueType, number] => ['REFERENCE', n.symbol.tokenIndex]),
         ];
 
-        return new ForClausesTypeClass(tokens.sort((a, b) => a[1] - b[1]).map(([value]) => value));
+        return new ForClausesTypeClass(
+            { value: tokens.sort((a, b) => a[1] - b[1]).map(([value]) => value) },
+            getSourceSpan(ctx),
+        );
+    }
+
+    getValue(): ForClausesType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isForClausesType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is ForClausesTypeClass => {
-    return target instanceof ForClausesTypeClass;
+    return isSpicifyApexCommonTypeClass('forClauses', target);
 };

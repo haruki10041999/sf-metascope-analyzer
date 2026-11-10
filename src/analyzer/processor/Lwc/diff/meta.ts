@@ -1,7 +1,6 @@
 import {
     LWC_BUNDLE_META_SCHEMA,
     LWC_TARGET_PROPERTY_SCHEMA,
-    type ErrorJson,
     type LwcBundleMetaJson,
     type LwcTargetConfigJson,
     type LwcTargetPropertyJson,
@@ -37,8 +36,8 @@ export type LwcTargetPropertyJsonDiff = NodeDiff<
 >;
 
 const makeTargetPropertyDiff = (
-    before: LwcTargetPropertyJson | ErrorJson,
-    after: LwcTargetPropertyJson | ErrorJson,
+    before: LwcTargetPropertyJson,
+    after: LwcTargetPropertyJson,
     match: Match,
 ): LwcTargetPropertyJsonDiff =>
     makeNodeDiff('lwcTargetProperty', before, after, match, (b, a) =>
@@ -61,8 +60,8 @@ export type LwcTargetConfigJsonDiff = NodeDiff<
 >;
 
 const makeTargetConfigDiff = (
-    before: LwcTargetConfigJson | ErrorJson,
-    after: LwcTargetConfigJson | ErrorJson,
+    before: LwcTargetConfigJson,
+    after: LwcTargetConfigJson,
     match: Match,
     sources?: Sources,
 ): LwcTargetConfigJsonDiff =>
@@ -109,8 +108,8 @@ export type LwcBundleMetaJsonDiff = NodeDiff<
 const targetConfigKey = (config: LwcTargetConfigJson) => [...config.targets].sort().join(',');
 
 export const makeLwcBundleMetaDiff = (
-    before: LwcBundleMetaJson | ErrorJson,
-    after: LwcBundleMetaJson | ErrorJson,
+    before: LwcBundleMetaJson,
+    after: LwcBundleMetaJson,
     sources?: Sources,
 ): LwcBundleMetaJsonDiff =>
     makeNodeDiff('lwcBundleMeta', before, after, 'slot', (b, a) => ({

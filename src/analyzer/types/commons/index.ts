@@ -1,4 +1,3 @@
-export * from './converter';
 export * from './json';
 export * from './spanJson';
 export * from './source';

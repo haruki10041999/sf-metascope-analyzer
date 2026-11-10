@@ -1,5 +1,4 @@
 import {
-    ErrorJson,
     FieldOrderJson,
     FieldSpecJson,
     LimitJson,
@@ -7,7 +6,6 @@ import {
     SoslFieldJson,
     SoslJson,
     SoslWithJson,
-    isErrorJson,
 } from '../../../../types';
 
 import {
@@ -15,13 +13,11 @@ import {
     Match,
     NodeDiff,
     OptionalDiff,
-    ReplacementDiff,
     Sources,
     ValueDiff,
     getValueKey,
     makeNodeDiff,
     makeOptionalDiff,
-    makeReplacementDiff,
     makeSequenceDiff,
     makeSetDiff,
     makeValueDiff,
@@ -48,8 +44,8 @@ export type SoslFieldJsonDiff = NodeDiff<
 >;
 
 export const makeSoslFieldDiff = (
-    before: SoslFieldJson | ErrorJson,
-    after: SoslFieldJson | ErrorJson,
+    before: SoslFieldJson,
+    after: SoslFieldJson,
     match: Match = 'slot',
 ): SoslFieldJsonDiff =>
     makeNodeDiff('soslField', before, after, match, (b, a) => {
@@ -70,45 +66,31 @@ export const makeSoslFieldDiff = (
         };
     });
 
-export type SoslFieldListDiff = ListItemDiff<
-    'soslField',
-    SoslFieldJson | ErrorJson,
-    SoslFieldJsonDiff
->[];
+export type SoslFieldListDiff = ListItemDiff<'soslField', SoslFieldJson, SoslFieldJsonDiff>[];
 
 const makeSoslFieldListDiff = (
-    before: FieldSpecJson['field'],
-    after: FieldSpecJson['field'],
+    before: SoslFieldJson[],
+    after: SoslFieldJson[],
     sources?: Sources,
-): SoslFieldListDiff | ValueDiff<FieldSpecJson['field']> =>
-    Array.isArray(before) && Array.isArray(after)
-        ? makeSetDiff('soslField', before, after, makeSoslFieldDiff, sources)
-        : makeValueDiff(before, after);
+): SoslFieldListDiff => makeSetDiff('soslField', before, after, makeSoslFieldDiff, sources);
 
 export type FieldSpecFieldsDiff = {
-    object: TypedListItemDiff<string | ErrorJson, never>[] | ValueDiff<FieldSpecJson['object']>;
-    field: OptionalDiff<
-        FieldSpecJson['field'],
-        SoslFieldListDiff | ValueDiff<FieldSpecJson['field']>
-    >;
+    object: TypedListItemDiff<string, never>[];
+    field: OptionalDiff<FieldSpecJson['field'], SoslFieldListDiff>;
     where: OptionalDiff<FieldSpecJson['where'], ValueDiff<FieldSpecJson['where']>>;
     orderBy: OptionalDiff<
         FieldSpecJson['orderBy'],
-        | ListItemDiff<'orderField', FieldOrderJson | ErrorJson, FieldOrderJsonDiff>[]
-        | ValueDiff<(FieldOrderJson | ErrorJson)[] | ErrorJson>
+        ListItemDiff<'orderField', FieldOrderJson, FieldOrderJsonDiff>[]
     >;
-    listView: OptionalDiff<
-        FieldSpecJson['listView'],
-        TypedListItemDiff<string | ErrorJson, never>[] | ValueDiff<FieldSpecJson['listView']>
-    >;
-    limit: OptionalDiff<LimitJson | ErrorJson, LimitJsonDiff>;
-    offset: OptionalDiff<OffsetJson | ErrorJson, OffsetJsonDiff>;
+    listView: OptionalDiff<FieldSpecJson['listView'], TypedListItemDiff<string, never>[]>;
+    limit: OptionalDiff<LimitJson, LimitJsonDiff>;
+    offset: OptionalDiff<OffsetJson, OffsetJsonDiff>;
 };
 
 export type FieldSpecJsonDiff =
     | { status: 'unchanged'; value: FieldSpecJson }
     | { status: 'changed'; fields: FieldSpecFieldsDiff }
-    | { status: 'changed'; before: FieldSpecJson | ErrorJson; after: FieldSpecJson | ErrorJson };
+    | { status: 'changed'; before: FieldSpecJson; after: FieldSpecJson };
 
 const makeFieldSpecDiff = (
     before: FieldSpecJson,
@@ -121,67 +103,41 @@ const makeFieldSpecDiff = (
     return {
         status: 'changed',
         fields: {
-            object:
-                Array.isArray(before.object) && Array.isArray(after.object)
-                    ? makeUnorderedValueListDiff(before.object, after.object)
-                    : makeValueDiff(before.object, after.object),
+            object: makeUnorderedValueListDiff(before.object, after.object),
             field: makeOptionalDiff(before.field, after.field, (b, a) =>
                 makeSoslFieldListDiff(b, a, sources),
             ),
             where: makeOptionalDiff(before.where, after.where, makeValueDiff),
             orderBy: makeOptionalDiff(before.orderBy, after.orderBy, (b, a) =>
-                Array.isArray(b) && Array.isArray(a)
-                    ? makeSequenceDiff('orderField', b, a, makeOrderFieldDiff, { sources })
-                    : makeValueDiff(b, a),
+                makeSequenceDiff('orderField', b, a, makeOrderFieldDiff, { sources }),
             ),
-            listView: makeOptionalDiff(before.listView, after.listView, (b, a) =>
-                Array.isArray(b) && Array.isArray(a)
-                    ? makeUnorderedValueListDiff(b, a)
-                    : makeValueDiff(b, a),
-            ),
+            listView: makeOptionalDiff(before.listView, after.listView, makeUnorderedValueListDiff),
             limit: makeOptionalDiff(before.limit, after.limit, makeLimitDiff),
             offset: makeOptionalDiff(before.offset, after.offset, makeOffsetDiff),
         },
     };
 };
 
-export type FieldSpecListDiff =
-    | TypedListDiff<
-          FieldSpecJson | ErrorJson,
-          FieldSpecJsonDiff | ReplacementDiff<FieldSpecJson | ErrorJson>
-      >
-    | ValueDiff<(FieldSpecJson | ErrorJson)[] | ErrorJson | undefined>;
+export type FieldSpecListDiff = TypedListDiff<FieldSpecJson, FieldSpecJsonDiff>;
 
+// RETURNING の順が結果の順になるので C. 順序付き列
 const makeFieldSpecListDiff = (
-    before: (FieldSpecJson | ErrorJson)[] | ErrorJson | undefined,
-    after: (FieldSpecJson | ErrorJson)[] | ErrorJson | undefined,
+    before: FieldSpecJson[],
+    after: FieldSpecJson[],
     sources?: Sources,
-): FieldSpecListDiff => {
-    if (!Array.isArray(before) || !Array.isArray(after)) {
-        return makeValueDiff(before, after);
-    }
-
-    // RETURNING の順が結果の順になるので C. 順序付き列
-    return makeTypedListDiff(
+): FieldSpecListDiff =>
+    makeTypedListDiff(
         before,
         after,
         pairAsSequence(before.map(getValueKey), after.map(getValueKey)),
-        (b, a) =>
-            isErrorJson(b) || isErrorJson(a)
-                ? makeReplacementDiff<FieldSpecJson | ErrorJson>(b, a)
-                : makeFieldSpecDiff(b, a, sources),
+        (b, a) => makeFieldSpecDiff(b, a, sources),
     );
-};
 
 export type SoslFieldsDiff = {
     find: ValueDiff<SoslJson['find']>;
     group: OptionalDiff<NonNullable<SoslJson['group']>, ValueDiff<NonNullable<SoslJson['group']>>>;
     fieldSpec: OptionalDiff<SoslJson['fieldSpec'], FieldSpecListDiff>;
-    with: OptionalDiff<
-        SoslJson['with'],
-        | TypedListItemDiff<SoslWithJson | ErrorJson, never>[]
-        | ValueDiff<(SoslWithJson | ErrorJson)[] | undefined>
-    >;
+    with: OptionalDiff<SoslJson['with'], TypedListItemDiff<SoslWithJson, never>[]>;
     limit: OptionalDiff<SoslJson['limit'], LimitJsonDiff>;
     update: OptionalDiff<SoslJson['update'], UpdateListJsonDiff>;
 };
@@ -189,8 +145,8 @@ export type SoslFieldsDiff = {
 export type SoslJsonDiff = NodeDiff<'sosl', SoslJson, SoslFieldsDiff>;
 
 export const makeSoslDiff = (
-    before: SoslJson | ErrorJson,
-    after: SoslJson | ErrorJson,
+    before: SoslJson,
+    after: SoslJson,
     sources?: Sources,
     match: Match = 'slot',
 ): SoslJsonDiff =>
@@ -200,14 +156,10 @@ export const makeSoslDiff = (
         fieldSpec: makeOptionalDiff(b.fieldSpec, a.fieldSpec, (beforeSpecs, afterSpecs) =>
             makeFieldSpecListDiff(beforeSpecs, afterSpecs, sources),
         ),
-        with: makeOptionalDiff(b.with, a.with, (beforeWith, afterWith) =>
-            Array.isArray(beforeWith) && Array.isArray(afterWith)
-                ? makeUnorderedValueListDiff(beforeWith, afterWith)
-                : makeValueDiff(beforeWith, afterWith),
-        ),
+        with: makeOptionalDiff(b.with, a.with, makeUnorderedValueListDiff),
         limit: makeOptionalDiff(b.limit, a.limit, makeLimitDiff),
         update: makeOptionalDiff(b.update, a.update, makeUpdateListDiff),
     }));
 
 /** WITH は B. 集合なので、要素は unchanged / added / removed だけ */
-export type SoslWithJsonDiff = TypedListItemDiff<SoslWithJson | ErrorJson, never>;
+export type SoslWithJsonDiff = TypedListItemDiff<SoslWithJson, never>;

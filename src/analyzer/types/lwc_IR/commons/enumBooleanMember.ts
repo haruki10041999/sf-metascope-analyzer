@@ -1,59 +1,44 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isEnumBooleanMember, type EnumBooleanMember } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { booleanLiteralTypePair, type BooleanLiteralTypeClass } from './booleanLiteral';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { BooleanLiteralTypeClass } from './booleanLiteral';
+import { IdentifierTypeClass } from './identifier';
 
-const enumBooleanMemberIdPairs = lazyPairs(() => [identifierTypePair] as const);
-const enumBooleanMemberInitPairs = lazyPairs(() => [booleanLiteralTypePair] as const);
-
-export type EnumBooleanMemberFields = {
-    id: IdentifierTypeClass | LwcErrorTypeClass;
-    init: BooleanLiteralTypeClass | LwcErrorTypeClass;
+export type EnumBooleanMemberFields = TypeField<'enumBooleanMember'> & {
+    id: IdentifierTypeClass;
+    init: BooleanLiteralTypeClass;
 };
 
-export class EnumBooleanMemberTypeClass extends LwcCommonTypeClass<'enumBooleanMember'> {
-    private readonly value: EnumBooleanMemberFields;
-
-    private constructor(value: EnumBooleanMemberFields) {
-        super('enumBooleanMember');
-        this.value = value;
+export class EnumBooleanMemberTypeClass extends LwcCommonTypeClass<
+    'enumBooleanMember',
+    EnumBooleanMemberFields
+> {
+    private constructor(value: FieldsOf<EnumBooleanMemberFields>, sourceSpan: SourceSpan) {
+        super('enumBooleanMember', value, sourceSpan);
     }
 
     static create(target: EnumBooleanMember, originalSource: string): EnumBooleanMemberTypeClass {
-        return new EnumBooleanMemberTypeClass({
-            id: visitNode(
-                target.id,
-                originalSource,
-                enumBooleanMemberIdPairs(),
-                'EnumBooleanMember.id',
-            ),
-            init: visitNode(
-                target.init,
-                originalSource,
-                enumBooleanMemberInitPairs(),
-                'EnumBooleanMember.init',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): EnumBooleanMemberFields {
-        return this.value;
+        return new EnumBooleanMemberTypeClass(
+            {
+                id: IdentifierTypeClass.create(target.id, originalSource),
+                init: BooleanLiteralTypeClass.create(target.init, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getId(): EnumBooleanMemberFields['id'] {
-        return this.value.id;
+        return this.getFields().id;
     }
 
     getInit(): EnumBooleanMemberFields['init'] {
-        return this.value.init;
+        return this.getFields().init;
     }
 }
 
@@ -65,5 +50,5 @@ export const enumBooleanMemberTypePair: EvaluatePair<
 );
 
 export const isEnumBooleanMemberType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is EnumBooleanMemberTypeClass => target instanceof EnumBooleanMemberTypeClass;

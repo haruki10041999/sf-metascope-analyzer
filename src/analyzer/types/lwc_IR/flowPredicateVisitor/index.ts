@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import {
     DeclaredPredicateTypeClass,
@@ -34,7 +35,7 @@ export class FlowPredicateVisitor extends LwcCommonVisitor<
 export type FlowPredicateTypeClass = DeclaredPredicateTypeClass | InferredPredicateTypeClass;
 
 export const isFlowPredicateType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is FlowPredicateTypeClass => {
     return (
         target instanceof DeclaredPredicateTypeClass || target instanceof InferredPredicateTypeClass

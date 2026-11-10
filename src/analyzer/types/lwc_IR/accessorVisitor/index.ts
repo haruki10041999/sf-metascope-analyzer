@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { isAccessor, type Accessor } from '@babel/types';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import {
@@ -25,6 +26,8 @@ export class AccessorVisitor extends LwcCommonVisitor<
 
 export type AccessorTypeClass = ClassAccessorPropertyTypeClass;
 
-export const isAccessorType = (target: LwcCommonTypeClass<string>): target is AccessorTypeClass => {
+export const isAccessorType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is AccessorTypeClass => {
     return target instanceof ClassAccessorPropertyTypeClass;
 };

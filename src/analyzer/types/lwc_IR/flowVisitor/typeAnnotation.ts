@@ -1,11 +1,13 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTypeAnnotation, type TypeAnnotation } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { identifierTypePair, type IdentifierTypeClass } from '../commons/identifier';
 import { flowTypeVisitorEvaluatePairs, type FlowTypeTypeClass } from '../flowTypeVisitor';
@@ -14,36 +16,34 @@ const typeAnnotationTypeAnnotationPairs = lazyPairs(
     () => [...flowTypeVisitorEvaluatePairs(), identifierTypePair] as const,
 );
 
-export type TypeAnnotationFields = {
-    typeAnnotation: FlowTypeTypeClass | IdentifierTypeClass | LwcErrorTypeClass;
+export type TypeAnnotationFields = TypeField<'typeAnnotation'> & {
+    typeAnnotation: FlowTypeTypeClass | IdentifierTypeClass;
 };
 
-export class TypeAnnotationTypeClass extends LwcCommonTypeClass<'typeAnnotation'> {
-    private readonly value: TypeAnnotationFields;
-
-    private constructor(value: TypeAnnotationFields) {
-        super('typeAnnotation');
-        this.value = value;
+export class TypeAnnotationTypeClass extends LwcCommonTypeClass<
+    'typeAnnotation',
+    TypeAnnotationFields
+> {
+    private constructor(value: FieldsOf<TypeAnnotationFields>, sourceSpan: SourceSpan) {
+        super('typeAnnotation', value, sourceSpan);
     }
 
     static create(target: TypeAnnotation, originalSource: string): TypeAnnotationTypeClass {
-        return new TypeAnnotationTypeClass({
-            typeAnnotation: visitNode(
-                target.typeAnnotation,
-                originalSource,
-                typeAnnotationTypeAnnotationPairs(),
-                'TypeAnnotation.typeAnnotation',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TypeAnnotationFields {
-        return this.value;
+        return new TypeAnnotationTypeClass(
+            {
+                typeAnnotation: visitNode(
+                    target.typeAnnotation,
+                    originalSource,
+                    typeAnnotationTypeAnnotationPairs(),
+                    'TypeAnnotation.typeAnnotation',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getTypeAnnotation(): TypeAnnotationFields['typeAnnotation'] {
-        return this.value.typeAnnotation;
+        return this.getFields().typeAnnotation;
     }
 }
 
@@ -53,5 +53,5 @@ export const typeAnnotationTypePair: EvaluatePair<TypeAnnotation, TypeAnnotation
     );
 
 export const isTypeAnnotationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TypeAnnotationTypeClass => target instanceof TypeAnnotationTypeClass;

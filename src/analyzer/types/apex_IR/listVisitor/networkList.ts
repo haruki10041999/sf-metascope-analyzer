@@ -1,35 +1,38 @@
 import { NetworkListContext } from '@apexdevtools/apex-parser';
 
-import { ListTypeClass, ListVisitor } from '.';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type NetworkListType = TypeField<'networkList'> & {
+    value: string[];
+};
 
-export class NetworkListTypeClass extends ListTypeClass<'networkList', string> {
-    private constructor(value: (string | ApexErrorTypeClass)[]) {
-        super('networkList', value);
+export class NetworkListTypeClass extends ApexCommonTypeClass<'networkList', NetworkListType> {
+    private constructor(fields: FieldsOf<NetworkListType>, sourceSpan: SourceSpan) {
+        super('networkList', fields, sourceSpan);
     }
 
     static create(ctx: NetworkListContext): NetworkListTypeClass {
-        if (!ctx.StringLiteral() && !ctx.MultilineStringLiteral()) {
+        const literal = ctx.StringLiteral() ?? ctx.MultilineStringLiteral();
+        if (!literal) {
             throw new Error('値が異常です。NetworkListContext: ' + ctx.getText());
         }
 
-        const value: (string | ApexErrorTypeClass)[] = [];
+        const value: NetworkListType['value'] = [literal.getText()];
 
-        if (ctx.StringLiteral()) {
-            value.push(ctx.StringLiteral().getText());
-        } else {
-            value.push(ctx.MultilineStringLiteral().getText());
-        }
-
+        // 入れ子の networkList は平坦化する
         if (ctx.networkList()) {
-            const nested = visitNode(
-                new ListVisitor(),
+            const nested = createNode(
                 ctx.networkList(),
-                isNetworkListType,
+                (c) => NetworkListTypeClass.create(c),
                 'networkList',
             );
-
             if (isNetworkListType(nested)) {
                 value.push(...nested.getValue());
             } else {
@@ -37,12 +40,14 @@ export class NetworkListTypeClass extends ListTypeClass<'networkList', string> {
             }
         }
 
-        return new NetworkListTypeClass(value);
+        return new NetworkListTypeClass({ value }, getSourceSpan(ctx));
+    }
+
+    getValue(): NetworkListType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isNetworkListType = (
-    target: ApexCommonTypeClass<string>,
-): target is NetworkListTypeClass => {
-    return target instanceof NetworkListTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is NetworkListTypeClass => isSpicifyApexCommonTypeClass('networkList', target);

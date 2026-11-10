@@ -1,50 +1,33 @@
 import { AssignExpressionContext } from '@apexdevtools/apex-parser';
 
-import {
-    DoubleStringOperatorExpressionTypeClass,
-    BasedExpressionTypeClass,
-    ExpressionVisitor,
-    isBasedExpressionType,
-} from '.';
+import { BasedExpressionTypeClass, ExpressionVisitor, isBasedExpressionType } from '.';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+import {
+    ApexCommonTypeClass,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+    visitNode,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
 type AssignOperatorType =
     '=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '>>>=' | '<<=';
 
-export class AssignExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
+export type AssignExpressionType = TypeField<'assignExpression'> & {
+    left: BasedExpressionTypeClass;
+    operator: AssignOperatorType;
+    right: BasedExpressionTypeClass;
+};
+
+export class AssignExpressionTypeClass extends ApexCommonTypeClass<
     'assignExpression',
-    BasedExpressionTypeClass,
-    AssignOperatorType,
-    BasedExpressionTypeClass
+    AssignExpressionType
 > {
-    private constructor(
-        left: BasedExpressionTypeClass | ApexErrorTypeClass,
-        right: BasedExpressionTypeClass | ApexErrorTypeClass,
-        operator: AssignOperatorType,
-    ) {
-        super('assignExpression', left, right, operator);
+    private constructor(fields: FieldsOf<AssignExpressionType>, sourceSpan: SourceSpan) {
+        super('assignExpression', fields, sourceSpan);
     }
 
     static create(ctx: AssignExpressionContext): AssignExpressionTypeClass {
-        if (
-            !ctx.expression_list() ||
-            ctx.expression_list().length !== 2 ||
-            (!ctx.ASSIGN() &&
-                !ctx.ADD_ASSIGN() &&
-                !ctx.SUB_ASSIGN() &&
-                !ctx.MUL_ASSIGN() &&
-                !ctx.DIV_ASSIGN() &&
-                !ctx.AND_ASSIGN() &&
-                !ctx.OR_ASSIGN() &&
-                !ctx.XOR_ASSIGN() &&
-                !ctx.RSHIFT_ASSIGN() &&
-                !ctx.URSHIFT_ASSIGN() &&
-                !ctx.LSHIFT_ASSIGN())
-        ) {
-            throw new Error('値が異常です。AssignExpressionContext: ' + ctx.getText());
-        }
-
         let operator: AssignOperatorType;
         if (ctx.ASSIGN()) {
             operator = '=';
@@ -66,30 +49,45 @@ export class AssignExpressionTypeClass extends DoubleStringOperatorExpressionTyp
             operator = '>>=';
         } else if (ctx.URSHIFT_ASSIGN()) {
             operator = '>>>=';
-        } else {
+        } else if (ctx.LSHIFT_ASSIGN()) {
             operator = '<<=';
+        } else {
+            throw new Error('値が異常です。AssignExpressionContext: ' + ctx.getText());
         }
 
         return new AssignExpressionTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(0),
-                isBasedExpressionType,
-                'expression',
-            ),
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(1),
-                isBasedExpressionType,
-                'expression',
-            ),
-            operator,
+            {
+                left: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(0),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+                operator: operator,
+                right: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(1),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getLeft(): AssignExpressionType['left'] {
+        return this.getFields().left;
+    }
+
+    getOperator(): AssignExpressionType['operator'] {
+        return this.getFields().operator;
+    }
+
+    getRight(): AssignExpressionType['right'] {
+        return this.getFields().right;
     }
 }
 
 export const isAssignExpressionType = (
-    target: ApexCommonTypeClass<string>,
-): target is AssignExpressionTypeClass => {
-    return target instanceof AssignExpressionTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is AssignExpressionTypeClass => isSpicifyApexCommonTypeClass('assignExpression', target);

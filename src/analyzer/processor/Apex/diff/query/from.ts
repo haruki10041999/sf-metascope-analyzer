@@ -1,4 +1,4 @@
-import { ErrorJson, FromJson, JsonType, isErrorJson } from '../../../../types';
+import { FromJson, JsonType } from '../../../../types';
 
 import {
     ListItemDiff,
@@ -15,7 +15,7 @@ import {
 import { FieldPathDiff, makeFieldPathDiff } from './select';
 
 export type FromFieldJson = JsonType<'fromField'> & { field: string[]; alias?: string };
-export type FromClauseJson = { field: (FromFieldJson | ErrorJson)[] };
+export type FromClauseJson = { field: FromFieldJson[] };
 
 export type FromFieldDiff = NodeDiff<
     'fromField',
@@ -27,8 +27,8 @@ export type FromFieldDiff = NodeDiff<
 >;
 
 export const makeFromFieldDiff = (
-    before: FromFieldJson | ErrorJson,
-    after: FromFieldJson | ErrorJson,
+    before: FromFieldJson,
+    after: FromFieldJson,
     match: Match = 'slot',
 ): FromFieldDiff =>
     makeNodeDiff('fromField', before, after, match, (b, a) => ({
@@ -36,16 +36,15 @@ export const makeFromFieldDiff = (
         alias: makeOptionalDiff(b.alias, a.alias, makeValueDiff),
     }));
 
-export type FromFieldsDiff = ListItemDiff<'fromField', FromFieldJson | ErrorJson, FromFieldDiff>[];
+export type FromFieldsDiff = ListItemDiff<'fromField', FromFieldJson, FromFieldDiff>[];
 
-/** FROM の項目は C. 順序付き列 (先頭が主オブジェクト)。FROM 自体がエラーなら値を丸ごと比べる */
-export type FromJsonDiff = FromFieldsDiff | ValueDiff<FromJson | FromClauseJson | ErrorJson>;
+/** FROM の項目は C. 順序付き列 (先頭が主オブジェクト) */
+export type FromJsonDiff = FromFieldsDiff;
 
 export const makeFromDiff = (
-    before: FromJson | FromClauseJson | ErrorJson,
-    after: FromJson | FromClauseJson | ErrorJson,
+    before: FromJson | FromClauseJson,
+    after: FromJson | FromClauseJson,
     sources?: Sources,
 ): FromJsonDiff => {
-    if (isErrorJson(before) || isErrorJson(after)) return makeValueDiff(before, after);
     return makeSequenceDiff('fromField', before.field, after.field, makeFromFieldDiff, { sources });
 };

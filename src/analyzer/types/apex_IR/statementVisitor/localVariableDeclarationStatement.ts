@@ -1,42 +1,53 @@
 import { LocalVariableDeclarationStatementContext } from '@apexdevtools/apex-parser';
 
-import { StatementTypeClass } from '../statementVisitor';
-
+import { LocalVariableDeclarationTypeClass } from '../declarationVisitor';
 import {
-    LocalVariableDeclarationTypeClass,
-    DeclarationVisitor,
-    isLocalVariableDeclarationType,
-} from '../declarationVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class LocalVariableDeclarationStatementTypeClass extends StatementTypeClass<
+export type LocalVariableDeclarationStatementType =
+    TypeField<'localVariableDeclarationStatement'> & {
+        value: LocalVariableDeclarationTypeClass;
+    };
+
+export class LocalVariableDeclarationStatementTypeClass extends ApexCommonTypeClass<
     'localVariableDeclarationStatement',
-    LocalVariableDeclarationTypeClass
+    LocalVariableDeclarationStatementType
 > {
-    private constructor(value: LocalVariableDeclarationTypeClass | ApexErrorTypeClass) {
-        super('localVariableDeclarationStatement', value);
+    private constructor(
+        fields: FieldsOf<LocalVariableDeclarationStatementType>,
+        sourceSpan: SourceSpan,
+    ) {
+        super('localVariableDeclarationStatement', fields, sourceSpan);
     }
 
-    static create(ctx: LocalVariableDeclarationStatementContext) {
-        if (!ctx.localVariableDeclaration()) {
-            throw new Error(
-                '値が異常です。LocalVariableDeclarationStatementContext: ' + ctx.getText(),
-            );
-        }
-
+    static create(
+        ctx: LocalVariableDeclarationStatementContext,
+    ): LocalVariableDeclarationStatementTypeClass {
         return new LocalVariableDeclarationStatementTypeClass(
-            visitNode(
-                new DeclarationVisitor(),
-                ctx.localVariableDeclaration(),
-                isLocalVariableDeclarationType,
-                'localVariableDeclaration',
-            ),
+            {
+                value: createNode(
+                    ctx.localVariableDeclaration(),
+                    (c) => LocalVariableDeclarationTypeClass.create(c),
+                    'localVariableDeclaration',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): LocalVariableDeclarationStatementType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isLocalVariableDeclarationStatementType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is LocalVariableDeclarationStatementTypeClass => {
-    return target instanceof LocalVariableDeclarationStatementTypeClass;
+    return isSpicifyApexCommonTypeClass('localVariableDeclarationStatement', target);
 };

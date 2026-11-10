@@ -93,7 +93,6 @@ export const ALL_KINDS = {
     ],
     SOSL: ['sosl', 'soslField'],
     'メタデータ (-meta.xml)': ['apexClassMeta', 'apexTriggerMeta'],
-    エラー: ['error'],
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>

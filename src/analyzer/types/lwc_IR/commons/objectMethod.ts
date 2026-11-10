@@ -1,37 +1,36 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isObjectMethod, type ObjectMethod } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
-    visitNode,
     visitNodeList,
     visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
-import {
-    typeAnnotationTypePair,
-    type TypeAnnotationTypeClass,
-} from '../flowVisitor/typeAnnotation';
-import {
-    typeParameterDeclarationTypePair,
-    type TypeParameterDeclarationTypeClass,
-} from '../flowVisitor/typeParameterDeclaration';
+import { typeAnnotationTypePair } from '../flowVisitor/typeAnnotation';
+import { typeParameterDeclarationTypePair } from '../flowVisitor/typeParameterDeclaration';
 import {
     functionParameterVisitorEvaluatePairs,
     type FunctionParameterTypeClass,
 } from '../functionParameterVisitor';
+import { tSTypeAnnotationTypePair } from '../typeScriptVisitor/tSTypeAnnotation';
+import { tSTypeParameterDeclarationTypePair } from '../typeScriptVisitor/tSTypeParameterDeclaration';
+import { BlockStatementTypeClass } from './blockStatement';
+import { type MethodReturnTypeClass, type MethodTypeParametersTypeClass } from './classMethod';
 import {
-    tSTypeAnnotationTypePair,
-    type TSTypeAnnotationTypeClass,
-} from '../typeScriptVisitor/tSTypeAnnotation';
-import {
-    tSTypeParameterDeclarationTypePair,
-    type TSTypeParameterDeclarationTypeClass,
-} from '../typeScriptVisitor/tSTypeParameterDeclaration';
-import { blockStatementTypePair, type BlockStatementTypeClass } from './blockStatement';
-import { decoratorTypePair, type DecoratorTypeClass } from './decorator';
+    createGetterParams,
+    createMemberKey,
+    createSetterParams,
+    rejectChild,
+    setterParamPairs,
+    staticMemberKeyPairs,
+    type GetterParams,
+    type MemberKey,
+    type SetterParams,
+} from './memberKey';
 
 const objectMethodReturnTypePairs = lazyPairs(
     () => [typeAnnotationTypePair, tSTypeAnnotationTypePair] as const,
@@ -39,125 +38,131 @@ const objectMethodReturnTypePairs = lazyPairs(
 const objectMethodTypeParametersPairs = lazyPairs(
     () => [typeParameterDeclarationTypePair, tSTypeParameterDeclarationTypePair] as const,
 );
-const objectMethodDecoratorsPairs = lazyPairs(() => [decoratorTypePair] as const);
-const objectMethodBodyPairs = lazyPairs(() => [blockStatementTypePair] as const);
 
-export type ObjectMethodFields = {
-    params: (FunctionParameterTypeClass | LwcErrorTypeClass)[];
-    generator: ObjectMethod['generator'];
-    async: ObjectMethod['async'];
-    returnType: TypeAnnotationTypeClass | TSTypeAnnotationTypeClass | LwcErrorTypeClass | null;
-    typeParameters:
-        | TypeParameterDeclarationTypeClass
-        | TSTypeParameterDeclarationTypeClass
-        | LwcErrorTypeClass
-        | null;
-    kind: ObjectMethod['kind'];
-    computed: ObjectMethod['computed'];
-    key: ExpressionTypeClass | LwcErrorTypeClass;
-    decorators: (DecoratorTypeClass | LwcErrorTypeClass)[] | null;
-    body: BlockStatementTypeClass | LwcErrorTypeClass;
-};
+/**
+ * Babel 8 の ObjectMethodComputed | ObjectMethodNonComputed と、kind ごとの決まり
+ * (get・set は generator・async・typeParameters を持たず、params の数が決まる。set は returnType も持たない)。
+ * オブジェクトリテラルでは書けないので decorators は持たない
+ */
+export type ObjectMethodFields = TypeField<'objectMethod'> &
+    MemberKey & { body: BlockStatementTypeClass } & (
+        | {
+              kind: 'method';
+              generator: ObjectMethod['generator'];
+              async: ObjectMethod['async'];
+              params: FunctionParameterTypeClass[];
+              returnType: MethodReturnTypeClass | null;
+              typeParameters: MethodTypeParametersTypeClass | null;
+          }
+        | { kind: 'get'; params: GetterParams; returnType: MethodReturnTypeClass | null }
+        | { kind: 'set'; params: SetterParams }
+    );
 
-export class ObjectMethodTypeClass extends LwcCommonTypeClass<'objectMethod'> {
-    private readonly value: ObjectMethodFields;
-
-    private constructor(value: ObjectMethodFields) {
-        super('objectMethod');
-        this.value = value;
+export class ObjectMethodTypeClass extends LwcCommonTypeClass<'objectMethod', ObjectMethodFields> {
+    private constructor(value: FieldsOf<ObjectMethodFields>, sourceSpan: SourceSpan) {
+        super('objectMethod', value, sourceSpan);
     }
 
     static create(target: ObjectMethod, originalSource: string): ObjectMethodTypeClass {
-        return new ObjectMethodTypeClass({
-            params: visitNodeList(
-                target.params,
-                originalSource,
-                functionParameterVisitorEvaluatePairs(),
-                'FunctionParameterVisitor',
-            ),
-            generator: target.generator,
-            async: target.async,
-            returnType: visitOptionalNode(
+        const common = {
+            ...createMemberKey(target, originalSource, staticMemberKeyPairs(), 'ObjectMethod'),
+            body: BlockStatementTypeClass.create(target.body, originalSource),
+        };
+        const returnType = (): MethodReturnTypeClass | null =>
+            visitOptionalNode(
                 target.returnType,
                 originalSource,
                 objectMethodReturnTypePairs(),
                 'ObjectMethod.returnType',
-            ),
-            typeParameters: visitOptionalNode(
-                target.typeParameters,
-                originalSource,
-                objectMethodTypeParametersPairs(),
-                'ObjectMethod.typeParameters',
-            ),
-            kind: target.kind,
-            computed: target.computed,
-            key: visitNode(
-                target.key,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-            decorators:
-                target.decorators == null
-                    ? null
-                    : visitNodeList(
-                          target.decorators,
-                          originalSource,
-                          objectMethodDecoratorsPairs(),
-                          'ObjectMethod.decorators',
-                      ),
-            body: visitNode(
-                target.body,
-                originalSource,
-                objectMethodBodyPairs(),
-                'ObjectMethod.body',
-            ),
-        });
-    }
+            );
 
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): ObjectMethodFields {
-        return this.value;
+        switch (target.kind) {
+            case 'method':
+                return new ObjectMethodTypeClass(
+                    {
+                        ...common,
+                        kind: 'method',
+                        generator: target.generator,
+                        async: target.async,
+                        params: visitNodeList(
+                            target.params,
+                            originalSource,
+                            functionParameterVisitorEvaluatePairs(),
+                            'ObjectMethod.params',
+                        ),
+                        returnType: returnType(),
+                        typeParameters: visitOptionalNode(
+                            target.typeParameters,
+                            originalSource,
+                            objectMethodTypeParametersPairs(),
+                            'ObjectMethod.typeParameters',
+                        ),
+                    },
+                    getSourceSpan(target, originalSource),
+                );
+            case 'get':
+                rejectChild(
+                    target,
+                    target.typeParameters,
+                    originalSource,
+                    'get は型パラメータを持てません',
+                );
+                return new ObjectMethodTypeClass(
+                    {
+                        ...common,
+                        kind: 'get',
+                        params: createGetterParams(target, originalSource, 'ObjectMethod'),
+                        returnType: returnType(),
+                    },
+                    getSourceSpan(target, originalSource),
+                );
+            case 'set':
+                rejectChild(
+                    target,
+                    target.typeParameters,
+                    originalSource,
+                    'set は型パラメータを持てません',
+                );
+                rejectChild(
+                    target,
+                    target.returnType,
+                    originalSource,
+                    'set は戻り値の型を持てません',
+                );
+                return new ObjectMethodTypeClass(
+                    {
+                        ...common,
+                        kind: 'set',
+                        params: createSetterParams(
+                            target,
+                            originalSource,
+                            setterParamPairs(),
+                            'ObjectMethod',
+                        ),
+                    },
+                    getSourceSpan(target, originalSource),
+                );
+        }
     }
 
     getParams(): ObjectMethodFields['params'] {
-        return this.value.params;
-    }
-
-    getGenerator(): ObjectMethodFields['generator'] {
-        return this.value.generator;
-    }
-
-    getAsync(): ObjectMethodFields['async'] {
-        return this.value.async;
-    }
-
-    getReturnType(): ObjectMethodFields['returnType'] {
-        return this.value.returnType;
-    }
-
-    getTypeParameters(): ObjectMethodFields['typeParameters'] {
-        return this.value.typeParameters;
+        return this.getFields().params;
     }
 
     getKind(): ObjectMethodFields['kind'] {
-        return this.value.kind;
+        return this.getFields().kind;
     }
 
     getComputed(): ObjectMethodFields['computed'] {
-        return this.value.computed;
+        return this.getFields().computed;
     }
 
     getKey(): ObjectMethodFields['key'] {
-        return this.value.key;
-    }
-
-    getDecorators(): ObjectMethodFields['decorators'] {
-        return this.value.decorators;
+        return this.getFields().key;
     }
 
     getBody(): ObjectMethodFields['body'] {
-        return this.value.body;
+        return this.getFields().body;
     }
 }
 
@@ -167,5 +172,5 @@ export const objectMethodTypePair: EvaluatePair<ObjectMethod, ObjectMethodTypeCl
     );
 
 export const isObjectMethodType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ObjectMethodTypeClass => target instanceof ObjectMethodTypeClass;

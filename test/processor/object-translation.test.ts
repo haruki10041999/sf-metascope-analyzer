@@ -80,12 +80,12 @@ describe('object translation diff (docs/examples/metadata)', () => {
             unit('Broken__c-ja').resolvedError.map((e) => e.status),
             ['added'],
         );
+        // after は項目の翻訳が読めないので fields を持たない (エラーのノードはない) → 配列ごと removed
+        const brokenFields = fieldsOf('Broken__c-ja').fields as Node;
+        assert.equal(brokenFields.status, 'removed');
         assert.deepEqual(
-            (fieldsOf('Broken__c-ja').fields as Node[]).map((f) => [f.status, f.kind]),
-            [
-                ['removed', 'fieldTranslation'],
-                ['added', 'error'],
-            ],
+            (brokenFields.value as Node[]).map((f) => f.kind),
+            ['fieldTranslation'],
         );
     });
 });

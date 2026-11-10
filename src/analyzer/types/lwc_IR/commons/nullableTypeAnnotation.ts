@@ -1,46 +1,46 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isNullableTypeAnnotation, type NullableTypeAnnotation } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { flowTypeVisitorEvaluatePairs, type FlowTypeTypeClass } from '../flowTypeVisitor';
 
-export type NullableTypeAnnotationFields = {
-    typeAnnotation: FlowTypeTypeClass | LwcErrorTypeClass;
+export type NullableTypeAnnotationFields = TypeField<'nullableTypeAnnotation'> & {
+    typeAnnotation: FlowTypeTypeClass;
 };
 
-export class NullableTypeAnnotationTypeClass extends LwcCommonTypeClass<'nullableTypeAnnotation'> {
-    private readonly value: NullableTypeAnnotationFields;
-
-    private constructor(value: NullableTypeAnnotationFields) {
-        super('nullableTypeAnnotation');
-        this.value = value;
+export class NullableTypeAnnotationTypeClass extends LwcCommonTypeClass<
+    'nullableTypeAnnotation',
+    NullableTypeAnnotationFields
+> {
+    private constructor(value: FieldsOf<NullableTypeAnnotationFields>, sourceSpan: SourceSpan) {
+        super('nullableTypeAnnotation', value, sourceSpan);
     }
 
     static create(
         target: NullableTypeAnnotation,
         originalSource: string,
     ): NullableTypeAnnotationTypeClass {
-        return new NullableTypeAnnotationTypeClass({
-            typeAnnotation: visitNode(
-                target.typeAnnotation,
-                originalSource,
-                flowTypeVisitorEvaluatePairs(),
-                'FlowTypeVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): NullableTypeAnnotationFields {
-        return this.value;
+        return new NullableTypeAnnotationTypeClass(
+            {
+                typeAnnotation: visitNode(
+                    target.typeAnnotation,
+                    originalSource,
+                    flowTypeVisitorEvaluatePairs(),
+                    'FlowTypeVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getTypeAnnotation(): NullableTypeAnnotationFields['typeAnnotation'] {
-        return this.value.typeAnnotation;
+        return this.getFields().typeAnnotation;
     }
 }
 
@@ -52,5 +52,5 @@ export const nullableTypeAnnotationTypePair: EvaluatePair<
 );
 
 export const isNullableTypeAnnotationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is NullableTypeAnnotationTypeClass => target instanceof NullableTypeAnnotationTypeClass;

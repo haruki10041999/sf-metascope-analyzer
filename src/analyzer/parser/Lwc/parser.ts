@@ -71,7 +71,7 @@ export class LwcParser {
 
     /**
      * バンドル (lwc/<名前>/ のフォルダ) を読む。フォルダを 1 回読んで (folder.ts)、中のファイルをまとめて解析する (bundle.ts)。
-     * フォルダが読めない・メインのモジュール (<名前>.ts / .js) がないときは dataType: 'error'
+     * フォルダが読めない・メインのモジュール (<名前>.ts / .js) がないときは dataType: 'error' (中身はなく、理由は resolvedError)
      */
     static async parseLwcBundle(
         bundleDir: string,
@@ -84,6 +84,7 @@ export class LwcParser {
             return makeErrorBundleResult(
                 bundleDir,
                 path.basename(bundleDir),
+                'BUNDLE_UNREADABLE',
                 'bundle folder cannot be read',
             );
         }
@@ -121,6 +122,8 @@ export class LwcParser {
 
     /** baseDir に保存したすべてのバンドルを読む (lwc_ で始まるものだけ)。baseDir がなければ空 */
     static async readSavedBundles(baseDir: string): Promise<LwcBundleParseResult[]> {
-        return readSavedMsgPacks(baseDir, isLwcSaveId, (id) => LwcParser.readLwcMsgPack(baseDir, id));
+        return readSavedMsgPacks(baseDir, isLwcSaveId, (id) =>
+            LwcParser.readLwcMsgPack(baseDir, id),
+        );
     }
 }

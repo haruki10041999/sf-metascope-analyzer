@@ -1,46 +1,46 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isIntersectionTypeAnnotation, type IntersectionTypeAnnotation } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
 import { flowTypeVisitorEvaluatePairs, type FlowTypeTypeClass } from '../flowTypeVisitor';
 
-export type IntersectionTypeAnnotationFields = {
-    types: (FlowTypeTypeClass | LwcErrorTypeClass)[];
+export type IntersectionTypeAnnotationFields = TypeField<'intersectionTypeAnnotation'> & {
+    types: FlowTypeTypeClass[];
 };
 
-export class IntersectionTypeAnnotationTypeClass extends LwcCommonTypeClass<'intersectionTypeAnnotation'> {
-    private readonly value: IntersectionTypeAnnotationFields;
-
-    private constructor(value: IntersectionTypeAnnotationFields) {
-        super('intersectionTypeAnnotation');
-        this.value = value;
+export class IntersectionTypeAnnotationTypeClass extends LwcCommonTypeClass<
+    'intersectionTypeAnnotation',
+    IntersectionTypeAnnotationFields
+> {
+    private constructor(value: FieldsOf<IntersectionTypeAnnotationFields>, sourceSpan: SourceSpan) {
+        super('intersectionTypeAnnotation', value, sourceSpan);
     }
 
     static create(
         target: IntersectionTypeAnnotation,
         originalSource: string,
     ): IntersectionTypeAnnotationTypeClass {
-        return new IntersectionTypeAnnotationTypeClass({
-            types: visitNodeList(
-                target.types,
-                originalSource,
-                flowTypeVisitorEvaluatePairs(),
-                'FlowTypeVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): IntersectionTypeAnnotationFields {
-        return this.value;
+        return new IntersectionTypeAnnotationTypeClass(
+            {
+                types: visitNodeList(
+                    target.types,
+                    originalSource,
+                    flowTypeVisitorEvaluatePairs(),
+                    'FlowTypeVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getTypes(): IntersectionTypeAnnotationFields['types'] {
-        return this.value.types;
+        return this.getFields().types;
     }
 }
 
@@ -52,6 +52,6 @@ export const intersectionTypeAnnotationTypePair: EvaluatePair<
 );
 
 export const isIntersectionTypeAnnotationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is IntersectionTypeAnnotationTypeClass =>
     target instanceof IntersectionTypeAnnotationTypeClass;

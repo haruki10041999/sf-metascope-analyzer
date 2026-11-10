@@ -1,15 +1,16 @@
 import { UpdateTypeContext } from '@apexdevtools/apex-parser';
 
-import { ClauseValueTypeClass } from '.';
+import { ApexCommonTypeClass, getSourceSpan, isSpicifyApexCommonTypeClass } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { ApexCommonTypeClass } from '../commonVisitor';
+export type UpdateTypeType = TypeField<'updateType'> & {
+    value: 'TRACKING' | 'VIEWSTAT';
+};
 
-export class UpdateTypeTypeClass extends ClauseValueTypeClass<
-    'updateType',
-    'TRACKING' | 'VIEWSTAT'
-> {
-    private constructor(value: 'TRACKING' | 'VIEWSTAT') {
-        super('updateType', value);
+export class UpdateTypeTypeClass extends ApexCommonTypeClass<'updateType', UpdateTypeType> {
+    private constructor(fields: FieldsOf<UpdateTypeType>, sourceSpan: SourceSpan) {
+        super('updateType', fields, sourceSpan);
     }
 
     static create(ctx: UpdateTypeContext): UpdateTypeTypeClass {
@@ -17,12 +18,19 @@ export class UpdateTypeTypeClass extends ClauseValueTypeClass<
             throw new Error('値が異常です UpdateTypeContext:' + ctx.getText());
         }
 
-        return new UpdateTypeTypeClass(ctx.TRACKING() ? 'TRACKING' : 'VIEWSTAT');
+        return new UpdateTypeTypeClass(
+            { value: ctx.TRACKING() ? 'TRACKING' : 'VIEWSTAT' },
+            getSourceSpan(ctx),
+        );
+    }
+
+    getValue(): UpdateTypeType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isUpdateTypeType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is UpdateTypeTypeClass => {
-    return target instanceof UpdateTypeTypeClass;
+    return isSpicifyApexCommonTypeClass('updateType', target);
 };

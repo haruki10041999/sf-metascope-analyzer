@@ -12,7 +12,8 @@ import type {
 // Apex の単位 (クラス・トリガー・匿名 Apex) の定義と参照。方針: docs/analysis-plan.md 3.3
 // - 定義: クラス (内側のクラスは Outer.Inner)・インターフェース・enum・メソッド・プロパティ・項目
 // - 参照: SOQL / SOSL の対象 (オブジェクト・項目)、DML の対象、メソッドの呼び出し、型 (extends / implements /
-//   変数の型 / new)、Label.<名前>、Schema の参照、カスタム権限 (FeatureManagement.checkPermission)、トリガーのオブジェクト
+//   変数の型 / new)、Label.<名前>、Schema の参照、カスタム権限 (FeatureManagement.checkPermission)、トリガーのオブジェクト、
+//   カスタム設定・カスタムメタデータ型の読み取り (X__c.getInstance() / X__mdt.getInstance('Rec') など)
 // - 変数の型は、メソッドの引数・ローカル変数・for の変数・クラスの項目から決める (同じ名前は内側を優先)。
 //   型がクラスかオブジェクトかは決めず (apexType / apexTypeMember)、グラフで定義と突き合わせて決める
 
@@ -71,6 +72,16 @@ const DML_KINDS: Record<string, DependencyKind> = {
     undelete: 'undeletes',
     merge: 'merges',
 };
+
+/** 呼び出しの最初の引数が名前の文字列のリテラル ('Default') なら、その名前 */
+const nameArgOf = (node: Json): string | undefined => {
+    const arg = Array.isArray(node.memberArg) ? node.memberArg[0] : undefined;
+    const literal = isRecord(arg) ? str(arg.value) : undefined;
+    return literal && /^'\w+'$/.test(literal) ? literal.slice(1, -1) : undefined;
+};
+
+/** カスタム設定の読み取りのメソッド (小文字) */
+const SETTINGS_METHODS = new Set(['getinstance', 'getorgdefaults', 'getvalues', 'getall']);
 
 const APEX_LABEL = /^(?:System\.)?Label\.(\w+)$/i;
 
@@ -220,6 +231,56 @@ export const getApexDependencies = (unit: ApexUnitParseResult): UnitDependencies
         return undefined;
     };
 
+    /**
+     * カスタム設定 (X__c) ・カスタムメタデータ型 (X__mdt) の読み取りの呼び出し (X__c.getInstance() など)。
+     * single はレコード 1 つを返すもの (続く .Field__c を項目の読み取りにする)
+     */
+    const settingsCallOf = (
+        node: Json,
+    ): { type: string; single: boolean; via: string; record?: string } | undefined => {
+        if (node.kind !== 'memberAccess' || node.type !== 'method') return undefined;
+        const object = str(node.object);
+        const member = str(node.member)?.toLowerCase();
+        // Apex の変数名は __ を持てないので、X__c / X__mdt はいつも型の名前
+        if (!object || !member) return undefined;
+        const record = nameArgOf(node);
+        if (/__c$/i.test(object) && SETTINGS_METHODS.has(member)) {
+            return { type: object, single: member !== 'getall', via: 'customSetting' };
+        }
+        if (/__mdt$/i.test(object) && (member === 'getinstance' || member === 'getall')) {
+            return {
+                type: object,
+                single: member === 'getinstance',
+                via: 'customMetadata',
+                ...(member === 'getinstance' && record ? { record } : {}),
+            };
+        }
+        return undefined;
+    };
+    /** 設定の読み取りの呼び出しなら参照にして true (X__c.getInstance は項目ではない) */
+    const settingsRefs = (context: Context, node: Json): boolean => {
+        const keys = keysOf(node);
+        // X__mdt.getAll().get('Rec')
+        if (isRecord(node.object) && str(node.member)?.toLowerCase() === 'get') {
+            const owner = settingsCallOf(node.object);
+            const name = nameArgOf(node);
+            if (owner?.via === 'customMetadata' && name) {
+                const record = `${owner.type.replace(/__mdt$/i, '')}.${name}`;
+                add(context, 'customMetadata', record, 'reads', owner.via, keys);
+                return true;
+            }
+            return false;
+        }
+        const call = settingsCallOf(node);
+        if (!call) return false;
+        add(context, 'object', call.type, 'reads', call.via, keys);
+        if (call.record) {
+            const record = `${call.type.replace(/__mdt$/i, '')}.${call.record}`;
+            add(context, 'customMetadata', record, 'reads', call.via, keys);
+        }
+        return true;
+    };
+
     /** メンバーの参照 (a.b / a.b() / X.method()) */
     const memberAccessRefs = (context: Context, node: Json) => {
         const keys = keysOf(node);
@@ -252,6 +313,7 @@ export const getApexDependencies = (unit: ApexUnitParseResult): UnitDependencies
                     );
                 }
             }
+            if (settingsRefs(context, node)) return;
             if (typeof object === 'string' && object !== 'this' && object !== 'super') {
                 const variable = variableOf(context, object);
                 // 集合のメソッド (accounts.size()) と、型の分からない変数 (小文字で始まる名前) は参照にしない
@@ -275,6 +337,14 @@ export const getApexDependencies = (unit: ApexUnitParseResult): UnitDependencies
                 add(context, 'apexMethod', `${context.className}.${member}`, 'calls', 'call', keys);
             }
             return;
+        }
+        // 設定の読み取りの結果の項目 (Conf__c.getInstance().Rate__c)
+        if (node.type === 'object' && isRecord(object)) {
+            const owner = settingsCallOf(object);
+            if (owner?.single) {
+                add(context, 'field', `${owner.type}.${member}`, 'reads', owner.via, keys);
+                return;
+            }
         }
         if (node.type === 'object' && typeof object === 'string') {
             // Schema.SObjectType.Account / Account.SObjectType / Schema.Account

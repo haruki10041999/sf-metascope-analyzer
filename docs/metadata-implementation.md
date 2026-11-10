@@ -25,16 +25,16 @@ MetadataProcessor → MCP の analyze_objects → viewer（レポート HTML）
 
 ## 2. ファイル構成
 
-| 層              | ファイル                                                                                                                                                                            | 役割                                                                                                                                                                                |
-| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| XML の読み取り  | [types/commons/xml.ts](../src/analyzer/types/commons/xml.ts)                                                                                                                        | `parseXml`。要素ごとに開始・終了位置（offset / 行 / 列）を持つ木（`XmlElement`）を作る。構文エラーは `XmlSyntaxError`（位置付き）                                                   |
-| JSON の共通部品 | [types/commons/xmlJson.ts](../src/analyzer/types/commons/xmlJson.ts)                                                                                                                | `makeXmlJson`（kind / sourceKeys の付与とソース位置の登録）、`makeXmlErrorJson`、`XmlSourceRegistry`、`findXmlSourceInfo`、子要素を読む `readProperties` / `readText` / `readTexts` |
-| JSON の型       | [types/metadata/](../src/analyzer/types/metadata/) の `object.ts`・`field.ts`・`validationRule.ts`・`recordType.ts`・`listView.ts`・`fieldSet.ts`・`compactLayout.ts`・`webLink.ts` | kind ごとの `*Json` 型、`make*Json`、値のスキーマ（`*_SCHEMA`）。`object.ts` には子の種類の対応表 `OBJECT_MEMBERS` と、フォルダ全体をまとめる `makeCustomObjectJson` がある         |
-| parse           | [parser/Metadata/parser.ts](../src/analyzer/parser/Metadata/parser.ts)                                                                                                              | `MetadataParser`。フォルダを探し、ファイルを読み、`ObjectParseResult` にする。msgpack / JSON での保存と読み込み                                                                     |
-| analysis        | [processor/Metadata/analysis.ts](../src/analyzer/processor/Metadata/analysis.ts)                                                                                                    | 項目の値の型、暗黙の標準項目、参照関係、関連オブジェクト                                                                                                                            |
-| diff            | [processor/Metadata/diff/](../src/analyzer/processor/Metadata/diff/)                                                                                                                | kind ごとの `*JsonDiff` と `make*Diff`（types と同じファイル分け）、オブジェクト単位の `unit.ts`、共通部品 `commons.ts`                                                             |
-| 表示用データ    | [processor/Metadata/view.ts](../src/analyzer/processor/Metadata/view.ts)                                                                                                            | viewer に渡す `ObjectView` / `FieldView` / `DependencyView`                                                                                                                         |
-| まとめ役        | [processor/Metadata/metadata.ts](../src/analyzer/processor/Metadata/metadata.ts)                                                                                                    | `MetadataProcessor`。before / after を読み、差分と表示用データを返す。MCP サーバーから使う                                                                                          |
+| 層              | ファイル                                                                                                                                                                            | 役割                                                                                                                                                                                                       |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| XML の読み取り  | [types/commons/xml.ts](../src/analyzer/types/commons/xml.ts)                                                                                                                        | `parseXml`。要素ごとに開始・終了位置（offset / 行 / 列）を持つ木（`XmlElement`）を作る。構文エラーは `XmlSyntaxError`（位置付き）                                                                          |
+| JSON の共通部品 | [types/commons/xmlJson.ts](../src/analyzer/types/commons/xmlJson.ts)                                                                                                                | `makeXmlJson`（kind / sourceKeys の付与とソース位置の登録）、`readXmlRoot`（読めなければ null と理由）、`XmlSourceRegistry`、`findXmlSourceInfo`、子要素を読む `readProperties` / `readText` / `readTexts` |
+| JSON の型       | [types/metadata/](../src/analyzer/types/metadata/) の `object.ts`・`field.ts`・`validationRule.ts`・`recordType.ts`・`listView.ts`・`fieldSet.ts`・`compactLayout.ts`・`webLink.ts` | kind ごとの `*Json` 型、`make*Json`、値のスキーマ（`*_SCHEMA`）。`object.ts` には子の種類の対応表 `OBJECT_MEMBERS` と、フォルダ全体をまとめる `makeCustomObjectJson` がある                                |
+| parse           | [parser/Metadata/parser.ts](../src/analyzer/parser/Metadata/parser.ts)                                                                                                              | `MetadataParser`。フォルダを探し、ファイルを読み、`ObjectParseResult` にする。msgpack / JSON での保存と読み込み                                                                                            |
+| analysis        | [processor/Metadata/analysis.ts](../src/analyzer/processor/Metadata/analysis.ts)                                                                                                    | 項目の値の型、暗黙の標準項目、参照関係、関連オブジェクト                                                                                                                                                   |
+| diff            | [processor/Metadata/diff/](../src/analyzer/processor/Metadata/diff/)                                                                                                                | kind ごとの `*JsonDiff` と `make*Diff`（types と同じファイル分け）、オブジェクト単位の `unit.ts`、共通部品 `commons.ts`                                                                                    |
+| 表示用データ    | [processor/Metadata/view.ts](../src/analyzer/processor/Metadata/view.ts)                                                                                                            | viewer に渡す `ObjectView` / `FieldView` / `DependencyView`                                                                                                                                                |
+| まとめ役        | [processor/Metadata/metadata.ts](../src/analyzer/processor/Metadata/metadata.ts)                                                                                                    | `MetadataProcessor`。before / after を読み、差分と表示用データを返す。MCP サーバーから使う                                                                                                                 |
 
 すべて `src/analyzer/index.ts` から公開している（`types` / `parser` / `processor` の各 `index.ts` 経由）。
 
@@ -56,7 +56,7 @@ MetadataProcessor → MCP の analyze_objects → viewer（レポート HTML）
 | `businessProcesses` | `businessProcesses/*.businessProcess-meta.xml` | `BusinessProcess` | `businessProcess`（使える値 `values` は集合）   |
 | `sharingReasons`    | `sharingReasons/*.sharingReason-meta.xml`      | `SharingReason`   | `sharingReason`                                 |
 
-- `<API 名>.object-meta.xml`（`CustomObject`）から、オブジェクト自身の値（`label`、`sharingModel` など）、`nameField`、検索レイアウト（`searchLayouts`。項目・ボタンの並び）、アクションの上書き（`actionOverrides`。kind `objectActionOverride`）を読む。項目は参照項目の絞り込み条件（`lookupFilter`）も読む。新しく足したこれらは要素があるときだけ持つ（保存済みのオブジェクトの objectKey を変えないため）。ないとき（標準オブジェクトなど）は、子のファイルだけから作る。
+- `<API 名>.object-meta.xml`（`CustomObject`）から、オブジェクト自身の値（`label`、`sharingModel`、カスタム設定の `customSettingsType`（`List` / `Hierarchy`）・`customSettingsVisibility` など。`objectType` は接尾辞で決めるので、カスタム設定も `custom`）、`nameField`、検索レイアウト（`searchLayouts`。項目・ボタンの並び）、アクションの上書き（`actionOverrides`。kind `objectActionOverride`）を読む。項目は参照項目の絞り込み条件（`lookupFilter`）も読む。新しく足したこれらは要素があるときだけ持つ（保存済みのオブジェクトの objectKey を変えないため）。ないとき（標準オブジェクトなど）は、子のファイルだけから作る。
 - メタデータ API の形式（`<CustomObject>` の中に `<fields>` などを書く）も読む。子の並びは、object-meta.xml の中のもののあとに、ファイル名の順。
 - プロパティ名は XML の要素名と同じ。真偽値・数値は `boolean` / `number` にする。フォルダにもファイルにもないもの（値の要素、子のフォルダ、空のリスト）はプロパティごと持たない。
 - 種類を増やすときは、`types/metadata/` に型と `make*Json` を足し、`OBJECT_MEMBERS` に 1 行足す（parser は表を見てフォルダを読む）。
@@ -73,11 +73,11 @@ MetadataProcessor → MCP の analyze_objects → viewer（レポート HTML）
 
 ### 3.3 読めなかったファイル
 
-| 場合                             | 結果                                                                                      |
-| -------------------------------- | ----------------------------------------------------------------------------------------- |
-| 子のファイルの XML の構文エラー  | その配列に `ErrorJson`（`kindType` は読もうとした kind）。`resolvedError` に `XML_SYNTAX` |
-| 子のファイルのルート要素の間違い | 同上。`UNEXPECTED_ROOT`                                                                   |
-| object-meta.xml 自体が読めない   | オブジェクト全体が `dataType: 'error'`（`base` が `ErrorJson`）                           |
+| 場合                             | 結果                                                                                                     |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| 子のファイルの XML の構文エラー  | その配列に入れない（JSON から落とす）。`resolvedError` に `XML_SYNTAX`（`kindType` は読もうとした kind） |
+| 子のファイルのルート要素の間違い | 同上。`UNEXPECTED_ROOT`                                                                                  |
+| object-meta.xml 自体が読めない   | オブジェクト全体が `dataType: 'error'`（`base` は null）                                                 |
 
 ### 3.4 主な API（`MetadataParser`）
 
@@ -88,12 +88,12 @@ MetadataProcessor → MCP の analyze_objects → viewer（レポート HTML）
 | `parseObjects(rootDir)`                                     | `objects` フォルダ（またはその上）の下のすべてのオブジェクトを読む。`objects` そのものを渡すと直下だけを見る                                  |
 | `searchObjectDirectories(rootDir)`                          | オブジェクトのフォルダの一覧                                                                                                                  |
 | `saveObjectFile` / `readObjectMsgPack` / `readSavedObjects` | msgpack（Apex と同じ設定）での保存と読み込み                                                                                                  |
-| `saveObjectFileForDeveloper`                               | 確認用の JSON                                                                                                                                 |
+| `saveObjectFileForDeveloper`                                | 確認用の JSON                                                                                                                                 |
 
 ```ts
 const result = await MetadataParser.parseObject('force-app/main/default/objects/Invoice__c');
 if (result.dataType === 'object') {
-    result.result.base.fields; // (CustomFieldJson | ErrorJson)[]
+    result.result.base.fields; // CustomFieldJson[]（読めなかった項目は入らない）
 }
 ```
 
@@ -111,7 +111,7 @@ if (result.dataType === 'object') {
 ### 5.1 オブジェクト単位（`makeObjectUnitDiffs`）
 
 - オブジェクトは API 名で対応付ける。片方にしかなければ `added` / `removed`。
-- `ObjectUnitDiff` は `id`、`status`、`filePath`、`dataType`、`resolvedError`（読めなかったファイルの集合）、`content`（`CustomObjectJsonDiff`、どちらも読めなかったときは `ErrorJsonDiff`）を持つ。
+- `ObjectUnitDiff` は `id`、`status`、`filePath`、`dataType`、`resolvedError`（読めなかったファイルの集合）、`content`（`CustomObjectJsonDiff`）を持つ。どちらかが `dataType: 'error'` なら `content` はなく、違いは `dataType` と `resolvedError` に出る。
 - 中身か `resolvedError` に変化があれば `changed`。位置だけの変化は `unchanged`。
 
 ### 5.2 kind ごと
@@ -224,12 +224,12 @@ npx ttsx --noCheck docs/examples/metadata/scripts/run-diff.ts    # output/diff/:
 
 ### 10.1 対象
 
-| 分類                 | 種類（`dataType`・保存名の接頭辞）                                                                                                                                                                                                                                                                    | フォルダ                                                                                                                                                     |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 権限                 | `permissionSet`・`mutingPermissionSet`・`profile`・`permissionSetGroup`                                                                                                                                                                                                                               | `permissionsets/`・`mutingpermissionsets/`・`profiles/`・`permissionsetgroups/`                                                                              |
-| ラベル・自動化・画面 | `customLabels`・`flow`・`layout`・`flexiPage`                                                                                                                                                                                                                                                         | `labels/`・`flows/`・`layouts/`・`flexipages/`                                                                                                               |
-| そのほか（表で読む） | `customMetadata`・`customTab`・`customApplication`・`globalValueSet`・`standardValueSet`・`customPermission`・`quickAction`・`sharingRules`・`staticResource`・`report`・`dashboard`・`translations`・`namedCredential`・`remoteSiteSetting`・`workflow`・`approvalProcess`・`queue`・`group`・`role` | `customMetadata/`・`tabs/`・`applications/` など（`parser/Metadata/record.ts` の `RECORD_FOLDERS`）。レポート・ダッシュボードは `<フォルダ>/<サブフォルダ>/` |
-| 本体を伴う・バンドル | `apexPage`・`apexComponent`（Visualforce）・`emailTemplate`・`aura`                                                                                                                                                                                                                                   | `pages/`・`components/`・`email/<サブフォルダ>/`・`aura/<名前>/`                                                                                             |
+| 分類                 | 種類（`dataType`・保存名の接頭辞）                                                                                                                                                                                                                                                                                                                                                    | フォルダ                                                                                                                                                                                                                                       |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 権限                 | `permissionSet`・`mutingPermissionSet`・`profile`・`permissionSetGroup`                                                                                                                                                                                                                                                                                                               | `permissionsets/`・`mutingpermissionsets/`・`profiles/`・`permissionsetgroups/`                                                                                                                                                                |
+| ラベル・自動化・画面 | `customLabels`・`flow`・`layout`・`flexiPage`                                                                                                                                                                                                                                                                                                                                         | `labels/`・`flows/`・`layouts/`・`flexipages/`                                                                                                                                                                                                 |
+| そのほか（表で読む） | `customMetadata`・`customTab`・`customApplication`・`globalValueSet`・`standardValueSet`・`customPermission`・`quickAction`・`sharingRules`・`staticResource`・`report`・`dashboard`・`translations`・`namedCredential`・`remoteSiteSetting`・`workflow`・`approvalProcess`・`queue`・`group`・`role`・`messageChannel`・`externalCredential`・`customNotificationType`・`reportType` | `customMetadata/`・`tabs/`・`applications/`・`messageChannels/`・`externalCredentials/`・`notificationtypes/`・`reportTypes/` など（`parser/Metadata/record.ts` の `RECORD_FOLDERS`）。レポート・ダッシュボードは `<フォルダ>/<サブフォルダ>/` |
+| 本体を伴う・バンドル | `apexPage`・`apexComponent`（Visualforce）・`emailTemplate`・`aura`                                                                                                                                                                                                                                                                                                                   | `pages/`・`components/`・`email/<サブフォルダ>/`・`aura/<名前>/`                                                                                                                                                                               |
 
 ### 10.2 読み方（[parser/Metadata/folder.ts](../src/analyzer/parser/Metadata/folder.ts)）
 

@@ -1,4 +1,4 @@
-import type { ErrorJson, JsonType } from '../commons/json';
+import type { JsonType } from '../commons/json';
 import { childOf, childrenOf, type XmlElement } from '../commons/xml';
 import {
     makeXmlJson,
@@ -95,21 +95,15 @@ const readList = (element: XmlElement, container: string, item: string): string[
 const LWC_BUNDLE_META_KIND = 'lwcBundleMeta';
 const LWC_BUNDLE_META_ROOT = 'LightningComponentBundle';
 
-/** 読み込んだ js-meta.xml を JSON にする。読めない・ルート要素が違うときは ErrorJson (理由は problems) */
+/** 読み込んだ js-meta.xml を JSON にする。読めない・ルート要素が違うときは null (理由は problems) */
 export const makeLwcBundleMetaJson = (
     file: ParsedXmlFile,
     registry: XmlSourceRegistry,
     problems: XmlReadProblem[],
-): LwcBundleMetaJson | ErrorJson => {
-    const element = readXmlRoot(
-        file,
-        LWC_BUNDLE_META_ROOT,
-        LWC_BUNDLE_META_KIND,
-        registry,
-        problems,
-    );
-    if (!('name' in element)) {
-        return element;
+): LwcBundleMetaJson | null => {
+    const element = readXmlRoot(file, LWC_BUNDLE_META_ROOT, LWC_BUNDLE_META_KIND, problems);
+    if (!element) {
+        return null;
     }
 
     const targetConfigs = childrenIn(element, 'targetConfigs', 'targetConfig').map((config) =>

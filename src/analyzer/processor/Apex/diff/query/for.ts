@@ -1,4 +1,4 @@
-import { ErrorJson, ForJson } from '../../../../types';
+import { ForJson } from '../../../../types';
 
 import { Match, NodeDiff, makeNodeDiff } from '../../../commons/diff/commons';
 import { makeUnorderedValueListDiff } from './commons';
@@ -10,11 +10,7 @@ export type ForJsonDiff = NodeDiff<
     { value: TypedListItemDiff<string, never>[] }
 >;
 
-export const makeForDiff = (
-    before: ForJson | ErrorJson,
-    after: ForJson | ErrorJson,
-    match: Match = 'slot',
-): ForJsonDiff =>
+export const makeForDiff = (before: ForJson, after: ForJson, match: Match = 'slot'): ForJsonDiff =>
     makeNodeDiff('forClause', before, after, match, (b, a) => ({
         value: makeUnorderedValueListDiff(b.value, a.value),
     }));

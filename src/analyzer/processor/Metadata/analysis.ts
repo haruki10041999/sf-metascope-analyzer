@@ -1,10 +1,4 @@
-import {
-    ConvertKeys,
-    CustomFieldJson,
-    CustomObjectJson,
-    ObjectType,
-    isErrorJson,
-} from '../../types';
+import { ConvertKeys, CustomFieldJson, CustomObjectJson, ObjectType } from '../../types';
 
 // 方針: docs/metadata-implementation.md
 // 1 つの時点の CustomObjectJson から情報を取り出す。Diff には依存しない (Apex の analysis と同じ分け方)。
@@ -129,11 +123,9 @@ const toFieldInfo = (field: CustomFieldJson): ObjectFieldInfo => {
     };
 };
 
-/** オブジェクトの項目の一覧。暗黙の標準項目のあとに、メタデータの項目を API 名の順で並べる (読めなかった項目は除く) */
+/** オブジェクトの項目の一覧。暗黙の標準項目のあとに、メタデータの項目を API 名の順で並べる (読めなかった項目は JSON にない) */
 export const analyzeObject = (object: CustomObjectJson): ObjectInfo => {
-    const fields = (object.fields ?? []).filter(
-        (field) => !isErrorJson(field),
-    ) as CustomFieldJson[];
+    const fields: CustomFieldJson[] = object.fields ?? [];
     const defined = new Set(fields.map((field) => field.apiName));
     return {
         apiName: object.apiName,

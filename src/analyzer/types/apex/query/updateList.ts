@@ -1,7 +1,7 @@
 import typia from 'typia';
 
 import { JsonType } from '../../commons';
-import type { UpdateListTypeClass } from '../../apex_IR_v2';
+import type { UpdateListTypeClass } from '../../apex_IR';
 
 import { makeNodeJson } from '../commons/node';
 

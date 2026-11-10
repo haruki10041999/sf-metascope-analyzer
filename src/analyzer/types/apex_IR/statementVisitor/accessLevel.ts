@@ -1,30 +1,31 @@
 import { AccessLevelContext } from '@apexdevtools/apex-parser';
 
-import { StatementValueTypeClass } from '.';
+import { ApexCommonTypeClass, getSourceSpan, isSpicifyApexCommonTypeClass } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { ApexCommonTypeClass } from '../commonVisitor';
+export type AccessLevelValueType = TypeField<'accessLevel'> & { level: 'SYSTEM' | 'USER' };
+export type AccessLevelType = AccessLevelValueType;
 
-type AccessLevelValueType = 'SYSTEM' | 'USER';
-
-export class AccessLevelTypeClass extends StatementValueTypeClass<
-    'accessLevel',
-    AccessLevelValueType
-> {
-    private constructor(value: AccessLevelValueType) {
-        super('accessLevel', value);
+export class AccessLevelTypeClass extends ApexCommonTypeClass<'accessLevel', AccessLevelValueType> {
+    private constructor(fields: FieldsOf<AccessLevelValueType>, sourceSpan: SourceSpan) {
+        super('accessLevel', fields, sourceSpan);
     }
 
-    static create(ctx: AccessLevelContext) {
-        if (!ctx.SYSTEM() && !ctx.USER()) {
-            throw new Error('値が異常です。AccessLevelContext: ' + ctx.getText());
-        }
+    static create(ctx: AccessLevelContext): AccessLevelTypeClass {
+        return new AccessLevelTypeClass(
+            { level: ctx.SYSTEM() ? 'SYSTEM' : 'USER' },
+            getSourceSpan(ctx),
+        );
+    }
 
-        return new AccessLevelTypeClass(ctx.SYSTEM() ? 'SYSTEM' : 'USER');
+    getLevel(): AccessLevelValueType['level'] {
+        return this.getFields().level;
     }
 }
 
 export const isAccessLevelType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is AccessLevelTypeClass => {
-    return target instanceof AccessLevelTypeClass;
+    return isSpicifyApexCommonTypeClass('accessLevel', target);
 };

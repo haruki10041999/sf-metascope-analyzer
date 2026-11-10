@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { IdentifierTypeClass, identifierTypePair } from '../commons/identifier';
 import { RestElementTypeClass, restElementTypePair } from '../commons/restElement';
@@ -65,7 +66,7 @@ export type FunctionParameterTypeClass =
     | VoidPatternTypeClass;
 
 export const isFunctionParameterType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is FunctionParameterTypeClass => {
     return (
         target instanceof IdentifierTypeClass ||

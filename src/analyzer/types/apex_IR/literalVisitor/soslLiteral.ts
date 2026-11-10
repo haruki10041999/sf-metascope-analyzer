@@ -1,54 +1,62 @@
 import { SoslLiteralContext } from '@apexdevtools/apex-parser';
 
-import { LiteralTypeClass } from '.';
-
+import { BoundExpressionTypeClass } from '../expressionVisitor';
+import { SoslClausesTypeClass } from '../clauseVisitor';
 import {
-    BoundExpressionTypeClass,
-    ExpressionVisitor,
-    isBoundExpressionType,
-} from '../expressionVisitor';
-import { SoslClausesTypeClass, ClauseVisitor, isSoslClausesType } from '../clauseVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class SoslLiteralTypeClass extends LiteralTypeClass<
-    'soslLiteral',
-    string | BoundExpressionTypeClass
-> {
-    private soslClauses: SoslClausesTypeClass | ApexErrorTypeClass;
+export type SoslLiteralType = TypeField<'soslLiteral'> & {
+    /** `FIND 'xxx'` (literal) と `FIND :var` (bind) */
+    search: { kind: 'literal'; text: string } | { kind: 'bind'; expr: BoundExpressionTypeClass };
+    soslClauses: SoslClausesTypeClass;
+};
 
-    private constructor(
-        value: string | BoundExpressionTypeClass | ApexErrorTypeClass,
-        soslClauses: SoslClausesTypeClass | ApexErrorTypeClass,
-    ) {
-        super('soslLiteral', value);
-        this.soslClauses = soslClauses;
+export class SoslLiteralTypeClass extends ApexCommonTypeClass<'soslLiteral', SoslLiteralType> {
+    private constructor(fields: FieldsOf<SoslLiteralType>, sourceSpan: SourceSpan) {
+        super('soslLiteral', fields, sourceSpan);
     }
 
     static create(ctx: SoslLiteralContext): SoslLiteralTypeClass {
-        if ((!ctx.FindLiteral() && !ctx.boundExpression()) || !ctx.soslClauses()) {
-            throw new Error('値が異常です。SoslLiteralContext: ' + ctx.getText());
-        }
-
-        return new SoslLiteralTypeClass(
-            ctx.FindLiteral()
-                ? ctx.FindLiteral().getText()
-                : visitNode(
-                      new ExpressionVisitor(),
+        // `[FIND 'xxx' ...]` は FindLiteral、`[FIND :var ...]` は boundExpression
+        const search: SoslLiteralType['search'] = ctx.FindLiteral()
+            ? { kind: 'literal', text: ctx.FindLiteral().getText() }
+            : {
+                  kind: 'bind',
+                  expr: createNode(
                       ctx.boundExpression(),
-                      isBoundExpressionType,
+                      (c) => BoundExpressionTypeClass.create(c),
                       'boundExpression',
                   ),
-            visitNode(new ClauseVisitor(), ctx.soslClauses(), isSoslClausesType, 'soslClauses'),
+              };
+
+        return new SoslLiteralTypeClass(
+            {
+                search,
+                soslClauses: createNode(
+                    ctx.soslClauses(),
+                    (c) => SoslClausesTypeClass.create(c),
+                    'soslClauses',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getSoslClauses(): SoslClausesTypeClass | ApexErrorTypeClass {
-        return this.soslClauses;
+    getSearch(): SoslLiteralType['search'] {
+        return this.getFields().search;
+    }
+
+    getSoslClauses(): SoslLiteralType['soslClauses'] {
+        return this.getFields().soslClauses;
     }
 }
 
 export const isSoslLiteralType = (
-    target: ApexCommonTypeClass<string>,
-): target is SoslLiteralTypeClass => {
-    return target instanceof SoslLiteralTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is SoslLiteralTypeClass => isSpicifyApexCommonTypeClass('soslLiteral', target);

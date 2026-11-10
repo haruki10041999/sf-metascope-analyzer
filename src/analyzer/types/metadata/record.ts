@@ -1,4 +1,4 @@
-import type { ErrorJson, JsonType } from '../commons/json';
+import type { JsonType } from '../commons/json';
 import { childrenOf, type XmlElement } from '../commons/xml';
 import {
     makeMetadataJson,
@@ -163,8 +163,8 @@ export const makeRecordJson =
         file: ParsedXmlFile,
         registry: XmlSourceRegistry,
         problems: XmlReadProblem[],
-    ): RecordJson<S> | ErrorJson => {
-        const root = readXmlRoot(file, spec.root, spec.kind, registry, problems);
-        if (!('name' in root)) return root;
+    ): RecordJson<S> | null => {
+        const root = readXmlRoot(file, spec.root, spec.kind, problems);
+        if (!root) return null;
         return makeRecordJsonFromRoot(spec, root, file, registry);
     };

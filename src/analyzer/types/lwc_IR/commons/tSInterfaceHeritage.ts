@@ -1,67 +1,59 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSInterfaceHeritage, type TSInterfaceHeritage } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
     visitNode,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
-import {
-    tSTypeParameterInstantiationTypePair,
-    type TSTypeParameterInstantiationTypeClass,
-} from '../typeScriptVisitor/tSTypeParameterInstantiation';
+import { TSTypeParameterInstantiationTypeClass } from '../typeScriptVisitor/tSTypeParameterInstantiation';
 
-const tSInterfaceHeritageTypeArgumentsPairs = lazyPairs(
-    () => [tSTypeParameterInstantiationTypePair] as const,
-);
-
-export type TSInterfaceHeritageFields = {
-    expression: ExpressionTypeClass | LwcErrorTypeClass;
-    typeArguments: TSTypeParameterInstantiationTypeClass | LwcErrorTypeClass | null;
+export type TSInterfaceHeritageFields = TypeField<'tSInterfaceHeritage'> & {
+    expression: ExpressionTypeClass;
+    typeArguments: TSTypeParameterInstantiationTypeClass | null;
 };
 
-export class TSInterfaceHeritageTypeClass extends LwcCommonTypeClass<'tSInterfaceHeritage'> {
-    private readonly value: TSInterfaceHeritageFields;
-
-    private constructor(value: TSInterfaceHeritageFields) {
-        super('tSInterfaceHeritage');
-        this.value = value;
+export class TSInterfaceHeritageTypeClass extends LwcCommonTypeClass<
+    'tSInterfaceHeritage',
+    TSInterfaceHeritageFields
+> {
+    private constructor(value: FieldsOf<TSInterfaceHeritageFields>, sourceSpan: SourceSpan) {
+        super('tSInterfaceHeritage', value, sourceSpan);
     }
 
     static create(
         target: TSInterfaceHeritage,
         originalSource: string,
     ): TSInterfaceHeritageTypeClass {
-        return new TSInterfaceHeritageTypeClass({
-            expression: visitNode(
-                target.expression,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-            typeArguments: visitOptionalNode(
-                target.typeArguments,
-                originalSource,
-                tSInterfaceHeritageTypeArgumentsPairs(),
-                'TSInterfaceHeritage.typeArguments',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSInterfaceHeritageFields {
-        return this.value;
+        return new TSInterfaceHeritageTypeClass(
+            {
+                expression: visitNode(
+                    target.expression,
+                    originalSource,
+                    expressionVisitorEvaluatePairs(),
+                    'ExpressionVisitor',
+                ),
+                typeArguments:
+                    target.typeArguments == null
+                        ? null
+                        : TSTypeParameterInstantiationTypeClass.create(
+                              target.typeArguments,
+                              originalSource,
+                          ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getExpression(): TSInterfaceHeritageFields['expression'] {
-        return this.value.expression;
+        return this.getFields().expression;
     }
 
     getTypeArguments(): TSInterfaceHeritageFields['typeArguments'] {
-        return this.value.typeArguments;
+        return this.getFields().typeArguments;
     }
 }
 
@@ -73,5 +65,5 @@ export const tSInterfaceHeritageTypePair: EvaluatePair<
 );
 
 export const isTSInterfaceHeritageType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSInterfaceHeritageTypeClass => target instanceof TSInterfaceHeritageTypeClass;

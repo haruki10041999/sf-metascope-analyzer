@@ -1,6 +1,6 @@
 import typia from 'typia';
 
-import { ErrorJson, JsonType } from '../../commons';
+import { JsonType } from '../../commons';
 import type {
     ComparisonOperatorTypeClass,
     DateFormulaTypeClass,
@@ -9,7 +9,7 @@ import type {
     SignedIntegerTypeClass,
     SignedNumberTypeClass,
     ValueTypeClass,
-} from '../../apex_IR_v2';
+} from '../../apex_IR';
 
 import { makeNodeJson } from '../commons/node';
 import { BaseExpressionJson, makeExpressionJsonConvert } from '../expression';
@@ -140,9 +140,9 @@ export type ValueJson =
     | ({
           type: 'dateFormula';
       } & DateFormulaJson)
-    | { type: 'subQuery'; value: SubQueryJson | ErrorJson }
+    | { type: 'subQuery'; value: SubQueryJson }
     | { type: 'list'; value: ValueJson[] }
-    | { type: 'bind'; value: BaseExpressionJson | ErrorJson };
+    | { type: 'bind'; value: BaseExpressionJson };
 
 export const isValueJson = typia.createIs<ValueJson>();
 
@@ -243,7 +243,7 @@ export const makeSingleConditionJson = (target: FieldExpressionTypeClass): Singl
 };
 
 export type LogicalConditionJson = {
-    condition: (SingleConditionJson | LogicalConditionJson | ErrorJson)[];
+    condition: (SingleConditionJson | LogicalConditionJson)[];
     operator?: 'AND' | 'OR' | 'NOT';
 };
 
@@ -255,17 +255,15 @@ export const makeLogicalConditionJson = (
     const fields = target.getFields();
     // AND・OR は 2 つ以上、NOT と演算子なし (条件が 1 つだけ) は 1 つの被演算子
     const operands = 'operands' in fields ? fields.operands : [fields.operand];
-    const condition: (SingleConditionJson | LogicalConditionJson | ErrorJson)[] = operands.map(
-        (v) => {
-            const value = v.getFields().value;
-            switch (value.kind) {
-                case 'logicalExpression':
-                    return makeLogicalConditionJson(value);
-                case 'fieldExpression':
-                    return makeSingleConditionJson(value);
-            }
-        },
-    );
+    const condition: (SingleConditionJson | LogicalConditionJson)[] = operands.map((v) => {
+        const value = v.getFields().value;
+        switch (value.kind) {
+            case 'logicalExpression':
+                return makeLogicalConditionJson(value);
+            case 'fieldExpression':
+                return makeSingleConditionJson(value);
+        }
+    });
 
     return {
         condition: condition,

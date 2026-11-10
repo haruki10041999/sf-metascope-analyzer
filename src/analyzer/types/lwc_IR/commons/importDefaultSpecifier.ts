@@ -1,49 +1,40 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isImportDefaultSpecifier, type ImportDefaultSpecifier } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { IdentifierTypeClass } from './identifier';
 
-const importDefaultSpecifierLocalPairs = lazyPairs(() => [identifierTypePair] as const);
-
-export type ImportDefaultSpecifierFields = {
-    local: IdentifierTypeClass | LwcErrorTypeClass;
+export type ImportDefaultSpecifierFields = TypeField<'importDefaultSpecifier'> & {
+    local: IdentifierTypeClass;
 };
 
-export class ImportDefaultSpecifierTypeClass extends LwcCommonTypeClass<'importDefaultSpecifier'> {
-    private readonly value: ImportDefaultSpecifierFields;
-
-    private constructor(value: ImportDefaultSpecifierFields) {
-        super('importDefaultSpecifier');
-        this.value = value;
+export class ImportDefaultSpecifierTypeClass extends LwcCommonTypeClass<
+    'importDefaultSpecifier',
+    ImportDefaultSpecifierFields
+> {
+    private constructor(value: FieldsOf<ImportDefaultSpecifierFields>, sourceSpan: SourceSpan) {
+        super('importDefaultSpecifier', value, sourceSpan);
     }
 
     static create(
         target: ImportDefaultSpecifier,
         originalSource: string,
     ): ImportDefaultSpecifierTypeClass {
-        return new ImportDefaultSpecifierTypeClass({
-            local: visitNode(
-                target.local,
-                originalSource,
-                importDefaultSpecifierLocalPairs(),
-                'ImportDefaultSpecifier.local',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): ImportDefaultSpecifierFields {
-        return this.value;
+        return new ImportDefaultSpecifierTypeClass(
+            {
+                local: IdentifierTypeClass.create(target.local, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getLocal(): ImportDefaultSpecifierFields['local'] {
-        return this.value.local;
+        return this.getFields().local;
     }
 }
 
@@ -55,5 +46,5 @@ export const importDefaultSpecifierTypePair: EvaluatePair<
 );
 
 export const isImportDefaultSpecifierType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ImportDefaultSpecifierTypeClass => target instanceof ImportDefaultSpecifierTypeClass;

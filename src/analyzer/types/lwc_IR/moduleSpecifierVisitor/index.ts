@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { ExportSpecifierTypeClass, exportSpecifierTypePair } from '../commons/exportSpecifier';
 import {
@@ -78,7 +79,7 @@ export type ModuleSpecifierTypeClass =
     | ExportDefaultSpecifierTypeClass;
 
 export const isModuleSpecifierType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ModuleSpecifierTypeClass => {
     return (
         target instanceof ExportSpecifierTypeClass ||

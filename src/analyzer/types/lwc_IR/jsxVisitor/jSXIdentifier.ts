@@ -1,31 +1,36 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isJSXIdentifier, type JSXIdentifier } from '@babel/types';
-import { EvaluatePair, LwcCommonTypeClass, makeEvaluatePair } from '../commonVisitor';
+import {
+    EvaluatePair,
+    LwcCommonTypeClass,
+    makeEvaluatePair,
+    getSourceSpan,
+} from '../commonVisitor';
 
-export type JSXIdentifierFields = {
+export type JSXIdentifierFields = TypeField<'jSXIdentifier'> & {
     name: JSXIdentifier['name'];
 };
 
-export class JSXIdentifierTypeClass extends LwcCommonTypeClass<'jSXIdentifier'> {
-    private readonly value: JSXIdentifierFields;
-
-    private constructor(value: JSXIdentifierFields) {
-        super('jSXIdentifier');
-        this.value = value;
+export class JSXIdentifierTypeClass extends LwcCommonTypeClass<
+    'jSXIdentifier',
+    JSXIdentifierFields
+> {
+    private constructor(value: FieldsOf<JSXIdentifierFields>, sourceSpan: SourceSpan) {
+        super('jSXIdentifier', value, sourceSpan);
     }
 
     static create(target: JSXIdentifier, originalSource: string): JSXIdentifierTypeClass {
-        return new JSXIdentifierTypeClass({
-            name: target.name,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): JSXIdentifierFields {
-        return this.value;
+        return new JSXIdentifierTypeClass(
+            {
+                name: target.name,
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getName(): JSXIdentifierFields['name'] {
-        return this.value.name;
+        return this.getFields().name;
     }
 }
 
@@ -35,5 +40,5 @@ export const jSXIdentifierTypePair: EvaluatePair<JSXIdentifier, JSXIdentifierTyp
     );
 
 export const isJSXIdentifierType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is JSXIdentifierTypeClass => target instanceof JSXIdentifierTypeClass;

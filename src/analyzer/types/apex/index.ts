@@ -1,7 +1,4 @@
-// converter（IR → CommonType）
-export * from './converter';
-
-// JSON 生成層（CommonType → ConvertNode → JSON）
+// JSON 生成層（IR → JSON）
 export * from './commons';
 export * from './declaration';
 export * from './expression';

@@ -1,66 +1,11 @@
-import { SourceInfo } from '../../commons/converter';
+import type { SourceSpan } from '../../commons/source';
 
 import { ConvertKeys, JsonType, isJsonType, isStructureJsonType } from '../../commons/json';
 
 export type SourceJson = {
     objectKey: string;
     context: string;
-    source: ({ sourceKey: string } & Omit<SourceInfo, 'context'>)[];
-};
-
-export type SourceRegistration = {
-    objectKey: string;
-    sourceKey: string;
-    sourceInfo: SourceInfo;
-};
-
-export const makeSourceObjects = (registrations: (SourceRegistration | null)[]): SourceJson[] => {
-    const sourceObjects = new Map<string, SourceJson>();
-
-    for (const registration of registrations) {
-        if (!registration) {
-            continue;
-        }
-
-        const { objectKey, sourceKey, sourceInfo } = registration;
-        const { context, ...content } = sourceInfo;
-        const sourceObject = sourceObjects.get(objectKey);
-
-        if (sourceObject) {
-            sourceObject.source.push({ sourceKey, ...content });
-        } else {
-            sourceObjects.set(objectKey, {
-                objectKey,
-                context,
-                source: [{ sourceKey, ...content }],
-            });
-        }
-    }
-
-    return [...sourceObjects.values()];
-};
-
-export const findSourceInfo = (
-    sourceObject: SourceJson[],
-    objectKey: string,
-    sourceKey: string,
-): SourceInfo => {
-    const object = sourceObject.find((object) => object.objectKey === objectKey);
-
-    if (object) {
-        const source = object.source.find((source) => source.sourceKey === sourceKey);
-
-        if (source) {
-            const { sourceKey: _sourceKey, ...content } = source;
-
-            return {
-                context: object.context,
-                ...content,
-            };
-        }
-    }
-
-    throw new Error('sourceInfo cannot be found');
+    source: ({ sourceKey: string } & Omit<SourceSpan, 'context'>)[];
 };
 
 const isConvertKeys = (value: unknown): value is ConvertKeys =>

@@ -1,46 +1,40 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isBreakStatement, type BreakStatement } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { IdentifierTypeClass } from './identifier';
 
-const breakStatementLabelPairs = lazyPairs(() => [identifierTypePair] as const);
-
-export type BreakStatementFields = {
-    label: IdentifierTypeClass | LwcErrorTypeClass | null;
+export type BreakStatementFields = TypeField<'breakStatement'> & {
+    label: IdentifierTypeClass | null;
 };
 
-export class BreakStatementTypeClass extends LwcCommonTypeClass<'breakStatement'> {
-    private readonly value: BreakStatementFields;
-
-    private constructor(value: BreakStatementFields) {
-        super('breakStatement');
-        this.value = value;
+export class BreakStatementTypeClass extends LwcCommonTypeClass<
+    'breakStatement',
+    BreakStatementFields
+> {
+    private constructor(value: FieldsOf<BreakStatementFields>, sourceSpan: SourceSpan) {
+        super('breakStatement', value, sourceSpan);
     }
 
     static create(target: BreakStatement, originalSource: string): BreakStatementTypeClass {
-        return new BreakStatementTypeClass({
-            label: visitOptionalNode(
-                target.label,
-                originalSource,
-                breakStatementLabelPairs(),
-                'BreakStatement.label',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): BreakStatementFields {
-        return this.value;
+        return new BreakStatementTypeClass(
+            {
+                label:
+                    target.label == null
+                        ? null
+                        : IdentifierTypeClass.create(target.label, originalSource),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getLabel(): BreakStatementFields['label'] {
-        return this.value.label;
+        return this.getFields().label;
     }
 }
 
@@ -50,5 +44,5 @@ export const breakStatementTypePair: EvaluatePair<BreakStatement, BreakStatement
     );
 
 export const isBreakStatementType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is BreakStatementTypeClass => target instanceof BreakStatementTypeClass;

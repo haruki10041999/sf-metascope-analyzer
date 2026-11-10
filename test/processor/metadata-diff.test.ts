@@ -171,7 +171,7 @@ describe('metadata diff samples (docs/examples/metadata)', () => {
         );
     });
 
-    it('reports unreadable files as error nodes and resolvedError', () => {
+    it('reports unreadable files only in resolvedError (no error nodes in the JSON)', () => {
         const broken = unit('Broken__c');
         assert.deepEqual(
             broken.resolvedError.map((e) => [e.status, (e.value as Node).code]),
@@ -180,13 +180,12 @@ describe('metadata diff samples (docs/examples/metadata)', () => {
                 ['added', 'UNEXPECTED_ROOT'],
             ],
         );
+        // after は項目がどれも読めないので fields を持たない → 配列ごと removed
+        const brokenFields = (broken.content as Node).fields.fields as Node;
+        assert.equal(brokenFields.status, 'removed');
         assert.deepEqual(
-            (broken.content as Node).fields.fields.map((f: Node) => [f.status, f.kind]),
-            [
-                ['removed', 'field'],
-                ['added', 'error'],
-                ['added', 'error'],
-            ],
+            (brokenFields.value as Node[]).map((f) => f.kind),
+            ['field'],
         );
     });
 

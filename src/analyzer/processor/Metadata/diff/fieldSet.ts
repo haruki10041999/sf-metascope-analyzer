@@ -1,4 +1,4 @@
-import { ErrorJson, FIELD_SET_SCHEMA, FieldSetItemJson, FieldSetJson } from '../../../types';
+import { FIELD_SET_SCHEMA, FieldSetItemJson, FieldSetJson } from '../../../types';
 
 import {
     Match,
@@ -31,8 +31,8 @@ export type FieldSetJsonDiff = NodeDiff<
 >;
 
 export const makeFieldSetDiff = (
-    before: FieldSetJson | ErrorJson,
-    after: FieldSetJson | ErrorJson,
+    before: FieldSetJson,
+    after: FieldSetJson,
     match: Match = 'slot',
 ): FieldSetJsonDiff =>
     makeNodeDiff('fieldSet', before, after, match, (b, a) => ({

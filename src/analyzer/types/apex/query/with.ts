@@ -1,6 +1,6 @@
 import typia from 'typia';
 
-import { ErrorJson, JsonType } from '../../commons';
+import { JsonType } from '../../commons';
 import type {
     DataCategoryNameTypeClass,
     DataCategorySelectionTypeClass,
@@ -8,7 +8,7 @@ import type {
     FilteringSelectorTypeClass,
     SoslWithClauseTypeClass,
     WithClauseTypeClass,
-} from '../../apex_IR_v2';
+} from '../../apex_IR';
 
 import { makeNodeJson } from '../commons/node';
 import { makeLogicalConditionJson, LogicalConditionJson } from './commons';
@@ -47,8 +47,8 @@ export type WithJson =
     | {
           mode: 'SYSTEM_MODE' | 'USER_MODE' | 'SECURITY_ENFORCED';
       }
-    | { mode: LogicalConditionJson | ErrorJson }
-    | { mode: 'DATA_CATEGORY'; selection: (DataCategorySelectionJson | ErrorJson)[] | ErrorJson };
+    | { mode: LogicalConditionJson }
+    | { mode: 'DATA_CATEGORY'; selection: DataCategorySelectionJson[] };
 
 export const isWithJson = typia.createIs<WithJson>();
 
@@ -89,12 +89,12 @@ export type SoslWithJson =
                 }
               | {
                     type: 'bind';
-                    value: BaseExpressionJson | ErrorJson;
+                    value: BaseExpressionJson;
                 };
       }
     | {
           mode: 'DATA_CATEGORY';
-          value: (DataCategorySelectionJson | ErrorJson)[] | ErrorJson;
+          value: DataCategorySelectionJson[];
       }
     | {
           // WITH SNIPPET (target_length = n)。文法上のオプションは target_length だけ
@@ -107,7 +107,7 @@ export type SoslWithJson =
       }
     | {
           mode: 'NETWORK';
-          value: (string | ErrorJson)[] | ErrorJson;
+          value: string[];
       }
     | {
           mode: 'METADATA';

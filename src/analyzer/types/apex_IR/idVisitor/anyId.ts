@@ -1,19 +1,27 @@
 import { AnyIdContext } from '@apexdevtools/apex-parser';
 
-import { IdValueTypeClass } from '.';
+import { ApexCommonTypeClass, getSourceSpan, isSpicifyApexCommonTypeClass } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { ApexCommonTypeClass } from '../commonVisitor';
+export type AnyIdType = TypeField<'anyId'> & {
+    value: string;
+};
 
-export class AnyIdTypeClass extends IdValueTypeClass<'anyId', string> {
-    private constructor(value: string) {
-        super('anyId', value);
+export class AnyIdTypeClass extends ApexCommonTypeClass<'anyId', AnyIdType> {
+    private constructor(fields: FieldsOf<AnyIdType>, sourceSpan: SourceSpan) {
+        super('anyId', fields, sourceSpan);
     }
 
     static create(ctx: AnyIdContext): AnyIdTypeClass {
-        return new AnyIdTypeClass(ctx.getText());
+        return new AnyIdTypeClass({ value: ctx.getText() }, getSourceSpan(ctx));
+    }
+
+    getValue(): AnyIdType['value'] {
+        return this.getFields().value;
     }
 }
 
-export const isAnyIdType = (target: ApexCommonTypeClass<string>): target is AnyIdTypeClass => {
-    return target instanceof AnyIdTypeClass;
-};
+export const isAnyIdType = (
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is AnyIdTypeClass => isSpicifyApexCommonTypeClass('anyId', target);

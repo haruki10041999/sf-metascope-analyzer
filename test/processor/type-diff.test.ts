@@ -7,7 +7,7 @@ import {
     makeTypeWithVoidDiff,
     makeTypesDiff,
 } from '../../src/analyzer/processor/Apex/diff/type';
-import type { ErrorJson, TypeJson } from '../../src/analyzer/types';
+import type { TypeJson } from '../../src/analyzer/types';
 
 const beforeKeys = { objectKey: 'before', sourceKey: 'before-source' };
 const afterKeys = { objectKey: 'after', sourceKey: 'after-source' };
@@ -22,16 +22,6 @@ const after: TypeJson = {
     sourceKeys: afterKeys,
     type: 'primitive',
     primitiveType: 'String',
-};
-const beforeError: ErrorJson = {
-    kind: 'error',
-    sourceKeys: beforeKeys,
-    kindType: 'type',
-};
-const afterError: ErrorJson = {
-    kind: 'error',
-    sourceKeys: afterKeys,
-    kindType: 'type',
 };
 // objectKey / sourceKey ごとに、同じなら単体、違えば { before, after }
 const sourceKeys = {
@@ -63,28 +53,6 @@ describe('type diff', () => {
             },
             status: 'unchanged',
             value: { type: 'primitive', primitiveType: 'Integer' },
-        });
-    });
-
-    it('compares two errors by objectKey', () => {
-        assert.deepEqual(makeTypeDiff(beforeError, afterError), {
-            kind: 'type',
-            sourceKeys,
-            status: 'changed',
-            match: 'slot',
-            before: { kindType: 'type' },
-            after: { kindType: 'type' },
-        });
-    });
-
-    it('preserves contents when a type becomes an error or recovers', () => {
-        assert.deepEqual(makeTypeDiff(before, afterError), {
-            kind: 'type',
-            sourceKeys,
-            status: 'changed',
-            match: 'slot',
-            before: { type: 'primitive', primitiveType: 'Integer' },
-            after: { kindType: 'type' },
         });
     });
 

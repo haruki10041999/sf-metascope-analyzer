@@ -11,12 +11,12 @@ import {
     makeCompilationUnitJson,
     makeTriggerUnitJson,
 } from '../../src/analyzer/types/apex/unit';
-import { buildApexIr } from '../../src/analyzer/types/apex_IR_v2/commonVisitor';
+import { buildApexIr } from '../../src/analyzer/types/apex_IR/commonVisitor';
 import {
     AnonymousUnitTypeClass,
     CompilationUnitTypeClass,
     TriggerUnitTypeClass,
-} from '../../src/analyzer/types/apex_IR_v2/unitVisitor';
+} from '../../src/analyzer/types/apex_IR/unitVisitor';
 import {
     CommonTypeClass,
     collectSourceObjects,
@@ -29,7 +29,7 @@ export const unitRules = {
     anonymous: (parser: ApexParser) => parser.anonymousUnit(),
 };
 
-/** IR v2 の unit を作る (本番の parseApexSource と同じ。docs/ir-v2-integration.md) */
+/** IR v2 の unit を作る (本番の parseApexSource と同じ。docs/ir-integration.md) */
 const buildUnit = (source: string, rule: (parser: ApexParser) => ApexParserRuleContext) => {
     const listener = new ApexCommonErrorListener(source);
     const { parser } = ApexParserFactory.createLexerAndParser(source, listener);

@@ -1,25 +1,40 @@
 import { SetterContext } from '@apexdevtools/apex-parser';
 
-import { NormalBlockTypeClass, BlockTypeClass, BlockVisitor, isNormalBlockType } from '.';
+import { BlockTypeClass } from './block';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitOptionalNode } from '../commonVisitor';
+import {
+    ApexCommonTypeClass,
+    createOptionalNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class SetterTypeClass extends BlockTypeClass<'setter', NormalBlockTypeClass | null> {
-    private constructor(value: NormalBlockTypeClass | ApexErrorTypeClass | null) {
-        super('setter', value);
+export type SetterType = TypeField<'setter'> & {
+    /** `set;` (自動プロパティ) は本体を持たない */
+    block: BlockTypeClass | null;
+};
+
+export class SetterTypeClass extends ApexCommonTypeClass<'setter', SetterType> {
+    private constructor(fields: FieldsOf<SetterType>, sourceSpan: SourceSpan) {
+        super('setter', fields, sourceSpan);
     }
 
     static create(ctx: SetterContext): SetterTypeClass {
-        if (!ctx.SET()) {
-            throw new Error('値が異常です。SetterContext: ' + ctx.getText());
-        }
-
         return new SetterTypeClass(
-            visitOptionalNode(new BlockVisitor(), ctx.block(), isNormalBlockType, 'block'),
+            { block: createOptionalNode(ctx.block(), (c) => BlockTypeClass.create(c), 'block') },
+            getSourceSpan(ctx),
         );
+    }
+
+    getBlock(): SetterType['block'] {
+        return this.getFields().block;
     }
 }
 
-export const isSetterType = (target: ApexCommonTypeClass<string>): target is SetterTypeClass => {
-    return target instanceof SetterTypeClass;
+export const isSetterType = (
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is SetterTypeClass => {
+    return isSpicifyApexCommonTypeClass('setter', target);
 };

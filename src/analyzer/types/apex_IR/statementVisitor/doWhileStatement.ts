@@ -1,52 +1,54 @@
 import { DoWhileStatementContext } from '@apexdevtools/apex-parser';
 
-import { StatementTypeClass } from '.';
-
-import { NormalBlockTypeClass, BlockVisitor, isNormalBlockType } from '../blockVisitor';
+import { BlockTypeClass } from '../blockVisitor';
+import { ParExpressionTypeClass } from '../expressionVisitor';
 import {
-    ParExpressionTypeClass,
-    ExpressionVisitor,
-    isParExpressionType,
-} from '../expressionVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class DoWhileStatementTypeClass extends StatementTypeClass<
+export type DoWhileStatementType = TypeField<'doWhileStatement'> & {
+    value: ParExpressionTypeClass;
+    block: BlockTypeClass;
+};
+
+export class DoWhileStatementTypeClass extends ApexCommonTypeClass<
     'doWhileStatement',
-    ParExpressionTypeClass
+    DoWhileStatementType
 > {
-    private block: NormalBlockTypeClass | ApexErrorTypeClass;
-
-    private constructor(
-        value: ParExpressionTypeClass | ApexErrorTypeClass,
-        block: NormalBlockTypeClass | ApexErrorTypeClass,
-    ) {
-        super('doWhileStatement', value);
-        this.block = block;
+    private constructor(fields: FieldsOf<DoWhileStatementType>, sourceSpan: SourceSpan) {
+        super('doWhileStatement', fields, sourceSpan);
     }
 
     static create(ctx: DoWhileStatementContext): DoWhileStatementTypeClass {
-        if (!ctx.parExpression() || !ctx.block()) {
-            throw new Error('値が異常です。DoWhileStatementContext: ' + ctx.getText());
-        }
-
         return new DoWhileStatementTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.parExpression(),
-                isParExpressionType,
-                'parExpression',
-            ),
-            visitNode(new BlockVisitor(), ctx.block(), isNormalBlockType, 'block'),
+            {
+                value: createNode(
+                    ctx.parExpression(),
+                    (c) => ParExpressionTypeClass.create(c),
+                    'parExpression',
+                ),
+                block: createNode(ctx.block(), (c) => BlockTypeClass.create(c), 'block'),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getBlock() {
-        return this.block;
+    getValue(): DoWhileStatementType['value'] {
+        return this.getFields().value;
+    }
+
+    getBlock(): DoWhileStatementType['block'] {
+        return this.getFields().block;
     }
 }
 
 export const isDoWhileStatementType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is DoWhileStatementTypeClass => {
-    return target instanceof DoWhileStatementTypeClass;
+    return isSpicifyApexCommonTypeClass('doWhileStatement', target);
 };

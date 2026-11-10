@@ -1,58 +1,51 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isEnumBooleanBody, type EnumBooleanBody } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
-    visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
-import { enumBooleanMemberTypePair, type EnumBooleanMemberTypeClass } from './enumBooleanMember';
+import { EnumBooleanMemberTypeClass } from './enumBooleanMember';
 
-const enumBooleanBodyMembersPairs = lazyPairs(() => [enumBooleanMemberTypePair] as const);
-
-export type EnumBooleanBodyFields = {
+export type EnumBooleanBodyFields = TypeField<'enumBooleanBody'> & {
     explicitType: EnumBooleanBody['explicitType'];
     hasUnknownMembers: EnumBooleanBody['hasUnknownMembers'];
-    members: (EnumBooleanMemberTypeClass | LwcErrorTypeClass)[];
+    members: EnumBooleanMemberTypeClass[];
 };
 
-export class EnumBooleanBodyTypeClass extends LwcCommonTypeClass<'enumBooleanBody'> {
-    private readonly value: EnumBooleanBodyFields;
-
-    private constructor(value: EnumBooleanBodyFields) {
-        super('enumBooleanBody');
-        this.value = value;
+export class EnumBooleanBodyTypeClass extends LwcCommonTypeClass<
+    'enumBooleanBody',
+    EnumBooleanBodyFields
+> {
+    private constructor(value: FieldsOf<EnumBooleanBodyFields>, sourceSpan: SourceSpan) {
+        super('enumBooleanBody', value, sourceSpan);
     }
 
     static create(target: EnumBooleanBody, originalSource: string): EnumBooleanBodyTypeClass {
-        return new EnumBooleanBodyTypeClass({
-            explicitType: target.explicitType,
-            hasUnknownMembers: target.hasUnknownMembers,
-            members: visitNodeList(
-                target.members,
-                originalSource,
-                enumBooleanBodyMembersPairs(),
-                'EnumBooleanBody.members',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): EnumBooleanBodyFields {
-        return this.value;
+        return new EnumBooleanBodyTypeClass(
+            {
+                explicitType: target.explicitType,
+                hasUnknownMembers: target.hasUnknownMembers,
+                members: target.members.map((child) =>
+                    EnumBooleanMemberTypeClass.create(child, originalSource),
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getExplicitType(): EnumBooleanBodyFields['explicitType'] {
-        return this.value.explicitType;
+        return this.getFields().explicitType;
     }
 
     getHasUnknownMembers(): EnumBooleanBodyFields['hasUnknownMembers'] {
-        return this.value.hasUnknownMembers;
+        return this.getFields().hasUnknownMembers;
     }
 
     getMembers(): EnumBooleanBodyFields['members'] {
-        return this.value.members;
+        return this.getFields().members;
     }
 }
 
@@ -62,5 +55,5 @@ export const enumBooleanBodyTypePair: EvaluatePair<EnumBooleanBody, EnumBooleanB
     );
 
 export const isEnumBooleanBodyType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is EnumBooleanBodyTypeClass => target instanceof EnumBooleanBodyTypeClass;

@@ -78,9 +78,10 @@ describe('LWC の CSS (JSON)', () => {
 });
 
 describe('LWC の CSS (検証)', () => {
-    it('構文エラーはファイルを ErrorJson にし、CSS_SYNTAX の resolvedError にする', () => {
+    it('構文エラーは JSON を作らず (null)、CSS_SYNTAX の resolvedError にする', () => {
         const result = parse('.a { color: red;\n');
-        assert.equal(result.stylesheet.kind, 'error');
+        assert.equal(result.stylesheet, null);
+        assert.deepEqual(result.sourceObjects, []);
         assert.deepEqual(
             result.resolvedError.map((e) => [e.phase, e.code, e.errorMessage]),
             [['syntax', 'CSS_SYNTAX', 'Unclosed block']],
@@ -89,7 +90,7 @@ describe('LWC の CSS (検証)', () => {
 
     it('LWC の仕様違反は、複数あってもすべて resolvedError にする (JSON は作る)', () => {
         const result = parse(':root { color: red; }\n#foo { color: blue; }\n.ok { color: red; }\n');
-        assert.equal(result.stylesheet.kind, 'lwcStylesheet');
+        assert.equal(result.stylesheet?.kind, 'lwcStylesheet');
         assert.deepEqual(
             result.resolvedError.map((e) => [e.phase, e.code, e.start.line, e.context]),
             [
@@ -109,7 +110,7 @@ describe('LWC の CSS (検証)', () => {
         );
         if (result.dataType === 'lwcBundle') {
             assert.deepEqual(
-                result.result.base.stylesheets.map((s) => [s.fileName, s.stylesheet.kind]),
+                result.result.base.stylesheets.map((s) => [s.fileName, s.stylesheet?.kind]),
                 [['broken.css', 'lwcStylesheet']],
             );
         }

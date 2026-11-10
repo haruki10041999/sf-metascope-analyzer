@@ -9,10 +9,11 @@
 | Apex       | [apex-implementation.md](./apex-implementation.md)         | 実装の全体像（単位・構成・Diff）                                                                     |
 |            | [apex-json-analysis.md](./apex-json-analysis.md)           | JSON の解析（宣言・SOQL / DML・呼び出し）の計画                                                      |
 | LWC        | [lwc-implementation.md](./lwc-implementation.md)           | 実装の全体像（バンドル・JS / TS・HTML・CSS・js-meta.xml・検証・解析）                                |
-| IR v2      | [ir-v2.md](./ir-v2.md)                                     | Apex・LWC の IR v2 の作り方（基底クラス・子の作り方・エラーを木に残さない方針と検証）                |
-| IR v2      | [ir-v2-types.md](./ir-v2-types.md)                         | IR v2 の型の見直しの一覧（ありえない組み合わせを書ける型。修正の対象）                               |
-| IR v2      | [lwc-ir-v2-types.md](./lwc-ir-v2-types.md)                 | LWC の IR v2 のノード型 250 の一覧（フィールド・判別 union・alias の和）と関連図                     |
-| IR v2      | [ir-v2-integration.md](./ir-v2-integration.md)             | IR v2 を parser から JSON までの流れにつなぐ方針・進み具合・ゴールデンの違い                         |
+|            | [lwc-json-types.md](./lwc-json-types.md)                   | JS / TS の JSON の型の見直し（今の型・使われ方・足りないもの・型にする案と優先度・進め方）           |
+| IR         | [ir.md](./ir.md)                                           | Apex・LWC の IR の作り方（基底クラス・子の作り方・エラーを木に残さない方針と検証）                   |
+| IR         | [ir-types.md](./ir-types.md)                               | IR の型の見直しの一覧（ありえない組み合わせを書ける型。修正の対象）                                  |
+| IR         | [lwc-ir-types.md](./lwc-ir-types.md)                       | LWC の IR のノード型 250 の一覧（フィールド・判別 union・alias の和）と関連図                        |
+| IR         | [ir-integration.md](./ir-integration.md)                   | IR を parser から JSON までの流れにつなぎ、v1 と置き換えた記録（方針・ゴールデンの違い・後始末）     |
 |            | [lwc-snapshot-plan.md](./lwc-snapshot-plan.md)             | 画面のスナップショット（SSR）の試作と計画                                                            |
 | メタデータ | [metadata-implementation.md](./metadata-implementation.md) | 実装の全体像（オブジェクトと、権限・Flow・画面・タブ・Visualforce・Aura などフォルダ単位の種類）     |
 |            | [object-translation.md](./object-translation.md)           | オブジェクトの翻訳                                                                                   |

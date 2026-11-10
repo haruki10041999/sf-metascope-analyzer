@@ -1,7 +1,7 @@
 import typia from 'typia';
 
-import { ErrorJson, JsonType } from '../../commons';
-import type { SubQueryTypeClass } from '../../apex_IR_v2';
+import { JsonType } from '../../commons';
+import type { SubQueryTypeClass } from '../../apex_IR';
 
 import { makeNodeJson } from '../commons/node';
 import { SelectJson, makeSelectJson } from './select';
@@ -14,13 +14,13 @@ import { UpdateListJson, makeUpdateListJson } from './updateList';
 
 // サブクエリ全体の位置を持つノード（SoqlJson と同じ扱い）
 export type SubQueryJson = JsonType<'subQuery'> & {
-    select: SelectJson | ErrorJson;
-    from: FromJson | ErrorJson;
-    where?: WhereJson | ErrorJson;
-    for?: ForJson | ErrorJson;
-    orderBy?: OrderByJson | ErrorJson;
-    limit?: LimitJson | ErrorJson;
-    updateList?: UpdateListJson | ErrorJson;
+    select: SelectJson;
+    from: FromJson;
+    where?: WhereJson;
+    for?: ForJson;
+    orderBy?: OrderByJson;
+    limit?: LimitJson;
+    updateList?: UpdateListJson;
 };
 
 export const isSubQueryJson = typia.createIs<SubQueryJson>();

@@ -1,61 +1,64 @@
 import { AnnotationContext } from '@apexdevtools/apex-parser';
 
-import { ModifierTypeClass } from '../modifierVisitor';
+import { IdTypeClass } from '../idVisitor';
+import { ElementValueTypeClass } from '../valueVisitor';
+import { ElementValuePairsTypeClass } from '../pairVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
-import { ElementValueTypeClass, ValueVisitor, isElementValueType } from '../valueVisitor';
-import { ElementValuePairsTypeClass, PairVisitor, isElementValuePairsType } from '../pairVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type AnnotationType = TypeField<'annotation'> & {
+    name: IdTypeClass;
+    /** `@Future` のように引数がなければ null */
+    param: ElementValueTypeClass | ElementValuePairsTypeClass | null;
+};
 
-export class AnnotationTypeClass extends ModifierTypeClass<'annotation', NormalIdTypeClass> {
-    private param: ElementValueTypeClass | ElementValuePairsTypeClass | ApexErrorTypeClass | null =
-        null;
-
-    private constructor(
-        value: NormalIdTypeClass | ApexErrorTypeClass,
-        param: ElementValueTypeClass | ElementValuePairsTypeClass | ApexErrorTypeClass | null,
-    ) {
-        super('annotation', value);
-        this.param = param;
+export class AnnotationTypeClass extends ApexCommonTypeClass<'annotation', AnnotationType> {
+    private constructor(fields: FieldsOf<AnnotationType>, sourceSpan: SourceSpan) {
+        super('annotation', fields, sourceSpan);
     }
 
     static create(ctx: AnnotationContext): AnnotationTypeClass {
-        if (!ctx.id()) {
-            throw new Error('値が異常です。AnnotationContext: ' + ctx.getText());
-        }
-
-        let param: ElementValueTypeClass | ElementValuePairsTypeClass | ApexErrorTypeClass | null =
-            null;
-
+        let param: AnnotationType['param'] = null;
         if (ctx.elementValue()) {
-            param = visitNode(
-                new ValueVisitor(),
+            param = createNode(
                 ctx.elementValue(),
-                isElementValueType,
+                (c) => ElementValueTypeClass.create(c),
                 'elementValue',
             );
         } else if (ctx.elementValuePairs()) {
-            param = visitNode(
-                new PairVisitor(),
+            param = createNode(
                 ctx.elementValuePairs(),
-                isElementValuePairsType,
+                (c) => ElementValuePairsTypeClass.create(c),
                 'elementValuePairs',
             );
         }
 
         return new AnnotationTypeClass(
-            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
-            param,
+            {
+                name: createNode(ctx.id(), (c) => IdTypeClass.create(c), 'id'),
+                param,
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getParam(): ElementValueTypeClass | ElementValuePairsTypeClass | ApexErrorTypeClass | null {
-        return this.param;
+    getName(): AnnotationType['name'] {
+        return this.getFields().name;
+    }
+
+    getParam(): AnnotationType['param'] {
+        return this.getFields().param;
     }
 }
 
 export const isAnnotationType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is AnnotationTypeClass => {
-    return target instanceof AnnotationTypeClass;
+    return isSpicifyApexCommonTypeClass('annotation', target);
 };

@@ -1,40 +1,48 @@
 import { VariableDeclaratorsContext } from '@apexdevtools/apex-parser';
 
+import { VariableDeclaratorTypeClass } from './variableDeclarator';
+
 import {
-    VariableDeclaratorTypeClass,
-    VariableListTypeClass,
-    VariableVisitor,
-    isVariableDeclaratorType,
-} from '.';
+    ApexCommonTypeClass,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
+export type VariableDeclaratorsType = TypeField<'variableDeclarators'> & {
+    element: VariableDeclaratorTypeClass[];
+};
 
-export class VariableDeclaratorsTypeClass extends VariableListTypeClass<
+export class VariableDeclaratorsTypeClass extends ApexCommonTypeClass<
     'variableDeclarators',
-    VariableDeclaratorTypeClass
+    VariableDeclaratorsType
 > {
-    private constructor(value: (VariableDeclaratorTypeClass | ApexErrorTypeClass)[]) {
-        super('variableDeclarators', value);
+    private constructor(fields: FieldsOf<VariableDeclaratorsType>, sourceSpan: SourceSpan) {
+        super('variableDeclarators', fields, sourceSpan);
     }
 
-    static create(ctx: VariableDeclaratorsContext) {
-        if (!ctx.variableDeclarator_list() || ctx.variableDeclarator_list().length === 0) {
-            throw new Error('値が異常です。VariableDeclaratorsContext: ' + ctx.getText());
-        }
-
+    static create(ctx: VariableDeclaratorsContext): VariableDeclaratorsTypeClass {
         return new VariableDeclaratorsTypeClass(
-            visitNodeList(
-                new VariableVisitor(),
-                ctx.variableDeclarator_list(),
-                isVariableDeclaratorType,
-                'variableDeclarator',
-            ),
+            {
+                element: createNodeList(
+                    ctx.variableDeclarator_list(),
+                    (c) => VariableDeclaratorTypeClass.create(c),
+                    'variableDeclarator',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getElement(): VariableDeclaratorsType['element'] {
+        return this.getFields().element;
     }
 }
 
 export const isVariableDeclaratorsType = (
-    value: ApexCommonTypeClass<string>,
-): value is VariableDeclaratorsTypeClass => {
-    return value instanceof VariableDeclaratorsTypeClass;
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is VariableDeclaratorsTypeClass => {
+    return isSpicifyApexCommonTypeClass('variableDeclarators', target);
 };

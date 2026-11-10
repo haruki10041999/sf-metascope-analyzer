@@ -1,65 +1,59 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isFunctionTypeParam, type FunctionTypeParam } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
     visitNode,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { identifierTypePair, type IdentifierTypeClass } from '../commons/identifier';
+import { IdentifierTypeClass } from '../commons/identifier';
 import { flowTypeVisitorEvaluatePairs, type FlowTypeTypeClass } from '../flowTypeVisitor';
 
-const functionTypeParamNamePairs = lazyPairs(() => [identifierTypePair] as const);
-
-export type FunctionTypeParamFields = {
-    name: IdentifierTypeClass | LwcErrorTypeClass | null;
-    typeAnnotation: FlowTypeTypeClass | LwcErrorTypeClass;
-    optional: NonNullable<FunctionTypeParam['optional']> | null;
+export type FunctionTypeParamFields = TypeField<'functionTypeParam'> & {
+    name: IdentifierTypeClass | null;
+    typeAnnotation: FlowTypeTypeClass;
+    optional: boolean;
 };
 
-export class FunctionTypeParamTypeClass extends LwcCommonTypeClass<'functionTypeParam'> {
-    private readonly value: FunctionTypeParamFields;
-
-    private constructor(value: FunctionTypeParamFields) {
-        super('functionTypeParam');
-        this.value = value;
+export class FunctionTypeParamTypeClass extends LwcCommonTypeClass<
+    'functionTypeParam',
+    FunctionTypeParamFields
+> {
+    private constructor(value: FieldsOf<FunctionTypeParamFields>, sourceSpan: SourceSpan) {
+        super('functionTypeParam', value, sourceSpan);
     }
 
     static create(target: FunctionTypeParam, originalSource: string): FunctionTypeParamTypeClass {
-        return new FunctionTypeParamTypeClass({
-            name: visitOptionalNode(
-                target.name,
-                originalSource,
-                functionTypeParamNamePairs(),
-                'FunctionTypeParam.name',
-            ),
-            typeAnnotation: visitNode(
-                target.typeAnnotation,
-                originalSource,
-                flowTypeVisitorEvaluatePairs(),
-                'FlowTypeVisitor',
-            ),
-            optional: target.optional ?? null,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): FunctionTypeParamFields {
-        return this.value;
+        return new FunctionTypeParamTypeClass(
+            {
+                name:
+                    target.name == null
+                        ? null
+                        : IdentifierTypeClass.create(target.name, originalSource),
+                typeAnnotation: visitNode(
+                    target.typeAnnotation,
+                    originalSource,
+                    flowTypeVisitorEvaluatePairs(),
+                    'FlowTypeVisitor',
+                ),
+                optional: target.optional ?? false,
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getName(): FunctionTypeParamFields['name'] {
-        return this.value.name;
+        return this.getFields().name;
     }
 
     getTypeAnnotation(): FunctionTypeParamFields['typeAnnotation'] {
-        return this.value.typeAnnotation;
+        return this.getFields().typeAnnotation;
     }
 
     getOptional(): FunctionTypeParamFields['optional'] {
-        return this.value.optional;
+        return this.getFields().optional;
     }
 }
 
@@ -71,5 +65,5 @@ export const functionTypeParamTypePair: EvaluatePair<
 );
 
 export const isFunctionTypeParamType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is FunctionTypeParamTypeClass => target instanceof FunctionTypeParamTypeClass;

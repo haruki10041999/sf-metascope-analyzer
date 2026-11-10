@@ -1,40 +1,45 @@
 import { CompilationUnitContext } from '@apexdevtools/apex-parser';
 
-import { UnitTypeClass } from '../unitVisitor';
-
+import { TypeDeclarationTypeClass } from '../declarationVisitor';
 import {
-    TypeDeclarationTypeClass,
-    DeclarationVisitor,
-    isTypeDeclarationType,
-} from '../declarationVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class CompilationUnitTypeClass extends UnitTypeClass<
+export type CompilationUnitType = TypeField<'compilationUnit'> & {
+    declaration: TypeDeclarationTypeClass;
+};
+
+export class CompilationUnitTypeClass extends ApexCommonTypeClass<
     'compilationUnit',
-    TypeDeclarationTypeClass
+    CompilationUnitType
 > {
-    private constructor(value: TypeDeclarationTypeClass | ApexErrorTypeClass) {
-        super('compilationUnit', value);
+    private constructor(fields: FieldsOf<CompilationUnitType>, sourceSpan: SourceSpan) {
+        super('compilationUnit', fields, sourceSpan);
     }
 
     static create(ctx: CompilationUnitContext): CompilationUnitTypeClass {
-        if (!ctx.typeDeclaration()) {
-            throw new Error('値が異常です。CompilationUnitContext: ' + ctx.getText());
-        }
-
         return new CompilationUnitTypeClass(
-            visitNode(
-                new DeclarationVisitor(),
-                ctx.typeDeclaration(),
-                isTypeDeclarationType,
-                'typeDeclaration',
-            ),
+            {
+                declaration: createNode(
+                    ctx.typeDeclaration(),
+                    (c) => TypeDeclarationTypeClass.create(c),
+                    'typeDeclaration',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getDeclaration(): CompilationUnitType['declaration'] {
+        return this.getFields().declaration;
     }
 }
 
 export const isCompilationUnitType = (
-    target: ApexCommonTypeClass<string>,
-): target is CompilationUnitTypeClass => {
-    return target instanceof CompilationUnitTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is CompilationUnitTypeClass => isSpicifyApexCommonTypeClass('compilationUnit', target);

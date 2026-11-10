@@ -1,36 +1,45 @@
 import { FieldGroupByListContext } from '@apexdevtools/apex-parser';
 
-import { ListTypeClass } from '.';
+import { FieldGroupByTypeClass } from '../clauseVisitor';
+import {
+    ApexCommonTypeClass,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { FieldGroupByTypeClass, ClauseVisitor, isFieldGroupByType } from '../clauseVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
+export type FieldGroupByListType = TypeField<'fieldGroupByList'> & {
+    value: FieldGroupByTypeClass[];
+};
 
-export class FieldGroupByListTypeClass extends ListTypeClass<
+export class FieldGroupByListTypeClass extends ApexCommonTypeClass<
     'fieldGroupByList',
-    FieldGroupByTypeClass
+    FieldGroupByListType
 > {
-    private constructor(value: (FieldGroupByTypeClass | ApexErrorTypeClass)[]) {
-        super('fieldGroupByList', value);
+    private constructor(fields: FieldsOf<FieldGroupByListType>, sourceSpan: SourceSpan) {
+        super('fieldGroupByList', fields, sourceSpan);
     }
 
     static create(ctx: FieldGroupByListContext): FieldGroupByListTypeClass {
-        if (!ctx.fieldGroupBy_list() || ctx.fieldGroupBy_list().length === 0) {
-            throw new Error('値が異常です。FieldGroupByListContext: ' + ctx.getText());
-        }
-
         return new FieldGroupByListTypeClass(
-            visitNodeList(
-                new ClauseVisitor(),
-                ctx.fieldGroupBy_list(),
-                isFieldGroupByType,
-                'fieldGroupBy',
-            ),
+            {
+                value: createNodeList(
+                    ctx.fieldGroupBy_list(),
+                    (c) => FieldGroupByTypeClass.create(c),
+                    'fieldGroupBy',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): FieldGroupByListType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isFieldGroupByListType = (
-    target: ApexCommonTypeClass<string>,
-): target is FieldGroupByListTypeClass => {
-    return target instanceof FieldGroupByListTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is FieldGroupByListTypeClass => isSpicifyApexCommonTypeClass('fieldGroupByList', target);

@@ -16,7 +16,7 @@
 
 | 系統                                | 単位                                                        | parser                                                     | 単位の解析結果                                      | worker                                    | 保存名                                           |
 | ----------------------------------- | ----------------------------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------- | ----------------------------------------- | ------------------------------------------------ |
-| Apex                                | クラス・トリガー（ソース + `-meta.xml`）・匿名 Apex         | `ApexParser`（static）。IR → converter → JSON              | `ApexUnitParseResult`（`dataType: 'apexUnit'`）     | `ApexWorker`                              | `class_` / `trigger_` / `anonymous_`             |
+| Apex                                | クラス・トリガー（ソース + `-meta.xml`）・匿名 Apex         | `ApexParser`（static）。IR → JSON                          | `ApexUnitParseResult`（`dataType: 'apexUnit'`）     | `ApexWorker`                              | `class_` / `trigger_` / `anonymous_`             |
 | LWC                                 | バンドル（フォルダ）                                        | `LwcParser`（static）。Babel・テンプレート・postcss → JSON | `LwcBundleParseResult`（`'lwcBundle'`）             | `LwcWorker`                               | `lwc_`                                           |
 | オブジェクト・翻訳                  | フォルダ（`objects/<API 名>/`・`objectTranslations/<…>/`）  | `MetadataParser`・`ObjectTranslationParser`（static）      | `ObjectParseResult`・`ObjectTranslationParseResult` | `ObjectWorker`・`ObjectTranslationWorker` | API 名のまま（接頭辞なし）・`objectTranslation_` |
 | フォルダ単位のメタデータ（A・B・C） | ファイル（Aura はバンドル、レポートなどは入れ子のフォルダ） | `MetadataFolderParser`（インスタンス。種類の設定で動く）   | `MetadataFileParseResult<種類, JSON>`               | `MetadataFolderWorker`（1 つ）            | `<種類>_`                                        |
@@ -104,7 +104,7 @@ type UnitType<T extends string, J> = {
     read(location: UnitLocation): Promise<SourceText[]>; // 作業ツリーから読む
     fromGitPaths(paths: string[]): UnitLocation[]; // git の変更ファイル → 単位 (2.3)
     parseUnit(id: string, files: SourceText[]): UnitParseResult<T, J>;
-    diff(before: J | ErrorJson, after: J | ErrorJson, sources: Sources): unknown;
+    diff(before: J, after: J, sources: Sources): unknown;
     definitions(result: UnitParseResult<T, J>): Definition[]; // 3 章
     references(result: UnitParseResult<T, J>): Reference[]; // 3 章
 };
@@ -310,4 +310,4 @@ type DependencyEdge = {
 ### 8.3 検証の結果（2026-11-09）
 
 - `npm test`: 450 件すべて成功。以前、途中で止まっていたのは `GitTree` の `git cat-file` のプロセスが残っていたためで、しばらく読まなければ終えるように直した。
-- 型チェック: src とテストはエラーなし。ただし、作業ツリーに追加されている `src/analyzer/types/apex_IR_v2/`・`src/analyzer/types/lwc_IR_v2/`（未追跡。この作業では触っていない）に型エラーがあり、`npm run typecheck` はそこで失敗する。
+- 型チェック: src とテストはエラーなし。ただし、作業ツリーに追加されている `src/analyzer/types/apex_IR_v2/`・`src/analyzer/types/lwc_IR_v2/`（未追跡。この作業では触っていない。今の `apex_IR`・`lwc_IR`）に型エラーがあり、`npm run typecheck` はそこで失敗する。

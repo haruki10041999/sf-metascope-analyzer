@@ -1,75 +1,95 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isOptionalMemberExpression, type OptionalMemberExpression } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
+import { identifierTypePair, type IdentifierTypeClass } from './identifier';
 import { privateNameTypePair, type PrivateNameTypeClass } from './privateName';
 
-const optionalMemberExpressionPropertyPairs = lazyPairs(
-    () => [...expressionVisitorEvaluatePairs(), privateNameTypePair] as const,
+const optionalMemberExpressionStaticPropertyPairs = lazyPairs(
+    () => [identifierTypePair, privateNameTypePair] as const,
 );
 
-export type OptionalMemberExpressionFields = {
-    object: ExpressionTypeClass | LwcErrorTypeClass;
-    property: ExpressionTypeClass | PrivateNameTypeClass | LwcErrorTypeClass;
-    computed: OptionalMemberExpression['computed'];
+/**
+ * Babel 8 の OptionalMemberExpressionComputed | OptionalMemberExpressionNonComputed。
+ * computed: false の property は Identifier・PrivateName (object は式だけ。`super?.x` は書けない)
+ */
+export type OptionalMemberExpressionFields = TypeField<'optionalMemberExpression'> & {
+    object: ExpressionTypeClass;
     optional: OptionalMemberExpression['optional'];
-};
+} & (
+        | { computed: false; property: IdentifierTypeClass | PrivateNameTypeClass }
+        | { computed: true; property: ExpressionTypeClass }
+    );
 
-export class OptionalMemberExpressionTypeClass extends LwcCommonTypeClass<'optionalMemberExpression'> {
-    private readonly value: OptionalMemberExpressionFields;
-
-    private constructor(value: OptionalMemberExpressionFields) {
-        super('optionalMemberExpression');
-        this.value = value;
+export class OptionalMemberExpressionTypeClass extends LwcCommonTypeClass<
+    'optionalMemberExpression',
+    OptionalMemberExpressionFields
+> {
+    private constructor(value: FieldsOf<OptionalMemberExpressionFields>, sourceSpan: SourceSpan) {
+        super('optionalMemberExpression', value, sourceSpan);
     }
 
     static create(
         target: OptionalMemberExpression,
         originalSource: string,
     ): OptionalMemberExpressionTypeClass {
-        return new OptionalMemberExpressionTypeClass({
+        const common = {
             object: visitNode(
                 target.object,
                 originalSource,
                 expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
+                'OptionalMemberExpression.object',
             ),
-            property: visitNode(
-                target.property,
-                originalSource,
-                optionalMemberExpressionPropertyPairs(),
-                'OptionalMemberExpression.property',
-            ),
-            computed: target.computed,
             optional: target.optional,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): OptionalMemberExpressionFields {
-        return this.value;
+        };
+        return new OptionalMemberExpressionTypeClass(
+            target.computed
+                ? {
+                      ...common,
+                      computed: true,
+                      property: visitNode(
+                          target.property,
+                          originalSource,
+                          expressionVisitorEvaluatePairs(),
+                          'OptionalMemberExpression.property',
+                      ),
+                  }
+                : {
+                      ...common,
+                      computed: false,
+                      property: visitNode(
+                          target.property,
+                          originalSource,
+                          optionalMemberExpressionStaticPropertyPairs(),
+                          'OptionalMemberExpression.property',
+                      ),
+                  },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getObject(): OptionalMemberExpressionFields['object'] {
-        return this.value.object;
+        return this.getFields().object;
     }
 
     getProperty(): OptionalMemberExpressionFields['property'] {
-        return this.value.property;
+        return this.getFields().property;
     }
 
     getComputed(): OptionalMemberExpressionFields['computed'] {
-        return this.value.computed;
+        return this.getFields().computed;
     }
 
     getOptional(): OptionalMemberExpressionFields['optional'] {
-        return this.value.optional;
+        return this.getFields().optional;
     }
 }
 
@@ -81,6 +101,6 @@ export const optionalMemberExpressionTypePair: EvaluatePair<
 );
 
 export const isOptionalMemberExpressionType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is OptionalMemberExpressionTypeClass =>
     target instanceof OptionalMemberExpressionTypeClass;

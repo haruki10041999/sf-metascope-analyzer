@@ -1,5 +1,4 @@
 import type {
-    ErrorJson,
     LwcComponentJson,
     LwcDeclarationJson,
     LwcImportJson,
@@ -18,7 +17,6 @@ import {
     getValueKey,
     makeKeyedDiff,
     makeNodeDiff,
-    makeSetDiff,
     makeValueDiff,
     pairByKey,
 } from '../../commons/diff/commons';
@@ -66,8 +64,8 @@ export type LwcImportSpecifierJsonDiff = NodeDiff<
 >;
 
 const makeSpecifierDiff = (
-    before: LwcImportSpecifierJson | ErrorJson,
-    after: LwcImportSpecifierJson | ErrorJson,
+    before: LwcImportSpecifierJson,
+    after: LwcImportSpecifierJson,
     match: Match,
 ): LwcImportSpecifierJsonDiff =>
     makeNodeDiff('lwcImportSpecifier', before, after, match, (b, a) => ({
@@ -97,8 +95,8 @@ export type LwcImportJsonDiff = NodeDiff<
 >;
 
 const makeImportDiff = (
-    before: LwcImportJson | ErrorJson,
-    after: LwcImportJson | ErrorJson,
+    before: LwcImportJson,
+    after: LwcImportJson,
     match: Match,
     sources?: Sources,
 ): LwcImportJsonDiff =>
@@ -120,8 +118,8 @@ const makeImportDiff = (
     }));
 
 /** import 文の識別キー。同じ import 元を値と型で 2 回 import できるので typeOnly も含める */
-export const getLwcImportKey = (item: LwcImportJson | ErrorJson): string | undefined =>
-    item.kind === 'error' ? undefined : `${item.typeOnly ? 'type ' : ''}${item.source}`;
+export const getLwcImportKey = (item: LwcImportJson): string =>
+    `${item.typeOnly ? 'type ' : ''}${item.source}`;
 
 // ---------------------------------------------------------------------------
 // モジュールの直下の宣言
@@ -131,7 +129,7 @@ export type LwcDeclarationJsonDiff = NodeDiff<
     'lwcDeclaration',
     LwcDeclarationJson,
     LwcBodyContentDiff & {
-        name: ValueDiff<string | ErrorJson>;
+        name: ValueDiff<string>;
         declarationType: ValueDiff<LwcDeclarationJson['declarationType']>;
         exported: ValueDiff<boolean>;
         variableKind?: OptionalValueDiff<string>;
@@ -144,8 +142,8 @@ export type LwcDeclarationJsonDiff = NodeDiff<
 >;
 
 const makeDeclarationDiff = (
-    before: LwcDeclarationJson | ErrorJson,
-    after: LwcDeclarationJson | ErrorJson,
+    before: LwcDeclarationJson,
+    after: LwcDeclarationJson,
     match: Match,
     sources?: Sources,
 ): LwcDeclarationJsonDiff =>
@@ -206,8 +204,8 @@ export type LwcTypeDeclarationJsonDiff = NodeDiff<
 >;
 
 const makeTypeDeclarationDiff = (
-    before: LwcTypeDeclarationJson | ErrorJson,
-    after: LwcTypeDeclarationJson | ErrorJson,
+    before: LwcTypeDeclarationJson,
+    after: LwcTypeDeclarationJson,
     match: Match,
 ): LwcTypeDeclarationJsonDiff =>
     makeNodeDiff('lwcTypeDeclaration', before, after, match, (b, a) => ({
@@ -227,30 +225,24 @@ const makeTypeDeclarationDiff = (
 // モジュール
 // ---------------------------------------------------------------------------
 
-const byName = (node: { name: string | ErrorJson } | ErrorJson): string | undefined =>
-    'name' in node && typeof node.name === 'string' ? node.name : undefined;
-
-type ImportJson = LwcImportJson | ErrorJson;
-type DeclarationJson = LwcDeclarationJson | ErrorJson;
-type TypeDeclarationJson = LwcTypeDeclarationJson | ErrorJson;
+const byName = (node: { name: string }): string => node.name;
 
 /**
  * モジュールは kind を持たない入れ物なので TypedObjectDiff。
- * import・宣言は名前で D. キー対応、export 名は B. 集合、IR を作れなかった文 (errors) は B. 集合
+ * import・宣言は名前で D. キー対応、export 名は B. 集合
  */
 export type LwcModuleJsonDiff = TypedObjectDiff<
     LwcModuleJson,
     {
         fileType: ValueDiff<LwcModuleJson['fileType']>;
-        imports: ListItemDiff<'lwcImport', ImportJson, LwcImportJsonDiff>[];
-        component?: PresentDiff<LwcComponentJson | ErrorJson, LwcComponentJsonDiff>;
+        imports: ListItemDiff<'lwcImport', LwcImportJson, LwcImportJsonDiff>[];
+        component?: PresentDiff<LwcComponentJson, LwcComponentJsonDiff>;
         otherExports: TypedListDiff<string, never>;
-        declarations: ListItemDiff<'lwcDeclaration', DeclarationJson, LwcDeclarationJsonDiff>[];
+        declarations: ListItemDiff<'lwcDeclaration', LwcDeclarationJson, LwcDeclarationJsonDiff>[];
         typeDeclarations?: PresentDiff<
-            TypeDeclarationJson[],
-            ListItemDiff<'lwcTypeDeclaration', TypeDeclarationJson, LwcTypeDeclarationJsonDiff>[]
+            LwcTypeDeclarationJson[],
+            ListItemDiff<'lwcTypeDeclaration', LwcTypeDeclarationJson, LwcTypeDeclarationJsonDiff>[]
         >;
-        errors: ListItemDiff<'error', ErrorJson, never>[];
     }
 >;
 
@@ -290,5 +282,4 @@ export const makeLwcModuleDiff = (
                 makeKeyedDiff('lwcTypeDeclaration', x, y, makeTypeDeclarationDiff, byName, sources),
             ),
         ),
-        errors: makeSetDiff('error', b.errors, a.errors, () => undefined as never, sources),
     }));

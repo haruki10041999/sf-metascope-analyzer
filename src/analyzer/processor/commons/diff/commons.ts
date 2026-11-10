@@ -1,4 +1,4 @@
-import { ConvertKeys, ErrorJson, JsonType, StructureJsonType } from '../../../types';
+import { ConvertKeys, JsonType, StructureJsonType } from '../../../types';
 
 import {
     compareSourceDistance,
@@ -264,39 +264,39 @@ export type Identity<T> = (node: T) => string;
 
 export type NodeDiff<K extends string, T extends JsonNode, Fields> = {
     kind: K;
-    sourceKeys: SourceKeysDiff<(T | ErrorJson)['sourceKeys']>;
+    sourceKeys: SourceKeysDiff<T['sourceKeys']>;
 } & (
-    | { status: 'unchanged'; value: Body<T | ErrorJson> }
+    | { status: 'unchanged'; value: Body<T> }
     | { status: 'changed'; match: Match; fields: Fields }
     | {
           status: 'changed';
           match: Match;
-          before: Body<T | ErrorJson>;
-          after: Body<T | ErrorJson>;
+          before: Body<T>;
+          after: Body<T>;
       }
 );
 
 /**
  * 1 組のノードの差分。
  * 判定キー (identity、既定は objectKey) が同じなら unchanged、同じ kind で makeFields が値を返せばプロパティごとの差分、
- * それ以外 (エラーが絡む・形が違う) は値を丸ごと before / after に入れる。
+ * それ以外 (形が違う) は値を丸ごと before / after に入れる。
  */
 export const makeNodeDiff = <K extends string, T extends JsonNode & { kind: K }, Fields>(
     kind: K,
-    before: T | ErrorJson,
-    after: T | ErrorJson,
+    before: T,
+    after: T,
     match: Match,
     makeFields: (before: T, after: T) => Fields | undefined,
-    identity: Identity<T | ErrorJson> = getObjectKey,
+    identity: Identity<T> = getObjectKey,
 ): NodeDiff<K, T, Fields> => {
     // T の制約から sourceKeys が広がるため、元の型に戻す
     const sourceKeys = makeSourceKeysDiff(
-        before.sourceKeys as (T | ErrorJson)['sourceKeys'],
-        after.sourceKeys as (T | ErrorJson)['sourceKeys'],
+        before.sourceKeys as T['sourceKeys'],
+        after.sourceKeys as T['sourceKeys'],
     );
 
     if (identity(before) === identity(after)) {
-        return { kind, sourceKeys, status: 'unchanged', value: toBody<T | ErrorJson>(before) };
+        return { kind, sourceKeys, status: 'unchanged', value: toBody<T>(before) };
     }
 
     const fields =
@@ -313,18 +313,10 @@ export const makeNodeDiff = <K extends string, T extends JsonNode & { kind: K },
         sourceKeys,
         status: 'changed',
         match,
-        before: toBody<T | ErrorJson>(before),
-        after: toBody<T | ErrorJson>(after),
+        before: toBody<T>(before),
+        after: toBody<T>(after),
     };
 };
-
-/** ErrorJson 同士の差分 (文・式・宣言のどこに現れても同じ形) */
-export type ErrorJsonDiff = NodeDiff<'error', ErrorJson, { kindType: ValueDiff<string> }>;
-
-export const makeErrorJsonDiff = (before: ErrorJson, after: ErrorJson): ErrorJsonDiff =>
-    makeNodeDiff('error', before, after, 'slot', (b, a) => ({
-        kindType: makeValueDiff(b.kindType, a.kindType),
-    }));
 
 // ---------------------------------------------------------------------------
 // 配列の対応付け (B. 集合 / C. 順序付き列 / D. キー対応)
@@ -555,7 +547,7 @@ export const pairAsSequence = (
 
 /**
  * D. キー対応: 識別キーが同じもの同士を対応付ける。
- * 識別キーを持たないもの (ErrorJson など) は集合として比べる。
+ * 識別キーを持たないものは集合として比べる。
  */
 export const pairByKey = (
     beforeIds: (string | undefined)[],
@@ -609,7 +601,7 @@ export const pairByKey = (
 
 export type ListItemDiff<K extends string, T extends JsonNode, D> =
     | (D & { index: { before: number; after: number } })
-    // 要素自身の kind (読めなかった要素は 'error')
+    // 要素自身の kind
     | {
           kind: T['kind'];
           status: 'moved';
@@ -745,22 +737,4 @@ export const makeKeyedDiff = <K extends string, T extends JsonNode, D>(
         makeDistance(before, after, sources),
     );
     return makeListDiff(kind, before, after, pairings, makeDiff);
-};
-
-/** `T[] | ErrorJson` (と省略) のプロパティ。両方配列なら要素の差分、そうでなければ値を丸ごと比べる */
-export type ListOrErrorDiff<I, T> = I[] | ValueDiff<T[] | ErrorJson | null>;
-
-export const makeListOrErrorDiff = <T, I>(
-    before: T[] | ErrorJson | undefined,
-    after: T[] | ErrorJson | undefined,
-    makeList: (before: T[], after: T[]) => I[],
-): ListOrErrorDiff<I, T> => {
-    if (
-        (before === undefined || Array.isArray(before)) &&
-        (after === undefined || Array.isArray(after))
-    ) {
-        return makeList(before ?? [], after ?? []);
-    }
-
-    return makeValueDiff<T[] | ErrorJson | null>(before ?? null, after ?? null);
 };

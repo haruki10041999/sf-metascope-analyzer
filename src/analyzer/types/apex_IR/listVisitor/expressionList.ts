@@ -1,41 +1,50 @@
 import { ExpressionListContext } from '@apexdevtools/apex-parser';
 
-import { ListTypeClass } from '.';
-
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
+import {
+    ApexCommonTypeClass,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+    visitNodeList,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
+export type ExpressionListType = TypeField<'expressionList'> & {
+    value: BasedExpressionTypeClass[];
+};
 
-export class ExpressionListTypeClass extends ListTypeClass<
+export class ExpressionListTypeClass extends ApexCommonTypeClass<
     'expressionList',
-    BasedExpressionTypeClass
+    ExpressionListType
 > {
-    private constructor(value: (BasedExpressionTypeClass | ApexErrorTypeClass)[]) {
-        super('expressionList', value);
+    private constructor(fields: FieldsOf<ExpressionListType>, sourceSpan: SourceSpan) {
+        super('expressionList', fields, sourceSpan);
     }
 
     static create(ctx: ExpressionListContext): ExpressionListTypeClass {
-        if (!ctx.expression_list() || ctx.expression_list().length === 0) {
-            throw new Error('値が異常です。ExpressionListContext: ' + ctx.getText());
-        }
-
         return new ExpressionListTypeClass(
-            visitNodeList(
-                new ExpressionVisitor(),
-                ctx.expression_list(),
-                isBasedExpressionType,
-                'expression',
-            ),
+            {
+                value: visitNodeList(
+                    new ExpressionVisitor(),
+                    ctx.expression_list(),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): ExpressionListType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isExpressionListType = (
-    target: ApexCommonTypeClass<string>,
-): target is ExpressionListTypeClass => {
-    return target instanceof ExpressionListTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is ExpressionListTypeClass => isSpicifyApexCommonTypeClass('expressionList', target);

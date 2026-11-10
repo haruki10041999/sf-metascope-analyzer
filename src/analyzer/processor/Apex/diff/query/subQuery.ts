@@ -1,4 +1,4 @@
-import { ErrorJson, SubQueryJson, isErrorJson } from '../../../../types';
+import { SubQueryJson } from '../../../../types';
 
 import {
     Body,
@@ -13,7 +13,7 @@ import {
     makeOptionalDiff,
     makeValueDiff,
 } from '../../../commons/diff/commons';
-import { FromClauseJson, FromFieldsDiff, makeFromDiff } from './from';
+import { FromFieldsDiff, makeFromDiff } from './from';
 import { ForJsonDiff, makeForDiff } from './for';
 import { LimitJsonDiff, makeLimitDiff } from './limit';
 import { OrderByJsonDiff, makeOrderByDiff } from './orderBy';
@@ -26,7 +26,7 @@ export type SubQueryBody = Body<SubQueryEntryJson>;
 
 export type SubQueryFieldsDiff = {
     select: SelectJsonDiff;
-    from: FromFieldsDiff | ValueDiff<FromClauseJson | ErrorJson>;
+    from: FromFieldsDiff;
     where: OptionalDiff<SubQueryJson['where'], WhereJsonDiff>;
     for: OptionalDiff<SubQueryJson['for'], ForJsonDiff>;
     orderBy: OptionalDiff<SubQueryJson['orderBy'], OrderByJsonDiff>;
@@ -38,8 +38,8 @@ export type SubQueryFieldsDiff = {
 export type SubQueryJsonDiff = NodeDiff<'subQuery', SubQueryEntryJson, SubQueryFieldsDiff>;
 
 export const makeSubQueryDiff = (
-    before: SubQueryEntryJson | ErrorJson,
-    after: SubQueryEntryJson | ErrorJson,
+    before: SubQueryEntryJson,
+    after: SubQueryEntryJson,
     match: Match = 'slot',
     sources?: Sources,
 ): SubQueryJsonDiff =>
@@ -49,11 +49,7 @@ export const makeSubQueryDiff = (
         after,
         match,
         (b, a) => ({
-            select: makeSelectDiff(
-                isErrorJson(b.select) ? b.select : b.select.field,
-                isErrorJson(a.select) ? a.select : a.select.field,
-                sources,
-            ),
+            select: makeSelectDiff(b.select.field, a.select.field, sources),
             from: makeFromDiff(b.from, a.from, sources),
             where: makeOptionalDiff(b.where, a.where, makeWhereDiff),
             for: makeOptionalDiff(b.for, a.for, makeForDiff),
@@ -64,6 +60,5 @@ export const makeSubQueryDiff = (
             updateList: makeOptionalDiff(b.updateList, a.updateList, makeUpdateListDiff),
             alias: makeOptionalDiff(b.alias, a.alias, makeValueDiff),
         }),
-        (node) =>
-            `${getObjectKey(node)}:${node.kind === 'subQuery' ? getValueKey(node.alias) : 'no-alias'}`,
+        (node) => `${getObjectKey(node)}:${getValueKey(node.alias)}`,
     );

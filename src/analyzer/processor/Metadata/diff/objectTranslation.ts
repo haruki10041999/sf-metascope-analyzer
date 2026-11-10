@@ -2,7 +2,6 @@ import {
     CaseValueJson,
     CustomFieldTranslationJson,
     CustomObjectTranslationJson,
-    ErrorJson,
     FIELD_TRANSLATION_SCHEMA,
     LayoutSectionTranslationJson,
     LookupFilterTranslationJson,
@@ -54,8 +53,8 @@ export type PicklistValueTranslationJsonDiff = NodeDiff<
 >;
 
 export const makePicklistValueTranslationDiff = (
-    before: PicklistValueTranslationJson | ErrorJson,
-    after: PicklistValueTranslationJson | ErrorJson,
+    before: PicklistValueTranslationJson,
+    after: PicklistValueTranslationJson,
     match: Match = 'slot',
 ): PicklistValueTranslationJsonDiff =>
     makeNodeDiff('picklistValueTranslation', before, after, match, (b, a) => ({
@@ -88,8 +87,8 @@ export type CustomFieldTranslationJsonDiff = NodeDiff<
 >;
 
 export const makeCustomFieldTranslationDiff = (
-    before: CustomFieldTranslationJson | ErrorJson,
-    after: CustomFieldTranslationJson | ErrorJson,
+    before: CustomFieldTranslationJson,
+    after: CustomFieldTranslationJson,
     match: Match = 'slot',
     sources?: Sources,
 ): CustomFieldTranslationJsonDiff =>
@@ -151,8 +150,8 @@ const makeSectionsDiff = (
 export const makeTranslationMemberDiff =
     (key: TranslationMemberKey) =>
     (
-        before: TranslationMemberJson | ErrorJson,
-        after: TranslationMemberJson | ErrorJson,
+        before: TranslationMemberJson,
+        after: TranslationMemberJson,
         match: Match = 'slot',
     ): TranslationMemberJsonDiff =>
         makeNodeDiff(TRANSLATION_MEMBERS[key].kind, before, after, match, (b, a) => {
@@ -194,10 +193,10 @@ export type CustomObjectTranslationJsonDiff = NodeDiff<
         objectApiName: ValueDiff<string>;
         locale: ValueDiff<string>;
         fields?: PresentDiff<
-            (CustomFieldTranslationJson | ErrorJson)[],
+            CustomFieldTranslationJson[],
             ListItemDiff<
                 'fieldTranslation',
-                CustomFieldTranslationJson | ErrorJson,
+                CustomFieldTranslationJson,
                 CustomFieldTranslationJsonDiff
             >[]
         >;
@@ -212,8 +211,8 @@ export type CustomObjectTranslationJsonDiff = NodeDiff<
 >;
 
 export const makeCustomObjectTranslationDiff = (
-    before: CustomObjectTranslationJson | ErrorJson,
-    after: CustomObjectTranslationJson | ErrorJson,
+    before: CustomObjectTranslationJson,
+    after: CustomObjectTranslationJson,
     match: Match = 'slot',
     sources?: Sources,
 ): CustomObjectTranslationJsonDiff =>
@@ -229,7 +228,7 @@ export const makeCustomObjectTranslationDiff = (
                     bf,
                     af,
                     (x, y, m) => makeCustomFieldTranslationDiff(x, y, m, sources),
-                    (field) => (field.kind === 'error' ? undefined : field.name),
+                    (field) => field.name,
                     sources,
                 ),
             ),

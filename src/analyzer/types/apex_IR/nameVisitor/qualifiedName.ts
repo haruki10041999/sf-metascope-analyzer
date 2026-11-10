@@ -1,28 +1,39 @@
 import { QualifiedNameContext } from '@apexdevtools/apex-parser';
 
-import { NameListTypeClass } from '.';
+import { IdTypeClass } from '../idVisitor';
+import {
+    ApexCommonTypeClass,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
+export type QualifiedNameType = TypeField<'qualifiedName'> & {
+    value: IdTypeClass[];
+};
 
-export class QualifiedNameTypeClass extends NameListTypeClass<'qualifiedName', NormalIdTypeClass> {
-    private constructor(value: (NormalIdTypeClass | ApexErrorTypeClass)[]) {
-        super('qualifiedName', value);
+export class QualifiedNameTypeClass extends ApexCommonTypeClass<
+    'qualifiedName',
+    QualifiedNameType
+> {
+    private constructor(fields: FieldsOf<QualifiedNameType>, sourceSpan: SourceSpan) {
+        super('qualifiedName', fields, sourceSpan);
     }
 
     static create(ctx: QualifiedNameContext): QualifiedNameTypeClass {
-        if (!ctx.id_list() || ctx.id_list().length === 0) {
-            throw new Error('値が異常です。QualifiedNameContext: ' + ctx.getText());
-        }
-
         return new QualifiedNameTypeClass(
-            visitNodeList(new IdVisitor(), ctx.id_list(), isNormalIdType, 'id'),
+            { value: createNodeList(ctx.id_list(), (c) => IdTypeClass.create(c), 'id') },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): QualifiedNameType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isQualifiedNameType = (
-    target: ApexCommonTypeClass<string>,
-): target is QualifiedNameTypeClass => {
-    return target instanceof QualifiedNameTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is QualifiedNameTypeClass => isSpicifyApexCommonTypeClass('qualifiedName', target);

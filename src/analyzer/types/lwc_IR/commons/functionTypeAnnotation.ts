@@ -1,108 +1,86 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isFunctionTypeAnnotation, type FunctionTypeAnnotation } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
     visitNode,
-    visitNodeList,
-    visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { flowTypeVisitorEvaluatePairs, type FlowTypeTypeClass } from '../flowTypeVisitor';
-import {
-    functionTypeParamTypePair,
-    type FunctionTypeParamTypeClass,
-} from '../flowVisitor/functionTypeParam';
-import {
-    typeParameterDeclarationTypePair,
-    type TypeParameterDeclarationTypeClass,
-} from '../flowVisitor/typeParameterDeclaration';
+import { FunctionTypeParamTypeClass } from '../flowVisitor/functionTypeParam';
+import { TypeParameterDeclarationTypeClass } from '../flowVisitor/typeParameterDeclaration';
 
-const functionTypeAnnotationTypeParametersPairs = lazyPairs(
-    () => [typeParameterDeclarationTypePair] as const,
-);
-const functionTypeAnnotationParamsPairs = lazyPairs(() => [functionTypeParamTypePair] as const);
-const functionTypeAnnotationRestPairs = lazyPairs(() => [functionTypeParamTypePair] as const);
-const functionTypeAnnotationThisPairs = lazyPairs(() => [functionTypeParamTypePair] as const);
-
-export type FunctionTypeAnnotationFields = {
-    typeParameters: TypeParameterDeclarationTypeClass | LwcErrorTypeClass | null;
-    params: (FunctionTypeParamTypeClass | LwcErrorTypeClass)[];
-    rest: FunctionTypeParamTypeClass | LwcErrorTypeClass | null;
-    this: FunctionTypeParamTypeClass | LwcErrorTypeClass | null;
-    returnType: FlowTypeTypeClass | LwcErrorTypeClass;
+export type FunctionTypeAnnotationFields = TypeField<'functionTypeAnnotation'> & {
+    typeParameters: TypeParameterDeclarationTypeClass | null;
+    params: FunctionTypeParamTypeClass[];
+    rest: FunctionTypeParamTypeClass | null;
+    this: FunctionTypeParamTypeClass | null;
+    returnType: FlowTypeTypeClass;
 };
 
-export class FunctionTypeAnnotationTypeClass extends LwcCommonTypeClass<'functionTypeAnnotation'> {
-    private readonly value: FunctionTypeAnnotationFields;
-
-    private constructor(value: FunctionTypeAnnotationFields) {
-        super('functionTypeAnnotation');
-        this.value = value;
+export class FunctionTypeAnnotationTypeClass extends LwcCommonTypeClass<
+    'functionTypeAnnotation',
+    FunctionTypeAnnotationFields
+> {
+    private constructor(value: FieldsOf<FunctionTypeAnnotationFields>, sourceSpan: SourceSpan) {
+        super('functionTypeAnnotation', value, sourceSpan);
     }
 
     static create(
         target: FunctionTypeAnnotation,
         originalSource: string,
     ): FunctionTypeAnnotationTypeClass {
-        return new FunctionTypeAnnotationTypeClass({
-            typeParameters: visitOptionalNode(
-                target.typeParameters,
-                originalSource,
-                functionTypeAnnotationTypeParametersPairs(),
-                'FunctionTypeAnnotation.typeParameters',
-            ),
-            params: visitNodeList(
-                target.params,
-                originalSource,
-                functionTypeAnnotationParamsPairs(),
-                'FunctionTypeAnnotation.params',
-            ),
-            rest: visitOptionalNode(
-                target.rest,
-                originalSource,
-                functionTypeAnnotationRestPairs(),
-                'FunctionTypeAnnotation.rest',
-            ),
-            this: visitOptionalNode(
-                target.this,
-                originalSource,
-                functionTypeAnnotationThisPairs(),
-                'FunctionTypeAnnotation.this',
-            ),
-            returnType: visitNode(
-                target.returnType,
-                originalSource,
-                flowTypeVisitorEvaluatePairs(),
-                'FlowTypeVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): FunctionTypeAnnotationFields {
-        return this.value;
+        return new FunctionTypeAnnotationTypeClass(
+            {
+                typeParameters:
+                    target.typeParameters == null
+                        ? null
+                        : TypeParameterDeclarationTypeClass.create(
+                              target.typeParameters,
+                              originalSource,
+                          ),
+                params: target.params.map((child) =>
+                    FunctionTypeParamTypeClass.create(child, originalSource),
+                ),
+                rest:
+                    target.rest == null
+                        ? null
+                        : FunctionTypeParamTypeClass.create(target.rest, originalSource),
+                this:
+                    target.this == null
+                        ? null
+                        : FunctionTypeParamTypeClass.create(target.this, originalSource),
+                returnType: visitNode(
+                    target.returnType,
+                    originalSource,
+                    flowTypeVisitorEvaluatePairs(),
+                    'FlowTypeVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getTypeParameters(): FunctionTypeAnnotationFields['typeParameters'] {
-        return this.value.typeParameters;
+        return this.getFields().typeParameters;
     }
 
     getParams(): FunctionTypeAnnotationFields['params'] {
-        return this.value.params;
+        return this.getFields().params;
     }
 
     getRest(): FunctionTypeAnnotationFields['rest'] {
-        return this.value.rest;
+        return this.getFields().rest;
     }
 
     getThis(): FunctionTypeAnnotationFields['this'] {
-        return this.value.this;
+        return this.getFields().this;
     }
 
     getReturnType(): FunctionTypeAnnotationFields['returnType'] {
-        return this.value.returnType;
+        return this.getFields().returnType;
     }
 }
 
@@ -114,5 +92,5 @@ export const functionTypeAnnotationTypePair: EvaluatePair<
 );
 
 export const isFunctionTypeAnnotationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is FunctionTypeAnnotationTypeClass => target instanceof FunctionTypeAnnotationTypeClass;

@@ -1,4 +1,4 @@
-import { ErrorJson, ParameterJson } from '../../../types';
+import { ParameterJson } from '../../../types';
 
 import {
     ListItemDiff,
@@ -24,8 +24,8 @@ export type ParameterJsonDiff = NodeDiff<
 >;
 
 export const makeParameterDiff = (
-    before: ParameterJson | ErrorJson,
-    after: ParameterJson | ErrorJson,
+    before: ParameterJson,
+    after: ParameterJson,
     match: Match = 'slot',
 ): ParameterJsonDiff => {
     return makeNodeDiff('parameter', before, after, match, (b, a) => ({
@@ -36,18 +36,14 @@ export const makeParameterDiff = (
 };
 
 /** パラメータは位置で識別されるので C. 順序付き列。入れ替えは moved になる */
-export type ParametersDiff = ListItemDiff<
-    'parameter',
-    ParameterJson | ErrorJson,
-    ParameterJsonDiff
->;
+export type ParametersDiff = ListItemDiff<'parameter', ParameterJson, ParameterJsonDiff>;
 
 export const makeParametersDiff = (
-    before: (ParameterJson | ErrorJson)[],
-    after: (ParameterJson | ErrorJson)[],
+    before: ParameterJson[],
+    after: ParameterJson[],
     sources?: Sources,
 ): ParametersDiff[] => {
-    // 構文エラーの直し途中 (ErrorJson ↔ ParameterJson) も同じ位置のパラメータとして組にする
+    // 名前・型が変わっても、同じ位置のパラメータとして組にする
     return makeSequenceDiff('parameter', before, after, makeParameterDiff, {
         sources,
         canPair: () => true,

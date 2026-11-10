@@ -1,37 +1,53 @@
 import { ReturnStatementContext } from '@apexdevtools/apex-parser';
 
-import { StatementTypeClass } from '../statementVisitor';
-
 import {
     BasedExpressionTypeClass,
     ExpressionVisitor,
     isBasedExpressionType,
 } from '../expressionVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitOptionalNode } from '../commonVisitor';
+import {
+    ApexCommonTypeClass,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+    visitOptionalNode,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class ReturnStatementTypeClass extends StatementTypeClass<
+export type ReturnStatementType = TypeField<'returnStatement'> & {
+    /** void メソッドの `return;` は式を持たない */
+    value: BasedExpressionTypeClass | null;
+};
+
+export class ReturnStatementTypeClass extends ApexCommonTypeClass<
     'returnStatement',
-    BasedExpressionTypeClass | null
+    ReturnStatementType
 > {
-    private constructor(value: BasedExpressionTypeClass | ApexErrorTypeClass | null) {
-        super('returnStatement', value);
+    private constructor(fields: FieldsOf<ReturnStatementType>, sourceSpan: SourceSpan) {
+        super('returnStatement', fields, sourceSpan);
     }
 
     static create(ctx: ReturnStatementContext): ReturnStatementTypeClass {
-        // void メソッドの `return;` は式を持たない
         return new ReturnStatementTypeClass(
-            visitOptionalNode(
-                new ExpressionVisitor(),
-                ctx.expression(),
-                isBasedExpressionType,
-                'expression',
-            ),
+            {
+                value: visitOptionalNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): ReturnStatementType['value'] {
+        return this.getFields().value;
     }
 }
 
 export const isReturnStatementType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is ReturnStatementTypeClass => {
-    return target instanceof ReturnStatementTypeClass;
+    return isSpicifyApexCommonTypeClass('returnStatement', target);
 };

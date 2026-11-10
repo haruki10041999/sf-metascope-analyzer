@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { BlockStatementTypeClass, blockStatementTypePair } from '../commons/blockStatement';
 import { CatchClauseTypeClass, catchClauseTypePair } from '../commons/catchClause';
@@ -162,7 +163,7 @@ export type BlockParentTypeClass =
     | TSModuleBlockTypeClass;
 
 export const isBlockParentType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is BlockParentTypeClass => {
     return (
         target instanceof BlockStatementTypeClass ||

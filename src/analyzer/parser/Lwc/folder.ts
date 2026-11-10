@@ -70,8 +70,7 @@ const classify = (
 
 /** バンドルのフォルダの中身 1 つ (直下のファイル・フォルダ)。ファイルは中身 (改行は LF) を持つ */
 export type LwcBundleEntry =
-    | { name: string; isDirectory: true }
-    | { name: string; isDirectory: false; source: string };
+    { name: string; isDirectory: true } | { name: string; isDirectory: false; source: string };
 
 /**
  * バンドルのフォルダの中身から LwcBundleFolder を作る (ファイルを読まない。git のある時点の中身にも使う)。

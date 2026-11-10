@@ -1,16 +1,16 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isPlaceholder, type Placeholder } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
-    visitNode,
-    visitNodeList,
     visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
-import { decoratorTypePair, type DecoratorTypeClass } from '../commons/decorator';
-import { identifierTypePair, type IdentifierTypeClass } from '../commons/identifier';
+import { DecoratorTypeClass } from '../commons/decorator';
+import { IdentifierTypeClass } from '../commons/identifier';
 import {
     typeAnnotationTypePair,
     type TypeAnnotationTypeClass,
@@ -20,79 +20,64 @@ import {
     type TSTypeAnnotationTypeClass,
 } from '../typeScriptVisitor/tSTypeAnnotation';
 
-const placeholderNamePairs = lazyPairs(() => [identifierTypePair] as const);
 const placeholderTypeAnnotationPairs = lazyPairs(
     () => [typeAnnotationTypePair, tSTypeAnnotationTypePair] as const,
 );
-const placeholderDecoratorsPairs = lazyPairs(() => [decoratorTypePair] as const);
 
-export type PlaceholderFields = {
-    name: IdentifierTypeClass | LwcErrorTypeClass;
+export type PlaceholderFields = TypeField<'placeholder'> & {
+    name: IdentifierTypeClass;
     expectedNode: Placeholder['expectedNode'];
-    typeAnnotation: TypeAnnotationTypeClass | TSTypeAnnotationTypeClass | LwcErrorTypeClass | null;
-    optional: NonNullable<Placeholder['optional']> | null;
-    decorators: (DecoratorTypeClass | LwcErrorTypeClass)[] | null;
+    typeAnnotation: TypeAnnotationTypeClass | TSTypeAnnotationTypeClass | null;
+    optional: boolean;
+    decorators: DecoratorTypeClass[] | null;
 };
 
-export class PlaceholderTypeClass extends LwcCommonTypeClass<'placeholder'> {
-    private readonly value: PlaceholderFields;
-
-    private constructor(value: PlaceholderFields) {
-        super('placeholder');
-        this.value = value;
+export class PlaceholderTypeClass extends LwcCommonTypeClass<'placeholder', PlaceholderFields> {
+    private constructor(value: FieldsOf<PlaceholderFields>, sourceSpan: SourceSpan) {
+        super('placeholder', value, sourceSpan);
     }
 
     static create(target: Placeholder, originalSource: string): PlaceholderTypeClass {
-        return new PlaceholderTypeClass({
-            name: visitNode(
-                target.name,
-                originalSource,
-                placeholderNamePairs(),
-                'Placeholder.name',
-            ),
-            expectedNode: target.expectedNode,
-            typeAnnotation: visitOptionalNode(
-                target.typeAnnotation,
-                originalSource,
-                placeholderTypeAnnotationPairs(),
-                'Placeholder.typeAnnotation',
-            ),
-            optional: target.optional ?? null,
-            decorators:
-                target.decorators == null
-                    ? null
-                    : visitNodeList(
-                          target.decorators,
-                          originalSource,
-                          placeholderDecoratorsPairs(),
-                          'Placeholder.decorators',
-                      ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): PlaceholderFields {
-        return this.value;
+        return new PlaceholderTypeClass(
+            {
+                name: IdentifierTypeClass.create(target.name, originalSource),
+                expectedNode: target.expectedNode,
+                typeAnnotation: visitOptionalNode(
+                    target.typeAnnotation,
+                    originalSource,
+                    placeholderTypeAnnotationPairs(),
+                    'Placeholder.typeAnnotation',
+                ),
+                optional: target.optional ?? false,
+                decorators:
+                    target.decorators == null
+                        ? null
+                        : target.decorators.map((child) =>
+                              DecoratorTypeClass.create(child, originalSource),
+                          ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getName(): PlaceholderFields['name'] {
-        return this.value.name;
+        return this.getFields().name;
     }
 
     getExpectedNode(): PlaceholderFields['expectedNode'] {
-        return this.value.expectedNode;
+        return this.getFields().expectedNode;
     }
 
     getTypeAnnotation(): PlaceholderFields['typeAnnotation'] {
-        return this.value.typeAnnotation;
+        return this.getFields().typeAnnotation;
     }
 
     getOptional(): PlaceholderFields['optional'] {
-        return this.value.optional;
+        return this.getFields().optional;
     }
 
     getDecorators(): PlaceholderFields['decorators'] {
-        return this.value.decorators;
+        return this.getFields().decorators;
     }
 }
 
@@ -102,5 +87,5 @@ export const placeholderTypePair: EvaluatePair<Placeholder, PlaceholderTypeClass
     );
 
 export const isPlaceholderType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is PlaceholderTypeClass => target instanceof PlaceholderTypeClass;

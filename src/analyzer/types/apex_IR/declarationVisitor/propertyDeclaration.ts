@@ -1,61 +1,62 @@
 import { PropertyDeclarationContext } from '@apexdevtools/apex-parser';
 
-import { DeclarationTypeClass } from '.';
-
-import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
-import { PropertyBlockTypeClass, BlockVisitor, isPropertyBlockType } from '../blockVisitor';
-import { TypeRefTypeClass, TypeVisitor, isTypeRefType } from '../typeVisitor';
+import { IdTypeClass } from '../idVisitor';
+import { PropertyBlockTypeClass } from '../blockVisitor';
+import { TypeRefTypeClass } from '../typeVisitor';
 import {
-    ApexErrorTypeClass,
     ApexCommonTypeClass,
-    visitNodeList,
-    visitNode,
+    createNode,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
 } from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class PropertyDeclarationTypeClass extends DeclarationTypeClass<
+export type PropertyDeclarationType = TypeField<'propertyDeclaration'> & {
+    valueType: TypeRefTypeClass;
+    name: IdTypeClass;
+    blocks: PropertyBlockTypeClass[];
+};
+
+export class PropertyDeclarationTypeClass extends ApexCommonTypeClass<
     'propertyDeclaration',
-    NormalIdTypeClass
+    PropertyDeclarationType
 > {
-    private valueType: TypeRefTypeClass | ApexErrorTypeClass;
-    private block: (PropertyBlockTypeClass | ApexErrorTypeClass)[] = [];
-    private constructor(
-        value: NormalIdTypeClass | ApexErrorTypeClass,
-        valueType: TypeRefTypeClass | ApexErrorTypeClass,
-        block: (PropertyBlockTypeClass | ApexErrorTypeClass)[],
-    ) {
-        super('propertyDeclaration', value);
-        this.valueType = valueType;
-        this.block = block;
+    private constructor(fields: FieldsOf<PropertyDeclarationType>, sourceSpan: SourceSpan) {
+        super('propertyDeclaration', fields, sourceSpan);
     }
 
     static create(ctx: PropertyDeclarationContext): PropertyDeclarationTypeClass {
-        if (!ctx.typeRef() || !ctx.id()) {
-            throw new Error('値が異常です。PropertyDeclarationContext: ' + ctx.getText());
-        }
-
         return new PropertyDeclarationTypeClass(
-            visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
-            visitNode(new TypeVisitor(), ctx.typeRef(), isTypeRefType, 'typeRef'),
-            visitNodeList(
-                new BlockVisitor(),
-                ctx.propertyBlock_list(),
-                isPropertyBlockType,
-                'propertyBlock',
-            ),
+            {
+                valueType: createNode(ctx.typeRef(), (c) => TypeRefTypeClass.create(c), 'typeRef'),
+                name: createNode(ctx.id(), (c) => IdTypeClass.create(c), 'id'),
+                blocks: createNodeList(
+                    ctx.propertyBlock_list(),
+                    (c) => PropertyBlockTypeClass.create(c),
+                    'propertyBlock',
+                ),
+            },
+            getSourceSpan(ctx),
         );
     }
 
-    getValueType(): TypeRefTypeClass | ApexErrorTypeClass {
-        return this.valueType;
+    getValueType(): PropertyDeclarationType['valueType'] {
+        return this.getFields().valueType;
     }
 
-    getBlock(): (PropertyBlockTypeClass | ApexErrorTypeClass)[] {
-        return this.block;
+    getName(): PropertyDeclarationType['name'] {
+        return this.getFields().name;
+    }
+
+    getBlocks(): PropertyDeclarationType['blocks'] {
+        return this.getFields().blocks;
     }
 }
 
 export const isPropertyDeclarationType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is PropertyDeclarationTypeClass => {
-    return target instanceof PropertyDeclarationTypeClass;
+    return isSpicifyApexCommonTypeClass('propertyDeclaration', target);
 };

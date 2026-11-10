@@ -5,17 +5,16 @@ import {
     getApexMetaSuffix,
     makeApexMetaJson,
     type ApexMetaJson,
-    type ErrorJson,
     type XmlReadProblem,
     type XmlSourceJson,
 } from '../../types';
 import { parseXmlSource, toXmlResolvedError, type XmlResolvedError } from '../commons';
 
-/** -meta.xml の JSON。読めない・ルート要素が違うときは ErrorJson */
+/** -meta.xml の JSON。読めない・ルート要素が違うときは meta が null (理由は resolvedError) */
 export type ApexMetaFileJson = {
     /** ファイル名 (Foo.cls-meta.xml) */
     fileName: string;
-    meta: ApexMetaJson | ErrorJson;
+    meta: ApexMetaJson | null;
 };
 
 export type ApexMetaParseResult = {

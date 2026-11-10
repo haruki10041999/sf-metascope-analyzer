@@ -1,46 +1,46 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isUnionTypeAnnotation, type UnionTypeAnnotation } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
 import { flowTypeVisitorEvaluatePairs, type FlowTypeTypeClass } from '../flowTypeVisitor';
 
-export type UnionTypeAnnotationFields = {
-    types: (FlowTypeTypeClass | LwcErrorTypeClass)[];
+export type UnionTypeAnnotationFields = TypeField<'unionTypeAnnotation'> & {
+    types: FlowTypeTypeClass[];
 };
 
-export class UnionTypeAnnotationTypeClass extends LwcCommonTypeClass<'unionTypeAnnotation'> {
-    private readonly value: UnionTypeAnnotationFields;
-
-    private constructor(value: UnionTypeAnnotationFields) {
-        super('unionTypeAnnotation');
-        this.value = value;
+export class UnionTypeAnnotationTypeClass extends LwcCommonTypeClass<
+    'unionTypeAnnotation',
+    UnionTypeAnnotationFields
+> {
+    private constructor(value: FieldsOf<UnionTypeAnnotationFields>, sourceSpan: SourceSpan) {
+        super('unionTypeAnnotation', value, sourceSpan);
     }
 
     static create(
         target: UnionTypeAnnotation,
         originalSource: string,
     ): UnionTypeAnnotationTypeClass {
-        return new UnionTypeAnnotationTypeClass({
-            types: visitNodeList(
-                target.types,
-                originalSource,
-                flowTypeVisitorEvaluatePairs(),
-                'FlowTypeVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): UnionTypeAnnotationFields {
-        return this.value;
+        return new UnionTypeAnnotationTypeClass(
+            {
+                types: visitNodeList(
+                    target.types,
+                    originalSource,
+                    flowTypeVisitorEvaluatePairs(),
+                    'FlowTypeVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getTypes(): UnionTypeAnnotationFields['types'] {
-        return this.value.types;
+        return this.getFields().types;
     }
 }
 
@@ -52,5 +52,5 @@ export const unionTypeAnnotationTypePair: EvaluatePair<
 );
 
 export const isUnionTypeAnnotationType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is UnionTypeAnnotationTypeClass => target instanceof UnionTypeAnnotationTypeClass;

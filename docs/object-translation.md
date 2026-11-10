@@ -48,12 +48,12 @@
 
 ### 2.3 解析結果と保存
 
-| 型                                        | `dataType`                                           | `result.id`                   |
-| ----------------------------------------- | ---------------------------------------------------- | ----------------------------- |
-| `ObjectTranslationFileStructureType`      | `objectTranslation`                                  | フォルダ名（`Invoice__c-ja`） |
-| `ErrorObjectTranslationFileStructureType` | `error`（objectTranslation-meta.xml が読めないとき） | 同上                          |
+| 型                                        | `dataType`                                                                  | `result.id`                   |
+| ----------------------------------------- | --------------------------------------------------------------------------- | ----------------------------- |
+| `ObjectTranslationFileStructureType`      | `objectTranslation`                                                         | フォルダ名（`Invoice__c-ja`） |
+| `ErrorObjectTranslationFileStructureType` | `error`（objectTranslation-meta.xml が読めないとき。`result.base` は null） | 同上                          |
 
-- 読めなかったファイルは `ErrorJson` と `resolvedError`（`XML_SYNTAX` / `UNEXPECTED_ROOT`）にする（オブジェクトと同じ）。
+- 読めなかった子のファイルは JSON に入れず、理由を `resolvedError`（`XML_SYNTAX` / `UNEXPECTED_ROOT`）に出す（オブジェクトと同じ）。
 - 保存は msgpack で、保存名に接頭辞 `objectTranslation_` を付ける（`objectTranslation_Invoice__c-ja.msgpack`）。オブジェクト（`<API 名>.msgpack`）と同じフォルダに置いても分けられ、`MetadataParser.readSavedObjects` は翻訳の保存データを読まない。
 - `MetadataProcessor` は、オブジェクトを `<保存先>/objects/`、翻訳を `<保存先>/objectTranslations/` に分けて保存する。
 
@@ -63,7 +63,7 @@
 | `parseObjectTranslation(directory)` / `parseObjectTranslations(rootDir)`                     | 翻訳を読む                                                                                                                     |
 | `parseObjectTranslationSource(name, files)`                                                  | 読み込み済みのファイル（`<オブジェクト>-<言語>/...` の相対パスと中身）から読む（ファイルを読まない入口。git の before 側など） |
 | `saveObjectTranslationFile` / `readObjectTranslationMsgPack` / `readSavedObjectTranslations` | msgpack での保存と読み込み（読み込みの id は保存名でもフォルダ名でもよい）                                                     |
-| `saveObjectTranslationFileForDeveloper`                                                     | 確認用の JSON                                                                                                                  |
+| `saveObjectTranslationFileForDeveloper`                                                      | 確認用の JSON                                                                                                                  |
 
 ## 3. Diff
 

@@ -1,46 +1,46 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSNonNullExpression, type TSNonNullExpression } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { expressionVisitorEvaluatePairs, type ExpressionTypeClass } from '../expressionVisitor';
 
-export type TSNonNullExpressionFields = {
-    expression: ExpressionTypeClass | LwcErrorTypeClass;
+export type TSNonNullExpressionFields = TypeField<'tSNonNullExpression'> & {
+    expression: ExpressionTypeClass;
 };
 
-export class TSNonNullExpressionTypeClass extends LwcCommonTypeClass<'tSNonNullExpression'> {
-    private readonly value: TSNonNullExpressionFields;
-
-    private constructor(value: TSNonNullExpressionFields) {
-        super('tSNonNullExpression');
-        this.value = value;
+export class TSNonNullExpressionTypeClass extends LwcCommonTypeClass<
+    'tSNonNullExpression',
+    TSNonNullExpressionFields
+> {
+    private constructor(value: FieldsOf<TSNonNullExpressionFields>, sourceSpan: SourceSpan) {
+        super('tSNonNullExpression', value, sourceSpan);
     }
 
     static create(
         target: TSNonNullExpression,
         originalSource: string,
     ): TSNonNullExpressionTypeClass {
-        return new TSNonNullExpressionTypeClass({
-            expression: visitNode(
-                target.expression,
-                originalSource,
-                expressionVisitorEvaluatePairs(),
-                'ExpressionVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSNonNullExpressionFields {
-        return this.value;
+        return new TSNonNullExpressionTypeClass(
+            {
+                expression: visitNode(
+                    target.expression,
+                    originalSource,
+                    expressionVisitorEvaluatePairs(),
+                    'ExpressionVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getExpression(): TSNonNullExpressionFields['expression'] {
-        return this.value.expression;
+        return this.getFields().expression;
     }
 }
 
@@ -52,5 +52,5 @@ export const tSNonNullExpressionTypePair: EvaluatePair<
 );
 
 export const isTSNonNullExpressionType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSNonNullExpressionTypeClass => target instanceof TSNonNullExpressionTypeClass;

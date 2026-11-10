@@ -1,52 +1,60 @@
 import { MethodCallContext } from '@apexdevtools/apex-parser';
 
-import { CallTypeClass } from '.';
+import { IdTypeClass } from '../idVisitor';
+import { ExpressionListTypeClass } from '../listVisitor';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    createOptionalNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { NormalIdTypeClass, IdVisitor, isNormalIdType } from '../idVisitor';
-import { ExpressionListTypeClass, ListVisitor, isExpressionListType } from '../listVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitOptionalNode } from '../commonVisitor';
+/** `id(...)`・`this(...)`・`super(...)` の 3 通り。メソッド名 (value) があるのは method のときだけ */
+export type MethodCallType = TypeField<'methodCall'> & {
+    param: ExpressionListTypeClass | null;
+} & ({ kind: 'method'; value: IdTypeClass } | { kind: 'this' | 'super' });
 
-export class MethodCallTypeClass extends CallTypeClass<
-    'methodCall',
-    NormalIdTypeClass | null,
-    ExpressionListTypeClass
-> {
-    private reference: 'this' | 'super' | null = null;
-
-    private constructor(
-        value: NormalIdTypeClass | ApexErrorTypeClass | null,
-        param: ExpressionListTypeClass | ApexErrorTypeClass | null,
-        reference: 'this' | 'super' | null,
-    ) {
-        super('methodCall', value, param);
-        this.reference = reference;
+export class MethodCallTypeClass extends ApexCommonTypeClass<'methodCall', MethodCallType> {
+    private constructor(fields: FieldsOf<MethodCallType>, sourceSpan: SourceSpan) {
+        super('methodCall', fields, sourceSpan);
     }
 
-    // `this(...)` / `super(...)` のコンストラクタ呼び出しは id を持たない
     static create(ctx: MethodCallContext): MethodCallTypeClass {
-        if (!ctx.id() && !ctx.THIS() && !ctx.SUPER()) {
-            throw new Error('値が異常です。MethodCallContext: ' + ctx.getText());
-        }
-
-        return new MethodCallTypeClass(
-            visitOptionalNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'),
-            visitOptionalNode(
-                new ListVisitor(),
-                ctx.expressionList(),
-                isExpressionListType,
-                'expressionList',
-            ),
-            ctx.THIS() ? 'this' : ctx.SUPER() ? 'super' : null,
+        const param = createOptionalNode(
+            ctx.expressionList(),
+            (c) => ExpressionListTypeClass.create(c),
+            'expressionList',
         );
+
+        if (ctx.THIS()) {
+            return new MethodCallTypeClass({ kind: 'this', param }, getSourceSpan(ctx));
+        } else if (ctx.SUPER()) {
+            return new MethodCallTypeClass({ kind: 'super', param }, getSourceSpan(ctx));
+        } else if (ctx.id()) {
+            return new MethodCallTypeClass(
+                {
+                    kind: 'method',
+                    value: createNode(ctx.id(), (c) => IdTypeClass.create(c), 'id'),
+                    param,
+                },
+                getSourceSpan(ctx),
+            );
+        }
+        throw new Error('値が異常です。MethodCallContext: ' + ctx.getText());
     }
 
-    getReference(): 'this' | 'super' | null {
-        return this.reference;
+    getKind(): MethodCallType['kind'] {
+        return this.getFields().kind;
+    }
+
+    getParam(): MethodCallType['param'] {
+        return this.getFields().param;
     }
 }
 
 export const isMethodCallType = (
-    target: ApexCommonTypeClass<string>,
-): target is MethodCallTypeClass => {
-    return target instanceof MethodCallTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is MethodCallTypeClass => isSpicifyApexCommonTypeClass('methodCall', target);

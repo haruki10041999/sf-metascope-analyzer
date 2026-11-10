@@ -1,4 +1,4 @@
-import { CUSTOM_LABEL_SCHEMA, CustomLabelJson, CustomLabelsJson, ErrorJson } from '../../../types';
+import { CUSTOM_LABEL_SCHEMA, CustomLabelJson, CustomLabelsJson } from '../../../types';
 
 import {
     ListItemDiff,
@@ -59,8 +59,8 @@ export type CustomLabelsJsonDiff = NodeDiff<
 >;
 
 export const makeCustomLabelsDiff = (
-    before: CustomLabelsJson | ErrorJson,
-    after: CustomLabelsJson | ErrorJson,
+    before: CustomLabelsJson,
+    after: CustomLabelsJson,
     match: Match = 'key',
     sources?: Sources,
 ): CustomLabelsJsonDiff =>

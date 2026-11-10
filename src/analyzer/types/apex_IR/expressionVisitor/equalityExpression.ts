@@ -1,47 +1,33 @@
 import { EqualityExpressionContext } from '@apexdevtools/apex-parser';
 
-import {
-    DoubleStringOperatorExpressionTypeClass,
-    BasedExpressionTypeClass,
-    ExpressionVisitor,
-    isBasedExpressionType,
-} from '.';
+import { BasedExpressionTypeClass, ExpressionVisitor, isBasedExpressionType } from '.';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+import {
+    ApexCommonTypeClass,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+    visitNode,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
 type EqualityOperatorType = '===' | '!==' | '==' | '!=' | '<>';
 
-export class EqualityExpressionTypeClass extends DoubleStringOperatorExpressionTypeClass<
+export type EqualityExpressionType = TypeField<'equalityExpression'> & {
+    left: BasedExpressionTypeClass;
+    operator: EqualityOperatorType;
+    right: BasedExpressionTypeClass;
+};
+
+export class EqualityExpressionTypeClass extends ApexCommonTypeClass<
     'equalityExpression',
-    BasedExpressionTypeClass,
-    EqualityOperatorType,
-    BasedExpressionTypeClass
+    EqualityExpressionType
 > {
-    private constructor(
-        left: BasedExpressionTypeClass | ApexErrorTypeClass,
-        right: BasedExpressionTypeClass | ApexErrorTypeClass,
-        operator: EqualityOperatorType,
-    ) {
-        super('equalityExpression', left, right, operator);
+    private constructor(fields: FieldsOf<EqualityExpressionType>, sourceSpan: SourceSpan) {
+        super('equalityExpression', fields, sourceSpan);
     }
 
     static create(ctx: EqualityExpressionContext): EqualityExpressionTypeClass {
-        if (
-            !ctx.expression_list() ||
-            ctx.expression_list().length !== 2 ||
-            !(
-                ctx.TRIPLEEQUAL() ||
-                ctx.TRIPLENOTEQUAL() ||
-                ctx.EQUAL() ||
-                ctx.NOTEQUAL() ||
-                ctx.LESSANDGREATER()
-            )
-        ) {
-            throw new Error('値が異常です。EqualityExpressionContext: ' + ctx.getText());
-        }
-
         let operator: EqualityOperatorType;
-
         if (ctx.TRIPLEEQUAL()) {
             operator = '===';
         } else if (ctx.TRIPLENOTEQUAL()) {
@@ -50,30 +36,46 @@ export class EqualityExpressionTypeClass extends DoubleStringOperatorExpressionT
             operator = '==';
         } else if (ctx.NOTEQUAL()) {
             operator = '!=';
-        } else {
+        } else if (ctx.LESSANDGREATER()) {
             operator = '<>';
+        } else {
+            throw new Error('値が異常です。EqualityExpressionContext: ' + ctx.getText());
         }
 
         return new EqualityExpressionTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(0),
-                isBasedExpressionType,
-                'expression',
-            ),
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(1),
-                isBasedExpressionType,
-                'expression',
-            ),
-            operator,
+            {
+                left: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(0),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+                operator: operator,
+                right: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(1),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getLeft(): EqualityExpressionType['left'] {
+        return this.getFields().left;
+    }
+
+    getOperator(): EqualityExpressionType['operator'] {
+        return this.getFields().operator;
+    }
+
+    getRight(): EqualityExpressionType['right'] {
+        return this.getFields().right;
     }
 }
 
 export const isEqualityExpressionType = (
-    target: ApexCommonTypeClass<string>,
-): target is EqualityExpressionTypeClass => {
-    return target instanceof EqualityExpressionTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is EqualityExpressionTypeClass =>
+    isSpicifyApexCommonTypeClass('equalityExpression', target);

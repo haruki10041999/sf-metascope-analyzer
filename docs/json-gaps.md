@@ -5,6 +5,7 @@
 - 対象: [unitType.ts](../src/analyzer/unit/unitType.ts) の `UNIT_TYPES`（Apex・匿名 Apex・LWC・オブジェクト・オブジェクトの翻訳と、[folders.ts](../src/analyzer/parser/Metadata/folders.ts#L49-L84) の `METADATA_FOLDER_PARSERS` の 31 種類）、JSON の型（[types/](../src/analyzer/types/)）、定義・参照（[processor/dependency/](../src/analyzer/processor/dependency/)）。
 - 2026-11-09 の作業ツリーを読んで確かめた。「確認」と書いたものは、グラフ（`buildDependencyGraph`）に小さな入力を渡して動きを確かめた。それ以外はコードを読んだ結果。確かめられなかったものは **未確認** と書く。
 - すでに計画にあるもの（[analysis-plan.md](./analysis-plan.md) 3.3・8.1、[todo.md](./todo.md)）は、そちらへのリンクだけにする。
+- **2026-11-10: 5 章の 1〜3 は対応済み**（6 章）。0〜3 章の本文は調査した時点のまま残す。
 
 ## 0. まとめ
 
@@ -175,9 +176,30 @@ JSON はすべての行を持つ（[permission.ts](../src/analyzer/types/metadat
 
 ## 5. 進め方の案
 
-1. 誤った指摘をなくす（小さい修正）: Aura の `c:` を `lwc` か `aura` のどちらかで探す、Flow の標準の部品を標準として扱う、`customMetadataRecord` の種類・名前を `customMetadata` に合わせる。
-2. カスタム設定: `OBJECT_SCHEMA` に `customSettingsType` を足し、`objectType` か別のプロパティで区別する。Apex の `getInstance` などを設定の読み取りとして参照にする。
-3. メッセージチャネル・外部ログイン情報・カスタム通知・レポートタイプの単位を、表の種類（`RecordSpec`）で足す。
+1. **済（2026-11-10）** 誤った指摘をなくす（小さい修正）: Aura の `c:` を `lwc` か `aura` のどちらかで探す、Flow の標準の部品を標準として扱う、`customMetadataRecord` の種類・名前を `customMetadata` に合わせる。
+2. **済（2026-11-10）** カスタム設定: `OBJECT_SCHEMA` に `customSettingsType` を足し、`objectType` か別のプロパティで区別する。Apex の `getInstance` などを設定の読み取りとして参照にする。
+3. **済（2026-11-10）** メッセージチャネル・外部ログイン情報・カスタム通知・レポートタイプの単位を、表の種類（`RecordSpec`）で足す。
 4. 文字列の引数（`Page.X`・`Type.forName`・`callout:`・`PageReference.forResource`・`Flow.Interview`）を参照にする。
 5. LWC の `js-meta.xml`・式の値の属性・子の `@api`、権限の残りの行、Flow のアクション。
 6. 組織の設定（`settings/`）と、ほかの単位がない種類。
+
+## 6. 対応したこと（2026-11-10）
+
+5 章の 1〜3。テストは [graph-targets.test.ts](../test/dependency/graph-targets.test.ts)（グラフに小さな入力を渡すもの）と、[metadata-parse.test.ts](../test/parser/metadata-parse.test.ts)・[references.test.ts](../test/dependency/references.test.ts)・[metadata-bc.test.ts](../test/processor/metadata-bc.test.ts)（サンプル）。保存の形が変わったので `SAVE_FORMAT_VERSION` を 5 にした。
+
+1. 誤った指摘
+    - `c:<名前>` の部品: グラフ（[graph.ts](../src/analyzer/processor/dependency/graph.ts) の `resolveTarget`）で、`lwc` の定義がなければ `aura` の定義も探す。LWC の import・テンプレート（`via` が `import`・`template`）は LWC だけを探す（LWC は Aura を使えないため）。
+    - Flow の画面の `c` 以外の名前空間の部品（`forceContent:fileUpload` など）は `standard` にする（`UNKNOWN_AURA` にしない）。
+    - 数式の `$CustomMetadata.<型>__mdt.<レコード>` は `customMetadata:<型>.<レコード>`（定義と同じ種類・名前）にした（[formula.ts](../src/analyzer/processor/dependency/formula.ts)）。
+2. カスタム設定
+    - `OBJECT_SCHEMA` に `customSettingsType`（`List` / `Hierarchy`）・`customSettingsVisibility` を足した。`objectType` は接尾辞で決めるまま（`custom`）で、カスタム設定かは `customSettingsType` で分かる（`objectType` を変えると、暗黙の項目・解析など `objectType` を見るところに広がるため）。
+    - Apex（[apex.ts](../src/analyzer/processor/dependency/apex.ts)）: `X__c.getInstance()`・`getOrgDefaults()`・`getValues()`・`getAll()` はオブジェクト `X__c` の `reads`（`via: customSetting`）。`X__c.getInstance().Field__c` のように 1 件を返す呼び出しに続く項目は、項目の `reads`。`X__mdt.getInstance()`・`getAll()` は型の `reads`（`via: customMetadata`）、`getInstance('Rec')`・`getAll().get('Rec')`（文字列のリテラル）はレコード `customMetadata:<型>.Rec` の `reads`。項目 `X__c.getInstance` のノードはできなくなった。
+    - 権限の `customSettingAccesses`・`customMetadataTypeAccesses`（4.4）、レコードの値の中の参照（2.1）はまだ。
+3. 単位の種類を 4 つ足した（[recordTypes.ts](../src/analyzer/types/metadata/recordTypes.ts) の表、[record.ts](../src/analyzer/parser/Metadata/record.ts)・[folders.ts](../src/analyzer/parser/Metadata/folders.ts)・Diff の一覧・package.xml の型名）。サンプルは `repository/{before,after}` の各フォルダ。
+    - `messageChannel`（`messageChannels/<名前>.messageChannel-meta.xml`）。項目は子 `lightningMessageFields`（kind `messageChannelField`）。名前は `__c` なし（ファイル名）で、LWC の import の参照も `__c` を除くので突き合う。
+    - `externalCredential`（`externalCredentials/`）。指定ログイン情報の `namedCredentialParameters.externalCredential` から参照を作る（`analyzeMetadataReferences` でも確かめる）。
+    - `customNotificationType`（`notificationtypes/<名前>.notiftype-meta.xml`）。Flow・Apex は Id で使うので、名前の参照はまだない。
+    - `reportType`（`reportTypes/`）。`join` は値の木、`sections` は子（列は値の木）。レポートの `reportType` が `<名前>__c` のとき `reportType:<名前>` を参照にする。レポートタイプの列の項目への参照はまだ。
+    - 権限の `externalCredentialPrincipalAccesses`（4.4）はまだ。
+
+ほかに見つけて直したもの: LWC の `@api` のプロパティの定義（`lwcProperty`）が、グラフに一度も作られていなかった。[units.ts](../src/analyzer/processor/dependency/units.ts) がデコレーターを `member.decorators` / `member.decorator` から探していたが、LWC の JSON では `modifier.decorator`（getter / setter は `getterContent` / `setterContent` の `modifier.decorator`）にある。そちらから探すようにした（4.2 の「子の `@api` への参照」はまだ）。

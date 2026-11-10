@@ -1,57 +1,65 @@
 import { PreOpExpressionContext } from '@apexdevtools/apex-parser';
 
+import { BasedExpressionTypeClass, ExpressionVisitor, isBasedExpressionType } from '.';
+
 import {
-    BasedExpressionTypeClass,
-    ExpressionVisitor,
-    isBasedExpressionType,
-    SingleOperatorExpressionTypeClass,
-} from '.';
+    ApexCommonTypeClass,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+    visitNode,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+export type PreOpExpressionType = TypeField<'preOpExpression'> & {
+    operator: '++' | '--' | '+' | '-';
+    value: BasedExpressionTypeClass;
+};
 
-export class PreOpExpressionTypeClass extends SingleOperatorExpressionTypeClass<
+export class PreOpExpressionTypeClass extends ApexCommonTypeClass<
     'preOpExpression',
-    BasedExpressionTypeClass,
-    '++' | '--' | '+' | '-'
+    PreOpExpressionType
 > {
-    private constructor(
-        value: BasedExpressionTypeClass | ApexErrorTypeClass,
-        operator: '++' | '--' | '+' | '-',
-    ) {
-        super('preOpExpression', value, operator);
+    private constructor(fields: FieldsOf<PreOpExpressionType>, sourceSpan: SourceSpan) {
+        super('preOpExpression', fields, sourceSpan);
     }
 
     static create(ctx: PreOpExpressionContext): PreOpExpressionTypeClass {
-        if (!ctx.expression() || (!ctx.INC() && !ctx.DEC() && !ctx.ADD() && !ctx.SUB())) {
-            throw new Error('値が異常です。PreOpExpressionContext: ' + ctx.getText());
-        }
-
-        let operator: '++' | '--' | '+' | '-';
-
+        let operator: PreOpExpressionType['operator'];
         if (ctx.INC()) {
             operator = '++';
         } else if (ctx.DEC()) {
             operator = '--';
         } else if (ctx.ADD()) {
             operator = '+';
-        } else {
+        } else if (ctx.SUB()) {
             operator = '-';
+        } else {
+            throw new Error('値が異常です。PreOpExpressionContext: ' + ctx.getText());
         }
 
         return new PreOpExpressionTypeClass(
-            visitNode(
-                new ExpressionVisitor(),
-                ctx.expression(),
-                isBasedExpressionType,
-                'expression',
-            ),
-            operator,
+            {
+                operator: operator,
+                value: visitNode(
+                    new ExpressionVisitor(),
+                    ctx.expression(),
+                    isBasedExpressionType,
+                    'expression',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getValue(): PreOpExpressionType['value'] {
+        return this.getFields().value;
+    }
+
+    getOperator(): PreOpExpressionType['operator'] {
+        return this.getFields().operator;
     }
 }
 
 export const isPreOpExpressionType = (
-    target: ApexCommonTypeClass<string>,
-): target is PreOpExpressionTypeClass => {
-    return target instanceof PreOpExpressionTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is PreOpExpressionTypeClass => isSpicifyApexCommonTypeClass('preOpExpression', target);

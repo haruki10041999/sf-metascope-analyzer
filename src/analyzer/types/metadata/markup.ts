@@ -1,8 +1,7 @@
-import type { ErrorJson, JsonType } from '../commons/json';
+import type { JsonType } from '../commons/json';
 import { childrenOf, parseXml, XmlSyntaxError, type XmlElement } from '../commons/xml';
 import {
     makeMetadataJson,
-    makeXmlErrorJson,
     nonEmptyEntry,
     readXmlRoot,
     type ParsedXmlFile,
@@ -24,28 +23,25 @@ import {
 // -meta.xml は種類の表 (recordTypes.ts) で読み、本体のマークアップは構造 (ルートの属性・使っている部品・宣言) だけを JSON にする。
 // 中の差し込み ({!...}) などの参照は、参照の対応 (docs/analysis-plan.md) でまとめて扱う
 
-/** 本体のマークアップを XML として読む。読めなければ problems に理由を足し、ErrorJson */
+/** 本体のマークアップを XML として読む。読めなければ problems に理由を足し、null (JSON には持たない) */
 const parseMarkup = (
     text: SourceText,
     kindType: string,
-    registry: XmlSourceRegistry,
     problems: XmlReadProblem[],
-): { file: XmlFile; root: XmlElement } | ErrorJson => {
+): { file: XmlFile; root: XmlElement } | null => {
     const file: XmlFile = { filePath: text.filePath, source: text.source };
     try {
         return { file, root: parseXml(text.source) };
     } catch (error) {
         if (!(error instanceof XmlSyntaxError)) throw error;
-        const json = makeXmlErrorJson(kindType, error.reason, error.position, file, registry);
         problems.push({
             code: 'XML_SYNTAX',
             file,
             kindType,
             message: error.reason,
             position: error.position,
-            error: json,
         });
-        return json;
+        return null;
     }
 };
 
@@ -121,24 +117,24 @@ export type VisualforceMarkupJson = JsonType<'visualforceMarkup'> & {
     componentAttributes?: MarkupDeclarationJson<'visualforceAttribute'>[];
 };
 
-/** Visualforce ページ (pages/<名前>.page-meta.xml と <名前>.page) */
+/** Visualforce ページ (pages/<名前>.page-meta.xml と <名前>.page)。markup は読めなければ持たない (理由は resolvedError) */
 export type ApexPageJson = RecordJson<typeof APEX_PAGE_META_SPEC> & {
-    markup?: VisualforceMarkupJson | ErrorJson;
+    markup?: VisualforceMarkupJson;
 };
 
-/** Visualforce コンポーネント (components/<名前>.component-meta.xml と <名前>.component) */
+/** Visualforce コンポーネント (components/<名前>.component-meta.xml と <名前>.component)。markup は読めなければ持たない */
 export type ApexComponentJson = RecordJson<typeof APEX_COMPONENT_META_SPEC> & {
-    markup?: VisualforceMarkupJson | ErrorJson;
+    markup?: VisualforceMarkupJson;
 };
 
 const makeVisualforceMarkup = (
     text: SourceText | undefined,
     registry: XmlSourceRegistry,
     problems: XmlReadProblem[],
-): { markup?: VisualforceMarkupJson | ErrorJson } => {
+): { markup?: VisualforceMarkupJson } => {
     if (!text) return {};
-    const parsed = parseMarkup(text, 'visualforceMarkup', registry, problems);
-    if (!('root' in parsed)) return { markup: parsed };
+    const parsed = parseMarkup(text, 'visualforceMarkup', problems);
+    if (!parsed) return {};
     return {
         markup: makeMetadataJson<VisualforceMarkupJson>(
             'visualforceMarkup',
@@ -171,9 +167,9 @@ export const makeApexPageJson = (
     registry: XmlSourceRegistry,
     problems: XmlReadProblem[],
     extras: SourceText[] = [],
-): ApexPageJson | ErrorJson => {
-    const meta = readXmlRoot(file, APEX_PAGE_META_SPEC.root, 'apexPage', registry, problems);
-    if (!('name' in meta)) return meta;
+): ApexPageJson | null => {
+    const meta = readXmlRoot(file, APEX_PAGE_META_SPEC.root, 'apexPage', problems);
+    if (!meta) return null;
     const markup = makeVisualforceMarkup(
         extras.find((extra) => extra.fileName.endsWith('.page')),
         registry,
@@ -187,15 +183,9 @@ export const makeApexComponentJson = (
     registry: XmlSourceRegistry,
     problems: XmlReadProblem[],
     extras: SourceText[] = [],
-): ApexComponentJson | ErrorJson => {
-    const meta = readXmlRoot(
-        file,
-        APEX_COMPONENT_META_SPEC.root,
-        'apexComponent',
-        registry,
-        problems,
-    );
-    if (!('name' in meta)) return meta;
+): ApexComponentJson | null => {
+    const meta = readXmlRoot(file, APEX_COMPONENT_META_SPEC.root, 'apexComponent', problems);
+    if (!meta) return null;
     const markup = makeVisualforceMarkup(
         extras.find((extra) => extra.fileName.endsWith('.component')),
         registry,
@@ -216,15 +206,9 @@ export const makeEmailTemplateJson = (
     registry: XmlSourceRegistry,
     problems: XmlReadProblem[],
     extras: SourceText[] = [],
-): EmailTemplateJson | ErrorJson => {
-    const meta = readXmlRoot(
-        file,
-        EMAIL_TEMPLATE_META_SPEC.root,
-        'emailTemplate',
-        registry,
-        problems,
-    );
-    if (!('name' in meta)) return meta;
+): EmailTemplateJson | null => {
+    const meta = readXmlRoot(file, EMAIL_TEMPLATE_META_SPEC.root, 'emailTemplate', problems);
+    if (!meta) return null;
     const body = extras.find((extra) => extra.fileName.endsWith('.email'));
     return makeRecordJsonFromRoot(
         EMAIL_TEMPLATE_META_SPEC,
@@ -274,8 +258,8 @@ export type AuraBundleJson = JsonType<'auraBundle'> & {
     javascript?: Partial<Record<'controller' | 'helper' | 'renderer', string[]>>;
     /** バンドルの中のファイル (名前の順) */
     files: string[];
-    /** <名前>.<種類>-meta.xml */
-    meta?: AuraDefinitionBundleJson | ErrorJson;
+    /** <名前>.<種類>-meta.xml。読めなければ持たない (理由は resolvedError) */
+    meta?: AuraDefinitionBundleJson;
 };
 
 const AURA_DECLARATION_TAGS = new Set([
@@ -295,27 +279,24 @@ export const makeAuraBundleJson = (
     registry: XmlSourceRegistry,
     problems: XmlReadProblem[],
     extras: SourceText[] = [],
-): AuraBundleJson | ErrorJson => {
+): AuraBundleJson | null => {
     const extension = file.filePath.split('.').pop() ?? '';
     const bundleType = (
         extension in AURA_BUNDLE_ROOTS ? extension : 'cmp'
     ) as keyof typeof AURA_BUNDLE_ROOTS;
-    const root = readXmlRoot(file, AURA_BUNDLE_ROOTS[bundleType], 'auraBundle', registry, problems);
-    if (!('name' in root)) return root;
+    const root = readXmlRoot(file, AURA_BUNDLE_ROOTS[bundleType], 'auraBundle', problems);
+    if (!root) return null;
 
     const metaText = extras.find((extra) => extra.fileName.endsWith('-meta.xml'));
-    let meta: AuraDefinitionBundleJson | ErrorJson | undefined;
-    if (metaText) {
-        const parsed = parseMarkup(metaText, 'auraDefinitionBundle', registry, problems);
-        meta =
-            'root' in parsed
-                ? makeRecordJsonFromRoot(
-                      AURA_DEFINITION_BUNDLE_SPEC,
-                      parsed.root,
-                      { ...parsed.file, name: file.name },
-                      registry,
-                  )
-                : parsed;
+    let meta: AuraDefinitionBundleJson | undefined;
+    const parsedMeta = metaText && parseMarkup(metaText, 'auraDefinitionBundle', problems);
+    if (parsedMeta) {
+        meta = makeRecordJsonFromRoot(
+            AURA_DEFINITION_BUNDLE_SPEC,
+            parsedMeta.root,
+            { ...parsedMeta.file, name: file.name },
+            registry,
+        );
     }
     const javascript = Object.fromEntries(
         extras.flatMap((extra) => {

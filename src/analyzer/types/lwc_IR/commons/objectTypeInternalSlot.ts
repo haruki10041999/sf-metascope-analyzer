@@ -1,79 +1,71 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isObjectTypeInternalSlot, type ObjectTypeInternalSlot } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
-    lazyPairs,
     makeEvaluatePair,
     visitNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import { flowTypeVisitorEvaluatePairs, type FlowTypeTypeClass } from '../flowTypeVisitor';
-import { identifierTypePair, type IdentifierTypeClass } from './identifier';
+import { IdentifierTypeClass } from './identifier';
 
-const objectTypeInternalSlotIdPairs = lazyPairs(() => [identifierTypePair] as const);
-
-export type ObjectTypeInternalSlotFields = {
-    id: IdentifierTypeClass | LwcErrorTypeClass;
-    value: FlowTypeTypeClass | LwcErrorTypeClass;
+export type ObjectTypeInternalSlotFields = TypeField<'objectTypeInternalSlot'> & {
+    id: IdentifierTypeClass;
+    value: FlowTypeTypeClass;
     optional: ObjectTypeInternalSlot['optional'];
     static: ObjectTypeInternalSlot['static'];
     method: ObjectTypeInternalSlot['method'];
 };
 
-export class ObjectTypeInternalSlotTypeClass extends LwcCommonTypeClass<'objectTypeInternalSlot'> {
-    private readonly value: ObjectTypeInternalSlotFields;
-
-    private constructor(value: ObjectTypeInternalSlotFields) {
-        super('objectTypeInternalSlot');
-        this.value = value;
+export class ObjectTypeInternalSlotTypeClass extends LwcCommonTypeClass<
+    'objectTypeInternalSlot',
+    ObjectTypeInternalSlotFields
+> {
+    private constructor(value: FieldsOf<ObjectTypeInternalSlotFields>, sourceSpan: SourceSpan) {
+        super('objectTypeInternalSlot', value, sourceSpan);
     }
 
     static create(
         target: ObjectTypeInternalSlot,
         originalSource: string,
     ): ObjectTypeInternalSlotTypeClass {
-        return new ObjectTypeInternalSlotTypeClass({
-            id: visitNode(
-                target.id,
-                originalSource,
-                objectTypeInternalSlotIdPairs(),
-                'ObjectTypeInternalSlot.id',
-            ),
-            value: visitNode(
-                target.value,
-                originalSource,
-                flowTypeVisitorEvaluatePairs(),
-                'FlowTypeVisitor',
-            ),
-            optional: target.optional,
-            static: target.static,
-            method: target.method,
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): ObjectTypeInternalSlotFields {
-        return this.value;
+        return new ObjectTypeInternalSlotTypeClass(
+            {
+                id: IdentifierTypeClass.create(target.id, originalSource),
+                value: visitNode(
+                    target.value,
+                    originalSource,
+                    flowTypeVisitorEvaluatePairs(),
+                    'FlowTypeVisitor',
+                ),
+                optional: target.optional,
+                static: target.static,
+                method: target.method,
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getId(): ObjectTypeInternalSlotFields['id'] {
-        return this.value.id;
+        return this.getFields().id;
     }
 
     getValue(): ObjectTypeInternalSlotFields['value'] {
-        return this.value.value;
+        return this.getFields().value;
     }
 
     getOptional(): ObjectTypeInternalSlotFields['optional'] {
-        return this.value.optional;
+        return this.getFields().optional;
     }
 
     getStatic(): ObjectTypeInternalSlotFields['static'] {
-        return this.value.static;
+        return this.getFields().static;
     }
 
     getMethod(): ObjectTypeInternalSlotFields['method'] {
-        return this.value.method;
+        return this.getFields().method;
     }
 }
 
@@ -85,5 +77,5 @@ export const objectTypeInternalSlotTypePair: EvaluatePair<
 );
 
 export const isObjectTypeInternalSlotType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is ObjectTypeInternalSlotTypeClass => target instanceof ObjectTypeInternalSlotTypeClass;

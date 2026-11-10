@@ -15,7 +15,6 @@ import {
     XmlSyntaxError,
     parseXml,
     SourceSpan,
-    ApexErrorTypeClass,
     hash,
 } from '../types';
 
@@ -41,9 +40,11 @@ const packr = new Packr({ useRecords: true });
  * 版の違う保存データは読まない (読む側は「保存データなし」として扱い、解析し直して保存し直す)。
  * 1: 版なし (〜 2026/11/05)
  * 2: 版を入れた。オブジェクトの保存名を object_<API 名> にした。メタデータの JSON のキーを並べ替えて作る
- * 3: Apex を IR v2 から作る。キーの値が変わった (docs/ir-v2-integration.md)
+ * 3: Apex を IR v2 から作る。キーの値が変わった (docs/ir-integration.md)
+ * 4: LWC も IR v2 から作る (キーの値が変わった)。JSON から ErrorJson をなくした (読めなかったものは resolvedError だけに出る)
+ * 5: オブジェクトに customSettingsType・customSettingsVisibility を足した。メッセージチャネルなど 4 つの単位の種類を足した
  */
-export const SAVE_FORMAT_VERSION = 3;
+export const SAVE_FORMAT_VERSION = 5;
 
 /** 保存ファイルの中身。data を版と一緒に包む */
 type SavedEnvelope = { formatVersion: number; data: unknown };
@@ -256,8 +257,15 @@ export type XmlResolvedError = {
     end: SourcePosition;
 };
 
+/**
+ * 読めなかった XML ファイルの問題を resolvedError にする。
+ * キーは、以前 JSON に置いていたエラーのノードと同じ作り方 (内容と、ファイルと位置から作る)
+ */
 export const toXmlResolvedError = (problem: XmlReadProblem): XmlResolvedError => ({
-    sourceKeys: problem.error.sourceKeys,
+    sourceKeys: {
+        objectKey: `error_${hash({ kindType: problem.kindType, message: problem.message })}`,
+        sourceKey: `error_${hash({ filePath: problem.file.filePath, position: problem.position })}`,
+    },
     code: problem.code,
     contextType: problem.kindType,
     context: problem.file.source.split('\n')[problem.position.line - 1] ?? '',

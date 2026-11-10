@@ -1,36 +1,47 @@
 import { AnonymousBlockContext } from '@apexdevtools/apex-parser';
 
-import { BlockListTypeClass } from '../blockVisitor';
-
+import { AnonymousBlockMemberTypeClass } from '../memberVisitor';
 import {
-    AnonymousBlockMemberTypeClass,
-    MemberVisitor,
-    isAnonymousBlockMemberType,
-} from '../memberVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNodeList } from '../commonVisitor';
+    ApexCommonTypeClass,
+    createNodeList,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-export class AnonymousBlockTypeClass extends BlockListTypeClass<
+export type AnonymousBlockType = TypeField<'anonymousBlock'> & {
+    members: AnonymousBlockMemberTypeClass[];
+};
+
+export class AnonymousBlockTypeClass extends ApexCommonTypeClass<
     'anonymousBlock',
-    AnonymousBlockMemberTypeClass
+    AnonymousBlockType
 > {
-    private constructor(value: (AnonymousBlockMemberTypeClass | ApexErrorTypeClass)[]) {
-        super('anonymousBlock', value);
+    private constructor(fields: FieldsOf<AnonymousBlockType>, sourceSpan: SourceSpan) {
+        super('anonymousBlock', fields, sourceSpan);
     }
 
     static create(ctx: AnonymousBlockContext): AnonymousBlockTypeClass {
         return new AnonymousBlockTypeClass(
-            visitNodeList(
-                new MemberVisitor(),
-                ctx.anonymousBlockMember_list(),
-                isAnonymousBlockMemberType,
-                'anonymousBlock',
-            ),
+            {
+                members: createNodeList(
+                    ctx.anonymousBlockMember_list(),
+                    (c) => AnonymousBlockMemberTypeClass.create(c),
+                    'anonymousBlockMember',
+                ),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getMembers(): AnonymousBlockType['members'] {
+        return this.getFields().members;
     }
 }
 
 export const isAnonymousBlockType = (
-    target: ApexCommonTypeClass<string>,
+    target: ApexCommonTypeClass<string, TypeField<string>>,
 ): target is AnonymousBlockTypeClass => {
-    return target instanceof AnonymousBlockTypeClass;
+    return isSpicifyApexCommonTypeClass('anonymousBlock', target);
 };

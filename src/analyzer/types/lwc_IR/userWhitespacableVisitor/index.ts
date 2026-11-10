@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { ObjectMethodTypeClass, objectMethodTypePair } from '../commons/objectMethod';
 import { ObjectPropertyTypeClass, objectPropertyTypePair } from '../commons/objectProperty';
@@ -89,7 +90,7 @@ export type UserWhitespacableTypeClass =
     | ObjectTypeSpreadPropertyTypeClass;
 
 export const isUserWhitespacableType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is UserWhitespacableTypeClass => {
     return (
         target instanceof ObjectMethodTypeClass ||

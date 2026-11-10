@@ -36,15 +36,6 @@ export type TypeField<TName extends string> = {
     type: TName;
 };
 
-export const isSpicifyTypeField = <TName extends string>(
-    type: TName,
-    target: unknown,
-): target is TypeField<TName> => {
-    return (
-        target !== null && typeof target === 'object' && 'type' in target && target.type === type
-    );
-};
-
 export type SourcePosition = {
     offset: number;
     line: number;
@@ -110,7 +101,7 @@ export abstract class CommonTypeClass<TName extends string, TField extends TypeF
     }
 
     /**
-     * ノードのキー。形は `type_ハッシュ` (docs/ir-v2-integration.md 3.3)。
+     * ノードのキー。形は `type_ハッシュ` (docs/ir-integration.md 3.3)。
      * - objectKey: フィールドの中身から作る。子ノードは子の objectKey に置きかえるので、中身が同じ部分木は同じキーになる。
      *   フィールドの順には依らない
      * - sourceKey: ソースの位置 (start・end) から作る
@@ -183,7 +174,7 @@ const hasPosition = (span: SourceSpan): boolean =>
 
 /**
  * 木のソース位置の一覧。親を子より先に (前順) たどり、同じ objectKey のものは 1 つにまとめる
- * (今の makeConvertType・makeSourceObjects と同じ順)
+ * (JSON 層の regenerateSourceObjects が、JSON で使ったキーだけに絞る)
  */
 export const collectSourceObjects = (
     root: CommonTypeClass<string, TypeField<string>>,
@@ -214,26 +205,8 @@ export const collectSourceObjects = (
 export type ErrorCode =
     'NULL_CHILD' | 'UNSUPPORTED_CONTEXT' | 'TYPE_MISMATCH' | 'EXCEPTION' | 'UNRESOLVED';
 
-export type ErrorField = TypeField<'analyzerError'> & {
-    code: ErrorCode;
-    contextType: string;
-    context: string;
-    errorMessage: string;
-};
-
-export const isErrorField = (target: unknown): target is ErrorField => {
-    return isSpicifyTypeField('analyzerError', target);
-};
-
-export interface ErrorOutputFuncsution {
-    getCode: () => ErrorField['code'];
-    getContextType: () => ErrorField['context'];
-    getContext: () => ErrorField['contextType'];
-    getParseErrorMessage: () => ErrorField['errorMessage'];
-}
-
 // ---------------------------------------------------------------------------
-// IR を作れなかったところ。解析木には残さず、集めて resolvedError に渡す (docs/ir-v2.md 4 章)
+// IR を作れなかったところ。解析木には残さず、集めて resolvedError に渡す (docs/ir.md 4 章)
 // ---------------------------------------------------------------------------
 
 /** リスナー (parser/Apex/errorListener.ts・parser/Lwc/errorListener.ts) が受け取るエラーの形 */
@@ -246,7 +219,7 @@ export interface IrErrorLike {
 }
 
 /** IR を作れなかったところ 1 つ */
-export class IrError implements IrErrorLike, ErrorOutputFuncsution {
+export class IrError implements IrErrorLike {
     constructor(
         readonly code: ErrorCode,
         readonly contextType: string,

@@ -1,4 +1,4 @@
-import { ErrorJson, JsonType, ConvertKeys } from '../commons';
+import { JsonType, ConvertKeys } from '../commons';
 import type {
     ArrayExpressionTypeClass,
     Arth1ExpressionTypeClass,
@@ -28,7 +28,7 @@ import type {
     PostOpExpressionTypeClass,
     PreOpExpressionTypeClass,
     SubExpressionTypeClass,
-} from '../apex_IR_v2';
+} from '../apex_IR';
 
 import { keysOf, makeNodeJson } from './commons/node';
 import { makeTypeJson, TypeJson } from './type';
@@ -48,10 +48,10 @@ const makeExpressionListJson = (target: ExpressionListTypeClass): BaseExpression
 
 export type DotMethodCallJson = JsonType<'memberAccess'> & {
     type: 'object' | 'method';
-    object: BaseExpressionJson | ErrorJson;
+    object: BaseExpressionJson;
     operator: '.' | '?.';
     member: string;
-    memberArg?: (BaseExpressionJson | ErrorJson)[] | ErrorJson;
+    memberArg?: BaseExpressionJson[];
 };
 
 const makeDotMethodCallJson = (target: DotExpressionTypeClass): DotMethodCallJson => {
@@ -83,7 +83,7 @@ const makeDotMethodCallJson = (target: DotExpressionTypeClass): DotMethodCallJso
 export type MethodCallJson = JsonType<'memberAccess'> & {
     type: 'method';
     member: 'this' | 'super' | string;
-    memberArg?: (BaseExpressionJson | ErrorJson)[] | ErrorJson;
+    memberArg?: BaseExpressionJson[];
     ref?: 'this' | 'super';
 };
 
@@ -105,7 +105,7 @@ const makeMethodCallJson = (target: MethodCallExpressionTypeClass): MethodCallJs
 
 export type InstanceNameJson = {
     collection: string[];
-    generic?: (TypeJson | ErrorJson)[];
+    generic?: TypeJson[];
 };
 
 export const makeInstanceNameJson = (target: CreatedNameTypeClass): InstanceNameJson => {
@@ -130,24 +130,21 @@ export const makeInstanceNameJson = (target: CreatedNameTypeClass): InstanceName
 
 export type ArrayInitInstanceJson = {
     initType: 'array';
-    init?: (BaseExpressionJson | ErrorJson)[];
-    size?: BaseExpressionJson | ErrorJson;
+    init?: BaseExpressionJson[];
+    size?: BaseExpressionJson;
 };
 
 export type ClassInitInstanceJson = {
     initType: 'class';
-    arg?: (BaseExpressionJson | ErrorJson)[];
+    arg?: BaseExpressionJson[];
 };
 
 export type MapInitInstanceJson = {
     initType: 'map';
-    init?: (
-        | {
-              key: BaseExpressionJson | ErrorJson;
-              value: BaseExpressionJson | ErrorJson;
-          }
-        | ErrorJson
-    )[];
+    init?: {
+        key: BaseExpressionJson;
+        value: BaseExpressionJson;
+    }[];
 };
 
 export type NoInitInstanceJson = {
@@ -157,7 +154,7 @@ export type NoInitInstanceJson = {
 
 export type SetInitInstanceJson = {
     initType: 'list || set';
-    init?: (BaseExpressionJson | ErrorJson)[];
+    init?: BaseExpressionJson[];
 };
 
 export type InitInstanceJson =
@@ -246,8 +243,8 @@ const makeNewInstanceJson = (target: NewExpressionTypeClass): NewInstanceJson =>
 };
 
 export type CastJson = ExpressionValueKeys & {
-    target: BaseExpressionJson | ErrorJson;
-    convertType: TypeJson | ErrorJson;
+    target: BaseExpressionJson;
+    convertType: TypeJson;
 };
 
 const makeCastJson = (target: CastExpressionTypeClass): CastJson => {
@@ -261,7 +258,7 @@ const makeCastJson = (target: CastExpressionTypeClass): CastJson => {
 };
 
 export type SubJson = ExpressionValueKeys & {
-    value: BaseExpressionJson | ErrorJson;
+    value: BaseExpressionJson;
     parentheses: '()';
 };
 
@@ -274,8 +271,8 @@ const makeSubJson = (target: SubExpressionTypeClass): SubJson => {
 };
 
 export type ArrayJson = ExpressionValueKeys & {
-    variant: BaseExpressionJson | ErrorJson;
-    index: BaseExpressionJson | ErrorJson;
+    variant: BaseExpressionJson;
+    index: BaseExpressionJson;
 };
 
 const makeArrayJson = (target: ArrayExpressionTypeClass): ArrayJson => {
@@ -288,7 +285,7 @@ const makeArrayJson = (target: ArrayExpressionTypeClass): ArrayJson => {
 };
 
 export type FormulaJson = ExpressionValueKeys & {
-    left: BaseExpressionJson | ErrorJson;
+    left: BaseExpressionJson;
     operator:
         | '*'
         | '/'
@@ -319,7 +316,7 @@ export type FormulaJson = ExpressionValueKeys & {
         | '~'
         | '!'
         | string;
-    right: BaseExpressionJson | ErrorJson;
+    right: BaseExpressionJson;
 };
 
 // bitNotExpression は名前と違い XOR (`^`) の二項の式
@@ -348,9 +345,9 @@ const makeFormulaJson = (target: FormulaExpressionTypeClass): FormulaJson => {
 };
 
 export type InstanceofJson = ExpressionValueKeys & {
-    target: BaseExpressionJson | ErrorJson;
+    target: BaseExpressionJson;
     operator: 'instanceof';
-    type: TypeJson | ErrorJson;
+    type: TypeJson;
 };
 
 const makeInstanceofJson = (target: InstanceOfExpressionTypeClass): InstanceofJson => {
@@ -366,7 +363,7 @@ const makeInstanceofJson = (target: InstanceOfExpressionTypeClass): InstanceofJs
 };
 
 export type UnaryJson = ExpressionValueKeys & {
-    variant: BaseExpressionJson | ErrorJson;
+    variant: BaseExpressionJson;
 } & {
     operator: '~' | '!' | '++' | '--' | '+' | '-';
     operatorLocation: 'front' | 'back';
@@ -386,9 +383,9 @@ const makeUnaryJson = (target: UnaryExpressionTypeClass): UnaryJson => {
 };
 
 export type TernaryJson = ExpressionValueKeys & {
-    condition: BaseExpressionJson | ErrorJson;
-    trueValue: BaseExpressionJson | ErrorJson;
-    falseValue: BaseExpressionJson | ErrorJson;
+    condition: BaseExpressionJson;
+    trueValue: BaseExpressionJson;
+    falseValue: BaseExpressionJson;
 };
 
 const makeTernaryJson = (target: CondExpressionTypeClass): TernaryJson => {

@@ -1,63 +1,65 @@
 import { FieldExpressionContext } from '@apexdevtools/apex-parser';
 
-import { DoubleOperatorExpressionTypeClass } from '.';
-
-import { FieldNameTypeClass, NameVisitor, isFieldNameType } from '../nameVisitor';
-import { NormalValueTypeClass, ValueVisitor, isNormalValueType } from '../valueVisitor';
+import { FieldNameTypeClass } from '../nameVisitor';
+import { ValueTypeClass } from '../valueVisitor';
+import { SoqlFunctionTypeClass, ComparisonOperatorTypeClass } from '../queryVisitor';
 import {
-    SoqlFunctionTypeClass,
-    ComparisonOperatorTypeClass,
-    QueryVisitor,
-    isSoqlFunctionType,
-    isComparisonOperatorType,
-} from '../queryVisitor';
-import { ApexErrorTypeClass, ApexCommonTypeClass, visitNode } from '../commonVisitor';
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, SourceSpan, TypeField } from '../../commons/ir';
 
-export class FieldExpressionTypeClass extends DoubleOperatorExpressionTypeClass<
+/** SOQL の条件 `(fieldName | soqlFunction) comparisonOperator value` */
+export type FieldExpressionType = TypeField<'fieldExpression'> & {
+    left: FieldNameTypeClass | SoqlFunctionTypeClass;
+    operator: ComparisonOperatorTypeClass;
+    right: ValueTypeClass;
+};
+
+export class FieldExpressionTypeClass extends ApexCommonTypeClass<
     'fieldExpression',
-    FieldNameTypeClass | SoqlFunctionTypeClass,
-    ComparisonOperatorTypeClass,
-    NormalValueTypeClass
+    FieldExpressionType
 > {
-    private constructor(
-        left: FieldNameTypeClass | SoqlFunctionTypeClass | ApexErrorTypeClass,
-        operator: ComparisonOperatorTypeClass | ApexErrorTypeClass,
-        right: NormalValueTypeClass | ApexErrorTypeClass,
-    ) {
-        super('fieldExpression', left, right, operator);
+    private constructor(fields: FieldsOf<FieldExpressionType>, sourceSpan: SourceSpan) {
+        super('fieldExpression', fields, sourceSpan);
     }
 
     static create(ctx: FieldExpressionContext): FieldExpressionTypeClass {
-        if (
-            !ctx.comparisonOperator() ||
-            !ctx.value() ||
-            (!ctx.fieldName() && !ctx.soqlFunction())
-        ) {
-            throw new Error('値が異常です。FieldExpressionContext: ' + ctx.getText());
-        }
-
         return new FieldExpressionTypeClass(
-            ctx.fieldName()
-                ? visitNode(new NameVisitor(), ctx.fieldName()!, isFieldNameType, 'fieldName')
-                : visitNode(
-                      new QueryVisitor(),
-                      ctx.soqlFunction()!,
-                      isSoqlFunctionType,
-                      'soqlFunction',
-                  ),
-            visitNode(
-                new QueryVisitor(),
-                ctx.comparisonOperator(),
-                isComparisonOperatorType,
-                'comparisonOperator',
-            ),
-            visitNode(new ValueVisitor(), ctx.value(), isNormalValueType, 'value'),
+            {
+                left: ctx.soqlFunction()
+                    ? createNode(
+                          ctx.soqlFunction(),
+                          (c) => SoqlFunctionTypeClass.create(c),
+                          'soqlFunction',
+                      )
+                    : createNode(ctx.fieldName(), (c) => FieldNameTypeClass.create(c), 'fieldName'),
+                operator: createNode(
+                    ctx.comparisonOperator(),
+                    (c) => ComparisonOperatorTypeClass.create(c),
+                    'comparisonOperator',
+                ),
+                right: createNode(ctx.value(), (c) => ValueTypeClass.create(c), 'value'),
+            },
+            getSourceSpan(ctx),
         );
+    }
+
+    getLeft(): FieldExpressionType['left'] {
+        return this.getFields().left;
+    }
+
+    getOperator(): FieldExpressionType['operator'] {
+        return this.getFields().operator;
+    }
+
+    getRight(): FieldExpressionType['right'] {
+        return this.getFields().right;
     }
 }
 
 export const isFieldExpressionType = (
-    target: ApexCommonTypeClass<string>,
-): target is FieldExpressionTypeClass => {
-    return target instanceof FieldExpressionTypeClass;
-};
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is FieldExpressionTypeClass => isSpicifyApexCommonTypeClass('fieldExpression', target);

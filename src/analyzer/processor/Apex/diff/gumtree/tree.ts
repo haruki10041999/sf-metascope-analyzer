@@ -11,8 +11,6 @@ import { getTypeKey } from '../type';
 const getNodeLabel = (node: JsonNode): string => {
     const raw = node as unknown as Record<string, unknown>;
     switch (node.kind) {
-        case 'error':
-            return `error:${String(raw.kindType)}`;
         case 'forCondition':
             return 'initializeType' in raw ? 'forCondition:enhanced' : 'forCondition:basic';
         case 'limitClause':

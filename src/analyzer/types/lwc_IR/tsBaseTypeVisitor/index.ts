@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { TSAnyKeywordTypeClass, tSAnyKeywordTypePair } from '../commons/tSAnyKeyword';
 import { TSBooleanKeywordTypeClass, tSBooleanKeywordTypePair } from '../commons/tSBooleanKeyword';
@@ -151,7 +152,7 @@ export type TSBaseTypeTypeClass =
     | TSLiteralTypeTypeClass;
 
 export const isTSBaseTypeType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSBaseTypeTypeClass => {
     return (
         target instanceof TSAnyKeywordTypeClass ||

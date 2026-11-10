@@ -1,25 +1,24 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isJSXFragment, type JSXFragment } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
-    visitNode,
     visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
-import { jSXClosingFragmentTypePair, type JSXClosingFragmentTypeClass } from './jSXClosingFragment';
+import { JSXClosingFragmentTypeClass } from './jSXClosingFragment';
 import { jSXElementTypePair, type JSXElementTypeClass } from './jSXElement';
 import {
     jSXExpressionContainerTypePair,
     type JSXExpressionContainerTypeClass,
 } from './jSXExpressionContainer';
-import { jSXOpeningFragmentTypePair, type JSXOpeningFragmentTypeClass } from './jSXOpeningFragment';
+import { JSXOpeningFragmentTypeClass } from './jSXOpeningFragment';
 import { jSXSpreadChildTypePair, type JSXSpreadChildTypeClass } from './jSXSpreadChild';
 import { jSXTextTypePair, type JSXTextTypeClass } from './jSXText';
 
-const jSXFragmentOpeningFragmentPairs = lazyPairs(() => [jSXOpeningFragmentTypePair] as const);
-const jSXFragmentClosingFragmentPairs = lazyPairs(() => [jSXClosingFragmentTypePair] as const);
 const jSXFragmentChildrenPairs = lazyPairs(
     () =>
         [
@@ -31,65 +30,55 @@ const jSXFragmentChildrenPairs = lazyPairs(
         ] as const,
 );
 
-export type JSXFragmentFields = {
-    openingFragment: JSXOpeningFragmentTypeClass | LwcErrorTypeClass;
-    closingFragment: JSXClosingFragmentTypeClass | LwcErrorTypeClass;
+export type JSXFragmentFields = TypeField<'jSXFragment'> & {
+    openingFragment: JSXOpeningFragmentTypeClass;
+    closingFragment: JSXClosingFragmentTypeClass;
     children: (
         | JSXTextTypeClass
         | JSXExpressionContainerTypeClass
         | JSXSpreadChildTypeClass
         | JSXElementTypeClass
         | JSXFragmentTypeClass
-        | LwcErrorTypeClass
     )[];
 };
 
-export class JSXFragmentTypeClass extends LwcCommonTypeClass<'jSXFragment'> {
-    private readonly value: JSXFragmentFields;
-
-    private constructor(value: JSXFragmentFields) {
-        super('jSXFragment');
-        this.value = value;
+export class JSXFragmentTypeClass extends LwcCommonTypeClass<'jSXFragment', JSXFragmentFields> {
+    private constructor(value: FieldsOf<JSXFragmentFields>, sourceSpan: SourceSpan) {
+        super('jSXFragment', value, sourceSpan);
     }
 
     static create(target: JSXFragment, originalSource: string): JSXFragmentTypeClass {
-        return new JSXFragmentTypeClass({
-            openingFragment: visitNode(
-                target.openingFragment,
-                originalSource,
-                jSXFragmentOpeningFragmentPairs(),
-                'JSXFragment.openingFragment',
-            ),
-            closingFragment: visitNode(
-                target.closingFragment,
-                originalSource,
-                jSXFragmentClosingFragmentPairs(),
-                'JSXFragment.closingFragment',
-            ),
-            children: visitNodeList(
-                target.children,
-                originalSource,
-                jSXFragmentChildrenPairs(),
-                'JSXFragment.children',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): JSXFragmentFields {
-        return this.value;
+        return new JSXFragmentTypeClass(
+            {
+                openingFragment: JSXOpeningFragmentTypeClass.create(
+                    target.openingFragment,
+                    originalSource,
+                ),
+                closingFragment: JSXClosingFragmentTypeClass.create(
+                    target.closingFragment,
+                    originalSource,
+                ),
+                children: visitNodeList(
+                    target.children,
+                    originalSource,
+                    jSXFragmentChildrenPairs(),
+                    'JSXFragment.children',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getOpeningFragment(): JSXFragmentFields['openingFragment'] {
-        return this.value.openingFragment;
+        return this.getFields().openingFragment;
     }
 
     getClosingFragment(): JSXFragmentFields['closingFragment'] {
-        return this.value.closingFragment;
+        return this.getFields().closingFragment;
     }
 
     getChildren(): JSXFragmentFields['children'] {
-        return this.value.children;
+        return this.getFields().children;
     }
 }
 
@@ -99,5 +88,5 @@ export const jSXFragmentTypePair: EvaluatePair<JSXFragment, JSXFragmentTypeClass
     );
 
 export const isJSXFragmentType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is JSXFragmentTypeClass => target instanceof JSXFragmentTypeClass;

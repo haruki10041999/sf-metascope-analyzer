@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import {
     ClassPrivatePropertyTypeClass,
@@ -40,7 +41,9 @@ export class PrivateVisitor extends LwcCommonVisitor<
 export type PrivateTypeClass =
     ClassPrivatePropertyTypeClass | ClassPrivateMethodTypeClass | PrivateNameTypeClass;
 
-export const isPrivateType = (target: LwcCommonTypeClass<string>): target is PrivateTypeClass => {
+export const isPrivateType = (
+    target: LwcCommonTypeClass<string, TypeField<string>>,
+): target is PrivateTypeClass => {
     return (
         target instanceof ClassPrivatePropertyTypeClass ||
         target instanceof ClassPrivateMethodTypeClass ||

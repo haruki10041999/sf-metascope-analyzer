@@ -1,13 +1,14 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isRestElement, type RestElement } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     lazyPairs,
     makeEvaluatePair,
     visitNode,
-    visitNodeList,
     visitOptionalNode,
+    getSourceSpan,
 } from '../commonVisitor';
 import {
     typeAnnotationTypePair,
@@ -18,7 +19,7 @@ import {
     type TSTypeAnnotationTypeClass,
 } from '../typeScriptVisitor/tSTypeAnnotation';
 import { arrayPatternTypePair, type ArrayPatternTypeClass } from './arrayPattern';
-import { decoratorTypePair, type DecoratorTypeClass } from './decorator';
+import { DecoratorTypeClass } from './decorator';
 import { identifierTypePair, type IdentifierTypeClass } from './identifier';
 import { memberExpressionTypePair, type MemberExpressionTypeClass } from './memberExpression';
 import { objectPatternTypePair, type ObjectPatternTypeClass } from './objectPattern';
@@ -36,7 +37,6 @@ import { tSTypeAssertionTypePair, type TSTypeAssertionTypeClass } from './tSType
 const restElementTypeAnnotationPairs = lazyPairs(
     () => [typeAnnotationTypePair, tSTypeAnnotationTypePair] as const,
 );
-const restElementDecoratorsPairs = lazyPairs(() => [decoratorTypePair] as const);
 const restElementArgumentPairs = lazyPairs(
     () =>
         [
@@ -51,10 +51,10 @@ const restElementArgumentPairs = lazyPairs(
         ] as const,
 );
 
-export type RestElementFields = {
-    typeAnnotation: TypeAnnotationTypeClass | TSTypeAnnotationTypeClass | LwcErrorTypeClass | null;
-    optional: NonNullable<RestElement['optional']> | null;
-    decorators: (DecoratorTypeClass | LwcErrorTypeClass)[] | null;
+export type RestElementFields = TypeField<'restElement'> & {
+    typeAnnotation: TypeAnnotationTypeClass | TSTypeAnnotationTypeClass | null;
+    optional: boolean;
+    decorators: DecoratorTypeClass[] | null;
     argument:
         | IdentifierTypeClass
         | ArrayPatternTypeClass
@@ -63,64 +63,55 @@ export type RestElementFields = {
         | TSAsExpressionTypeClass
         | TSSatisfiesExpressionTypeClass
         | TSTypeAssertionTypeClass
-        | TSNonNullExpressionTypeClass
-        | LwcErrorTypeClass;
+        | TSNonNullExpressionTypeClass;
 };
 
-export class RestElementTypeClass extends LwcCommonTypeClass<'restElement'> {
-    private readonly value: RestElementFields;
-
-    private constructor(value: RestElementFields) {
-        super('restElement');
-        this.value = value;
+export class RestElementTypeClass extends LwcCommonTypeClass<'restElement', RestElementFields> {
+    private constructor(value: FieldsOf<RestElementFields>, sourceSpan: SourceSpan) {
+        super('restElement', value, sourceSpan);
     }
 
     static create(target: RestElement, originalSource: string): RestElementTypeClass {
-        return new RestElementTypeClass({
-            typeAnnotation: visitOptionalNode(
-                target.typeAnnotation,
-                originalSource,
-                restElementTypeAnnotationPairs(),
-                'RestElement.typeAnnotation',
-            ),
-            optional: target.optional ?? null,
-            decorators:
-                target.decorators == null
-                    ? null
-                    : visitNodeList(
-                          target.decorators,
-                          originalSource,
-                          restElementDecoratorsPairs(),
-                          'RestElement.decorators',
-                      ),
-            argument: visitNode(
-                target.argument,
-                originalSource,
-                restElementArgumentPairs(),
-                'RestElement.argument',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): RestElementFields {
-        return this.value;
+        return new RestElementTypeClass(
+            {
+                typeAnnotation: visitOptionalNode(
+                    target.typeAnnotation,
+                    originalSource,
+                    restElementTypeAnnotationPairs(),
+                    'RestElement.typeAnnotation',
+                ),
+                optional: target.optional ?? false,
+                decorators:
+                    target.decorators == null
+                        ? null
+                        : target.decorators.map((child) =>
+                              DecoratorTypeClass.create(child, originalSource),
+                          ),
+                argument: visitNode(
+                    target.argument,
+                    originalSource,
+                    restElementArgumentPairs(),
+                    'RestElement.argument',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getTypeAnnotation(): RestElementFields['typeAnnotation'] {
-        return this.value.typeAnnotation;
+        return this.getFields().typeAnnotation;
     }
 
     getOptional(): RestElementFields['optional'] {
-        return this.value.optional;
+        return this.getFields().optional;
     }
 
     getDecorators(): RestElementFields['decorators'] {
-        return this.value.decorators;
+        return this.getFields().decorators;
     }
 
     getArgument(): RestElementFields['argument'] {
-        return this.value.argument;
+        return this.getFields().argument;
     }
 }
 
@@ -130,5 +121,5 @@ export const restElementTypePair: EvaluatePair<RestElement, RestElementTypeClass
     );
 
 export const isRestElementType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is RestElementTypeClass => target instanceof RestElementTypeClass;

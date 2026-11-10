@@ -1,46 +1,46 @@
+import { type FieldsOf, type TypeField } from '../../commons/ir';
+import { type SourceSpan } from '../../commons/source';
 import { isTSTypeLiteral, type TSTypeLiteral } from '@babel/types';
 import {
     EvaluatePair,
     LwcCommonTypeClass,
-    LwcErrorTypeClass,
     makeEvaluatePair,
     visitNodeList,
+    getSourceSpan,
 } from '../commonVisitor';
 import {
     tSTypeElementVisitorEvaluatePairs,
     type TSTypeElementTypeClass,
 } from '../tsTypeElementVisitor';
 
-export type TSTypeLiteralFields = {
-    members: (TSTypeElementTypeClass | LwcErrorTypeClass)[];
+export type TSTypeLiteralFields = TypeField<'tSTypeLiteral'> & {
+    members: TSTypeElementTypeClass[];
 };
 
-export class TSTypeLiteralTypeClass extends LwcCommonTypeClass<'tSTypeLiteral'> {
-    private readonly value: TSTypeLiteralFields;
-
-    private constructor(value: TSTypeLiteralFields) {
-        super('tSTypeLiteral');
-        this.value = value;
+export class TSTypeLiteralTypeClass extends LwcCommonTypeClass<
+    'tSTypeLiteral',
+    TSTypeLiteralFields
+> {
+    private constructor(value: FieldsOf<TSTypeLiteralFields>, sourceSpan: SourceSpan) {
+        super('tSTypeLiteral', value, sourceSpan);
     }
 
     static create(target: TSTypeLiteral, originalSource: string): TSTypeLiteralTypeClass {
-        return new TSTypeLiteralTypeClass({
-            members: visitNodeList(
-                target.members,
-                originalSource,
-                tSTypeElementVisitorEvaluatePairs(),
-                'TSTypeElementVisitor',
-            ),
-        });
-    }
-
-    /** すべてのフィールド (Babel の value フィールドの getter getValue() と区別する。getChildNodes もこれから作る) */
-    override getFields(): TSTypeLiteralFields {
-        return this.value;
+        return new TSTypeLiteralTypeClass(
+            {
+                members: visitNodeList(
+                    target.members,
+                    originalSource,
+                    tSTypeElementVisitorEvaluatePairs(),
+                    'TSTypeElementVisitor',
+                ),
+            },
+            getSourceSpan(target, originalSource),
+        );
     }
 
     getMembers(): TSTypeLiteralFields['members'] {
-        return this.value.members;
+        return this.getFields().members;
     }
 }
 
@@ -50,5 +50,5 @@ export const tSTypeLiteralTypePair: EvaluatePair<TSTypeLiteral, TSTypeLiteralTyp
     );
 
 export const isTSTypeLiteralType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is TSTypeLiteralTypeClass => target instanceof TSTypeLiteralTypeClass;

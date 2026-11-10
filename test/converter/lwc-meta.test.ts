@@ -46,12 +46,12 @@ describe('LWC の js-meta.xml', () => {
         assert.equal(apiVersionOf(meta), 61);
     });
 
-    it('ルート要素の違い・XML の構文エラーは ErrorJson と resolvedError (phase syntax)', () => {
+    it('ルート要素の違い・XML の構文エラーは meta が null で、理由は resolvedError (phase syntax)', () => {
         const wrongRoot = parseBundleMeta(
             'x/x.js-meta.xml',
             '<?xml version="1.0"?><ApexClass></ApexClass>',
         );
-        assert.equal(wrongRoot.meta.kind, 'error');
+        assert.equal(wrongRoot.meta, null);
         assert.deepEqual(
             wrongRoot.resolvedError.map((e) => [e.phase, e.code]),
             [['syntax', 'UNEXPECTED_ROOT']],
@@ -60,7 +60,7 @@ describe('LWC の js-meta.xml', () => {
             'x/x.js-meta.xml',
             '<LightningComponentBundle><apiVersion>61.0',
         );
-        assert.equal(broken.meta.kind, 'error');
+        assert.equal(broken.meta, null);
         assert.equal(broken.resolvedError[0]!.code, 'XML_SYNTAX');
     });
 

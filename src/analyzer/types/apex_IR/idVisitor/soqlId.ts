@@ -1,19 +1,36 @@
 import { SoqlIdContext } from '@apexdevtools/apex-parser';
 
-import { NormalIdTypeClass, IdTypeClass, IdVisitor, isNormalIdType } from '.';
+import { IdTypeClass } from './id';
+import {
+    ApexCommonTypeClass,
+    createNode,
+    getSourceSpan,
+    isSpicifyApexCommonTypeClass,
+} from '../commonVisitor';
+import { type FieldsOf, TypeField } from '../../commons/ir';
+import { SourceSpan } from '../../commons';
 
-import { ApexCommonTypeClass, ApexErrorTypeClass, visitNode } from '../commonVisitor';
+export type SoqlIdType = TypeField<'soqlId'> & {
+    value: IdTypeClass;
+};
 
-export class SoqlIdTypeClass extends IdTypeClass<'soqlId', NormalIdTypeClass> {
-    private constructor(value: NormalIdTypeClass | ApexErrorTypeClass) {
-        super('soqlId', value);
+export class SoqlIdTypeClass extends ApexCommonTypeClass<'soqlId', SoqlIdType> {
+    private constructor(fields: FieldsOf<SoqlIdType>, sourceSpan: SourceSpan) {
+        super('soqlId', fields, sourceSpan);
     }
 
     static create(ctx: SoqlIdContext): SoqlIdTypeClass {
-        return new SoqlIdTypeClass(visitNode(new IdVisitor(), ctx.id(), isNormalIdType, 'id'));
+        return new SoqlIdTypeClass(
+            { value: createNode(ctx.id(), (c) => IdTypeClass.create(c), 'id') },
+            getSourceSpan(ctx),
+        );
+    }
+
+    getValue(): SoqlIdType['value'] {
+        return this.getFields().value;
     }
 }
 
-export const isSoqlIdType = (target: ApexCommonTypeClass<string>): target is SoqlIdTypeClass => {
-    return target instanceof SoqlIdTypeClass;
-};
+export const isSoqlIdType = (
+    target: ApexCommonTypeClass<string, TypeField<string>>,
+): target is SoqlIdTypeClass => isSpicifyApexCommonTypeClass('soqlId', target);

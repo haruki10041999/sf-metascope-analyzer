@@ -1,3 +1,4 @@
+import { type TypeField } from '../../commons/ir';
 import { LwcCommonTypeClass, LwcCommonVisitor, lazyPairs } from '../commonVisitor';
 import { BlockStatementTypeClass, blockStatementTypePair } from '../commons/blockStatement';
 import { BreakStatementTypeClass, breakStatementTypePair } from '../commons/breakStatement';
@@ -452,7 +453,7 @@ export type StatementTypeClass =
     | TSNamespaceExportDeclarationTypeClass;
 
 export const isStatementType = (
-    target: LwcCommonTypeClass<string>,
+    target: LwcCommonTypeClass<string, TypeField<string>>,
 ): target is StatementTypeClass => {
     return (
         target instanceof BlockStatementTypeClass ||
