@@ -23,15 +23,14 @@
             "type": "primitive",
             "primitiveType": "Decimal"
           },
+          "param": [],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
                 "name": "PUBLIC"
-              }
-            ],
-            "declaration": [
+              },
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -42,14 +41,12 @@
         }
       ],
       "modifier": {
-        "access": [
+        "keyword": [
           {
             "kind": "modifier",
             "sourceKeys": {},
             "name": "PUBLIC"
-          }
-        ],
-        "declaration": [
+          },
           {
             "kind": "modifier",
             "sourceKeys": {},

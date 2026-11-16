@@ -15,12 +15,13 @@
           "sourceKeys": {},
           "variants": [
             {
+              "kind": "variant",
               "sourceKeys": {},
               "name": "MAX_SIZE",
               "init": {
+                "kind": "integer",
                 "sourceKeys": {},
-                "value": "100",
-                "valueType": "integer"
+                "value": "100"
               }
             }
           ],
@@ -31,14 +32,12 @@
             "primitiveType": "Integer"
           },
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
                 "name": "PUBLIC"
-              }
-            ],
-            "declaration": [
+              },
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -57,12 +56,13 @@
           "sourceKeys": {},
           "variants": [
             {
+              "kind": "variant",
               "sourceKeys": {},
               "name": "name",
               "init": {
+                "kind": "string",
                 "sourceKeys": {},
-                "value": "'default'",
-                "valueType": "string"
+                "value": "default"
               }
             }
           ],
@@ -73,7 +73,7 @@
             "primitiveType": "String"
           },
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -87,21 +87,23 @@
           "sourceKeys": {},
           "variants": [
             {
+              "kind": "variant",
               "sourceKeys": {},
               "name": "first",
               "init": {
+                "kind": "integer",
                 "sourceKeys": {},
-                "value": "1",
-                "valueType": "integer"
+                "value": "1"
               }
             },
             {
+              "kind": "variant",
               "sourceKeys": {},
               "name": "second",
               "init": {
+                "kind": "integer",
                 "sourceKeys": {},
-                "value": "2",
-                "valueType": "integer"
+                "value": "2"
               }
             }
           ],
@@ -112,7 +114,7 @@
             "primitiveType": "Integer"
           },
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -127,44 +129,54 @@
         },
         {
           "kind": "initializer",
+          "sourceKeys": {},
           "block": [
             {
               "kind": "expression",
               "sourceKeys": {},
               "value": {
+                "kind": "assignment",
                 "sourceKeys": {},
-                "left": "counter",
-                "operator": "=",
-                "right": {
+                "left": {
+                  "kind": "identifier",
                   "sourceKeys": {},
-                  "value": "0",
-                  "valueType": "integer"
-                }
+                  "name": "counter"
+                },
+                "right": {
+                  "kind": "integer",
+                  "sourceKeys": {},
+                  "value": "0"
+                },
+                "operator": "="
               }
             }
           ],
-          "modifier": {},
           "isStatic": true
         },
         {
           "kind": "initializer",
+          "sourceKeys": {},
           "block": [
             {
               "kind": "expression",
               "sourceKeys": {},
               "value": {
+                "kind": "assignment",
                 "sourceKeys": {},
-                "left": "name",
-                "operator": "=",
-                "right": {
+                "left": {
+                  "kind": "identifier",
                   "sourceKeys": {},
-                  "value": "'init'",
-                  "valueType": "string"
-                }
+                  "name": "name"
+                },
+                "right": {
+                  "kind": "string",
+                  "sourceKeys": {},
+                  "value": "init"
+                },
+                "operator": "="
               }
             }
           ],
-          "modifier": {},
           "isStatic": false
         },
         {
@@ -189,7 +201,7 @@
             "modifier": {}
           },
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -217,7 +229,11 @@
               {
                 "kind": "return",
                 "sourceKeys": {},
-                "field": "total"
+                "field": {
+                  "kind": "identifier",
+                  "sourceKeys": {},
+                  "name": "total"
+                }
               }
             ],
             "modifier": {}
@@ -229,15 +245,24 @@
                 "kind": "expression",
                 "sourceKeys": {},
                 "value": {
+                  "kind": "assignment",
                   "sourceKeys": {},
-                  "left": "total",
-                  "operator": "=",
-                  "right": "value"
+                  "left": {
+                    "kind": "identifier",
+                    "sourceKeys": {},
+                    "name": "total"
+                  },
+                  "right": {
+                    "kind": "identifier",
+                    "sourceKeys": {},
+                    "name": "value"
+                  },
+                  "operator": "="
                 }
               }
             ],
             "modifier": {
-              "access": [
+              "keyword": [
                 {
                   "kind": "modifier",
                   "sourceKeys": {},
@@ -247,7 +272,7 @@
             }
           },
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -281,7 +306,7 @@
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -315,7 +340,9 @@
                     "kind": "type",
                     "sourceKeys": {},
                     "type": "custom",
-                    "customType": "Account"
+                    "customType": [
+                      "Account"
+                    ]
                   },
                   "modifier": {}
                 }
@@ -335,11 +362,12 @@
                 "type": "primitive",
                 "primitiveType": "Integer"
               },
+              "param": [],
               "modifier": {}
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -361,6 +389,7 @@
               "sourceKeys": {},
               "variants": [
                 {
+                  "kind": "variant",
                   "sourceKeys": {},
                   "name": "record"
                 }
@@ -369,10 +398,12 @@
                 "kind": "type",
                 "sourceKeys": {},
                 "type": "custom",
-                "customType": "Account"
+                "customType": [
+                  "Account"
+                ]
               },
               "modifier": {
-                "access": [
+                "keyword": [
                   {
                     "kind": "modifier",
                     "sourceKeys": {},
@@ -399,7 +430,9 @@
                     "kind": "type",
                     "sourceKeys": {},
                     "type": "custom",
-                    "customType": "Account"
+                    "customType": [
+                      "Account"
+                    ]
                   },
                   "modifier": {}
                 }
@@ -409,22 +442,30 @@
                   "kind": "expression",
                   "sourceKeys": {},
                   "value": {
+                    "kind": "assignment",
                     "sourceKeys": {},
                     "left": {
                       "kind": "memberAccess",
                       "sourceKeys": {},
                       "type": "object",
-                      "object": "this",
+                      "object": {
+                        "kind": "this",
+                        "sourceKeys": {}
+                      },
                       "operator": ".",
                       "member": "record"
                     },
-                    "operator": "=",
-                    "right": "record"
+                    "right": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "record"
+                    },
+                    "operator": "="
                   }
                 }
               ],
               "modifier": {
-                "access": [
+                "keyword": [
                   {
                     "kind": "modifier",
                     "sourceKeys": {},
@@ -435,7 +476,7 @@
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -453,27 +494,30 @@
           "name": [
             "AccountService"
           ],
+          "param": [],
           "block": [
             {
               "kind": "expression",
               "sourceKeys": {},
               "value": {
-                "kind": "memberAccess",
+                "kind": "call",
                 "sourceKeys": {},
-                "type": "method",
-                "member": "this",
-                "memberArg": [
+                "callee": {
+                  "kind": "this",
+                  "sourceKeys": {}
+                },
+                "arg": [
                   {
+                    "kind": "string",
                     "sourceKeys": {},
-                    "value": "'default'",
-                    "valueType": "string"
+                    "value": "default"
                   }
                 ]
               }
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -510,22 +554,30 @@
               "kind": "expression",
               "sourceKeys": {},
               "value": {
+                "kind": "assignment",
                 "sourceKeys": {},
                 "left": {
                   "kind": "memberAccess",
                   "sourceKeys": {},
                   "type": "object",
-                  "object": "this",
+                  "object": {
+                    "kind": "this",
+                    "sourceKeys": {}
+                  },
                   "operator": ".",
                   "member": "name"
                 },
-                "operator": "=",
-                "right": "name"
+                "right": {
+                  "kind": "identifier",
+                  "sourceKeys": {},
+                  "name": "name"
+                },
+                "operator": "="
               }
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -563,130 +615,141 @@
             {
               "kind": "localVariable",
               "sourceKeys": {},
-              "variable": {
-                "variants": [
-                  {
+              "variantType": {
+                "kind": "type",
+                "sourceKeys": {},
+                "type": "list",
+                "elementType": {
+                  "type": "custom",
+                  "customType": [
+                    "Account"
+                  ]
+                }
+              },
+              "modifier": {},
+              "variants": [
+                {
+                  "kind": "variant",
+                  "sourceKeys": {},
+                  "name": "accounts",
+                  "init": {
+                    "kind": "soql",
                     "sourceKeys": {},
-                    "name": "accounts",
-                    "init": {
-                      "kind": "soql",
-                      "sourceKeys": {},
-                      "select": {
-                        "field": [
-                          {
-                            "kind": "selectEntry",
-                            "sourceKeys": {},
-                            "type": "field",
-                            "field": [
-                              "Id"
-                            ]
-                          },
-                          {
-                            "kind": "selectEntry",
-                            "sourceKeys": {},
-                            "type": "field",
-                            "field": [
-                              "Name"
-                            ]
-                          }
-                        ]
-                      },
-                      "from": {
-                        "field": [
-                          {
-                            "kind": "fromField",
-                            "sourceKeys": {},
-                            "field": [
-                              "Account"
-                            ]
-                          }
-                        ]
-                      },
-                      "where": {
-                        "condition": {
-                          "condition": [
-                            {
-                              "kind": "singleCondition",
-                              "sourceKeys": {},
-                              "field": {
-                                "type": "field",
-                                "field": [
-                                  "Id"
-                                ]
-                              },
-                              "operator": "IN",
-                              "value": {
-                                "type": "bind",
-                                "value": "ids"
-                              }
-                            }
+                    "select": {
+                      "field": [
+                        {
+                          "kind": "selectEntry",
+                          "sourceKeys": {},
+                          "type": "field",
+                          "field": [
+                            "Id"
+                          ]
+                        },
+                        {
+                          "kind": "selectEntry",
+                          "sourceKeys": {},
+                          "type": "field",
+                          "field": [
+                            "Name"
                           ]
                         }
-                      },
-                      "orderBy": {
-                        "orderBy": [
+                      ]
+                    },
+                    "from": {
+                      "field": [
+                        {
+                          "kind": "fromField",
+                          "sourceKeys": {},
+                          "field": [
+                            "Account"
+                          ]
+                        }
+                      ]
+                    },
+                    "where": {
+                      "condition": {
+                        "condition": [
                           {
-                            "kind": "orderField",
+                            "kind": "singleCondition",
                             "sourceKeys": {},
-                            "type": "field",
-                            "field": [
-                              "Name"
-                            ],
-                            "direction": "ASC"
+                            "field": {
+                              "type": "field",
+                              "field": [
+                                "Id"
+                              ]
+                            },
+                            "operator": "IN",
+                            "value": {
+                              "type": "bind",
+                              "value": {
+                                "kind": "identifier",
+                                "sourceKeys": {},
+                                "name": "ids"
+                              }
+                            }
                           }
                         ]
-                      },
-                      "limit": {
-                        "kind": "limitClause",
-                        "sourceKeys": {},
-                        "type": "literal",
-                        "value": "100"
                       }
+                    },
+                    "orderBy": {
+                      "orderBy": [
+                        {
+                          "kind": "orderField",
+                          "sourceKeys": {},
+                          "type": "field",
+                          "field": [
+                            "Name"
+                          ],
+                          "direction": "ASC"
+                        }
+                      ]
+                    },
+                    "limit": {
+                      "kind": "limitClause",
+                      "sourceKeys": {},
+                      "type": "literal",
+                      "value": "100"
                     }
                   }
-                ],
-                "variantsType": {
-                  "kind": "type",
-                  "sourceKeys": {},
-                  "type": "list",
-                  "elementType": {
-                    "type": "custom",
-                    "customType": "Account"
-                  }
-                },
-                "modifier": {}
-              }
+                }
+              ]
             },
             {
-              "kind": "for",
+              "kind": "forEach",
               "sourceKeys": {},
-              "condition": {
-                "kind": "forCondition",
+              "variant": "acc",
+              "variantType": {
+                "kind": "type",
                 "sourceKeys": {},
-                "initializer": "acc",
-                "initializeType": {
-                  "kind": "type",
-                  "sourceKeys": {},
-                  "type": "custom",
-                  "customType": "Account"
-                },
-                "baseObject": "accounts"
+                "type": "custom",
+                "customType": [
+                  "Account"
+                ]
+              },
+              "right": {
+                "kind": "identifier",
+                "sourceKeys": {},
+                "name": "accounts"
               },
               "block": [
                 {
                   "kind": "expression",
                   "sourceKeys": {},
                   "value": {
+                    "kind": "assignment",
                     "sourceKeys": {},
                     "left": {
                       "kind": "memberAccess",
                       "sourceKeys": {},
                       "type": "object",
-                      "object": "acc",
+                      "object": {
+                        "kind": "identifier",
+                        "sourceKeys": {},
+                        "name": "acc"
+                      },
                       "operator": ".",
                       "member": "Name"
                     },
-                    "operator": "=",
                     "right": {
                       "kind": "memberAccess",
                       "sourceKeys": {},
@@ -695,13 +758,18 @@
                         "kind": "memberAccess",
                         "sourceKeys": {},
                         "type": "object",
-                        "object": "acc",
+                        "object": {
+                          "kind": "identifier",
+                          "sourceKeys": {},
+                          "name": "acc"
+                        },
                         "operator": ".",
                         "member": "Name"
                       },
                       "operator": ".",
                       "member": "trim"
-                    }
+                    },
+                    "operator": "="
                   }
                 }
               ]
@@ -709,25 +777,27 @@
             {
               "kind": "update",
               "sourceKeys": {},
-              "field": "accounts"
+              "field": {
+                "kind": "identifier",
+                "sourceKeys": {},
+                "name": "accounts"
+              }
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
                 "name": "PUBLIC"
-              }
-            ],
-            "declaration": [
+              },
               {
                 "kind": "modifier",
                 "sourceKeys": {},
                 "name": "STATIC"
               }
             ],
-            "asyncAnnotation": [
+            "annotation": [
               {
                 "kind": "annotation",
                 "sourceKeys": {},
@@ -735,8 +805,11 @@
                 "arg": [
                   {
                     "key": "callout",
-                    "value": "true",
-                    "valueType": "boolean"
+                    "value": {
+                      "kind": "boolean",
+                      "sourceKeys": {},
+                      "value": true
+                    }
                   }
                 ]
               }
@@ -786,27 +859,35 @@
             {
               "kind": "localVariable",
               "sourceKeys": {},
-              "variable": {
-                "variants": [
-                  {
-                    "sourceKeys": {},
-                    "name": "result",
-                    "init": {
-                      "sourceKeys": {},
-                      "left": "a",
-                      "operator": "+",
-                      "right": "b"
-                    }
-                  }
-                ],
-                "variantsType": {
-                  "kind": "type",
+              "variantType": {
+                "kind": "type",
+                "sourceKeys": {},
+                "type": "primitive",
+                "primitiveType": "Integer"
+              },
+              "modifier": {},
+              "variants": [
+                {
+                  "kind": "variant",
                   "sourceKeys": {},
-                  "type": "primitive",
-                  "primitiveType": "Integer"
-                },
-                "modifier": {}
-              }
+                  "name": "result",
+                  "init": {
+                    "kind": "binary",
+                    "sourceKeys": {},
+                    "left": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "a"
+                    },
+                    "right": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "b"
+                    },
+                    "operator": "+"
+                  }
+                }
+              ]
             },
             {
               "kind": "if",
@@ -814,56 +895,76 @@
               "conditionBlock": [
                 {
                   "condition": {
-                    "kind": "ifCondition",
+                    "kind": "binary",
                     "sourceKeys": {},
-                    "condition": {
+                    "left": {
+                      "kind": "identifier",
                       "sourceKeys": {},
-                      "left": "result",
-                      "operator": ">",
-                      "right": "MAX_SIZE"
-                    }
+                      "name": "result"
+                    },
+                    "right": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "MAX_SIZE"
+                    },
+                    "operator": ">"
                   },
                   "block": [
                     {
                       "kind": "expression",
                       "sourceKeys": {},
                       "value": {
+                        "kind": "assignment",
                         "sourceKeys": {},
-                        "left": "result",
-                        "operator": "=",
-                        "right": "MAX_SIZE"
+                        "left": {
+                          "kind": "identifier",
+                          "sourceKeys": {},
+                          "name": "result"
+                        },
+                        "right": {
+                          "kind": "identifier",
+                          "sourceKeys": {},
+                          "name": "MAX_SIZE"
+                        },
+                        "operator": "="
                       }
                     }
                   ]
                 },
                 {
                   "condition": {
-                    "kind": "ifCondition",
+                    "kind": "binary",
                     "sourceKeys": {},
-                    "condition": {
+                    "left": {
+                      "kind": "identifier",
                       "sourceKeys": {},
-                      "left": "result",
-                      "operator": "<",
-                      "right": {
-                        "sourceKeys": {},
-                        "value": "0",
-                        "valueType": "integer"
-                      }
-                    }
+                      "name": "result"
+                    },
+                    "right": {
+                      "kind": "integer",
+                      "sourceKeys": {},
+                      "value": "0"
+                    },
+                    "operator": "<"
                   },
                   "block": [
                     {
                       "kind": "expression",
                       "sourceKeys": {},
                       "value": {
+                        "kind": "assignment",
                         "sourceKeys": {},
-                        "left": "result",
-                        "operator": "=",
-                        "right": {
+                        "left": {
+                          "kind": "identifier",
                           "sourceKeys": {},
-                          "value": "0",
-                          "valueType": "integer"
-                        }
+                          "name": "result"
+                        },
+                        "right": {
+                          "kind": "integer",
+                          "sourceKeys": {},
+                          "value": "0"
+                        },
+                        "operator": "="
                       }
                     }
                   ]
@@ -873,11 +974,15 @@
             {
               "kind": "return",
               "sourceKeys": {},
-              "field": "result"
+              "field": {
+                "kind": "identifier",
+                "sourceKeys": {},
+                "name": "result"
+              }
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -905,7 +1010,9 @@
                 "type": "list",
                 "elementType": {
                   "type": "custom",
-                  "customType": "Account"
+                  "customType": [
+                    "Account"
+                  ]
                 }
               },
               "modifier": {}
@@ -915,56 +1022,65 @@
             {
               "kind": "localVariable",
               "sourceKeys": {},
-              "variable": {
-                "variants": [
-                  {
-                    "sourceKeys": {},
-                    "name": "i",
-                    "init": {
-                      "sourceKeys": {},
-                      "value": "0",
-                      "valueType": "integer"
-                    }
-                  }
-                ],
-                "variantsType": {
-                  "kind": "type",
+              "variantType": {
+                "kind": "type",
+                "sourceKeys": {},
+                "type": "primitive",
+                "primitiveType": "Integer"
+              },
+              "modifier": {},
+              "variants": [
+                {
+                  "kind": "variant",
                   "sourceKeys": {},
-                  "type": "primitive",
-                  "primitiveType": "Integer"
-                },
-                "modifier": {}
-              }
+                  "name": "i",
+                  "init": {
+                    "kind": "integer",
+                    "sourceKeys": {},
+                    "value": "0"
+                  }
+                }
+              ]
             },
             {
               "kind": "while",
               "sourceKeys": {},
               "condition": {
-                "kind": "whileCondition",
+                "kind": "binary",
                 "sourceKeys": {},
-                "condition": {
+                "left": {
+                  "kind": "identifier",
                   "sourceKeys": {},
-                  "left": "i",
-                  "operator": "<",
-                  "right": {
-                    "kind": "memberAccess",
+                  "name": "i"
+                },
+                "right": {
+                  "kind": "memberAccess",
+                  "sourceKeys": {},
+                  "type": "method",
+                  "object": {
+                    "kind": "identifier",
                     "sourceKeys": {},
-                    "type": "method",
-                    "object": "accounts",
-                    "operator": ".",
-                    "member": "size"
-                  }
-                }
+                    "name": "accounts"
+                  },
+                  "operator": ".",
+                  "member": "size"
+                },
+                "operator": "<"
               },
-              "body": [
+              "block": [
                 {
                   "kind": "expression",
                   "sourceKeys": {},
                   "value": {
+                    "kind": "unary",
                     "sourceKeys": {},
-                    "variant": "i",
                     "operator": "++",
-                    "operatorLocation": "back"
+                    "operatorLocation": "back",
+                    "argument": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "i"
+                    }
                   }
                 }
               ]
@@ -973,28 +1089,34 @@
               "kind": "doWhile",
               "sourceKeys": {},
               "condition": {
-                "kind": "doWhileCondition",
+                "kind": "binary",
                 "sourceKeys": {},
-                "condition": {
+                "left": {
+                  "kind": "identifier",
                   "sourceKeys": {},
-                  "left": "i",
-                  "operator": ">",
-                  "right": {
-                    "sourceKeys": {},
-                    "value": "0",
-                    "valueType": "integer"
-                  }
-                }
+                  "name": "i"
+                },
+                "right": {
+                  "kind": "integer",
+                  "sourceKeys": {},
+                  "value": "0"
+                },
+                "operator": ">"
               },
-              "body": [
+              "block": [
                 {
                   "kind": "expression",
                   "sourceKeys": {},
                   "value": {
+                    "kind": "unary",
                     "sourceKeys": {},
-                    "variant": "i",
                     "operator": "--",
-                    "operatorLocation": "back"
+                    "operatorLocation": "back",
+                    "argument": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "i"
+                    }
                   }
                 }
               ]
@@ -1003,44 +1125,53 @@
               "kind": "for",
               "sourceKeys": {},
               "condition": {
-                "kind": "forCondition",
-                "sourceKeys": {},
                 "initializer": {
-                  "variants": [
-                    {
-                      "sourceKeys": {},
-                      "name": "j",
-                      "init": {
-                        "sourceKeys": {},
-                        "value": "0",
-                        "valueType": "integer"
-                      }
-                    }
-                  ],
-                  "variantsType": {
+                  "variantType": {
                     "kind": "type",
                     "sourceKeys": {},
                     "type": "primitive",
                     "primitiveType": "Integer"
                   },
-                  "modifier": {}
+                  "modifier": {},
+                  "variants": [
+                    {
+                      "kind": "variant",
+                      "sourceKeys": {},
+                      "name": "j",
+                      "init": {
+                        "kind": "integer",
+                        "sourceKeys": {},
+                        "value": "0"
+                      }
+                    }
+                  ]
                 },
                 "condition": {
+                  "kind": "binary",
                   "sourceKeys": {},
-                  "left": "j",
-                  "operator": "<",
-                  "right": {
+                  "left": {
+                    "kind": "identifier",
                     "sourceKeys": {},
-                    "value": "10",
-                    "valueType": "integer"
-                  }
+                    "name": "j"
+                  },
+                  "right": {
+                    "kind": "integer",
+                    "sourceKeys": {},
+                    "value": "10"
+                  },
+                  "operator": "<"
                 },
                 "update": [
                   {
+                    "kind": "unary",
                     "sourceKeys": {},
-                    "variant": "j",
                     "operator": "++",
-                    "operatorLocation": "back"
+                    "operatorLocation": "back",
+                    "argument": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "j"
+                    }
                   }
                 ]
               },
@@ -1051,24 +1182,24 @@
                   "conditionBlock": [
                     {
                       "condition": {
-                        "kind": "ifCondition",
+                        "kind": "binary",
                         "sourceKeys": {},
-                        "condition": {
+                        "left": {
+                          "kind": "identifier",
                           "sourceKeys": {},
-                          "left": "j",
-                          "operator": "==",
-                          "right": {
-                            "sourceKeys": {},
-                            "value": "1",
-                            "valueType": "integer"
-                          }
-                        }
+                          "name": "j"
+                        },
+                        "right": {
+                          "kind": "integer",
+                          "sourceKeys": {},
+                          "value": "1"
+                        },
+                        "operator": "=="
                       },
                       "block": [
                         {
                           "kind": "continue",
-                          "sourceKeys": {},
-                          "value": "continue"
+                          "sourceKeys": {}
                         }
                       ]
                     }
@@ -1080,24 +1211,24 @@
                   "conditionBlock": [
                     {
                       "condition": {
-                        "kind": "ifCondition",
+                        "kind": "binary",
                         "sourceKeys": {},
-                        "condition": {
+                        "left": {
+                          "kind": "identifier",
                           "sourceKeys": {},
-                          "left": "j",
-                          "operator": "==",
-                          "right": {
-                            "sourceKeys": {},
-                            "value": "2",
-                            "valueType": "integer"
-                          }
-                        }
+                          "name": "j"
+                        },
+                        "right": {
+                          "kind": "integer",
+                          "sourceKeys": {},
+                          "value": "2"
+                        },
+                        "operator": "=="
                       },
                       "block": [
                         {
                           "kind": "break",
-                          "sourceKeys": {},
-                          "value": "break"
+                          "sourceKeys": {}
                         }
                       ]
                     }
@@ -1107,12 +1238,19 @@
                   "kind": "expression",
                   "sourceKeys": {},
                   "value": {
-                    "kind": "memberAccess",
+                    "kind": "call",
                     "sourceKeys": {},
-                    "type": "method",
-                    "member": "log",
-                    "memberArg": [
-                      "j"
+                    "callee": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "log"
+                    },
+                    "arg": [
+                      {
+                        "kind": "identifier",
+                        "sourceKeys": {},
+                        "name": "j"
+                      }
                     ]
                   }
                 }
@@ -1128,40 +1266,48 @@
                     {
                       "kind": "insert",
                       "sourceKeys": {},
-                      "field": "accounts"
+                      "field": {
+                        "kind": "identifier",
+                        "sourceKeys": {},
+                        "name": "accounts"
+                      }
                     }
                   ]
                 },
                 {
                   "condition": "catch",
-                  "catchCondition": {
-                    "kind": "catchCondition",
-                    "sourceKeys": {
-                      "base": {},
-                      "exception": {},
-                      "exceptionType": {}
-                    },
-                    "exception": "e",
-                    "exceptionType": [
+                  "variant": "e",
+                  "variantType": {
+                    "kind": "type",
+                    "sourceKeys": {},
+                    "type": "custom",
+                    "customType": [
                       "DmlException"
-                    ],
-                    "modifier": []
+                    ]
                   },
+                  "modifier": [],
                   "block": [
                     {
                       "kind": "expression",
                       "sourceKeys": {},
                       "value": {
-                        "kind": "memberAccess",
+                        "kind": "call",
                         "sourceKeys": {},
-                        "type": "method",
-                        "member": "log",
-                        "memberArg": [
+                        "callee": {
+                          "kind": "identifier",
+                          "sourceKeys": {},
+                          "name": "log"
+                        },
+                        "arg": [
                           {
                             "kind": "memberAccess",
                             "sourceKeys": {},
                             "type": "method",
-                            "object": "e",
+                            "object": {
+                              "kind": "identifier",
+                              "sourceKeys": {},
+                              "name": "e"
+                            },
                             "operator": ".",
                             "member": "getMessage"
                           }
@@ -1177,15 +1323,18 @@
                       "kind": "expression",
                       "sourceKeys": {},
                       "value": {
-                        "kind": "memberAccess",
+                        "kind": "call",
                         "sourceKeys": {},
-                        "type": "method",
-                        "member": "log",
-                        "memberArg": [
+                        "callee": {
+                          "kind": "identifier",
+                          "sourceKeys": {},
+                          "name": "log"
+                        },
+                        "arg": [
                           {
+                            "kind": "string",
                             "sourceKeys": {},
-                            "value": "'done'",
-                            "valueType": "string"
+                            "value": "done"
                           }
                         ]
                       }
@@ -1196,7 +1345,7 @@
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -1227,7 +1376,9 @@
                 "kind": "type",
                 "sourceKeys": {},
                 "type": "custom",
-                "customType": "Status"
+                "customType": [
+                  "Status"
+                ]
               },
               "modifier": {}
             }
@@ -1236,22 +1387,21 @@
             {
               "kind": "switch",
               "sourceKeys": {},
-              "variant": {
-                "kind": "switchVariant",
+              "value": {
+                "kind": "identifier",
                 "sourceKeys": {},
-                "variant": "s"
+                "name": "s"
               },
-              "block": [
+              "when": [
                 {
                   "condition": {
                     "kind": "switchCondition",
                     "sourceKeys": {},
                     "condition": [
                       {
-                        "value": [
-                          "ACTIVE"
-                        ],
-                        "valueType": "id"
+                        "kind": "identifier",
+                        "sourceKeys": {},
+                        "name": "ACTIVE"
                       }
                     ]
                   },
@@ -1260,9 +1410,9 @@
                       "kind": "return",
                       "sourceKeys": {},
                       "field": {
+                        "kind": "string",
                         "sourceKeys": {},
-                        "value": "'active'",
-                        "valueType": "string"
+                        "value": "active"
                       }
                     }
                   ]
@@ -1278,9 +1428,9 @@
                       "kind": "return",
                       "sourceKeys": {},
                       "field": {
+                        "kind": "string",
                         "sourceKeys": {},
-                        "value": "'other'",
-                        "valueType": "string"
+                        "value": "other"
                       }
                     }
                   ]
@@ -1289,7 +1439,7 @@
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -1324,93 +1474,111 @@
             {
               "kind": "localVariable",
               "sourceKeys": {},
-              "variable": {
-                "variants": [
-                  {
-                    "sourceKeys": {},
-                    "name": "found",
-                    "init": {
-                      "kind": "sosl",
-                      "sourceKeys": {},
-                      "find": "key",
-                      "group": "ALL",
-                      "fieldSpec": [
-                        {
-                          "object": [
-                            "Account"
-                          ],
-                          "field": [
-                            {
-                              "kind": "soslField",
-                              "sourceKeys": {},
-                              "field": [
-                                "Id"
-                              ]
-                            },
-                            {
-                              "kind": "soslField",
-                              "sourceKeys": {},
-                              "field": [
-                                "Name"
-                              ]
-                            }
-                          ]
-                        },
-                        {
-                          "object": [
-                            "Contact"
-                          ]
-                        }
-                      ]
-                    }
-                  }
-                ],
-                "variantsType": {
-                  "kind": "type",
-                  "sourceKeys": {},
+              "variantType": {
+                "kind": "type",
+                "sourceKeys": {},
+                "type": "list",
+                "elementType": {
                   "type": "list",
                   "elementType": {
-                    "type": "list",
-                    "elementType": {
-                      "type": "custom",
-                      "customType": "SObject"
-                    }
+                    "type": "custom",
+                    "customType": [
+                      "SObject"
+                    ]
                   }
-                },
-                "modifier": {}
-              }
+                }
+              },
+              "modifier": {},
+              "variants": [
+                {
+                  "kind": "variant",
+                  "sourceKeys": {},
+                  "name": "found",
+                  "init": {
+                    "kind": "sosl",
+                    "sourceKeys": {},
+                    "find": {
+                      "type": "bind",
+                      "value": {
+                        "kind": "identifier",
+                        "sourceKeys": {},
+                        "name": "key"
+                      }
+                    },
+                    "group": "ALL",
+                    "fieldSpec": [
+                      {
+                        "object": [
+                          "Account"
+                        ],
+                        "field": [
+                          {
+                            "kind": "soslField",
+                            "sourceKeys": {},
+                            "field": [
+                              "Id"
+                            ]
+                          },
+                          {
+                            "kind": "soslField",
+                            "sourceKeys": {},
+                            "field": [
+                              "Name"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "object": [
+                          "Contact"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
             },
             {
               "kind": "runAs",
               "sourceKeys": {},
-              "condition": {
-                "kind": "runAsCondition",
-                "sourceKeys": {},
-                "field": [
-                  {
+              "arg": [
+                {
+                  "kind": "new",
+                  "sourceKeys": {},
+                  "newType": {
+                    "kind": "type",
                     "sourceKeys": {},
-                    "collection": [
+                    "type": "custom",
+                    "customType": [
                       "User"
-                    ],
-                    "initType": "class",
-                    "arg": [
-                      {
-                        "sourceKeys": {},
-                        "left": "Id",
-                        "operator": "=",
-                        "right": {
-                          "kind": "memberAccess",
-                          "sourceKeys": {},
-                          "type": "method",
-                          "object": "UserInfo",
-                          "operator": ".",
-                          "member": "getUserId"
-                        }
-                      }
                     ]
-                  }
-                ]
-              },
+                  },
+                  "arg": [
+                    {
+                      "kind": "assignment",
+                      "sourceKeys": {},
+                      "left": {
+                        "kind": "identifier",
+                        "sourceKeys": {},
+                        "name": "Id"
+                      },
+                      "right": {
+                        "kind": "memberAccess",
+                        "sourceKeys": {},
+                        "type": "method",
+                        "object": {
+                          "kind": "identifier",
+                          "sourceKeys": {},
+                          "name": "UserInfo"
+                        },
+                        "operator": ".",
+                        "member": "getUserId"
+                      },
+                      "operator": "="
+                    }
+                  ]
+                }
+              ],
               "block": [
                 {
                   "kind": "delete",
@@ -1470,17 +1638,31 @@
               "kind": "upsert",
               "sourceKeys": {},
               "field": {
+                "kind": "new",
                 "sourceKeys": {},
-                "collection": [
-                  "Account"
-                ],
-                "initType": "class",
+                "newType": {
+                  "kind": "type",
+                  "sourceKeys": {},
+                  "type": "custom",
+                  "customType": [
+                    "Account"
+                  ]
+                },
                 "arg": [
                   {
+                    "kind": "assignment",
                     "sourceKeys": {},
-                    "left": "Name",
-                    "operator": "=",
-                    "right": "key"
+                    "left": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "Name"
+                    },
+                    "right": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "key"
+                    },
+                    "operator": "="
                   }
                 ]
               },
@@ -1492,43 +1674,60 @@
             {
               "kind": "merge",
               "sourceKeys": {},
-              "field": [
-                "masterAccount",
-                "duplicateAccount"
-              ]
+              "master": {
+                "kind": "identifier",
+                "sourceKeys": {},
+                "name": "masterAccount"
+              },
+              "merged": {
+                "kind": "identifier",
+                "sourceKeys": {},
+                "name": "duplicateAccount"
+              }
             },
             {
               "kind": "undelete",
               "sourceKeys": {},
               "field": {
+                "kind": "new",
                 "sourceKeys": {},
-                "collection": [
-                  "Account"
-                ],
-                "initType": "class"
+                "newType": {
+                  "kind": "type",
+                  "sourceKeys": {},
+                  "type": "custom",
+                  "customType": [
+                    "Account"
+                  ]
+                },
+                "arg": []
               }
             },
             {
               "kind": "throw",
               "sourceKeys": {},
               "value": {
+                "kind": "new",
                 "sourceKeys": {},
-                "collection": [
-                  "ServiceException"
-                ],
-                "initType": "class",
+                "newType": {
+                  "kind": "type",
+                  "sourceKeys": {},
+                  "type": "custom",
+                  "customType": [
+                    "ServiceException"
+                  ]
+                },
                 "arg": [
                   {
+                    "kind": "string",
                     "sourceKeys": {},
-                    "value": "'not supported'",
-                    "valueType": "string"
+                    "value": "not supported"
                   }
                 ]
               }
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -1550,9 +1749,12 @@
             "type": "list",
             "elementType": {
               "type": "custom",
-              "customType": "AggregateResult"
+              "customType": [
+                "AggregateResult"
+              ]
             }
           },
+          "param": [],
           "block": [
             {
               "kind": "return",
@@ -1773,7 +1975,7 @@
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -1828,463 +2030,501 @@
             {
               "kind": "localVariable",
               "sourceKeys": {},
-              "variable": {
-                "variants": [
-                  {
+              "variantType": {
+                "kind": "type",
+                "sourceKeys": {},
+                "type": "primitive",
+                "primitiveType": "Integer"
+              },
+              "modifier": {},
+              "variants": [
+                {
+                  "kind": "variant",
+                  "sourceKeys": {},
+                  "name": "x",
+                  "init": {
+                    "kind": "cast",
                     "sourceKeys": {},
-                    "name": "x",
-                    "init": {
+                    "expression": {
+                      "kind": "identifier",
                       "sourceKeys": {},
-                      "target": "value",
-                      "convertType": {
-                        "kind": "type",
+                      "name": "value"
+                    },
+                    "convertType": {
+                      "kind": "type",
+                      "sourceKeys": {},
+                      "type": "primitive",
+                      "primitiveType": "Integer"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "localVariable",
+              "sourceKeys": {},
+              "variantType": {
+                "kind": "type",
+                "sourceKeys": {},
+                "type": "primitive",
+                "primitiveType": "Boolean"
+              },
+              "modifier": {},
+              "variants": [
+                {
+                  "kind": "variant",
+                  "sourceKeys": {},
+                  "name": "isText",
+                  "init": {
+                    "kind": "instanceof",
+                    "sourceKeys": {},
+                    "expression": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "value"
+                    },
+                    "checkType": {
+                      "kind": "type",
+                      "sourceKeys": {},
+                      "type": "primitive",
+                      "primitiveType": "String"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "localVariable",
+              "sourceKeys": {},
+              "variantType": {
+                "kind": "type",
+                "sourceKeys": {},
+                "type": "primitive",
+                "primitiveType": "Integer"
+              },
+              "modifier": {},
+              "variants": [
+                {
+                  "kind": "variant",
+                  "sourceKeys": {},
+                  "name": "y",
+                  "init": {
+                    "kind": "binary",
+                    "sourceKeys": {},
+                    "left": {
+                      "kind": "unary",
+                      "sourceKeys": {},
+                      "operator": "-",
+                      "operatorLocation": "front",
+                      "argument": {
+                        "kind": "index",
                         "sourceKeys": {},
+                        "object": {
+                          "kind": "identifier",
+                          "sourceKeys": {},
+                          "name": "numbers"
+                        },
+                        "index": {
+                          "kind": "integer",
+                          "sourceKeys": {},
+                          "value": "0"
+                        }
+                      }
+                    },
+                    "right": {
+                      "kind": "parenthesized",
+                      "sourceKeys": {},
+                      "expression": {
+                        "kind": "binary",
+                        "sourceKeys": {},
+                        "left": {
+                          "kind": "identifier",
+                          "sourceKeys": {},
+                          "name": "x"
+                        },
+                        "right": {
+                          "kind": "integer",
+                          "sourceKeys": {},
+                          "value": "2"
+                        },
+                        "operator": "*"
+                      }
+                    },
+                    "operator": "+"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "localVariable",
+              "sourceKeys": {},
+              "variantType": {
+                "kind": "type",
+                "sourceKeys": {},
+                "type": "primitive",
+                "primitiveType": "Integer"
+              },
+              "modifier": {},
+              "variants": [
+                {
+                  "kind": "variant",
+                  "sourceKeys": {},
+                  "name": "z",
+                  "init": {
+                    "kind": "conditional",
+                    "sourceKeys": {},
+                    "condition": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "isText"
+                    },
+                    "trueValue": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "x"
+                    },
+                    "falseValue": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "y"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "localVariable",
+              "sourceKeys": {},
+              "variantType": {
+                "kind": "type",
+                "sourceKeys": {},
+                "type": "map",
+                "keyType": {
+                  "type": "primitive",
+                  "primitiveType": "String"
+                },
+                "valueType": {
+                  "type": "primitive",
+                  "primitiveType": "Integer"
+                }
+              },
+              "modifier": {},
+              "variants": [
+                {
+                  "kind": "variant",
+                  "sourceKeys": {},
+                  "name": "counts",
+                  "init": {
+                    "kind": "new",
+                    "sourceKeys": {},
+                    "newType": {
+                      "kind": "type",
+                      "sourceKeys": {},
+                      "type": "map",
+                      "keyType": {
+                        "type": "primitive",
+                        "primitiveType": "String"
+                      },
+                      "valueType": {
                         "type": "primitive",
                         "primitiveType": "Integer"
                       }
-                    }
+                    },
+                    "entries": [
+                      {
+                        "key": {
+                          "kind": "string",
+                          "sourceKeys": {},
+                          "value": "a"
+                        },
+                        "value": {
+                          "kind": "integer",
+                          "sourceKeys": {},
+                          "value": "1"
+                        }
+                      }
+                    ]
                   }
-                ],
-                "variantsType": {
-                  "kind": "type",
-                  "sourceKeys": {},
-                  "type": "primitive",
-                  "primitiveType": "Integer"
-                },
-                "modifier": {}
-              }
+                }
+              ]
             },
             {
               "kind": "localVariable",
               "sourceKeys": {},
-              "variable": {
-                "variants": [
-                  {
+              "variantType": {
+                "kind": "type",
+                "sourceKeys": {},
+                "type": "set",
+                "elementType": {
+                  "type": "primitive",
+                  "primitiveType": "String"
+                }
+              },
+              "modifier": {},
+              "variants": [
+                {
+                  "kind": "variant",
+                  "sourceKeys": {},
+                  "name": "keys",
+                  "init": {
+                    "kind": "new",
                     "sourceKeys": {},
-                    "name": "isText",
-                    "init": {
+                    "newType": {
+                      "kind": "type",
                       "sourceKeys": {},
-                      "target": "value",
-                      "operator": "instanceof",
-                      "type": {
-                        "kind": "type",
-                        "sourceKeys": {},
+                      "type": "set",
+                      "elementType": {
                         "type": "primitive",
                         "primitiveType": "String"
                       }
-                    }
+                    },
+                    "elements": [
+                      {
+                        "kind": "string",
+                        "sourceKeys": {},
+                        "value": "a"
+                      },
+                      {
+                        "kind": "string",
+                        "sourceKeys": {},
+                        "value": "b"
+                      }
+                    ]
                   }
-                ],
-                "variantsType": {
-                  "kind": "type",
-                  "sourceKeys": {},
-                  "type": "primitive",
-                  "primitiveType": "Boolean"
-                },
-                "modifier": {}
-              }
+                }
+              ]
             },
             {
               "kind": "localVariable",
               "sourceKeys": {},
-              "variable": {
-                "variants": [
-                  {
-                    "sourceKeys": {},
-                    "name": "y",
-                    "init": {
-                      "sourceKeys": {},
-                      "left": {
-                        "sourceKeys": {},
-                        "variant": {
-                          "sourceKeys": {},
-                          "variant": "numbers",
-                          "index": {
-                            "sourceKeys": {},
-                            "value": "0",
-                            "valueType": "integer"
-                          }
-                        },
-                        "operator": "-",
-                        "operatorLocation": "front"
-                      },
-                      "operator": "+",
-                      "right": {
-                        "sourceKeys": {},
-                        "value": {
-                          "sourceKeys": {},
-                          "left": "x",
-                          "operator": "*",
-                          "right": {
-                            "sourceKeys": {},
-                            "value": "2",
-                            "valueType": "integer"
-                          }
-                        },
-                        "parentheses": "()"
-                      }
-                    }
-                  }
-                ],
-                "variantsType": {
-                  "kind": "type",
-                  "sourceKeys": {},
+              "variantType": {
+                "kind": "type",
+                "sourceKeys": {},
+                "type": "array",
+                "elementType": {
                   "type": "primitive",
                   "primitiveType": "Integer"
                 },
-                "modifier": {}
-              }
-            },
-            {
-              "kind": "localVariable",
-              "sourceKeys": {},
-              "variable": {
-                "variants": [
-                  {
+                "dimension": 1
+              },
+              "modifier": {},
+              "variants": [
+                {
+                  "kind": "variant",
+                  "sourceKeys": {},
+                  "name": "matrix",
+                  "init": {
+                    "kind": "new",
                     "sourceKeys": {},
-                    "name": "z",
-                    "init": {
+                    "newType": {
+                      "kind": "type",
                       "sourceKeys": {},
-                      "condition": "isText",
-                      "trueValue": "x",
-                      "falseValue": "y"
+                      "type": "array",
+                      "elementType": {
+                        "type": "primitive",
+                        "primitiveType": "Integer"
+                      },
+                      "dimension": 1
+                    },
+                    "size": {
+                      "kind": "integer",
+                      "sourceKeys": {},
+                      "value": "3"
                     }
                   }
-                ],
-                "variantsType": {
-                  "kind": "type",
-                  "sourceKeys": {},
-                  "type": "primitive",
-                  "primitiveType": "Integer"
-                },
-                "modifier": {}
-              }
+                }
+              ]
             },
             {
               "kind": "localVariable",
               "sourceKeys": {},
-              "variable": {
-                "variants": [
-                  {
+              "variantType": {
+                "kind": "type",
+                "sourceKeys": {},
+                "type": "list",
+                "elementType": {
+                  "type": "custom",
+                  "customType": [
+                    "Account"
+                  ]
+                }
+              },
+              "modifier": {},
+              "variants": [
+                {
+                  "kind": "variant",
+                  "sourceKeys": {},
+                  "name": "rows",
+                  "init": {
+                    "kind": "soql",
                     "sourceKeys": {},
-                    "name": "counts",
-                    "init": {
+                    "select": {
+                      "field": [
+                        {
+                          "kind": "selectEntry",
+                          "sourceKeys": {},
+                          "type": "field",
+                          "field": [
+                            "Id"
+                          ]
+                        }
+                      ]
+                    },
+                    "from": {
+                      "field": [
+                        {
+                          "kind": "fromField",
+                          "sourceKeys": {},
+                          "field": [
+                            "Account"
+                          ]
+                        }
+                      ]
+                    },
+                    "allRows": {
+                      "kind": "allRowsClause",
+                      "sourceKeys": {}
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "localVariable",
+              "sourceKeys": {},
+              "variantType": {
+                "kind": "type",
+                "sourceKeys": {},
+                "type": "list",
+                "elementType": {
+                  "type": "custom",
+                  "customType": [
+                    "Account"
+                  ]
+                }
+              },
+              "modifier": {},
+              "variants": [
+                {
+                  "kind": "variant",
+                  "sourceKeys": {},
+                  "name": "locked",
+                  "init": {
+                    "kind": "soql",
+                    "sourceKeys": {},
+                    "select": {
+                      "field": [
+                        {
+                          "kind": "selectEntry",
+                          "sourceKeys": {},
+                          "type": "field",
+                          "field": [
+                            "Id"
+                          ]
+                        }
+                      ]
+                    },
+                    "from": {
+                      "field": [
+                        {
+                          "kind": "fromField",
+                          "sourceKeys": {},
+                          "field": [
+                            "Account"
+                          ]
+                        }
+                      ]
+                    },
+                    "for": {
+                      "kind": "forClause",
                       "sourceKeys": {},
-                      "collection": [
-                        "Map"
-                      ],
-                      "generic": [
+                      "value": [
+                        "UPDATE"
+                      ]
+                    },
+                    "limit": {
+                      "kind": "limitClause",
+                      "sourceKeys": {},
+                      "type": "bind",
+                      "value": {
+                        "kind": "identifier",
+                        "sourceKeys": {},
+                        "name": "x"
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "localVariable",
+              "sourceKeys": {},
+              "variantType": {
+                "kind": "type",
+                "sourceKeys": {},
+                "type": "list",
+                "elementType": {
+                  "type": "custom",
+                  "customType": [
+                    "Account"
+                  ]
+                }
+              },
+              "modifier": {},
+              "variants": [
+                {
+                  "kind": "variant",
+                  "sourceKeys": {},
+                  "name": "tracked",
+                  "init": {
+                    "kind": "soql",
+                    "sourceKeys": {},
+                    "select": {
+                      "field": [
                         {
-                          "kind": "type",
+                          "kind": "selectEntry",
                           "sourceKeys": {},
-                          "type": "primitive",
-                          "primitiveType": "String"
-                        },
+                          "type": "field",
+                          "field": [
+                            "Id"
+                          ]
+                        }
+                      ]
+                    },
+                    "from": {
+                      "field": [
                         {
-                          "kind": "type",
+                          "kind": "fromField",
                           "sourceKeys": {},
-                          "type": "primitive",
-                          "primitiveType": "Integer"
+                          "field": [
+                            "Account"
+                          ]
                         }
-                      ],
-                      "initType": "map",
-                      "init": [
-                        {
-                          "key": {
-                            "sourceKeys": {},
-                            "value": "'a'",
-                            "valueType": "string"
-                          },
-                          "value": {
-                            "sourceKeys": {},
-                            "value": "1",
-                            "valueType": "integer"
-                          }
-                        }
+                      ]
+                    },
+                    "updateList": {
+                      "kind": "updateClause",
+                      "sourceKeys": {},
+                      "value": [
+                        "TRACKING"
                       ]
                     }
                   }
-                ],
-                "variantsType": {
-                  "kind": "type",
-                  "sourceKeys": {},
-                  "type": "map",
-                  "keyType": {
-                    "type": "primitive",
-                    "primitiveType": "String"
-                  },
-                  "valueType": {
-                    "type": "primitive",
-                    "primitiveType": "Integer"
-                  }
-                },
-                "modifier": {}
-              }
-            },
-            {
-              "kind": "localVariable",
-              "sourceKeys": {},
-              "variable": {
-                "variants": [
-                  {
-                    "sourceKeys": {},
-                    "name": "keys",
-                    "init": {
-                      "sourceKeys": {},
-                      "collection": [
-                        "Set"
-                      ],
-                      "generic": [
-                        {
-                          "kind": "type",
-                          "sourceKeys": {},
-                          "type": "primitive",
-                          "primitiveType": "String"
-                        }
-                      ],
-                      "initType": "list || set",
-                      "init": [
-                        {
-                          "sourceKeys": {},
-                          "value": "'a'",
-                          "valueType": "string"
-                        },
-                        {
-                          "sourceKeys": {},
-                          "value": "'b'",
-                          "valueType": "string"
-                        }
-                      ]
-                    }
-                  }
-                ],
-                "variantsType": {
-                  "kind": "type",
-                  "sourceKeys": {},
-                  "type": "set",
-                  "elementType": {
-                    "type": "primitive",
-                    "primitiveType": "String"
-                  }
-                },
-                "modifier": {}
-              }
-            },
-            {
-              "kind": "localVariable",
-              "sourceKeys": {},
-              "variable": {
-                "variants": [
-                  {
-                    "sourceKeys": {},
-                    "name": "matrix",
-                    "init": {
-                      "sourceKeys": {},
-                      "collection": [
-                        "Integer"
-                      ],
-                      "initType": "array",
-                      "size": {
-                        "sourceKeys": {},
-                        "value": "3",
-                        "valueType": "integer"
-                      }
-                    }
-                  }
-                ],
-                "variantsType": {
-                  "kind": "type",
-                  "sourceKeys": {},
-                  "type": "array",
-                  "elementType": {
-                    "type": "primitive",
-                    "primitiveType": "Integer"
-                  },
-                  "dimension": 1
-                },
-                "modifier": {}
-              }
-            },
-            {
-              "kind": "localVariable",
-              "sourceKeys": {},
-              "variable": {
-                "variants": [
-                  {
-                    "sourceKeys": {},
-                    "name": "rows",
-                    "init": {
-                      "kind": "soql",
-                      "sourceKeys": {},
-                      "select": {
-                        "field": [
-                          {
-                            "kind": "selectEntry",
-                            "sourceKeys": {},
-                            "type": "field",
-                            "field": [
-                              "Id"
-                            ]
-                          }
-                        ]
-                      },
-                      "from": {
-                        "field": [
-                          {
-                            "kind": "fromField",
-                            "sourceKeys": {},
-                            "field": [
-                              "Account"
-                            ]
-                          }
-                        ]
-                      },
-                      "allRows": {
-                        "kind": "allRowsClause",
-                        "sourceKeys": {},
-                        "value": "ALL ROWS"
-                      }
-                    }
-                  }
-                ],
-                "variantsType": {
-                  "kind": "type",
-                  "sourceKeys": {},
-                  "type": "list",
-                  "elementType": {
-                    "type": "custom",
-                    "customType": "Account"
-                  }
-                },
-                "modifier": {}
-              }
-            },
-            {
-              "kind": "localVariable",
-              "sourceKeys": {},
-              "variable": {
-                "variants": [
-                  {
-                    "sourceKeys": {},
-                    "name": "locked",
-                    "init": {
-                      "kind": "soql",
-                      "sourceKeys": {},
-                      "select": {
-                        "field": [
-                          {
-                            "kind": "selectEntry",
-                            "sourceKeys": {},
-                            "type": "field",
-                            "field": [
-                              "Id"
-                            ]
-                          }
-                        ]
-                      },
-                      "from": {
-                        "field": [
-                          {
-                            "kind": "fromField",
-                            "sourceKeys": {},
-                            "field": [
-                              "Account"
-                            ]
-                          }
-                        ]
-                      },
-                      "for": {
-                        "kind": "forClause",
-                        "sourceKeys": {},
-                        "value": [
-                          "UPDATE"
-                        ]
-                      },
-                      "limit": {
-                        "kind": "limitClause",
-                        "sourceKeys": {},
-                        "type": "bind",
-                        "value": "x"
-                      }
-                    }
-                  }
-                ],
-                "variantsType": {
-                  "kind": "type",
-                  "sourceKeys": {},
-                  "type": "list",
-                  "elementType": {
-                    "type": "custom",
-                    "customType": "Account"
-                  }
-                },
-                "modifier": {}
-              }
-            },
-            {
-              "kind": "localVariable",
-              "sourceKeys": {},
-              "variable": {
-                "variants": [
-                  {
-                    "sourceKeys": {},
-                    "name": "tracked",
-                    "init": {
-                      "kind": "soql",
-                      "sourceKeys": {},
-                      "select": {
-                        "field": [
-                          {
-                            "kind": "selectEntry",
-                            "sourceKeys": {},
-                            "type": "field",
-                            "field": [
-                              "Id"
-                            ]
-                          }
-                        ]
-                      },
-                      "from": {
-                        "field": [
-                          {
-                            "kind": "fromField",
-                            "sourceKeys": {},
-                            "field": [
-                              "Account"
-                            ]
-                          }
-                        ]
-                      },
-                      "updateList": {
-                        "kind": "updateClause",
-                        "sourceKeys": {},
-                        "value": [
-                          "TRACKING"
-                        ]
-                      }
-                    }
-                  }
-                ],
-                "variantsType": {
-                  "kind": "type",
-                  "sourceKeys": {},
-                  "type": "list",
-                  "elementType": {
-                    "type": "custom",
-                    "customType": "Account"
-                  }
-                },
-                "modifier": {}
-              }
+                }
+              ]
             },
             {
               "kind": "return",
               "sourceKeys": {},
-              "field": "z"
+              "field": {
+                "kind": "identifier",
+                "sourceKeys": {},
+                "name": "z"
+              }
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -2301,49 +2541,59 @@
           },
           "name": "loop",
           "returnType": "void",
+          "param": [],
           "block": [
             {
               "kind": "for",
               "sourceKeys": {},
               "condition": {
-                "kind": "forCondition",
-                "sourceKeys": {},
                 "initializer": {
-                  "variants": [
-                    {
-                      "sourceKeys": {},
-                      "name": "k",
-                      "init": {
-                        "sourceKeys": {},
-                        "value": "0",
-                        "valueType": "integer"
-                      }
-                    }
-                  ],
-                  "variantsType": {
+                  "variantType": {
                     "kind": "type",
                     "sourceKeys": {},
                     "type": "primitive",
                     "primitiveType": "Integer"
                   },
-                  "modifier": {}
+                  "modifier": {},
+                  "variants": [
+                    {
+                      "kind": "variant",
+                      "sourceKeys": {},
+                      "name": "k",
+                      "init": {
+                        "kind": "integer",
+                        "sourceKeys": {},
+                        "value": "0"
+                      }
+                    }
+                  ]
                 },
                 "condition": {
+                  "kind": "binary",
                   "sourceKeys": {},
-                  "left": "k",
-                  "operator": "<",
-                  "right": {
+                  "left": {
+                    "kind": "identifier",
                     "sourceKeys": {},
-                    "value": "3",
-                    "valueType": "integer"
-                  }
+                    "name": "k"
+                  },
+                  "right": {
+                    "kind": "integer",
+                    "sourceKeys": {},
+                    "value": "3"
+                  },
+                  "operator": "<"
                 },
                 "update": [
                   {
+                    "kind": "unary",
                     "sourceKeys": {},
-                    "variant": "k",
                     "operator": "++",
-                    "operatorLocation": "back"
+                    "operatorLocation": "back",
+                    "argument": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "k"
+                    }
                   }
                 ]
               },
@@ -2354,24 +2604,24 @@
                   "conditionBlock": [
                     {
                       "condition": {
-                        "kind": "ifCondition",
+                        "kind": "binary",
                         "sourceKeys": {},
-                        "condition": {
+                        "left": {
+                          "kind": "identifier",
                           "sourceKeys": {},
-                          "left": "k",
-                          "operator": "==",
-                          "right": {
-                            "sourceKeys": {},
-                            "value": "1",
-                            "valueType": "integer"
-                          }
-                        }
+                          "name": "k"
+                        },
+                        "right": {
+                          "kind": "integer",
+                          "sourceKeys": {},
+                          "value": "1"
+                        },
+                        "operator": "=="
                       },
                       "block": [
                         {
                           "kind": "continue",
-                          "sourceKeys": {},
-                          "value": "continue"
+                          "sourceKeys": {}
                         }
                       ]
                     }
@@ -2383,24 +2633,24 @@
                   "conditionBlock": [
                     {
                       "condition": {
-                        "kind": "ifCondition",
+                        "kind": "binary",
                         "sourceKeys": {},
-                        "condition": {
+                        "left": {
+                          "kind": "identifier",
                           "sourceKeys": {},
-                          "left": "k",
-                          "operator": "==",
-                          "right": {
-                            "sourceKeys": {},
-                            "value": "2",
-                            "valueType": "integer"
-                          }
-                        }
+                          "name": "k"
+                        },
+                        "right": {
+                          "kind": "integer",
+                          "sourceKeys": {},
+                          "value": "2"
+                        },
+                        "operator": "=="
                       },
                       "block": [
                         {
                           "kind": "break",
-                          "sourceKeys": {},
-                          "value": "break"
+                          "sourceKeys": {}
                         }
                       ]
                     }
@@ -2410,7 +2660,7 @@
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -2436,7 +2686,9 @@
                 "kind": "type",
                 "sourceKeys": {},
                 "type": "custom",
-                "customType": "SchedulableContext"
+                "customType": [
+                  "SchedulableContext"
+                ]
               },
               "modifier": {}
             }
@@ -2446,32 +2698,34 @@
               "kind": "expression",
               "sourceKeys": {},
               "value": {
-                "kind": "memberAccess",
+                "kind": "call",
                 "sourceKeys": {},
-                "type": "method",
-                "member": "sync",
-                "memberArg": [
+                "callee": {
+                  "kind": "identifier",
+                  "sourceKeys": {},
+                  "name": "sync"
+                },
+                "arg": [
                   {
+                    "kind": "new",
                     "sourceKeys": {},
-                    "collection": [
-                      "Set"
-                    ],
-                    "generic": [
-                      {
-                        "kind": "type",
-                        "sourceKeys": {},
+                    "newType": {
+                      "kind": "type",
+                      "sourceKeys": {},
+                      "type": "set",
+                      "elementType": {
                         "type": "primitive",
                         "primitiveType": "Id"
                       }
-                    ],
-                    "initType": "class"
+                    },
+                    "arg": []
                   }
                 ]
               }
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -2485,32 +2739,34 @@
         "kind": "type",
         "sourceKeys": {},
         "type": "custom",
-        "customType": "BaseService"
+        "customType": [
+          "BaseService"
+        ]
       },
       "implement": [
         {
           "kind": "type",
           "sourceKeys": {},
           "type": "custom",
-          "customType": "Schedulable"
+          "customType": [
+            "Schedulable"
+          ]
         }
       ],
       "modifier": {
-        "access": [
+        "keyword": [
           {
             "kind": "modifier",
             "sourceKeys": {},
             "name": "PUBLIC"
-          }
-        ],
-        "sharing": [
+          },
           {
             "kind": "modifier",
             "sourceKeys": {},
             "name": "WITH_SHARING"
           }
         ],
-        "restAnnotation": [
+        "annotation": [
           {
             "kind": "annotation",
             "sourceKeys": {},
@@ -2518,8 +2774,11 @@
             "arg": [
               {
                 "key": "urlMapping",
-                "value": "'/accounts/*'",
-                "valueType": "string"
+                "value": {
+                  "kind": "string",
+                  "sourceKeys": {},
+                  "value": "/accounts/*"
+                }
               }
             ]
           }
@@ -2528,6 +2787,19 @@
     }
   },
   "sourceObject": [
+    {
+      "context": "'/accounts/*'",
+      "start": {
+        "offset": 132,
+        "line": 5,
+        "column": 25
+      },
+      "end": {
+        "offset": 145,
+        "line": 5,
+        "column": 38
+      }
+    },
     {
       "context": "'a'",
       "start": {
@@ -2669,110 +2941,6 @@
         "offset": 3432,
         "line": 138,
         "column": 35
-      }
-    },
-    {
-      "context": "(i < accounts.size())",
-      "start": {
-        "offset": 1657,
-        "line": 75,
-        "column": 14
-      },
-      "end": {
-        "offset": 1678,
-        "line": 75,
-        "column": 35
-      }
-    },
-    {
-      "context": "(i > 0)",
-      "start": {
-        "offset": 1754,
-        "line": 80,
-        "column": 16
-      },
-      "end": {
-        "offset": 1761,
-        "line": 80,
-        "column": 23
-      }
-    },
-    {
-      "context": "(j == 1)",
-      "start": {
-        "offset": 1821,
-        "line": 82,
-        "column": 15
-      },
-      "end": {
-        "offset": 1829,
-        "line": 82,
-        "column": 23
-      }
-    },
-    {
-      "context": "(j == 2)",
-      "start": {
-        "offset": 1887,
-        "line": 85,
-        "column": 15
-      },
-      "end": {
-        "offset": 1895,
-        "line": 85,
-        "column": 23
-      }
-    },
-    {
-      "context": "(k == 1)",
-      "start": {
-        "offset": 4060,
-        "line": 153,
-        "column": 15
-      },
-      "end": {
-        "offset": 4068,
-        "line": 153,
-        "column": 23
-      }
-    },
-    {
-      "context": "(k == 2)",
-      "start": {
-        "offset": 4126,
-        "line": 156,
-        "column": 15
-      },
-      "end": {
-        "offset": 4134,
-        "line": 156,
-        "column": 23
-      }
-    },
-    {
-      "context": "(result < 0)",
-      "start": {
-        "offset": 1491,
-        "line": 67,
-        "column": 18
-      },
-      "end": {
-        "offset": 1503,
-        "line": 67,
-        "column": 30
-      }
-    },
-    {
-      "context": "(result > MAX_SIZE)",
-      "start": {
-        "offset": 1420,
-        "line": 65,
-        "column": 11
-      },
-      "end": {
-        "offset": 1439,
-        "line": 65,
-        "column": 30
       }
     },
     {
@@ -3129,6 +3297,19 @@
     {
       "context": "ACTIVE",
       "start": {
+        "offset": 2216,
+        "line": 101,
+        "column": 17
+      },
+      "end": {
+        "offset": 2222,
+        "line": 101,
+        "column": 23
+      }
+    },
+    {
+      "context": "ACTIVE",
+      "start": {
         "offset": 616,
         "line": 31,
         "column": 25
@@ -3163,19 +3344,6 @@
         "offset": 2973,
         "line": 124,
         "column": 26
-      }
-    },
-    {
-      "context": "Account acc : accounts",
-      "start": {
-        "offset": 1221,
-        "line": 57,
-        "column": 13
-      },
-      "end": {
-        "offset": 1243,
-        "line": 57,
-        "column": 35
       }
     },
     {
@@ -3241,6 +3409,32 @@
         "offset": 1228,
         "line": 57,
         "column": 20
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
+        "offset": 2651,
+        "line": 115,
+        "column": 19
+      },
+      "end": {
+        "offset": 2658,
+        "line": 115,
+        "column": 26
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
+        "offset": 2750,
+        "line": 117,
+        "column": 21
+      },
+      "end": {
+        "offset": 2757,
+        "line": 117,
+        "column": 28
       }
     },
     {
@@ -3636,6 +3830,19 @@
     {
       "context": "Id",
       "start": {
+        "offset": 2526,
+        "line": 112,
+        "column": 30
+      },
+      "end": {
+        "offset": 2528,
+        "line": 112,
+        "column": 32
+      }
+    },
+    {
+      "context": "Id",
+      "start": {
         "offset": 2583,
         "line": 113,
         "column": 27
@@ -3696,19 +3903,6 @@
         "offset": 3921,
         "line": 147,
         "column": 42
-      }
-    },
-    {
-      "context": "Id",
-      "start": {
-        "offset": 4261,
-        "line": 163,
-        "column": 21
-      },
-      "end": {
-        "offset": 4263,
-        "line": 163,
-        "column": 23
       }
     },
     {
@@ -3813,32 +4007,6 @@
         "offset": 1642,
         "line": 74,
         "column": 22
-      }
-    },
-    {
-      "context": "Integer j = 0; j < 10; j++",
-      "start": {
-        "offset": 1776,
-        "line": 81,
-        "column": 13
-      },
-      "end": {
-        "offset": 1802,
-        "line": 81,
-        "column": 39
-      }
-    },
-    {
-      "context": "Integer k = 0; k < 3; k++",
-      "start": {
-        "offset": 4016,
-        "line": 152,
-        "column": 13
-      },
-      "end": {
-        "offset": 4041,
-        "line": 152,
-        "column": 38
       }
     },
     {
@@ -4065,14 +4233,14 @@
     {
       "context": "Integer",
       "start": {
-        "offset": 3617,
-        "line": 142,
-        "column": 54
+        "offset": 3726,
+        "line": 144,
+        "column": 31
       },
       "end": {
-        "offset": 3624,
-        "line": 142,
-        "column": 61
+        "offset": 3733,
+        "line": 144,
+        "column": 38
       }
     },
     {
@@ -4414,6 +4582,32 @@
       }
     },
     {
+      "context": "MAX_SIZE",
+      "start": {
+        "offset": 1430,
+        "line": 65,
+        "column": 21
+      },
+      "end": {
+        "offset": 1438,
+        "line": 65,
+        "column": 29
+      }
+    },
+    {
+      "context": "MAX_SIZE",
+      "start": {
+        "offset": 1463,
+        "line": 66,
+        "column": 21
+      },
+      "end": {
+        "offset": 1471,
+        "line": 66,
+        "column": 29
+      }
+    },
+    {
       "context": "Map<String, Integer> counts = new Map<String, Integer>{ 'a' => 1 };",
       "start": {
         "offset": 3571,
@@ -4437,6 +4631,19 @@
         "offset": 3591,
         "line": 142,
         "column": 28
+      }
+    },
+    {
+      "context": "Map<String, Integer>",
+      "start": {
+        "offset": 3605,
+        "line": 142,
+        "column": 42
+      },
+      "end": {
+        "offset": 3625,
+        "line": 142,
+        "column": 62
       }
     },
     {
@@ -4515,6 +4722,19 @@
         "offset": 2483,
         "line": 111,
         "column": 87
+      }
+    },
+    {
+      "context": "Name",
+      "start": {
+        "offset": 2659,
+        "line": 115,
+        "column": 27
+      },
+      "end": {
+        "offset": 2663,
+        "line": 115,
+        "column": 31
       }
     },
     {
@@ -4739,6 +4959,19 @@
       }
     },
     {
+      "context": "ServiceException",
+      "start": {
+        "offset": 2779,
+        "line": 118,
+        "column": 18
+      },
+      "end": {
+        "offset": 2795,
+        "line": 118,
+        "column": 34
+      }
+    },
+    {
       "context": "Set<Id> ids",
       "start": {
         "offset": 1083,
@@ -4765,6 +4998,19 @@
       }
     },
     {
+      "context": "Set<Id>",
+      "start": {
+        "offset": 4257,
+        "line": 163,
+        "column": 17
+      },
+      "end": {
+        "offset": 4264,
+        "line": 163,
+        "column": 24
+      }
+    },
+    {
       "context": "Set<String> keys = new Set<String>{ 'a', 'b' };",
       "start": {
         "offset": 3647,
@@ -4788,6 +5034,19 @@
         "offset": 3658,
         "line": 143,
         "column": 19
+      }
+    },
+    {
+      "context": "Set<String>",
+      "start": {
+        "offset": 3670,
+        "line": 143,
+        "column": 31
+      },
+      "end": {
+        "offset": 3681,
+        "line": 143,
+        "column": 42
       }
     },
     {
@@ -4949,32 +5208,6 @@
     {
       "context": "String",
       "start": {
-        "offset": 3609,
-        "line": 142,
-        "column": 46
-      },
-      "end": {
-        "offset": 3615,
-        "line": 142,
-        "column": 52
-      }
-    },
-    {
-      "context": "String",
-      "start": {
-        "offset": 3674,
-        "line": 143,
-        "column": 35
-      },
-      "end": {
-        "offset": 3680,
-        "line": 143,
-        "column": 41
-      }
-    },
-    {
-      "context": "String",
-      "start": {
         "offset": 460,
         "line": 24,
         "column": 11
@@ -5035,6 +5268,32 @@
         "offset": 3002,
         "line": 125,
         "column": 28
+      }
+    },
+    {
+      "context": "User",
+      "start": {
+        "offset": 2521,
+        "line": 112,
+        "column": 25
+      },
+      "end": {
+        "offset": 2525,
+        "line": 112,
+        "column": 29
+      }
+    },
+    {
+      "context": "UserInfo",
+      "start": {
+        "offset": 2531,
+        "line": 112,
+        "column": 35
+      },
+      "end": {
+        "offset": 2539,
+        "line": 112,
+        "column": 43
       }
     },
     {
@@ -5116,6 +5375,45 @@
       }
     },
     {
+      "context": "a",
+      "start": {
+        "offset": 1402,
+        "line": 64,
+        "column": 25
+      },
+      "end": {
+        "offset": 1403,
+        "line": 64,
+        "column": 26
+      }
+    },
+    {
+      "context": "acc",
+      "start": {
+        "offset": 1259,
+        "line": 58,
+        "column": 12
+      },
+      "end": {
+        "offset": 1262,
+        "line": 58,
+        "column": 15
+      }
+    },
+    {
+      "context": "acc",
+      "start": {
+        "offset": 1270,
+        "line": 58,
+        "column": 23
+      },
+      "end": {
+        "offset": 1273,
+        "line": 58,
+        "column": 26
+      }
+    },
+    {
       "context": "acc.Name = acc.Name.trim()",
       "start": {
         "offset": 1259,
@@ -5194,6 +5492,58 @@
       }
     },
     {
+      "context": "accounts",
+      "start": {
+        "offset": 1235,
+        "line": 57,
+        "column": 27
+      },
+      "end": {
+        "offset": 1243,
+        "line": 57,
+        "column": 35
+      }
+    },
+    {
+      "context": "accounts",
+      "start": {
+        "offset": 1312,
+        "line": 60,
+        "column": 15
+      },
+      "end": {
+        "offset": 1320,
+        "line": 60,
+        "column": 23
+      }
+    },
+    {
+      "context": "accounts",
+      "start": {
+        "offset": 1662,
+        "line": 75,
+        "column": 19
+      },
+      "end": {
+        "offset": 1670,
+        "line": 75,
+        "column": 27
+      }
+    },
+    {
+      "context": "accounts",
+      "start": {
+        "offset": 1998,
+        "line": 91,
+        "column": 19
+      },
+      "end": {
+        "offset": 2006,
+        "line": 91,
+        "column": 27
+      }
+    },
+    {
       "context": "accounts.size()",
       "start": {
         "offset": 1662,
@@ -5204,6 +5554,19 @@
         "offset": 1677,
         "line": 75,
         "column": 34
+      }
+    },
+    {
+      "context": "b",
+      "start": {
+        "offset": 1406,
+        "line": 64,
+        "column": 29
+      },
+      "end": {
+        "offset": 1407,
+        "line": 64,
+        "column": 30
       }
     },
     {
@@ -5243,19 +5606,6 @@
         "offset": 1352,
         "line": 63,
         "column": 23
-      }
-    },
-    {
-      "context": "catch (DmlException e) {\n            log(e.getMessage());\n        }",
-      "start": {
-        "offset": 2018,
-        "line": 92,
-        "column": 10
-      },
-      "end": {
-        "offset": 2085,
-        "line": 94,
-        "column": 9
       }
     },
     {
@@ -5350,6 +5700,19 @@
       }
     },
     {
+      "context": "counter",
+      "start": {
+        "offset": 393,
+        "line": 17,
+        "column": 8
+      },
+      "end": {
+        "offset": 400,
+        "line": 17,
+        "column": 15
+      }
+    },
+    {
       "context": "counts = new Map<String, Integer>{ 'a' => 1 }",
       "start": {
         "offset": 3592,
@@ -5402,16 +5765,29 @@
       }
     },
     {
-      "context": "e",
+      "context": "duplicateAccount",
       "start": {
-        "offset": 2038,
-        "line": 92,
-        "column": 30
+        "offset": 2711,
+        "line": 116,
+        "column": 28
       },
       "end": {
-        "offset": 2039,
-        "line": 92,
-        "column": 31
+        "offset": 2727,
+        "line": 116,
+        "column": 44
+      }
+    },
+    {
+      "context": "e",
+      "start": {
+        "offset": 2059,
+        "line": 93,
+        "column": 16
+      },
+      "end": {
+        "offset": 2060,
+        "line": 93,
+        "column": 17
       }
     },
     {
@@ -5610,6 +5986,58 @@
       }
     },
     {
+      "context": "i",
+      "start": {
+        "offset": 1658,
+        "line": 75,
+        "column": 15
+      },
+      "end": {
+        "offset": 1659,
+        "line": 75,
+        "column": 16
+      }
+    },
+    {
+      "context": "i",
+      "start": {
+        "offset": 1693,
+        "line": 76,
+        "column": 12
+      },
+      "end": {
+        "offset": 1694,
+        "line": 76,
+        "column": 13
+      }
+    },
+    {
+      "context": "i",
+      "start": {
+        "offset": 1733,
+        "line": 79,
+        "column": 12
+      },
+      "end": {
+        "offset": 1734,
+        "line": 79,
+        "column": 13
+      }
+    },
+    {
+      "context": "i",
+      "start": {
+        "offset": 1755,
+        "line": 80,
+        "column": 17
+      },
+      "end": {
+        "offset": 1756,
+        "line": 80,
+        "column": 18
+      }
+    },
+    {
       "context": "i++",
       "start": {
         "offset": 1693,
@@ -5659,6 +6087,19 @@
         "offset": 1737,
         "line": 79,
         "column": 16
+      }
+    },
+    {
+      "context": "ids",
+      "start": {
+        "offset": 1174,
+        "line": 56,
+        "column": 76
+      },
+      "end": {
+        "offset": 1177,
+        "line": 56,
+        "column": 79
       }
     },
     {
@@ -5779,6 +6220,19 @@
       }
     },
     {
+      "context": "isText",
+      "start": {
+        "offset": 3547,
+        "line": 141,
+        "column": 20
+      },
+      "end": {
+        "offset": 3553,
+        "line": 141,
+        "column": 26
+      }
+    },
+    {
       "context": "j < 10",
       "start": {
         "offset": 1791,
@@ -5828,6 +6282,71 @@
         "offset": 1894,
         "line": 85,
         "column": 22
+      }
+    },
+    {
+      "context": "j",
+      "start": {
+        "offset": 1791,
+        "line": 81,
+        "column": 28
+      },
+      "end": {
+        "offset": 1792,
+        "line": 81,
+        "column": 29
+      }
+    },
+    {
+      "context": "j",
+      "start": {
+        "offset": 1799,
+        "line": 81,
+        "column": 36
+      },
+      "end": {
+        "offset": 1800,
+        "line": 81,
+        "column": 37
+      }
+    },
+    {
+      "context": "j",
+      "start": {
+        "offset": 1822,
+        "line": 82,
+        "column": 16
+      },
+      "end": {
+        "offset": 1823,
+        "line": 82,
+        "column": 17
+      }
+    },
+    {
+      "context": "j",
+      "start": {
+        "offset": 1888,
+        "line": 85,
+        "column": 16
+      },
+      "end": {
+        "offset": 1889,
+        "line": 85,
+        "column": 17
+      }
+    },
+    {
+      "context": "j",
+      "start": {
+        "offset": 1951,
+        "line": 88,
+        "column": 16
+      },
+      "end": {
+        "offset": 1952,
+        "line": 88,
+        "column": 17
       }
     },
     {
@@ -5896,6 +6415,58 @@
       }
     },
     {
+      "context": "k",
+      "start": {
+        "offset": 4031,
+        "line": 152,
+        "column": 28
+      },
+      "end": {
+        "offset": 4032,
+        "line": 152,
+        "column": 29
+      }
+    },
+    {
+      "context": "k",
+      "start": {
+        "offset": 4038,
+        "line": 152,
+        "column": 35
+      },
+      "end": {
+        "offset": 4039,
+        "line": 152,
+        "column": 36
+      }
+    },
+    {
+      "context": "k",
+      "start": {
+        "offset": 4061,
+        "line": 153,
+        "column": 16
+      },
+      "end": {
+        "offset": 4062,
+        "line": 153,
+        "column": 17
+      }
+    },
+    {
+      "context": "k",
+      "start": {
+        "offset": 4127,
+        "line": 156,
+        "column": 16
+      },
+      "end": {
+        "offset": 4128,
+        "line": 156,
+        "column": 17
+      }
+    },
+    {
       "context": "k++",
       "start": {
         "offset": 4038,
@@ -5906,6 +6477,32 @@
         "offset": 4041,
         "line": 152,
         "column": 38
+      }
+    },
+    {
+      "context": "key",
+      "start": {
+        "offset": 2439,
+        "line": 111,
+        "column": 43
+      },
+      "end": {
+        "offset": 2442,
+        "line": 111,
+        "column": 46
+      }
+    },
+    {
+      "context": "key",
+      "start": {
+        "offset": 2666,
+        "line": 115,
+        "column": 34
+      },
+      "end": {
+        "offset": 2669,
+        "line": 115,
+        "column": 37
       }
     },
     {
@@ -5945,6 +6542,45 @@
         "offset": 3877,
         "line": 146,
         "column": 75
+      }
+    },
+    {
+      "context": "log",
+      "start": {
+        "offset": 1947,
+        "line": 88,
+        "column": 12
+      },
+      "end": {
+        "offset": 1950,
+        "line": 88,
+        "column": 15
+      }
+    },
+    {
+      "context": "log",
+      "start": {
+        "offset": 2055,
+        "line": 93,
+        "column": 12
+      },
+      "end": {
+        "offset": 2058,
+        "line": 93,
+        "column": 15
+      }
+    },
+    {
+      "context": "log",
+      "start": {
+        "offset": 2108,
+        "line": 95,
+        "column": 12
+      },
+      "end": {
+        "offset": 2111,
+        "line": 95,
+        "column": 15
       }
     },
     {
@@ -6039,6 +6675,19 @@
       }
     },
     {
+      "context": "masterAccount",
+      "start": {
+        "offset": 2697,
+        "line": 116,
+        "column": 14
+      },
+      "end": {
+        "offset": 2710,
+        "line": 116,
+        "column": 27
+      }
+    },
+    {
       "context": "matrix = new Integer[3]",
       "start": {
         "offset": 3713,
@@ -6101,6 +6750,32 @@
         "offset": 441,
         "line": 21,
         "column": 22
+      }
+    },
+    {
+      "context": "name",
+      "start": {
+        "offset": 1016,
+        "line": 51,
+        "column": 20
+      },
+      "end": {
+        "offset": 1020,
+        "line": 51,
+        "column": 24
+      }
+    },
+    {
+      "context": "name",
+      "start": {
+        "offset": 427,
+        "line": 21,
+        "column": 8
+      },
+      "end": {
+        "offset": 431,
+        "line": 21,
+        "column": 12
       }
     },
     {
@@ -6208,16 +6883,16 @@
       }
     },
     {
-      "context": "new User(Id = UserInfo.getUserId())",
+      "context": "numbers",
       "start": {
-        "offset": 2517,
-        "line": 112,
+        "offset": 3505,
+        "line": 140,
         "column": 21
       },
       "end": {
-        "offset": 2552,
-        "line": 112,
-        "column": 56
+        "offset": 3512,
+        "line": 140,
+        "column": 28
       }
     },
     {
@@ -6559,6 +7234,19 @@
       }
     },
     {
+      "context": "record",
+      "start": {
+        "offset": 868,
+        "line": 42,
+        "column": 26
+      },
+      "end": {
+        "offset": 874,
+        "line": 42,
+        "column": 32
+      }
+    },
+    {
       "context": "result < 0",
       "start": {
         "offset": 1492,
@@ -6647,6 +7335,71 @@
         "offset": 1438,
         "line": 65,
         "column": 29
+      }
+    },
+    {
+      "context": "result",
+      "start": {
+        "offset": 1421,
+        "line": 65,
+        "column": 12
+      },
+      "end": {
+        "offset": 1427,
+        "line": 65,
+        "column": 18
+      }
+    },
+    {
+      "context": "result",
+      "start": {
+        "offset": 1454,
+        "line": 66,
+        "column": 12
+      },
+      "end": {
+        "offset": 1460,
+        "line": 66,
+        "column": 18
+      }
+    },
+    {
+      "context": "result",
+      "start": {
+        "offset": 1492,
+        "line": 67,
+        "column": 19
+      },
+      "end": {
+        "offset": 1498,
+        "line": 67,
+        "column": 25
+      }
+    },
+    {
+      "context": "result",
+      "start": {
+        "offset": 1518,
+        "line": 68,
+        "column": 12
+      },
+      "end": {
+        "offset": 1524,
+        "line": 68,
+        "column": 18
+      }
+    },
+    {
+      "context": "result",
+      "start": {
+        "offset": 1555,
+        "line": 70,
+        "column": 15
+      },
+      "end": {
+        "offset": 1561,
+        "line": 70,
+        "column": 21
       }
     },
     {
@@ -6780,6 +7533,19 @@
       }
     },
     {
+      "context": "static {\n        counter = 0;\n    }",
+      "start": {
+        "offset": 376,
+        "line": 16,
+        "column": 4
+      },
+      "end": {
+        "offset": 411,
+        "line": 18,
+        "column": 5
+      }
+    },
+    {
       "context": "static",
       "start": {
         "offset": 1066,
@@ -6845,6 +7611,19 @@
       }
     },
     {
+      "context": "sync",
+      "start": {
+        "offset": 4248,
+        "line": 163,
+        "column": 8
+      },
+      "end": {
+        "offset": 4252,
+        "line": 163,
+        "column": 12
+      }
+    },
+    {
       "context": "sync(new Set<Id>())",
       "start": {
         "offset": 4248,
@@ -6868,6 +7647,45 @@
         "offset": 4268,
         "line": 163,
         "column": 28
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 1004,
+        "line": 51,
+        "column": 8
+      },
+      "end": {
+        "offset": 1008,
+        "line": 51,
+        "column": 12
+      }
+    },
+    {
+      "context": "this",
+      "start": {
+        "offset": 854,
+        "line": 42,
+        "column": 12
+      },
+      "end": {
+        "offset": 858,
+        "line": 42,
+        "column": 16
+      }
+    },
+    {
+      "context": "this('default')",
+      "start": {
+        "offset": 931,
+        "line": 47,
+        "column": 8
+      },
+      "end": {
+        "offset": 946,
+        "line": 47,
+        "column": 23
       }
     },
     {
@@ -7027,6 +7845,32 @@
       }
     },
     {
+      "context": "total",
+      "start": {
+        "offset": 536,
+        "line": 27,
+        "column": 21
+      },
+      "end": {
+        "offset": 541,
+        "line": 27,
+        "column": 26
+      }
+    },
+    {
+      "context": "total",
+      "start": {
+        "offset": 567,
+        "line": 28,
+        "column": 22
+      },
+      "end": {
+        "offset": 572,
+        "line": 28,
+        "column": 27
+      }
+    },
+    {
       "context": "tracked = [SELECT Id FROM Account UPDATE TRACKING]",
       "start": {
         "offset": 3901,
@@ -7037,6 +7881,19 @@
         "offset": 3951,
         "line": 147,
         "column": 72
+      }
+    },
+    {
+      "context": "true",
+      "start": {
+        "offset": 1049,
+        "line": 54,
+        "column": 20
+      },
+      "end": {
+        "offset": 1053,
+        "line": 54,
+        "column": 24
       }
     },
     {
@@ -7102,6 +7959,45 @@
         "offset": 3482,
         "line": 139,
         "column": 48
+      }
+    },
+    {
+      "context": "value",
+      "start": {
+        "offset": 3427,
+        "line": 138,
+        "column": 30
+      },
+      "end": {
+        "offset": 3432,
+        "line": 138,
+        "column": 35
+      }
+    },
+    {
+      "context": "value",
+      "start": {
+        "offset": 3459,
+        "line": 139,
+        "column": 25
+      },
+      "end": {
+        "offset": 3464,
+        "line": 139,
+        "column": 30
+      }
+    },
+    {
+      "context": "value",
+      "start": {
+        "offset": 575,
+        "line": 28,
+        "column": 30
+      },
+      "end": {
+        "offset": 580,
+        "line": 28,
+        "column": 35
       }
     },
     {
@@ -7235,6 +8131,45 @@
       }
     },
     {
+      "context": "x",
+      "start": {
+        "offset": 3519,
+        "line": 140,
+        "column": 35
+      },
+      "end": {
+        "offset": 3520,
+        "line": 140,
+        "column": 36
+      }
+    },
+    {
+      "context": "x",
+      "start": {
+        "offset": 3556,
+        "line": 141,
+        "column": 29
+      },
+      "end": {
+        "offset": 3557,
+        "line": 141,
+        "column": 30
+      }
+    },
+    {
+      "context": "x",
+      "start": {
+        "offset": 3864,
+        "line": 146,
+        "column": 62
+      },
+      "end": {
+        "offset": 3865,
+        "line": 146,
+        "column": 63
+      }
+    },
+    {
       "context": "y = -numbers[0] + (x * 2)",
       "start": {
         "offset": 3500,
@@ -7248,6 +8183,19 @@
       }
     },
     {
+      "context": "y",
+      "start": {
+        "offset": 3560,
+        "line": 141,
+        "column": 33
+      },
+      "end": {
+        "offset": 3561,
+        "line": 141,
+        "column": 34
+      }
+    },
+    {
       "context": "z = isText ? x : y",
       "start": {
         "offset": 3543,
@@ -7258,6 +8206,32 @@
         "offset": 3561,
         "line": 141,
         "column": 34
+      }
+    },
+    {
+      "context": "z",
+      "start": {
+        "offset": 3968,
+        "line": 148,
+        "column": 15
+      },
+      "end": {
+        "offset": 3969,
+        "line": 148,
+        "column": 16
+      }
+    },
+    {
+      "context": "{\n        name = 'init';\n    }",
+      "start": {
+        "offset": 417,
+        "line": 20,
+        "column": 4
+      },
+      "end": {
+        "offset": 447,
+        "line": 22,
+        "column": 5
       }
     }
   ],

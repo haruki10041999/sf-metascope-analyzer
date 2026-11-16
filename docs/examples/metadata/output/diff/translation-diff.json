@@ -46,8 +46,8 @@
       "kind": "objectTranslation",
       "sourceKeys": {
         "objectKey": {
-          "before": "objectTranslation_8c6f9bbb38309e14",
-          "after": "objectTranslation_3f2ab7e38fb78c3d"
+          "before": "objectTranslation_e5942f6ef8bba7bb",
+          "after": "objectTranslation_99ebc79f4b1f2370"
         },
         "sourceKey": "objectTranslation_d3f352bd3fa4c751"
       },
@@ -66,33 +66,22 @@
           "status": "unchanged",
           "value": "壊れた"
         },
-        "fields": [
-          {
-            "kind": "fieldTranslation",
-            "sourceKeys": {
-              "objectKey": "fieldTranslation_f470dccc52d910c4",
-              "sourceKey": "fieldTranslation_ac7b864be35b8a2c"
-            },
-            "status": "removed",
-            "index": 0,
-            "value": {
-              "name": "Code__c",
-              "label": "コード"
+        "fields": {
+          "status": "removed",
+          "value": [
+            {
+              "kind": "fieldTranslation",
+              "sourceKeys": {
+                "objectKey": "fieldTranslation_2d04985c0ea2e025",
+                "sourceKey": "fieldTranslation_ac7b864be35b8a2c"
+              },
+              "value": {
+                "name": "Code__c",
+                "label": "コード"
+              }
             }
-          },
-          {
-            "kind": "error",
-            "sourceKeys": {
-              "objectKey": "error_29c74a952f75ff8f",
-              "sourceKey": "error_d8a010b1093ce50d"
-            },
-            "status": "added",
-            "index": 0,
-            "value": {
-              "kindType": "fieldTranslation"
-            }
-          }
-        ]
+          ]
+        }
       }
     }
   },
@@ -105,7 +94,7 @@
     "content": {
       "kind": "objectTranslation",
       "sourceKeys": {
-        "objectKey": "objectTranslation_c9686b86c92954ea",
+        "objectKey": "objectTranslation_5cf0ba13b0464c0e",
         "sourceKey": {
           "before": "objectTranslation_1433a328ad71659d",
           "after": "objectTranslation_d3d36f3cec3f2aef"
@@ -129,8 +118,8 @@
       "kind": "objectTranslation",
       "sourceKeys": {
         "objectKey": {
-          "before": "objectTranslation_3c2d655c83ab504d",
-          "after": "objectTranslation_961763512a38d47c"
+          "before": "objectTranslation_c0a602ece322bb83",
+          "after": "objectTranslation_7dfc2a8bbad4d897"
         },
         "sourceKey": "objectTranslation_53a3b33d94e742a5"
       },
@@ -154,8 +143,8 @@
             "kind": "fieldTranslation",
             "sourceKeys": {
               "objectKey": {
-                "before": "fieldTranslation_cbed259110d83caf",
-                "after": "fieldTranslation_09f308ad643dfaa5"
+                "before": "fieldTranslation_6f5eb1b473907672",
+                "after": "fieldTranslation_3bf44e51a72967ef"
               },
               "sourceKey": {
                 "before": "fieldTranslation_8e74997381ee1e7c",
@@ -187,7 +176,7 @@
           {
             "kind": "fieldTranslation",
             "sourceKeys": {
-              "objectKey": "fieldTranslation_d198782cd6dfe89b",
+              "objectKey": "fieldTranslation_bc56e2c0fc555a62",
               "sourceKey": "fieldTranslation_005de5cefe19657e"
             },
             "status": "unchanged",
@@ -203,7 +192,7 @@
           {
             "kind": "fieldTranslation",
             "sourceKeys": {
-              "objectKey": "fieldTranslation_25324e98b71d3440",
+              "objectKey": "fieldTranslation_259bf4ea6b37e47e",
               "sourceKey": "fieldTranslation_511f7a0f359a3a36"
             },
             "status": "unchanged",
@@ -219,7 +208,7 @@
           {
             "kind": "fieldTranslation",
             "sourceKeys": {
-              "objectKey": "fieldTranslation_fb4f41ba2c92fbf5",
+              "objectKey": "fieldTranslation_127d7ee147661ce3",
               "sourceKey": "fieldTranslation_4fb21aac7bf9d56d"
             },
             "status": "unchanged",
@@ -236,8 +225,8 @@
             "kind": "fieldTranslation",
             "sourceKeys": {
               "objectKey": {
-                "before": "fieldTranslation_5e8702097780253c",
-                "after": "fieldTranslation_3519f3a3f6354d54"
+                "before": "fieldTranslation_d478d59851ffda03",
+                "after": "fieldTranslation_f0b1ae4fe770cd0c"
               },
               "sourceKey": {
                 "before": "fieldTranslation_a59ac1df752a8704",
@@ -320,7 +309,7 @@
           {
             "kind": "recordTypeTranslation",
             "sourceKeys": {
-              "objectKey": "recordTypeTranslation_7ca05a4432a58e3a",
+              "objectKey": "recordTypeTranslation_26c9a05cdc92e3d7",
               "sourceKey": "recordTypeTranslation_c302b44ca1a22640"
             },
             "status": "unchanged",
@@ -338,7 +327,7 @@
           {
             "kind": "validationRuleTranslation",
             "sourceKeys": {
-              "objectKey": "validationRuleTranslation_184cc1335101582d",
+              "objectKey": "validationRuleTranslation_bb966b9406089386",
               "sourceKey": "validationRuleTranslation_961e1937b6216236"
             },
             "status": "unchanged",
@@ -356,7 +345,7 @@
           {
             "kind": "webLinkTranslation",
             "sourceKeys": {
-              "objectKey": "webLinkTranslation_fb636f42c8a7f613",
+              "objectKey": "webLinkTranslation_2c420ec1b4e554f0",
               "sourceKey": "webLinkTranslation_5871df9a7a22bb22"
             },
             "status": "unchanged",
@@ -374,7 +363,7 @@
           {
             "kind": "fieldSetTranslation",
             "sourceKeys": {
-              "objectKey": "fieldSetTranslation_44a8995d9bb799a8",
+              "objectKey": "fieldSetTranslation_924054dc75d5aa4f",
               "sourceKey": "fieldSetTranslation_edd5182d9b37e436"
             },
             "status": "unchanged",
@@ -392,7 +381,7 @@
           {
             "kind": "layoutTranslation",
             "sourceKeys": {
-              "objectKey": "layoutTranslation_3a2124ee9e969dee",
+              "objectKey": "layoutTranslation_a6db85e749b4f21c",
               "sourceKey": "layoutTranslation_f9bd716cd023e9f5"
             },
             "status": "unchanged",

@@ -1,5 +1,7 @@
 # メタデータの JSON の見直し（調査。LWC・Apex と比べて）
 
+> 2026-11-16: この調査の 7.1 の #1〜#9 と #10 の一部は対応した（段階 M0〜M8）。今の形は [metadata-implementation.md](./metadata-implementation.md) 11 章、進み具合と残りは [json-redesign-plan.md](./json-redesign-plan.md) 5.1。以下は調査した時点（2026-11-10）の記述のまま残す。
+
 改修方針のまとめは [json-redesign-plan.md](./json-redesign-plan.md)。この文書は 2026-11-10 の調査の結果。
 
 LWC の JS / TS の JSON の見直し（[lwc-json-types.md](./lwc-json-types.md) 5〜8 章）と同じ観点で、メタデータの JSON・処理を調べた。2026-11-10 時点のコード（`SAVE_FORMAT_VERSION` は 7。[parser/commons.ts](../src/analyzer/parser/commons.ts#L49)）。

@@ -280,7 +280,8 @@ export class MetadataFolderParser<T extends string, J extends JsonType<string>> 
             source: extra.source.split('\r\n').join('\n'),
         }));
         const base = this.spec.make(file, registry, problems, extras);
-        const resolvedError = problems.map(toXmlResolvedError);
+        // 読めなかった数式 (JSON には文字列のまま置いたもの。段階 M4) も resolvedError に出す
+        const resolvedError = [...problems, ...registry.problems].map(toXmlResolvedError);
         if (base === null) {
             return {
                 filePath,

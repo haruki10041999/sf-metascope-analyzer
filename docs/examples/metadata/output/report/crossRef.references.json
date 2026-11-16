@@ -1,14 +1,48 @@
 [
   {
     "refType": "apexClass",
+    "target": "AccountService",
+    "usedBy": [
+      {
+        "from": "permissionSet_Invoice_Manager",
+        "via": "classAccesses.apexClass",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
+        "sourceKeys": {
+          "objectKey": "classAccess_e418c3ab2d446925",
+          "sourceKey": "classAccess_65d32997f6a670ae"
+        }
+      },
+      {
+        "from": "profile_Sales",
+        "via": "classAccesses.apexClass",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
+        "sourceKeys": {
+          "objectKey": "classAccess_e418c3ab2d446925",
+          "sourceKey": "classAccess_b68812b5de16433a"
+        }
+      },
+      {
+        "from": "flow_Invoice_Status_Update",
+        "via": "flow.flowActionCall",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Invoice_Status_Update.flow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flowActionCall_67365654dbc9b429",
+          "sourceKey": "flowActionCall_59a1e74900519d38"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "apexClass",
     "target": "InvoiceController",
     "usedBy": [
       {
         "from": "aura_invoiceCard",
         "via": "controller",
-        "filePath": "aura/invoiceCard",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\aura\\invoiceCard",
         "sourceKeys": {
-          "objectKey": "auraBundle_4651d651d52e5642",
+          "objectKey": "auraBundle_ae4e8ae75454db28",
           "sourceKey": "auraBundle_e4e8002a84c6c7e8"
         }
       }
@@ -23,14 +57,95 @@
       {
         "from": "apexPage_InvoicePrint",
         "via": "markup.extensions",
-        "filePath": "pages/InvoicePrint.page-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\pages\\InvoicePrint.page-meta.xml",
         "sourceKeys": {
-          "objectKey": "visualforceMarkup_b0020e3f602b5522",
+          "objectKey": "visualforceMarkup_6efa7a39e93a04dd",
           "sourceKey": "visualforceMarkup_a4462fc44c960e86"
         }
       }
     ],
     "problem": "UNKNOWN_APEX_CLASS",
+    "status": "unchanged"
+  },
+  {
+    "refType": "apexClass",
+    "target": "NewHelper",
+    "usedBy": [
+      {
+        "from": "permissionSet_Invoice_Manager",
+        "via": "classAccesses.apexClass",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
+        "sourceKeys": {
+          "objectKey": "classAccess_7f23a5503647ae62",
+          "sourceKey": "classAccess_a5757912708f2557"
+        }
+      }
+    ],
+    "status": "added"
+  },
+  {
+    "refType": "apexClass",
+    "target": "ParserInterface",
+    "usedBy": [
+      {
+        "from": "class_ParserTest",
+        "via": "implements",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_bdfa3abd82deb580",
+          "sourceKey": "typeRef_89212d0569c13aba"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "apexClass",
+    "target": "PaymentService",
+    "usedBy": [
+      {
+        "from": "permissionSet_Payment_Clerk",
+        "via": "classAccesses.apexClass",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Payment_Clerk.permissionset-meta.xml",
+        "sourceKeys": {
+          "objectKey": "classAccess_02cb20c07a614a8e",
+          "sourceKey": "classAccess_4e3e921febc7217b"
+        }
+      }
+    ],
+    "problem": "UNKNOWN_APEX_CLASS",
+    "status": "added"
+  },
+  {
+    "refType": "apexComponent",
+    "target": "invoiceHeader",
+    "usedBy": [
+      {
+        "from": "apexPage_InvoicePrint",
+        "via": "markup.components",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\pages\\InvoicePrint.page-meta.xml",
+        "sourceKeys": {
+          "objectKey": "visualforceMarkup_6efa7a39e93a04dd",
+          "sourceKey": "visualforceMarkup_a4462fc44c960e86"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "apexTrigger",
+    "target": "AccountTrigger",
+    "usedBy": [
+      {
+        "from": "platformEventSubscriberConfig_AccountTriggerConfig",
+        "via": "platformEventConsumer",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\PlatformEventSubscriberConfigs\\AccountTriggerConfig.platformEventSubscriberConfig-meta.xml",
+        "sourceKeys": {
+          "objectKey": "platformEventSubscriberConfig_aac37910286aae1f",
+          "sourceKey": "platformEventSubscriberConfig_19f299fd3009730c"
+        }
+      }
+    ],
     "status": "unchanged"
   },
   {
@@ -40,7 +155,7 @@
       {
         "from": "aura_invoiceCard",
         "via": "registerEvents",
-        "filePath": "aura/invoiceCard",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\aura\\invoiceCard",
         "sourceKeys": {
           "objectKey": "auraRegisterEvent_4b6a1b3266c64687",
           "sourceKey": "auraRegisterEvent_2adfe1c3e55a764e"
@@ -56,8 +171,8 @@
     "usedBy": [
       {
         "from": "profile_Sales",
-        "via": "applicationVisibilities",
-        "filePath": "profiles/Sales.profile-meta.xml",
+        "via": "applicationVisibilities.application",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
         "sourceKeys": {
           "objectKey": "applicationVisibility_80ee7c87e883293c",
           "sourceKey": "applicationVisibility_c35fe4e0d3dbbc87"
@@ -66,7 +181,7 @@
       {
         "from": "translations_ja",
         "via": "customApplications",
-        "filePath": "translations/ja.translation-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\translations\\ja.translation-meta.xml",
         "sourceKeys": {
           "objectKey": "applicationTranslation_8d25bb24afc5d11d",
           "sourceKey": "applicationTranslation_14a47bdf21885f14"
@@ -80,34 +195,60 @@
     "target": "AccountListTitle",
     "usedBy": [
       {
+        "from": "flow_Account_Wizard",
+        "via": "flow.flowScreen",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Account_Wizard.flow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flowScreen_09fb9feb6a5f3f31",
+          "sourceKey": "flowScreen_da78defa1b5d2b8a"
+        }
+      },
+      {
         "from": "apexPage_InvoicePrint",
         "via": "markup.expressions",
-        "filePath": "pages/InvoicePrint.page-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\pages\\InvoicePrint.page-meta.xml",
         "sourceKeys": {
-          "objectKey": "visualforceMarkup_b0020e3f602b5522",
+          "objectKey": "visualforceMarkup_6efa7a39e93a04dd",
           "sourceKey": "visualforceMarkup_a4462fc44c960e86"
         }
       },
       {
         "from": "aura_invoiceCard",
         "via": "expressions",
-        "filePath": "aura/invoiceCard",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\aura\\invoiceCard",
         "sourceKeys": {
-          "objectKey": "auraBundle_4651d651d52e5642",
+          "objectKey": "auraBundle_ae4e8ae75454db28",
           "sourceKey": "auraBundle_e4e8002a84c6c7e8"
         }
       },
       {
         "from": "translations_ja",
         "via": "customLabels",
-        "filePath": "translations/ja.translation-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\translations\\ja.translation-meta.xml",
         "sourceKeys": {
           "objectKey": "labelTranslation_5375639bdcac62d1",
           "sourceKey": "labelTranslation_f88bbd4b54502c82"
         }
       }
     ],
-    "status": "unchanged"
+    "status": "changed"
+  },
+  {
+    "refType": "customLabel",
+    "target": "BannerMessage",
+    "usedBy": [
+      {
+        "from": "newBanner",
+        "via": "import",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\newBanner",
+        "sourceKeys": {
+          "objectKey": "importDeclaration_b1d1e50d1ee13f4a",
+          "sourceKey": "importDeclaration_e988dfac11d6694e"
+        }
+      }
+    ],
+    "problem": "UNKNOWN_CUSTOM_LABEL",
+    "status": "changed"
   },
   {
     "refType": "customLabel",
@@ -116,7 +257,7 @@
       {
         "from": "translations_ja",
         "via": "customLabels",
-        "filePath": "translations/ja.translation-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\translations\\ja.translation-meta.xml",
         "sourceKeys": {
           "objectKey": "labelTranslation_492f594dd6c2c4d7",
           "sourceKey": "labelTranslation_80d0a84b3e21433e"
@@ -126,13 +267,29 @@
     "status": "added"
   },
   {
+    "refType": "customLabel",
+    "target": "Invoice_Overdue",
+    "usedBy": [
+      {
+        "from": "flow_Invoice_Status_Update",
+        "via": "flow.flowAssignment",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Invoice_Status_Update.flow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flowAssignment_b782621cc6dce6cc",
+          "sourceKey": "flowAssignment_5fb7c1145e8dc2a4"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
     "refType": "customPermission",
     "target": "Approve_Invoice",
     "usedBy": [
       {
         "from": "permissionSet_Invoice_Manager",
-        "via": "customPermissions",
-        "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+        "via": "customPermissions.name",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
         "sourceKeys": {
           "objectKey": "customPermissionAccess_27e11322ee9a9932",
           "sourceKey": "customPermissionAccess_8e213eb50556113d"
@@ -148,7 +305,7 @@
       {
         "from": "customPermission_Approve_Invoice",
         "via": "requiredPermission",
-        "filePath": "customPermissions/Approve_Invoice.customPermission-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\customPermissions\\Approve_Invoice.customPermission-meta.xml",
         "sourceKeys": {
           "objectKey": "requiredPermission_bdedecd7e56f11dd",
           "sourceKey": "requiredPermission_ff3b4cbee7adf154"
@@ -164,7 +321,7 @@
       {
         "from": "customApplication_Invoice_App",
         "via": "tabs",
-        "filePath": "applications/Invoice_App.app-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\applications\\Invoice_App.app-meta.xml",
         "sourceKeys": {
           "objectKey": "customApplication_46cf47e19b954737",
           "sourceKey": "customApplication_517e7431e5d6260e"
@@ -180,7 +337,7 @@
       {
         "from": "permissionSet_Invoice_Manager",
         "via": "tabSettings",
-        "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
         "sourceKeys": {
           "objectKey": "tabSetting_a5e96d7b322c0141",
           "sourceKey": "tabSetting_303bd0fba88ae35a"
@@ -189,7 +346,7 @@
       {
         "from": "profile_Sales",
         "via": "tabSettings",
-        "filePath": "profiles/Sales.profile-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
         "sourceKeys": {
           "objectKey": "tabVisibility_c0e48d164a0d2bc3",
           "sourceKey": "tabVisibility_90e57b04518f11ba"
@@ -198,7 +355,7 @@
       {
         "from": "customApplication_Invoice_App",
         "via": "tabs",
-        "filePath": "applications/Invoice_App.app-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\applications\\Invoice_App.app-meta.xml",
         "sourceKeys": {
           "objectKey": "customApplication_46cf47e19b954737",
           "sourceKey": "customApplication_517e7431e5d6260e"
@@ -207,7 +364,7 @@
       {
         "from": "translations_ja",
         "via": "customTabs",
-        "filePath": "translations/ja.translation-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\translations\\ja.translation-meta.xml",
         "sourceKeys": {
           "objectKey": "tabTranslation_4844ed45c5971a6e",
           "sourceKey": "tabTranslation_0989b48ff2440019"
@@ -217,13 +374,149 @@
     "status": "unchanged"
   },
   {
+    "refType": "externalCredential",
+    "target": "Billing_Auth",
+    "usedBy": [
+      {
+        "from": "namedCredential_Billing_API",
+        "via": "namedCredentialParameters.externalCredential",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\namedCredentials\\Billing_API.namedCredential-meta.xml",
+        "sourceKeys": {
+          "objectKey": "namedCredentialParameter_79efd0cb55300c3a",
+          "sourceKey": "namedCredentialParameter_0a0fd963e5f5541c"
+        }
+      }
+    ],
+    "status": "added"
+  },
+  {
+    "refType": "field",
+    "target": "Account.Birthdate__c",
+    "usedBy": [
+      {
+        "from": "class_ParserTest",
+        "via": "soql.where",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_3fbfa2bbf0f88989",
+          "sourceKey": "query_6cee6cc97f3fddeb"
+        }
+      }
+    ],
+    "problem": "UNKNOWN_FIELD",
+    "status": "unchanged"
+  },
+  {
+    "refType": "field",
+    "target": "Account.Interests__c",
+    "usedBy": [
+      {
+        "from": "class_ParserTest",
+        "via": "soql.where",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_3fbfa2bbf0f88989",
+          "sourceKey": "query_6cee6cc97f3fddeb"
+        }
+      }
+    ],
+    "problem": "UNKNOWN_FIELD",
+    "status": "unchanged"
+  },
+  {
+    "refType": "field",
+    "target": "Account.Missing__c",
+    "usedBy": [
+      {
+        "from": "layout_Account-Account Layout",
+        "via": "items.field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\layouts\\Account-Account Layout.layout-meta.xml",
+        "sourceKeys": {
+          "objectKey": "layoutItem_302e9fb7ab4081bb",
+          "sourceKey": "layoutItem_c766fc743282482a"
+        }
+      }
+    ],
+    "problem": "UNKNOWN_FIELD",
+    "status": "added"
+  },
+  {
+    "refType": "field",
+    "target": "Account.Tier__c",
+    "usedBy": [
+      {
+        "from": "Invoice__c",
+        "via": "lookupFilter",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c",
+        "sourceKeys": {
+          "objectKey": "field_5a20d9c578f74572",
+          "sourceKey": "field_6c3612f03a822541"
+        }
+      },
+      {
+        "from": "Account-ja",
+        "via": "fields",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Account-ja",
+        "sourceKeys": {
+          "objectKey": "fieldTranslation_2b8d45e19b742268",
+          "sourceKey": "fieldTranslation_79fc08e9f5016360"
+        }
+      },
+      {
+        "from": "profile_Sales",
+        "via": "fieldPermissions.field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
+        "sourceKeys": {
+          "objectKey": "fieldPermission_d9faa032db9ea76e",
+          "sourceKey": "fieldPermission_3d5cad74fdaea5ec"
+        }
+      },
+      {
+        "from": "flow_Account_Wizard",
+        "via": "flow.flowRecordLookup",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Account_Wizard.flow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flowRecordLookup_dc6a5aa966b4cb45",
+          "sourceKey": "flowRecordLookup_7d3e549c22554faf"
+        }
+      },
+      {
+        "from": "layout_Account-Account Layout",
+        "via": "items.field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\layouts\\Account-Account Layout.layout-meta.xml",
+        "sourceKeys": {
+          "objectKey": "layoutItem_0ba32fdb39c4b91d",
+          "sourceKey": "layoutItem_1a137f6447a22922"
+        }
+      }
+    ],
+    "status": "changed"
+  },
+  {
+    "refType": "field",
+    "target": "Account.Unknown__c",
+    "usedBy": [
+      {
+        "from": "flow_Account_Wizard",
+        "via": "flow.flowRecordLookup",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Account_Wizard.flow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flowRecordLookup_dc6a5aa966b4cb45",
+          "sourceKey": "flowRecordLookup_7d3e549c22554faf"
+        }
+      }
+    ],
+    "problem": "UNKNOWN_FIELD",
+    "status": "added"
+  },
+  {
     "refType": "field",
     "target": "App_Setting__mdt.Value__c",
     "usedBy": [
       {
         "from": "customMetadata_App_Setting.Default",
         "via": "values.field",
-        "filePath": "customMetadata/App_Setting.Default.md-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\customMetadata\\App_Setting.Default.md-meta.xml",
         "sourceKeys": {
           "objectKey": "customMetadataValue_7ef62da16cdbe00e",
           "sourceKey": "customMetadataValue_fea6f94f69dd8937"
@@ -232,7 +525,7 @@
       {
         "from": "customMetadata_App_Setting.Sandbox",
         "via": "values.field",
-        "filePath": "customMetadata/App_Setting.Sandbox.md-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\customMetadata\\App_Setting.Sandbox.md-meta.xml",
         "sourceKeys": {
           "objectKey": "customMetadataValue_4889143b62381973",
           "sourceKey": "customMetadataValue_02d8e3cf603837c8"
@@ -243,14 +536,39 @@
   },
   {
     "refType": "field",
+    "target": "FAQ__kav.Id",
+    "usedBy": [
+      {
+        "from": "class_ParserTest",
+        "via": "soql.select",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_c531367544583041",
+          "sourceKey": "query_2504de7eccff1b0a"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "field",
     "target": "Invoice__c.Account__c",
     "usedBy": [
       {
+        "from": "Invoice__c-ja",
+        "via": "fields",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+        "sourceKeys": {
+          "objectKey": "fieldTranslation_3bf44e51a72967ef",
+          "sourceKey": "fieldTranslation_b8086fcc1248d9d4"
+        }
+      },
+      {
         "from": "emailTemplate_Invoice_Templates.Invoice_Sent",
         "via": "body",
-        "filePath": "email/Invoice_Templates/Invoice_Sent.email-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\email\\Invoice_Templates\\Invoice_Sent.email-meta.xml",
         "sourceKeys": {
-          "objectKey": "emailTemplate_f1b73238ce47fd4a",
+          "objectKey": "emailTemplate_d8a41e3dca1f7036",
           "sourceKey": "emailTemplate_9ffc47d0e0c6fca5"
         }
       }
@@ -262,9 +580,90 @@
     "target": "Invoice__c.Amount__c",
     "usedBy": [
       {
+        "from": "Invoice__c-ja",
+        "via": "fields",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+        "sourceKeys": {
+          "objectKey": "fieldTranslation_bc56e2c0fc555a62",
+          "sourceKey": "fieldTranslation_005de5cefe19657e"
+        }
+      },
+      {
+        "from": "permissionSet_Invoice_Manager",
+        "via": "fieldPermissions.field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
+        "sourceKeys": {
+          "objectKey": "fieldPermission_aaa100381ce7d463",
+          "sourceKey": "fieldPermission_b654c9c9429748a1"
+        }
+      },
+      {
+        "from": "permissionSet_Payment_Clerk",
+        "via": "fieldPermissions.field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Payment_Clerk.permissionset-meta.xml",
+        "sourceKeys": {
+          "objectKey": "fieldPermission_b73cebb1562adc62",
+          "sourceKey": "fieldPermission_3ffa05cb4278ca16"
+        }
+      },
+      {
+        "from": "flow_Invoice_Status_Update",
+        "via": "flow.flowStart",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Invoice_Status_Update.flow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flowStart_9f727bd8e7edde4f",
+          "sourceKey": "flowStart_23ca7b8c2b7966ae"
+        }
+      },
+      {
+        "from": "flow_Invoice_Status_Update",
+        "via": "flow.flowDecision",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Invoice_Status_Update.flow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flowDecision_24f758921bd6f52b",
+          "sourceKey": "flowDecision_35893f95df1da895"
+        }
+      },
+      {
+        "from": "flow_Invoice_Status_Update",
+        "via": "formula.expression",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Invoice_Status_Update.flow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "fxName_d4a2fdb269aec3b6",
+          "sourceKey": "fxName_f26f2f46554fa537"
+        }
+      },
+      {
+        "from": "layout_Invoice__c-Invoice Detail",
+        "via": "items.field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\layouts\\Invoice__c-Invoice Detail.layout-meta.xml",
+        "sourceKeys": {
+          "objectKey": "layoutItem_c2da30ac705dfd51",
+          "sourceKey": "layoutItem_df850b793be876d2"
+        }
+      },
+      {
+        "from": "layout_Invoice__c-Invoice Layout",
+        "via": "items.field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\layouts\\Invoice__c-Invoice Layout.layout-meta.xml",
+        "sourceKeys": {
+          "objectKey": "layoutItem_7c5e5ca6c2e11fcb",
+          "sourceKey": "layoutItem_c64a22fce315e942"
+        }
+      },
+      {
+        "from": "flexiPage_Invoice_Record_Page",
+        "via": "fields.fieldItem",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flexipages\\Invoice_Record_Page.flexipage-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flexiPageField_2fc235e0bc9814d6",
+          "sourceKey": "flexiPageField_5c61138ba5aaab6c"
+        }
+      },
+      {
         "from": "quickAction_Invoice__c.Approve",
         "via": "quickActionLayout",
-        "filePath": "quickActions/Invoice__c.Approve.quickAction-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\quickActions\\Invoice__c.Approve.quickAction-meta.xml",
         "sourceKeys": {
           "objectKey": "quickAction_488c91ba34e89c31",
           "sourceKey": "quickAction_9d6c625c85502f1d"
@@ -273,43 +672,43 @@
       {
         "from": "sharingRules_Invoice__c",
         "via": "sharingCriteriaRules.criteriaItems",
-        "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\sharingRules\\Invoice__c.sharingRules-meta.xml",
         "sourceKeys": {
-          "objectKey": "sharingCriteriaRule_44d2046d33cfca92",
+          "objectKey": "sharingCriteriaRule_2b9fe12391f7b00a",
           "sourceKey": "sharingCriteriaRule_0153393cdf4a4266"
         }
       },
       {
         "from": "sharingRules_Invoice__c",
         "via": "sharingCriteriaRules.criteriaItems",
-        "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\sharingRules\\Invoice__c.sharingRules-meta.xml",
         "sourceKeys": {
-          "objectKey": "sharingCriteriaRule_463cddb3e054da83",
+          "objectKey": "sharingCriteriaRule_8933548d0a91825a",
           "sourceKey": "sharingCriteriaRule_83d322fd43604732"
         }
       },
       {
         "from": "apexPage_InvoicePrint",
         "via": "markup.expressions",
-        "filePath": "pages/InvoicePrint.page-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\pages\\InvoicePrint.page-meta.xml",
         "sourceKeys": {
-          "objectKey": "visualforceMarkup_b0020e3f602b5522",
+          "objectKey": "visualforceMarkup_6efa7a39e93a04dd",
           "sourceKey": "visualforceMarkup_a4462fc44c960e86"
         }
       },
       {
         "from": "emailTemplate_Invoice_Templates.Invoice_Sent",
         "via": "body",
-        "filePath": "email/Invoice_Templates/Invoice_Sent.email-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\email\\Invoice_Templates\\Invoice_Sent.email-meta.xml",
         "sourceKeys": {
-          "objectKey": "emailTemplate_f1b73238ce47fd4a",
+          "objectKey": "emailTemplate_d8a41e3dca1f7036",
           "sourceKey": "emailTemplate_9ffc47d0e0c6fca5"
         }
       },
       {
         "from": "report_Invoice_Reports.Open_Invoices",
         "via": "columns",
-        "filePath": "reports/Invoice_Reports/Open_Invoices.report-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\reports\\Invoice_Reports\\Open_Invoices.report-meta.xml",
         "sourceKeys": {
           "objectKey": "reportColumn_62fd78e3ff8b348c",
           "sourceKey": "reportColumn_da4a7551ba714f6a"
@@ -318,10 +717,19 @@
       {
         "from": "approvalProcess_Invoice__c.Large_Invoice_Approval",
         "via": "entryCriteria",
-        "filePath": "approvalProcesses/Invoice__c.Large_Invoice_Approval.approvalProcess-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\approvalProcesses\\Invoice__c.Large_Invoice_Approval.approvalProcess-meta.xml",
         "sourceKeys": {
-          "objectKey": "approvalProcess_a854833d3aaf406b",
+          "objectKey": "approvalProcess_ccd7eb037e96941e",
           "sourceKey": "approvalProcess_797f4ded05aef36f"
+        }
+      },
+      {
+        "from": "reportType_Invoices_with_Lines",
+        "via": "sections.columns",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\reportTypes\\Invoices_with_Lines.reportType-meta.xml",
+        "sourceKeys": {
+          "objectKey": "reportTypeSection_c304b0b352d5be09",
+          "sourceKey": "reportTypeSection_2bd0e5d92fc0238e"
         }
       }
     ],
@@ -332,16 +740,104 @@
     "target": "Invoice__c.Approved__c",
     "usedBy": [
       {
+        "from": "permissionSet_Invoice_Manager",
+        "via": "fieldPermissions.field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
+        "sourceKeys": {
+          "objectKey": "fieldPermission_b17d02b8f2e293b6",
+          "sourceKey": "fieldPermission_e3b8dd9a1c70e02e"
+        }
+      },
+      {
+        "from": "mutingPermissionSet_Invoice_Team_Muted",
+        "via": "fieldPermissions.field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\mutingpermissionsets\\Invoice_Team_Muted.mutingpermissionset-meta.xml",
+        "sourceKeys": {
+          "objectKey": "fieldPermission_6c1a53216036c5cd",
+          "sourceKey": "fieldPermission_99d5034a91fd483a"
+        }
+      },
+      {
+        "from": "layout_Invoice__c-Invoice Layout",
+        "via": "items.field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\layouts\\Invoice__c-Invoice Layout.layout-meta.xml",
+        "sourceKeys": {
+          "objectKey": "layoutItem_4c0e02cca22aa628",
+          "sourceKey": "layoutItem_16480b0fe7eaf566"
+        }
+      },
+      {
         "from": "quickAction_Invoice__c.Approve",
         "via": "quickActionLayout",
-        "filePath": "quickActions/Invoice__c.Approve.quickAction-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\quickActions\\Invoice__c.Approve.quickAction-meta.xml",
         "sourceKeys": {
           "objectKey": "quickAction_488c91ba34e89c31",
           "sourceKey": "quickAction_9d6c625c85502f1d"
         }
+      },
+      {
+        "from": "pathAssistant_Invoice_Path",
+        "via": "pathAssistantSteps.fieldNames",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\pathAssistants\\Invoice_Path.pathAssistant-meta.xml",
+        "sourceKeys": {
+          "objectKey": "pathAssistantStep_f2cfa0c946fb6508",
+          "sourceKey": "pathAssistantStep_b4a4c3e19c90bf1a"
+        }
       }
     ],
     "status": "added"
+  },
+  {
+    "refType": "field",
+    "target": "Invoice__c.Due_Date__c",
+    "usedBy": [
+      {
+        "from": "Invoice__c-ja",
+        "via": "fields",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+        "sourceKeys": {
+          "objectKey": "fieldTranslation_259bf4ea6b37e47e",
+          "sourceKey": "fieldTranslation_511f7a0f359a3a36"
+        }
+      },
+      {
+        "from": "layout_Invoice__c-Invoice Layout",
+        "via": "items.field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\layouts\\Invoice__c-Invoice Layout.layout-meta.xml",
+        "sourceKeys": {
+          "objectKey": "layoutItem_fdd99157056e8e23",
+          "sourceKey": "layoutItem_d972cdd437684cb9"
+        }
+      },
+      {
+        "from": "reportType_Invoices_with_Lines",
+        "via": "sections.columns",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\reportTypes\\Invoices_with_Lines.reportType-meta.xml",
+        "sourceKeys": {
+          "objectKey": "reportTypeSection_c304b0b352d5be09",
+          "sourceKey": "reportTypeSection_2bd0e5d92fc0238e"
+        }
+      },
+      {
+        "from": "pathAssistant_Invoice_Path",
+        "via": "pathAssistantSteps.fieldNames",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\pathAssistants\\Invoice_Path.pathAssistant-meta.xml",
+        "sourceKeys": {
+          "objectKey": "pathAssistantStep_f32c33b3c4381b64",
+          "sourceKey": "pathAssistantStep_113c229e9c5b7f20"
+        }
+      },
+      {
+        "from": "pathAssistant_Invoice_Path",
+        "via": "pathAssistantSteps.fieldNames",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\pathAssistants\\Invoice_Path.pathAssistant-meta.xml",
+        "sourceKeys": {
+          "objectKey": "pathAssistantStep_f2cfa0c946fb6508",
+          "sourceKey": "pathAssistantStep_b4a4c3e19c90bf1a"
+        }
+      }
+    ],
+    "status": "changed"
   },
   {
     "refType": "field",
@@ -350,9 +846,9 @@
       {
         "from": "workflow_Invoice__c",
         "via": "rules.criteriaItems",
-        "filePath": "workflows/Invoice__c.workflow-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\workflows\\Invoice__c.workflow-meta.xml",
         "sourceKeys": {
-          "objectKey": "workflowRule_2f1545b36d5dc11f",
+          "objectKey": "workflowRule_0a4019f532484330",
           "sourceKey": "workflowRule_5afd9b74c1d936d6"
         }
       }
@@ -361,27 +857,45 @@
   },
   {
     "refType": "field",
-    "target": "Invoice__c.Name",
+    "target": "Invoice__c.Missing__c",
     "usedBy": [
       {
-        "from": "emailTemplate_Invoice_Templates.Invoice_Sent",
-        "via": "body",
-        "filePath": "email/Invoice_Templates/Invoice_Sent.email-meta.xml",
+        "from": "permissionSet_Invoice_Manager",
+        "via": "fieldPermissions.field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
         "sourceKeys": {
-          "objectKey": "emailTemplate_f1b73238ce47fd4a",
-          "sourceKey": "emailTemplate_9ffc47d0e0c6fca5"
+          "objectKey": "fieldPermission_25a2eabf84d5a698",
+          "sourceKey": "fieldPermission_7a4e2c75d3aeb07a"
         }
       },
       {
-        "from": "emailTemplate_Invoice_Templates.Invoice_Sent",
-        "via": "body",
-        "filePath": "email/Invoice_Templates/Invoice_Sent.email-meta.xml",
+        "from": "flexiPage_Invoice_Record_Page",
+        "via": "fields.fieldItem",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flexipages\\Invoice_Record_Page.flexipage-meta.xml",
         "sourceKeys": {
-          "objectKey": "emailTemplate_f1b73238ce47fd4a",
-          "sourceKey": "emailTemplate_9ffc47d0e0c6fca5"
+          "objectKey": "flexiPageField_f522e46504069696",
+          "sourceKey": "flexiPageField_760854506638aa36"
         }
       }
     ],
+    "problem": "UNKNOWN_FIELD",
+    "status": "added"
+  },
+  {
+    "refType": "field",
+    "target": "Invoice__c.Note__c",
+    "usedBy": [
+      {
+        "from": "Invoice__c-ja",
+        "via": "fields",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+        "sourceKeys": {
+          "objectKey": "fieldTranslation_127d7ee147661ce3",
+          "sourceKey": "fieldTranslation_4fb21aac7bf9d56d"
+        }
+      }
+    ],
+    "problem": "UNKNOWN_FIELD",
     "status": "changed"
   },
   {
@@ -389,9 +903,36 @@
     "target": "Invoice__c.Status__c",
     "usedBy": [
       {
+        "from": "Invoice__c-ja",
+        "via": "fields",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+        "sourceKeys": {
+          "objectKey": "fieldTranslation_f0b1ae4fe770cd0c",
+          "sourceKey": "fieldTranslation_2c6f7608452e8ff9"
+        }
+      },
+      {
+        "from": "profile_Sales",
+        "via": "fieldPermissions.field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
+        "sourceKeys": {
+          "objectKey": "fieldPermission_8f813990a36b0899",
+          "sourceKey": "fieldPermission_e99e3342cd85c0bc"
+        }
+      },
+      {
+        "from": "layout_Invoice__c-Invoice Layout",
+        "via": "items.field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\layouts\\Invoice__c-Invoice Layout.layout-meta.xml",
+        "sourceKeys": {
+          "objectKey": "layoutItem_08a37b1aa47cf32b",
+          "sourceKey": "layoutItem_84fe1a3f0bca9fe7"
+        }
+      },
+      {
         "from": "quickAction_Invoice__c.Approve",
         "via": "fieldOverrides.field",
-        "filePath": "quickActions/Invoice__c.Approve.quickAction-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\quickActions\\Invoice__c.Approve.quickAction-meta.xml",
         "sourceKeys": {
           "objectKey": "quickActionFieldOverride_259ab9c4f9b0e2f4",
           "sourceKey": "quickActionFieldOverride_68f221af854cd2de"
@@ -400,7 +941,7 @@
       {
         "from": "report_Invoice_Reports.Open_Invoices",
         "via": "columns",
-        "filePath": "reports/Invoice_Reports/Open_Invoices.report-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\reports\\Invoice_Reports\\Open_Invoices.report-meta.xml",
         "sourceKeys": {
           "objectKey": "reportColumn_234e70d24a87fef4",
           "sourceKey": "reportColumn_6a5a28de2876cbc9"
@@ -409,14 +950,55 @@
       {
         "from": "workflow_Invoice__c",
         "via": "fieldUpdates.field",
-        "filePath": "workflows/Invoice__c.workflow-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\workflows\\Invoice__c.workflow-meta.xml",
         "sourceKeys": {
           "objectKey": "workflowFieldUpdate_61cc1659d5daf744",
           "sourceKey": "workflowFieldUpdate_0f19cb350ff2abbb"
         }
+      },
+      {
+        "from": "pathAssistant_Invoice_Path",
+        "via": "fieldName",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\pathAssistants\\Invoice_Path.pathAssistant-meta.xml",
+        "sourceKeys": {
+          "objectKey": "pathAssistant_309ddcfe6b619200",
+          "sourceKey": "pathAssistant_99c30416a572f920"
+        }
       }
     ],
     "status": "changed"
+  },
+  {
+    "refType": "field",
+    "target": "Knowledge__kav.Title",
+    "usedBy": [
+      {
+        "from": "class_ParserTest",
+        "via": "soql.select",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_c5a7170e1378aadb",
+          "sourceKey": "query_dd417b364fc92e0f"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "fieldSet",
+    "target": "Invoice__c.Summary",
+    "usedBy": [
+      {
+        "from": "Invoice__c-ja",
+        "via": "fieldSets",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+        "sourceKeys": {
+          "objectKey": "fieldSetTranslation_924054dc75d5aa4f",
+          "sourceKey": "fieldSetTranslation_edd5182d9b37e436"
+        }
+      }
+    ],
+    "status": "unchanged"
   },
   {
     "refType": "flexiPage",
@@ -425,7 +1007,7 @@
       {
         "from": "customApplication_Invoice_App",
         "via": "actionOverrides.content",
-        "filePath": "applications/Invoice_App.app-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\applications\\Invoice_App.app-meta.xml",
         "sourceKeys": {
           "objectKey": "appActionOverride_e6aacd2873bccdd5",
           "sourceKey": "appActionOverride_14c30017cff80fe0"
@@ -436,16 +1018,97 @@
     "status": "added"
   },
   {
+    "refType": "flow",
+    "target": "Invoice_Status_Update",
+    "usedBy": [
+      {
+        "from": "flow_Account_Wizard",
+        "via": "flow.flowSubflow",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Account_Wizard.flow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flowSubflow_eba4278201f9e44e",
+          "sourceKey": "flowSubflow_2661cc0ec003e395"
+        }
+      }
+    ],
+    "status": "added"
+  },
+  {
+    "refType": "flow",
+    "target": "Login_Check",
+    "usedBy": [
+      {
+        "from": "profile_Sales",
+        "via": "loginFlows.flow",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
+        "sourceKeys": {
+          "objectKey": "loginFlow_c79b77657c881c44",
+          "sourceKey": "loginFlow_c2a35eeaace313c0"
+        }
+      }
+    ],
+    "problem": "UNKNOWN_FLOW",
+    "status": "unchanged"
+  },
+  {
     "refType": "group",
     "target": "Finance",
     "usedBy": [
       {
         "from": "queue_Invoice_Queue",
         "via": "queueMembers",
-        "filePath": "queues/Invoice_Queue.queue-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\queues\\Invoice_Queue.queue-meta.xml",
         "sourceKeys": {
           "objectKey": "queue_e18ea811cb255a4b",
           "sourceKey": "queue_781f86699eb79965"
+        }
+      }
+    ],
+    "status": "changed"
+  },
+  {
+    "refType": "layout",
+    "target": "Account-Account Layout",
+    "usedBy": [
+      {
+        "from": "profile_Sales",
+        "via": "layoutAssignments.layout",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
+        "sourceKeys": {
+          "objectKey": "layoutAssignment_d379569b3a594792",
+          "sourceKey": "layoutAssignment_206dc0d83a81fc95"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "layout",
+    "target": "Invoice__c-Invoice Detail",
+    "usedBy": [
+      {
+        "from": "profile_Sales",
+        "via": "layoutAssignments.layout",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
+        "sourceKeys": {
+          "objectKey": "layoutAssignment_9bd20196e2fe46ae",
+          "sourceKey": "layoutAssignment_14b32ce4a99430f5"
+        }
+      }
+    ],
+    "status": "added"
+  },
+  {
+    "refType": "layout",
+    "target": "Invoice__c-Invoice Layout",
+    "usedBy": [
+      {
+        "from": "Invoice__c-ja",
+        "via": "layouts",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+        "sourceKeys": {
+          "objectKey": "layoutTranslation_a6db85e749b4f21c",
+          "sourceKey": "layoutTranslation_f9bd716cd023e9f5"
         }
       }
     ],
@@ -456,9 +1119,27 @@
     "target": "accountList",
     "usedBy": [
       {
+        "from": "flow_Account_Wizard",
+        "via": "flow.flowScreen",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Account_Wizard.flow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flowScreen_09fb9feb6a5f3f31",
+          "sourceKey": "flowScreen_da78defa1b5d2b8a"
+        }
+      },
+      {
+        "from": "flexiPage_Invoice_Record_Page",
+        "via": "components",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flexipages\\Invoice_Record_Page.flexipage-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flexiPageComponent_f32bef42c44a894a",
+          "sourceKey": "flexiPageComponent_da3384e401ebd3d3"
+        }
+      },
+      {
         "from": "customTab_Account_List",
         "via": "lwcComponent",
-        "filePath": "tabs/Account_List.tab-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\tabs\\Account_List.tab-meta.xml",
         "sourceKeys": {
           "objectKey": "customTab_ce0a31a7b24dc108",
           "sourceKey": "customTab_841f25750c64b7c2"
@@ -467,10 +1148,1664 @@
       {
         "from": "aura_invoiceCard",
         "via": "components",
-        "filePath": "aura/invoiceCard",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\aura\\invoiceCard",
         "sourceKeys": {
-          "objectKey": "auraBundle_4651d651d52e5642",
+          "objectKey": "auraBundle_ae4e8ae75454db28",
           "sourceKey": "auraBundle_e4e8002a84c6c7e8"
+        }
+      }
+    ],
+    "status": "changed"
+  },
+  {
+    "refType": "lwc",
+    "target": "accountRow",
+    "usedBy": [
+      {
+        "from": "accountList",
+        "via": "query",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+        "sourceKeys": {
+          "objectKey": "stringLiteral_75a8a8314eff27fc",
+          "sourceKey": "stringLiteral_118a26274dd9e93f"
+        }
+      },
+      {
+        "from": "accountList",
+        "via": "template",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+        "sourceKeys": {
+          "objectKey": "lwcElement_dccd01599fff9ed7",
+          "sourceKey": "lwcElement_4c3551d781b8b91d"
+        }
+      },
+      {
+        "from": "flexiPage_Invoice_Record_Page",
+        "via": "components",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flexipages\\Invoice_Record_Page.flexipage-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flexiPageComponent_7ccd912d91566b74",
+          "sourceKey": "flexiPageComponent_9cbd43b1ddda972e"
+        }
+      }
+    ],
+    "status": "changed"
+  },
+  {
+    "refType": "lwc",
+    "target": "child",
+    "usedBy": [
+      {
+        "from": "broken",
+        "via": "template",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\broken",
+        "sourceKeys": {
+          "objectKey": "lwcElement_b5ab7359048d42ad",
+          "sourceKey": "lwcElement_dcd2df94fbc96369"
+        }
+      }
+    ],
+    "problem": "UNKNOWN_LWC",
+    "status": "unchanged"
+  },
+  {
+    "refType": "lwc",
+    "target": "errorPanel",
+    "usedBy": [
+      {
+        "from": "accountList",
+        "via": "template",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+        "sourceKeys": {
+          "objectKey": "lwcElement_ba6a69ced1e1eb24",
+          "sourceKey": "lwcElement_fa191c2761e26688"
+        }
+      }
+    ],
+    "problem": "UNKNOWN_LWC",
+    "status": "unchanged"
+  },
+  {
+    "refType": "lwc",
+    "target": "missingChart",
+    "usedBy": [
+      {
+        "from": "flow_Account_Wizard",
+        "via": "flow.flowScreen",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Account_Wizard.flow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flowScreen_09fb9feb6a5f3f31",
+          "sourceKey": "flowScreen_da78defa1b5d2b8a"
+        }
+      }
+    ],
+    "problem": "UNKNOWN_LWC",
+    "status": "added"
+  },
+  {
+    "refType": "lwc",
+    "target": "utils",
+    "usedBy": [
+      {
+        "from": "accountList",
+        "via": "import",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+        "sourceKeys": {
+          "objectKey": "importDeclaration_0174795b4abeba94",
+          "sourceKey": "importDeclaration_afa3387b65bbfe6e"
+        }
+      },
+      {
+        "from": "accountList",
+        "via": "import",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+        "sourceKeys": {
+          "objectKey": "importDeclaration_bc13e003620baec4",
+          "sourceKey": "importDeclaration_a7692cf1cc64935e"
+        }
+      },
+      {
+        "from": "accountRow",
+        "via": "import",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountRow",
+        "sourceKeys": {
+          "objectKey": "importDeclaration_03254812a49cddfc",
+          "sourceKey": "importDeclaration_2ac5193362839a87"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "lwcProperty",
+    "target": "accountRow.amount",
+    "usedBy": [
+      {
+        "from": "accountList",
+        "via": "template.attribute",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+        "sourceKeys": {
+          "objectKey": "lwcAttribute_06b3945ce724279f",
+          "sourceKey": "lwcAttribute_825c137404af745c"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "lwcProperty",
+    "target": "accountRow.name",
+    "usedBy": [
+      {
+        "from": "accountList",
+        "via": "template.attribute",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+        "sourceKeys": {
+          "objectKey": "lwcAttribute_f29974bd17e944cb",
+          "sourceKey": "lwcAttribute_9bd0079b1286f5fc"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "lwcProperty",
+    "target": "accountRow.recordId",
+    "usedBy": [
+      {
+        "from": "accountList",
+        "via": "template.attribute",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+        "sourceKeys": {
+          "objectKey": "lwcAttribute_fde5fcbdffb5cde5",
+          "sourceKey": "lwcAttribute_9f3ba1cf0359537d"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "lwcProperty",
+    "target": "errorPanel.errors",
+    "usedBy": [
+      {
+        "from": "accountList",
+        "via": "template.attribute",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+        "sourceKeys": {
+          "objectKey": "lwcAttribute_4011f660630ff57d",
+          "sourceKey": "lwcAttribute_2679bf01fb35ac15"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "matchingRule",
+    "target": "Account.Account_Name_Match",
+    "usedBy": [
+      {
+        "from": "duplicateRule_Account.Account_Name_Duplicate",
+        "via": "duplicateRuleMatchRules.matchingRule",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\duplicateRules\\Account.Account_Name_Duplicate.duplicateRule-meta.xml",
+        "sourceKeys": {
+          "objectKey": "duplicateRuleMatchRule_30affd7b5efef2f4",
+          "sourceKey": "duplicateRuleMatchRule_d01e5653267d6fa5"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "mutingPermissionSet",
+    "target": "Invoice_Team_Muted",
+    "usedBy": [
+      {
+        "from": "permissionSetGroup_Invoice_Team",
+        "via": "mutingPermissionSets",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsetgroups\\Invoice_Team.permissionsetgroup-meta.xml",
+        "sourceKeys": {
+          "objectKey": "permissionSetGroup_977542f490e5eb01",
+          "sourceKey": "permissionSetGroup_ca71a1ddc6196f2a"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "object",
+    "target": "Account",
+    "usedBy": [
+      {
+        "from": "class_AccountService",
+        "via": "parameter",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_e4d3af8f8d2cbcf1"
+        }
+      },
+      {
+        "from": "class_AccountService",
+        "via": "field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_511cda78ee3b16fb"
+        }
+      },
+      {
+        "from": "class_AccountService",
+        "via": "parameter",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_7c6e4a057fc7ca29"
+        }
+      },
+      {
+        "from": "class_AccountService",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_8eeaa69371bc0d4e"
+        }
+      },
+      {
+        "from": "class_AccountService",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+        "sourceKeys": {
+          "objectKey": "query_66be4d0bf203071b",
+          "sourceKey": "query_ab78e16624019aa5"
+        }
+      },
+      {
+        "from": "class_AccountService",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_7b5999d96dd5d383"
+        }
+      },
+      {
+        "from": "class_AccountService",
+        "via": "dml.update",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+        "sourceKeys": {
+          "objectKey": "updateStatement_930a72c5127674aa",
+          "sourceKey": "updateStatement_b1088e53e784d3c4"
+        }
+      },
+      {
+        "from": "class_AccountService",
+        "via": "parameter",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_cbd4579ac4290a33"
+        }
+      },
+      {
+        "from": "class_AccountService",
+        "via": "dml.insert",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+        "sourceKeys": {
+          "objectKey": "insertStatement_b8999ca5e2a8ba7b",
+          "sourceKey": "insertStatement_aec96bd32d435794"
+        }
+      },
+      {
+        "from": "class_AccountService",
+        "via": "sosl.returning",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+        "sourceKeys": {
+          "objectKey": "soslLiteral_03f43ba8d53b3cf1",
+          "sourceKey": "soslLiteral_d0c18bf354b83b04"
+        }
+      },
+      {
+        "from": "class_AccountService",
+        "via": "dml.upsert",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+        "sourceKeys": {
+          "objectKey": "upsertStatement_62338b253f4e7761",
+          "sourceKey": "upsertStatement_f0f2800ec396a0f4"
+        }
+      },
+      {
+        "from": "class_AccountService",
+        "via": "new",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+        "sourceKeys": {
+          "objectKey": "newExpression_9abe4237aaad12af",
+          "sourceKey": "newExpression_91024a3a385ddbbb"
+        }
+      },
+      {
+        "from": "class_AccountService",
+        "via": "dml.undelete",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+        "sourceKeys": {
+          "objectKey": "undeleteStatement_307e42f77a9a8b63",
+          "sourceKey": "undeleteStatement_321072021aec4810"
+        }
+      },
+      {
+        "from": "class_AccountService",
+        "via": "new",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+        "sourceKeys": {
+          "objectKey": "newExpression_8c0d893212530456",
+          "sourceKey": "newExpression_346d0850fc469b97"
+        }
+      },
+      {
+        "from": "class_AccountService",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+        "sourceKeys": {
+          "objectKey": "query_7e58a48cc630ef1f",
+          "sourceKey": "query_68337bd65782b959"
+        }
+      },
+      {
+        "from": "class_AccountService",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_1a348590d843f16d"
+        }
+      },
+      {
+        "from": "class_AccountService",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+        "sourceKeys": {
+          "objectKey": "query_d986012f54f1fbfa",
+          "sourceKey": "query_40068ba5f9bfc0ce"
+        }
+      },
+      {
+        "from": "class_AccountService",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_a028e2c71bccc331"
+        }
+      },
+      {
+        "from": "class_AccountService",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+        "sourceKeys": {
+          "objectKey": "query_abedb4ef1b87ee71",
+          "sourceKey": "query_abd37e361e2a2687"
+        }
+      },
+      {
+        "from": "class_AccountService",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_68584b2bd6728e35"
+        }
+      },
+      {
+        "from": "class_AccountService",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+        "sourceKeys": {
+          "objectKey": "query_cc190dcd128d9311",
+          "sourceKey": "query_2050db46a48ee1c6"
+        }
+      },
+      {
+        "from": "class_ParserInterface",
+        "via": "returnType",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserInterface.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_02ccc13150fc5ee9"
+        }
+      },
+      {
+        "from": "class_ParserInterface",
+        "via": "parameter",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserInterface.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_d1d4ef0dfee574b8"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_d5d25568519943c9",
+          "sourceKey": "typeRef_507a519a94809339"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_d5d25568519943c9",
+          "sourceKey": "typeRef_a1a1ffaf4495a125"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_b3089ac568daa043",
+          "sourceKey": "typeRef_68b5bcf508002545"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_d0a5b15a73c7dc17",
+          "sourceKey": "typeRef_69ea977bc8129e27"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "Schema",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "dotExpression_83d8ecf63105a9d8",
+          "sourceKey": "dotExpression_190dca6322aa8958"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_2aa1a0459ad7a779"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "new",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "newExpression_b18eb94d8110f31d",
+          "sourceKey": "newExpression_6a78ef4128acb9be"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_151afd008c560b4f"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_9377955383df1e29"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_27a4fb4a785ee19b"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_d9fbd6d272cd5323"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_3df81c974be5e619",
+          "sourceKey": "query_919be74bb7e06eef"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "parameter",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_ae28c1800a4fdc0e"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_72f3ab4c5b845edd"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_ab6127932b376b88"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_bc12d588e569ab12",
+          "sourceKey": "query_27ad1cbcd3951126"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_946eddbc9264a5c9"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_e010a56530543818"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_bd83ccce01fc6176",
+          "sourceKey": "query_5f13977427dd0f31"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "parameter",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_de332d95aadbe450"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "parameter",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_def4e92e6fe56ad9"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "parameter",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_498f7b2453da3aee"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "dml.insert",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "insertStatement_58ea948595256f5f",
+          "sourceKey": "insertStatement_5804449691d73423"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "dml.insert",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "insertStatement_a3ff5d23c609f009",
+          "sourceKey": "insertStatement_1391c2250f5db4fa"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "dml.update",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "updateStatement_5aa35d93207b908f",
+          "sourceKey": "updateStatement_c598a17c98542fc3"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "dml.upsert",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "upsertStatement_f68096a3ea11373e",
+          "sourceKey": "upsertStatement_ac858d28b353aa8d"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "dml.upsert",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "upsertStatement_00de62781cb2249c",
+          "sourceKey": "upsertStatement_c5f83d5e3824a9cc"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "dml.upsert",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "upsertStatement_122b49b96d27d93d",
+          "sourceKey": "upsertStatement_84d5760de7f5e1d5"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "dml.delete",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "deleteStatement_443a282a7068512a",
+          "sourceKey": "deleteStatement_9ba8a05ca7168bfc"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "dml.undelete",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "undeleteStatement_9bb87ac835db399e",
+          "sourceKey": "undeleteStatement_369c4e089b1725ae"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "dml.merge",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "mergeStatement_a4b16d49f7164e5c",
+          "sourceKey": "mergeStatement_6adea220b14723e0"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "dml.merge",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "mergeStatement_ea5f6ffd3f0a1d08",
+          "sourceKey": "mergeStatement_30d0068f896f4d7f"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "parameter",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_ece82d4573f88382"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "Database.insert",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "dotExpression_0c4e137a51967765",
+          "sourceKey": "dotExpression_a59e71214204485f"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "Database.update",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "dotExpression_34e07573ba4a3131",
+          "sourceKey": "dotExpression_991de1478ea32556"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "Database.delete",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "dotExpression_b0e33737cf984fd8",
+          "sourceKey": "dotExpression_96e01092f56bce6d"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "Database.upsert",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "dotExpression_111adf9d9469c6eb",
+          "sourceKey": "dotExpression_a9a3dd960339c909"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "returnType",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_d88f14eccb711f11"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_cb559a7b55205a77"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_29246c89a5adadb2",
+          "sourceKey": "query_f3ed8831bf2f1d9b"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_38b5b40ba6064840",
+          "sourceKey": "query_8c6e60bfe1cf3468"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "returnType",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_e28c1a52727ca3cd"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_3fbfa2bbf0f88989",
+          "sourceKey": "query_6cee6cc97f3fddeb"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "returnType",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_ad7f2d2a1f40cc5f"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_7c57b4051f3ef62c",
+          "sourceKey": "query_ac74383ef47f5963"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_23e27621878549ce",
+          "sourceKey": "query_fceaec7d2e107b23"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_1ca1365fba54af23",
+          "sourceKey": "query_4f26e20f4b36ec02"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_9e7fefd313b27daf",
+          "sourceKey": "query_ac5dc1d19cdbc570"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_9b916d8cbd83d9ca",
+          "sourceKey": "query_5d9d36bf42f09817"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_9a53194a2a379629",
+          "sourceKey": "query_1f55cf4ebe44d095"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_81a1d48e99a2f780"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_5f4dcfb069261fbd",
+          "sourceKey": "query_94569a6d2a4dc88c"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_358a484ba1d96da6"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_7fd622080d8bfc6e",
+          "sourceKey": "query_2412f63da6ed43ab"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_da8aab141789d0d6"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_d9ab64fcd74ebce1",
+          "sourceKey": "query_4b059f0c88f19885"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_a8ac8b61ac203509"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_40a190726320af4d",
+          "sourceKey": "query_5682ac24fef4b9a7"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "returnType",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_96f5aa83adf8fb46"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_3fb20aa34a677074",
+          "sourceKey": "query_b9d68a81bbe001f1"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_c4baca2eb15fb175"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_61a6b87b4ced23e1",
+          "sourceKey": "query_0b880ac0c5d1c6b9"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_baf5bdd758c5e7c4"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_a269627b676c50df",
+          "sourceKey": "query_7742a55d94364cc5"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_1a7e82783369787c"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_cd267d4d6d0684fa",
+          "sourceKey": "query_74751459d292a778"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_f94bcdf4f36587b1"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_8131724c7bc7178d",
+          "sourceKey": "query_d5ef7180f6d95492"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_1d979b29dc8d9d25"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_40e5f5433705a1ae",
+          "sourceKey": "query_ef910cfeeec78057"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_7cb93da7ed2f8024"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_1b0641d4d3e0fb90",
+          "sourceKey": "query_1a25c8066882d28a"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_24e5e7753f5d8522"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_f0b2acf0c7c966c5",
+          "sourceKey": "query_cd3a779b2bfb8e9d"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_2c95d10b8e598b4e"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_3be02f1ba1564a3f",
+          "sourceKey": "query_17f0e104045b09c6"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "sosl.returning",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "soslLiteral_4d940557b3d76004",
+          "sourceKey": "soslLiteral_3c8616dbfccb5b27"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "sosl.returning",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "soslLiteral_913d56765f8f4c35",
+          "sourceKey": "soslLiteral_54065221391e99dd"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "sosl.returning",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "soslLiteral_511c4adcf5d60d73",
+          "sourceKey": "soslLiteral_cf32a646646e5b5e"
+        }
+      },
+      {
+        "from": "trigger_AccountTrigger",
+        "via": "trigger.object",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\triggers\\AccountTrigger.trigger"
+      },
+      {
+        "from": "trigger_ParserTrigger",
+        "via": "trigger.object",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\triggers\\ParserTrigger.trigger"
+      },
+      {
+        "from": "trigger_ParserTrigger",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\triggers\\ParserTrigger.trigger",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_0b22a9f04cb6374b"
+        }
+      },
+      {
+        "from": "trigger_ParserTrigger",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\triggers\\ParserTrigger.trigger",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_0a9e5e742dde7eb2"
+        }
+      },
+      {
+        "from": "trigger_ParserTrigger",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\triggers\\ParserTrigger.trigger",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_ea56d5a09598b6b3"
+        }
+      },
+      {
+        "from": "trigger_ParserTrigger",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\triggers\\ParserTrigger.trigger",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_6261d85d2b52a3fb"
+        }
+      },
+      {
+        "from": "trigger_ParserTrigger",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\triggers\\ParserTrigger.trigger",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_0836c34680b366b9"
+        }
+      },
+      {
+        "from": "trigger_ParserTrigger",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\triggers\\ParserTrigger.trigger",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_bb93615242cc15d1"
+        }
+      },
+      {
+        "from": "trigger_ParserTrigger",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\triggers\\ParserTrigger.trigger",
+        "sourceKeys": {
+          "objectKey": "query_b4d7f7daf47713ae",
+          "sourceKey": "query_68097a3cead57fb4"
+        }
+      },
+      {
+        "from": "trigger_ParserTrigger",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\triggers\\ParserTrigger.trigger",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_222aef36e6b46fc7"
+        }
+      },
+      {
+        "from": "trigger_ParserTrigger",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\triggers\\ParserTrigger.trigger",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_6e715321413fae6f"
+        }
+      },
+      {
+        "from": "trigger_ParserTrigger",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\triggers\\ParserTrigger.trigger",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_66998cf642c01e25"
+        }
+      },
+      {
+        "from": "anonymous_broken",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\broken.apex",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_57fe09ac89b098f8"
+        }
+      },
+      {
+        "from": "anonymous_broken",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\broken.apex",
+        "sourceKeys": {
+          "objectKey": "query_bc12d588e569ab12",
+          "sourceKey": "query_2ccf7969867f44dc"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "typeRef_d5d25568519943c9",
+          "sourceKey": "typeRef_8517fff349b1a920"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_70e5fa53c0e4d3fd"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "new",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "newExpression_2d1a29fa7304fd84",
+          "sourceKey": "newExpression_9d2e1950d22dd74c"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_59beabf67d878192"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_a5b443f3eb9af31b"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "new",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "newExpression_e5ac8191867a2241",
+          "sourceKey": "newExpression_19bafc1b20b0427c"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_ffdd86f35184af33"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "new",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "newExpression_8e2ce747eefdd586",
+          "sourceKey": "newExpression_e1b87fa5b7e2bc92"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "new",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "newExpression_baf376d4631216e4",
+          "sourceKey": "newExpression_9498af6bf2fea401"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "new",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "newExpression_1d3665e8d225086a",
+          "sourceKey": "newExpression_9a5254d68ad3eb3c"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_d7aea6ed4d41e886"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "query_1f1492026e94e616",
+          "sourceKey": "query_7335267dded952ee"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "query_3bd3f35ead539c3c",
+          "sourceKey": "query_9918d8c8b9e8a7a5"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_9af8a064d3b4a9df"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "query_41be447b981237d9",
+          "sourceKey": "query_9573ed9993d0ecbe"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_554c90238bdb2cc0"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "query_7fd622080d8bfc6e",
+          "sourceKey": "query_c70a2b5c01eae796"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_bdac92c6dd87f2d1"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "query_431f4ff5e6b3aa19",
+          "sourceKey": "query_8516bec803327693"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_39816691bd4fc3ad"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "query_ffb13f17e834f8b7",
+          "sourceKey": "query_1aacadc8dc86abbc"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "query_859afb98814b0a53",
+          "sourceKey": "query_f54324ea6d86007c"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "sosl.returning",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "soslLiteral_8b152ce6d9832956",
+          "sourceKey": "soslLiteral_f8ef36040ac09d8f"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_72073e5f4581220e"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_561c84c1deacac2f"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "query_c733d813b5313482",
+          "sourceKey": "query_9e46c0cc49b81c45"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_fb0beec5f0b8ec57"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "query_cc8d15f0a48b0f2b",
+          "sourceKey": "query_f459bbccfd540012"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "new",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "newExpression_6ce1047f3ac37902",
+          "sourceKey": "newExpression_02c95a2ba86a3bb7"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "field",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_2afb797a5a655cc9"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_da6d536e84d6f666"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_0636741c40719fc4"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_54a05bc245281ef5"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_721b7e030c2207e6"
+        }
+      },
+      {
+        "from": "anonymous_parser",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+        "sourceKeys": {
+          "objectKey": "typeRef_4ae4432abe2a6f7e",
+          "sourceKey": "typeRef_3f8b6a6323f79f84"
+        }
+      },
+      {
+        "from": "accountList",
+        "via": "navigation",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+        "sourceKeys": {
+          "objectKey": "objectExpression_673be616d260435f",
+          "sourceKey": "objectExpression_31bfed4fc55f2421"
+        }
+      },
+      {
+        "from": "accountList",
+        "via": "meta.objects",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+        "sourceKeys": {
+          "objectKey": "lwcTargetConfig_4276d464d80a932a",
+          "sourceKey": "lwcTargetConfig_cedb27e41c143452"
+        }
+      },
+      {
+        "from": "Invoice__c",
+        "via": "referenceTo",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c",
+        "sourceKeys": {
+          "objectKey": "field_5a20d9c578f74572",
+          "sourceKey": "field_6c3612f03a822541"
+        }
+      },
+      {
+        "from": "Account-ja",
+        "via": "objectApiName",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Account-ja",
+        "sourceKeys": {
+          "objectKey": "objectTranslation_f215b3174c987177",
+          "sourceKey": "objectTranslation_99876454374dab6d"
+        }
+      },
+      {
+        "from": "profile_Sales",
+        "via": "objectPermissions.object",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
+        "sourceKeys": {
+          "objectKey": "objectPermission_e540e1a46cbfd694",
+          "sourceKey": "objectPermission_2d53d117e8849cb4"
+        }
+      },
+      {
+        "from": "flow_Account_Wizard",
+        "via": "flow.flowRecordLookup",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Account_Wizard.flow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flowRecordLookup_dc6a5aa966b4cb45",
+          "sourceKey": "flowRecordLookup_7d3e549c22554faf"
+        }
+      },
+      {
+        "from": "duplicateRule_Account.Account_Name_Duplicate",
+        "via": "fullName",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\duplicateRules\\Account.Account_Name_Duplicate.duplicateRule-meta.xml",
+        "sourceKeys": {
+          "objectKey": "duplicateRule_b454d2b657446c82",
+          "sourceKey": "duplicateRule_2d01b4ad897074ad"
+        }
+      },
+      {
+        "from": "duplicateRule_Account.Account_Name_Duplicate",
+        "via": "duplicateRuleMatchRules.matchRuleSObjectType",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\duplicateRules\\Account.Account_Name_Duplicate.duplicateRule-meta.xml",
+        "sourceKeys": {
+          "objectKey": "duplicateRuleMatchRule_30affd7b5efef2f4",
+          "sourceKey": "duplicateRuleMatchRule_d01e5653267d6fa5"
+        }
+      },
+      {
+        "from": "matchingRules_Account",
+        "via": "fullName",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\matchingRules\\Account.matchingRule-meta.xml",
+        "sourceKeys": {
+          "objectKey": "matchingRules_ee628d0a420975cf",
+          "sourceKey": "matchingRules_74e076a2d9582370"
         }
       }
     ],
@@ -483,7 +2818,7 @@
       {
         "from": "customMetadata_App_Setting.Default",
         "via": "fullName",
-        "filePath": "customMetadata/App_Setting.Default.md-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\customMetadata\\App_Setting.Default.md-meta.xml",
         "sourceKeys": {
           "objectKey": "customMetadataRecord_9941b642a67bfc92",
           "sourceKey": "customMetadataRecord_f4373c3f93c75f7a"
@@ -492,7 +2827,7 @@
       {
         "from": "customMetadata_App_Setting.Sandbox",
         "via": "fullName",
-        "filePath": "customMetadata/App_Setting.Sandbox.md-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\customMetadata\\App_Setting.Sandbox.md-meta.xml",
         "sourceKeys": {
           "objectKey": "customMetadataRecord_302bab8cf0826a10",
           "sourceKey": "customMetadataRecord_621f8f21df6ae86b"
@@ -503,12 +2838,134 @@
   },
   {
     "refType": "object",
+    "target": "Broken__c",
+    "usedBy": [
+      {
+        "from": "Broken__c-ja",
+        "via": "objectApiName",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Broken__c-ja",
+        "sourceKeys": {
+          "objectKey": "objectTranslation_99ebc79f4b1f2370",
+          "sourceKey": "objectTranslation_d3f352bd3fa4c751"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "object",
+    "target": "FAQ__kav",
+    "usedBy": [
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_c531367544583041",
+          "sourceKey": "query_2504de7eccff1b0a"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "object",
     "target": "Invoice__c",
     "usedBy": [
       {
+        "from": "Invoice_Line__c",
+        "via": "referenceTo",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice_Line__c",
+        "sourceKeys": {
+          "objectKey": "field_dbf01ecbdab951de",
+          "sourceKey": "field_0a6d60509fda0d7c"
+        }
+      },
+      {
+        "from": "Payment__c",
+        "via": "referenceTo",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Payment__c",
+        "sourceKeys": {
+          "objectKey": "field_1edc183c1b5e5395",
+          "sourceKey": "field_04beaf30fa5fb9b0"
+        }
+      },
+      {
+        "from": "Invoice__c-en_US",
+        "via": "objectApiName",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-en_US",
+        "sourceKeys": {
+          "objectKey": "objectTranslation_5cf0ba13b0464c0e",
+          "sourceKey": "objectTranslation_d3d36f3cec3f2aef"
+        }
+      },
+      {
+        "from": "Invoice__c-ja",
+        "via": "objectApiName",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+        "sourceKeys": {
+          "objectKey": "objectTranslation_7dfc2a8bbad4d897",
+          "sourceKey": "objectTranslation_53a3b33d94e742a5"
+        }
+      },
+      {
+        "from": "permissionSet_Invoice_Manager",
+        "via": "objectPermissions.object",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
+        "sourceKeys": {
+          "objectKey": "objectPermission_248af890aac730b8",
+          "sourceKey": "objectPermission_3268943b95374199"
+        }
+      },
+      {
+        "from": "permissionSet_Payment_Clerk",
+        "via": "objectPermissions.object",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Payment_Clerk.permissionset-meta.xml",
+        "sourceKeys": {
+          "objectKey": "objectPermission_ab00743a2ceb0b58",
+          "sourceKey": "objectPermission_2059fde0a3955277"
+        }
+      },
+      {
+        "from": "mutingPermissionSet_Invoice_Team_Muted",
+        "via": "objectPermissions.object",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\mutingpermissionsets\\Invoice_Team_Muted.mutingpermissionset-meta.xml",
+        "sourceKeys": {
+          "objectKey": "objectPermission_b0f1e6c05e1c1721",
+          "sourceKey": "objectPermission_f6c0b17cded170d2"
+        }
+      },
+      {
+        "from": "profile_Sales",
+        "via": "objectPermissions.object",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
+        "sourceKeys": {
+          "objectKey": "objectPermission_b4ee98627615aa0a",
+          "sourceKey": "objectPermission_ae7f5f7145fe728a"
+        }
+      },
+      {
+        "from": "flow_Invoice_Status_Update",
+        "via": "flow.flowStart",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Invoice_Status_Update.flow-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flowStart_9f727bd8e7edde4f",
+          "sourceKey": "flowStart_23ca7b8c2b7966ae"
+        }
+      },
+      {
+        "from": "flexiPage_Invoice_Record_Page",
+        "via": "sobjectType",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flexipages\\Invoice_Record_Page.flexipage-meta.xml",
+        "sourceKeys": {
+          "objectKey": "flexiPage_49ba9fd2be13ca35",
+          "sourceKey": "flexiPage_04e4d43b0076e809"
+        }
+      },
+      {
         "from": "customTab_Invoice__c",
         "via": "customObject",
-        "filePath": "tabs/Invoice__c.tab-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\tabs\\Invoice__c.tab-meta.xml",
         "sourceKeys": {
           "objectKey": "customTab_ce5e277ceb6f63e2",
           "sourceKey": "customTab_3721339e951f992d"
@@ -517,7 +2974,7 @@
       {
         "from": "customApplication_Invoice_App",
         "via": "actionOverrides.pageOrSobjectType",
-        "filePath": "applications/Invoice_App.app-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\applications\\Invoice_App.app-meta.xml",
         "sourceKeys": {
           "objectKey": "appActionOverride_e6aacd2873bccdd5",
           "sourceKey": "appActionOverride_14c30017cff80fe0"
@@ -526,7 +2983,7 @@
       {
         "from": "quickAction_Invoice__c.Approve",
         "via": "targetObject",
-        "filePath": "quickActions/Invoice__c.Approve.quickAction-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\quickActions\\Invoice__c.Approve.quickAction-meta.xml",
         "sourceKeys": {
           "objectKey": "quickAction_488c91ba34e89c31",
           "sourceKey": "quickAction_9d6c625c85502f1d"
@@ -535,55 +2992,98 @@
       {
         "from": "sharingRules_Invoice__c",
         "via": "fullName",
-        "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\sharingRules\\Invoice__c.sharingRules-meta.xml",
         "sourceKeys": {
-          "objectKey": "sharingRules_c77ab8f6b35c1616",
+          "objectKey": "sharingRules_f5a90bf36d77674c",
           "sourceKey": "sharingRules_8bbc491c64d0528d"
         }
       },
       {
         "from": "apexPage_InvoicePrint",
         "via": "markup.standardController",
-        "filePath": "pages/InvoicePrint.page-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\pages\\InvoicePrint.page-meta.xml",
         "sourceKeys": {
-          "objectKey": "visualforceMarkup_b0020e3f602b5522",
+          "objectKey": "visualforceMarkup_6efa7a39e93a04dd",
           "sourceKey": "visualforceMarkup_a4462fc44c960e86"
         }
       },
       {
         "from": "report_Invoice_Reports.Open_Invoices",
         "via": "reportType",
-        "filePath": "reports/Invoice_Reports/Open_Invoices.report-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\reports\\Invoice_Reports\\Open_Invoices.report-meta.xml",
         "sourceKeys": {
-          "objectKey": "report_9a31918763738a26",
+          "objectKey": "report_2c717e065bfe58eb",
           "sourceKey": "report_b979aed23009d2e9"
         }
       },
       {
         "from": "workflow_Invoice__c",
         "via": "fullName",
-        "filePath": "workflows/Invoice__c.workflow-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\workflows\\Invoice__c.workflow-meta.xml",
         "sourceKeys": {
-          "objectKey": "workflow_bc45a1d200620cce",
+          "objectKey": "workflow_32e675b46ce159ec",
           "sourceKey": "workflow_696f800a6edd8253"
         }
       },
       {
         "from": "approvalProcess_Invoice__c.Large_Invoice_Approval",
         "via": "fullName",
-        "filePath": "approvalProcesses/Invoice__c.Large_Invoice_Approval.approvalProcess-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\approvalProcesses\\Invoice__c.Large_Invoice_Approval.approvalProcess-meta.xml",
         "sourceKeys": {
-          "objectKey": "approvalProcess_a854833d3aaf406b",
+          "objectKey": "approvalProcess_ccd7eb037e96941e",
           "sourceKey": "approvalProcess_797f4ded05aef36f"
         }
       },
       {
         "from": "queue_Invoice_Queue",
         "via": "queueSobject",
-        "filePath": "queues/Invoice_Queue.queue-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\queues\\Invoice_Queue.queue-meta.xml",
         "sourceKeys": {
           "objectKey": "queueSobject_bdea1fb295cf5ffa",
           "sourceKey": "queueSobject_fb23c3213562ec67"
+        }
+      },
+      {
+        "from": "reportType_Invoices_with_Lines",
+        "via": "baseObject",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\reportTypes\\Invoices_with_Lines.reportType-meta.xml",
+        "sourceKeys": {
+          "objectKey": "reportType_2cce44e466e89428",
+          "sourceKey": "reportType_78dc2e1256f0f763"
+        }
+      },
+      {
+        "from": "pathAssistant_Invoice_Path",
+        "via": "entityName",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\pathAssistants\\Invoice_Path.pathAssistant-meta.xml",
+        "sourceKeys": {
+          "objectKey": "pathAssistant_309ddcfe6b619200",
+          "sourceKey": "pathAssistant_99c30416a572f920"
+        }
+      },
+      {
+        "from": "platformEventChannelMember_Invoice_Changes_chn_Invoice_ChangeEvent",
+        "via": "selectedEntity",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\platformEventChannelMembers\\Invoice_Changes_chn_Invoice_ChangeEvent.platformEventChannelMember-meta.xml",
+        "sourceKeys": {
+          "objectKey": "platformEventChannelMember_97334b6e9342a264",
+          "sourceKey": "platformEventChannelMember_44a05fdad56046f7"
+        }
+      }
+    ],
+    "status": "changed"
+  },
+  {
+    "refType": "object",
+    "target": "Knowledge__kav",
+    "usedBy": [
+      {
+        "from": "class_ParserTest",
+        "via": "soql.from",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "query_c5a7170e1378aadb",
+          "sourceKey": "query_dd417b364fc92e0f"
         }
       }
     ],
@@ -594,9 +3094,27 @@
     "target": "Payment__c",
     "usedBy": [
       {
+        "from": "permissionSet_Invoice_Manager",
+        "via": "objectPermissions.object",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
+        "sourceKeys": {
+          "objectKey": "objectPermission_55784922962ae9d2",
+          "sourceKey": "objectPermission_b8f7b5ded3d9ab4d"
+        }
+      },
+      {
+        "from": "permissionSet_Payment_Clerk",
+        "via": "objectPermissions.object",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Payment_Clerk.permissionset-meta.xml",
+        "sourceKeys": {
+          "objectKey": "objectPermission_550f3e3837060de8",
+          "sourceKey": "objectPermission_4880850c7700b8d9"
+        }
+      },
+      {
         "from": "queue_Invoice_Queue",
         "via": "queueSobject",
-        "filePath": "queues/Invoice_Queue.queue-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\queues\\Invoice_Queue.queue-meta.xml",
         "sourceKeys": {
           "objectKey": "queueSobject_86af9b2a3c801fee",
           "sourceKey": "queueSobject_b4dda947dde94dfd"
@@ -606,13 +3124,145 @@
     "status": "added"
   },
   {
+    "refType": "object",
+    "target": "Receipt__c",
+    "usedBy": [
+      {
+        "from": "permissionSet_Payment_Clerk",
+        "via": "objectPermissions.object",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Payment_Clerk.permissionset-meta.xml",
+        "sourceKeys": {
+          "objectKey": "objectPermission_938f20afa0216043",
+          "sourceKey": "objectPermission_023909c270126261"
+        }
+      }
+    ],
+    "problem": "UNKNOWN_OBJECT",
+    "status": "added"
+  },
+  {
+    "refType": "permissionSet",
+    "target": "Invoice_Manager",
+    "usedBy": [
+      {
+        "from": "permissionSetGroup_Invoice_Team",
+        "via": "permissionSets",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsetgroups\\Invoice_Team.permissionsetgroup-meta.xml",
+        "sourceKeys": {
+          "objectKey": "permissionSetGroup_977542f490e5eb01",
+          "sourceKey": "permissionSetGroup_ca71a1ddc6196f2a"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "permissionSet",
+    "target": "Invoice_Viewer",
+    "usedBy": [
+      {
+        "from": "permissionSetGroup_Invoice_Team",
+        "via": "permissionSets",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsetgroups\\Invoice_Team.permissionsetgroup-meta.xml",
+        "sourceKeys": {
+          "objectKey": "permissionSetGroup_977542f490e5eb01",
+          "sourceKey": "permissionSetGroup_ca71a1ddc6196f2a"
+        }
+      }
+    ],
+    "problem": "UNKNOWN_PERMISSION_SET",
+    "status": "unchanged"
+  },
+  {
+    "refType": "permissionSet",
+    "target": "Payment_Clerk",
+    "usedBy": [
+      {
+        "from": "permissionSetGroup_Invoice_Team",
+        "via": "permissionSets",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsetgroups\\Invoice_Team.permissionsetgroup-meta.xml",
+        "sourceKeys": {
+          "objectKey": "permissionSetGroup_977542f490e5eb01",
+          "sourceKey": "permissionSetGroup_ca71a1ddc6196f2a"
+        }
+      }
+    ],
+    "status": "added"
+  },
+  {
+    "refType": "platformEventChannel",
+    "target": "Invoice_Changes__chn",
+    "usedBy": [
+      {
+        "from": "platformEventChannelMember_Invoice_Changes_chn_Invoice_ChangeEvent",
+        "via": "eventChannel",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\platformEventChannelMembers\\Invoice_Changes_chn_Invoice_ChangeEvent.platformEventChannelMember-meta.xml",
+        "sourceKeys": {
+          "objectKey": "platformEventChannelMember_97334b6e9342a264",
+          "sourceKey": "platformEventChannelMember_44a05fdad56046f7"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "queue",
+    "target": "Invoice_Queue",
+    "usedBy": [
+      {
+        "from": "assignmentRules_Case",
+        "via": "assignmentRule.ruleEntry",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\assignmentRules\\Case.assignmentRules-meta.xml",
+        "sourceKeys": {
+          "objectKey": "assignmentRule_feda5ef86358d03d",
+          "sourceKey": "assignmentRule_cb48939bb91513ed"
+        }
+      },
+      {
+        "from": "escalationRules_Case",
+        "via": "escalationRule.ruleEntry",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\escalationRules\\Case.escalationRules-meta.xml",
+        "sourceKeys": {
+          "objectKey": "escalationRule_105d995d093220fe",
+          "sourceKey": "escalationRule_7c39548f562c44d1"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
+    "refType": "recordType",
+    "target": "Invoice__c.Standard",
+    "usedBy": [
+      {
+        "from": "Invoice__c-ja",
+        "via": "recordTypes",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+        "sourceKeys": {
+          "objectKey": "recordTypeTranslation_26c9a05cdc92e3d7",
+          "sourceKey": "recordTypeTranslation_c302b44ca1a22640"
+        }
+      },
+      {
+        "from": "permissionSet_Invoice_Manager",
+        "via": "recordTypeVisibilities.recordType",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
+        "sourceKeys": {
+          "objectKey": "recordTypeVisibility_29a6facabc64db34",
+          "sourceKey": "recordTypeVisibility_28922c73b72d3563"
+        }
+      }
+    ],
+    "status": "unchanged"
+  },
+  {
     "refType": "report",
     "target": "Invoice_Reports/Open_Invoices",
     "usedBy": [
       {
         "from": "dashboard_Invoice_Dashboards.Invoice_Overview",
         "via": "leftSection.report",
-        "filePath": "dashboards/Invoice_Dashboards/Invoice_Overview.dashboard-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\dashboards\\Invoice_Dashboards\\Invoice_Overview.dashboard-meta.xml",
         "sourceKeys": {
           "objectKey": "dashboard_5fbc2d31b51d510c",
           "sourceKey": "dashboard_4585bec515607e0d"
@@ -628,7 +3278,7 @@
       {
         "from": "role_Sales_Manager",
         "via": "parentRole",
-        "filePath": "roles/Sales_Manager.role-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\roles\\Sales_Manager.role-meta.xml",
         "sourceKeys": {
           "objectKey": "role_fa0a4cb073b9f764",
           "sourceKey": "role_81175e88a0dc70a1"
@@ -645,18 +3295,18 @@
       {
         "from": "sharingRules_Invoice__c",
         "via": "sharingCriteriaRules.sharedTo",
-        "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\sharingRules\\Invoice__c.sharingRules-meta.xml",
         "sourceKeys": {
-          "objectKey": "sharingCriteriaRule_44d2046d33cfca92",
+          "objectKey": "sharingCriteriaRule_2b9fe12391f7b00a",
           "sourceKey": "sharingCriteriaRule_0153393cdf4a4266"
         }
       },
       {
         "from": "sharingRules_Invoice__c",
         "via": "sharingCriteriaRules.sharedTo",
-        "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\sharingRules\\Invoice__c.sharingRules-meta.xml",
         "sourceKeys": {
-          "objectKey": "sharingCriteriaRule_463cddb3e054da83",
+          "objectKey": "sharingCriteriaRule_8933548d0a91825a",
           "sourceKey": "sharingCriteriaRule_83d322fd43604732"
         }
       }
@@ -664,36 +3314,52 @@
     "status": "changed"
   },
   {
-    "refType": "visualforceComponent",
-    "target": "invoiceHeader",
+    "refType": "validationRule",
+    "target": "Account.Name_Required",
     "usedBy": [
       {
-        "from": "apexPage_InvoicePrint",
-        "via": "markup.components",
-        "filePath": "pages/InvoicePrint.page-meta.xml",
+        "from": "Account-ja",
+        "via": "validationRules",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Account-ja",
         "sourceKeys": {
-          "objectKey": "visualforceMarkup_b0020e3f602b5522",
-          "sourceKey": "visualforceMarkup_a4462fc44c960e86"
+          "objectKey": "validationRuleTranslation_94b4c2c38b99b070",
+          "sourceKey": "validationRuleTranslation_743470e4ad806af4"
+        }
+      }
+    ],
+    "status": "added"
+  },
+  {
+    "refType": "validationRule",
+    "target": "Invoice__c.Amount_Positive",
+    "usedBy": [
+      {
+        "from": "Invoice__c-ja",
+        "via": "validationRules",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+        "sourceKeys": {
+          "objectKey": "validationRuleTranslation_bb966b9406089386",
+          "sourceKey": "validationRuleTranslation_961e1937b6216236"
         }
       }
     ],
     "status": "unchanged"
   },
   {
-    "refType": "customLabel",
-    "target": "BannerMessage",
+    "refType": "webLink",
+    "target": "Invoice__c.Send_Invoice",
     "usedBy": [
       {
-        "from": "translations_ja",
-        "via": "customLabels",
-        "filePath": "translations/ja.translation-meta.xml",
+        "from": "Invoice__c-ja",
+        "via": "webLinks",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
         "sourceKeys": {
-          "objectKey": "labelTranslation_4e0823fa74c3d785",
-          "sourceKey": "labelTranslation_f23929f4bd69efa4"
+          "objectKey": "webLinkTranslation_2c420ec1b4e554f0",
+          "sourceKey": "webLinkTranslation_5871df9a7a22bb22"
         }
       }
     ],
-    "status": "removed"
+    "status": "unchanged"
   },
   {
     "refType": "emailTemplate",
@@ -702,7 +3368,7 @@
       {
         "from": "workflow_Invoice__c",
         "via": "alerts.template",
-        "filePath": "workflows/Invoice__c.workflow-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\workflows\\Invoice__c.workflow-meta.xml",
         "sourceKeys": {
           "objectKey": "workflowAlert_66ef8ae0464775af",
           "sourceKey": "workflowAlert_9d2bf8c75c4b7932"
@@ -713,15 +3379,31 @@
   },
   {
     "refType": "field",
-    "target": "Invoice__c.Due_Date__c",
+    "target": "Broken__c.Code__c",
     "usedBy": [
       {
-        "from": "report_Invoice_Reports.Open_Invoices",
-        "via": "columns",
-        "filePath": "reports/Invoice_Reports/Open_Invoices.report-meta.xml",
+        "from": "Broken__c-ja",
+        "via": "fields",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\objectTranslations\\Broken__c-ja",
         "sourceKeys": {
-          "objectKey": "reportColumn_1bc96c00bd34cfdd",
-          "sourceKey": "reportColumn_ac8910ba96c594fb"
+          "objectKey": "fieldTranslation_2d04985c0ea2e025",
+          "sourceKey": "fieldTranslation_ac7b864be35b8a2c"
+        }
+      }
+    ],
+    "status": "removed"
+  },
+  {
+    "refType": "field",
+    "target": "Legacy_Item__c.Invoice__c",
+    "usedBy": [
+      {
+        "from": "Legacy_Item__c-ja",
+        "via": "fields",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\objectTranslations\\Legacy_Item__c-ja",
+        "sourceKeys": {
+          "objectKey": "fieldTranslation_4844ed45c5971a6e",
+          "sourceKey": "fieldTranslation_442eb4ee3001b55d"
         }
       }
     ],
@@ -734,10 +3416,26 @@
       {
         "from": "customApplication_Invoice_App",
         "via": "actionOverrides.content",
-        "filePath": "applications/Invoice_App.app-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\applications\\Invoice_App.app-meta.xml",
         "sourceKeys": {
           "objectKey": "appActionOverride_ef997c64177685ab",
           "sourceKey": "appActionOverride_fe118d800a5d06fc"
+        }
+      }
+    ],
+    "status": "removed"
+  },
+  {
+    "refType": "object",
+    "target": "Legacy_Item__c",
+    "usedBy": [
+      {
+        "from": "Legacy_Item__c-ja",
+        "via": "objectApiName",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\objectTranslations\\Legacy_Item__c-ja",
+        "sourceKeys": {
+          "objectKey": "objectTranslation_eeb73ded9a4088ea",
+          "sourceKey": "objectTranslation_142972ca2b4932a1"
         }
       }
     ],

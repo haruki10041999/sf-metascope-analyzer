@@ -30,9 +30,8 @@
 - 読めなかったファイル **added**: Broken__c/fields/Misplaced__c.field-meta.xml L2 <CustomField> expected but <ValidationRule> found
 
 - **changed** object Broken__c (key) — Broken__c/Broken__c.object-meta.xml L2
-  - **removed** field Code__c — Broken__c/fields/Code__c.field-meta.xml L2
-  - **added** error — Broken__c/fields/Code__c.field-meta.xml L5
-  - **added** error — Broken__c/fields/Misplaced__c.field-meta.xml L2
+  - **removed** fields
+    - field Code__c — Broken__c/fields/Code__c.field-meta.xml L2
 
 ## Invoice__c
 
@@ -57,12 +56,12 @@
   - **added** validationRule Due_Date_Required — Invoice__c/validationRules/Due_Date_Required.validationRule-meta.xml L2
   - **changed** recordType Standard (key) — Invoice__c/recordTypes/Standard.recordType-meta.xml L2
     - **changed** recordTypePicklist Status__c (key) — Invoice__c/recordTypes/Standard.recordType-meta.xml L6
-      - **removed** values Sent: {"fullName":"Sent","default":false}
-      - **added** values Overdue: {"fullName":"Overdue","default":false}
+      - **removed** picklistValueSelection Sent — Invoice__c/recordTypes/Standard.recordType-meta.xml L12
+      - **added** picklistValueSelection Overdue — Invoice__c/recordTypes/Standard.recordType-meta.xml L12
   - **changed** fieldSet Summary (key) — Invoice__c/fieldSets/Summary.fieldSet-meta.xml L2
     - **moved** displayedFields (identical)
   - **changed** webLink Send_Invoice (key) — Invoice__c/webLinks/Send_Invoice.webLink-meta.xml L2
-    - **changed** url: "/apex/SendInvoice?id={!Invoice__c.Id}" → "/lightning/cmp/c__sendInvoice?c__id={!Invoice__c.Id}"
+    - **changed** fxTemplate: {"parts":["/apex/SendInvoice?id=",{"kind":"fxMerge","sourceKeys":{"objectKey":"f… → {"parts":["/lightning/cmp/c__sendInvoice?c__id=",{"kind":"fxMerge","sourceKeys":… — Invoice__c/webLinks/Send_Invoice.webLink-meta.xml L10
   - **changed** sharingReason Approver__c (key) — Invoice__c/sharingReasons/Approver__c.sharingReason-meta.xml L2
     - **changed** label: "Approver" → "Invoice Approver"
   - **removed** customTabListAdditionalFields: "Due_Date__c"
@@ -88,7 +87,7 @@
 - **changed** object Opportunity (key) — Opportunity/Opportunity.object-meta.xml L2
   - **changed** businessProcess Standard_Sales (key) — Opportunity/businessProcesses/Standard_Sales.businessProcess-meta.xml L2
     - **changed** description: "標準の営業プロセス" → "標準の営業プロセス (交渉を含む)"
-    - **added** values Negotiation/Review: {"fullName":"Negotiation/Review","default":false}
+    - **added** picklistValueSelection Negotiation/Review — Opportunity/businessProcesses/Standard_Sales.businessProcess-meta.xml L14
 
 ## Payment__c
 
@@ -106,8 +105,8 @@
 - 読めなかったファイル **added**: Broken__c-ja/Code__c.fieldTranslation-meta.xml L3 </label> expected but </lable> found
 
 - **changed** objectTranslation (key) — Broken__c-ja/Broken__c-ja.objectTranslation-meta.xml L2
-  - **removed** fieldTranslation Code__c — Broken__c-ja/Code__c.fieldTranslation-meta.xml L2
-  - **added** error — Broken__c-ja/Code__c.fieldTranslation-meta.xml L3
+  - **removed** fields
+    - fieldTranslation Code__c — Broken__c-ja/Code__c.fieldTranslation-meta.xml L2
 
 ## Invoice__c-en_US
 

@@ -219,7 +219,7 @@ export const getFlexiPageDetails = (input: SnapshotInput, names?: string[]): Fle
                                         item.itemType === 'component'
                                             ? item.componentName
                                             : item.fieldItem,
-                                    properties: item.properties ?? {},
+                                    properties: item.attributes ?? {},
                                     hasVisibilityRule: item.visibilityRule !== undefined,
                                     ...(moved ? { movedFrom: c.before!.region } : {}),
                                 };

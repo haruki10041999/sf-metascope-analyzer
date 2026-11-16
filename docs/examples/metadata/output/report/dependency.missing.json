@@ -1,0 +1,242 @@
+[
+  {
+    "code": "UNKNOWN_FIELD",
+    "severity": "warning",
+    "target": "field:Account.Interests__c",
+    "from": "apexMethod:ParserTest.whereSoql",
+    "unit": "apexClass:ParserTest",
+    "message": "field Account.Interests__c is not in the repository (apexClass class_ParserTest, soql.where)",
+    "sourceKeys": {
+      "objectKey": "query_3fbfa2bbf0f88989",
+      "sourceKey": "query_6cee6cc97f3fddeb"
+    }
+  },
+  {
+    "code": "UNKNOWN_FIELD",
+    "severity": "warning",
+    "target": "field:Account.Birthdate__c",
+    "from": "apexMethod:ParserTest.whereSoql",
+    "unit": "apexClass:ParserTest",
+    "message": "field Account.Birthdate__c is not in the repository (apexClass class_ParserTest, soql.where)",
+    "sourceKeys": {
+      "objectKey": "query_3fbfa2bbf0f88989",
+      "sourceKey": "query_6cee6cc97f3fddeb"
+    }
+  },
+  {
+    "code": "UNKNOWN_LWC",
+    "severity": "warning",
+    "target": "lwc:errorPanel",
+    "from": "lwc:accountList",
+    "unit": "lwc:accountList",
+    "message": "lwc errorPanel is not in the repository (lwc accountList, template)",
+    "sourceKeys": {
+      "objectKey": "lwcElement_ba6a69ced1e1eb24",
+      "sourceKey": "lwcElement_fa191c2761e26688"
+    }
+  },
+  {
+    "code": "UNKNOWN_LWC",
+    "severity": "warning",
+    "target": "lwc:child",
+    "from": "lwc:broken",
+    "unit": "lwc:broken",
+    "message": "lwc child is not in the repository (lwc broken, template)",
+    "sourceKeys": {
+      "objectKey": "lwcElement_b5ab7359048d42ad",
+      "sourceKey": "lwcElement_dcd2df94fbc96369"
+    }
+  },
+  {
+    "code": "UNKNOWN_CUSTOM_LABEL",
+    "severity": "warning",
+    "target": "customLabel:BannerMessage",
+    "from": "lwc:newBanner",
+    "unit": "lwc:newBanner",
+    "message": "customLabel BannerMessage is not in the repository (lwc newBanner, import)",
+    "sourceKeys": {
+      "objectKey": "importDeclaration_b1d1e50d1ee13f4a",
+      "sourceKey": "importDeclaration_e988dfac11d6694e"
+    }
+  },
+  {
+    "code": "UNKNOWN_FIELD",
+    "severity": "warning",
+    "target": "field:Invoice__c.Note__c",
+    "from": "objectTranslation:Invoice__c-ja",
+    "unit": "objectTranslation:Invoice__c-ja",
+    "message": "field Invoice__c.Note__c is not in the repository (objectTranslation Invoice__c-ja, fields)",
+    "sourceKeys": {
+      "objectKey": "fieldTranslation_127d7ee147661ce3",
+      "sourceKey": "fieldTranslation_4fb21aac7bf9d56d"
+    }
+  },
+  {
+    "code": "UNKNOWN_FIELD",
+    "severity": "warning",
+    "target": "field:Invoice__c.Missing__c",
+    "from": "permissionSet:Invoice_Manager",
+    "unit": "permissionSet:Invoice_Manager",
+    "message": "field Invoice__c.Missing__c is not in the repository (permissionSet permissionSet_Invoice_Manager, fieldPermissions.field)",
+    "sourceKeys": {
+      "objectKey": "fieldPermission_25a2eabf84d5a698",
+      "sourceKey": "fieldPermission_7a4e2c75d3aeb07a"
+    }
+  },
+  {
+    "code": "UNKNOWN_OBJECT",
+    "severity": "warning",
+    "target": "object:Receipt__c",
+    "from": "permissionSet:Payment_Clerk",
+    "unit": "permissionSet:Payment_Clerk",
+    "message": "object Receipt__c is not in the repository (permissionSet permissionSet_Payment_Clerk, objectPermissions.object)",
+    "sourceKeys": {
+      "objectKey": "objectPermission_938f20afa0216043",
+      "sourceKey": "objectPermission_023909c270126261"
+    }
+  },
+  {
+    "code": "UNKNOWN_APEX_CLASS",
+    "severity": "warning",
+    "target": "apexClass:PaymentService",
+    "from": "permissionSet:Payment_Clerk",
+    "unit": "permissionSet:Payment_Clerk",
+    "message": "apexClass PaymentService is not in the repository (permissionSet permissionSet_Payment_Clerk, classAccesses.apexClass)",
+    "sourceKeys": {
+      "objectKey": "classAccess_02cb20c07a614a8e",
+      "sourceKey": "classAccess_4e3e921febc7217b"
+    }
+  },
+  {
+    "code": "UNKNOWN_FLOW",
+    "severity": "warning",
+    "target": "flow:Login_Check",
+    "from": "profile:Sales",
+    "unit": "profile:Sales",
+    "message": "flow Login_Check is not in the repository (profile profile_Sales, loginFlows.flow)",
+    "sourceKeys": {
+      "objectKey": "loginFlow_c79b77657c881c44",
+      "sourceKey": "loginFlow_c2a35eeaace313c0"
+    }
+  },
+  {
+    "code": "UNKNOWN_PERMISSION_SET",
+    "severity": "warning",
+    "target": "permissionSet:Invoice_Viewer",
+    "from": "permissionSetGroup:Invoice_Team",
+    "unit": "permissionSetGroup:Invoice_Team",
+    "message": "permissionSet Invoice_Viewer is not in the repository (permissionSetGroup permissionSetGroup_Invoice_Team, permissionSets)",
+    "sourceKeys": {
+      "objectKey": "permissionSetGroup_977542f490e5eb01",
+      "sourceKey": "permissionSetGroup_ca71a1ddc6196f2a"
+    }
+  },
+  {
+    "code": "UNKNOWN_FIELD",
+    "severity": "warning",
+    "target": "field:Account.Unknown__c",
+    "from": "flow:Account_Wizard",
+    "unit": "flow:Account_Wizard",
+    "message": "field Account.Unknown__c is not in the repository (flow flow_Account_Wizard, flow.flowRecordLookup)",
+    "sourceKeys": {
+      "objectKey": "flowRecordLookup_dc6a5aa966b4cb45",
+      "sourceKey": "flowRecordLookup_7d3e549c22554faf"
+    }
+  },
+  {
+    "code": "UNKNOWN_LWC",
+    "severity": "warning",
+    "target": "lwc:missingChart",
+    "from": "flow:Account_Wizard",
+    "unit": "flow:Account_Wizard",
+    "message": "lwc missingChart is not in the repository (flow flow_Account_Wizard, flow.flowScreen)",
+    "sourceKeys": {
+      "objectKey": "flowScreen_09fb9feb6a5f3f31",
+      "sourceKey": "flowScreen_da78defa1b5d2b8a"
+    }
+  },
+  {
+    "code": "UNKNOWN_FIELD",
+    "severity": "warning",
+    "target": "field:Account.Missing__c",
+    "from": "layout:Account-Account Layout",
+    "unit": "layout:Account-Account Layout",
+    "message": "field Account.Missing__c is not in the repository (layout layout_Account-Account Layout, items.field)",
+    "sourceKeys": {
+      "objectKey": "layoutItem_302e9fb7ab4081bb",
+      "sourceKey": "layoutItem_c766fc743282482a"
+    }
+  },
+  {
+    "code": "UNKNOWN_FIELD",
+    "severity": "warning",
+    "target": "field:Invoice__c.Missing__c",
+    "from": "flexiPage:Invoice_Record_Page",
+    "unit": "flexiPage:Invoice_Record_Page",
+    "message": "field Invoice__c.Missing__c is not in the repository (flexiPage flexiPage_Invoice_Record_Page, fields.fieldItem)",
+    "sourceKeys": {
+      "objectKey": "flexiPageField_f522e46504069696",
+      "sourceKey": "flexiPageField_760854506638aa36"
+    }
+  },
+  {
+    "code": "UNKNOWN_FLEXI_PAGE",
+    "severity": "warning",
+    "target": "flexiPage:Invoice_Record_Page_V2",
+    "from": "customApplication:Invoice_App",
+    "unit": "customApplication:Invoice_App",
+    "message": "flexiPage Invoice_Record_Page_V2 is not in the repository (customApplication customApplication_Invoice_App, actionOverrides.content)",
+    "sourceKeys": {
+      "objectKey": "appActionOverride_e6aacd2873bccdd5",
+      "sourceKey": "appActionOverride_14c30017cff80fe0"
+    }
+  },
+  {
+    "code": "UNKNOWN_APEX_CLASS",
+    "severity": "warning",
+    "target": "apexClass:InvoicePrintExt",
+    "from": "apexPage:InvoicePrint",
+    "unit": "apexPage:InvoicePrint",
+    "message": "apexClass InvoicePrintExt is not in the repository (apexPage apexPage_InvoicePrint, markup.extensions)",
+    "sourceKeys": {
+      "objectKey": "visualforceMarkup_6efa7a39e93a04dd",
+      "sourceKey": "visualforceMarkup_a4462fc44c960e86"
+    }
+  },
+  {
+    "code": "UNKNOWN_APEX_CLASS",
+    "severity": "warning",
+    "target": "apexClass:InvoiceController",
+    "from": "aura:invoiceCard",
+    "unit": "aura:invoiceCard",
+    "message": "apexClass InvoiceController is not in the repository (aura aura_invoiceCard, controller)",
+    "sourceKeys": {
+      "objectKey": "auraBundle_ae4e8ae75454db28",
+      "sourceKey": "auraBundle_e4e8002a84c6c7e8"
+    }
+  },
+  {
+    "code": "UNKNOWN_AURA",
+    "severity": "warning",
+    "target": "aura:invoiceSelectedEvent",
+    "from": "aura:invoiceCard",
+    "unit": "aura:invoiceCard",
+    "message": "aura invoiceSelectedEvent is not in the repository (aura aura_invoiceCard, registerEvents)",
+    "sourceKeys": {
+      "objectKey": "auraRegisterEvent_4b6a1b3266c64687",
+      "sourceKey": "auraRegisterEvent_2adfe1c3e55a764e"
+    }
+  },
+  {
+    "code": "UNKNOWN_ROLE",
+    "severity": "warning",
+    "target": "role:CEO",
+    "from": "role:Sales_Manager",
+    "unit": "role:Sales_Manager",
+    "message": "role CEO is not in the repository (role role_Sales_Manager, parentRole)",
+    "sourceKeys": {
+      "objectKey": "role_fa0a4cb073b9f764",
+      "sourceKey": "role_81175e88a0dc70a1"
+    }
+  }
+]

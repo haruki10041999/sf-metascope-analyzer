@@ -3,7 +3,6 @@ export * from './declaration';
 export * from './meta';
 export * from './modifier';
 export * from './param';
-export * from './primary';
 export * from './query';
 export * from './statement';
 export * from './type';

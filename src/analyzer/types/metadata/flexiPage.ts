@@ -13,6 +13,13 @@ import {
     type XmlReadProblem,
     type XmlSourceRegistry,
 } from '../commons/xmlJson';
+import {
+    type CriterionJson,
+    type CriterionNames,
+    type FilterLogicValue,
+    readCriteria,
+    readFilterLogic,
+} from './criteria';
 
 // Lightning ページ (flexipages/<名前>.flexipage-meta.xml) の JSON。方針: docs/metadata-implementation.md 10 章
 // リージョン・部品・項目は平らな並びにし、部品・項目は置かれているリージョンの名前 (region) を持つ
@@ -28,10 +35,16 @@ export const FLEXI_PAGE_SCHEMA = {
     pageTemplate: 'string',
 } as const;
 
-/** 表示条件 (visibilityRule) */
+/** 表示条件 (visibilityRule)。条件の行は leftValue・operator・rightValue を criterion にしたもの (段階 M5) */
 export type FlexiPageVisibilityRule = {
-    booleanFilter?: string;
-    criteria: { leftValue?: string; operator?: string; rightValue?: string }[];
+    booleanFilter?: FilterLogicValue;
+    criteria: CriterionJson[];
+};
+
+const VISIBILITY_CRITERION_NAMES: CriterionNames = {
+    left: 'leftValue',
+    operator: 'operator',
+    value: 'rightValue',
 };
 
 export type FlexiPageRegionJson = JsonType<'flexiPageRegion'> & {
@@ -49,8 +62,13 @@ export type FlexiPageComponentJson = JsonType<'flexiPageComponent'> & {
     identifier: string;
     componentName: string;
     region: string;
-    /** componentInstanceProperties (名前 → 値) */
-    properties?: Record<string, string>;
+    /** componentInstanceProperties (名前 → 値)。段階 M8 で properties から改名 (Flow・設定の properties は値の木で形が違う) */
+    attributes?: Record<string, string>;
+    /**
+     * componentInstanceProperties のうち、値が並び (valueList) のもの (名前 → 値の並び)。
+     * 動的な関連リストの項目など。段階 M3 で足した (以前は value だけを読み、並びは消えていた)
+     */
+    valueLists?: Record<string, string[]>;
     visibilityRule?: FlexiPageVisibilityRule;
 };
 
@@ -59,7 +77,8 @@ export type FlexiPageFieldJson = JsonType<'flexiPageField'> & {
     identifier: string;
     fieldItem: string;
     region: string;
-    properties?: Record<string, string>;
+    /** fieldInstanceProperties (名前 → 値。段階 M8 で properties から改名) */
+    attributes?: Record<string, string>;
     visibilityRule?: FlexiPageVisibilityRule;
 };
 
@@ -67,8 +86,8 @@ export type FlexiPageJson = JsonType<'flexiPage'> & {
     name: string;
     /** template の name (flexipage:recordHomeTemplateDesktop など) */
     template?: string;
-    /** template の properties */
-    templateProperties?: Record<string, string>;
+    /** template の properties (名前 → 値。段階 M8 で templateProperties から改名) */
+    templateAttributes?: Record<string, string>;
     regions?: FlexiPageRegionJson[];
     components?: FlexiPageComponentJson[];
     fields?: FlexiPageFieldJson[];
@@ -84,23 +103,47 @@ const readNameValues = (element: XmlElement, name: string): Record<string, strin
         ]),
     );
 
-const propertiesEntry = (properties: Record<string, string>) =>
-    Object.keys(properties).length ? { properties } : {};
+const attributesEntry = (attributes: Record<string, string>) =>
+    Object.keys(attributes).length ? { attributes } : {};
 
-const readVisibilityRule = (element: XmlElement): { visibilityRule?: FlexiPageVisibilityRule } => {
+/** <name>…</name><valueList><valueListItems><value>…</value></valueListItems>…</valueList> の並び */
+const readValueLists = (element: XmlElement, name: string): Record<string, string[]> =>
+    Object.fromEntries(
+        childrenOf(element, name).flatMap((property) => {
+            const list = childOf(property, 'valueList');
+            return list
+                ? [
+                      [
+                          readText(property, 'name') ?? '',
+                          childrenOf(list, 'valueListItems').map(
+                              (item) => readText(item, 'value') ?? '',
+                          ),
+                      ],
+                  ]
+                : [];
+        }),
+    );
+
+const valueListsEntry = (valueLists: Record<string, string[]>) =>
+    Object.keys(valueLists).length ? { valueLists } : {};
+
+const readVisibilityRule = (
+    element: XmlElement,
+    file: XmlFile,
+    registry: XmlSourceRegistry,
+): { visibilityRule?: FlexiPageVisibilityRule } => {
     const rule = childOf(element, 'visibilityRule');
     if (!rule) return {};
-    const booleanFilter = readText(rule, 'booleanFilter');
+    const booleanFilter = childOf(rule, 'booleanFilter');
     return {
         visibilityRule: {
-            ...(booleanFilter !== undefined ? { booleanFilter } : {}),
-            criteria: childrenOf(rule, 'criteria').map((criteria) =>
-                readProperties(criteria, {
-                    leftValue: 'string',
-                    operator: 'string',
-                    rightValue: 'string',
-                }),
-            ),
+            ...(booleanFilter
+                ? { booleanFilter: readFilterLogic(booleanFilter, { file, registry }) }
+                : {}),
+            criteria: readCriteria(rule, 'criteria', VISIBILITY_CRITERION_NAMES, {
+                file,
+                registry,
+            }),
         },
     };
 };
@@ -127,10 +170,13 @@ const makeItems = (
                             `${regionName}:${componentName}:${index + 1}`,
                         componentName,
                         region: regionName,
-                        ...propertiesEntry(
+                        ...attributesEntry(
                             readNameValues(component, 'componentInstanceProperties'),
                         ),
-                        ...readVisibilityRule(component),
+                        ...valueListsEntry(
+                            readValueLists(component, 'componentInstanceProperties'),
+                        ),
+                        ...readVisibilityRule(component, file, registry),
                     },
                     component,
                     file,
@@ -149,8 +195,8 @@ const makeItems = (
                         identifier: readText(field, 'identifier') ?? `${regionName}:${fieldItem}`,
                         fieldItem,
                         region: regionName,
-                        ...propertiesEntry(readNameValues(field, 'fieldInstanceProperties')),
-                        ...readVisibilityRule(field),
+                        ...attributesEntry(readNameValues(field, 'fieldInstanceProperties')),
+                        ...readVisibilityRule(field, file, registry),
                     },
                     field,
                     file,
@@ -193,7 +239,7 @@ export const makeFlexiPageJson = (
     });
     const template = childOf(root, 'template');
     const templateName = template ? readText(template, 'name') : undefined;
-    const templateProperties = template ? readNameValues(template, 'properties') : {};
+    const templateAttributes = template ? readNameValues(template, 'properties') : {};
 
     return makeMetadataJson<FlexiPageJson>(
         'flexiPage',
@@ -201,7 +247,7 @@ export const makeFlexiPageJson = (
             name: file.name,
             ...readProperties(root, FLEXI_PAGE_SCHEMA),
             ...(templateName !== undefined ? { template: templateName } : {}),
-            ...(Object.keys(templateProperties).length ? { templateProperties } : {}),
+            ...(Object.keys(templateAttributes).length ? { templateAttributes } : {}),
             ...nonEmptyEntry('regions', regions),
             ...nonEmptyEntry(
                 'components',

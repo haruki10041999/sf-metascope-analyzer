@@ -7,7 +7,7 @@
     "base": {
       "kind": "auraBundle",
       "sourceKeys": {
-        "objectKey": "auraBundle_0cc819767d59ab0b",
+        "objectKey": "auraBundle_1cc648385acd2f50",
         "sourceKey": "auraBundle_2f030bba3c653a82"
       },
       "name": "invoiceCard",
@@ -69,18 +69,163 @@
           }
         }
       ],
-      "components": [
-        "c:accountList",
-        "lightning:button",
-        "lightning:card"
-      ],
-      "expressions": [
-        "$Label.c.AccountListTitle",
-        "c.doInit",
-        "c.handleClick",
-        "this",
-        "v.invoice.Name",
-        "v.recordId"
+      "body": [
+        {
+          "kind": "markupElement",
+          "sourceKeys": {
+            "objectKey": "markupElement_490edccae82f83d9",
+            "sourceKey": "markupElement_60429db745d97d34"
+          },
+          "tag": "lightning:card",
+          "attributes": [
+            {
+              "name": "title",
+              "value": {
+                "kind": "fxTemplate",
+                "sourceKeys": {
+                  "objectKey": "fxTemplate_254c742b1c922a29",
+                  "sourceKey": "fxTemplate_34367baf308b8ff5"
+                },
+                "parts": [
+                  {
+                    "kind": "fxMerge",
+                    "sourceKeys": {
+                      "objectKey": "fxMerge_ec7631a2cd2eaebe",
+                      "sourceKey": "fxMerge_34367baf308b8ff5"
+                    },
+                    "expression": {
+                      "kind": "fxName",
+                      "sourceKeys": {
+                        "objectKey": "fxName_45bfa1fdc7f89acd",
+                        "sourceKey": "fxName_88f4af4304c8e716"
+                      },
+                      "path": [
+                        "v",
+                        "invoice",
+                        "Name"
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "children": [
+            {
+              "kind": "markupElement",
+              "sourceKeys": {
+                "objectKey": "markupElement_2bf4ee50e17b0b7d",
+                "sourceKey": "markupElement_8a81bd6b458c5762"
+              },
+              "tag": "c:accountList",
+              "attributes": [
+                {
+                  "name": "recordId",
+                  "value": {
+                    "kind": "fxTemplate",
+                    "sourceKeys": {
+                      "objectKey": "fxTemplate_3e9130b1698d0233",
+                      "sourceKey": "fxTemplate_3229cadda319ec0d"
+                    },
+                    "parts": [
+                      {
+                        "kind": "fxMerge",
+                        "sourceKeys": {
+                          "objectKey": "fxMerge_d17b115a75a5f027",
+                          "sourceKey": "fxMerge_3229cadda319ec0d"
+                        },
+                        "expression": {
+                          "kind": "fxName",
+                          "sourceKeys": {
+                            "objectKey": "fxName_9d47365440471700",
+                            "sourceKey": "fxName_01ffc7eb51b1ac19"
+                          },
+                          "path": [
+                            "v",
+                            "recordId"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "children": []
+            },
+            {
+              "kind": "markupElement",
+              "sourceKeys": {
+                "objectKey": "markupElement_3a49b284b4fb974d",
+                "sourceKey": "markupElement_14a3dba3b8d33b13"
+              },
+              "tag": "lightning:button",
+              "attributes": [
+                {
+                  "name": "label",
+                  "value": {
+                    "kind": "fxTemplate",
+                    "sourceKeys": {
+                      "objectKey": "fxTemplate_2172631d56d3a77f",
+                      "sourceKey": "fxTemplate_710f6f09a2858fc6"
+                    },
+                    "parts": [
+                      {
+                        "kind": "fxMerge",
+                        "sourceKeys": {
+                          "objectKey": "fxMerge_9d57e9b13c092b30",
+                          "sourceKey": "fxMerge_710f6f09a2858fc6"
+                        },
+                        "expression": {
+                          "kind": "fxName",
+                          "sourceKeys": {
+                            "objectKey": "fxName_8727c9984c39e825",
+                            "sourceKey": "fxName_c21e3722d1211ef7"
+                          },
+                          "path": [
+                            "$Label",
+                            "c",
+                            "AccountListTitle"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "name": "onclick",
+                  "value": {
+                    "kind": "fxTemplate",
+                    "sourceKeys": {
+                      "objectKey": "fxTemplate_a3377315cd0f657f",
+                      "sourceKey": "fxTemplate_01d18e5481caac1a"
+                    },
+                    "parts": [
+                      {
+                        "kind": "fxMerge",
+                        "sourceKeys": {
+                          "objectKey": "fxMerge_487c21ba63c4e481",
+                          "sourceKey": "fxMerge_01d18e5481caac1a"
+                        },
+                        "expression": {
+                          "kind": "fxName",
+                          "sourceKeys": {
+                            "objectKey": "fxName_ee826d8bd12ad335",
+                            "sourceKey": "fxName_408bc0aa1a6ef0a4"
+                          },
+                          "path": [
+                            "c",
+                            "handleClick"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "children": []
+            }
+          ]
+        }
       ],
       "javascript": {
         "controller": [
@@ -210,7 +355,307 @@
         ]
       },
       {
-        "objectKey": "auraBundle_0cc819767d59ab0b",
+        "objectKey": "fxName_45bfa1fdc7f89acd",
+        "context": "v.invoice.Name",
+        "source": [
+          {
+            "sourceKey": "fxName_88f4af4304c8e716",
+            "filePath": "aura/invoiceCard/invoiceCard.cmp",
+            "start": {
+              "offset": 419,
+              "line": 6,
+              "column": 29
+            },
+            "end": {
+              "offset": 433,
+              "line": 6,
+              "column": 43
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxMerge_ec7631a2cd2eaebe",
+        "context": "{!v.invoice.Name}",
+        "source": [
+          {
+            "sourceKey": "fxMerge_34367baf308b8ff5",
+            "filePath": "aura/invoiceCard/invoiceCard.cmp",
+            "start": {
+              "offset": 417,
+              "line": 6,
+              "column": 27
+            },
+            "end": {
+              "offset": 434,
+              "line": 6,
+              "column": 44
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxTemplate_254c742b1c922a29",
+        "context": "{!v.invoice.Name}",
+        "source": [
+          {
+            "sourceKey": "fxTemplate_34367baf308b8ff5",
+            "filePath": "aura/invoiceCard/invoiceCard.cmp",
+            "start": {
+              "offset": 417,
+              "line": 6,
+              "column": 27
+            },
+            "end": {
+              "offset": 434,
+              "line": 6,
+              "column": 44
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxName_9d47365440471700",
+        "context": "v.recordId",
+        "source": [
+          {
+            "sourceKey": "fxName_01ffc7eb51b1ac19",
+            "filePath": "aura/invoiceCard/invoiceCard.cmp",
+            "start": {
+              "offset": 472,
+              "line": 7,
+              "column": 35
+            },
+            "end": {
+              "offset": 482,
+              "line": 7,
+              "column": 45
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxMerge_d17b115a75a5f027",
+        "context": "{!v.recordId}",
+        "source": [
+          {
+            "sourceKey": "fxMerge_3229cadda319ec0d",
+            "filePath": "aura/invoiceCard/invoiceCard.cmp",
+            "start": {
+              "offset": 470,
+              "line": 7,
+              "column": 33
+            },
+            "end": {
+              "offset": 483,
+              "line": 7,
+              "column": 46
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxTemplate_3e9130b1698d0233",
+        "context": "{!v.recordId}",
+        "source": [
+          {
+            "sourceKey": "fxTemplate_3229cadda319ec0d",
+            "filePath": "aura/invoiceCard/invoiceCard.cmp",
+            "start": {
+              "offset": 470,
+              "line": 7,
+              "column": 33
+            },
+            "end": {
+              "offset": 483,
+              "line": 7,
+              "column": 46
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "markupElement_2bf4ee50e17b0b7d",
+        "context": "<c:accountList recordId=\"{!v.recordId}\"/>",
+        "source": [
+          {
+            "sourceKey": "markupElement_8a81bd6b458c5762",
+            "filePath": "aura/invoiceCard/invoiceCard.cmp",
+            "start": {
+              "offset": 445,
+              "line": 7,
+              "column": 8
+            },
+            "end": {
+              "offset": 486,
+              "line": 7,
+              "column": 49
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxName_8727c9984c39e825",
+        "context": "$Label.c.AccountListTitle",
+        "source": [
+          {
+            "sourceKey": "fxName_c21e3722d1211ef7",
+            "filePath": "aura/invoiceCard/invoiceCard.cmp",
+            "start": {
+              "offset": 522,
+              "line": 8,
+              "column": 35
+            },
+            "end": {
+              "offset": 547,
+              "line": 8,
+              "column": 60
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxMerge_9d57e9b13c092b30",
+        "context": "{!$Label.c.AccountListTitle}",
+        "source": [
+          {
+            "sourceKey": "fxMerge_710f6f09a2858fc6",
+            "filePath": "aura/invoiceCard/invoiceCard.cmp",
+            "start": {
+              "offset": 520,
+              "line": 8,
+              "column": 33
+            },
+            "end": {
+              "offset": 548,
+              "line": 8,
+              "column": 61
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxTemplate_2172631d56d3a77f",
+        "context": "{!$Label.c.AccountListTitle}",
+        "source": [
+          {
+            "sourceKey": "fxTemplate_710f6f09a2858fc6",
+            "filePath": "aura/invoiceCard/invoiceCard.cmp",
+            "start": {
+              "offset": 520,
+              "line": 8,
+              "column": 33
+            },
+            "end": {
+              "offset": 548,
+              "line": 8,
+              "column": 61
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxName_ee826d8bd12ad335",
+        "context": "c.handleClick",
+        "source": [
+          {
+            "sourceKey": "fxName_408bc0aa1a6ef0a4",
+            "filePath": "aura/invoiceCard/invoiceCard.cmp",
+            "start": {
+              "offset": 561,
+              "line": 8,
+              "column": 74
+            },
+            "end": {
+              "offset": 574,
+              "line": 8,
+              "column": 87
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxMerge_487c21ba63c4e481",
+        "context": "{!c.handleClick}",
+        "source": [
+          {
+            "sourceKey": "fxMerge_01d18e5481caac1a",
+            "filePath": "aura/invoiceCard/invoiceCard.cmp",
+            "start": {
+              "offset": 559,
+              "line": 8,
+              "column": 72
+            },
+            "end": {
+              "offset": 575,
+              "line": 8,
+              "column": 88
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxTemplate_a3377315cd0f657f",
+        "context": "{!c.handleClick}",
+        "source": [
+          {
+            "sourceKey": "fxTemplate_01d18e5481caac1a",
+            "filePath": "aura/invoiceCard/invoiceCard.cmp",
+            "start": {
+              "offset": 559,
+              "line": 8,
+              "column": 72
+            },
+            "end": {
+              "offset": 575,
+              "line": 8,
+              "column": 88
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "markupElement_3a49b284b4fb974d",
+        "context": "<lightning:button label=\"{!$Label.c.AccountListTitle}\" onclick=\"{!c.handleClick}\"/>",
+        "source": [
+          {
+            "sourceKey": "markupElement_14a3dba3b8d33b13",
+            "filePath": "aura/invoiceCard/invoiceCard.cmp",
+            "start": {
+              "offset": 495,
+              "line": 8,
+              "column": 8
+            },
+            "end": {
+              "offset": 578,
+              "line": 8,
+              "column": 91
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "markupElement_490edccae82f83d9",
+        "context": "<lightning:card title=\"{!v.invoice.Name}\">\n        <c:accountList recordId=\"{!v.recordId}\"/>\n        <lightning:button label=\"{!$Label.c.AccountListTitle}\" onclick=\"{!c.handleClick}\"/>\n    </lightning:card>",
+        "source": [
+          {
+            "sourceKey": "markupElement_60429db745d97d34",
+            "filePath": "aura/invoiceCard/invoiceCard.cmp",
+            "start": {
+              "offset": 394,
+              "line": 6,
+              "column": 4
+            },
+            "end": {
+              "offset": 600,
+              "line": 9,
+              "column": 21
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "auraBundle_1cc648385acd2f50",
         "context": "<aura:component controller=\"InvoiceController\" implements=\"flexipage:availableForRecordHome,force:hasRecordId\" access=\"global\">\n    <aura:attribute name=\"recordId\" type=\"Id\"/>\n    <aura:attribute name=\"invoice\" type=\"Invoice__c\" default=\"\"/>\n    <aura:handler name=\"init\" value=\"{!this}\" action=\"{!c.doInit}\"/>\n    <aura:registerEvent name=\"invoiceSelected\" type=\"c:invoiceSelectedEvent\"/>\n    <lightning:card title=\"{!v.invoice.Name}\">\n        <c:accountList recordId=\"{!v.recordId}\"/>\n        <lightning:button label=\"{!$Label.c.AccountListTitle}\" onclick=\"{!c.handleClick}\"/>\n    </lightning:card>\n</aura:component>",
         "source": [
           {

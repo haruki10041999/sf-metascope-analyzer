@@ -3,8 +3,10 @@ import type {
     ApexPageJson,
     AuraBundleJson,
     AuraDefinitionBundleJson,
+    CriterionJson,
     EmailTemplateJson,
     MarkupDeclarationJson,
+    TemplateValue,
     PropertySchema,
     RecordChildJson,
     RecordChildSpec,
@@ -45,6 +47,7 @@ import {
 } from '../../commons/diff/present';
 import { FlowPropertiesDiff, makeFlowPropertiesDiff } from './flow';
 import { NameValuesDiff, makeNameValuesDiff } from './page';
+import { MarkupBodyDiff, makeMarkupBodyDiff } from './markup';
 
 // 優先度 B・C の差分。方針: docs/metadata-implementation.md 10 章
 // 種類の表 (RecordSpec) から作る。値は 1 つずつ (makePropertiesDiff)、繰り返す値は書いた順 (C)、
@@ -63,10 +66,25 @@ type TreesDiff<S extends { trees?: TreeSpec }> = {
         : PresentDiff<ValueTree, ValueDiff<ValueTree>>;
 };
 
-type ValuesDiff<S extends { schema: PropertySchema; lists?: readonly string[]; trees?: TreeSpec }> =
-    PropertiesDiff<S['schema']> &
-        ListsDiff<S> &
-        TreesDiff<S> & { skippedElements?: PresentDiff<string[], TypedListDiff<string, never>> };
+/** 条件の行 (criterion。段階 M5) は書いた順 (C。booleanFilter の番号が並び順を指す) */
+type CriteriaDiff<S extends { criteria?: readonly string[] }> = {
+    [C in NonNullable<S['criteria']>[number]]?: PresentDiff<
+        CriterionJson[],
+        TypedListDiff<CriterionJson, ValueDiff<CriterionJson>>
+    >;
+};
+
+type ValuesDiff<
+    S extends {
+        schema: PropertySchema;
+        lists?: readonly string[];
+        trees?: TreeSpec;
+        criteria?: readonly string[];
+    },
+> = PropertiesDiff<S['schema']> &
+    ListsDiff<S> &
+    TreesDiff<S> &
+    CriteriaDiff<S> & { skippedElements?: PresentDiff<string[], TypedListDiff<string, never>> };
 
 /** 子の差分 */
 export type RecordChildJsonDiff<C extends RecordChildSpec> = NodeDiff<
@@ -96,7 +114,7 @@ export type RecordJsonDiff<S extends RecordSpec> = NodeDiff<
 type Values = Record<string, unknown>;
 
 const makeValuesDiff = (
-    spec: Pick<RecordSpec, 'schema' | 'lists' | 'trees'>,
+    spec: Pick<RecordSpec, 'schema' | 'lists' | 'trees' | 'criteria'>,
     before: Values,
     after: Values,
 ): Values => ({
@@ -125,6 +143,16 @@ const makeValuesDiff = (
                           after[name] as ValueTree | undefined,
                           makeValueDiff,
                       );
+            return diff === undefined ? [] : [[name, diff]];
+        }),
+    ),
+    ...Object.fromEntries(
+        (spec.criteria ?? []).flatMap((name) => {
+            const diff = makePresentDiff(
+                before[name] as CriterionJson[] | undefined,
+                after[name] as CriterionJson[] | undefined,
+                makeOrderedValuesDiff,
+            );
             return diff === undefined ? [] : [[name, diff]];
         }),
     ),
@@ -230,9 +258,8 @@ export type VisualforceMarkupJsonDiff = NodeDiff<
     {
         root: ValueDiff<string>;
         attributes: NameValuesDiff;
-        /** B. 使っている部品 */
-        components: TypedListDiff<string, never>;
-        expressions?: PresentDiff<string[], TypedListDiff<string, never>>;
+        /** 本体の木 (GumTree。段階 M6) */
+        body: MarkupBodyDiff;
         componentAttributes?: DeclarationsDiff<'visualforceAttribute'>;
     }
 >;
@@ -259,11 +286,7 @@ const makeMarkupDiff = (
             makeNodeDiff('visualforceMarkup', b, a, 'slot', (x, y) => ({
                 root: makeValueDiff(x.root, y.root),
                 attributes: makeNameValuesDiff(x.attributes, y.attributes),
-                components: makeUnorderedValuesDiff(x.components, y.components),
-                ...presentEntry(
-                    'expressions',
-                    makePresentDiff(x.expressions, y.expressions, makeUnorderedValuesDiff),
-                ),
+                body: makeMarkupBodyDiff(x.body, y.body, sources),
                 ...presentEntry(
                     'componentAttributes',
                     makeDeclarationsDiff(
@@ -311,7 +334,7 @@ export const makeApexComponentDiff = (
     );
 
 export type EmailTemplateJsonDiff = RecordJsonDiff<typeof EMAIL_TEMPLATE_META_SPEC> & {
-    fields?: { body?: PresentDiff<string, ValueDiff<string>> };
+    fields?: { body?: PresentDiff<TemplateValue, ValueDiff<TemplateValue>> };
 };
 
 const emailTemplateMetaDiff = makeRecordDiff(EMAIL_TEMPLATE_META_SPEC);
@@ -348,9 +371,8 @@ export type AuraBundleJsonDiff = NodeDiff<
         methods?: DeclarationsDiff<'auraMethod'>;
         dependencies?: PresentDiff<string[], TypedListDiff<string, never>>;
         messageChannels?: PresentDiff<string[], TypedListDiff<string, never>>;
-        /** B. 使っている部品 */
-        components: TypedListDiff<string, never>;
-        expressions?: PresentDiff<string[], TypedListDiff<string, never>>;
+        /** 本体の木 (GumTree。段階 M6) */
+        body: MarkupBodyDiff;
         /** ファイルごとの関数の名前 (C. 書いた順) */
         javascript?: Partial<
             Record<
@@ -419,11 +441,7 @@ export const makeAuraBundleDiff = (
                 'messageChannels',
                 makePresentDiff(b.messageChannels, a.messageChannels, makeUnorderedValuesDiff),
             ),
-            components: makeUnorderedValuesDiff(b.components, a.components),
-            ...presentEntry(
-                'expressions',
-                makePresentDiff(b.expressions, a.expressions, makeUnorderedValuesDiff),
-            ),
+            body: makeMarkupBodyDiff(b.body, a.body, sources),
             ...(Object.keys(javascript).length ? { javascript } : {}),
             files: makeUnorderedValuesDiff(b.files, a.files),
             ...presentEntry(

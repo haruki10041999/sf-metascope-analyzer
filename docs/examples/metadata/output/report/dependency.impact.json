@@ -1,0 +1,846 @@
+{
+  "changed": [
+    {
+      "id": "apexClass:AccountService",
+      "type": "apexClass",
+      "name": "AccountService",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "classDeclaration_960c93cca18ee296",
+        "sourceKey": "classDeclaration_201e47368e24c9c5"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "apexClass:Broken",
+      "type": "apexClass",
+      "name": "Broken",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "classDeclaration_097b407b64e401be",
+        "sourceKey": "classDeclaration_316ccc84364cdbc4"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "apexClass:Level",
+      "type": "apexClass",
+      "name": "Level",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "enumDeclaration_bb8616d1e7c0c120",
+        "sourceKey": "enumDeclaration_c435a86df91b037e"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "apexClass:NewHelper",
+      "type": "apexClass",
+      "name": "NewHelper",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "classDeclaration_962e7837a01a6972",
+        "sourceKey": "classDeclaration_7f477543a4289086"
+      },
+      "status": "added"
+    },
+    {
+      "id": "apexClass:Shape",
+      "type": "apexClass",
+      "name": "Shape",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "classDeclaration_1706a1abe9a3e1bb",
+        "sourceKey": "classDeclaration_1a606c18644285c2"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "apexTrigger:AccountTrigger",
+      "type": "apexTrigger",
+      "name": "AccountTrigger",
+      "origin": "repository",
+      "status": "changed"
+    },
+    {
+      "id": "anonymousApex:anonymous_script",
+      "type": "anonymousApex",
+      "name": "anonymous_script",
+      "origin": "repository",
+      "status": "changed"
+    },
+    {
+      "id": "lwc:accountList",
+      "type": "lwc",
+      "name": "accountList",
+      "origin": "repository",
+      "status": "changed"
+    },
+    {
+      "id": "lwc:newBanner",
+      "type": "lwc",
+      "name": "newBanner",
+      "origin": "repository",
+      "status": "added"
+    },
+    {
+      "id": "lwc:utils",
+      "type": "lwc",
+      "name": "utils",
+      "origin": "repository",
+      "status": "changed"
+    },
+    {
+      "id": "object:Account",
+      "type": "object",
+      "name": "Account",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "object_4531d0b418ec4f56",
+        "sourceKey": "object_5e4501090ced50f4"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "object:Broken__c",
+      "type": "object",
+      "name": "Broken__c",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "object_feb4576f9832cea9",
+        "sourceKey": "object_2ba1815a360d4e42"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "object:Invoice__c",
+      "type": "object",
+      "name": "Invoice__c",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "object_d918b341e7e90768",
+        "sourceKey": "object_f6c2bf7f8e39ece3"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "object:Invoice_Line__c",
+      "type": "object",
+      "name": "Invoice_Line__c",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "object_260a222b30172abe",
+        "sourceKey": "object_97265b6e92059763"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "object:Opportunity",
+      "type": "object",
+      "name": "Opportunity",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "object_7bfdbf102530415e",
+        "sourceKey": "object_64bf5e9bd583ac0d"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "object:Payment__c",
+      "type": "object",
+      "name": "Payment__c",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "object_0cf457affdd24219",
+        "sourceKey": "object_fea90b9aeb1e99a1"
+      },
+      "status": "added"
+    },
+    {
+      "id": "objectTranslation:Account-ja",
+      "type": "objectTranslation",
+      "name": "Account-ja",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "objectTranslation_f215b3174c987177",
+        "sourceKey": "objectTranslation_99876454374dab6d"
+      },
+      "status": "added"
+    },
+    {
+      "id": "objectTranslation:Broken__c-ja",
+      "type": "objectTranslation",
+      "name": "Broken__c-ja",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "objectTranslation_99ebc79f4b1f2370",
+        "sourceKey": "objectTranslation_d3f352bd3fa4c751"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "objectTranslation:Invoice__c-ja",
+      "type": "objectTranslation",
+      "name": "Invoice__c-ja",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "objectTranslation_7dfc2a8bbad4d897",
+        "sourceKey": "objectTranslation_53a3b33d94e742a5"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "permissionSet:Invoice_Manager",
+      "type": "permissionSet",
+      "name": "Invoice_Manager",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "permissionSet_c63b3dd9be5e8b8b",
+        "sourceKey": "permissionSet_66c65958a93475fc"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "permissionSet:Payment_Clerk",
+      "type": "permissionSet",
+      "name": "Payment_Clerk",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "permissionSet_dd3a595e9c73a854",
+        "sourceKey": "permissionSet_02f916d6d4992d22"
+      },
+      "status": "added"
+    },
+    {
+      "id": "mutingPermissionSet:Invoice_Team_Muted",
+      "type": "mutingPermissionSet",
+      "name": "Invoice_Team_Muted",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "mutingPermissionSet_d408db916cbb2824",
+        "sourceKey": "mutingPermissionSet_1d95312d26f61ce0"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "profile:Sales",
+      "type": "profile",
+      "name": "Sales",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "profile_aa995c352c049dca",
+        "sourceKey": "profile_7e45bb132eea17be"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "permissionSetGroup:Invoice_Team",
+      "type": "permissionSetGroup",
+      "name": "Invoice_Team",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "permissionSetGroup_977542f490e5eb01",
+        "sourceKey": "permissionSetGroup_ca71a1ddc6196f2a"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "customLabels:CustomLabels",
+      "type": "customLabels",
+      "name": "CustomLabels",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "customLabels_799030ec97c12787",
+        "sourceKey": "customLabels_4f1f00633c54a4cf"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "flow:Account_Wizard",
+      "type": "flow",
+      "name": "Account_Wizard",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "flow_d1886448fc511004",
+        "sourceKey": "flow_533601b48e7551a1"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "flow:Invoice_Status_Update",
+      "type": "flow",
+      "name": "Invoice_Status_Update",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "flow_8bd11fabbc495f15",
+        "sourceKey": "flow_67ff9e0fb530fcd2"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "layout:Account-Account Layout",
+      "type": "layout",
+      "name": "Account-Account Layout",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "layout_023ee5fcea89da4d",
+        "sourceKey": "layout_d6c06ffe74734e29"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "layout:Invoice__c-Invoice Detail",
+      "type": "layout",
+      "name": "Invoice__c-Invoice Detail",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "layout_72d9ac01e8ccc2a5",
+        "sourceKey": "layout_f4546ffd1e758237"
+      },
+      "status": "added"
+    },
+    {
+      "id": "layout:Invoice__c-Invoice Layout",
+      "type": "layout",
+      "name": "Invoice__c-Invoice Layout",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "layout_73abc97f9fb96cf5",
+        "sourceKey": "layout_763f18f990a9e8cd"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "flexiPage:Invoice_Record_Page",
+      "type": "flexiPage",
+      "name": "Invoice_Record_Page",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "flexiPage_49ba9fd2be13ca35",
+        "sourceKey": "flexiPage_04e4d43b0076e809"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "customMetadata:App_Setting.Default",
+      "type": "customMetadata",
+      "name": "App_Setting.Default",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "customMetadataRecord_9941b642a67bfc92",
+        "sourceKey": "customMetadataRecord_f4373c3f93c75f7a"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "customMetadata:App_Setting.Sandbox",
+      "type": "customMetadata",
+      "name": "App_Setting.Sandbox",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "customMetadataRecord_302bab8cf0826a10",
+        "sourceKey": "customMetadataRecord_621f8f21df6ae86b"
+      },
+      "status": "added"
+    },
+    {
+      "id": "customTab:Account_List",
+      "type": "customTab",
+      "name": "Account_List",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "customTab_ce0a31a7b24dc108",
+        "sourceKey": "customTab_841f25750c64b7c2"
+      },
+      "status": "added"
+    },
+    {
+      "id": "customTab:Invoice__c",
+      "type": "customTab",
+      "name": "Invoice__c",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "customTab_ce5e277ceb6f63e2",
+        "sourceKey": "customTab_3721339e951f992d"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "customApplication:Invoice_App",
+      "type": "customApplication",
+      "name": "Invoice_App",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "customApplication_46cf47e19b954737",
+        "sourceKey": "customApplication_517e7431e5d6260e"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "globalValueSet:Invoice_Status",
+      "type": "globalValueSet",
+      "name": "Invoice_Status",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "globalValueSet_08287727fc8ce65b",
+        "sourceKey": "globalValueSet_7c1e95aa0a1aec9f"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "standardValueSet:Industry",
+      "type": "standardValueSet",
+      "name": "Industry",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "standardValueSet_36786ff2a69b9202",
+        "sourceKey": "standardValueSet_10a7cf536aff17a5"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "customPermission:Approve_Invoice",
+      "type": "customPermission",
+      "name": "Approve_Invoice",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "customPermission_2bcf2a2d47723560",
+        "sourceKey": "customPermission_1697a4037188010d"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "quickAction:Invoice__c.Approve",
+      "type": "quickAction",
+      "name": "Invoice__c.Approve",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "quickAction_488c91ba34e89c31",
+        "sourceKey": "quickAction_9d6c625c85502f1d"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "sharingRules:Invoice__c",
+      "type": "sharingRules",
+      "name": "Invoice__c",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "sharingRules_f5a90bf36d77674c",
+        "sourceKey": "sharingRules_8bbc491c64d0528d"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "apexPage:InvoicePrint",
+      "type": "apexPage",
+      "name": "InvoicePrint",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "apexPage_17248dbeb7fed887",
+        "sourceKey": "apexPage_69568e92420dff25"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "apexComponent:invoiceHeader",
+      "type": "apexComponent",
+      "name": "invoiceHeader",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "apexComponent_b53a8f517c77f930",
+        "sourceKey": "apexComponent_7bee9d595f513d33"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "aura:aura_brokenCard",
+      "type": "aura",
+      "name": "aura_brokenCard",
+      "origin": "repository",
+      "status": "added"
+    },
+    {
+      "id": "aura:invoiceCard",
+      "type": "aura",
+      "name": "invoiceCard",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "auraBundle_ae4e8ae75454db28",
+        "sourceKey": "auraBundle_e4e8002a84c6c7e8"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "staticResource:logo",
+      "type": "staticResource",
+      "name": "logo",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "staticResource_0821ce06b1317b1e",
+        "sourceKey": "staticResource_c7d35038628fb145"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "emailTemplate:Invoice_Templates/Invoice_Sent",
+      "type": "emailTemplate",
+      "name": "Invoice_Templates/Invoice_Sent",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "emailTemplate_d8a41e3dca1f7036",
+        "sourceKey": "emailTemplate_9ffc47d0e0c6fca5"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "report:Invoice_Reports/Open_Invoices",
+      "type": "report",
+      "name": "Invoice_Reports/Open_Invoices",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "report_2c717e065bfe58eb",
+        "sourceKey": "report_b979aed23009d2e9"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "dashboard:Invoice_Dashboards/Invoice_Overview",
+      "type": "dashboard",
+      "name": "Invoice_Dashboards/Invoice_Overview",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "dashboard_5fbc2d31b51d510c",
+        "sourceKey": "dashboard_4585bec515607e0d"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "translations:ja",
+      "type": "translations",
+      "name": "ja",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "translations_fe935b91dd14a81b",
+        "sourceKey": "translations_52f19b1f7f97ae5f"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "namedCredential:Billing_API",
+      "type": "namedCredential",
+      "name": "Billing_API",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "namedCredential_39e8cd3e5c337459",
+        "sourceKey": "namedCredential_a90c2a31a9e4eb7a"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "remoteSiteSetting:Billing",
+      "type": "remoteSiteSetting",
+      "name": "Billing",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "remoteSiteSetting_e9ed8597230162b3",
+        "sourceKey": "remoteSiteSetting_d1cc3be307e9cdf8"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "workflow:Invoice__c",
+      "type": "workflow",
+      "name": "Invoice__c",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "workflow_32e675b46ce159ec",
+        "sourceKey": "workflow_696f800a6edd8253"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "approvalProcess:Invoice__c.Large_Invoice_Approval",
+      "type": "approvalProcess",
+      "name": "Invoice__c.Large_Invoice_Approval",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "approvalProcess_ccd7eb037e96941e",
+        "sourceKey": "approvalProcess_797f4ded05aef36f"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "queue:Invoice_Queue",
+      "type": "queue",
+      "name": "Invoice_Queue",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "queue_e18ea811cb255a4b",
+        "sourceKey": "queue_781f86699eb79965"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "group:Finance",
+      "type": "group",
+      "name": "Finance",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "group_0cd4d5be30804663",
+        "sourceKey": "group_14c5aa6748fe1afb"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "role:Sales_Manager",
+      "type": "role",
+      "name": "Sales_Manager",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "role_fa0a4cb073b9f764",
+        "sourceKey": "role_81175e88a0dc70a1"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "messageChannel:Invoice_Selected",
+      "type": "messageChannel",
+      "name": "Invoice_Selected",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "messageChannel_64ee926c333aa62e",
+        "sourceKey": "messageChannel_5f86733021c07e23"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "externalCredential:Billing_Auth",
+      "type": "externalCredential",
+      "name": "Billing_Auth",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "externalCredential_e7622c691ce8cace",
+        "sourceKey": "externalCredential_04bc8773d3dffed0"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "customNotificationType:Invoice_Overdue",
+      "type": "customNotificationType",
+      "name": "Invoice_Overdue",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "customNotificationType_b23ff9e7480b0eb3",
+        "sourceKey": "customNotificationType_cd28795a97c581a7"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "reportType:Invoices_with_Lines",
+      "type": "reportType",
+      "name": "Invoices_with_Lines",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "reportType_2cce44e466e89428",
+        "sourceKey": "reportType_78dc2e1256f0f763"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "assignmentRules:Case",
+      "type": "assignmentRules",
+      "name": "Case",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "assignmentRules_8d1125ebec5e9f3c",
+        "sourceKey": "assignmentRules_cc5bb98f1765fa24"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "autoResponseRules:Case",
+      "type": "autoResponseRules",
+      "name": "Case",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "autoResponseRules_6e827bd92a3f4b9e",
+        "sourceKey": "autoResponseRules_23636ed88e05b7d7"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "escalationRules:Case",
+      "type": "escalationRules",
+      "name": "Case",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "escalationRules_7bb1031f03eb9f4a",
+        "sourceKey": "escalationRules_e6cfb82feb5d75b6"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "pathAssistant:Invoice_Path",
+      "type": "pathAssistant",
+      "name": "Invoice_Path",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "pathAssistant_309ddcfe6b619200",
+        "sourceKey": "pathAssistant_99c30416a572f920"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "duplicateRule:Account.Account_Name_Duplicate",
+      "type": "duplicateRule",
+      "name": "Account.Account_Name_Duplicate",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "duplicateRule_b454d2b657446c82",
+        "sourceKey": "duplicateRule_2d01b4ad897074ad"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "matchingRules:Account",
+      "type": "matchingRules",
+      "name": "Account",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "matchingRules_ee628d0a420975cf",
+        "sourceKey": "matchingRules_74e076a2d9582370"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "platformEventChannel:Invoice_Changes__chn",
+      "type": "platformEventChannel",
+      "name": "Invoice_Changes__chn",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "platformEventChannel_ef4850eb1693b7f4",
+        "sourceKey": "platformEventChannel_addd54b1cf1e8c3d"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "platformEventChannelMember:Invoice_Changes_chn_Invoice_ChangeEvent",
+      "type": "platformEventChannelMember",
+      "name": "Invoice_Changes_chn_Invoice_ChangeEvent",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "platformEventChannelMember_97334b6e9342a264",
+        "sourceKey": "platformEventChannelMember_44a05fdad56046f7"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "platformEventSubscriberConfig:AccountTriggerConfig",
+      "type": "platformEventSubscriberConfig",
+      "name": "AccountTriggerConfig",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "platformEventSubscriberConfig_aac37910286aae1f",
+        "sourceKey": "platformEventSubscriberConfig_19f299fd3009730c"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "cspTrustedSite:Billing_API",
+      "type": "cspTrustedSite",
+      "name": "Billing_API",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "cspTrustedSite_eceb2b5c87e525bf",
+        "sourceKey": "cspTrustedSite_d5ccc86591339373"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "externalDataSource:Billing_Data",
+      "type": "externalDataSource",
+      "name": "Billing_Data",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "externalDataSource_30d3e8ce69711e88",
+        "sourceKey": "externalDataSource_f4e1ade983617093"
+      },
+      "status": "changed"
+    },
+    {
+      "id": "settings:Security",
+      "type": "settings",
+      "name": "Security",
+      "origin": "repository",
+      "sourceKeys": {
+        "objectKey": "settings_a585a9f2787f62ea",
+        "sourceKey": "settings_295d7e3538c04ab7"
+      },
+      "status": "changed"
+    }
+  ],
+  "impacted": [
+    {
+      "id": "lwc:accountRow",
+      "type": "lwc",
+      "name": "accountRow",
+      "origin": "repository",
+      "depth": 1
+    },
+    {
+      "id": "apexClass:ParserInterface",
+      "type": "apexClass",
+      "name": "ParserInterface",
+      "origin": "repository",
+      "depth": 1,
+      "sourceKeys": {
+        "objectKey": "interfaceDeclaration_c7aae7cb61959f11",
+        "sourceKey": "interfaceDeclaration_af524b608d508c20"
+      }
+    },
+    {
+      "id": "apexClass:ParserTest",
+      "type": "apexClass",
+      "name": "ParserTest",
+      "origin": "repository",
+      "depth": 1,
+      "sourceKeys": {
+        "objectKey": "classDeclaration_9c5bf812682d2124",
+        "sourceKey": "classDeclaration_2353063bb0f0782f"
+      }
+    },
+    {
+      "id": "apexTrigger:ParserTrigger",
+      "type": "apexTrigger",
+      "name": "ParserTrigger",
+      "origin": "repository",
+      "depth": 1
+    },
+    {
+      "id": "anonymousApex:anonymous_broken",
+      "type": "anonymousApex",
+      "name": "anonymous_broken",
+      "origin": "repository",
+      "depth": 1
+    },
+    {
+      "id": "anonymousApex:anonymous_parser",
+      "type": "anonymousApex",
+      "name": "anonymous_parser",
+      "origin": "repository",
+      "depth": 1
+    },
+    {
+      "id": "objectTranslation:Invoice__c-en_US",
+      "type": "objectTranslation",
+      "name": "Invoice__c-en_US",
+      "origin": "repository",
+      "depth": 1,
+      "sourceKeys": {
+        "objectKey": "objectTranslation_5cf0ba13b0464c0e",
+        "sourceKey": "objectTranslation_d3d36f3cec3f2aef"
+      }
+    }
+  ]
+}

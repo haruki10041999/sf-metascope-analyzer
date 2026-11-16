@@ -7,7 +7,7 @@
     "base": {
       "kind": "object",
       "sourceKeys": {
-        "objectKey": "object_4592924aaffdad8b",
+        "objectKey": "object_7bfdbf102530415e",
         "sourceKey": "object_64bf5e9bd583ac0d"
       },
       "apiName": "Opportunity",
@@ -18,7 +18,7 @@
         {
           "kind": "businessProcess",
           "sourceKeys": {
-            "objectKey": "businessProcess_56378bf125ae64e9",
+            "objectKey": "businessProcess_21ef7c7041db97fb",
             "sourceKey": "businessProcess_2d8e14da6ab7cc07"
           },
           "fullName": "Standard_Sales",
@@ -26,18 +26,38 @@
           "isActive": true,
           "values": [
             {
+              "kind": "picklistValueSelection",
+              "sourceKeys": {
+                "objectKey": "picklistValueSelection_48e6e40b801ab829",
+                "sourceKey": "picklistValueSelection_39dbcd7b374f6e6a"
+              },
               "fullName": "Prospecting",
               "default": true
             },
             {
+              "kind": "picklistValueSelection",
+              "sourceKeys": {
+                "objectKey": "picklistValueSelection_4e910538b47bb3e4",
+                "sourceKey": "picklistValueSelection_328115c45209eada"
+              },
               "fullName": "Qualification",
               "default": false
             },
             {
+              "kind": "picklistValueSelection",
+              "sourceKeys": {
+                "objectKey": "picklistValueSelection_6e779ea52c6e598e",
+                "sourceKey": "picklistValueSelection_1da6d4fc6203b18d"
+              },
               "fullName": "Negotiation/Review",
               "default": false
             },
             {
+              "kind": "picklistValueSelection",
+              "sourceKeys": {
+                "objectKey": "picklistValueSelection_6d82df836d808d48",
+                "sourceKey": "picklistValueSelection_bf60daf3a295e6c0"
+              },
               "fullName": "Closed Won",
               "default": false
             }
@@ -47,7 +67,87 @@
     },
     "sourceObject": [
       {
-        "objectKey": "businessProcess_56378bf125ae64e9",
+        "objectKey": "picklistValueSelection_48e6e40b801ab829",
+        "context": "<values>\n        <fullName>Prospecting</fullName>\n        <default>true</default>\n    </values>",
+        "source": [
+          {
+            "sourceKey": "picklistValueSelection_39dbcd7b374f6e6a",
+            "filePath": "Opportunity/businessProcesses/Standard_Sales.businessProcess-meta.xml",
+            "start": {
+              "offset": 228,
+              "line": 6,
+              "column": 4
+            },
+            "end": {
+              "offset": 323,
+              "line": 9,
+              "column": 13
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "picklistValueSelection_4e910538b47bb3e4",
+        "context": "<values>\n        <fullName>Qualification</fullName>\n        <default>false</default>\n    </values>",
+        "source": [
+          {
+            "sourceKey": "picklistValueSelection_328115c45209eada",
+            "filePath": "Opportunity/businessProcesses/Standard_Sales.businessProcess-meta.xml",
+            "start": {
+              "offset": 328,
+              "line": 10,
+              "column": 4
+            },
+            "end": {
+              "offset": 426,
+              "line": 13,
+              "column": 13
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "picklistValueSelection_6e779ea52c6e598e",
+        "context": "<values>\n        <fullName>Negotiation/Review</fullName>\n        <default>false</default>\n    </values>",
+        "source": [
+          {
+            "sourceKey": "picklistValueSelection_1da6d4fc6203b18d",
+            "filePath": "Opportunity/businessProcesses/Standard_Sales.businessProcess-meta.xml",
+            "start": {
+              "offset": 431,
+              "line": 14,
+              "column": 4
+            },
+            "end": {
+              "offset": 534,
+              "line": 17,
+              "column": 13
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "picklistValueSelection_6d82df836d808d48",
+        "context": "<values>\n        <fullName>Closed Won</fullName>\n        <default>false</default>\n    </values>",
+        "source": [
+          {
+            "sourceKey": "picklistValueSelection_bf60daf3a295e6c0",
+            "filePath": "Opportunity/businessProcesses/Standard_Sales.businessProcess-meta.xml",
+            "start": {
+              "offset": 539,
+              "line": 18,
+              "column": 4
+            },
+            "end": {
+              "offset": 634,
+              "line": 21,
+              "column": 13
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "businessProcess_21ef7c7041db97fb",
         "context": "<BusinessProcess xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Standard_Sales</fullName>\n    <description>標準の営業プロセス (交渉を含む)</description>\n    <isActive>true</isActive>\n    <values>\n        <fullName>Prospecting</fullName>\n        <default>true</default>\n    </values>\n    <values>\n        <fullName>Qualification</fullName>\n        <default>false</default>\n    </values>\n    <values>\n        <fullName>Negotiation/Review</fullName>\n        <default>false</default>\n    </values>\n    <values>\n        <fullName>Closed Won</fullName>\n        <default>false</default>\n    </values>\n</BusinessProcess>",
         "source": [
           {
@@ -67,7 +167,7 @@
         ]
       },
       {
-        "objectKey": "object_4592924aaffdad8b",
+        "objectKey": "object_7bfdbf102530415e",
         "context": "<CustomObject xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <enableHistory>true</enableHistory>\n    <sharingModel>Private</sharingModel>\n</CustomObject>",
         "source": [
           {

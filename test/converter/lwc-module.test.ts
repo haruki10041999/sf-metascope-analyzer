@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { lwcTypeTextOf } from '../../src/analyzer/types';
 import { describe, it } from 'node:test';
 
 import { parseLwcBundleFolder } from '../../src/analyzer/parser/Lwc/bundle';
@@ -105,7 +106,7 @@ export interface Shape { size: number }
     it('変数の宣言は型 (variantType) と初期値の式 (init) を持つ', () => {
         const module = moduleOf(`export const limit: number = 10;\nlet name;\n`);
         const limit = declarationOf(module, 'limit');
-        assert.equal(limit.variantType?.text, 'number');
+        assert.equal(limit.variantType && lwcTypeTextOf(limit.variantType), 'number');
         assert.deepEqual(limit.init?.kind === 'jsNumber' && limit.init.value, 10);
         const name = declarationOf(module, 'name');
         assert.equal(name.init, undefined);
@@ -134,7 +135,7 @@ export default class Demo extends LightningElement {}
             name: 'Base',
         });
         assert.deepEqual(
-            store.implement?.map((t) => t.text),
+            store.implement?.map((t) => lwcTypeTextOf(t)),
             ['Saver'],
         );
         assert.deepEqual(

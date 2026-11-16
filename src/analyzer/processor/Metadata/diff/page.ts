@@ -243,6 +243,20 @@ export const makeNameValuesDiff = (
         }),
     );
 
+/** 値の並び (valueList) は名前ごとに、並び全体を値として比べる */
+export type ValueListsDiff = Record<string, PresentDiff<string[], ValueDiff<string[]>>>;
+
+export const makeValueListsDiff = (
+    before: Record<string, string[]> = {},
+    after: Record<string, string[]> = {},
+): ValueListsDiff =>
+    Object.fromEntries(
+        [...new Set([...Object.keys(before), ...Object.keys(after)])].flatMap((key) => {
+            const diff = makePresentDiff(before[key], after[key], makeValueDiff);
+            return diff === undefined ? [] : [[key, diff]];
+        }),
+    );
+
 const nameValuesEntry = <K extends string>(
     key: K,
     before?: Record<string, string>,
@@ -279,14 +293,14 @@ export const makeFlexiPageRegionDiff = (
 type ItemFields = {
     identifier: ValueDiff<string>;
     region: ValueDiff<string>;
-    properties?: NameValuesDiff;
+    attributes?: NameValuesDiff;
     visibilityRule?: PresentDiff<FlexiPageVisibilityRule, ValueDiff<FlexiPageVisibilityRule>>;
 };
 
 export type FlexiPageComponentJsonDiff = NodeDiff<
     'flexiPageComponent',
     FlexiPageComponentJson,
-    ItemFields & { componentName: ValueDiff<string> }
+    ItemFields & { componentName: ValueDiff<string>; valueLists?: ValueListsDiff }
 >;
 
 export const makeFlexiPageComponentDiff = (
@@ -298,7 +312,10 @@ export const makeFlexiPageComponentDiff = (
         identifier: makeValueDiff(b.identifier, a.identifier),
         componentName: makeValueDiff(b.componentName, a.componentName),
         region: makeValueDiff(b.region, a.region),
-        ...nameValuesEntry('properties', b.properties, a.properties),
+        ...nameValuesEntry('attributes', b.attributes, a.attributes),
+        ...(b.valueLists || a.valueLists
+            ? { valueLists: makeValueListsDiff(b.valueLists, a.valueLists) }
+            : {}),
         ...optionalEntry('visibilityRule', b.visibilityRule, a.visibilityRule),
     }));
 
@@ -317,7 +334,7 @@ export const makeFlexiPageFieldDiff = (
         identifier: makeValueDiff(b.identifier, a.identifier),
         fieldItem: makeValueDiff(b.fieldItem, a.fieldItem),
         region: makeValueDiff(b.region, a.region),
-        ...nameValuesEntry('properties', b.properties, a.properties),
+        ...nameValuesEntry('attributes', b.attributes, a.attributes),
         ...optionalEntry('visibilityRule', b.visibilityRule, a.visibilityRule),
     }));
 
@@ -327,7 +344,7 @@ export type FlexiPageJsonDiff = NodeDiff<
     {
         name: ValueDiff<string>;
         template?: PresentDiff<string, ValueDiff<string>>;
-        templateProperties?: NameValuesDiff;
+        templateAttributes?: NameValuesDiff;
         regions?: PresentDiff<
             FlexiPageRegionJson[],
             ListItemDiff<'flexiPageRegion', FlexiPageRegionJson, FlexiPageRegionJsonDiff>[]
@@ -354,7 +371,7 @@ export const makeFlexiPageDiff = (
         name: makeValueDiff(b.name, a.name),
         ...makePropertiesDiff(FLEXI_PAGE_SCHEMA, b, a),
         ...optionalEntry('template', b.template, a.template),
-        ...nameValuesEntry('templateProperties', b.templateProperties, a.templateProperties),
+        ...nameValuesEntry('templateAttributes', b.templateAttributes, a.templateAttributes),
         ...presentEntry(
             'regions',
             makePresentDiff(b.regions, a.regions, (br, ar) =>

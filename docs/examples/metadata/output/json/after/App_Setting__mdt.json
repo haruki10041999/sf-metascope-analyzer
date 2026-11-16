@@ -7,7 +7,7 @@
     "base": {
       "kind": "object",
       "sourceKeys": {
-        "objectKey": "object_af13afaa91d16251",
+        "objectKey": "object_cae201c76868a5ba",
         "sourceKey": "object_2af00f581cb7c023"
       },
       "apiName": "App_Setting__mdt",
@@ -19,19 +19,22 @@
         {
           "kind": "field",
           "sourceKeys": {
-            "objectKey": "field_174879fdc3993fa7",
+            "objectKey": "field_22e70efc4b06b061",
             "sourceKey": "field_ff2305cde7be4892"
           },
           "apiName": "Value__c",
           "label": "Value",
           "type": "Text",
-          "length": 255
+          "length": 255,
+          "skippedElements": [
+            "fieldManageability"
+          ]
         }
       ]
     },
     "sourceObject": [
       {
-        "objectKey": "field_174879fdc3993fa7",
+        "objectKey": "field_22e70efc4b06b061",
         "context": "<CustomField xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Value__c</fullName>\n    <fieldManageability>DeveloperControlled</fieldManageability>\n    <label>Value</label>\n    <length>255</length>\n    <type>Text</type>\n</CustomField>",
         "source": [
           {
@@ -51,7 +54,7 @@
         ]
       },
       {
-        "objectKey": "object_af13afaa91d16251",
+        "objectKey": "object_cae201c76868a5ba",
         "context": "<CustomObject xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n\n\n    <label>App Setting</label>\n    <pluralLabel>App Settings</pluralLabel>\n    <visibility>Public</visibility>\n</CustomObject>",
         "source": [
           {

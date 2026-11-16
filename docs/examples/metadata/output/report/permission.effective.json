@@ -1,7 +1,7 @@
 [
   {
     "status": "unchanged",
-    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsetgroups\\Invoice_Team.permissionsetgroup-meta.xml",
     "group": "Invoice_Team",
     "category": "object",
     "target": "Invoice__c",
@@ -10,7 +10,7 @@
   },
   {
     "status": "added",
-    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsetgroups\\Invoice_Team.permissionsetgroup-meta.xml",
     "group": "Invoice_Team",
     "category": "object",
     "target": "Payment__c",
@@ -18,7 +18,7 @@
   },
   {
     "status": "added",
-    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsetgroups\\Invoice_Team.permissionsetgroup-meta.xml",
     "group": "Invoice_Team",
     "category": "object",
     "target": "Receipt__c",
@@ -26,7 +26,7 @@
   },
   {
     "status": "changed",
-    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsetgroups\\Invoice_Team.permissionsetgroup-meta.xml",
     "group": "Invoice_Team",
     "category": "field",
     "target": "Invoice__c.Amount__c",
@@ -35,7 +35,7 @@
   },
   {
     "status": "added",
-    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsetgroups\\Invoice_Team.permissionsetgroup-meta.xml",
     "group": "Invoice_Team",
     "category": "field",
     "target": "Invoice__c.Approved__c",
@@ -43,7 +43,7 @@
   },
   {
     "status": "added",
-    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsetgroups\\Invoice_Team.permissionsetgroup-meta.xml",
     "group": "Invoice_Team",
     "category": "field",
     "target": "Invoice__c.Missing__c",
@@ -51,7 +51,7 @@
   },
   {
     "status": "unchanged",
-    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsetgroups\\Invoice_Team.permissionsetgroup-meta.xml",
     "group": "Invoice_Team",
     "category": "apexClass",
     "target": "AccountService",
@@ -60,7 +60,7 @@
   },
   {
     "status": "added",
-    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsetgroups\\Invoice_Team.permissionsetgroup-meta.xml",
     "group": "Invoice_Team",
     "category": "apexClass",
     "target": "NewHelper",
@@ -68,7 +68,7 @@
   },
   {
     "status": "added",
-    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsetgroups\\Invoice_Team.permissionsetgroup-meta.xml",
     "group": "Invoice_Team",
     "category": "apexClass",
     "target": "PaymentService",
@@ -76,7 +76,7 @@
   },
   {
     "status": "unchanged",
-    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsetgroups\\Invoice_Team.permissionsetgroup-meta.xml",
     "group": "Invoice_Team",
     "category": "customPermission",
     "target": "Approve_Invoice",
@@ -85,7 +85,7 @@
   },
   {
     "status": "unchanged",
-    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsetgroups\\Invoice_Team.permissionsetgroup-meta.xml",
     "group": "Invoice_Team",
     "category": "userPermission",
     "target": "ApiEnabled",
@@ -94,7 +94,7 @@
   },
   {
     "status": "removed",
-    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\permissionsetgroups\\Invoice_Team.permissionsetgroup-meta.xml",
     "group": "Invoice_Team",
     "category": "field",
     "target": "Invoice__c.Status__c",

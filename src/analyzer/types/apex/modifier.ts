@@ -4,16 +4,22 @@ import { JsonType } from '../commons';
 import type { AnnotationTypeClass, ElementValueTypeClass, ModifierTypeClass } from '../apex_IR';
 
 import { makeNodeJson } from './commons/node';
+import { type LiteralJson, makeLiteralNodeJson } from './primary';
 
+/**
+ * アノテーションの引数 1 つ。値はリテラルの式 (string / integer / boolean など。引用符を持たない)。
+ * @RestResource(urlMapping='/a') のような名前付きの引数は key を持つ
+ */
 export type AnnotationArgJson = {
     key?: string;
-    value: string;
-    valueType: string;
+    value: LiteralJson;
 };
 
+/** アノテーション。名前は書いたまま (大文字・小文字は解析で区別しない) */
 export type AnnotationJson = JsonType<'annotation'> & {
     name: string;
-    arg?: AnnotationArgJson | AnnotationArgJson[];
+    /** 引数 (書いた順)。() がなければ持たない */
+    arg?: AnnotationArgJson[];
 };
 
 export const isAnnotationJson = typia.createIs<AnnotationJson>();
@@ -39,72 +45,22 @@ export type ModifierJson = JsonType<'modifier'> & {
 
 export const isModifierJson = typia.createIs<ModifierJson>();
 
+/**
+ * 修飾子 (キーワード) とアノテーション (それぞれ書いた順)。どちらもなければ持たない。
+ * 分類 (access・testAnnotation など) は名前で決まる派生の情報なので持たない
+ * (processor/Apex/modifiers.ts。docs/json-redesign-plan.md の段階 A5、決めたこと 5)
+ */
 export type ModifiersJson = {
-    access?: ModifierJson[];
-    declaration?: ModifierJson[];
-    webService?: ModifierJson[];
-    test?: ModifierJson[];
-    sharing?: ModifierJson[];
-    other?: ModifierJson[];
-    lwcAnnotation?: AnnotationJson[];
-    flowAnnotation?: AnnotationJson[];
-    asyncAnnotation?: AnnotationJson[];
-    testAnnotation?: AnnotationJson[];
-    restAnnotation?: AnnotationJson[];
-    visualforceAnnotation?: AnnotationJson[];
-    accessAnnotation?: AnnotationJson[];
-    serializeAnnotation?: AnnotationJson[];
-    executionAnnotation?: AnnotationJson[];
-    compatibilityAnnotation?: AnnotationJson[];
-    otherAnnotation?: AnnotationJson[];
+    keyword?: ModifierJson[];
+    annotation?: AnnotationJson[];
 };
 
 export const isModifiersJson = typia.createIs<ModifiersJson>();
 
-const isAccessModifier = (value: string): boolean =>
-    ['PUBLIC', 'PRIVATE', 'PROTECTED', 'GLOBAL'].includes(value.toUpperCase());
-
-const isDeclarationModifier = (value: string): boolean =>
-    ['STATIC', 'FINAL', 'ABSTRACT', 'VIRTUAL', 'OVERRIDE'].includes(value.toUpperCase());
-
-const isWebServiceModifier = (value: string): boolean => value.toUpperCase() === 'WEBSERVICE';
-
-const isTestModifier = (value: string): boolean => value.toUpperCase() === 'TESTMETHOD';
-
-const isSharingModifier = (value: string): boolean =>
-    ['WITH_SHARING', 'WITHOUT_SHARING', 'INHERITED_SHARING'].includes(value.toUpperCase());
-
-const isLWCAnnotation = (value: string): boolean => value.toUpperCase() === 'AURAENABLED';
-
-const isFlowAnnotation = (value: string): boolean =>
-    ['INVOCABLEMETHOD', 'INVOCABLEVARIABLE'].includes(value.toUpperCase());
-
-const isAsyncAnnotation = (value: string): boolean => value.toUpperCase() === 'FUTURE';
-
-const isTestAnnotation = (value: string): boolean =>
-    ['ISTEST', 'TESTSETUP', 'TESTVISIBLE'].includes(value.toUpperCase());
-
-const isRestAnnotation = (value: string): boolean =>
-    ['RESTRESOURCE', 'HTTPDELETE', 'HTTPGET', 'HTTPPATCH', 'HTTPPOST', 'HTTPPUT'].includes(
-        value.toUpperCase(),
-    );
-
-const isVisualforceAnnotation = (value: string): boolean => value.toUpperCase() === 'REMOTEACTION';
-
-const isAccessAnnotation = (value: string): boolean =>
-    value.toUpperCase() === 'NAMESPACEACCESSIBLE';
-
-const isSerializationAnnotation = (value: string): boolean => value.toUpperCase() === 'JSONACCESS';
-
-const isExecutionAnnotation = (value: string): boolean => value.toUpperCase() === 'READONLY';
-
-const isCompatibilityAnnotation = (value: string): boolean =>
-    ['DEPRECATED', 'SUPPRESSWARNINGS'].includes(value.toUpperCase());
-
-const makeAnnotationArgJson = (target: ElementValueTypeClass, key?: string): AnnotationArgJson => {
-    const { value, valueType } = target.getFields().value.getFields();
-    return { ...(key !== undefined ? { key: key } : {}), value: value, valueType: valueType };
-};
+const makeAnnotationArgJson = (target: ElementValueTypeClass, key?: string): AnnotationArgJson => ({
+    ...(key !== undefined ? { key: key } : {}),
+    value: makeLiteralNodeJson(target.getFields().value),
+});
 
 // アノテーションのキーは、それを持つ修飾子のノードのキーにする (v1 と同じ)
 const makeAnnotationJson = (
@@ -112,25 +68,24 @@ const makeAnnotationJson = (
     modifier: ModifierTypeClass,
 ): AnnotationJson => {
     const { name, param } = target.getFields();
-    const annotationJson = makeNodeJson<AnnotationJson>('annotation', modifier, {
+    return makeNodeJson<AnnotationJson>('annotation', modifier, {
         name: name.getFields().value,
+        ...(param
+            ? {
+                  arg:
+                      param.kind === 'elementValue'
+                          ? [makeAnnotationArgJson(param)]
+                          : param
+                                .getFields()
+                                .value.map((pair) =>
+                                    makeAnnotationArgJson(
+                                        pair.getFields().right,
+                                        pair.getFields().left.getFields().value,
+                                    ),
+                                ),
+              }
+            : {}),
     });
-
-    if (param) {
-        annotationJson.arg =
-            param.kind === 'elementValue'
-                ? makeAnnotationArgJson(param)
-                : param
-                      .getFields()
-                      .value.map((pair) =>
-                          makeAnnotationArgJson(
-                              pair.getFields().right,
-                              pair.getFields().left.getFields().value,
-                          ),
-                      );
-    }
-
-    return annotationJson;
 };
 
 export const makeModifierJson = (target: ModifierTypeClass): ModifierJson | AnnotationJson => {
@@ -144,64 +99,11 @@ export const makeModifierJson = (target: ModifierTypeClass): ModifierJson | Anno
 };
 
 export const makeModifiersJson = (targets: readonly ModifierTypeClass[]): ModifiersJson => {
-    const modifiers: Record<string, ModifierJson[]> = {};
-    const annotations: Record<string, AnnotationJson[]> = {};
-    const addModifier = (attribute: string, value: ModifierJson) => {
-        (modifiers[attribute] ??= []).push(value);
-    };
-    const addAnnotation = (attribute: string, value: AnnotationJson) => {
-        (annotations[attribute] ??= []).push(value);
-    };
-
-    targets.forEach((target) => {
-        const result = makeModifierJson(target);
-
-        // 判別は kind で行う（isModifierJson は name を既知の修飾子に限るため、未知の修飾子を取りこぼす）
-        if (result.kind === 'modifier') {
-            if (isAccessModifier(result.name)) {
-                addModifier('access', result);
-            } else if (isDeclarationModifier(result.name)) {
-                addModifier('declaration', result);
-            } else if (isWebServiceModifier(result.name)) {
-                addModifier('webService', result);
-            } else if (isTestModifier(result.name)) {
-                addModifier('test', result);
-            } else if (isSharingModifier(result.name)) {
-                addModifier('sharing', result);
-            } else {
-                // TRANSIENT と、どの分類にも当たらない修飾子（捨てずに残す）
-                addModifier('other', result);
-            }
-            return;
-        }
-
-        if (isLWCAnnotation(result.name)) {
-            addAnnotation('lwcAnnotation', result);
-        } else if (isFlowAnnotation(result.name)) {
-            addAnnotation('flowAnnotation', result);
-        } else if (isAsyncAnnotation(result.name)) {
-            addAnnotation('asyncAnnotation', result);
-        } else if (isTestAnnotation(result.name)) {
-            addAnnotation('testAnnotation', result);
-        } else if (isRestAnnotation(result.name)) {
-            addAnnotation('restAnnotation', result);
-        } else if (isVisualforceAnnotation(result.name)) {
-            addAnnotation('visualforceAnnotation', result);
-        } else if (isAccessAnnotation(result.name)) {
-            addAnnotation('accessAnnotation', result);
-        } else if (isSerializationAnnotation(result.name)) {
-            addAnnotation('serializeAnnotation', result);
-        } else if (isExecutionAnnotation(result.name)) {
-            addAnnotation('executionAnnotation', result);
-        } else if (isCompatibilityAnnotation(result.name)) {
-            addAnnotation('compatibilityAnnotation', result);
-        } else {
-            addAnnotation('otherAnnotation', result);
-        }
-    });
-
+    const items = targets.map((target) => makeModifierJson(target));
+    const keyword = items.filter((item): item is ModifierJson => item.kind === 'modifier');
+    const annotation = items.filter((item): item is AnnotationJson => item.kind === 'annotation');
     return {
-        ...modifiers,
-        ...annotations,
+        ...(keyword.length ? { keyword } : {}),
+        ...(annotation.length ? { annotation } : {}),
     };
 };

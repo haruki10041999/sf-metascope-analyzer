@@ -158,7 +158,8 @@ export class MetadataParser {
         const registry = new XmlSourceRegistry();
         const source = { apiName, ...(objectFile ? { objectFile } : {}), members };
         const { object, problems } = makeCustomObjectJson(source, registry);
-        const resolvedError = problems.map(toXmlResolvedError);
+        // 読めなかった数式 (JSON には文字列のまま置いたもの。段階 M4) も resolvedError に出す
+        const resolvedError = [...problems, ...registry.problems].map(toXmlResolvedError);
 
         // object-meta.xml 自体が読めなければ、オブジェクト全体をエラーにする (Apex のユニットのエラーと同じ)
         if (problems.some((problem) => problem.kindType === 'object')) {

@@ -11,6 +11,7 @@ import {
     readText,
 } from '../commons/xmlJson';
 import { XmlElement, childOf, childrenOf } from '../commons/xml';
+import { CRITERIA_ITEM_NAMES, type CriterionJson, readCriteria } from './criteria';
 
 /** 選択リスト値 (`<valueSetDefinition><value>`) */
 export const PICKLIST_VALUE_SCHEMA = {
@@ -32,7 +33,15 @@ export type ValueSetJson = {
     valueSetName?: string;
     controllingField?: string;
     values?: PicklistValueJson[];
+    /**
+     * 依存する選択リストの対応表 (値 → その値を選べる制御項目の値)。段階 M3 で足した
+     * (以前は valueSet の子なので skippedElements にも出ずに消えていた)
+     */
+    valueSettings?: PicklistValueSettingJson[];
 };
+
+/** 依存する選択リストの値 1 つと、その値を選べる制御項目の値 */
+export type PicklistValueSettingJson = { valueName: string; controllingFieldValues: string[] };
 
 export const FIELD_SCHEMA = {
     label: 'string',
@@ -48,8 +57,9 @@ export const FIELD_SCHEMA = {
     precision: 'number',
     scale: 'number',
     visibleLines: 'number',
-    defaultValue: 'string',
-    formula: 'string',
+    /** 既定値 (数式) */
+    defaultValue: 'formula',
+    formula: 'formula',
     formulaTreatBlanksAs: 'string',
     displayFormat: 'string',
     referenceTo: 'string',
@@ -70,23 +80,16 @@ export const FIELD_SCHEMA = {
 /** 参照項目の絞り込み条件 (`<lookupFilter>`) */
 export const LOOKUP_FILTER_SCHEMA = {
     active: 'boolean',
-    booleanFilter: 'string',
+    booleanFilter: 'filterLogic',
     description: 'string',
     errorMessage: 'string',
     infoMessage: 'string',
     isOptional: 'boolean',
 } as const;
 
-export type LookupFilterItem = {
-    field: string;
-    operation?: string;
-    value?: string;
-    valueField?: string;
-};
-
 export type LookupFilterJson = PropertiesOf<typeof LOOKUP_FILTER_SCHEMA> & {
     /** 条件の行 (書いた順。booleanFilter の番号が順序に依る) */
-    filterItems: LookupFilterItem[];
+    filterItems: CriterionJson[];
 };
 
 export type CustomFieldJson = JsonType<'field'> & {
@@ -136,6 +139,15 @@ const makeValueSetJson = (
                   )
                 : [],
         ),
+        ...nonEmptyEntry(
+            'valueSettings',
+            childrenOf(element, 'valueSettings').map((setting): PicklistValueSettingJson => ({
+                valueName: readText(setting, 'valueName') ?? '',
+                controllingFieldValues: childrenOf(setting, 'controllingFieldValue').map(
+                    (value) => value.text,
+                ),
+            })),
+        ),
     };
 };
 
@@ -158,21 +170,20 @@ export const makeCustomFieldJson = (
         'field',
         {
             apiName: readText(element, 'fullName') ?? apiName,
-            ...readProperties(element, FIELD_SCHEMA),
+            ...readProperties(element, FIELD_SCHEMA, { file, registry }),
             ...(valueSet ? { valueSet: makeValueSetJson(valueSet, file, registry) } : {}),
             // 要素がないときは持たない (保存済みのオブジェクトの objectKey を変えないため)
             ...(lookupFilter
                 ? {
                       lookupFilter: {
-                          ...readProperties(lookupFilter, LOOKUP_FILTER_SCHEMA),
-                          filterItems: childrenOf(lookupFilter, 'filterItems').map((item) => ({
-                              field: readText(item, 'field') ?? '',
-                              ...readProperties(item, {
-                                  operation: 'string',
-                                  value: 'string',
-                                  valueField: 'string',
-                              }),
-                          })),
+                          ...readProperties(lookupFilter, LOOKUP_FILTER_SCHEMA, { file, registry }),
+                          // 条件の行 (段階 M5 で criterion にした)
+                          filterItems: readCriteria(
+                              lookupFilter,
+                              'filterItems',
+                              CRITERIA_ITEM_NAMES,
+                              { file, registry },
+                          ),
                       },
                   }
                 : {}),

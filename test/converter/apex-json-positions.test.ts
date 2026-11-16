@@ -35,23 +35,29 @@ const hasSource = (result: ApexUnitParseResult, keys: { objectKey: string; sourc
             o.objectKey === keys.objectKey && o.source.some((s) => s.sourceKey === keys.sourceKey),
     );
 
-describe('Apex の JSON: kind のない式・変数の位置', () => {
-    it('リテラル・new・代入・キャストと変数 (variants) は sourceKeys を持ち、sourceObject に位置がある', async () => {
+describe('Apex の JSON: 式・変数の位置', () => {
+    it('式 (リテラル・識別子・new・代入・キャスト) と変数 (variants) は sourceKeys を持ち、sourceObject に位置がある', async () => {
         const result = await parseSource(SOURCE);
         const base = result.result.base;
+        // 文字列のリテラルは引用符を持たない (段階 A2)
         const literal = find(
             base,
-            (n) => n.value === "'001000000000001AAA'" && 'valueType' in n,
+            (n) => n.kind === 'string' && n.value === '001000000000001AAA',
         )[0];
         assert.ok(literal?.sourceKeys, 'literal');
         assert.ok(hasSource(result, literal.sourceKeys));
 
-        const formula = find(base, (n) => 'left' in n && 'right' in n && n.operator === '+')[0];
-        assert.ok(formula?.sourceKeys, 'formula');
-        const newInstance = find(base, (n) => 'collection' in n && n.initType === 'class')[0];
+        const formula = find(base, (n) => n.kind === 'binary' && n.operator === '+')[0];
+        assert.ok(formula?.sourceKeys, 'binary');
+        const identifier = find(base, (n) => n.kind === 'identifier' && n.name === 'first')[0];
+        assert.ok(identifier && hasSource(result, identifier.sourceKeys), 'identifier');
+        const newInstance = find(base, (n) => n.kind === 'new')[0];
         assert.ok(newInstance?.sourceKeys, 'new');
-        assert.equal(newInstance.kind, undefined, 'new は kind を持たない (initType)');
-        const cast = find(base, (n) => 'convertType' in n && 'target' in n)[0];
+        assert.deepEqual(newInstance.newType.customType, ['Account']);
+        assert.ok(hasSource(result, newInstance.newType.sourceKeys), 'new の型');
+        const assignment = find(newInstance.arg, (n) => n.kind === 'assignment')[0];
+        assert.ok(assignment?.sourceKeys, 'assignment');
+        const cast = find(base, (n) => n.kind === 'cast')[0];
         assert.ok(cast?.sourceKeys, 'cast');
 
         const variants = find(base, (n) => n.kind === 'field')[0]?.variants;

@@ -114,12 +114,6 @@
                     },
                     "name": "BANNER_LABEL"
                   },
-                  "references": [
-                    {
-                      "local": "BANNER_LABEL",
-                      "source": "@salesforce/label/c.BannerMessage"
-                    }
-                  ],
                   "optional": false,
                   "modifier": {
                     "decorator": [
@@ -156,7 +150,6 @@
                     },
                     "value": "info"
                   },
-                  "references": [],
                   "optional": false,
                   "modifier": {
                     "decorator": [
@@ -240,8 +233,7 @@
                         ]
                       }
                     }
-                  ],
-                  "references": []
+                  ]
                 }
               ]
             },

@@ -15,12 +15,13 @@
           "sourceKeys": {},
           "variants": [
             {
+              "kind": "variant",
               "sourceKeys": {},
               "name": "value",
               "init": {
+                "kind": "integer",
                 "sourceKeys": {},
-                "value": "1",
-                "valueType": "integer"
+                "value": "1"
               }
             }
           ],
@@ -31,7 +32,7 @@
             "primitiveType": "Integer"
           },
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -42,7 +43,7 @@
         }
       ],
       "modifier": {
-        "access": [
+        "keyword": [
           {
             "kind": "modifier",
             "sourceKeys": {},

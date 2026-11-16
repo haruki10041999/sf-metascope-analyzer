@@ -7,7 +7,7 @@
     "base": {
       "kind": "apexComponent",
       "sourceKeys": {
-        "objectKey": "apexComponent_1bdc92bd2d7ed9cb",
+        "objectKey": "apexComponent_b53a8f517c77f930",
         "sourceKey": "apexComponent_7bee9d595f513d33"
       },
       "fullName": "invoiceHeader",
@@ -16,14 +16,57 @@
       "markup": {
         "kind": "visualforceMarkup",
         "sourceKeys": {
-          "objectKey": "visualforceMarkup_9a8397268a628eb4",
+          "objectKey": "visualforceMarkup_f518da8b178d600e",
           "sourceKey": "visualforceMarkup_5366150031c2b534"
         },
         "root": "apex:component",
         "attributes": {},
-        "components": [],
-        "expressions": [
-          "invoice.Name"
+        "body": [
+          {
+            "kind": "markupElement",
+            "sourceKeys": {
+              "objectKey": "markupElement_db54f12d544f81fc",
+              "sourceKey": "markupElement_1991566a9da17960"
+            },
+            "tag": "h1",
+            "attributes": [],
+            "children": [
+              {
+                "kind": "markupText",
+                "sourceKeys": {
+                  "objectKey": "markupText_5312abf71f71b407",
+                  "sourceKey": "markupText_d5412fcf64184bec"
+                },
+                "text": {
+                  "kind": "fxTemplate",
+                  "sourceKeys": {
+                    "objectKey": "fxTemplate_5d1c65656c89cdac",
+                    "sourceKey": "fxTemplate_d5412fcf64184bec"
+                  },
+                  "parts": [
+                    {
+                      "kind": "fxMerge",
+                      "sourceKeys": {
+                        "objectKey": "fxMerge_e12b6d7ecdebfb2b",
+                        "sourceKey": "fxMerge_d5412fcf64184bec"
+                      },
+                      "expression": {
+                        "kind": "fxName",
+                        "sourceKeys": {
+                          "objectKey": "fxName_236f6fb415c55d88",
+                          "sourceKey": "fxName_3d93764756ca718f"
+                        },
+                        "path": [
+                          "invoice",
+                          "Name"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
         ],
         "componentAttributes": [
           {
@@ -56,6 +99,106 @@
       }
     },
     "sourceObject": [
+      {
+        "objectKey": "fxName_236f6fb415c55d88",
+        "context": "invoice.Name",
+        "source": [
+          {
+            "sourceKey": "fxName_3d93764756ca718f",
+            "filePath": "components/invoiceHeader.component",
+            "start": {
+              "offset": 209,
+              "line": 4,
+              "column": 10
+            },
+            "end": {
+              "offset": 221,
+              "line": 4,
+              "column": 22
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxMerge_e12b6d7ecdebfb2b",
+        "context": "{!invoice.Name}",
+        "source": [
+          {
+            "sourceKey": "fxMerge_d5412fcf64184bec",
+            "filePath": "components/invoiceHeader.component",
+            "start": {
+              "offset": 207,
+              "line": 4,
+              "column": 8
+            },
+            "end": {
+              "offset": 222,
+              "line": 4,
+              "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxTemplate_5d1c65656c89cdac",
+        "context": "{!invoice.Name}",
+        "source": [
+          {
+            "sourceKey": "fxTemplate_d5412fcf64184bec",
+            "filePath": "components/invoiceHeader.component",
+            "start": {
+              "offset": 207,
+              "line": 4,
+              "column": 8
+            },
+            "end": {
+              "offset": 222,
+              "line": 4,
+              "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "markupText_5312abf71f71b407",
+        "context": "{!invoice.Name}",
+        "source": [
+          {
+            "sourceKey": "markupText_d5412fcf64184bec",
+            "filePath": "components/invoiceHeader.component",
+            "start": {
+              "offset": 207,
+              "line": 4,
+              "column": 8
+            },
+            "end": {
+              "offset": 222,
+              "line": 4,
+              "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "markupElement_db54f12d544f81fc",
+        "context": "<h1>{!invoice.Name}</h1>",
+        "source": [
+          {
+            "sourceKey": "markupElement_1991566a9da17960",
+            "filePath": "components/invoiceHeader.component",
+            "start": {
+              "offset": 203,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 227,
+              "line": 4,
+              "column": 28
+            }
+          }
+        ]
+      },
       {
         "objectKey": "visualforceAttribute_8fec406fefde0595",
         "context": "<apex:attribute name=\"invoice\" type=\"Invoice__c\" required=\"true\" description=\"表示する請求書\"/>",
@@ -97,7 +240,7 @@
         ]
       },
       {
-        "objectKey": "visualforceMarkup_9a8397268a628eb4",
+        "objectKey": "visualforceMarkup_f518da8b178d600e",
         "context": "<apex:component>\n    <apex:attribute name=\"invoice\" type=\"Invoice__c\" required=\"true\" description=\"表示する請求書\"/>\n    <apex:attribute name=\"showLogo\" type=\"Boolean\" default=\"true\" description=\"ロゴを出すか\"/>\n    <h1>{!invoice.Name}</h1>\n</apex:component>",
         "source": [
           {
@@ -117,7 +260,7 @@
         ]
       },
       {
-        "objectKey": "apexComponent_1bdc92bd2d7ed9cb",
+        "objectKey": "apexComponent_b53a8f517c77f930",
         "context": "<ApexComponent xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <apiVersion>61.0</apiVersion>\n    <label>invoiceHeader</label>\n</ApexComponent>",
         "source": [
           {

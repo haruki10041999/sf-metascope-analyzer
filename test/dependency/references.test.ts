@@ -50,6 +50,20 @@ describe('dependency references (単位ごとの定義と参照)', () => {
         assert.ok(defs.includes('apexProperty:AccountService.MAX_SIZE'));
     });
 
+    it('extracts child relationships of lookup fields (for SOQL subqueries)', () => {
+        const { childRelationships } = refsOf('object', 'Invoice__c');
+        assert.ok(
+            childRelationships?.some(
+                (r) =>
+                    r.parent === 'Account' &&
+                    r.name === 'Invoices__r' &&
+                    r.child === 'Invoice__c' &&
+                    r.field === 'Invoice__c.Account__c',
+            ),
+            JSON.stringify(childRelationships),
+        );
+    });
+
     it('extracts the trigger object and calls', () => {
         const all = refsOf('apexTrigger', 'trigger_AccountTrigger').references.map(show);
         assert.ok(all.includes('triggers object:Account (trigger.object)'));

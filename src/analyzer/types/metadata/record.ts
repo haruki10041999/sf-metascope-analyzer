@@ -4,6 +4,7 @@ import {
     makeMetadataJson,
     nonEmptyEntry,
     readProperties,
+    type FormulaReadContext,
     readTexts,
     readXmlRoot,
     unknownChildNames,
@@ -14,7 +15,13 @@ import {
     type XmlReadProblem,
     type XmlSourceRegistry,
 } from '../commons/xmlJson';
-import { toValueTree, type ValueTree } from '../commons/valueTree';
+import { toValueTree, type ValueTree, type ValueTreeOptions } from '../commons/valueTree';
+import {
+    CRITERIA_ITEM_NAMES,
+    type CriterionJson,
+    readCriteria,
+    recordTreeConverter,
+} from './criteria';
 
 // 優先度 B・C の XML の種類の JSON の作り方。方針: docs/metadata-implementation.md 10 章
 // 種類ごとの表 (RecordSpec) から JSON を作り、型も表から導く (RecordJson<typeof 表>)。
@@ -22,6 +29,7 @@ import { toValueTree, type ValueTree } from '../commons/valueTree';
 // - lists: 繰り返す値の要素 (文字列の並び)
 // - trees: 入れ子の構造の要素 (共有先・条件の行など)。値の木 (types/commons/valueTree.ts) のまま持つ。
 //   'one' は 1 つ、'many' は繰り返す (いつも配列)
+// - criteria: 条件の行の要素 (criteriaItems。field・operation・value・valueField)。criterion の並び (書いた順。段階 M5)
 // - children: 名前で対応付ける子 (Diff の D)。子も同じ形の表
 // - 表にない要素は skippedElements に名前を残す
 
@@ -35,6 +43,7 @@ export type RecordChildSpec = {
     schema: PropertySchema;
     lists?: readonly string[];
     trees?: TreeSpec;
+    criteria?: readonly string[];
 };
 
 /** 種類の表 */
@@ -45,6 +54,7 @@ export type RecordSpec = {
     schema: PropertySchema;
     lists?: readonly string[];
     trees?: TreeSpec;
+    criteria?: readonly string[];
     children?: Readonly<Record<string, RecordChildSpec>>;
 };
 
@@ -58,8 +68,21 @@ type TreesOf<S extends { trees?: TreeSpec }> = {
         : ValueTree;
 };
 
-type ValuesOf<S extends { schema: PropertySchema; lists?: readonly string[]; trees?: TreeSpec }> =
-    PropertiesOf<S['schema']> & ListsOf<S> & TreesOf<S> & { skippedElements?: string[] };
+type CriteriaOf<S extends { criteria?: readonly string[] }> = {
+    [C in NonNullable<S['criteria']>[number]]?: CriterionJson[];
+};
+
+type ValuesOf<
+    S extends {
+        schema: PropertySchema;
+        lists?: readonly string[];
+        trees?: TreeSpec;
+        criteria?: readonly string[];
+    },
+> = PropertiesOf<S['schema']> &
+    ListsOf<S> &
+    TreesOf<S> &
+    CriteriaOf<S> & { skippedElements?: string[] };
 
 /** 子の JSON */
 export type RecordChildJson<C extends RecordChildSpec> = JsonType<C['kind']> & ValuesOf<C>;
@@ -86,23 +109,28 @@ export const recordChildKey = (spec: Pick<RecordChildSpec, 'key'>, child: object
 /** 値の要素・繰り返す値・入れ子の構造を読む (exclude の要素は読まない。子の表の要素など) */
 const readValues = (
     element: XmlElement,
-    spec: Pick<RecordSpec, 'schema' | 'lists' | 'trees'>,
+    spec: Pick<RecordSpec, 'schema' | 'lists' | 'trees' | 'criteria'>,
+    formula: FormulaReadContext,
     exclude: string[] = [],
 ): Record<string, unknown> => {
     const trees = Object.entries(spec.trees ?? {}).flatMap(([name, cardinality]) => {
         const items = childrenOf(element, name);
         if (!items.length) return [];
-        const values = items.map((item) => toValueTree(item));
+        // 条件の行・数式・booleanFilter は型の JSON にする (段階 M7。criteria.ts の recordTreeConverter)
+        const options: ValueTreeOptions = {};
+        options.convert = recordTreeConverter(formula, options);
+        const values = items.map((item) => toValueTree(item, options));
         return [[name, cardinality === 'many' ? values : values[0]!]];
     });
     const known = [
         ...Object.keys(spec.schema),
         ...(spec.lists ?? []),
         ...Object.keys(spec.trees ?? {}),
+        ...(spec.criteria ?? []),
         ...exclude,
     ];
     return {
-        ...readProperties(element, spec.schema),
+        ...readProperties(element, spec.schema, formula),
         ...Object.fromEntries(
             (spec.lists ?? []).flatMap((name) => {
                 const values = readTexts(element, name);
@@ -110,6 +138,12 @@ const readValues = (
             }),
         ),
         ...Object.fromEntries(trees),
+        ...Object.fromEntries(
+            (spec.criteria ?? []).flatMap((name) => {
+                const criteria = readCriteria(element, name, CRITERIA_ITEM_NAMES, formula);
+                return criteria.length ? [[name, criteria]] : [];
+            }),
+        ),
         ...nonEmptyEntry('skippedElements', unknownChildNames(element, known)),
     };
 };
@@ -125,7 +159,10 @@ const readChildren = (
             const items = childrenOf(element, name).map((child) =>
                 makeMetadataJson<JsonType<string>>(
                     spec.kind,
-                    readValues(child, spec) as Omit<JsonType<string>, 'kind' | 'sourceKeys'>,
+                    readValues(child, spec, { file, registry }) as Omit<
+                        JsonType<string>,
+                        'kind' | 'sourceKeys'
+                    >,
                     child,
                     file,
                     registry,
@@ -147,7 +184,7 @@ export const makeRecordJsonFromRoot = <S extends RecordSpec>(
         spec.kind,
         {
             fullName: file.name,
-            ...readValues(root, spec, Object.keys(spec.children ?? {})),
+            ...readValues(root, spec, { file, registry }, Object.keys(spec.children ?? {})),
             ...readChildren(root, spec.children, file, registry),
             ...extra,
         } as Omit<JsonType<string>, 'kind' | 'sourceKeys'>,

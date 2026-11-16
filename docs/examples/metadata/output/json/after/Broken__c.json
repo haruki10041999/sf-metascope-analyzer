@@ -50,7 +50,7 @@
     "base": {
       "kind": "object",
       "sourceKeys": {
-        "objectKey": "object_fc983e9dc3783925",
+        "objectKey": "object_feb4576f9832cea9",
         "sourceKey": "object_2ba1815a360d4e42"
       },
       "apiName": "Broken__c",
@@ -58,69 +58,11 @@
       "label": "Broken",
       "pluralLabel": "Brokens",
       "sharingModel": "ReadWrite",
-      "deploymentStatus": "Deployed",
-      "fields": [
-        {
-          "kind": "error",
-          "sourceKeys": {
-            "objectKey": "error_e6cd0a1da7567a97",
-            "sourceKey": "error_63685c4984ada19e"
-          },
-          "kindType": "field"
-        },
-        {
-          "kind": "error",
-          "sourceKeys": {
-            "objectKey": "error_df6f0870b1e56b70",
-            "sourceKey": "error_34bf9dfe2a11ca04"
-          },
-          "kindType": "field"
-        }
-      ]
+      "deploymentStatus": "Deployed"
     },
     "sourceObject": [
       {
-        "objectKey": "error_e6cd0a1da7567a97",
-        "context": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<CustomField xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Code__c</fullName>\n    <label>Code</label>\n    <length>10</lenght>\n    <type>Text</type>\n</CustomField>\n",
-        "source": [
-          {
-            "sourceKey": "error_63685c4984ada19e",
-            "filePath": "Broken__c/fields/Code__c.field-meta.xml",
-            "start": {
-              "offset": 180,
-              "line": 5,
-              "column": 22
-            },
-            "end": {
-              "offset": 180,
-              "line": 5,
-              "column": 22
-            }
-          }
-        ]
-      },
-      {
-        "objectKey": "error_df6f0870b1e56b70",
-        "context": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<ValidationRule xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Misplaced__c</fullName>\n    <active>true</active>\n    <errorConditionFormula>false</errorConditionFormula>\n    <errorMessage>misplaced</errorMessage>\n</ValidationRule>\n",
-        "source": [
-          {
-            "sourceKey": "error_34bf9dfe2a11ca04",
-            "filePath": "Broken__c/fields/Misplaced__c.field-meta.xml",
-            "start": {
-              "offset": 39,
-              "line": 2,
-              "column": 0
-            },
-            "end": {
-              "offset": 39,
-              "line": 2,
-              "column": 0
-            }
-          }
-        ]
-      },
-      {
-        "objectKey": "object_fc983e9dc3783925",
+        "objectKey": "object_feb4576f9832cea9",
         "context": "<CustomObject xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <deploymentStatus>Deployed</deploymentStatus>\n    <label>Broken</label>\n    <pluralLabel>Brokens</pluralLabel>\n    <sharingModel>ReadWrite</sharingModel>\n</CustomObject>",
         "source": [
           {

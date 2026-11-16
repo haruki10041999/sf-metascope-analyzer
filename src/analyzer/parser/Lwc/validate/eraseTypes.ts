@@ -1,5 +1,6 @@
-// TS の型を空白にする処理 (docs/lwc-implementation.md)。
-// 検証は docs/examples/lwc/scripts/verify-erase-types.ts、使用例は docs/examples/lwc/scripts/run-library-parse.ts
+// TS・Flow の型を空白にする処理 (docs/lwc-implementation.md)。
+// 検証は docs/examples/lwc/scripts/verify-erase-types.ts、使用例は docs/examples/lwc/scripts/run-library-parse.ts。
+// Flow (// @flow の .js) は Babel の flow プラグインで parse した AST を渡す (docs/json-redesign-plan.md 4 章の 7)
 import { parse as babelParse } from '@babel/parser';
 import type { File } from '@babel/types';
 
@@ -26,8 +27,21 @@ export const BABEL_TS_OPTIONS = {
     createParenthesizedExpressions: true,
 } as const;
 
+/** Babel の設定 (Flow)。parsed を渡さずに Flow を空白にするとき */
+export const BABEL_FLOW_OPTIONS = {
+    sourceType: 'module',
+    plugins: [
+        ['flow', { all: true }],
+        ['decorators', { decoratorsBeforeExport: true }],
+    ],
+    tokens: true,
+    createParenthesizedExpressions: true,
+} as const;
+
 const BABEL_UNSUPPORTED: Record<string, string> = {
     TSEnumDeclaration: 'enum',
+    // Flow の enum は実行時の値を作る (TS の enum と同じ)
+    EnumDeclaration: 'enum',
     TSModuleDeclaration: 'namespace / module',
     TSParameterProperty: 'parameter property',
     TSImportEqualsDeclaration: 'import = require',
@@ -42,6 +56,20 @@ const BABEL_TYPE_ONLY = new Set([
     'TSDeclareFunction',
     'TSDeclareMethod',
     'TSIndexSignature',
+    // Flow
+    'TypeAlias',
+    'OpaqueType',
+    'InterfaceDeclaration',
+    'DeclareClass',
+    'DeclareFunction',
+    'DeclareVariable',
+    'DeclareModule',
+    'DeclareModuleExports',
+    'DeclareTypeAlias',
+    'DeclareOpaqueType',
+    'DeclareInterface',
+    'DeclareExportDeclaration',
+    'DeclareExportAllDeclaration',
 ]);
 
 /** そのノードの範囲を丸ごと空白にする、型の位置のノード */
@@ -49,6 +77,13 @@ const BABEL_TYPE_POSITIONS = new Set([
     'TSTypeAnnotation',
     'TSTypeParameterDeclaration',
     'TSTypeParameterInstantiation',
+    // Flow (TypeAnnotation は : を含む。(x: T) の型キャストの : T も)。+x / -x の variance、%checks
+    'TypeAnnotation',
+    'TypeParameterDeclaration',
+    'TypeParameterInstantiation',
+    'Variance',
+    'DeclaredPredicate',
+    'InferredPredicate',
 ]);
 
 const BABEL_MODIFIERS = new Set([
@@ -62,11 +97,16 @@ const BABEL_MODIFIERS = new Set([
 ]);
 
 /**
- * TS の型を空白にする。parsed に parse 済みの AST (typescript と tokens: true で parse したもの) を渡せば、
- * parse し直さない (LwcParser は構文解析の AST をそのまま渡す)
+ * TS・Flow の型を空白にする。parsed に parse 済みの AST (typescript か flow と、tokens: true で parse したもの) を渡せば、
+ * parse し直さない (LwcParser は構文解析の AST をそのまま渡す)。渡さなければ flow で TS か Flow かを決めて parse する
  */
-export const eraseTypes = (source: string, parsed?: File): EraseResult => {
-    const ast: any = parsed ?? babelParse(source, BABEL_TS_OPTIONS as any);
+export const eraseTypes = (
+    source: string,
+    parsed?: File,
+    options: { flow?: boolean } = {},
+): EraseResult => {
+    const ast: any =
+        parsed ?? babelParse(source, (options.flow ? BABEL_FLOW_OPTIONS : BABEL_TS_OPTIONS) as any);
     if (!ast.tokens) {
         throw new Error('eraseTypes には tokens: true で parse した AST を渡してください');
     }
@@ -106,7 +146,8 @@ export const eraseTypes = (source: string, parsed?: File): EraseResult => {
         }
         const wholeDeclaration =
             BABEL_TYPE_ONLY.has(type) ||
-            (type === 'ImportDeclaration' && node.importKind === 'type') ||
+            (type === 'ImportDeclaration' &&
+                (node.importKind === 'type' || node.importKind === 'typeof')) ||
             (type === 'ExportNamedDeclaration' &&
                 (node.exportKind === 'type' ||
                     BABEL_TYPE_ONLY.has(node.declaration?.type) ||
@@ -119,7 +160,8 @@ export const eraseTypes = (source: string, parsed?: File): EraseResult => {
             return;
         }
         if (
-            (type === 'ImportSpecifier' && node.importKind === 'type') ||
+            (type === 'ImportSpecifier' &&
+                (node.importKind === 'type' || node.importKind === 'typeof')) ||
             (type === 'ExportSpecifier' && node.exportKind === 'type')
         ) {
             blankWithComma(node.start, node.end);

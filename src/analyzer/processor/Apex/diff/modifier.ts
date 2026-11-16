@@ -19,15 +19,17 @@ import {
     pairByKey,
     toBody,
 } from '../../commons/diff/commons';
+import { type BaseExpressionJsonDiff, makeExpressionValueDiff } from './expression';
+import { apexModifierCategoryOf, apexModifierItemsOf } from '../modifiers';
 
 export type ModifierValue = {
     modifierType: string;
 } & (ModifierJson | AnnotationJson);
 
-/** キーを持つ引数の差分 (`@RestResource(urlMapping='/a')` の urlMapping など) */
+/** キーを持つ引数の差分 (`@RestResource(urlMapping='/a')` の urlMapping など)。値はリテラルの式の差分 */
 export type AnnotationArgJsonDiff = { key: string } & OptionalDiff<
     AnnotationArgJson,
-    ValueDiff<AnnotationArgJson>
+    BaseExpressionJsonDiff
 >;
 
 /** 引数がすべてキーを持てばキーで対応付け、そうでなければ値を丸ごと比べる */
@@ -65,23 +67,17 @@ export type AnnotationJsonDiff =
 /** 修飾子・アノテーションは B. 集合 (分類キーをまたいで 1 つの集合にする) */
 export type ModifiersJsonDiff = (ModifierJsonDiff | AnnotationJsonDiff)[];
 
-export const makeTypedModifierJsons = (target: ModifiersJson): ModifierValue[] => {
-    const modifiers: ModifierValue[] = [];
+/**
+ * 修飾子・アノテーションの並びに、分類キー (modifierType) を足す。分類は JSON に持たず、名前から解析で出す
+ * (processor/Apex/modifiers.ts。docs/json-redesign-plan.md の段階 A5)
+ */
+export const makeTypedModifierJsons = (target: ModifiersJson): ModifierValue[] =>
+    apexModifierItemsOf(target).map((item) => ({
+        modifierType: apexModifierCategoryOf(item),
+        ...item,
+    }));
 
-    Object.entries(target).forEach(([key, value]) => {
-        value.forEach((v) => {
-            modifiers.push({
-                modifierType: key,
-                ...v,
-            });
-        });
-    });
-
-    return modifiers;
-};
-
-const toArgList = (arg: AnnotationJson['arg']): AnnotationArgJson[] =>
-    arg === undefined ? [] : Array.isArray(arg) ? arg : [arg];
+const toArgList = (arg: AnnotationJson['arg']): AnnotationArgJson[] => arg ?? [];
 
 export const makeAnnotationArgsDiff = (
     before: AnnotationJson['arg'],
@@ -103,7 +99,10 @@ export const makeAnnotationArgsDiff = (
     return keys.map((key) => {
         const b = find(beforeList, key);
         const a = find(afterList, key);
-        return { key: (a ?? b)!.key!, ...makeOptionalDiff(b, a, makeValueDiff) };
+        return {
+            key: (a ?? b)!.key!,
+            ...makeOptionalDiff(b, a, (x, y) => makeExpressionValueDiff(x.value, y.value)),
+        };
     });
 };
 

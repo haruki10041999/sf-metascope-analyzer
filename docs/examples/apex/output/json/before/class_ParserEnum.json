@@ -14,7 +14,7 @@
           "kind": "enum",
           "sourceKeys": {
             "base": {
-              "objectKey": "enumDeclaration_eeee721eb6805623",
+              "objectKey": "enumDeclaration_42428ec88d8048fc",
               "sourceKey": "enumDeclaration_4c54cd95b55d5eeb"
             },
             "name": {
@@ -58,11 +58,11 @@
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {
-                  "objectKey": "modifier_a04213395735c45e",
+                  "objectKey": "modifier_ff9740e1ee9f633a",
                   "sourceKey": "modifier_6360341d8bc750ef"
                 },
                 "name": "PUBLIC"
@@ -74,7 +74,7 @@
     },
     "sourceObject": [
       {
-        "objectKey": "enumDeclaration_eeee721eb6805623",
+        "objectKey": "enumDeclaration_42428ec88d8048fc",
         "context": "enum ParserEnum {\n    DRAFT,\n    SUBMITTED,\n    APPROVED,\n    REJECTED\n}",
         "source": [
           {
@@ -188,7 +188,7 @@
         ]
       },
       {
-        "objectKey": "modifier_a04213395735c45e",
+        "objectKey": "modifier_ff9740e1ee9f633a",
         "context": "public",
         "source": [
           {

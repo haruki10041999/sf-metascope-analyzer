@@ -17,3 +17,5 @@ export * from './recordTypes';
 export * from './markup';
 export * from './settings';
 export * from './businessProcess';
+export * from './formula';
+export * from './criteria';

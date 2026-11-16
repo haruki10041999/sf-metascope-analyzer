@@ -1,0 +1,15 @@
+[
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Invoice_Status_Update.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flowVariable_d3b6c76c7d9c7200",
+      "sourceKey": "flowVariable_2f86669cb40bb866"
+    },
+    "flow": "Invoice_Status_Update",
+    "variable": "errorMessage",
+    "direction": "output",
+    "dataType": "String",
+    "isCollection": false
+  }
+]

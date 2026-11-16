@@ -3,11 +3,28 @@ import {
     type GraphUnit,
     buildDependencyGraph,
 } from '../processor/dependency/graph';
+import type { UnitDependencies } from '../processor/dependency/types';
 import { getUnitDependencies } from '../processor/dependency/units';
 
 import type { Repository } from './repository';
 
 // リポジトリ (Repository) から依存関係のグラフを作る。方針: docs/analysis-plan.md 3.5
+
+/**
+ * 単位ごとの定義・参照 (解析結果のオブジェクトごと)。定義・参照はその単位の解析結果だけで決まるので、
+ * Repository.update・save で引き継いだ (変わらなかった) 単位は作り直さない (docs/save-format-plan.md の S0)
+ */
+const unitDependencies = new WeakMap<object, UnitDependencies>();
+
+/** 単位 1 つの定義・参照 (同じ解析結果には、作ったものを使い回す) */
+export const unitDependenciesOf = (type: string, result: object): UnitDependencies => {
+    let dependencies = unitDependencies.get(result);
+    if (!dependencies) {
+        dependencies = getUnitDependencies(type, result);
+        unitDependencies.set(result, dependencies);
+    }
+    return dependencies;
+};
 
 /** リポジトリのすべての単位の定義・参照 */
 export const getRepositoryDependencies = (repository: Repository): GraphUnit[] =>
@@ -15,7 +32,7 @@ export const getRepositoryDependencies = (repository: Repository): GraphUnit[] =
         results.map((result) => ({
             type,
             id: result.result.id,
-            dependencies: getUnitDependencies(type, result),
+            dependencies: unitDependenciesOf(type, result),
         })),
     );
 

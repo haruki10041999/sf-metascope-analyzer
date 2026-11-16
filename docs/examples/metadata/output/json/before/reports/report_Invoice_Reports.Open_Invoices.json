@@ -7,7 +7,7 @@
     "base": {
       "kind": "report",
       "sourceKeys": {
-        "objectKey": "report_e80984dcf2367d25",
+        "objectKey": "report_d81dc0b5bc98ce04",
         "sourceKey": "report_5203ed8c3818d56b"
       },
       "fullName": "Invoice_Reports/Open_Invoices",
@@ -18,10 +18,16 @@
       "showDetails": true,
       "filter": {
         "criteriaItems": {
-          "column": "Invoice__c.Status__c",
-          "isUnlocked": true,
-          "operator": "notEqual",
-          "value": "Paid"
+          "kind": "criterion",
+          "sourceKeys": {
+            "objectKey": "criterion_719c0e2ca14420fa",
+            "sourceKey": "criterion_21889b2f4023296d"
+          },
+          "left": "",
+          "right": {
+            "type": "value",
+            "value": "Paid"
+          }
         }
       },
       "params": [
@@ -58,6 +64,26 @@
       ]
     },
     "sourceObject": [
+      {
+        "objectKey": "criterion_719c0e2ca14420fa",
+        "context": "<criteriaItems>\n            <column>Invoice__c.Status__c</column>\n            <isUnlocked>true</isUnlocked>\n            <operator>notEqual</operator>\n            <value>Paid</value>\n        </criteriaItems>",
+        "source": [
+          {
+            "sourceKey": "criterion_21889b2f4023296d",
+            "filePath": "reports/Invoice_Reports/Open_Invoices.report-meta.xml",
+            "start": {
+              "offset": 327,
+              "line": 13,
+              "column": 8
+            },
+            "end": {
+              "offset": 533,
+              "line": 18,
+              "column": 24
+            }
+          }
+        ]
+      },
       {
         "objectKey": "reportColumn_d289fc792e5efb52",
         "context": "<columns>\n        <field>CUST_NAME</field>\n    </columns>",
@@ -119,7 +145,7 @@
         ]
       },
       {
-        "objectKey": "report_e80984dcf2367d25",
+        "objectKey": "report_d81dc0b5bc98ce04",
         "context": "<Report xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <columns>\n        <field>CUST_NAME</field>\n    </columns>\n    <columns>\n        <field>Invoice__c.Due_Date__c</field>\n    </columns>\n    <columns>\n        <field>Invoice__c.Amount__c</field>\n    </columns>\n    <filter>\n        <criteriaItems>\n            <column>Invoice__c.Status__c</column>\n            <isUnlocked>true</isUnlocked>\n            <operator>notEqual</operator>\n            <value>Paid</value>\n        </criteriaItems>\n    </filter>\n    <format>Tabular</format>\n    <name>Open Invoices</name>\n    <params>\n        <name>co</name>\n        <value>1</value>\n    </params>\n    <reportType>CustomEntity$Invoice__c</reportType>\n    <scope>organization</scope>\n    <showDetails>true</showDetails>\n</Report>",
         "source": [
           {

@@ -185,13 +185,13 @@ describe('SOQL and SOSL diff', () => {
         const before: SoslJson = {
             kind: 'sosl',
             sourceKeys: keys('sosl-before'),
-            find: 'Acme',
+            find: { type: 'literal', value: 'Acme' },
             fieldSpec: [],
         };
         const after: SoslJson = {
             ...before,
             sourceKeys: keys('sosl-after'),
-            find: 'Globex',
+            find: { type: 'literal', value: 'Globex' },
         };
 
         const diff = makeSoslDiff(before, after);
@@ -199,9 +199,32 @@ describe('SOQL and SOSL diff', () => {
         if (diff.status === 'changed' && 'fields' in diff) {
             assert.deepEqual(diff.fields.find, {
                 status: 'changed',
-                before: 'Acme',
-                after: 'Globex',
+                before: { type: 'literal', value: 'Acme' },
+                after: { type: 'literal', value: 'Globex' },
             });
+        } else {
+            assert.fail('Expected a field-level SOSL diff');
+        }
+    });
+
+    it("distinguishes FIND :term from FIND 'term' (段階 A1)", () => {
+        const literal: SoslJson = {
+            kind: 'sosl',
+            sourceKeys: keys('sosl'),
+            find: { type: 'literal', value: 'term' },
+        };
+        const bind: SoslJson = {
+            ...literal,
+            sourceKeys: keys('sosl-bind'),
+            find: {
+                type: 'bind',
+                value: { kind: 'identifier', sourceKeys: keys('term'), name: 'term' },
+            },
+        };
+        const diff = makeSoslDiff(literal, bind);
+        assert.equal(diff.status, 'changed');
+        if (diff.status === 'changed' && 'fields' in diff) {
+            assert.equal(diff.fields.find.status, 'changed');
         } else {
             assert.fail('Expected a field-level SOSL diff');
         }

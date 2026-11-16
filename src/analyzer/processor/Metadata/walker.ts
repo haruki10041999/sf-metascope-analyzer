@@ -1,0 +1,188 @@
+import type { ConvertKeys } from '../../types';
+
+// メタデータの JSON の共通の走査 (docs/json-redesign-plan.md の段階 M1、docs/metadata-json-review.md 7.1 の #2)。
+// LWC の walker (processor/Lwc/walker.ts) と同じ形: 処理 (Visitor) を登録して JSON を 1 回だけたどる。
+// - メタデータの JSON は、種類ごとの型のノード (kind と sourceKeys を持つ) と、値の木 (Flow の要素の中身・
+//   条件の行など。kind を持たない) が混ざる。走査はどちらの中にも入る
+// - 値の木は kind を持たないので、Visitor は kind ごとの処理 (kinds) のほかに、すべてのオブジェクト (record) と
+//   文字列のプロパティ (value) を受け取れる
+// - 文脈は、単位 (種類と名前)・数式の基準のオブジェクト・メンバー (直前の name / fullName)・直前の境界ノードの sourceKeys・
+//   プロパティ名の並び (path)
+
+type Json = Record<string, unknown>;
+
+/** 走査中の文脈 */
+export type MetadataWalkContext = {
+    /** 単位の種類 (dataType) */
+    readonly dataType: string;
+    /** 単位の名前 (fullName など) */
+    readonly unitName: string;
+    /** 数式・条件の項目の基準のオブジェクト (ワークフローなら単位の名前、Flow なら起動のオブジェクト) */
+    readonly object?: string | undefined;
+    /** 今いるメンバー (直前の name / fullName。単位そのものは持たない) */
+    readonly member?: string | undefined;
+    /** 直前の境界ノード (sourceKeys を持つノード) の sourceKeys */
+    readonly statement?: ConvertKeys | undefined;
+    /** 単位のルートからのプロパティ名の並び (配列の添字は入れない) */
+    readonly path: readonly string[];
+};
+
+/** 処理。false を返すとそのノードの中に入らない */
+export type MetadataVisitor = {
+    /** kind ごとの処理 (種類ごとの型のノード) */
+    kinds?: { [kind: string]: (node: Json, context: MetadataWalkContext) => void | boolean };
+    /** すべてのオブジェクト (kind のないものも)。context はそのノードに入ったあとのもの */
+    record?: (node: Json, context: MetadataWalkContext) => void | boolean;
+    /** 文字列のプロパティ (key: value)。owner は値を持つオブジェクト */
+    value?: (key: string, value: string, owner: Json, context: MetadataWalkContext) => void;
+};
+
+/** 複数の Visitor を 1 つにする (どれかが false を返せば中に入らない) */
+export const composeMetadataVisitors = (...visitors: MetadataVisitor[]): MetadataVisitor => {
+    const kinds = new Set(visitors.flatMap((visitor) => Object.keys(visitor.kinds ?? {})));
+    const all = <A extends unknown[]>(
+        handlers: (((...args: A) => void | boolean) | undefined)[],
+    ): ((...args: A) => boolean) => {
+        const defined = handlers.filter((h): h is (...args: A) => void | boolean => !!h);
+        return (...args: A) => {
+            let enter = true;
+            for (const handler of defined) if (handler(...args) === false) enter = false;
+            return enter;
+        };
+    };
+    return {
+        kinds: Object.fromEntries(
+            [...kinds].map((kind) => [kind, all(visitors.map((v) => v.kinds?.[kind]))]),
+        ),
+        record: all(visitors.map((v) => v.record)),
+        value: all(visitors.map((v) => v.value)),
+    };
+};
+
+const isRecord = (value: unknown): value is Json =>
+    typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const str = (value: unknown): string | undefined =>
+    typeof value === 'string' && value !== '' ? value : undefined;
+
+const keysOf = (node: Json): ConvertKeys | undefined =>
+    isRecord(node.sourceKeys) ? (node.sourceKeys as ConvertKeys) : undefined;
+
+/** 数式の JSON のノード (fxName・fxCall など) */
+export const isFormulaNode = (node: Json): boolean =>
+    typeof node.kind === 'string' && node.kind.startsWith('fx');
+
+/** 単位の種類ごとの、数式・条件の項目の基準のオブジェクト (対象のオブジェクト) */
+export const metadataBaseObjectOf = (
+    dataType: string,
+    json: Json,
+    unitName: string,
+): string | undefined => {
+    switch (dataType) {
+        case 'flow':
+            return isRecord(json.start) ? str(json.start.object) : undefined;
+        case 'workflow':
+        case 'sharingRules':
+        case 'matchingRules':
+        case 'assignmentRules':
+        case 'autoResponseRules':
+        case 'escalationRules':
+            return unitName;
+        case 'approvalProcess':
+        case 'duplicateRule':
+            return unitName.split('.')[0];
+        // 種類ごとに要素名が違う対象のオブジェクトを 1 つにする (段階 M8。docs/metadata-json-review.md 2.3。
+        // JSON は XML の名前のまま持ち、使う側はここで引く)
+        case 'layout':
+        case 'objectTranslation':
+            return str(json.objectApiName);
+        case 'flexiPage':
+            return str(json.sobjectType);
+        case 'quickAction':
+            // オブジェクト固有のアクション (<オブジェクト>.<名前>) は名前から。作成のアクションは作るオブジェクト
+            return (
+                str(json.targetObject) ??
+                (unitName.includes('.') ? unitName.split('.')[0] : undefined)
+            );
+        case 'pathAssistant':
+            return str(json.entityName);
+        case 'emailTemplate':
+            return str(json.relatedEntityType);
+        default:
+            return undefined;
+    }
+};
+
+/** 単位の JSON の、走査の最初の文脈 */
+export const initialMetadataWalkContext = (
+    dataType: string,
+    json: Json,
+    unitName: string,
+): MetadataWalkContext => ({
+    dataType,
+    unitName,
+    object: metadataBaseObjectOf(dataType, json, unitName),
+    statement: keysOf(json),
+    path: [],
+});
+
+/** ノードに入るときの文脈 (メンバーと直前の境界ノード) */
+const enterContext = (node: Json, context: MetadataWalkContext): MetadataWalkContext => {
+    // 数式のノード (fx*。段階 M4) は式なので、メンバー (fxCall の name は関数名) にも直前の境界ノード (文) にもしない
+    if (isFormulaNode(node)) return context;
+    const name = str(node.name) ?? str(node.fullName);
+    const member = name && name !== context.unitName ? name : context.member;
+    const statement = keysOf(node) ?? context.statement;
+    return member === context.member && statement === context.statement
+        ? context
+        : { ...context, member, statement };
+};
+
+/** JSON (単位のルート、または中のノード) をたどる */
+export const walkMetadataJson = (
+    value: unknown,
+    visitor: MetadataVisitor,
+    context: MetadataWalkContext,
+): void => {
+    if (Array.isArray(value)) {
+        for (const item of value) walkMetadataJson(item, visitor, context);
+        return;
+    }
+    if (!isRecord(value)) return;
+    const inner = enterContext(value, context);
+    let enter = visitor.record?.(value, inner) !== false;
+    const kind = str(value.kind);
+    const handler = kind ? visitor.kinds?.[kind] : undefined;
+    if (handler && handler(value, inner) === false) enter = false;
+    if (!enter) return;
+    for (const [key, child] of Object.entries(value)) {
+        if (key === 'sourceKeys') continue;
+        if (typeof child === 'string') {
+            visitor.value?.(key, child, value, inner);
+        } else if (typeof child === 'object' && child !== null) {
+            walkMetadataJson(child, visitor, { ...inner, path: [...inner.path, key] });
+        }
+    }
+};
+
+/** 値の木 (や JSON) の中の、プロパティ name の文字列をすべて集める (書いた順) */
+export const metadataValuesOf = (tree: unknown, name: string): string[] => {
+    const found: string[] = [];
+    walkMetadataJson(
+        tree,
+        { value: (key, value) => key === name && found.push(value) },
+        { dataType: '', unitName: '', path: [] },
+    );
+    return found;
+};
+
+/** 値の木 (や JSON) の中のオブジェクトをすべて (書いた順。入れ子も) */
+export const metadataRecordsOf = (tree: unknown): Json[] => {
+    const found: Json[] = [];
+    walkMetadataJson(
+        tree,
+        { record: (node) => void found.push(node) },
+        { dataType: '', unitName: '', path: [] },
+    );
+    return found;
+};

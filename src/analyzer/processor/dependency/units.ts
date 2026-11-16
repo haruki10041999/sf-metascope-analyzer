@@ -8,11 +8,19 @@ import type { ObjectParseResult } from '../../parser/Metadata/parser';
 import type { ConvertKeys, LwcJsExpressionJson } from '../../types';
 import { analyzeLwcModuleCalls, type LwcCallInfo } from '../Lwc/calls';
 import { lwcStringValueOf } from '../Lwc/walker';
-import { extractMetadataReferences } from '../Metadata/referenceAnalysis';
+import { analyzeMetadataRefs } from '../Metadata/refs';
 
 import { getApexDependencies } from './apex';
-import { type FormulaReference, getFormulaReferences } from './formula';
-import type { DependencyKind, UnitDefinition, UnitDependencies, UnitReference } from './types';
+import { type FormulaReferenceAt, formulaReferencesOf } from './formula';
+import { type FormulaValue, isFxJson } from '../../types/metadata/formula';
+import { criterionFieldsOf, formulaNameOf } from '../../types/metadata/criteria';
+import type {
+    ChildRelationship,
+    DependencyKind,
+    UnitDefinition,
+    UnitDependencies,
+    UnitReference,
+} from './types';
 
 // 単位の種類ごとの定義と参照 (Apex は apex.ts)。どれも UnitDependencies の形にする。方針: docs/analysis-plan.md 3 章
 
@@ -51,25 +59,32 @@ const reference = (
     },
 });
 
-/** 数式の参照を UnitReference にする */
+/** 数式のプロパティの値 (数式の JSON か、読めなかった文字列)。なければ undefined */
+const formulaOf = (value: unknown): FormulaValue | undefined =>
+    isFxJson(value) || (typeof value === 'string' && value !== '') ? value : undefined;
+
+/** 数式の参照を UnitReference にする。数式の JSON なら、名前のノードを expression に持つ */
 const formulaReferences = (
-    formula: string | undefined,
+    formula: unknown,
     object: string | undefined,
     via: string,
     site: { member?: string | undefined; statement?: ConvertKeys | undefined },
-): UnitReference[] =>
-    formula
-        ? getFormulaReferences(formula, object).map((r: FormulaReference) => {
+): UnitReference[] => {
+    const value = formulaOf(formula);
+    return value
+        ? formulaReferencesOf(value, object).map((r: FormulaReferenceAt) => {
+              const at = r.expression ? { ...site, expression: r.expression } : site;
               switch (r.refType) {
                   case 'field':
-                      return reference('field', `${r.object}.${r.field}`, 'reads', via, site);
+                      return reference('field', `${r.object}.${r.field}`, 'reads', via, at);
                   case 'object':
-                      return reference('object', r.name, 'reads', via, site);
+                      return reference('object', r.name, 'reads', via, at);
                   default:
-                      return reference(r.refType, r.name, 'uses', via, site);
+                      return reference(r.refType, r.name, 'uses', via, at);
               }
           })
         : [];
+};
 
 // ---------------------------------------------------------------------------
 // オブジェクト
@@ -79,6 +94,7 @@ const formulaReferences = (
 export const getObjectUnitDependencies = (unit: ObjectParseResult): UnitDependencies => {
     const definitions: UnitDefinition[] = [];
     const references: UnitReference[] = [];
+    const childRelationships: ChildRelationship[] = [];
     if (unit.dataType !== 'object') return { definitions, references };
     const object = unit.result.base as unknown as Json;
     const apiName = String(object.apiName);
@@ -97,11 +113,21 @@ export const getObjectUnitDependencies = (unit: ObjectParseResult): UnitDependen
             references.push(
                 reference('object', field.referenceTo as string, 'uses', 'referenceTo', site),
             );
+            // 子リレーション (SOQL では、カスタムの参照項目の名前は <relationshipName>__r)
+            const relationshipName = str(field.relationshipName);
+            if (relationshipName) {
+                childRelationships.push({
+                    parent: field.referenceTo as string,
+                    name: /__c$/i.test(String(field.apiName))
+                        ? `${relationshipName}__r`
+                        : relationshipName,
+                    child: apiName,
+                    field: name,
+                });
+            }
         }
-        references.push(...formulaReferences(str(field.formula), apiName, 'formula', site));
-        references.push(
-            ...formulaReferences(str(field.defaultValue), apiName, 'defaultValue', site),
-        );
+        references.push(...formulaReferences(field.formula, apiName, 'formula', site));
+        references.push(...formulaReferences(field.defaultValue, apiName, 'defaultValue', site));
         // 積み上げ集計: 子のオブジェクトの項目 (Child__c.Amount__c) と、子の参照項目
         const summarized = str(field.summarizedField);
         if (summarized)
@@ -139,8 +165,8 @@ export const getObjectUnitDependencies = (unit: ObjectParseResult): UnitDependen
         // 絞り込み条件: 項目は <オブジェクト>.<項目> か $Source.<項目> (参照元のレコード)
         const lookupFilter = isRecord(field.lookupFilter) ? field.lookupFilter : undefined;
         for (const item of lookupFilter ? rows(lookupFilter, 'filterItems') : []) {
-            for (const path of [str(item.field), str(item.valueField)]) {
-                if (!path) continue;
+            // 条件の行 (criterion。段階 M5) の左辺と、右辺が別の項目 (valueField) のときはその項目
+            for (const path of criterionFieldsOf(item)) {
                 const [head, ...rest] = path.split('.');
                 if (!head || rest.length === 0) continue;
                 const target =
@@ -155,15 +181,10 @@ export const getObjectUnitDependencies = (unit: ObjectParseResult): UnitDependen
         const name = `${apiName}.${String(rule.fullName)}`;
         def('validationRule', name, rule);
         references.push(
-            ...formulaReferences(
-                str(rule.errorConditionFormula),
-                apiName,
-                'errorConditionFormula',
-                {
-                    member: name,
-                    statement: keysOf(rule),
-                } as { member: string; statement: ConvertKeys },
-            ),
+            ...formulaReferences(rule.errorConditionFormula, apiName, 'errorConditionFormula', {
+                member: name,
+                statement: keysOf(rule),
+            } as { member: string; statement: ConvertKeys }),
         );
         if (str(rule.errorDisplayField)) {
             references.push(
@@ -214,10 +235,50 @@ export const getObjectUnitDependencies = (unit: ObjectParseResult): UnitDependen
             for (const column of Array.isArray(member.columns) ? member.columns : [])
                 fieldRef(str(column), 'listView.columns');
             for (const filter of rows(member, 'filters'))
-                fieldRef(str(filter.field), 'listView.filters');
+                fieldRef(formulaNameOf(filter.left), 'listView.filters');
+            // レコードタイプが使うビジネスプロセス・コンパクトレイアウト・選択リストの項目 (段階 M3 で足した)
+            if (key === 'recordTypes') {
+                const businessProcess = str(member.businessProcess);
+                if (businessProcess) {
+                    references.push(
+                        reference(
+                            'businessProcess',
+                            `${apiName}.${businessProcess}`,
+                            'uses',
+                            'recordType.businessProcess',
+                            site,
+                        ),
+                    );
+                }
+                // SYSTEM は既定 (コンパクトレイアウトの定義ではない)
+                const compactLayout = str(member.compactLayoutAssignment);
+                if (compactLayout && compactLayout !== 'SYSTEM') {
+                    references.push(
+                        reference(
+                            'compactLayout',
+                            `${apiName}.${compactLayout}`,
+                            'uses',
+                            'recordType.compactLayoutAssignment',
+                            site,
+                        ),
+                    );
+                }
+                for (const picklist of rows(member, 'picklistValues'))
+                    fieldRef(str(picklist.picklist), 'recordType.picklistValues');
+            }
+            // Visualforce のボタン・リンク (段階 M3 で足した。以前は page を読んでいなかった)
+            if (key === 'webLinks' && str(member.page)) {
+                references.push(
+                    reference('apexPage', member.page as string, 'uses', 'webLink.page', site),
+                );
+            }
         }
     }
-    return { definitions, references };
+    return {
+        definitions,
+        references,
+        ...(childRelationships.length ? { childRelationships } : {}),
+    };
 };
 
 /** オブジェクトの翻訳の要素 → 翻訳しているものの種類 (名前は <オブジェクト>.<名前>。レイアウトは <オブジェクト>-<名前>) */
@@ -595,227 +656,6 @@ const metadataNameOf = (result: MetadataFileParseResult): string => {
     );
 };
 
-/** Flow の要素の参照 (FlowReference) を UnitReference にする */
-const FLOW_REF_TYPES: Record<string, string> = {
-    object: 'object',
-    field: 'field',
-    apexClass: 'apexClass',
-    flow: 'flow',
-    lwc: 'lwc',
-    component: 'auraComponent',
-    label: 'customLabel',
-    global: 'globalVariable',
-    customPermission: 'customPermission',
-    customMetadata: 'customMetadata',
-    // ワークフローのメールアラート (定義はワークフローの単位の alerts。<オブジェクト>.<名前>)
-    emailAlert: 'workflowAlert',
-    quickAction: 'quickAction',
-    externalService: 'externalServiceRegistration',
-    customNotificationType: 'customNotificationType',
-};
-
-const flowReferences = (flow: Json, flowName: string): UnitReference[] =>
-    ['elements', 'resources', 'start'].flatMap((key) => {
-        const value = flow[key];
-        const items = Array.isArray(value)
-            ? value.filter(isRecord)
-            : isRecord(value)
-              ? [value]
-              : [];
-        return items.flatMap((element) =>
-            (Array.isArray(element.references) ? element.references.filter(isRecord) : []).flatMap(
-                (r) => {
-                    const refType = FLOW_REF_TYPES[String(r.refType)];
-                    const target = str(r.value);
-                    if (!refType || !target) return [];
-                    const member = str(element.name)
-                        ? `${flowName}.${element.name as string}`
-                        : flowName;
-                    return [
-                        reference(refType, target, 'uses', `flow.${String(element.kind)}`, {
-                            member,
-                            statement: keysOf(element),
-                        }),
-                    ];
-                },
-            ),
-        );
-    });
-
-/** 行の値の参照 (権限の行など)。行ごとに文の単位 */
-const rowReferences = (
-    json: Json,
-    rowName: string,
-    property: string,
-    refType: string,
-    kind: DependencyKind,
-    toTarget: (value: string) => string = (value) => value,
-): UnitReference[] =>
-    rows(json, rowName).flatMap((row) => {
-        const value = str(row[property]);
-        const keys = keysOf(row);
-        return value
-            ? [
-                  reference(refType, toTarget(value), kind, `${rowName}.${property}`, {
-                      statement: keys,
-                      expression: keys,
-                  }),
-              ]
-            : [];
-    });
-
-/** 権限 (権限セット・プロファイル) が与えるもの */
-const permissionReferences = (json: Json): UnitReference[] => [
-    ...rowReferences(json, 'objectPermissions', 'object', 'object', 'grants'),
-    ...rowReferences(json, 'fieldPermissions', 'field', 'field', 'grants'),
-    ...rowReferences(json, 'classAccesses', 'apexClass', 'apexClass', 'grants'),
-    ...rowReferences(json, 'pageAccesses', 'apexPage', 'visualforcePage', 'grants'),
-    ...rowReferences(json, 'recordTypeVisibilities', 'recordType', 'recordType', 'grants'),
-    ...rowReferences(json, 'layoutAssignments', 'layout', 'layout', 'uses'),
-    ...rowReferences(json, 'loginFlows', 'flow', 'flow', 'uses'),
-    // カスタム設定・カスタムメタデータ型はオブジェクト (X__c / X__mdt)
-    ...rowReferences(json, 'customSettingAccesses', 'name', 'object', 'grants'),
-    ...rowReferences(json, 'customMetadataTypeAccesses', 'name', 'object', 'grants'),
-    ...rowReferences(json, 'flowAccesses', 'flow', 'flow', 'grants'),
-    // プリンシパルは <外部ログイン情報>-<プリンシパル名> (API 名は - を含まないので、最初の - の前が外部ログイン情報)
-    ...rowReferences(
-        json,
-        'externalCredentialPrincipalAccesses',
-        'externalCredentialPrincipal',
-        'externalCredential',
-        'grants',
-        (principal) => principal.split('-')[0]!,
-    ),
-    ...rowReferences(
-        json,
-        'externalDataSourceAccesses',
-        'externalDataSource',
-        'externalDataSource',
-        'grants',
-    ),
-];
-
-/**
- * 優先度 A の種類の参照のうち、今の参照の解析 (extractMetadataReferences) にないもの
- * (A の解析 (権限の表・画面の解析) が自分で確かめているもの)
- */
-const A_TYPE_REFERENCES: Partial<Record<string, (json: Json, name: string) => UnitReference[]>> = {
-    permissionSet: permissionReferences,
-    mutingPermissionSet: permissionReferences,
-    profile: permissionReferences,
-    layout: (json) => {
-        const object = str(json.objectApiName);
-        return object
-            ? rowReferences(
-                  json,
-                  'items',
-                  'field',
-                  'field',
-                  'places',
-                  (field) => `${object}.${field}`,
-              )
-            : [];
-    },
-    permissionSetGroup: (json) => {
-        const keys = keysOf(json);
-        const names = (key: string) =>
-            Array.isArray(json[key])
-                ? (json[key] as unknown[]).filter((v) => typeof v === 'string')
-                : [];
-        return [
-            ...names('permissionSets').map((name) =>
-                reference('permissionSet', name as string, 'uses', 'permissionSets', {
-                    statement: keys,
-                }),
-            ),
-            ...names('mutingPermissionSets').map((name) =>
-                reference('mutingPermissionSet', name as string, 'uses', 'mutingPermissionSets', {
-                    statement: keys,
-                }),
-            ),
-        ];
-    },
-    flexiPage: (json) => {
-        const object = str(json.sobjectType);
-        return [
-            ...(object ? [reference('object', object, 'uses', 'sobjectType')] : []),
-            ...(object
-                ? rowReferences(
-                      json,
-                      'fields',
-                      'fieldItem',
-                      'field',
-                      'places',
-                      (item) => `${object}.${item.replace(/^Record\./, '')}`,
-                  )
-                : []),
-            ...rows(json, 'components').flatMap((component) => {
-                const componentName = str(component.componentName);
-                const keys = keysOf(component);
-                // c:<名前> (自分の名前空間の LWC / Aura)
-                const local = componentName?.match(/^c:(\w+)$/);
-                return local
-                    ? [
-                          reference('lwc', local[1]!, 'places', 'components', {
-                              statement: keys,
-                              expression: keys,
-                          }),
-                      ]
-                    : [];
-            }),
-        ];
-    },
-};
-
-/** 数式を持つプロパティ (Flow の数式・ワークフローのルール・承認の条件など) */
-const FORMULA_KEYS = new Set(['formula', 'expression', 'errorConditionFormula']);
-
-/** 種類ごとの、数式の基準のオブジェクト */
-const formulaObjectOf = (dataType: string, json: Json, name: string): string | undefined => {
-    switch (dataType) {
-        case 'flow':
-            return isRecord(json.start) ? str(json.start.object) : undefined;
-        case 'workflow':
-        case 'sharingRules':
-            return name;
-        case 'approvalProcess':
-            return name.split('.')[0];
-        default:
-            return undefined;
-    }
-};
-
-/** JSON の中の数式 (FORMULA_KEYS の文字列) の参照。文は数式を持つノード */
-const embeddedFormulaReferences = (dataType: string, json: Json, name: string): UnitReference[] => {
-    const object = formulaObjectOf(dataType, json, name);
-    const found: UnitReference[] = [];
-    const walk = (node: unknown, statement?: ConvertKeys, member?: string): void => {
-        if (Array.isArray(node)) {
-            node.forEach((child) => walk(child, statement, member));
-            return;
-        }
-        if (!isRecord(node)) return;
-        const keys = keysOf(node) ?? statement;
-        const memberName = str(node.name) ?? str(node.fullName) ?? member;
-        for (const [key, child] of Object.entries(node)) {
-            if (key === 'sourceKeys') continue;
-            if (FORMULA_KEYS.has(key) && typeof child === 'string') {
-                found.push(
-                    ...formulaReferences(child, object, `formula.${key}`, {
-                        member:
-                            memberName && memberName !== name ? `${name}.${memberName}` : undefined,
-                        statement: keys,
-                    }),
-                );
-            } else {
-                walk(child, keys, memberName);
-            }
-        }
-    };
-    walk(json);
-    return found;
-};
-
 /**
  * 子を定義にする種類 (dataType → [子の要素, 定義の種類])。名前は <単位の名前 (オブジェクト)>.<子の fullName>。
  * ワークフローのメールアラートは Flow のアクション (emailAlert)、一致ルールは重複ルールが使う
@@ -859,15 +699,14 @@ export const getMetadataFileDependencies = (unit: MetadataFileParseResult): Unit
                 });
         }
     }
-    const references: UnitReference[] = extractMetadataReferences(unit).map((r) =>
-        reference(r.refType, r.target, 'uses', r.via, {
-            statement: r.sourceKeys,
-            expression: r.sourceKeys,
+    // 参照の取り出しは Metadata/refs.ts の 1 本 (docs/json-redesign-plan.md の段階 M2)
+    const references: UnitReference[] = analyzeMetadataRefs(unit.dataType, base, name).map((r) =>
+        reference(r.refType, r.target, r.kind, r.via, {
+            member: r.member,
+            statement: r.statement,
+            expression: r.expression,
         }),
     );
-    if (unit.dataType === 'flow') references.push(...flowReferences(base, name));
-    references.push(...embeddedFormulaReferences(unit.dataType, base, name));
-    references.push(...(A_TYPE_REFERENCES[unit.dataType]?.(base, name) ?? []));
     return { definitions, references: dedupe(references) };
 };
 

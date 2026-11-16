@@ -15,30 +15,31 @@
             {
               "kind": "field",
               "sourceKeys": {
-                "objectKey": "fieldDeclaration_a59fb5456fe1b2bc",
+                "objectKey": "fieldDeclaration_c77b68f20c3f20e0",
                 "sourceKey": "fieldDeclaration_982a66ea025d8c59"
               },
               "variants": [
                 {
+                  "kind": "variant",
                   "sourceKeys": {
-                    "objectKey": "variableDeclarator_e07a0e3ed0d1fce9",
+                    "objectKey": "variableDeclarator_8ddd20df95427904",
                     "sourceKey": "variableDeclarator_1be6f2283811f45f"
                   },
                   "name": "limitSize",
                   "init": {
+                    "kind": "integer",
                     "sourceKeys": {
                       "objectKey": "literal_1e0f71bd1af6c752",
                       "sourceKey": "literal_5d0928ba12c543f2"
                     },
-                    "value": "10",
-                    "valueType": "integer"
+                    "value": "10"
                   }
                 }
               ],
               "variantType": {
                 "kind": "type",
                 "sourceKeys": {
-                  "objectKey": "typeRef_1a870c360196e41a",
+                  "objectKey": "typeRef_8c83bc51944df63a",
                   "sourceKey": "typeRef_01511f3fe2baf675"
                 },
                 "type": "primitive",
@@ -50,7 +51,7 @@
               "kind": "method",
               "sourceKeys": {
                 "base": {
-                  "objectKey": "methodDeclaration_bc29f76da47ddb5f",
+                  "objectKey": "methodDeclaration_d8c5eb6e436811ab",
                   "sourceKey": "methodDeclaration_3529e0eb91a91d8b"
                 },
                 "name": {
@@ -64,14 +65,14 @@
                 {
                   "kind": "parameter",
                   "sourceKeys": {
-                    "objectKey": "formalParameter_a31f28fc3417f058",
+                    "objectKey": "formalParameter_3c1aaa6705cf2488",
                     "sourceKey": "formalParameter_5bf8ec752b28bf53"
                   },
                   "variant": "n",
                   "variantType": {
                     "kind": "type",
                     "sourceKeys": {
-                      "objectKey": "typeRef_1a870c360196e41a",
+                      "objectKey": "typeRef_8c83bc51944df63a",
                       "sourceKey": "typeRef_712f99fdee7d39d0"
                     },
                     "type": "primitive",
@@ -84,21 +85,35 @@
                 {
                   "kind": "expression",
                   "sourceKeys": {
-                    "objectKey": "expressionStatement_6bf875f5bae79bb4",
+                    "objectKey": "expressionStatement_7664d4502ad48c9c",
                     "sourceKey": "expressionStatement_50312aabad08ccaf"
                   },
                   "value": {
                     "kind": "memberAccess",
                     "sourceKeys": {
-                      "objectKey": "dotExpression_f2e26c8fb3e2a209",
+                      "objectKey": "dotExpression_bc4fd652164a15a9",
                       "sourceKey": "dotExpression_7a523894d3687f5b"
                     },
                     "type": "method",
-                    "object": "System",
+                    "object": {
+                      "kind": "identifier",
+                      "sourceKeys": {
+                        "objectKey": "idPrimary_92bc4d8d53ed9978",
+                        "sourceKey": "idPrimary_d66302ed0b79ceaa"
+                      },
+                      "name": "System"
+                    },
                     "operator": ".",
                     "member": "debug",
                     "memberArg": [
-                      "n"
+                      {
+                        "kind": "identifier",
+                        "sourceKeys": {
+                          "objectKey": "idPrimary_23535433dcad254c",
+                          "sourceKey": "idPrimary_0bdc06fcf2ac802c"
+                        },
+                        "name": "n"
+                      }
                     ]
                   }
                 }
@@ -106,223 +121,243 @@
               "modifier": {}
             },
             {
-              "kind": "statement",
-              "statement": {
-                "kind": "for",
-                "sourceKeys": {
-                  "objectKey": "forStatement_ae6c7fd924687036",
-                  "sourceKey": "forStatement_67152a3be9a87f7f"
-                },
-                "condition": {
-                  "kind": "forCondition",
-                  "sourceKeys": {
-                    "objectKey": "forControl_5389d919eb96df9e",
-                    "sourceKey": "forControl_4d806dbe70a3ecc7"
-                  },
-                  "initializer": {
-                    "variants": [
-                      {
-                        "sourceKeys": {
-                          "objectKey": "variableDeclarator_883f35246563c6f8",
-                          "sourceKey": "variableDeclarator_cd82e2b2f121bf2d"
-                        },
-                        "name": "k",
-                        "init": {
-                          "sourceKeys": {
-                            "objectKey": "literal_c0d97fe34037a338",
-                            "sourceKey": "literal_311f7cd7bb83d0d9"
-                          },
-                          "value": "0",
-                          "valueType": "integer"
-                        }
-                      }
-                    ],
-                    "variantsType": {
-                      "kind": "type",
-                      "sourceKeys": {
-                        "objectKey": "typeRef_1a870c360196e41a",
-                        "sourceKey": "typeRef_4e56ccfb37cca535"
-                      },
-                      "type": "primitive",
-                      "primitiveType": "Integer"
-                    },
-                    "modifier": {}
-                  },
-                  "condition": {
+              "kind": "for",
+              "sourceKeys": {
+                "objectKey": "forStatement_fdddfc3232b64b42",
+                "sourceKey": "forStatement_67152a3be9a87f7f"
+              },
+              "condition": {
+                "initializer": {
+                  "variantType": {
+                    "kind": "type",
                     "sourceKeys": {
-                      "objectKey": "cmpExpression_ae3a027967ef1b23",
-                      "sourceKey": "cmpExpression_f99156bebb315970"
+                      "objectKey": "typeRef_8c83bc51944df63a",
+                      "sourceKey": "typeRef_4e56ccfb37cca535"
                     },
-                    "left": "k",
-                    "operator": "<",
-                    "right": {
-                      "sourceKeys": {
-                        "objectKey": "literal_72b29e97af94190f",
-                        "sourceKey": "literal_f454c945341290b4"
-                      },
-                      "value": "3",
-                      "valueType": "integer"
-                    }
+                    "type": "primitive",
+                    "primitiveType": "Integer"
                   },
-                  "update": [
+                  "modifier": {},
+                  "variants": [
                     {
+                      "kind": "variant",
                       "sourceKeys": {
-                        "objectKey": "postOpExpression_3c359679c111fb4b",
-                        "sourceKey": "postOpExpression_168c226f0aebd668"
+                        "objectKey": "variableDeclarator_f28f170e411ccfe7",
+                        "sourceKey": "variableDeclarator_cd82e2b2f121bf2d"
                       },
-                      "variant": "k",
-                      "operator": "++",
-                      "operatorLocation": "back"
+                      "name": "k",
+                      "init": {
+                        "kind": "integer",
+                        "sourceKeys": {
+                          "objectKey": "literal_c0d97fe34037a338",
+                          "sourceKey": "literal_311f7cd7bb83d0d9"
+                        },
+                        "value": "0"
+                      }
                     }
                   ]
                 },
-                "block": [
-                  {
-                    "kind": "if",
-                    "sourceKeys": {
-                      "objectKey": "ifStatement_f5b78462c717c809",
-                      "sourceKey": "ifStatement_47bdc15d04533bf2"
-                    },
-                    "conditionBlock": [
-                      {
-                        "condition": {
-                          "kind": "ifCondition",
-                          "sourceKeys": {
-                            "objectKey": "parExpression_6259982105dcf8a4",
-                            "sourceKey": "parExpression_7ad624108a1b4485"
-                          },
-                          "condition": {
-                            "sourceKeys": {
-                              "objectKey": "equalityExpression_acc58ef265eafc58",
-                              "sourceKey": "equalityExpression_2e323533f764f3a5"
-                            },
-                            "left": "k",
-                            "operator": "==",
-                            "right": {
-                              "sourceKeys": {
-                                "objectKey": "literal_fb5627d59521b262",
-                                "sourceKey": "literal_510435a1109ae73c"
-                              },
-                              "value": "1",
-                              "valueType": "integer"
-                            }
-                          }
-                        },
-                        "block": [
-                          {
-                            "kind": "continue",
-                            "sourceKeys": {
-                              "objectKey": "continueStatement_75e54317e0e4a15e",
-                              "sourceKey": "continueStatement_cbb5f518db033425"
-                            },
-                            "value": "continue"
-                          }
-                        ]
-                      }
-                    ]
+                "condition": {
+                  "kind": "binary",
+                  "sourceKeys": {
+                    "objectKey": "cmpExpression_235ff977a16b86d6",
+                    "sourceKey": "cmpExpression_f99156bebb315970"
                   },
-                  {
-                    "kind": "if",
+                  "left": {
+                    "kind": "identifier",
                     "sourceKeys": {
-                      "objectKey": "ifStatement_634e6bfc167e3c2c",
-                      "sourceKey": "ifStatement_e35c82b0b2675f26"
+                      "objectKey": "idPrimary_435c233175df8082",
+                      "sourceKey": "idPrimary_8726e16dd4571542"
                     },
-                    "conditionBlock": [
-                      {
-                        "condition": {
-                          "kind": "ifCondition",
-                          "sourceKeys": {
-                            "objectKey": "parExpression_70ff9d7e820a3a00",
-                            "sourceKey": "parExpression_a26623a27df2f3d6"
-                          },
-                          "condition": {
-                            "sourceKeys": {
-                              "objectKey": "equalityExpression_dd43140614826746",
-                              "sourceKey": "equalityExpression_6ef8ad76d02fc347"
-                            },
-                            "left": "k",
-                            "operator": "==",
-                            "right": {
-                              "sourceKeys": {
-                                "objectKey": "literal_a49b7b7e3b02d933",
-                                "sourceKey": "literal_a1490d515c686926"
-                              },
-                              "value": "2",
-                              "valueType": "integer"
-                            }
-                          }
-                        },
-                        "block": [
-                          {
-                            "kind": "break",
-                            "sourceKeys": {
-                              "objectKey": "breakStatement_791d9ef866afdfd1",
-                              "sourceKey": "breakStatement_14e839eab2b87563"
-                            },
-                            "value": "break"
-                          }
-                        ]
-                      }
-                    ]
+                    "name": "k"
+                  },
+                  "right": {
+                    "kind": "integer",
+                    "sourceKeys": {
+                      "objectKey": "literal_72b29e97af94190f",
+                      "sourceKey": "literal_f454c945341290b4"
+                    },
+                    "value": "3"
+                  },
+                  "operator": "<"
+                },
+                "update": [
+                  {
+                    "kind": "unary",
+                    "sourceKeys": {
+                      "objectKey": "postOpExpression_0333e72e57f8d127",
+                      "sourceKey": "postOpExpression_168c226f0aebd668"
+                    },
+                    "operator": "++",
+                    "operatorLocation": "back",
+                    "argument": {
+                      "kind": "identifier",
+                      "sourceKeys": {
+                        "objectKey": "idPrimary_435c233175df8082",
+                        "sourceKey": "idPrimary_a88b3f705299d9cb"
+                      },
+                      "name": "k"
+                    }
                   }
                 ]
               },
-              "modifier": {}
-            },
-            {
-              "kind": "statement",
-              "statement": {
-                "kind": "expression",
-                "sourceKeys": {
-                  "objectKey": "expressionStatement_2ca2826dad470ae2",
-                  "sourceKey": "expressionStatement_f73012e066a707a1"
-                },
-                "value": {
-                  "kind": "memberAccess",
+              "block": [
+                {
+                  "kind": "if",
                   "sourceKeys": {
-                    "objectKey": "methodCallExpression_308d5925e3d4a431",
-                    "sourceKey": "methodCallExpression_a552401fde737fe5"
+                    "objectKey": "ifStatement_f30b0de866f29725",
+                    "sourceKey": "ifStatement_47bdc15d04533bf2"
                   },
-                  "type": "method",
-                  "member": "helper",
-                  "memberArg": [
-                    "limitSize"
-                  ]
-                }
-              },
-              "modifier": {}
-            },
-            {
-              "kind": "statement",
-              "statement": {
-                "kind": "expression",
-                "sourceKeys": {
-                  "objectKey": "expressionStatement_cc836d68cfce2fd3",
-                  "sourceKey": "expressionStatement_0e8d77e0f338f96c"
-                },
-                "value": {
-                  "kind": "memberAccess",
-                  "sourceKeys": {
-                    "objectKey": "dotExpression_c05042caae093e4f",
-                    "sourceKey": "dotExpression_fc86a8f953d14ef6"
-                  },
-                  "type": "method",
-                  "object": "System",
-                  "operator": ".",
-                  "member": "debug",
-                  "memberArg": [
+                  "conditionBlock": [
                     {
-                      "sourceKeys": {
-                        "objectKey": "literal_ab7e545bc0eedd34",
-                        "sourceKey": "literal_45d481d7c2e0b1ed"
+                      "condition": {
+                        "kind": "binary",
+                        "sourceKeys": {
+                          "objectKey": "equalityExpression_670f09b8406fe586",
+                          "sourceKey": "equalityExpression_2e323533f764f3a5"
+                        },
+                        "left": {
+                          "kind": "identifier",
+                          "sourceKeys": {
+                            "objectKey": "idPrimary_435c233175df8082",
+                            "sourceKey": "idPrimary_679eafef49553046"
+                          },
+                          "name": "k"
+                        },
+                        "right": {
+                          "kind": "integer",
+                          "sourceKeys": {
+                            "objectKey": "literal_fb5627d59521b262",
+                            "sourceKey": "literal_510435a1109ae73c"
+                          },
+                          "value": "1"
+                        },
+                        "operator": "=="
                       },
-                      "value": "'end'",
-                      "valueType": "string"
+                      "block": [
+                        {
+                          "kind": "continue",
+                          "sourceKeys": {
+                            "objectKey": "continueStatement_75e54317e0e4a15e",
+                            "sourceKey": "continueStatement_cbb5f518db033425"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "kind": "if",
+                  "sourceKeys": {
+                    "objectKey": "ifStatement_233354f8a0234c5f",
+                    "sourceKey": "ifStatement_e35c82b0b2675f26"
+                  },
+                  "conditionBlock": [
+                    {
+                      "condition": {
+                        "kind": "binary",
+                        "sourceKeys": {
+                          "objectKey": "equalityExpression_2b0bce6ddbb6fe50",
+                          "sourceKey": "equalityExpression_6ef8ad76d02fc347"
+                        },
+                        "left": {
+                          "kind": "identifier",
+                          "sourceKeys": {
+                            "objectKey": "idPrimary_435c233175df8082",
+                            "sourceKey": "idPrimary_41f43a4b5755f5bc"
+                          },
+                          "name": "k"
+                        },
+                        "right": {
+                          "kind": "integer",
+                          "sourceKeys": {
+                            "objectKey": "literal_a49b7b7e3b02d933",
+                            "sourceKey": "literal_a1490d515c686926"
+                          },
+                          "value": "2"
+                        },
+                        "operator": "=="
+                      },
+                      "block": [
+                        {
+                          "kind": "break",
+                          "sourceKeys": {
+                            "objectKey": "breakStatement_791d9ef866afdfd1",
+                            "sourceKey": "breakStatement_14e839eab2b87563"
+                          }
+                        }
+                      ]
                     }
                   ]
                 }
+              ]
+            },
+            {
+              "kind": "expression",
+              "sourceKeys": {
+                "objectKey": "expressionStatement_cd3c81203de663d8",
+                "sourceKey": "expressionStatement_f73012e066a707a1"
               },
-              "modifier": {}
+              "value": {
+                "kind": "call",
+                "sourceKeys": {
+                  "objectKey": "methodCallExpression_30aaf600cb2a5483",
+                  "sourceKey": "methodCallExpression_a552401fde737fe5"
+                },
+                "callee": {
+                  "kind": "identifier",
+                  "sourceKeys": {
+                    "objectKey": "id_352aaf5556fb2f59",
+                    "sourceKey": "id_4c5ad5f7f732c1f3"
+                  },
+                  "name": "helper"
+                },
+                "arg": [
+                  {
+                    "kind": "identifier",
+                    "sourceKeys": {
+                      "objectKey": "idPrimary_b4212a0fdb103b82",
+                      "sourceKey": "idPrimary_12428890d1f57671"
+                    },
+                    "name": "limitSize"
+                  }
+                ]
+              }
+            },
+            {
+              "kind": "expression",
+              "sourceKeys": {
+                "objectKey": "expressionStatement_b0fa3840841f0ec7",
+                "sourceKey": "expressionStatement_0e8d77e0f338f96c"
+              },
+              "value": {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_8cdd1fdc7407b077",
+                  "sourceKey": "dotExpression_fc86a8f953d14ef6"
+                },
+                "type": "method",
+                "object": {
+                  "kind": "identifier",
+                  "sourceKeys": {
+                    "objectKey": "idPrimary_92bc4d8d53ed9978",
+                    "sourceKey": "idPrimary_f30083dcdff0753c"
+                  },
+                  "name": "System"
+                },
+                "operator": ".",
+                "member": "debug",
+                "memberArg": [
+                  {
+                    "kind": "string",
+                    "sourceKeys": {
+                      "objectKey": "literal_ab7e545bc0eedd34",
+                      "sourceKey": "literal_45d481d7c2e0b1ed"
+                    },
+                    "value": "end"
+                  }
+                ]
+              }
             }
           ]
         }
@@ -330,7 +365,7 @@
     },
     "sourceObject": [
       {
-        "objectKey": "fieldDeclaration_a59fb5456fe1b2bc",
+        "objectKey": "fieldDeclaration_c77b68f20c3f20e0",
         "context": "Integer limitSize = 10;",
         "source": [
           {
@@ -349,7 +384,7 @@
         ]
       },
       {
-        "objectKey": "variableDeclarator_e07a0e3ed0d1fce9",
+        "objectKey": "variableDeclarator_8ddd20df95427904",
         "context": "limitSize = 10",
         "source": [
           {
@@ -387,7 +422,7 @@
         ]
       },
       {
-        "objectKey": "typeRef_1a870c360196e41a",
+        "objectKey": "typeRef_8c83bc51944df63a",
         "context": "Integer",
         "source": [
           {
@@ -432,7 +467,7 @@
         ]
       },
       {
-        "objectKey": "methodDeclaration_bc29f76da47ddb5f",
+        "objectKey": "methodDeclaration_d8c5eb6e436811ab",
         "context": "void helper(Integer n) {\n    System.debug(n);\n}",
         "source": [
           {
@@ -466,11 +501,24 @@
               "line": 3,
               "column": 11
             }
+          },
+          {
+            "sourceKey": "id_4c5ad5f7f732c1f3",
+            "start": {
+              "offset": 191,
+              "line": 15,
+              "column": 0
+            },
+            "end": {
+              "offset": 197,
+              "line": 15,
+              "column": 6
+            }
           }
         ]
       },
       {
-        "objectKey": "formalParameter_a31f28fc3417f058",
+        "objectKey": "formalParameter_3c1aaa6705cf2488",
         "context": "Integer n",
         "source": [
           {
@@ -489,7 +537,7 @@
         ]
       },
       {
-        "objectKey": "expressionStatement_6bf875f5bae79bb4",
+        "objectKey": "expressionStatement_7664d4502ad48c9c",
         "context": "System.debug(n);",
         "source": [
           {
@@ -508,7 +556,7 @@
         ]
       },
       {
-        "objectKey": "dotExpression_f2e26c8fb3e2a209",
+        "objectKey": "dotExpression_bc4fd652164a15a9",
         "context": "System.debug(n)",
         "source": [
           {
@@ -527,7 +575,58 @@
         ]
       },
       {
-        "objectKey": "forStatement_ae6c7fd924687036",
+        "objectKey": "idPrimary_92bc4d8d53ed9978",
+        "context": "System",
+        "source": [
+          {
+            "sourceKey": "idPrimary_d66302ed0b79ceaa",
+            "start": {
+              "offset": 54,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 60,
+              "line": 4,
+              "column": 10
+            }
+          },
+          {
+            "sourceKey": "idPrimary_f30083dcdff0753c",
+            "start": {
+              "offset": 210,
+              "line": 16,
+              "column": 0
+            },
+            "end": {
+              "offset": 216,
+              "line": 16,
+              "column": 6
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "idPrimary_23535433dcad254c",
+        "context": "n",
+        "source": [
+          {
+            "sourceKey": "idPrimary_0bdc06fcf2ac802c",
+            "start": {
+              "offset": 67,
+              "line": 4,
+              "column": 17
+            },
+            "end": {
+              "offset": 68,
+              "line": 4,
+              "column": 18
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "forStatement_fdddfc3232b64b42",
         "context": "for (Integer k = 0; k < 3; k++) {\n    if (k == 1) {\n        continue;\n    }\n    if (k == 2) {\n        break;\n    }\n}",
         "source": [
           {
@@ -546,26 +645,7 @@
         ]
       },
       {
-        "objectKey": "forControl_5389d919eb96df9e",
-        "context": "Integer k = 0; k < 3; k++",
-        "source": [
-          {
-            "sourceKey": "forControl_4d806dbe70a3ecc7",
-            "start": {
-              "offset": 79,
-              "line": 7,
-              "column": 5
-            },
-            "end": {
-              "offset": 104,
-              "line": 7,
-              "column": 30
-            }
-          }
-        ]
-      },
-      {
-        "objectKey": "variableDeclarator_883f35246563c6f8",
+        "objectKey": "variableDeclarator_f28f170e411ccfe7",
         "context": "k = 0",
         "source": [
           {
@@ -603,7 +683,7 @@
         ]
       },
       {
-        "objectKey": "cmpExpression_ae3a027967ef1b23",
+        "objectKey": "cmpExpression_235ff977a16b86d6",
         "context": "k < 3",
         "source": [
           {
@@ -617,6 +697,64 @@
               "offset": 99,
               "line": 7,
               "column": 25
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "idPrimary_435c233175df8082",
+        "context": "k",
+        "source": [
+          {
+            "sourceKey": "idPrimary_8726e16dd4571542",
+            "start": {
+              "offset": 94,
+              "line": 7,
+              "column": 20
+            },
+            "end": {
+              "offset": 95,
+              "line": 7,
+              "column": 21
+            }
+          },
+          {
+            "sourceKey": "idPrimary_a88b3f705299d9cb",
+            "start": {
+              "offset": 101,
+              "line": 7,
+              "column": 27
+            },
+            "end": {
+              "offset": 102,
+              "line": 7,
+              "column": 28
+            }
+          },
+          {
+            "sourceKey": "idPrimary_679eafef49553046",
+            "start": {
+              "offset": 116,
+              "line": 8,
+              "column": 8
+            },
+            "end": {
+              "offset": 117,
+              "line": 8,
+              "column": 9
+            }
+          },
+          {
+            "sourceKey": "idPrimary_41f43a4b5755f5bc",
+            "start": {
+              "offset": 158,
+              "line": 11,
+              "column": 8
+            },
+            "end": {
+              "offset": 159,
+              "line": 11,
+              "column": 9
             }
           }
         ]
@@ -641,7 +779,7 @@
         ]
       },
       {
-        "objectKey": "postOpExpression_3c359679c111fb4b",
+        "objectKey": "postOpExpression_0333e72e57f8d127",
         "context": "k++",
         "source": [
           {
@@ -660,7 +798,7 @@
         ]
       },
       {
-        "objectKey": "ifStatement_f5b78462c717c809",
+        "objectKey": "ifStatement_f30b0de866f29725",
         "context": "if (k == 1) {\n        continue;\n    }",
         "source": [
           {
@@ -679,26 +817,7 @@
         ]
       },
       {
-        "objectKey": "parExpression_6259982105dcf8a4",
-        "context": "(k == 1)",
-        "source": [
-          {
-            "sourceKey": "parExpression_7ad624108a1b4485",
-            "start": {
-              "offset": 115,
-              "line": 8,
-              "column": 7
-            },
-            "end": {
-              "offset": 123,
-              "line": 8,
-              "column": 15
-            }
-          }
-        ]
-      },
-      {
-        "objectKey": "equalityExpression_acc58ef265eafc58",
+        "objectKey": "equalityExpression_670f09b8406fe586",
         "context": "k == 1",
         "source": [
           {
@@ -755,7 +874,7 @@
         ]
       },
       {
-        "objectKey": "ifStatement_634e6bfc167e3c2c",
+        "objectKey": "ifStatement_233354f8a0234c5f",
         "context": "if (k == 2) {\n        break;\n    }",
         "source": [
           {
@@ -774,26 +893,7 @@
         ]
       },
       {
-        "objectKey": "parExpression_70ff9d7e820a3a00",
-        "context": "(k == 2)",
-        "source": [
-          {
-            "sourceKey": "parExpression_a26623a27df2f3d6",
-            "start": {
-              "offset": 157,
-              "line": 11,
-              "column": 7
-            },
-            "end": {
-              "offset": 165,
-              "line": 11,
-              "column": 15
-            }
-          }
-        ]
-      },
-      {
-        "objectKey": "equalityExpression_dd43140614826746",
+        "objectKey": "equalityExpression_2b0bce6ddbb6fe50",
         "context": "k == 2",
         "source": [
           {
@@ -850,7 +950,7 @@
         ]
       },
       {
-        "objectKey": "expressionStatement_2ca2826dad470ae2",
+        "objectKey": "expressionStatement_cd3c81203de663d8",
         "context": "helper(limitSize);",
         "source": [
           {
@@ -869,7 +969,7 @@
         ]
       },
       {
-        "objectKey": "methodCallExpression_308d5925e3d4a431",
+        "objectKey": "methodCallExpression_30aaf600cb2a5483",
         "context": "helper(limitSize)",
         "source": [
           {
@@ -888,7 +988,26 @@
         ]
       },
       {
-        "objectKey": "expressionStatement_cc836d68cfce2fd3",
+        "objectKey": "idPrimary_b4212a0fdb103b82",
+        "context": "limitSize",
+        "source": [
+          {
+            "sourceKey": "idPrimary_12428890d1f57671",
+            "start": {
+              "offset": 198,
+              "line": 15,
+              "column": 7
+            },
+            "end": {
+              "offset": 207,
+              "line": 15,
+              "column": 16
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "expressionStatement_b0fa3840841f0ec7",
         "context": "System.debug('end');",
         "source": [
           {
@@ -907,7 +1026,7 @@
         ]
       },
       {
-        "objectKey": "dotExpression_c05042caae093e4f",
+        "objectKey": "dotExpression_8cdd1fdc7407b077",
         "context": "System.debug('end')",
         "source": [
           {

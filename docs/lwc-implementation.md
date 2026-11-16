@@ -25,12 +25,12 @@ LwcBundleParseResult (1 バンドル = 1 解析結果 = 1 保存ファイル lwc
    └─ analysis: analyzeLwcBundles  (processor/Lwc/analysis.ts。バンドルをまたぐ)
 ```
 
-| ファイル       | 構文解析                                               | 仕様の検証                                                | 中間表現                       |
-| -------------- | ------------------------------------------------------ | --------------------------------------------------------- | ------------------------------ |
-| `.js` / `.ts`  | `@babel/parser`（`errorRecovery`、TS は `typescript`） | `@lwc/compiler` の `transformSync`（TS は型を空白にして） | `lwc_IR`（Babel のノードごと） |
-| `.html`        | `parse5` の `parseFragment`                            | `@lwc/template-compiler` の `parse`                       | なし（parse5 の木から直接）    |
-| `.css`         | `postcss` の `parse`                                   | `@lwc/style-compiler` の `transform`                      | なし（postcss の木から直接）   |
-| `.js-meta.xml` | 自前の `parseXml`                                      | なし（ルート要素の確認だけ）                              | なし（`XmlElement`）           |
+| ファイル       | 構文解析                                               | 仕様の検証                                                      | 中間表現                       |
+| -------------- | ------------------------------------------------------ | --------------------------------------------------------------- | ------------------------------ |
+| `.js` / `.ts`  | `@babel/parser`（`errorRecovery`、TS は `typescript`） | `@lwc/compiler` の `transformSync`（TS・Flow は型を空白にして） | `lwc_IR`（Babel のノードごと） |
+| `.html`        | `parse5` の `parseFragment`                            | `@lwc/template-compiler` の `parse`                             | なし（parse5 の木から直接）    |
+| `.css`         | `postcss` の `parse`                                   | `@lwc/style-compiler` の `transform`                            | なし（postcss の木から直接）   |
+| `.js-meta.xml` | 自前の `parseXml`                                      | なし（ルート要素の確認だけ）                                    | なし（`XmlElement`）           |
 
 - **JS / TS は Babel**（SWC と比べて、情報の欠けがない・位置が Apex の `SourcePosition` と同じ形・LWC Compiler と同じ parser）。TypeScript Compiler API は使わないので、型の推論はしない（型注釈だけを使う）。
 - **HTML・CSS は中間表現を作らない**（XML のメタデータと同じ方式）。parse5・postcss の木はノードの種類が少なく、LWC の意味は属性名などで決まるため、種類ごとのクラスを作る利点がない。共通部品 `makeSpanJson`（[types/commons/spanJson.ts](../src/analyzer/types/commons/spanJson.ts)）で位置の範囲から JSON を作る。
@@ -70,7 +70,7 @@ src/analyzer/
 │   ├── stylesheet.ts           CSS の parse・検証
 │   ├── meta.ts                 js-meta.xml
 │   ├── errorListener.ts        すべてのファイルの診断を LwcResolvedError にそろえる
-│   └── validate/               eraseTypes.ts (TS の型を空白に)・javascript.ts (@lwc/compiler)・bundle.ts (バンドルの中の突き合わせ)
+│   └── validate/               eraseTypes.ts (TS・Flow の型を空白に)・javascript.ts (@lwc/compiler)・bundle.ts (バンドルの中の突き合わせ)
 ├── processor/Lwc/
 │   ├── diff/                   バンドル・モジュール・コンポーネント・テンプレート・CSS・js-meta.xml の差分
 │   └── analysis.ts             バンドルをまたぐ解析
@@ -102,7 +102,7 @@ JS / TS の流れは Apex と同じ（IR → JSON。JSON 層が IR のノード�
 | バンドルの中の突き合わせ（5 章） | `bundle`         | `TEMPLATE_UNKNOWN_*` など                     | すべて `warning`                                                                                            |
 | バンドルを読めない               | `bundle`         | `BUNDLE_UNREADABLE` / `MAIN_MODULE_NOT_FOUND` | フォルダが読めない・メインのモジュールがない。バンドル全体を `dataType: 'error'` にする                     |
 
-- **TS の検証**: `@lwc/compiler` は TS を受け付けないので、型の部分だけを空白に置き換えた JS（改行を残すので位置は元の TS と同じ）を検証する（[validate/eraseTypes.ts](../src/analyzer/parser/Lwc/validate/eraseTypes.ts)。検証スクリプトは [verify-erase-types.ts](./examples/lwc/scripts/verify-erase-types.ts)）。`ts.transpileModule` はデコレーターを書き換えるので使わない。
+- **TS の検証**: `@lwc/compiler` は TS を受け付けないので、型の部分だけを空白に置き換えた JS（改行を残すので位置は元の TS と同じ）を検証する（[validate/eraseTypes.ts](../src/analyzer/parser/Lwc/validate/eraseTypes.ts)。検証スクリプトは [verify-erase-types.ts](./examples/lwc/scripts/verify-erase-types.ts)）。`ts.transpileModule` はデコレーターを書き換えるので使わない。Flow（`// @flow` の `.js`）も同じく、flow プラグインで読んだ AST から型（型注釈・型キャストの `: T`・型引数・`type` / `opaque type` / `interface` / `declare` の宣言・`import type` / `import typeof`・variance・`%checks`）を空白にしてから検証する（2026-11-16。それまでは Flow の型が LWC1007 の構文エラーになっていた）。Flow の `enum` は TS の `enum` と同じく空白にできないので、`TS_UNSUPPORTED` を出して検証しない。
 - **template-compiler の設定**: `enableDynamicComponents` / `enableLwcOn` は `true`（`lwc:component`・`lwc:on` を違反にしない。使ってよいかはこちらで見る）。`apiVersion` は js-meta.xml の値を渡す。parse5 の `onParseError` は使わない（template-compiler が同じ構文エラーを LWC1058 で返すため）。
 - **非推奨の書き方は通す**（`if:true` / `if:false` など。利用者のコードで使われている可能性があるため、エラーにも警告にもしない）。
 

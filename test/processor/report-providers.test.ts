@@ -56,6 +56,17 @@ describe('レポートの data provider', () => {
         assert.match(diagram.text, /n_apexTrigger_AccountTrigger --> n_apexClass_AccountService/);
     });
 
+    it('flow.interface: Flow の入出力の変化を、2 つの時点の解析の結果から出す (意味の差分)', () => {
+        const rows = REPORT_PROVIDERS['flow.interface'](input, { onlyChanged: true });
+        assert.deepEqual(
+            rows.map((row) => [row.flow, row.variable, row.direction, row.status]),
+            [['Invoice_Status_Update', 'errorMessage', 'output', 'added']],
+        );
+        // 1 時点なら入出力の一覧 (status なし)
+        const current = REPORT_PROVIDERS['flow.interface']({ after: input.after });
+        assert.ok(current.some((row) => row.variable === 'errorMessage' && !row.status));
+    });
+
     it('before を渡さなければ status を持たない (1 時点のレポート)', () => {
         const rows = getPermissionDiffs(snapshotInputOf({ after: input.after }));
         assert.ok(rows.length > 0);

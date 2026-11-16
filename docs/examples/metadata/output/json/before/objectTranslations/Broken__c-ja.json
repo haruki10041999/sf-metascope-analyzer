@@ -7,7 +7,7 @@
     "base": {
       "kind": "objectTranslation",
       "sourceKeys": {
-        "objectKey": "objectTranslation_8c6f9bbb38309e14",
+        "objectKey": "objectTranslation_e5942f6ef8bba7bb",
         "sourceKey": "objectTranslation_d3f352bd3fa4c751"
       },
       "objectApiName": "Broken__c",
@@ -17,7 +17,7 @@
         {
           "kind": "fieldTranslation",
           "sourceKeys": {
-            "objectKey": "fieldTranslation_f470dccc52d910c4",
+            "objectKey": "fieldTranslation_2d04985c0ea2e025",
             "sourceKey": "fieldTranslation_ac7b864be35b8a2c"
           },
           "name": "Code__c",
@@ -27,7 +27,7 @@
     },
     "sourceObject": [
       {
-        "objectKey": "fieldTranslation_f470dccc52d910c4",
+        "objectKey": "fieldTranslation_2d04985c0ea2e025",
         "context": "<CustomFieldTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <label>コード</label>\n    <name>Code__c</name>\n</CustomFieldTranslation>",
         "source": [
           {
@@ -47,7 +47,7 @@
         ]
       },
       {
-        "objectKey": "objectTranslation_8c6f9bbb38309e14",
+        "objectKey": "objectTranslation_e5942f6ef8bba7bb",
         "context": "<CustomObjectTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <nameFieldLabel>壊れた</nameFieldLabel>\n</CustomObjectTranslation>",
         "source": [
           {

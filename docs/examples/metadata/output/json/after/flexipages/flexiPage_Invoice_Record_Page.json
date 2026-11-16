@@ -7,7 +7,7 @@
     "base": {
       "kind": "flexiPage",
       "sourceKeys": {
-        "objectKey": "flexiPage_d8ea489b72934ba1",
+        "objectKey": "flexiPage_49ba9fd2be13ca35",
         "sourceKey": "flexiPage_04e4d43b0076e809"
       },
       "name": "Invoice_Record_Page",
@@ -15,7 +15,7 @@
       "type": "RecordPage",
       "sobjectType": "Invoice__c",
       "template": "flexipage:recordHomeTemplateDesktop",
-      "templateProperties": {
+      "templateAttributes": {
         "enablePageActionConfig": "true"
       },
       "regions": [
@@ -74,35 +74,60 @@
         {
           "kind": "flexiPageComponent",
           "sourceKeys": {
-            "objectKey": "flexiPageComponent_9204e26f9059f131",
+            "objectKey": "flexiPageComponent_7226966d6de2594d",
             "sourceKey": "flexiPageComponent_4d0abf1bc86d3fb6"
           },
           "identifier": "force_highlightsPanel",
           "componentName": "force:highlightsPanel",
           "region": "header",
-          "properties": {
+          "attributes": {
             "collapsed": "false"
           }
         },
         {
           "kind": "flexiPageComponent",
           "sourceKeys": {
-            "objectKey": "flexiPageComponent_940f1642a10f092c",
+            "objectKey": "flexiPageComponent_f32bef42c44a894a",
             "sourceKey": "flexiPageComponent_da3384e401ebd3d3"
           },
           "identifier": "c_accountList",
           "componentName": "c:accountList",
           "region": "sidebar",
-          "properties": {
+          "attributes": {
             "title": "関連する取引先",
             "pageSize": "5"
           },
           "visibilityRule": {
             "criteria": [
               {
-                "leftValue": "{!Record.Status__c}",
+                "kind": "criterion",
+                "sourceKeys": {
+                  "objectKey": "criterion_b456fbf319c5d6d7",
+                  "sourceKey": "criterion_3fa8b1fe770c32fe"
+                },
+                "left": {
+                  "kind": "fxMerge",
+                  "sourceKeys": {
+                    "objectKey": "fxMerge_2b1dcb085ae9a903",
+                    "sourceKey": "fxMerge_6bd91feca8158608"
+                  },
+                  "expression": {
+                    "kind": "fxName",
+                    "sourceKeys": {
+                      "objectKey": "fxName_e018598a6d2bac1e",
+                      "sourceKey": "fxName_6927f8a5059b24e5"
+                    },
+                    "path": [
+                      "Record",
+                      "Status__c"
+                    ]
+                  }
+                },
                 "operator": "EQUAL",
-                "rightValue": "Approved"
+                "right": {
+                  "type": "value",
+                  "value": "Approved"
+                }
               }
             ]
           }
@@ -132,26 +157,26 @@
         {
           "kind": "flexiPageField",
           "sourceKeys": {
-            "objectKey": "flexiPageField_3badceb23152f968",
+            "objectKey": "flexiPageField_2fc235e0bc9814d6",
             "sourceKey": "flexiPageField_5c61138ba5aaab6c"
           },
           "identifier": "RecordAmountField",
           "fieldItem": "Record.Amount__c",
           "region": "main",
-          "properties": {
+          "attributes": {
             "uiBehavior": "none"
           }
         },
         {
           "kind": "flexiPageField",
           "sourceKeys": {
-            "objectKey": "flexiPageField_bb1439dba9136747",
+            "objectKey": "flexiPageField_f522e46504069696",
             "sourceKey": "flexiPageField_760854506638aa36"
           },
           "identifier": "RecordMissingField",
           "fieldItem": "Record.Missing__c",
           "region": "main",
-          "properties": {
+          "attributes": {
             "uiBehavior": "none"
           }
         }
@@ -179,7 +204,7 @@
         ]
       },
       {
-        "objectKey": "flexiPageComponent_9204e26f9059f131",
+        "objectKey": "flexiPageComponent_7226966d6de2594d",
         "context": "<componentInstance>\n                <componentInstanceProperties>\n                    <name>collapsed</name>\n                    <value>false</value>\n                </componentInstanceProperties>\n                <componentName>force:highlightsPanel</componentName>\n                <identifier>force_highlightsPanel</identifier>\n            </componentInstance>",
         "source": [
           {
@@ -199,7 +224,7 @@
         ]
       },
       {
-        "objectKey": "flexiPageField_3badceb23152f968",
+        "objectKey": "flexiPageField_2fc235e0bc9814d6",
         "context": "<fieldInstance>\n                <fieldInstanceProperties>\n                    <name>uiBehavior</name>\n                    <value>none</value>\n                </fieldInstanceProperties>\n                <fieldItem>Record.Amount__c</fieldItem>\n                <identifier>RecordAmountField</identifier>\n            </fieldInstance>",
         "source": [
           {
@@ -219,7 +244,7 @@
         ]
       },
       {
-        "objectKey": "flexiPageField_bb1439dba9136747",
+        "objectKey": "flexiPageField_f522e46504069696",
         "context": "<fieldInstance>\n                <fieldInstanceProperties>\n                    <name>uiBehavior</name>\n                    <value>none</value>\n                </fieldInstanceProperties>\n                <fieldItem>Record.Missing__c</fieldItem>\n                <identifier>RecordMissingField</identifier>\n            </fieldInstance>",
         "source": [
           {
@@ -239,7 +264,67 @@
         ]
       },
       {
-        "objectKey": "flexiPageComponent_940f1642a10f092c",
+        "objectKey": "fxName_e018598a6d2bac1e",
+        "context": "Record.Status__c",
+        "source": [
+          {
+            "sourceKey": "fxName_6927f8a5059b24e5",
+            "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+            "start": {
+              "offset": 2409,
+              "line": 62,
+              "column": 37
+            },
+            "end": {
+              "offset": 2425,
+              "line": 62,
+              "column": 53
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxMerge_2b1dcb085ae9a903",
+        "context": "{!Record.Status__c}",
+        "source": [
+          {
+            "sourceKey": "fxMerge_6bd91feca8158608",
+            "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+            "start": {
+              "offset": 2407,
+              "line": 62,
+              "column": 35
+            },
+            "end": {
+              "offset": 2426,
+              "line": 62,
+              "column": 54
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "criterion_b456fbf319c5d6d7",
+        "context": "<criteria>\n                        <leftValue>{!Record.Status__c}</leftValue>\n                        <operator>EQUAL</operator>\n                        <rightValue>Approved</rightValue>\n                    </criteria>",
+        "source": [
+          {
+            "sourceKey": "criterion_3fa8b1fe770c32fe",
+            "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+            "start": {
+              "offset": 2361,
+              "line": 61,
+              "column": 20
+            },
+            "end": {
+              "offset": 2579,
+              "line": 65,
+              "column": 31
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flexiPageComponent_f32bef42c44a894a",
         "context": "<componentInstance>\n                <componentInstanceProperties>\n                    <name>title</name>\n                    <value>関連する取引先</value>\n                </componentInstanceProperties>\n                <componentInstanceProperties>\n                    <name>pageSize</name>\n                    <value>5</value>\n                </componentInstanceProperties>\n                <componentName>c:accountList</componentName>\n                <identifier>c_accountList</identifier>\n                <visibilityRule>\n                    <criteria>\n                        <leftValue>{!Record.Status__c}</leftValue>\n                        <operator>EQUAL</operator>\n                        <rightValue>Approved</rightValue>\n                    </criteria>\n                </visibilityRule>\n            </componentInstance>",
         "source": [
           {
@@ -359,7 +444,7 @@
         ]
       },
       {
-        "objectKey": "flexiPage_d8ea489b72934ba1",
+        "objectKey": "flexiPage_49ba9fd2be13ca35",
         "context": "<FlexiPage xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <flexiPageRegions>\n        <itemInstances>\n            <componentInstance>\n                <componentName>runtime_sales_pathassistant:pathAssistant</componentName>\n                <identifier>pathAssistant</identifier>\n            </componentInstance>\n        </itemInstances>\n        <itemInstances>\n            <componentInstance>\n                <componentInstanceProperties>\n                    <name>collapsed</name>\n                    <value>false</value>\n                </componentInstanceProperties>\n                <componentName>force:highlightsPanel</componentName>\n                <identifier>force_highlightsPanel</identifier>\n            </componentInstance>\n        </itemInstances>\n        <name>header</name>\n        <type>Region</type>\n    </flexiPageRegions>\n    <flexiPageRegions>\n        <itemInstances>\n            <fieldInstance>\n                <fieldInstanceProperties>\n                    <name>uiBehavior</name>\n                    <value>none</value>\n                </fieldInstanceProperties>\n                <fieldItem>Record.Amount__c</fieldItem>\n                <identifier>RecordAmountField</identifier>\n            </fieldInstance>\n        </itemInstances>\n        <itemInstances>\n            <fieldInstance>\n                <fieldInstanceProperties>\n                    <name>uiBehavior</name>\n                    <value>none</value>\n                </fieldInstanceProperties>\n                <fieldItem>Record.Missing__c</fieldItem>\n                <identifier>RecordMissingField</identifier>\n            </fieldInstance>\n        </itemInstances>\n        <name>main</name>\n        <type>Region</type>\n    </flexiPageRegions>\n    <flexiPageRegions>\n        <itemInstances>\n            <componentInstance>\n                <componentInstanceProperties>\n                    <name>title</name>\n                    <value>関連する取引先</value>\n                </componentInstanceProperties>\n                <componentInstanceProperties>\n                    <name>pageSize</name>\n                    <value>5</value>\n                </componentInstanceProperties>\n                <componentName>c:accountList</componentName>\n                <identifier>c_accountList</identifier>\n                <visibilityRule>\n                    <criteria>\n                        <leftValue>{!Record.Status__c}</leftValue>\n                        <operator>EQUAL</operator>\n                        <rightValue>Approved</rightValue>\n                    </criteria>\n                </visibilityRule>\n            </componentInstance>\n        </itemInstances>\n        <itemInstances>\n            <componentInstance>\n                <componentName>c:accountRow</componentName>\n                <identifier>c_accountRow</identifier>\n            </componentInstance>\n        </itemInstances>\n        <itemInstances>\n            <componentInstance>\n                <componentName>force:relatedListContainer</componentName>\n                <identifier>force_relatedListContainer</identifier>\n            </componentInstance>\n        </itemInstances>\n        <name>sidebar</name>\n        <type>Region</type>\n    </flexiPageRegions>\n    <masterLabel>Invoice Record Page</masterLabel>\n    <sobjectType>Invoice__c</sobjectType>\n    <template>\n        <name>flexipage:recordHomeTemplateDesktop</name>\n        <properties>\n            <name>enablePageActionConfig</name>\n            <value>true</value>\n        </properties>\n    </template>\n    <type>RecordPage</type>\n</FlexiPage>",
         "source": [
           {

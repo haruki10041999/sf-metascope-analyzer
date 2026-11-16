@@ -7,7 +7,7 @@
     "base": {
       "kind": "objectTranslation",
       "sourceKeys": {
-        "objectKey": "objectTranslation_f0f9dc380e5be678",
+        "objectKey": "objectTranslation_f215b3174c987177",
         "sourceKey": "objectTranslation_99876454374dab6d"
       },
       "objectApiName": "Account",
@@ -16,7 +16,7 @@
         {
           "kind": "fieldTranslation",
           "sourceKeys": {
-            "objectKey": "fieldTranslation_7801d539ecfc4bba",
+            "objectKey": "fieldTranslation_e2ce8892f6d5e840",
             "sourceKey": "fieldTranslation_85e8bf4d34a17c7c"
           },
           "name": "Name",
@@ -25,7 +25,7 @@
         {
           "kind": "fieldTranslation",
           "sourceKeys": {
-            "objectKey": "fieldTranslation_bb198cf939361d93",
+            "objectKey": "fieldTranslation_2b8d45e19b742268",
             "sourceKey": "fieldTranslation_79fc08e9f5016360"
           },
           "name": "Tier__c",
@@ -71,7 +71,7 @@
         {
           "kind": "validationRuleTranslation",
           "sourceKeys": {
-            "objectKey": "validationRuleTranslation_1d169eaf06bbc280",
+            "objectKey": "validationRuleTranslation_94b4c2c38b99b070",
             "sourceKey": "validationRuleTranslation_743470e4ad806af4"
           },
           "name": "Name_Required",
@@ -81,7 +81,7 @@
     },
     "sourceObject": [
       {
-        "objectKey": "fieldTranslation_7801d539ecfc4bba",
+        "objectKey": "fieldTranslation_e2ce8892f6d5e840",
         "context": "<CustomFieldTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <label>取引先名</label>\n    <name>Name</name>\n</CustomFieldTranslation>",
         "source": [
           {
@@ -161,7 +161,7 @@
         ]
       },
       {
-        "objectKey": "fieldTranslation_bb198cf939361d93",
+        "objectKey": "fieldTranslation_2b8d45e19b742268",
         "context": "<CustomFieldTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <label>顧客ランク</label>\n    <name>Tier__c</name>\n    <picklistValues>\n        <masterLabel>Platinum</masterLabel>\n        <translation>プラチナ</translation>\n    </picklistValues>\n    <picklistValues>\n        <masterLabel>Gold</masterLabel>\n        <translation>ゴールド</translation>\n    </picklistValues>\n    <picklistValues>\n        <masterLabel>Silver</masterLabel>\n        <translation>シルバー</translation>\n    </picklistValues>\n</CustomFieldTranslation>",
         "source": [
           {
@@ -181,7 +181,7 @@
         ]
       },
       {
-        "objectKey": "validationRuleTranslation_1d169eaf06bbc280",
+        "objectKey": "validationRuleTranslation_94b4c2c38b99b070",
         "context": "<validationRules>\n        <errorMessage>取引先名は必須です。</errorMessage>\n        <name>Name_Required</name>\n    </validationRules>",
         "source": [
           {
@@ -201,7 +201,7 @@
         ]
       },
       {
-        "objectKey": "objectTranslation_f0f9dc380e5be678",
+        "objectKey": "objectTranslation_f215b3174c987177",
         "context": "<CustomObjectTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <caseValues>\n        <plural>false</plural>\n        <value>取引先</value>\n    </caseValues>\n    <validationRules>\n        <errorMessage>取引先名は必須です。</errorMessage>\n        <name>Name_Required</name>\n    </validationRules>\n</CustomObjectTranslation>",
         "source": [
           {

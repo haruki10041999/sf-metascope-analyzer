@@ -46,7 +46,7 @@
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Account | object | 1 | 1 | 0 | 1 | 0 | 1 | 0 | 0 | 0 | - |
 | App_Setting__mdt | object | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | - |
-| Broken__c | object | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | Broken__c/fields/Code__c.field-meta.xml L5: XML_SYNTAX </length> expected but </lenght> found<br>Broken__c/fields/Misplaced__c.field-meta.xml L2: UNEXPECTED_ROOT <CustomField> expected but <ValidationRule> found |
+| Broken__c | object | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | Broken__c/fields/Code__c.field-meta.xml L5: XML_SYNTAX </length> expected but </lenght> found<br>Broken__c/fields/Misplaced__c.field-meta.xml L2: UNEXPECTED_ROOT <CustomField> expected but <ValidationRule> found |
 | Invoice_Line__c | object | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | - |
 | Invoice__c | object | 6 | 2 | 1 | 0 | 1 | 0 | 1 | 0 | 1 | - |
 | Opportunity | object | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | - |
@@ -74,7 +74,7 @@
 | 翻訳 | dataType | fields | caseValues | recordTypes | validationRules | webLinks | quickActions | fieldSets | sharingReasons | standardFields | layouts | 読めなかったファイル |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Account-ja | objectTranslation | 2 | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | - |
-| Broken__c-ja | objectTranslation | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | Broken__c-ja/Code__c.fieldTranslation-meta.xml L3: XML_SYNTAX </label> expected but </lable> found |
+| Broken__c-ja | objectTranslation | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | Broken__c-ja/Code__c.fieldTranslation-meta.xml L3: XML_SYNTAX </label> expected but </lable> found |
 | Invoice__c-en_US | objectTranslation | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | - |
 | Invoice__c-ja | objectTranslation | 5 | 0 | 1 | 1 | 1 | 0 | 1 | 0 | 0 | 1 | - |
 

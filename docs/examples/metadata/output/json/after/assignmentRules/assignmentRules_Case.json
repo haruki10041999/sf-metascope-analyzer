@@ -1,0 +1,199 @@
+{
+  "filePath": "assignmentRules/Case.assignmentRules-meta.xml",
+  "resolvedError": [],
+  "dataType": "assignmentRules",
+  "result": {
+    "id": "assignmentRules_Case",
+    "base": {
+      "kind": "assignmentRules",
+      "sourceKeys": {
+        "objectKey": "assignmentRules_8d1125ebec5e9f3c",
+        "sourceKey": "assignmentRules_cc5bb98f1765fa24"
+      },
+      "fullName": "Case",
+      "assignmentRule": [
+        {
+          "kind": "assignmentRule",
+          "sourceKeys": {
+            "objectKey": "assignmentRule_feda5ef86358d03d",
+            "sourceKey": "assignmentRule_cb48939bb91513ed"
+          },
+          "fullName": "Standard",
+          "active": true,
+          "ruleEntry": [
+            {
+              "assignedTo": "Invoice_Queue",
+              "assignedToType": "Queue",
+              "criteriaItems": {
+                "kind": "criterion",
+                "sourceKeys": {
+                  "objectKey": "criterion_87679aec2d738bf0",
+                  "sourceKey": "criterion_b2cd5e9cf48c031c"
+                },
+                "left": {
+                  "kind": "fxName",
+                  "sourceKeys": {
+                    "objectKey": "fxName_1223796801f904c8",
+                    "sourceKey": "fxName_3dfdf963dba408e5"
+                  },
+                  "path": [
+                    "Case",
+                    "Origin"
+                  ]
+                },
+                "operator": "equals",
+                "right": {
+                  "type": "value",
+                  "value": "Web"
+                }
+              }
+            },
+            {
+              "assignedTo": "Invoice_Queue",
+              "assignedToType": "Queue",
+              "criteriaItems": {
+                "kind": "criterion",
+                "sourceKeys": {
+                  "objectKey": "criterion_d293db7119747ceb",
+                  "sourceKey": "criterion_4c58f1cd077cae0b"
+                },
+                "left": {
+                  "kind": "fxName",
+                  "sourceKeys": {
+                    "objectKey": "fxName_1223796801f904c8",
+                    "sourceKey": "fxName_f0b1b57a08ac5dae"
+                  },
+                  "path": [
+                    "Case",
+                    "Origin"
+                  ]
+                },
+                "operator": "equals",
+                "right": {
+                  "type": "value",
+                  "value": "Email"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "fxName_1223796801f904c8",
+        "context": "Case.Origin",
+        "source": [
+          {
+            "sourceKey": "fxName_3dfdf963dba408e5",
+            "filePath": "assignmentRules/Case.assignmentRules-meta.xml",
+            "start": {
+              "offset": 367,
+              "line": 10,
+              "column": 23
+            },
+            "end": {
+              "offset": 378,
+              "line": 10,
+              "column": 34
+            }
+          },
+          {
+            "sourceKey": "fxName_f0b1b57a08ac5dae",
+            "filePath": "assignmentRules/Case.assignmentRules-meta.xml",
+            "start": {
+              "offset": 691,
+              "line": 19,
+              "column": 23
+            },
+            "end": {
+              "offset": 702,
+              "line": 19,
+              "column": 34
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "criterion_87679aec2d738bf0",
+        "context": "<criteriaItems>\n                <field>Case.Origin</field>\n                <operation>equals</operation>\n                <value>Web</value>\n            </criteriaItems>",
+        "source": [
+          {
+            "sourceKey": "criterion_b2cd5e9cf48c031c",
+            "filePath": "assignmentRules/Case.assignmentRules-meta.xml",
+            "start": {
+              "offset": 328,
+              "line": 9,
+              "column": 12
+            },
+            "end": {
+              "offset": 496,
+              "line": 13,
+              "column": 28
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "criterion_d293db7119747ceb",
+        "context": "<criteriaItems>\n                <field>Case.Origin</field>\n                <operation>equals</operation>\n                <value>Email</value>\n            </criteriaItems>",
+        "source": [
+          {
+            "sourceKey": "criterion_4c58f1cd077cae0b",
+            "filePath": "assignmentRules/Case.assignmentRules-meta.xml",
+            "start": {
+              "offset": 652,
+              "line": 18,
+              "column": 12
+            },
+            "end": {
+              "offset": 822,
+              "line": 22,
+              "column": 28
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "assignmentRule_feda5ef86358d03d",
+        "context": "<assignmentRule>\n        <fullName>Standard</fullName>\n        <active>true</active>\n        <ruleEntry>\n            <assignedTo>Invoice_Queue</assignedTo>\n            <assignedToType>Queue</assignedToType>\n            <criteriaItems>\n                <field>Case.Origin</field>\n                <operation>equals</operation>\n                <value>Web</value>\n            </criteriaItems>\n        </ruleEntry>\n        <ruleEntry>\n            <assignedTo>Invoice_Queue</assignedTo>\n            <assignedToType>Queue</assignedToType>\n            <criteriaItems>\n                <field>Case.Origin</field>\n                <operation>equals</operation>\n                <value>Email</value>\n            </criteriaItems>\n        </ruleEntry>\n    </assignmentRule>",
+        "source": [
+          {
+            "sourceKey": "assignmentRule_cb48939bb91513ed",
+            "filePath": "assignmentRules/Case.assignmentRules-meta.xml",
+            "start": {
+              "offset": 109,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 865,
+              "line": 24,
+              "column": 21
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "assignmentRules_8d1125ebec5e9f3c",
+        "context": "<AssignmentRules xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <assignmentRule>\n        <fullName>Standard</fullName>\n        <active>true</active>\n        <ruleEntry>\n            <assignedTo>Invoice_Queue</assignedTo>\n            <assignedToType>Queue</assignedToType>\n            <criteriaItems>\n                <field>Case.Origin</field>\n                <operation>equals</operation>\n                <value>Web</value>\n            </criteriaItems>\n        </ruleEntry>\n        <ruleEntry>\n            <assignedTo>Invoice_Queue</assignedTo>\n            <assignedToType>Queue</assignedToType>\n            <criteriaItems>\n                <field>Case.Origin</field>\n                <operation>equals</operation>\n                <value>Email</value>\n            </criteriaItems>\n        </ruleEntry>\n    </assignmentRule>\n</AssignmentRules>",
+        "source": [
+          {
+            "sourceKey": "assignmentRules_cc5bb98f1765fa24",
+            "filePath": "assignmentRules/Case.assignmentRules-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 884,
+              "line": 25,
+              "column": 18
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

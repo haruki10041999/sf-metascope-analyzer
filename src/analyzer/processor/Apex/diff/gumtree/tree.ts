@@ -11,8 +11,6 @@ import { getTypeKey } from '../type';
 const getNodeLabel = (node: JsonNode): string => {
     const raw = node as unknown as Record<string, unknown>;
     switch (node.kind) {
-        case 'forCondition':
-            return 'initializeType' in raw ? 'forCondition:enhanced' : 'forCondition:basic';
         case 'limitClause':
         case 'offsetClause':
         case 'memberAccess':
@@ -22,19 +20,12 @@ const getNodeLabel = (node: JsonNode): string => {
     }
 };
 
-/** kind を持たない式・入れ物のラベルを形から決める。決まらなければ undefined */
+/**
+ * kind を持たない入れ物のラベルを形から決める。決まらなければ undefined。
+ * 式はすべて kind を持つ (docs/json-redesign-plan.md の段階 A2) ので、ここに残るのは文・宣言・SOQL の入れ物だけ
+ */
 export const getExpressionLabel = (value: Record<string, unknown>): string | undefined => {
-    if (typeof value.initType === 'string') {
-        // new 式 (collection を持つ) と、その初期化部分
-        return 'collection' in value ? `new:${value.initType}` : value.initType;
-    }
-    if ('left' in value && 'right' in value) return 'formula';
-    if ('operatorLocation' in value) return 'unary';
-    if ('trueValue' in value) return 'ternary';
-    if ('convertType' in value) return 'cast';
-    if (value.operator === 'instanceof') return 'instanceof';
-    if ('parentheses' in value) return 'paren';
-    if ('variant' in value && 'index' in value) return 'arrayAccess';
+    // switch の when のリテラル・SOQL の数・アノテーションの引数 (式ではない値)
     if ('value' in value && 'valueType' in value) return 'literal';
     if ('variants' in value) return 'localVariableDeclaration';
     if (
@@ -50,7 +41,8 @@ export const getExpressionLabel = (value: Record<string, unknown>): string | und
 const getElementLabel = (owner: string, role: string, value: Record<string, unknown>) => {
     if (owner === 'if' && role === 'conditionBlock') return 'if.branch';
     if (owner === 'try' && role === 'block') return `try.${String(value.condition)}`;
-    if (owner === 'switch' && role === 'block') return 'switch.when';
+    if (owner === 'switch' && role === 'when') return 'switch.when';
+    if (owner === 'new' && role === 'entries') return 'new.entry';
     return undefined;
 };
 
@@ -72,8 +64,7 @@ export const APEX_GUMTREE_LANGUAGE: GumTreeLanguage = {
     /** 文の並び (block) を持つプロパティか。try / switch の block は節の並びなので除く */
     isBlockRole: (owner, role) =>
         (role === 'block' || role === 'body') && owner !== 'try' && owner !== 'switch',
-    /** catch の例外型名は分類済みの修飾名なので、配列全体を値として比較する */
-    isAtomicArray: (label, role) => label === 'catchCondition' && role === 'exceptionType',
+    isAtomicArray: () => false,
     /** 型は葉にする (中身の TypeContentJson は kind を持たない) */
     leafValues: (node) =>
         node.kind === 'type' ? { type: getTypeKey(node as unknown as TypeJson) } : undefined,

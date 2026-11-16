@@ -18,7 +18,7 @@ import {
 } from '../../src/analyzer/parser/Metadata';
 import { MetadataParser } from '../../src/analyzer/parser/Metadata/parser';
 import type { MetadataFileParseResult } from '../../src/analyzer/parser/Metadata/folder';
-import { analyzeMetadataReferences } from '../../src/analyzer/processor/Metadata/referenceAnalysis';
+import { analyzeFlowRefs } from '../../src/analyzer/processor/Metadata/flowRefs';
 import {
     type GraphUnit,
     buildDependencyGraph,
@@ -118,14 +118,15 @@ describe('metadata references (権限・Flow・レポートタイプ・Aura)', (
             </Flow>`,
         );
         const json = flow.result.base as FlowJson;
-        const decision = json.elements!.find((e) => e.name === 'Can_Approve')!;
-        // JSON の references: $Permission はカスタム権限 (global ではない)
+        // 使っているもの (解析。段階 M3 で JSON の references から移した): $Permission はカスタム権限 (global ではない)
         assert.deepEqual(
-            decision.references!.filter((r) => r.refType !== 'element'),
+            analyzeFlowRefs(json)
+                .filter((r) => r.element === 'Can_Approve' && r.refType !== 'element')
+                .map((r) => [r.refType, r.target]),
             [
-                { refType: 'customPermission', value: 'Approve_Invoice' },
-                { refType: 'object', value: 'Billing_Config__c' },
-                { refType: 'field', value: 'Billing_Config__c.Enabled__c' },
+                ['customPermission', 'Approve_Invoice'],
+                ['object', 'Billing_Config__c'],
+                ['field', 'Billing_Config__c.Enabled__c'],
             ],
         );
         const refs = refsOf(flow);
@@ -195,10 +196,10 @@ describe('metadata references (権限・Flow・レポートタイプ・Aura)', (
             `<LightningMessageChannel ${NS}><masterLabel>Other</masterLabel></LightningMessageChannel>`,
         );
         // チャネルの解析結果があれば確かめる。名前空間付きは確かめない
-        const analysis = analyzeMetadataReferences({ metadata: [aura, channel] });
+        const graph = buildDependencyGraph([graphUnit(aura), graphUnit(channel)]);
         assert.deepEqual(
-            analysis.findings.map((f) => `${f.code}:${f.target}`),
-            ['UNKNOWN_MESSAGE_CHANNEL:Invoice_Selected'],
+            graph.findings.map((f) => `${f.code}:${f.target}`),
+            ['UNKNOWN_MESSAGE_CHANNEL:messageChannel:Invoice_Selected'],
         );
     });
 });

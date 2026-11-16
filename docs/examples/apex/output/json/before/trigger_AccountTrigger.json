@@ -17,7 +17,7 @@
             {
               "kind": "triggerCase",
               "sourceKeys": {
-                "objectKey": "triggerCase_600d5ffdca8e4a58",
+                "objectKey": "triggerCase_4b76dda46a54d1aa",
                 "sourceKey": "triggerCase_b8218fabc6988464"
               },
               "actionType": "INSERT",
@@ -26,7 +26,7 @@
             {
               "kind": "triggerCase",
               "sourceKeys": {
-                "objectKey": "triggerCase_cb2041e3455b1769",
+                "objectKey": "triggerCase_66f9f99759087efc",
                 "sourceKey": "triggerCase_23dd89767cd811f8"
               },
               "actionType": "UPDATE",
@@ -35,102 +35,115 @@
           ],
           "block": [
             {
-              "kind": "statement",
-              "statement": {
-                "kind": "if",
-                "sourceKeys": {
-                  "objectKey": "ifStatement_8181fa2f60751338",
-                  "sourceKey": "ifStatement_19dd7eaf0e7cc4d3"
-                },
-                "conditionBlock": [
-                  {
-                    "condition": {
-                      "kind": "ifCondition",
+              "kind": "if",
+              "sourceKeys": {
+                "objectKey": "ifStatement_4d868346f17ac08d",
+                "sourceKey": "ifStatement_19dd7eaf0e7cc4d3"
+              },
+              "conditionBlock": [
+                {
+                  "condition": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {
+                      "objectKey": "dotExpression_861713f0924dc6cf",
+                      "sourceKey": "dotExpression_e555cc850d35e2c9"
+                    },
+                    "type": "object",
+                    "object": {
+                      "kind": "identifier",
                       "sourceKeys": {
-                        "objectKey": "parExpression_fdbb1f8a12d846db",
-                        "sourceKey": "parExpression_4d9e4aba8c912b48"
+                        "objectKey": "idPrimary_b80f68411e972e77",
+                        "sourceKey": "idPrimary_7d164b87e3841f50"
                       },
-                      "condition": {
+                      "name": "Trigger"
+                    },
+                    "operator": ".",
+                    "member": "isBefore"
+                  },
+                  "block": [
+                    {
+                      "kind": "expression",
+                      "sourceKeys": {
+                        "objectKey": "expressionStatement_7008668129e255da",
+                        "sourceKey": "expressionStatement_7b97d4d554d313ae"
+                      },
+                      "value": {
                         "kind": "memberAccess",
                         "sourceKeys": {
-                          "objectKey": "dotExpression_e69ad3612606c1ea",
-                          "sourceKey": "dotExpression_e555cc850d35e2c9"
+                          "objectKey": "dotExpression_544ea5f8d1d1fb84",
+                          "sourceKey": "dotExpression_02ddd262a6649d33"
                         },
-                        "type": "object",
-                        "object": "Trigger",
-                        "operator": ".",
-                        "member": "isBefore"
-                      }
-                    },
-                    "block": [
-                      {
-                        "kind": "expression",
-                        "sourceKeys": {
-                          "objectKey": "expressionStatement_e999ad169ab956c5",
-                          "sourceKey": "expressionStatement_7b97d4d554d313ae"
-                        },
-                        "value": {
-                          "kind": "memberAccess",
+                        "type": "method",
+                        "object": {
+                          "kind": "identifier",
                           "sourceKeys": {
-                            "objectKey": "dotExpression_90d1ee920af54431",
-                            "sourceKey": "dotExpression_02ddd262a6649d33"
+                            "objectKey": "idPrimary_4ff3582e11acb07e",
+                            "sourceKey": "idPrimary_926164d2a2404c21"
                           },
-                          "type": "method",
-                          "object": "AccountService",
-                          "operator": ".",
-                          "member": "validate",
-                          "memberArg": [
-                            {
-                              "kind": "memberAccess",
+                          "name": "AccountService"
+                        },
+                        "operator": ".",
+                        "member": "validate",
+                        "memberArg": [
+                          {
+                            "kind": "memberAccess",
+                            "sourceKeys": {
+                              "objectKey": "dotExpression_295fef2c269488cf",
+                              "sourceKey": "dotExpression_057ee37c3e34c735"
+                            },
+                            "type": "object",
+                            "object": {
+                              "kind": "identifier",
                               "sourceKeys": {
-                                "objectKey": "dotExpression_2708e278520178f9",
-                                "sourceKey": "dotExpression_057ee37c3e34c735"
+                                "objectKey": "idPrimary_b80f68411e972e77",
+                                "sourceKey": "idPrimary_fe1b5e93586184cf"
                               },
-                              "type": "object",
-                              "object": "Trigger",
-                              "operator": ".",
-                              "member": "new"
-                            }
-                          ]
-                        }
+                              "name": "Trigger"
+                            },
+                            "operator": ".",
+                            "member": "new"
+                          }
+                        ]
                       }
-                    ]
-                  }
-                ]
-              },
-              "modifier": {}
-            },
-            {
-              "kind": "statement",
-              "statement": {
-                "kind": "expression",
-                "sourceKeys": {
-                  "objectKey": "expressionStatement_77b80b2e36b3b3c3",
-                  "sourceKey": "expressionStatement_a9aa32bfeb8a422a"
-                },
-                "value": {
-                  "kind": "memberAccess",
-                  "sourceKeys": {
-                    "objectKey": "dotExpression_a3400e7b69006d22",
-                    "sourceKey": "dotExpression_92b9e677c39541de"
-                  },
-                  "type": "method",
-                  "object": "System",
-                  "operator": ".",
-                  "member": "debug",
-                  "memberArg": [
-                    {
-                      "sourceKeys": {
-                        "objectKey": "literal_cf3910e8d4812945",
-                        "sourceKey": "literal_075f1dcec9d9479c"
-                      },
-                      "value": "'done'",
-                      "valueType": "string"
                     }
                   ]
                 }
+              ]
+            },
+            {
+              "kind": "expression",
+              "sourceKeys": {
+                "objectKey": "expressionStatement_6baf1097f71fa4a8",
+                "sourceKey": "expressionStatement_a9aa32bfeb8a422a"
               },
-              "modifier": {}
+              "value": {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_2edf9d9bed477bc2",
+                  "sourceKey": "dotExpression_92b9e677c39541de"
+                },
+                "type": "method",
+                "object": {
+                  "kind": "identifier",
+                  "sourceKeys": {
+                    "objectKey": "idPrimary_92bc4d8d53ed9978",
+                    "sourceKey": "idPrimary_92bc9c9644d01f96"
+                  },
+                  "name": "System"
+                },
+                "operator": ".",
+                "member": "debug",
+                "memberArg": [
+                  {
+                    "kind": "string",
+                    "sourceKeys": {
+                      "objectKey": "literal_cf3910e8d4812945",
+                      "sourceKey": "literal_075f1dcec9d9479c"
+                    },
+                    "value": "done"
+                  }
+                ]
+              }
             }
           ]
         }
@@ -150,7 +163,7 @@
     },
     "sourceObject": [
       {
-        "objectKey": "triggerCase_600d5ffdca8e4a58",
+        "objectKey": "triggerCase_4b76dda46a54d1aa",
         "context": "before insert",
         "source": [
           {
@@ -169,7 +182,7 @@
         ]
       },
       {
-        "objectKey": "triggerCase_cb2041e3455b1769",
+        "objectKey": "triggerCase_66f9f99759087efc",
         "context": "after update",
         "source": [
           {
@@ -188,7 +201,7 @@
         ]
       },
       {
-        "objectKey": "ifStatement_8181fa2f60751338",
+        "objectKey": "ifStatement_4d868346f17ac08d",
         "context": "if (Trigger.isBefore) {\n        AccountService.validate(Trigger.new);\n    }",
         "source": [
           {
@@ -207,26 +220,7 @@
         ]
       },
       {
-        "objectKey": "parExpression_fdbb1f8a12d846db",
-        "context": "(Trigger.isBefore)",
-        "source": [
-          {
-            "sourceKey": "parExpression_4d9e4aba8c912b48",
-            "start": {
-              "offset": 73,
-              "line": 2,
-              "column": 7
-            },
-            "end": {
-              "offset": 91,
-              "line": 2,
-              "column": 25
-            }
-          }
-        ]
-      },
-      {
-        "objectKey": "dotExpression_e69ad3612606c1ea",
+        "objectKey": "dotExpression_861713f0924dc6cf",
         "context": "Trigger.isBefore",
         "source": [
           {
@@ -245,7 +239,39 @@
         ]
       },
       {
-        "objectKey": "expressionStatement_e999ad169ab956c5",
+        "objectKey": "idPrimary_b80f68411e972e77",
+        "context": "Trigger",
+        "source": [
+          {
+            "sourceKey": "idPrimary_7d164b87e3841f50",
+            "start": {
+              "offset": 74,
+              "line": 2,
+              "column": 8
+            },
+            "end": {
+              "offset": 81,
+              "line": 2,
+              "column": 15
+            }
+          },
+          {
+            "sourceKey": "idPrimary_fe1b5e93586184cf",
+            "start": {
+              "offset": 126,
+              "line": 3,
+              "column": 32
+            },
+            "end": {
+              "offset": 133,
+              "line": 3,
+              "column": 39
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "expressionStatement_7008668129e255da",
         "context": "AccountService.validate(Trigger.new);",
         "source": [
           {
@@ -264,7 +290,7 @@
         ]
       },
       {
-        "objectKey": "dotExpression_90d1ee920af54431",
+        "objectKey": "dotExpression_544ea5f8d1d1fb84",
         "context": "AccountService.validate(Trigger.new)",
         "source": [
           {
@@ -283,7 +309,26 @@
         ]
       },
       {
-        "objectKey": "dotExpression_2708e278520178f9",
+        "objectKey": "idPrimary_4ff3582e11acb07e",
+        "context": "AccountService",
+        "source": [
+          {
+            "sourceKey": "idPrimary_926164d2a2404c21",
+            "start": {
+              "offset": 102,
+              "line": 3,
+              "column": 8
+            },
+            "end": {
+              "offset": 116,
+              "line": 3,
+              "column": 22
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "dotExpression_295fef2c269488cf",
         "context": "Trigger.new",
         "source": [
           {
@@ -302,7 +347,7 @@
         ]
       },
       {
-        "objectKey": "expressionStatement_77b80b2e36b3b3c3",
+        "objectKey": "expressionStatement_6baf1097f71fa4a8",
         "context": "System.debug('done');",
         "source": [
           {
@@ -321,7 +366,7 @@
         ]
       },
       {
-        "objectKey": "dotExpression_a3400e7b69006d22",
+        "objectKey": "dotExpression_2edf9d9bed477bc2",
         "context": "System.debug('done')",
         "source": [
           {
@@ -335,6 +380,25 @@
               "offset": 170,
               "line": 5,
               "column": 24
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "idPrimary_92bc4d8d53ed9978",
+        "context": "System",
+        "source": [
+          {
+            "sourceKey": "idPrimary_92bc9c9644d01f96",
+            "start": {
+              "offset": 150,
+              "line": 5,
+              "column": 4
+            },
+            "end": {
+              "offset": 156,
+              "line": 5,
+              "column": 10
             }
           }
         ]

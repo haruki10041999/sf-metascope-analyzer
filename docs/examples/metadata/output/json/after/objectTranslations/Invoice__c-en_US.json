@@ -7,7 +7,7 @@
     "base": {
       "kind": "objectTranslation",
       "sourceKeys": {
-        "objectKey": "objectTranslation_c9686b86c92954ea",
+        "objectKey": "objectTranslation_5cf0ba13b0464c0e",
         "sourceKey": "objectTranslation_d3d36f3cec3f2aef"
       },
       "objectApiName": "Invoice__c",
@@ -16,7 +16,7 @@
     },
     "sourceObject": [
       {
-        "objectKey": "objectTranslation_c9686b86c92954ea",
+        "objectKey": "objectTranslation_5cf0ba13b0464c0e",
         "context": "<CustomObjectTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n\n    <nameFieldLabel>Invoice No.</nameFieldLabel>\n</CustomObjectTranslation>",
         "source": [
           {

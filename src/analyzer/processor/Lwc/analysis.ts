@@ -17,7 +17,7 @@ import {
 
 import type { ObjectInfo } from '../Metadata/analysis';
 
-import { analyzeLwcModuleCalls } from './calls';
+import { analyzeLwcModuleCalls, lwcInitReferencesOf } from './calls';
 
 // LWC のバンドルをまたぐ解析 (docs/lwc-implementation.md)。
 // 子コンポーネントの @api・イベント・slot、lightning-* のカタログ、メタデータ (オブジェクト・項目) への参照を突き合わせる。
@@ -199,7 +199,10 @@ const resolveSchema = (
     if (direct) return schemaValue(direct) ? [schemaValue(direct)!] : [];
     const field = component?.block.find((m) => m.kind === 'lwcField' && m.name === name) as
         Extract<LwcMemberJson, { kind: 'lwcField' }> | undefined;
-    return (field?.references ?? []).flatMap((r) => (schemaValue(r) ? [schemaValue(r)!] : []));
+    // 初期値の中の import の参照 (解析で出す。json-redesign-plan.md 4 章の 4)
+    return (field ? lwcInitReferencesOf(field, { imports }) : []).flatMap((r) =>
+        schemaValue(r) ? [schemaValue(r)!] : [],
+    );
 };
 
 /** モジュールの import の名前 → 参照 (@salesforce/schema のもの) */

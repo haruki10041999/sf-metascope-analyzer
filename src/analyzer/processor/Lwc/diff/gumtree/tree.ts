@@ -1,6 +1,6 @@
 import type { LwcJsStatementJson, LwcTypeJson } from '../../../../types';
 
-import { JsonNode, Sources } from '../../../commons/diff/commons';
+import { JsonNode, Sources, getValueKey, toBody } from '../../../commons/diff/commons';
 import {
     DiffNodeValue,
     GumTreeDiff,
@@ -16,7 +16,7 @@ import {
 // - 文・式はすべて kind を持つので、ラベルはほぼ kind のまま (Apex の getExpressionLabel のような形からの推定は要らない)
 // - jsMemberAccess は Apex の memberAccess と同じく type (object / method) をラベルに含める
 // - try の節は condition ごと、if の分岐・switch の case は分岐のラベルにする (Apex の if.branch・try.catch と同じ考え方)
-// - 型 (lwcType) は葉にし、書かれた型の文字列で比べる (Apex の型と同じ)
+// - 型 (lwcType) は葉にし、中身で比べる (Apex の型と同じ)
 
 /** 実ノードのラベル。同じ kind で形が大きく違うものは形も含める */
 const getNodeLabel = (node: JsonNode): string => {
@@ -41,7 +41,7 @@ const getElementLabel = (owner: string, role: string, value: Record<string, unkn
 };
 
 /** 子の順序が意味を持たない並び (デコレーター・import の参照・型の集合) */
-const UNORDERED_LABELS = [/\.decorator$/, /\.references$/, /\.implement$/];
+const UNORDERED_LABELS = [/\.decorator$/, /\.implement$/];
 
 export const LWC_GUMTREE_LANGUAGE: GumTreeLanguage = {
     nodeLabel: getNodeLabel,
@@ -53,9 +53,11 @@ export const LWC_GUMTREE_LANGUAGE: GumTreeLanguage = {
      */
     isBlockRole: (owner, role) =>
         (role === 'block' && owner !== 'jsTry') || (owner === 'jsLabeled' && role === 'body'),
-    /** 型は葉にする (中身の LwcTypeContentJson は kind を持たない) */
+    /** 型は葉にし、中身で比べる (Apex の getTypeKey と同じ。書いた文字列 text は段階 6 の残りでなくした) */
     leafValues: (node) =>
-        node.kind === 'lwcType' ? { type: (node as unknown as LwcTypeJson).text } : undefined,
+        node.kind === 'lwcType'
+            ? { type: getValueKey(toBody(node as unknown as LwcTypeJson)) }
+            : undefined,
 };
 
 const builder = makeGumTreeBuilder(LWC_GUMTREE_LANGUAGE);

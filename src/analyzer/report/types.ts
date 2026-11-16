@@ -151,6 +151,19 @@ export type FlowDiffRow = RowBase & {
     changedProperties: string[];
 };
 
+/** flow.interface: Flow の入力・出力の変数 1 つ (before を渡せば、2 つの時点の入出力の変化) */
+export type FlowInterfaceRow = RowBase & {
+    flow: string;
+    variable: string;
+    direction: 'input' | 'output' | 'inputOutput';
+    dataType?: string;
+    objectType?: string;
+    apexClass?: string;
+    isCollection: boolean;
+    /** 変わったもの (changed のとき。direction・dataType・objectType・apexClass・isCollection) */
+    changedProperties?: string[];
+};
+
 export type FlowReferenceRow = RowBase & {
     flow: string;
     element: string;

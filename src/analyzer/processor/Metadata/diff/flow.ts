@@ -4,12 +4,14 @@ import {
     FlowElementJson,
     FlowJson,
     FlowProperties,
-    FlowReference,
     FlowResourceJson,
     FlowRuleJson,
     FlowScreenFieldJson,
     FlowStartJson,
     FlowValue,
+    FLOW_VARIABLE_SCHEMA,
+    FormulaValue,
+    TemplateValue,
 } from '../../../types';
 
 import {
@@ -24,19 +26,20 @@ import {
     makeValueDiff,
 } from '../../commons/diff/commons';
 import { TypedListDiff } from '../../commons/diff/list';
+import { type FormulaDiff, makeFormulaDiff } from '../../commons/diff/formula';
 import {
     PresentDiff,
     PropertiesDiff,
     makeOrderedValuesDiff,
     makePresentDiff,
-    makePropertiesDiff,
     makeUnorderedValuesDiff,
+    makePropertiesDiff,
     presentEntry,
 } from '../../commons/diff/present';
 
 // Flow の差分。方針: docs/metadata-implementation.md 10 章
 // 要素・資源は name で D、接続 (edges) は B、決定の結果 (rules) は C (name で組にする)、
-// 値の木 (properties) は値ごと (配列は書いた順の C)、references は B
+// 値の木 (properties) は値ごと (配列は書いた順の C)。使っているもの (参照) は解析で出すので Diff しない (段階 M3)
 
 /** 値の木の差分。プロパティごとに、配列なら C (書いた順)、それ以外は値として比べる */
 export type FlowPropertiesDiff = Record<
@@ -68,10 +71,12 @@ const propertiesEntry = (before?: FlowProperties, after?: FlowProperties) =>
 const optionalEntry = <K extends string>(key: K, before?: string, after?: string) =>
     presentEntry(key, makePresentDiff(before, after, makeValueDiff));
 
-type ReferencesDiff = PresentDiff<FlowReference[], TypedListDiff<FlowReference, never>>;
-
-const referencesEntry = (before?: FlowReference[], after?: FlowReference[]) =>
-    presentEntry('references', makePresentDiff(before, after, makeUnorderedValuesDiff));
+/** 数式 (段階 M4)。両方が数式の木なら GumTree の差分 */
+const formulaEntry = <K extends string>(key: K, before?: FormulaValue, after?: FormulaValue) =>
+    presentEntry(
+        key,
+        makePresentDiff(before, after, (b: FormulaValue, a: FormulaValue) => makeFormulaDiff(b, a)),
+    );
 
 export type FlowRuleJsonDiff = NodeDiff<
     'flowRule',
@@ -155,7 +160,6 @@ export type FlowElementJsonDiff = NodeDiff<
             FlowScreenFieldJson[],
             ListItemDiff<'flowScreenField', FlowScreenFieldJson, FlowScreenFieldJsonDiff>[]
         >;
-        references?: ReferencesDiff;
     }
 >;
 
@@ -181,7 +185,6 @@ export const makeFlowElementDiff = (
             ),
         ),
         ...presentEntry('fields', makeScreenFieldsDiff(b.fields, a.fields, sources)),
-        ...referencesEntry(b.references, a.references),
     }));
 
 export type FlowResourceJsonDiff = NodeDiff<
@@ -190,9 +193,10 @@ export type FlowResourceJsonDiff = NodeDiff<
     {
         name: ValueDiff<string>;
         description?: PresentDiff<string, ValueDiff<string>>;
+        expression?: PresentDiff<FormulaValue, FormulaDiff>;
+        text?: PresentDiff<TemplateValue, ValueDiff<TemplateValue>>;
         properties?: FlowPropertiesDiff;
-        references?: ReferencesDiff;
-    }
+    } & PropertiesDiff<typeof FLOW_VARIABLE_SCHEMA>
 >;
 
 export const makeFlowResourceDiff = (
@@ -203,8 +207,10 @@ export const makeFlowResourceDiff = (
     makeNodeDiff(before.kind, before, after, match, (b, a) => ({
         name: makeValueDiff(b.name, a.name),
         ...optionalEntry('description', b.description, a.description),
+        ...formulaEntry('expression', b.expression, a.expression),
+        ...presentEntry('text', makePresentDiff(b.text, a.text, makeValueDiff)),
+        ...makePropertiesDiff(FLOW_VARIABLE_SCHEMA, b, a),
         ...propertiesEntry(b.properties, a.properties),
-        ...referencesEntry(b.references, a.references),
     }));
 
 export type FlowStartJsonDiff = NodeDiff<
@@ -214,8 +220,8 @@ export type FlowStartJsonDiff = NodeDiff<
         object?: PresentDiff<string, ValueDiff<string>>;
         triggerType?: PresentDiff<string, ValueDiff<string>>;
         recordTriggerType?: PresentDiff<string, ValueDiff<string>>;
+        filterFormula?: PresentDiff<FormulaValue, FormulaDiff>;
         properties?: FlowPropertiesDiff;
-        references?: ReferencesDiff;
     }
 >;
 
@@ -224,8 +230,8 @@ export const makeFlowStartDiff = (before: FlowStartJson, after: FlowStartJson): 
         ...optionalEntry('object', b.object, a.object),
         ...optionalEntry('triggerType', b.triggerType, a.triggerType),
         ...optionalEntry('recordTriggerType', b.recordTriggerType, a.recordTriggerType),
+        ...formulaEntry('filterFormula', b.filterFormula, a.filterFormula),
         ...propertiesEntry(b.properties, a.properties),
-        ...referencesEntry(b.references, a.references),
     }));
 
 export type FlowJsonDiff = NodeDiff<

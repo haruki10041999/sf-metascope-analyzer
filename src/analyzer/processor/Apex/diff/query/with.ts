@@ -37,7 +37,7 @@ export const makeDataCategorySelectionDiff = (
 
 export type WithFieldsDiff =
     | { mode: ValueDiff<'SYSTEM_MODE' | 'USER_MODE' | 'SECURITY_ENFORCED'> }
-    | { mode: LogicalConditionJsonDiff }
+    | { mode: ValueDiff<'EXPRESSION'>; condition: LogicalConditionJsonDiff }
     | {
           mode: ValueDiff<'DATA_CATEGORY'>;
           selection: ListItemDiff<
@@ -54,33 +54,38 @@ export const makeWithDiff = (before: WithJson, after: WithJson): WithJsonDiff =>
         return makeValueDiff(before, after);
     }
 
-    if (typeof before.mode === 'string' && typeof after.mode === 'string') {
-        if (before.mode === 'DATA_CATEGORY' && after.mode === 'DATA_CATEGORY') {
-            return {
-                status: 'changed',
-                fields: {
-                    mode: makeValueDiff(before.mode, after.mode),
-                    selection: makeSetDiff(
-                        'categoryCondition',
-                        before.selection,
-                        after.selection,
-                        makeDataCategorySelectionDiff,
-                    ),
-                },
-            };
-        }
-        if (before.mode === 'DATA_CATEGORY' || after.mode === 'DATA_CATEGORY') {
-            return makeValueDiff(before, after);
-        }
+    if (before.mode === 'DATA_CATEGORY' && after.mode === 'DATA_CATEGORY') {
+        return {
+            status: 'changed',
+            fields: {
+                mode: makeValueDiff(before.mode, after.mode),
+                selection: makeSetDiff(
+                    'categoryCondition',
+                    before.selection,
+                    after.selection,
+                    makeDataCategorySelectionDiff,
+                ),
+            },
+        };
+    }
+    if (before.mode === 'EXPRESSION' && after.mode === 'EXPRESSION') {
+        return {
+            status: 'changed',
+            fields: {
+                mode: makeValueDiff(before.mode, after.mode),
+                condition: makeLogicalConditionDiff(before.condition, after.condition),
+            },
+        };
+    }
+    if (
+        before.mode !== 'DATA_CATEGORY' &&
+        before.mode !== 'EXPRESSION' &&
+        after.mode !== 'DATA_CATEGORY' &&
+        after.mode !== 'EXPRESSION'
+    ) {
         return {
             status: 'changed',
             fields: { mode: makeValueDiff(before.mode, after.mode) },
-        };
-    }
-    if (typeof before.mode !== 'string' && typeof after.mode !== 'string') {
-        return {
-            status: 'changed',
-            fields: { mode: makeLogicalConditionDiff(before.mode, after.mode) },
         };
     }
     return makeValueDiff(before, after);

@@ -1,4 +1,5 @@
-import { PropertiesOf, PropertySchema } from '../../../types';
+import { type FormulaValue, PropertiesOf, PropertySchema } from '../../../types';
+import { type FormulaDiff, makeFormulaDiff } from './formula';
 
 import {
     Body,
@@ -63,12 +64,11 @@ export const presentEntry = <K extends string, D>(
     diff: D | undefined,
 ): Partial<Record<K, D>> => (diff === undefined ? {} : ({ [key]: diff } as Record<K, D>));
 
-/** スキーマにある値ごとの差分。両方にない値のプロパティは持たない */
+/** スキーマにある値ごとの差分。両方にない値のプロパティは持たない。数式 (formula) は数式の差分 (GumTree。段階 M4 の続き) */
 export type PropertiesDiff<S extends PropertySchema> = {
-    [K in keyof S]?: PresentDiff<
-        NonNullable<PropertiesOf<S>[K]>,
-        ValueDiff<NonNullable<PropertiesOf<S>[K]>>
-    >;
+    [K in keyof S]?: S[K] extends 'formula'
+        ? PresentDiff<FormulaValue, FormulaDiff>
+        : PresentDiff<NonNullable<PropertiesOf<S>[K]>, ValueDiff<NonNullable<PropertiesOf<S>[K]>>>;
 };
 
 export const makePropertiesDiff = <S extends PropertySchema>(
@@ -78,7 +78,14 @@ export const makePropertiesDiff = <S extends PropertySchema>(
 ): PropertiesDiff<S> =>
     Object.fromEntries(
         Object.keys(schema).flatMap((key) => {
-            const diff = makePresentDiff(before[key], after[key], makeValueDiff);
+            const diff =
+                schema[key] === 'formula'
+                    ? makePresentDiff(
+                          before[key] as FormulaValue | undefined,
+                          after[key] as FormulaValue | undefined,
+                          (b: FormulaValue, a: FormulaValue) => makeFormulaDiff(b, a),
+                      )
+                    : makePresentDiff(before[key], after[key], makeValueDiff);
             return diff === undefined ? [] : [[key, diff]];
         }),
     ) as unknown as PropertiesDiff<S>;

@@ -14,7 +14,7 @@
           "kind": "class",
           "sourceKeys": {
             "base": {
-              "objectKey": "classDeclaration_e78e6de6f8354460",
+              "objectKey": "classDeclaration_73f0dcfaf88787f0",
               "sourceKey": "classDeclaration_fd596ab2d2aa4bcb"
             },
             "name": {
@@ -27,41 +27,42 @@
             {
               "kind": "field",
               "sourceKeys": {
-                "objectKey": "fieldDeclaration_454c797a1953a616",
+                "objectKey": "fieldDeclaration_29c3cb99599a754c",
                 "sourceKey": "fieldDeclaration_d82dc9c25f426c7a"
               },
               "variants": [
                 {
+                  "kind": "variant",
                   "sourceKeys": {
-                    "objectKey": "variableDeclarator_87a8a4394d2a28f9",
+                    "objectKey": "variableDeclarator_29116b7b5b22fde3",
                     "sourceKey": "variableDeclarator_531e11a4d8ea531f"
                   },
                   "name": "value",
                   "init": {
+                    "kind": "integer",
                     "sourceKeys": {
                       "objectKey": "literal_fb5627d59521b262",
                       "sourceKey": "literal_e9738ba07842f0dc"
                     },
-                    "value": "1",
-                    "valueType": "integer"
+                    "value": "1"
                   }
                 }
               ],
               "variantType": {
                 "kind": "type",
                 "sourceKeys": {
-                  "objectKey": "typeRef_1a870c360196e41a",
+                  "objectKey": "typeRef_8c83bc51944df63a",
                   "sourceKey": "typeRef_e52c1631c8a697d0"
                 },
                 "type": "primitive",
                 "primitiveType": "Integer"
               },
               "modifier": {
-                "access": [
+                "keyword": [
                   {
                     "kind": "modifier",
                     "sourceKeys": {
-                      "objectKey": "modifier_a04213395735c45e",
+                      "objectKey": "modifier_ff9740e1ee9f633a",
                       "sourceKey": "modifier_5343e7bf7a995428"
                     },
                     "name": "PUBLIC"
@@ -71,11 +72,11 @@
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {
-                  "objectKey": "modifier_a04213395735c45e",
+                  "objectKey": "modifier_ff9740e1ee9f633a",
                   "sourceKey": "modifier_a17627683ff63af1"
                 },
                 "name": "PUBLIC"
@@ -99,7 +100,7 @@
     },
     "sourceObject": [
       {
-        "objectKey": "classDeclaration_e78e6de6f8354460",
+        "objectKey": "classDeclaration_73f0dcfaf88787f0",
         "context": "class Unchanged {\n\n    public Integer value = 1;\n}",
         "source": [
           {
@@ -137,7 +138,7 @@
         ]
       },
       {
-        "objectKey": "fieldDeclaration_454c797a1953a616",
+        "objectKey": "fieldDeclaration_29c3cb99599a754c",
         "context": "Integer value = 1;",
         "source": [
           {
@@ -156,7 +157,7 @@
         ]
       },
       {
-        "objectKey": "variableDeclarator_87a8a4394d2a28f9",
+        "objectKey": "variableDeclarator_29116b7b5b22fde3",
         "context": "value = 1",
         "source": [
           {
@@ -194,7 +195,7 @@
         ]
       },
       {
-        "objectKey": "typeRef_1a870c360196e41a",
+        "objectKey": "typeRef_8c83bc51944df63a",
         "context": "Integer",
         "source": [
           {
@@ -213,7 +214,7 @@
         ]
       },
       {
-        "objectKey": "modifier_a04213395735c45e",
+        "objectKey": "modifier_ff9740e1ee9f633a",
         "context": "public",
         "source": [
           {

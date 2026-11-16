@@ -11,6 +11,7 @@ import type {
     ValueTypeClass,
 } from '../../apex_IR';
 
+import type { FormulaFieldJson } from './where';
 import { makeNodeJson } from '../commons/node';
 import { BaseExpressionJson, makeExpressionJsonConvert } from '../expression';
 import { SubQueryJson, makeSubQueryJson } from './subQuery';
@@ -202,7 +203,8 @@ export const makeComparisonOperatorJson = (
 };
 
 export type SingleConditionJson = JsonType<'singleCondition'> & {
-    field: FieldJson | SoqlFunctionJson;
+    /** 左辺。FORMULA('...') は WHERE だけ (where.ts) */
+    field: FieldJson | SoqlFunctionJson | FormulaFieldJson;
     operator:
         | '='
         | '!='

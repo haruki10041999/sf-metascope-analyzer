@@ -1,3 +1,4 @@
+import { lwcTypeTextOf } from '../../src/analyzer/types';
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -6,7 +7,11 @@ import path from 'node:path';
 
 import { LwcParser, type LwcBundleStructureType } from '../../src/analyzer/parser/Lwc';
 import { writeSaveDataInfo } from '../../src/analyzer/parser/commons';
-import { analyzeLwcBodyCalls } from '../../src/analyzer/processor/Lwc/calls';
+import {
+    analyzeLwcBodyCalls,
+    lwcImportReferencesOf,
+    lwcInitReferencesOf,
+} from '../../src/analyzer/processor/Lwc/calls';
 import { lwcHeritageOf } from '../../src/analyzer/processor/Lwc/walker';
 import {
     makeLwcImportTables,
@@ -161,7 +166,7 @@ describe('LWC の JSON', () => {
         assert.equal(rows.modifier.access, 'private');
         assert.deepEqual(rows.init?.kind === 'jsArray' && rows.init.elements, []);
         assert.ok(rows.variantType?.kind === 'lwcType' && rows.variantType.type === 'array');
-        assert.deepEqual(rows.variantType.elementType, { type: 'custom', customType: 'Row' });
+        assert.deepEqual(rows.variantType.elementType, { type: 'custom', customType: ['Row'] });
 
         const maxRows = memberOf<LwcFieldJson>(component, 'lwcField', 'maxRows');
         assert.equal(maxRows.optional, true);
@@ -171,25 +176,26 @@ describe('LWC の JSON', () => {
         assert.equal(parentName.isGetter, true);
         assert.equal(parentName.isSetter, false);
         assert.ok(parentName.variantType?.kind === 'lwcType');
-        assert.equal(parentName.variantType.text, 'string | undefined');
+        assert.equal(lwcTypeTextOf(parentName.variantType), 'string | undefined');
     });
 
     it('@wire の設定はデコレーターに入り、イベント・呼び出しはメソッドの本体から解析で出す', async () => {
         const module = mainModule(await parseBundle('accountList'));
         const component = componentOf(module);
+        const tables = makeLwcImportTables(module.imports);
         const record = memberOf<LwcFieldJson>(component, 'lwcField', 'record');
         const [wire] = record.modifier.decorator ?? [];
         assert.ok(wire?.kind === 'lwcDecorator' && wire.wire);
         assert.ok(wire.wire.adapter.kind === 'jsIdentifier');
         assert.equal(wire.wire.adapter.name, 'getRecord');
         assert.equal(wire.wire.adapterSource, 'lightning/uiRecordApi');
-        // 設定の項目は位置を持ち (lwcWireConfig)、値の中の import (項目) と結び付く
+        // 設定の項目は位置を持ち (lwcWireConfig)、値の中の import (項目) は解析で出す
         assert.deepEqual(
             wire.wire.config.map((c) => [
                 c.kind,
                 c.key,
                 c.reactive ?? null,
-                c.references.map((r) => r.schema?.fieldApiName),
+                lwcImportReferencesOf(c.value, tables).map((r) => r.schema?.fieldApiName),
             ]),
             [
                 ['lwcWireConfig', 'recordId', 'recordId', []],
@@ -204,10 +210,10 @@ describe('LWC の JSON', () => {
             className: 'AccountController',
             methodName: 'getAccounts',
         });
-        // 初期値の中の import (ラベル)
+        // 初期値の中の import (ラベル。解析で出す)
         const title = memberOf<LwcFieldJson>(component, 'lwcField', 'title');
         assert.deepEqual(
-            title.references.map((r) => r.source),
+            lwcInitReferencesOf(title, tables).map((r) => r.source),
             ['@salesforce/label/c.AccountListTitle'],
         );
 
@@ -247,7 +253,7 @@ describe('LWC の JSON', () => {
             [['accountselect', true, false, 'jsObject']],
         );
         assert.ok(events[0]?.detailType?.kind === 'lwcType');
-        assert.equal(events[0].detailType.text, 'SelectDetail');
+        assert.equal(lwcTypeTextOf(events[0].detailType), 'SelectDetail');
 
         const wired = memberOf<LwcMethodJson>(component, 'lwcMethod', 'wiredAccounts');
         assert.deepEqual(decoratorNames(wired), ['wire']);
@@ -355,6 +361,26 @@ export default class Hello extends LightningElement {
             assert.equal(value.isGetter, true);
             assert.equal(value.isSetter, true);
             assert.deepEqual(decoratorNames(value.getterContent!), ['api']);
+        });
+    });
+
+    it('計算されたキーのメンバーは、name ([式]) のほかにキーの式 computedKey を持つ', async () => {
+        const source = `import { LightningElement } from 'lwc';\nconst KEY = 'k';\nexport default class Hello extends LightningElement {\n    [KEY] = 1;\n    [KEY + 'M']() { return 1; }\n    get ['g' + KEY]() { return 2; }\n    plain = 3;\n}\n`;
+        await withBundle('hello', { 'hello.js': source }, async (dir) => {
+            const component = componentOf(
+                mainModule((await LwcParser.parseLwcBundle(dir)) as LwcBundleStructureType),
+            );
+            const field = memberOf<LwcFieldJson>(component, 'lwcField', '[KEY]');
+            assert.equal(field.computedKey?.kind, 'jsIdentifier');
+            const method = memberOf<LwcMethodJson>(component, 'lwcMethod', "[KEY + 'M']");
+            assert.equal(method.computedKey?.kind, 'jsBinary');
+            const getter = memberOf<LwcPropertyJson>(component, 'lwcProperty', "['g' + KEY]");
+            assert.equal(getter.computedKey?.kind, 'jsBinary');
+            // 計算されたキーでなければ持たない
+            assert.equal(
+                'computedKey' in memberOf<LwcFieldJson>(component, 'lwcField', 'plain'),
+                false,
+            );
         });
     });
 

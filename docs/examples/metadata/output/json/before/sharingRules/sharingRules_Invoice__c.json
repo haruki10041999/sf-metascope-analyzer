@@ -7,7 +7,7 @@
     "base": {
       "kind": "sharingRules",
       "sourceKeys": {
-        "objectKey": "sharingRules_b8c9affebe56d941",
+        "objectKey": "sharingRules_6df512d6ef9de150",
         "sourceKey": "sharingRules_171d2d36e712dc32"
       },
       "fullName": "Invoice__c",
@@ -15,7 +15,7 @@
         {
           "kind": "sharingCriteriaRule",
           "sourceKeys": {
-            "objectKey": "sharingCriteriaRule_3dc1fed87e84c6da",
+            "objectKey": "sharingCriteriaRule_244108abb11ccc52",
             "sourceKey": "sharingCriteriaRule_0153393cdf4a4266"
           },
           "fullName": "Large_Invoices",
@@ -23,13 +23,35 @@
           "accessLevel": "Read",
           "includeRecordsOwnedByAll": true,
           "sharedTo": {
+            "kind": "sharingPrincipals",
+            "sourceKeys": {
+              "objectKey": "sharingPrincipals_6be78ffecc9fc3ce",
+              "sourceKey": "sharingPrincipals_6979fa96e9807cae"
+            },
             "role": "Sales_Manager"
           },
           "criteriaItems": [
             {
-              "field": "Amount__c",
-              "operation": "greaterThan",
-              "value": "10000"
+              "kind": "criterion",
+              "sourceKeys": {
+                "objectKey": "criterion_e543e340233d6cf0",
+                "sourceKey": "criterion_fb588f0dbe34ccc2"
+              },
+              "left": {
+                "kind": "fxName",
+                "sourceKeys": {
+                  "objectKey": "fxName_bd29178350e43d25",
+                  "sourceKey": "fxName_e8234e87bf455245"
+                },
+                "path": [
+                  "Amount__c"
+                ]
+              },
+              "operator": "greaterThan",
+              "right": {
+                "type": "value",
+                "value": "10000"
+              }
             }
           ]
         }
@@ -38,16 +60,26 @@
         {
           "kind": "sharingOwnerRule",
           "sourceKeys": {
-            "objectKey": "sharingOwnerRule_ece9fe48a6f9cb8a",
+            "objectKey": "sharingOwnerRule_7a34bf021481debe",
             "sourceKey": "sharingOwnerRule_0a35bb31c1d5f826"
           },
           "fullName": "Sales_Team",
           "label": "Sales Team",
           "accessLevel": "Read",
           "sharedTo": {
+            "kind": "sharingPrincipals",
+            "sourceKeys": {
+              "objectKey": "sharingPrincipals_c716bf76cecd859a",
+              "sourceKey": "sharingPrincipals_d20ea893699dbf85"
+            },
             "group": "Finance"
           },
           "sharedFrom": {
+            "kind": "sharingPrincipals",
+            "sourceKeys": {
+              "objectKey": "sharingPrincipals_6be78ffecc9fc3ce",
+              "sourceKey": "sharingPrincipals_ec4a01feb51e8c89"
+            },
             "role": "Sales_Manager"
           }
         }
@@ -55,7 +87,81 @@
     },
     "sourceObject": [
       {
-        "objectKey": "sharingCriteriaRule_3dc1fed87e84c6da",
+        "objectKey": "sharingPrincipals_6be78ffecc9fc3ce",
+        "context": "<sharedTo>\n            <role>Sales_Manager</role>\n        </sharedTo>",
+        "source": [
+          {
+            "sourceKey": "sharingPrincipals_6979fa96e9807cae",
+            "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+            "start": {
+              "offset": 259,
+              "line": 7,
+              "column": 8
+            },
+            "end": {
+              "offset": 328,
+              "line": 9,
+              "column": 19
+            }
+          },
+          {
+            "sourceKey": "sharingPrincipals_ec4a01feb51e8c89",
+            "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+            "start": {
+              "offset": 809,
+              "line": 24,
+              "column": 8
+            },
+            "end": {
+              "offset": 882,
+              "line": 26,
+              "column": 21
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxName_bd29178350e43d25",
+        "context": "Amount__c",
+        "source": [
+          {
+            "sourceKey": "fxName_e8234e87bf455245",
+            "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+            "start": {
+              "offset": 372,
+              "line": 11,
+              "column": 19
+            },
+            "end": {
+              "offset": 381,
+              "line": 11,
+              "column": 28
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "criterion_e543e340233d6cf0",
+        "context": "<criteriaItems>\n            <field>Amount__c</field>\n            <operation>greaterThan</operation>\n            <value>10000</value>\n        </criteriaItems>",
+        "source": [
+          {
+            "sourceKey": "criterion_fb588f0dbe34ccc2",
+            "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+            "start": {
+              "offset": 337,
+              "line": 10,
+              "column": 8
+            },
+            "end": {
+              "offset": 494,
+              "line": 14,
+              "column": 24
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "sharingCriteriaRule_244108abb11ccc52",
         "context": "<sharingCriteriaRules>\n        <fullName>Large_Invoices</fullName>\n        <accessLevel>Read</accessLevel>\n        <label>Large Invoices</label>\n        <sharedTo>\n            <role>Sales_Manager</role>\n        </sharedTo>\n        <criteriaItems>\n            <field>Amount__c</field>\n            <operation>greaterThan</operation>\n            <value>10000</value>\n        </criteriaItems>\n        <includeRecordsOwnedByAll>true</includeRecordsOwnedByAll>\n    </sharingCriteriaRules>",
         "source": [
           {
@@ -75,7 +181,27 @@
         ]
       },
       {
-        "objectKey": "sharingOwnerRule_ece9fe48a6f9cb8a",
+        "objectKey": "sharingPrincipals_c716bf76cecd859a",
+        "context": "<sharedTo>\n            <group>Finance</group>\n        </sharedTo>",
+        "source": [
+          {
+            "sourceKey": "sharingPrincipals_d20ea893699dbf85",
+            "filePath": "sharingRules/Invoice__c.sharingRules-meta.xml",
+            "start": {
+              "offset": 735,
+              "line": 21,
+              "column": 8
+            },
+            "end": {
+              "offset": 800,
+              "line": 23,
+              "column": 19
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "sharingOwnerRule_7a34bf021481debe",
         "context": "<sharingOwnerRules>\n        <fullName>Sales_Team</fullName>\n        <accessLevel>Read</accessLevel>\n        <label>Sales Team</label>\n        <sharedTo>\n            <group>Finance</group>\n        </sharedTo>\n        <sharedFrom>\n            <role>Sales_Manager</role>\n        </sharedFrom>\n    </sharingOwnerRules>",
         "source": [
           {
@@ -95,7 +221,7 @@
         ]
       },
       {
-        "objectKey": "sharingRules_b8c9affebe56d941",
+        "objectKey": "sharingRules_6df512d6ef9de150",
         "context": "<SharingRules xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <sharingCriteriaRules>\n        <fullName>Large_Invoices</fullName>\n        <accessLevel>Read</accessLevel>\n        <label>Large Invoices</label>\n        <sharedTo>\n            <role>Sales_Manager</role>\n        </sharedTo>\n        <criteriaItems>\n            <field>Amount__c</field>\n            <operation>greaterThan</operation>\n            <value>10000</value>\n        </criteriaItems>\n        <includeRecordsOwnedByAll>true</includeRecordsOwnedByAll>\n    </sharingCriteriaRules>\n    <sharingOwnerRules>\n        <fullName>Sales_Team</fullName>\n        <accessLevel>Read</accessLevel>\n        <label>Sales Team</label>\n        <sharedTo>\n            <group>Finance</group>\n        </sharedTo>\n        <sharedFrom>\n            <role>Sales_Manager</role>\n        </sharedFrom>\n    </sharingOwnerRules>\n</SharingRules>",
         "source": [
           {

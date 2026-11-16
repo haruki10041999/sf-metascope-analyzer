@@ -8,4 +8,6 @@ export * from './labelAnalysis';
 export * from './flowAnalysis';
 export * from './pageAnalysis';
 export * from './automation';
-export * from './referenceAnalysis';
+export * from './refs';
+export * from './walker';
+export * from './markup';

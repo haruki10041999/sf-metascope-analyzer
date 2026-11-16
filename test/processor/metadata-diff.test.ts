@@ -243,6 +243,15 @@ describe('MetadataProcessor', () => {
         await processor.save();
         assert.equal(await processor.hasSaved(), true);
         assert.ok(processor.getObjectUnitDiffs().every((d) => d.status === 'unchanged'));
+        // 保存のあとは読み直さず、after をそのまま before にする (docs/save-format-plan.md の S0)
+        assert.equal(processor.before, processor.after);
+        // 保存したものを読み直しても同じ (変わっていない)
+        const reloaded = await RepositoryProcessor.create(saveRoot, repository);
+        assert.ok(reloaded.getObjectUnitDiffs().every((d) => d.status === 'unchanged'));
+        assert.deepEqual(
+            reloaded.before.get('object').map((r) => r.result.id),
+            processor.after.get('object').map((r) => r.result.id),
+        );
 
         await rm(objects, { recursive: true });
         await cp(sample('after'), objects, { recursive: true });

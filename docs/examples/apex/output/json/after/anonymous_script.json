@@ -15,30 +15,31 @@
             {
               "kind": "field",
               "sourceKeys": {
-                "objectKey": "fieldDeclaration_effb978910507346",
+                "objectKey": "fieldDeclaration_43b31e943441ae0e",
                 "sourceKey": "fieldDeclaration_982a66ea025d8c59"
               },
               "variants": [
                 {
+                  "kind": "variant",
                   "sourceKeys": {
-                    "objectKey": "variableDeclarator_26801864d3389c71",
+                    "objectKey": "variableDeclarator_069be3edfff649cb",
                     "sourceKey": "variableDeclarator_1be6f2283811f45f"
                   },
                   "name": "limitSize",
                   "init": {
+                    "kind": "integer",
                     "sourceKeys": {
                       "objectKey": "literal_d95b377d23a3dd1c",
                       "sourceKey": "literal_5d0928ba12c543f2"
                     },
-                    "value": "20",
-                    "valueType": "integer"
+                    "value": "20"
                   }
                 }
               ],
               "variantType": {
                 "kind": "type",
                 "sourceKeys": {
-                  "objectKey": "typeRef_1a870c360196e41a",
+                  "objectKey": "typeRef_8c83bc51944df63a",
                   "sourceKey": "typeRef_01511f3fe2baf675"
                 },
                 "type": "primitive",
@@ -50,7 +51,7 @@
               "kind": "method",
               "sourceKeys": {
                 "base": {
-                  "objectKey": "methodDeclaration_7a87919e87ee4e0d",
+                  "objectKey": "methodDeclaration_ea1bc30c4038843b",
                   "sourceKey": "methodDeclaration_e48cdaf4da3a1c32"
                 },
                 "name": {
@@ -64,14 +65,14 @@
                 {
                   "kind": "parameter",
                   "sourceKeys": {
-                    "objectKey": "formalParameter_a31f28fc3417f058",
+                    "objectKey": "formalParameter_3c1aaa6705cf2488",
                     "sourceKey": "formalParameter_5bf8ec752b28bf53"
                   },
                   "variant": "n",
                   "variantType": {
                     "kind": "type",
                     "sourceKeys": {
-                      "objectKey": "typeRef_1a870c360196e41a",
+                      "objectKey": "typeRef_8c83bc51944df63a",
                       "sourceKey": "typeRef_712f99fdee7d39d0"
                     },
                     "type": "primitive",
@@ -84,32 +85,53 @@
                 {
                   "kind": "expression",
                   "sourceKeys": {
-                    "objectKey": "expressionStatement_b53738a6bf02e71d",
+                    "objectKey": "expressionStatement_0b5866740b5390dc",
                     "sourceKey": "expressionStatement_6a5d3f0c27d773a1"
                   },
                   "value": {
                     "kind": "memberAccess",
                     "sourceKeys": {
-                      "objectKey": "dotExpression_c9233bff6d6a44d0",
+                      "objectKey": "dotExpression_dd3b20052df5d989",
                       "sourceKey": "dotExpression_502feaf963b4635b"
                     },
                     "type": "method",
-                    "object": "System",
+                    "object": {
+                      "kind": "identifier",
+                      "sourceKeys": {
+                        "objectKey": "idPrimary_92bc4d8d53ed9978",
+                        "sourceKey": "idPrimary_d66302ed0b79ceaa"
+                      },
+                      "name": "System"
+                    },
                     "operator": ".",
                     "member": "debug",
                     "memberArg": [
                       {
                         "kind": "memberAccess",
                         "sourceKeys": {
-                          "objectKey": "dotExpression_926d6a9dd4df72c8",
+                          "objectKey": "dotExpression_f746e8c731a5b16c",
                           "sourceKey": "dotExpression_075303c5a8bc2cf9"
                         },
                         "type": "object",
-                        "object": "LoggingLevel",
+                        "object": {
+                          "kind": "identifier",
+                          "sourceKeys": {
+                            "objectKey": "idPrimary_ce9ee251568baa4f",
+                            "sourceKey": "idPrimary_bf2a82ce956eb2b3"
+                          },
+                          "name": "LoggingLevel"
+                        },
                         "operator": ".",
                         "member": "WARN"
                       },
-                      "n"
+                      {
+                        "kind": "identifier",
+                        "sourceKeys": {
+                          "objectKey": "idPrimary_23535433dcad254c",
+                          "sourceKey": "idPrimary_55f50b650d840869"
+                        },
+                        "name": "n"
+                      }
                     ]
                   }
                 }
@@ -117,279 +139,313 @@
               "modifier": {}
             },
             {
-              "kind": "statement",
-              "statement": {
-                "kind": "expression",
-                "sourceKeys": {
-                  "objectKey": "expressionStatement_cc836d68cfce2fd3",
-                  "sourceKey": "expressionStatement_ccf3a20796822a22"
-                },
-                "value": {
-                  "kind": "memberAccess",
-                  "sourceKeys": {
-                    "objectKey": "dotExpression_c05042caae093e4f",
-                    "sourceKey": "dotExpression_f25a85627e8bd685"
-                  },
-                  "type": "method",
-                  "object": "System",
-                  "operator": ".",
-                  "member": "debug",
-                  "memberArg": [
-                    {
-                      "sourceKeys": {
-                        "objectKey": "literal_ab7e545bc0eedd34",
-                        "sourceKey": "literal_05180c8f94c9ce38"
-                      },
-                      "value": "'end'",
-                      "valueType": "string"
-                    }
-                  ]
-                }
+              "kind": "expression",
+              "sourceKeys": {
+                "objectKey": "expressionStatement_b0fa3840841f0ec7",
+                "sourceKey": "expressionStatement_ccf3a20796822a22"
               },
-              "modifier": {}
+              "value": {
+                "kind": "memberAccess",
+                "sourceKeys": {
+                  "objectKey": "dotExpression_8cdd1fdc7407b077",
+                  "sourceKey": "dotExpression_f25a85627e8bd685"
+                },
+                "type": "method",
+                "object": {
+                  "kind": "identifier",
+                  "sourceKeys": {
+                    "objectKey": "idPrimary_92bc4d8d53ed9978",
+                    "sourceKey": "idPrimary_bb419aabb7782293"
+                  },
+                  "name": "System"
+                },
+                "operator": ".",
+                "member": "debug",
+                "memberArg": [
+                  {
+                    "kind": "string",
+                    "sourceKeys": {
+                      "objectKey": "literal_ab7e545bc0eedd34",
+                      "sourceKey": "literal_05180c8f94c9ce38"
+                    },
+                    "value": "end"
+                  }
+                ]
+              }
             },
             {
-              "kind": "statement",
-              "statement": {
-                "kind": "for",
-                "sourceKeys": {
-                  "objectKey": "forStatement_9a7712739e01d0f9",
-                  "sourceKey": "forStatement_5fa735f8e3969448"
-                },
-                "condition": {
-                  "kind": "forCondition",
-                  "sourceKeys": {
-                    "objectKey": "forControl_43e72ff1f90ba9c0",
-                    "sourceKey": "forControl_8d2022319b532e04"
-                  },
-                  "initializer": {
-                    "variants": [
-                      {
-                        "sourceKeys": {
-                          "objectKey": "variableDeclarator_883f35246563c6f8",
-                          "sourceKey": "variableDeclarator_352a6e2ff81b8f95"
-                        },
-                        "name": "k",
-                        "init": {
-                          "sourceKeys": {
-                            "objectKey": "literal_c0d97fe34037a338",
-                            "sourceKey": "literal_e8d8e4fb26d509ab"
-                          },
-                          "value": "0",
-                          "valueType": "integer"
-                        }
-                      }
-                    ],
-                    "variantsType": {
-                      "kind": "type",
-                      "sourceKeys": {
-                        "objectKey": "typeRef_1a870c360196e41a",
-                        "sourceKey": "typeRef_302075cfeb2b0121"
-                      },
-                      "type": "primitive",
-                      "primitiveType": "Integer"
-                    },
-                    "modifier": {}
-                  },
-                  "condition": {
+              "kind": "for",
+              "sourceKeys": {
+                "objectKey": "forStatement_2f35565873e3eca6",
+                "sourceKey": "forStatement_5fa735f8e3969448"
+              },
+              "condition": {
+                "initializer": {
+                  "variantType": {
+                    "kind": "type",
                     "sourceKeys": {
-                      "objectKey": "cmpExpression_aa2c939105b9ee97",
-                      "sourceKey": "cmpExpression_82c7a12a82c2e70a"
+                      "objectKey": "typeRef_8c83bc51944df63a",
+                      "sourceKey": "typeRef_302075cfeb2b0121"
                     },
-                    "left": "k",
-                    "operator": "<",
-                    "right": {
-                      "sourceKeys": {
-                        "objectKey": "literal_fda491d352df2d3b",
-                        "sourceKey": "literal_0514b25723725240"
-                      },
-                      "value": "5",
-                      "valueType": "integer"
-                    }
+                    "type": "primitive",
+                    "primitiveType": "Integer"
                   },
-                  "update": [
+                  "modifier": {},
+                  "variants": [
                     {
+                      "kind": "variant",
                       "sourceKeys": {
-                        "objectKey": "postOpExpression_3c359679c111fb4b",
-                        "sourceKey": "postOpExpression_fec536dabeb2a06e"
+                        "objectKey": "variableDeclarator_f28f170e411ccfe7",
+                        "sourceKey": "variableDeclarator_352a6e2ff81b8f95"
                       },
-                      "variant": "k",
-                      "operator": "++",
-                      "operatorLocation": "back"
+                      "name": "k",
+                      "init": {
+                        "kind": "integer",
+                        "sourceKeys": {
+                          "objectKey": "literal_c0d97fe34037a338",
+                          "sourceKey": "literal_e8d8e4fb26d509ab"
+                        },
+                        "value": "0"
+                      }
                     }
                   ]
                 },
-                "block": [
-                  {
-                    "kind": "if",
-                    "sourceKeys": {
-                      "objectKey": "ifStatement_1f209025768f3b3c",
-                      "sourceKey": "ifStatement_4cd2a1b78a031696"
-                    },
-                    "conditionBlock": [
-                      {
-                        "condition": {
-                          "kind": "ifCondition",
-                          "sourceKeys": {
-                            "objectKey": "parExpression_6259982105dcf8a4",
-                            "sourceKey": "parExpression_3ed789dd82d581e6"
-                          },
-                          "condition": {
-                            "sourceKeys": {
-                              "objectKey": "equalityExpression_acc58ef265eafc58",
-                              "sourceKey": "equalityExpression_5784943fbb1a2270"
-                            },
-                            "left": "k",
-                            "operator": "==",
-                            "right": {
-                              "sourceKeys": {
-                                "objectKey": "literal_fb5627d59521b262",
-                                "sourceKey": "literal_3074e75504ff4284"
-                              },
-                              "value": "1",
-                              "valueType": "integer"
-                            }
-                          }
-                        },
-                        "block": [
-                          {
-                            "kind": "expression",
-                            "sourceKeys": {
-                              "objectKey": "expressionStatement_5f8d967bb91df747",
-                              "sourceKey": "expressionStatement_3ab3312686b5eb77"
-                            },
-                            "value": {
-                              "kind": "memberAccess",
-                              "sourceKeys": {
-                                "objectKey": "dotExpression_2f60f24ca6f76d17",
-                                "sourceKey": "dotExpression_ed88225e6fc6cf91"
-                              },
-                              "type": "method",
-                              "object": "System",
-                              "operator": ".",
-                              "member": "debug",
-                              "memberArg": [
-                                {
-                                  "sourceKeys": {
-                                    "objectKey": "literal_882385469ee1c80c",
-                                    "sourceKey": "literal_ba10f6c5d46a80e0"
-                                  },
-                                  "value": "'skip'",
-                                  "valueType": "string"
-                                }
-                              ]
-                            }
-                          },
-                          {
-                            "kind": "continue",
-                            "sourceKeys": {
-                              "objectKey": "continueStatement_75e54317e0e4a15e",
-                              "sourceKey": "continueStatement_738ad52cad630858"
-                            },
-                            "value": "continue"
-                          }
-                        ]
-                      }
-                    ]
+                "condition": {
+                  "kind": "binary",
+                  "sourceKeys": {
+                    "objectKey": "cmpExpression_8f4acfe1d807d91a",
+                    "sourceKey": "cmpExpression_82c7a12a82c2e70a"
                   },
-                  {
-                    "kind": "if",
+                  "left": {
+                    "kind": "identifier",
                     "sourceKeys": {
-                      "objectKey": "ifStatement_216b1bdfa7108200",
-                      "sourceKey": "ifStatement_79ba4e6d97e92063"
+                      "objectKey": "idPrimary_435c233175df8082",
+                      "sourceKey": "idPrimary_0045fd96cb337e1e"
                     },
-                    "conditionBlock": [
-                      {
-                        "condition": {
-                          "kind": "ifCondition",
-                          "sourceKeys": {
-                            "objectKey": "parExpression_9b3b406232364799",
-                            "sourceKey": "parExpression_03e1036387e9d351"
-                          },
-                          "condition": {
-                            "sourceKeys": {
-                              "objectKey": "cmpExpression_c28adedc75b55480",
-                              "sourceKey": "cmpExpression_e73344d4daf32cb2"
-                            },
-                            "left": "k",
-                            "operator": ">=",
-                            "right": {
-                              "sourceKeys": {
-                                "objectKey": "literal_a49b7b7e3b02d933",
-                                "sourceKey": "literal_f537d21579da29b3"
-                              },
-                              "value": "2",
-                              "valueType": "integer"
-                            }
-                          }
-                        },
-                        "block": [
-                          {
-                            "kind": "expression",
-                            "sourceKeys": {
-                              "objectKey": "expressionStatement_a25b450ab397f272",
-                              "sourceKey": "expressionStatement_d5297b468a488db5"
-                            },
-                            "value": {
-                              "kind": "memberAccess",
-                              "sourceKeys": {
-                                "objectKey": "dotExpression_e5c7fd4c18375366",
-                                "sourceKey": "dotExpression_29f5ceaa855a7c6b"
-                              },
-                              "type": "method",
-                              "object": "System",
-                              "operator": ".",
-                              "member": "debug",
-                              "memberArg": [
-                                {
-                                  "sourceKeys": {
-                                    "objectKey": "literal_47a11aacc88391b5",
-                                    "sourceKey": "literal_c449ab68a4c28877"
-                                  },
-                                  "value": "'stop'",
-                                  "valueType": "string"
-                                }
-                              ]
-                            }
-                          },
-                          {
-                            "kind": "break",
-                            "sourceKeys": {
-                              "objectKey": "breakStatement_791d9ef866afdfd1",
-                              "sourceKey": "breakStatement_feabe393afaa9a48"
-                            },
-                            "value": "break"
-                          }
-                        ]
-                      }
-                    ]
+                    "name": "k"
+                  },
+                  "right": {
+                    "kind": "integer",
+                    "sourceKeys": {
+                      "objectKey": "literal_fda491d352df2d3b",
+                      "sourceKey": "literal_0514b25723725240"
+                    },
+                    "value": "5"
+                  },
+                  "operator": "<"
+                },
+                "update": [
+                  {
+                    "kind": "unary",
+                    "sourceKeys": {
+                      "objectKey": "postOpExpression_0333e72e57f8d127",
+                      "sourceKey": "postOpExpression_fec536dabeb2a06e"
+                    },
+                    "operator": "++",
+                    "operatorLocation": "back",
+                    "argument": {
+                      "kind": "identifier",
+                      "sourceKeys": {
+                        "objectKey": "idPrimary_435c233175df8082",
+                        "sourceKey": "idPrimary_35e9cc00c3bd3810"
+                      },
+                      "name": "k"
+                    }
                   }
                 ]
               },
-              "modifier": {}
-            },
-            {
-              "kind": "statement",
-              "statement": {
-                "kind": "expression",
-                "sourceKeys": {
-                  "objectKey": "expressionStatement_2ca2826dad470ae2",
-                  "sourceKey": "expressionStatement_9d9bd10bd76aab1c"
-                },
-                "value": {
-                  "kind": "memberAccess",
+              "block": [
+                {
+                  "kind": "if",
                   "sourceKeys": {
-                    "objectKey": "methodCallExpression_308d5925e3d4a431",
-                    "sourceKey": "methodCallExpression_6acf982a95d49ad7"
+                    "objectKey": "ifStatement_801c85fe47c987e8",
+                    "sourceKey": "ifStatement_4cd2a1b78a031696"
                   },
-                  "type": "method",
-                  "member": "helper",
-                  "memberArg": [
-                    "limitSize"
+                  "conditionBlock": [
+                    {
+                      "condition": {
+                        "kind": "binary",
+                        "sourceKeys": {
+                          "objectKey": "equalityExpression_670f09b8406fe586",
+                          "sourceKey": "equalityExpression_5784943fbb1a2270"
+                        },
+                        "left": {
+                          "kind": "identifier",
+                          "sourceKeys": {
+                            "objectKey": "idPrimary_435c233175df8082",
+                            "sourceKey": "idPrimary_629f3c7f2d092460"
+                          },
+                          "name": "k"
+                        },
+                        "right": {
+                          "kind": "integer",
+                          "sourceKeys": {
+                            "objectKey": "literal_fb5627d59521b262",
+                            "sourceKey": "literal_3074e75504ff4284"
+                          },
+                          "value": "1"
+                        },
+                        "operator": "=="
+                      },
+                      "block": [
+                        {
+                          "kind": "expression",
+                          "sourceKeys": {
+                            "objectKey": "expressionStatement_5b516e664af7e1a6",
+                            "sourceKey": "expressionStatement_3ab3312686b5eb77"
+                          },
+                          "value": {
+                            "kind": "memberAccess",
+                            "sourceKeys": {
+                              "objectKey": "dotExpression_3187c0e309110eb3",
+                              "sourceKey": "dotExpression_ed88225e6fc6cf91"
+                            },
+                            "type": "method",
+                            "object": {
+                              "kind": "identifier",
+                              "sourceKeys": {
+                                "objectKey": "idPrimary_92bc4d8d53ed9978",
+                                "sourceKey": "idPrimary_37f36dd62d6ad0ae"
+                              },
+                              "name": "System"
+                            },
+                            "operator": ".",
+                            "member": "debug",
+                            "memberArg": [
+                              {
+                                "kind": "string",
+                                "sourceKeys": {
+                                  "objectKey": "literal_882385469ee1c80c",
+                                  "sourceKey": "literal_ba10f6c5d46a80e0"
+                                },
+                                "value": "skip"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "kind": "continue",
+                          "sourceKeys": {
+                            "objectKey": "continueStatement_75e54317e0e4a15e",
+                            "sourceKey": "continueStatement_738ad52cad630858"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "kind": "if",
+                  "sourceKeys": {
+                    "objectKey": "ifStatement_ffb19518906b924b",
+                    "sourceKey": "ifStatement_79ba4e6d97e92063"
+                  },
+                  "conditionBlock": [
+                    {
+                      "condition": {
+                        "kind": "binary",
+                        "sourceKeys": {
+                          "objectKey": "cmpExpression_c668e734a6ec1cab",
+                          "sourceKey": "cmpExpression_e73344d4daf32cb2"
+                        },
+                        "left": {
+                          "kind": "identifier",
+                          "sourceKeys": {
+                            "objectKey": "idPrimary_435c233175df8082",
+                            "sourceKey": "idPrimary_3acfaaf3f2ccd306"
+                          },
+                          "name": "k"
+                        },
+                        "right": {
+                          "kind": "integer",
+                          "sourceKeys": {
+                            "objectKey": "literal_a49b7b7e3b02d933",
+                            "sourceKey": "literal_f537d21579da29b3"
+                          },
+                          "value": "2"
+                        },
+                        "operator": ">="
+                      },
+                      "block": [
+                        {
+                          "kind": "expression",
+                          "sourceKeys": {
+                            "objectKey": "expressionStatement_7519e2502b83ee83",
+                            "sourceKey": "expressionStatement_d5297b468a488db5"
+                          },
+                          "value": {
+                            "kind": "memberAccess",
+                            "sourceKeys": {
+                              "objectKey": "dotExpression_946f04cbeb040b8d",
+                              "sourceKey": "dotExpression_29f5ceaa855a7c6b"
+                            },
+                            "type": "method",
+                            "object": {
+                              "kind": "identifier",
+                              "sourceKeys": {
+                                "objectKey": "idPrimary_92bc4d8d53ed9978",
+                                "sourceKey": "idPrimary_f0944fa7998cc270"
+                              },
+                              "name": "System"
+                            },
+                            "operator": ".",
+                            "member": "debug",
+                            "memberArg": [
+                              {
+                                "kind": "string",
+                                "sourceKeys": {
+                                  "objectKey": "literal_47a11aacc88391b5",
+                                  "sourceKey": "literal_c449ab68a4c28877"
+                                },
+                                "value": "stop"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "kind": "break",
+                          "sourceKeys": {
+                            "objectKey": "breakStatement_791d9ef866afdfd1",
+                            "sourceKey": "breakStatement_feabe393afaa9a48"
+                          }
+                        }
+                      ]
+                    }
                   ]
                 }
+              ]
+            },
+            {
+              "kind": "expression",
+              "sourceKeys": {
+                "objectKey": "expressionStatement_cd3c81203de663d8",
+                "sourceKey": "expressionStatement_9d9bd10bd76aab1c"
               },
-              "modifier": {}
+              "value": {
+                "kind": "call",
+                "sourceKeys": {
+                  "objectKey": "methodCallExpression_30aaf600cb2a5483",
+                  "sourceKey": "methodCallExpression_6acf982a95d49ad7"
+                },
+                "callee": {
+                  "kind": "identifier",
+                  "sourceKeys": {
+                    "objectKey": "id_352aaf5556fb2f59",
+                    "sourceKey": "id_5cc67d9ffa37cac1"
+                  },
+                  "name": "helper"
+                },
+                "arg": [
+                  {
+                    "kind": "identifier",
+                    "sourceKeys": {
+                      "objectKey": "idPrimary_b4212a0fdb103b82",
+                      "sourceKey": "idPrimary_9baf9fa87c64bccb"
+                    },
+                    "name": "limitSize"
+                  }
+                ]
+              }
             }
           ]
         }
@@ -397,7 +453,7 @@
     },
     "sourceObject": [
       {
-        "objectKey": "fieldDeclaration_effb978910507346",
+        "objectKey": "fieldDeclaration_43b31e943441ae0e",
         "context": "Integer limitSize = 20;",
         "source": [
           {
@@ -416,7 +472,7 @@
         ]
       },
       {
-        "objectKey": "variableDeclarator_26801864d3389c71",
+        "objectKey": "variableDeclarator_069be3edfff649cb",
         "context": "limitSize = 20",
         "source": [
           {
@@ -454,7 +510,7 @@
         ]
       },
       {
-        "objectKey": "typeRef_1a870c360196e41a",
+        "objectKey": "typeRef_8c83bc51944df63a",
         "context": "Integer",
         "source": [
           {
@@ -499,7 +555,7 @@
         ]
       },
       {
-        "objectKey": "methodDeclaration_7a87919e87ee4e0d",
+        "objectKey": "methodDeclaration_ea1bc30c4038843b",
         "context": "void helper(Integer n) {\n    System.debug(LoggingLevel.WARN, n);\n}",
         "source": [
           {
@@ -533,11 +589,24 @@
               "line": 3,
               "column": 11
             }
+          },
+          {
+            "sourceKey": "id_5cc67d9ffa37cac1",
+            "start": {
+              "offset": 291,
+              "line": 18,
+              "column": 0
+            },
+            "end": {
+              "offset": 297,
+              "line": 18,
+              "column": 6
+            }
           }
         ]
       },
       {
-        "objectKey": "formalParameter_a31f28fc3417f058",
+        "objectKey": "formalParameter_3c1aaa6705cf2488",
         "context": "Integer n",
         "source": [
           {
@@ -556,7 +625,7 @@
         ]
       },
       {
-        "objectKey": "expressionStatement_b53738a6bf02e71d",
+        "objectKey": "expressionStatement_0b5866740b5390dc",
         "context": "System.debug(LoggingLevel.WARN, n);",
         "source": [
           {
@@ -575,7 +644,7 @@
         ]
       },
       {
-        "objectKey": "dotExpression_c9233bff6d6a44d0",
+        "objectKey": "dotExpression_dd3b20052df5d989",
         "context": "System.debug(LoggingLevel.WARN, n)",
         "source": [
           {
@@ -594,7 +663,65 @@
         ]
       },
       {
-        "objectKey": "dotExpression_926d6a9dd4df72c8",
+        "objectKey": "idPrimary_92bc4d8d53ed9978",
+        "context": "System",
+        "source": [
+          {
+            "sourceKey": "idPrimary_d66302ed0b79ceaa",
+            "start": {
+              "offset": 54,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 60,
+              "line": 4,
+              "column": 10
+            }
+          },
+          {
+            "sourceKey": "idPrimary_bb419aabb7782293",
+            "start": {
+              "offset": 93,
+              "line": 7,
+              "column": 0
+            },
+            "end": {
+              "offset": 99,
+              "line": 7,
+              "column": 6
+            }
+          },
+          {
+            "sourceKey": "idPrimary_37f36dd62d6ad0ae",
+            "start": {
+              "offset": 174,
+              "line": 10,
+              "column": 8
+            },
+            "end": {
+              "offset": 180,
+              "line": 10,
+              "column": 14
+            }
+          },
+          {
+            "sourceKey": "idPrimary_f0944fa7998cc270",
+            "start": {
+              "offset": 246,
+              "line": 14,
+              "column": 8
+            },
+            "end": {
+              "offset": 252,
+              "line": 14,
+              "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "dotExpression_f746e8c731a5b16c",
         "context": "LoggingLevel.WARN",
         "source": [
           {
@@ -613,7 +740,45 @@
         ]
       },
       {
-        "objectKey": "expressionStatement_cc836d68cfce2fd3",
+        "objectKey": "idPrimary_ce9ee251568baa4f",
+        "context": "LoggingLevel",
+        "source": [
+          {
+            "sourceKey": "idPrimary_bf2a82ce956eb2b3",
+            "start": {
+              "offset": 67,
+              "line": 4,
+              "column": 17
+            },
+            "end": {
+              "offset": 79,
+              "line": 4,
+              "column": 29
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "idPrimary_23535433dcad254c",
+        "context": "n",
+        "source": [
+          {
+            "sourceKey": "idPrimary_55f50b650d840869",
+            "start": {
+              "offset": 86,
+              "line": 4,
+              "column": 36
+            },
+            "end": {
+              "offset": 87,
+              "line": 4,
+              "column": 37
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "expressionStatement_b0fa3840841f0ec7",
         "context": "System.debug('end');",
         "source": [
           {
@@ -632,7 +797,7 @@
         ]
       },
       {
-        "objectKey": "dotExpression_c05042caae093e4f",
+        "objectKey": "dotExpression_8cdd1fdc7407b077",
         "context": "System.debug('end')",
         "source": [
           {
@@ -670,7 +835,7 @@
         ]
       },
       {
-        "objectKey": "forStatement_9a7712739e01d0f9",
+        "objectKey": "forStatement_2f35565873e3eca6",
         "context": "for (Integer k = 0; k < 5; k++) {\n    if (k == 1) {\n        System.debug('skip');\n        continue;\n    }\n    if (k >= 2) {\n        System.debug('stop');\n        break;\n    }\n}",
         "source": [
           {
@@ -689,26 +854,7 @@
         ]
       },
       {
-        "objectKey": "forControl_43e72ff1f90ba9c0",
-        "context": "Integer k = 0; k < 5; k++",
-        "source": [
-          {
-            "sourceKey": "forControl_8d2022319b532e04",
-            "start": {
-              "offset": 119,
-              "line": 8,
-              "column": 5
-            },
-            "end": {
-              "offset": 144,
-              "line": 8,
-              "column": 30
-            }
-          }
-        ]
-      },
-      {
-        "objectKey": "variableDeclarator_883f35246563c6f8",
+        "objectKey": "variableDeclarator_f28f170e411ccfe7",
         "context": "k = 0",
         "source": [
           {
@@ -746,7 +892,7 @@
         ]
       },
       {
-        "objectKey": "cmpExpression_aa2c939105b9ee97",
+        "objectKey": "cmpExpression_8f4acfe1d807d91a",
         "context": "k < 5",
         "source": [
           {
@@ -760,6 +906,64 @@
               "offset": 139,
               "line": 8,
               "column": 25
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "idPrimary_435c233175df8082",
+        "context": "k",
+        "source": [
+          {
+            "sourceKey": "idPrimary_0045fd96cb337e1e",
+            "start": {
+              "offset": 134,
+              "line": 8,
+              "column": 20
+            },
+            "end": {
+              "offset": 135,
+              "line": 8,
+              "column": 21
+            }
+          },
+          {
+            "sourceKey": "idPrimary_35e9cc00c3bd3810",
+            "start": {
+              "offset": 141,
+              "line": 8,
+              "column": 27
+            },
+            "end": {
+              "offset": 142,
+              "line": 8,
+              "column": 28
+            }
+          },
+          {
+            "sourceKey": "idPrimary_629f3c7f2d092460",
+            "start": {
+              "offset": 156,
+              "line": 9,
+              "column": 8
+            },
+            "end": {
+              "offset": 157,
+              "line": 9,
+              "column": 9
+            }
+          },
+          {
+            "sourceKey": "idPrimary_3acfaaf3f2ccd306",
+            "start": {
+              "offset": 228,
+              "line": 13,
+              "column": 8
+            },
+            "end": {
+              "offset": 229,
+              "line": 13,
+              "column": 9
             }
           }
         ]
@@ -784,7 +988,7 @@
         ]
       },
       {
-        "objectKey": "postOpExpression_3c359679c111fb4b",
+        "objectKey": "postOpExpression_0333e72e57f8d127",
         "context": "k++",
         "source": [
           {
@@ -803,7 +1007,7 @@
         ]
       },
       {
-        "objectKey": "ifStatement_1f209025768f3b3c",
+        "objectKey": "ifStatement_801c85fe47c987e8",
         "context": "if (k == 1) {\n        System.debug('skip');\n        continue;\n    }",
         "source": [
           {
@@ -822,26 +1026,7 @@
         ]
       },
       {
-        "objectKey": "parExpression_6259982105dcf8a4",
-        "context": "(k == 1)",
-        "source": [
-          {
-            "sourceKey": "parExpression_3ed789dd82d581e6",
-            "start": {
-              "offset": 155,
-              "line": 9,
-              "column": 7
-            },
-            "end": {
-              "offset": 163,
-              "line": 9,
-              "column": 15
-            }
-          }
-        ]
-      },
-      {
-        "objectKey": "equalityExpression_acc58ef265eafc58",
+        "objectKey": "equalityExpression_670f09b8406fe586",
         "context": "k == 1",
         "source": [
           {
@@ -879,7 +1064,7 @@
         ]
       },
       {
-        "objectKey": "expressionStatement_5f8d967bb91df747",
+        "objectKey": "expressionStatement_5b516e664af7e1a6",
         "context": "System.debug('skip');",
         "source": [
           {
@@ -898,7 +1083,7 @@
         ]
       },
       {
-        "objectKey": "dotExpression_2f60f24ca6f76d17",
+        "objectKey": "dotExpression_3187c0e309110eb3",
         "context": "System.debug('skip')",
         "source": [
           {
@@ -955,7 +1140,7 @@
         ]
       },
       {
-        "objectKey": "ifStatement_216b1bdfa7108200",
+        "objectKey": "ifStatement_ffb19518906b924b",
         "context": "if (k >= 2) {\n        System.debug('stop');\n        break;\n    }",
         "source": [
           {
@@ -974,26 +1159,7 @@
         ]
       },
       {
-        "objectKey": "parExpression_9b3b406232364799",
-        "context": "(k >= 2)",
-        "source": [
-          {
-            "sourceKey": "parExpression_03e1036387e9d351",
-            "start": {
-              "offset": 227,
-              "line": 13,
-              "column": 7
-            },
-            "end": {
-              "offset": 235,
-              "line": 13,
-              "column": 15
-            }
-          }
-        ]
-      },
-      {
-        "objectKey": "cmpExpression_c28adedc75b55480",
+        "objectKey": "cmpExpression_c668e734a6ec1cab",
         "context": "k >= 2",
         "source": [
           {
@@ -1031,7 +1197,7 @@
         ]
       },
       {
-        "objectKey": "expressionStatement_a25b450ab397f272",
+        "objectKey": "expressionStatement_7519e2502b83ee83",
         "context": "System.debug('stop');",
         "source": [
           {
@@ -1050,7 +1216,7 @@
         ]
       },
       {
-        "objectKey": "dotExpression_e5c7fd4c18375366",
+        "objectKey": "dotExpression_946f04cbeb040b8d",
         "context": "System.debug('stop')",
         "source": [
           {
@@ -1107,7 +1273,7 @@
         ]
       },
       {
-        "objectKey": "expressionStatement_2ca2826dad470ae2",
+        "objectKey": "expressionStatement_cd3c81203de663d8",
         "context": "helper(limitSize);",
         "source": [
           {
@@ -1126,7 +1292,7 @@
         ]
       },
       {
-        "objectKey": "methodCallExpression_308d5925e3d4a431",
+        "objectKey": "methodCallExpression_30aaf600cb2a5483",
         "context": "helper(limitSize)",
         "source": [
           {
@@ -1140,6 +1306,25 @@
               "offset": 308,
               "line": 18,
               "column": 17
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "idPrimary_b4212a0fdb103b82",
+        "context": "limitSize",
+        "source": [
+          {
+            "sourceKey": "idPrimary_9baf9fa87c64bccb",
+            "start": {
+              "offset": 298,
+              "line": 18,
+              "column": 7
+            },
+            "end": {
+              "offset": 307,
+              "line": 18,
+              "column": 16
             }
           }
         ]

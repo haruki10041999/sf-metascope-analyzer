@@ -14,7 +14,7 @@
           "kind": "interface",
           "sourceKeys": {
             "base": {
-              "objectKey": "interfaceDeclaration_50b6227a924ca998",
+              "objectKey": "interfaceDeclaration_c7aae7cb61959f11",
               "sourceKey": "interfaceDeclaration_af524b608d508c20"
             },
             "name": {
@@ -28,7 +28,7 @@
               "kind": "interfaceMethod",
               "sourceKeys": {
                 "base": {
-                  "objectKey": "interfaceMethodDeclaration_c8637fa8538eba01",
+                  "objectKey": "interfaceMethodDeclaration_07f7b5171043f6db",
                   "sourceKey": "interfaceMethodDeclaration_bfbee0df6be30f35"
                 },
                 "name": {
@@ -42,18 +42,20 @@
                 {
                   "kind": "parameter",
                   "sourceKeys": {
-                    "objectKey": "formalParameter_dfccd4e5b39cc7a4",
+                    "objectKey": "formalParameter_b3c780141bfb1ebb",
                     "sourceKey": "formalParameter_63deb6fa5d6b330a"
                   },
                   "variant": "context",
                   "variantType": {
                     "kind": "type",
                     "sourceKeys": {
-                      "objectKey": "typeRef_899c4707a7c159de",
+                      "objectKey": "typeRef_4e48b52d5d218ff5",
                       "sourceKey": "typeRef_98788da5e2f73abe"
                     },
                     "type": "custom",
-                    "customType": "SchedulableContext"
+                    "customType": [
+                      "SchedulableContext"
+                    ]
                   },
                   "modifier": {}
                 }
@@ -64,7 +66,7 @@
               "kind": "interfaceMethod",
               "sourceKeys": {
                 "base": {
-                  "objectKey": "interfaceMethodDeclaration_31d6df6ee614c38a",
+                  "objectKey": "interfaceMethodDeclaration_16cbb1f9beaad9e6",
                   "sourceKey": "interfaceMethodDeclaration_4faf851f8cacb57b"
                 },
                 "name": {
@@ -76,19 +78,20 @@
               "returnType": {
                 "kind": "type",
                 "sourceKeys": {
-                  "objectKey": "typeRef_1a870c360196e41a",
+                  "objectKey": "typeRef_8c83bc51944df63a",
                   "sourceKey": "typeRef_dcd4c39d369db36b"
                 },
                 "type": "primitive",
                 "primitiveType": "Integer"
               },
+              "param": [],
               "modifier": {}
             },
             {
               "kind": "interfaceMethod",
               "sourceKeys": {
                 "base": {
-                  "objectKey": "interfaceMethodDeclaration_1095988fd41b248d",
+                  "objectKey": "interfaceMethodDeclaration_8d0748c48d56783d",
                   "sourceKey": "interfaceMethodDeclaration_5c11661a77ee8940"
                 },
                 "name": {
@@ -100,27 +103,29 @@
               "returnType": {
                 "kind": "type",
                 "sourceKeys": {
-                  "objectKey": "typeRef_ea7c57f43a96c57c",
+                  "objectKey": "typeRef_3618fb8568f22cae",
                   "sourceKey": "typeRef_02ccc13150fc5ee9"
                 },
                 "type": "list",
                 "elementType": {
                   "type": "custom",
-                  "customType": "Account"
+                  "customType": [
+                    "Account"
+                  ]
                 }
               },
               "param": [
                 {
                   "kind": "parameter",
                   "sourceKeys": {
-                    "objectKey": "formalParameter_809f0ed7cb4d7c9e",
+                    "objectKey": "formalParameter_4a8437cb224fbc91",
                     "sourceKey": "formalParameter_90af6f974847c02a"
                   },
                   "variant": "name",
                   "variantType": {
                     "kind": "type",
                     "sourceKeys": {
-                      "objectKey": "typeRef_0f82fcb626301929",
+                      "objectKey": "typeRef_13fe51f723d9be1c",
                       "sourceKey": "typeRef_d5181409ccd2fe58"
                     },
                     "type": "primitive",
@@ -131,14 +136,14 @@
                 {
                   "kind": "parameter",
                   "sourceKeys": {
-                    "objectKey": "formalParameter_03a943b8c07aecf0",
+                    "objectKey": "formalParameter_20b7d06f945d5657",
                     "sourceKey": "formalParameter_7e485ffca57ec37b"
                   },
                   "variant": "ownerIds",
                   "variantType": {
                     "kind": "type",
                     "sourceKeys": {
-                      "objectKey": "typeRef_f7e09b396fc9b418",
+                      "objectKey": "typeRef_28a186f1d29b035d",
                       "sourceKey": "typeRef_a340a101f459ccb9"
                     },
                     "type": "set",
@@ -156,7 +161,7 @@
               "kind": "interfaceMethod",
               "sourceKeys": {
                 "base": {
-                  "objectKey": "interfaceMethodDeclaration_c234d0098ec20c3e",
+                  "objectKey": "interfaceMethodDeclaration_f4ca82346fc0ce3c",
                   "sourceKey": "interfaceMethodDeclaration_728f3c89d8cd64d2"
                 },
                 "name": {
@@ -168,7 +173,7 @@
               "returnType": {
                 "kind": "type",
                 "sourceKeys": {
-                  "objectKey": "typeRef_760ade2379c245cf",
+                  "objectKey": "typeRef_7c1e95dbe3bfff5f",
                   "sourceKey": "typeRef_86c916a173e87cd9"
                 },
                 "type": "map",
@@ -180,7 +185,9 @@
                   "type": "list",
                   "elementType": {
                     "type": "custom",
-                    "customType": "Contact"
+                    "customType": [
+                      "Contact"
+                    ]
                   }
                 }
               },
@@ -188,20 +195,22 @@
                 {
                   "kind": "parameter",
                   "sourceKeys": {
-                    "objectKey": "formalParameter_82eadfe364f68196",
+                    "objectKey": "formalParameter_98442fe11cf2d8ff",
                     "sourceKey": "formalParameter_f2ef6b33e9b905e9"
                   },
                   "variant": "accounts",
                   "variantType": {
                     "kind": "type",
                     "sourceKeys": {
-                      "objectKey": "typeRef_ea7c57f43a96c57c",
+                      "objectKey": "typeRef_3618fb8568f22cae",
                       "sourceKey": "typeRef_d1d4ef0dfee574b8"
                     },
                     "type": "list",
                     "elementType": {
                       "type": "custom",
-                      "customType": "Account"
+                      "customType": [
+                        "Account"
+                      ]
                     }
                   },
                   "modifier": {}
@@ -213,7 +222,7 @@
               "kind": "interfaceMethod",
               "sourceKeys": {
                 "base": {
-                  "objectKey": "interfaceMethodDeclaration_120e2b7917a38552",
+                  "objectKey": "interfaceMethodDeclaration_c558b1a6f792db1b",
                   "sourceKey": "interfaceMethodDeclaration_77d3e14026df552e"
                 },
                 "name": {
@@ -225,7 +234,7 @@
               "returnType": {
                 "kind": "type",
                 "sourceKeys": {
-                  "objectKey": "typeRef_180aa300d118d182",
+                  "objectKey": "typeRef_42a1ae751bdbeae7",
                   "sourceKey": "typeRef_961e02bc99dffe19"
                 },
                 "type": "custom",
@@ -238,18 +247,20 @@
                 {
                   "kind": "parameter",
                   "sourceKeys": {
-                    "objectKey": "formalParameter_c31ac4d549c1ed74",
+                    "objectKey": "formalParameter_8c11eb270cebf5e1",
                     "sourceKey": "formalParameter_a8a124e15ae9cb90"
                   },
                   "variant": "record",
                   "variantType": {
                     "kind": "type",
                     "sourceKeys": {
-                      "objectKey": "typeRef_d60c229da128597e",
+                      "objectKey": "typeRef_db6f181392ccf6cd",
                       "sourceKey": "typeRef_78b4c0c500b8efcf"
                     },
                     "type": "custom",
-                    "customType": "SObject"
+                    "customType": [
+                      "SObject"
+                    ]
                   },
                   "modifier": {}
                 }
@@ -261,28 +272,32 @@
             {
               "kind": "type",
               "sourceKeys": {
-                "objectKey": "typeRef_c158b4ec6ce4d14e",
+                "objectKey": "typeRef_7b3ee5dcc337312f",
                 "sourceKey": "typeRef_535ba3b7fc23970c"
               },
               "type": "custom",
-              "customType": "Comparable"
+              "customType": [
+                "Comparable"
+              ]
             },
             {
               "kind": "type",
               "sourceKeys": {
-                "objectKey": "typeRef_9b5b1c7289bace1b",
+                "objectKey": "typeRef_9f948a85e04fe399",
                 "sourceKey": "typeRef_a388f859992ce237"
               },
               "type": "custom",
-              "customType": "Schedulable"
+              "customType": [
+                "Schedulable"
+              ]
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {
-                  "objectKey": "modifier_a04213395735c45e",
+                  "objectKey": "modifier_ff9740e1ee9f633a",
                   "sourceKey": "modifier_2f2474ec1938992b"
                 },
                 "name": "PUBLIC"
@@ -294,7 +309,7 @@
     },
     "sourceObject": [
       {
-        "objectKey": "interfaceDeclaration_50b6227a924ca998",
+        "objectKey": "interfaceDeclaration_c7aae7cb61959f11",
         "context": "interface ParserInterface extends Comparable, Schedulable {\n    void execute(SchedulableContext context);\n\n    Integer count();\n\n    List<Account> findAccounts(String name, Set<Id> ownerIds);\n\n    Map<Id, List<Contact>> groupContacts(List<Account> accounts);\n\n    Database.SaveResult save(SObject record);\n}",
         "source": [
           {
@@ -332,7 +347,7 @@
         ]
       },
       {
-        "objectKey": "interfaceMethodDeclaration_c8637fa8538eba01",
+        "objectKey": "interfaceMethodDeclaration_07f7b5171043f6db",
         "context": "void execute(SchedulableContext context);",
         "source": [
           {
@@ -370,7 +385,7 @@
         ]
       },
       {
-        "objectKey": "formalParameter_dfccd4e5b39cc7a4",
+        "objectKey": "formalParameter_b3c780141bfb1ebb",
         "context": "SchedulableContext context",
         "source": [
           {
@@ -389,7 +404,7 @@
         ]
       },
       {
-        "objectKey": "typeRef_899c4707a7c159de",
+        "objectKey": "typeRef_4e48b52d5d218ff5",
         "context": "SchedulableContext",
         "source": [
           {
@@ -408,7 +423,7 @@
         ]
       },
       {
-        "objectKey": "interfaceMethodDeclaration_31d6df6ee614c38a",
+        "objectKey": "interfaceMethodDeclaration_16cbb1f9beaad9e6",
         "context": "Integer count();",
         "source": [
           {
@@ -446,7 +461,7 @@
         ]
       },
       {
-        "objectKey": "typeRef_1a870c360196e41a",
+        "objectKey": "typeRef_8c83bc51944df63a",
         "context": "Integer",
         "source": [
           {
@@ -465,7 +480,7 @@
         ]
       },
       {
-        "objectKey": "interfaceMethodDeclaration_1095988fd41b248d",
+        "objectKey": "interfaceMethodDeclaration_8d0748c48d56783d",
         "context": "List<Account> findAccounts(String name, Set<Id> ownerIds);",
         "source": [
           {
@@ -503,7 +518,7 @@
         ]
       },
       {
-        "objectKey": "typeRef_ea7c57f43a96c57c",
+        "objectKey": "typeRef_3618fb8568f22cae",
         "context": "List<Account>",
         "source": [
           {
@@ -535,7 +550,7 @@
         ]
       },
       {
-        "objectKey": "formalParameter_809f0ed7cb4d7c9e",
+        "objectKey": "formalParameter_4a8437cb224fbc91",
         "context": "String name",
         "source": [
           {
@@ -554,7 +569,7 @@
         ]
       },
       {
-        "objectKey": "typeRef_0f82fcb626301929",
+        "objectKey": "typeRef_13fe51f723d9be1c",
         "context": "String",
         "source": [
           {
@@ -573,7 +588,7 @@
         ]
       },
       {
-        "objectKey": "formalParameter_03a943b8c07aecf0",
+        "objectKey": "formalParameter_20b7d06f945d5657",
         "context": "Set<Id> ownerIds",
         "source": [
           {
@@ -592,7 +607,7 @@
         ]
       },
       {
-        "objectKey": "typeRef_f7e09b396fc9b418",
+        "objectKey": "typeRef_28a186f1d29b035d",
         "context": "Set<Id>",
         "source": [
           {
@@ -611,7 +626,7 @@
         ]
       },
       {
-        "objectKey": "interfaceMethodDeclaration_c234d0098ec20c3e",
+        "objectKey": "interfaceMethodDeclaration_f4ca82346fc0ce3c",
         "context": "Map<Id, List<Contact>> groupContacts(List<Account> accounts);",
         "source": [
           {
@@ -649,7 +664,7 @@
         ]
       },
       {
-        "objectKey": "typeRef_760ade2379c245cf",
+        "objectKey": "typeRef_7c1e95dbe3bfff5f",
         "context": "Map<Id, List<Contact>>",
         "source": [
           {
@@ -668,7 +683,7 @@
         ]
       },
       {
-        "objectKey": "formalParameter_82eadfe364f68196",
+        "objectKey": "formalParameter_98442fe11cf2d8ff",
         "context": "List<Account> accounts",
         "source": [
           {
@@ -687,7 +702,7 @@
         ]
       },
       {
-        "objectKey": "interfaceMethodDeclaration_120e2b7917a38552",
+        "objectKey": "interfaceMethodDeclaration_c558b1a6f792db1b",
         "context": "Database.SaveResult save(SObject record);",
         "source": [
           {
@@ -725,7 +740,7 @@
         ]
       },
       {
-        "objectKey": "typeRef_180aa300d118d182",
+        "objectKey": "typeRef_42a1ae751bdbeae7",
         "context": "Database.SaveResult",
         "source": [
           {
@@ -744,7 +759,7 @@
         ]
       },
       {
-        "objectKey": "formalParameter_c31ac4d549c1ed74",
+        "objectKey": "formalParameter_8c11eb270cebf5e1",
         "context": "SObject record",
         "source": [
           {
@@ -763,7 +778,7 @@
         ]
       },
       {
-        "objectKey": "typeRef_d60c229da128597e",
+        "objectKey": "typeRef_db6f181392ccf6cd",
         "context": "SObject",
         "source": [
           {
@@ -782,7 +797,7 @@
         ]
       },
       {
-        "objectKey": "typeRef_c158b4ec6ce4d14e",
+        "objectKey": "typeRef_7b3ee5dcc337312f",
         "context": "Comparable",
         "source": [
           {
@@ -801,7 +816,7 @@
         ]
       },
       {
-        "objectKey": "typeRef_9b5b1c7289bace1b",
+        "objectKey": "typeRef_9f948a85e04fe399",
         "context": "Schedulable",
         "source": [
           {
@@ -820,7 +835,7 @@
         ]
       },
       {
-        "objectKey": "modifier_a04213395735c45e",
+        "objectKey": "modifier_ff9740e1ee9f633a",
         "context": "public",
         "source": [
           {

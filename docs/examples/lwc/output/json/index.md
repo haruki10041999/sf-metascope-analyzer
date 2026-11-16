@@ -13,4 +13,4 @@
 | after | [accountRow](after/accountRow.json) | lwcBundle | 52 | 0 |
 | after | [broken](after/broken.json) | lwcBundle | 22 | 5 |
 | after | [newBanner](after/newBanner.json) | lwcBundle | 28 | 0 |
-| after | [utils](after/utils.json) | lwcBundle | 93 | 1 |
+| after | [utils](after/utils.json) | lwcBundle | 94 | 1 |

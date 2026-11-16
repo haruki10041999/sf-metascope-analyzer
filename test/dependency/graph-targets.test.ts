@@ -11,7 +11,7 @@ import {
     ReportTypeParser,
 } from '../../src/analyzer/parser/Metadata';
 import type { MetadataFileParseResult } from '../../src/analyzer/parser/Metadata/folder';
-import { extractMetadataReferences } from '../../src/analyzer/processor/Metadata/referenceAnalysis';
+import { analyzeMetadataRefs } from '../../src/analyzer/processor/Metadata/refs';
 import { getApexDependencies } from '../../src/analyzer/processor/dependency/apex';
 import { getFormulaReferences } from '../../src/analyzer/processor/dependency/formula';
 import {
@@ -85,12 +85,8 @@ describe('dependency graph targets (参照と定義の突き合わせ)', () => {
         const graph = buildDependencyGraph([
             defUnit('aura', 'aura', 'myAura'),
             refUnit('flow', 'Screen_Flow', [
-                {
-                    refType: 'auraComponent',
-                    target: 'forceContent:fileUpload',
-                    via: 'flow.screens',
-                },
-                { refType: 'auraComponent', target: 'flowruntime:address', via: 'flow.screens' },
+                { refType: 'aura', target: 'forceContent:fileUpload', via: 'flow.screens' },
+                { refType: 'aura', target: 'flowruntime:address', via: 'flow.screens' },
             ]),
         ]);
         assert.deepEqual(graph.findings, []);
@@ -243,24 +239,12 @@ describe('dependency graph targets (参照と定義の突き合わせ)', () => {
     });
 
     it('references a custom report type from a report (<name>__c)', () => {
-        const report = (reportType: string) =>
-            ({
-                filePath: 'reports/R/Rep.report-meta.xml',
-                resolvedError: [],
-                dataType: 'report',
-                result: {
-                    id: 'report_R/Rep',
-                    base: { kind: 'report', reportType },
-                    sourceObject: [],
-                },
-            }) as unknown as MetadataFileParseResult;
-        const show = (r: { refType: string; target: string }) => `${r.refType}:${r.target}`;
-        assert.deepEqual(extractMetadataReferences(report('Invoices_with_Lines__c')).map(show), [
-            'reportType:Invoices_with_Lines',
-        ]);
-        assert.deepEqual(extractMetadataReferences(report('CustomEntity$Invoice__c')).map(show), [
-            'object:Invoice__c',
-        ]);
-        assert.deepEqual(extractMetadataReferences(report('Opportunity')).map(show), []);
+        const refsOf = (reportType: string) =>
+            analyzeMetadataRefs('report', { kind: 'report', reportType }, 'R/Rep').map(
+                (r) => `${r.refType}:${r.target}`,
+            );
+        assert.deepEqual(refsOf('Invoices_with_Lines__c'), ['reportType:Invoices_with_Lines']);
+        assert.deepEqual(refsOf('CustomEntity$Invoice__c'), ['object:Invoice__c']);
+        assert.deepEqual(refsOf('Opportunity'), []);
     });
 });

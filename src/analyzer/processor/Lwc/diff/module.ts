@@ -294,7 +294,7 @@ export type LwcTypeDeclarationJsonDiff = NodeDiff<
         declarationType: ValueDiff<LwcTypeDeclarationJson['declarationType']>;
         exported: ValueDiff<boolean>;
         /** B. 集合 */
-        extend?: PresentDiff<string[], TypedListDiff<string, never>>;
+        extend?: PresentDiff<LwcTypeJson[], TypedListDiff<LwcTypeJson, never>>;
         /** D. キー対応 (メンバー名) */
         members?: PresentDiff<LwcTypeMemberJson[], LwcTypeMembersDiff>;
         variantType?: LwcTypeDiff;

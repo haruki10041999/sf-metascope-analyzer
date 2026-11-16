@@ -84,10 +84,8 @@ describe('LWC diff samples (docs/examples/repository の lwc)', () => {
             [title.fields.init.before, title.fields.init.after],
             [{ name: 'TITLE_LABEL' }, { value: 'Accounts' }],
         );
-        assert.deepEqual(
-            title.fields.references.map((r: Node) => [r.status, r.value.local]),
-            [['removed', 'TITLE_LABEL']],
-        );
+        // import の参照は JSON に持たない (解析で出す) ので、差分にも出ない
+        assert.equal('references' in title.fields, false);
     });
 
     it('@wire の設定はキーで対応付き、追加したキーだけが added になる', () => {

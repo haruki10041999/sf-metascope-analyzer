@@ -5,7 +5,12 @@ import { parseLwcBundleFolder } from '../../src/analyzer/parser/Lwc/bundle';
 import type { LwcBundleFile } from '../../src/analyzer/parser/Lwc/folder';
 import { convertLwcModule, parseLwcModule } from '../../src/analyzer/parser/Lwc/module';
 import { analyzeLwcComponent } from '../../src/analyzer/processor/Lwc/analysis';
-import { analyzeLwcBodyCalls, type LwcBodyCalls } from '../../src/analyzer/processor/Lwc/calls';
+import {
+    analyzeLwcBodyCalls,
+    lwcBodyReferencesOf,
+    lwcInitReferencesOf,
+    type LwcBodyCalls,
+} from '../../src/analyzer/processor/Lwc/calls';
 import { makeLwcModuleDiff } from '../../src/analyzer/processor/Lwc/diff/module';
 import {
     composeLwcVisitors,
@@ -44,6 +49,12 @@ const moduleOf = (source: string, fileName = 'demo/demo.js'): LwcModuleJson => {
 /** 本体の呼び出しとイベント (最後に読んだモジュールの import で解析する) */
 const analyze = (content: LwcBodyContentJson): LwcBodyCalls =>
     analyzeLwcBodyCalls(content, makeLwcImportTables(lastModule!.imports));
+
+/** 本体・初期値の import の参照 (JSON には持たず、解析で出す。最後に読んだモジュールの import で引く) */
+const bodyRefsOf = (content: Parameters<typeof lwcBodyReferencesOf>[0]) =>
+    lwcBodyReferencesOf(content, makeLwcImportTables(lastModule!.imports));
+const initRefsOf = (target: Parameters<typeof lwcInitReferencesOf>[0]) =>
+    lwcInitReferencesOf(target, makeLwcImportTables(lastModule!.imports));
 
 const componentOf = (source: string, fileName?: string): LwcComponentJson => {
     const { component } = moduleOf(source, fileName);
@@ -109,7 +120,7 @@ export default class Demo extends LightningElement {
             ['saved'],
         );
         assert.deepEqual(
-            handleClick.function.references.map((r) => r.local),
+            bodyRefsOf(handleClick.function).map((r) => r.local),
             ['save'],
         );
         // function 式・式の本体のアロー関数 (block はなく、式の本体は expression)
@@ -120,7 +131,7 @@ export default class Demo extends LightningElement {
         assert.ok(format.function.expression);
     });
 
-    it('本体の中で使っている import を references に持つ (getter の getFieldValue(..., NAME_FIELD) など)', () => {
+    it('本体の中で使っている import を解析で出す (getter の getFieldValue(..., NAME_FIELD) など)', () => {
         const component = componentOf(`import { LightningElement, wire } from 'lwc';
 import { getRecord, getFieldValue } from 'lightning/uiRecordApi';
 import NAME_FIELD from '@salesforce/schema/Account.Name';
@@ -132,13 +143,13 @@ export default class Demo extends LightningElement {
 `);
         const name = memberOf<LwcPropertyJson>(component, 'name');
         assert.deepEqual(
-            name.getterContent?.references.map((r) => [r.local, r.schema?.fieldApiName ?? null]),
+            bodyRefsOf(name.getterContent!).map((r) => [r.local, r.schema?.fieldApiName ?? null]),
             [
                 ['getFieldValue', null],
                 ['NAME_FIELD', 'Name'],
             ],
         );
-        assert.deepEqual(memberOf<LwcMethodJson>(component, 'run').references, []);
+        assert.deepEqual(bodyRefsOf(memberOf<LwcMethodJson>(component, 'run')), []);
     });
 
     it('import 元と import した名前で callType を決める (lds / refreshApex / messageService / platformResource / module)', () => {
@@ -238,7 +249,31 @@ export default class Demo extends LightningElement {
         ]);
     });
 
-    it('function 宣言の references は本体の import の参照、変数は初期値全体の参照', () => {
+    it('引数の既定値 (init) と ...rest (rest) を持ち、import の参照はオブジェクトのキー・メンバー名を数えない', () => {
+        const module = moduleOf(`import NAME_FIELD from '@salesforce/schema/Account.Name';
+import helper from 'c/helper';
+export const f = (a = NAME_FIELD, ...rest) => helper(a, rest);
+export const k = { NAME_FIELD: 1, x: helper.NAME_FIELD };
+`);
+        const [f, k] = module.declarations as LwcDeclarationJson[];
+        const [a, rest] = f!.param!;
+        assert.equal(a!.init?.kind, 'jsIdentifier');
+        assert.equal(a!.optional, true);
+        assert.equal(a!.rest, undefined);
+        assert.equal(rest!.rest, true);
+        assert.equal(rest!.variant, 'rest');
+        assert.deepEqual(
+            initRefsOf(f!).map((r) => r.local),
+            ['NAME_FIELD', 'helper'],
+        );
+        // { NAME_FIELD: 1 } のキーと helper.NAME_FIELD のメンバー名は import の参照ではない
+        assert.deepEqual(
+            initRefsOf(k!).map((r) => r.local),
+            ['helper'],
+        );
+    });
+
+    it('function 宣言の参照は本体の import、変数は初期値全体 (引数の既定値を含む) の import', () => {
         const module = moduleOf(`import { formatAmount } from 'c/utils';
 import LABEL from '@salesforce/label/c.Title';
 export function total(rows) { return formatAmount(rows.length); }
@@ -246,12 +281,12 @@ export const title = (prefix = LABEL) => prefix;
 `);
         const [total, title] = module.declarations as LwcDeclarationJson[];
         assert.deepEqual(
-            total?.references.map((r) => r.local),
+            bodyRefsOf(total!).map((r) => r.local),
             ['formatAmount'],
         );
         assert.deepEqual(callsOf(total!), ['module:formatAmount']);
         assert.deepEqual(
-            title?.references.map((r) => r.local),
+            initRefsOf(title!).map((r) => r.local),
             ['LABEL'],
         );
     });

@@ -47,6 +47,22 @@
 | queue_Invoice_Queue | changed |
 | group_Finance | changed |
 | role_Sales_Manager | changed |
+| messageChannel_Invoice_Selected | changed |
+| externalCredential_Billing_Auth | changed |
+| customNotificationType_Invoice_Overdue | changed |
+| reportType_Invoices_with_Lines | changed |
+| assignmentRules_Case | changed |
+| autoResponseRules_Case | changed |
+| escalationRules_Case | changed |
+| pathAssistant_Invoice_Path | changed |
+| duplicateRule_Account.Account_Name_Duplicate | changed |
+| matchingRules_Account | changed |
+| platformEventChannel_Invoice_Changes__chn | changed |
+| platformEventChannelMember_Invoice_Changes_chn_Invoice_ChangeEvent | changed |
+| platformEventSubscriberConfig_AccountTriggerConfig | changed |
+| cspTrustedSite_Billing_API | changed |
+| externalDataSource_Billing_Data | changed |
+| settings_Security | changed |
 
 ## kind ごとの出現数
 
@@ -59,25 +75,39 @@
 | applicationVisibility | 2 | 0 |
 | approvalProcess | 2 | 1 |
 | approvalStep | 3 | 1 |
+| approver | 3 | 0 |
+| assignmentRule | 2 | 1 |
+| assignmentRules | 2 | 1 |
 | auraAttribute | 5 | 2 |
 | auraBundle | 2 | 1 |
 | auraDefinitionBundle | 2 | 1 |
 | auraHandler | 1 | 0 |
 | auraMethod | 1 | 0 |
 | auraRegisterEvent | 2 | 0 |
+| autoResponseRule | 2 | 1 |
+| autoResponseRules | 2 | 1 |
 | categoryGroupVisibility | 2 | 1 |
 | classAccess | 6 | 1 |
+| criterion | 23 | 3 |
+| cspTrustedSite | 2 | 1 |
 | customApplication | 2 | 1 |
 | customLabel | 6 | 4 |
 | customLabels | 2 | 1 |
 | customMetadataRecord | 3 | 1 |
 | customMetadataValue | 3 | 1 |
+| customNotificationType | 2 | 1 |
 | customPermission | 4 | 1 |
 | customPermissionAccess | 2 | 0 |
 | customTab | 3 | 1 |
 | dashboard | 2 | 1 |
+| duplicateRule | 2 | 1 |
+| duplicateRuleMatchRule | 2 | 0 |
 | emailTemplate | 2 | 1 |
-| error | 3 | 0 |
+| escalationRule | 2 | 1 |
+| escalationRules | 2 | 1 |
+| externalCredential | 2 | 1 |
+| externalCredentialParameter | 4 | 1 |
+| externalDataSource | 2 | 1 |
 | fieldPermission | 12 | 6 |
 | flexiPage | 2 | 1 |
 | flexiPageComponent | 9 | 2 |
@@ -85,9 +115,10 @@
 | flexiPageRegion | 6 | 3 |
 | flow | 4 | 2 |
 | flowActionCall | 2 | 0 |
-| flowAssignment | 3 | 1 |
+| flowAssignment | 5 | 2 |
 | flowDecision | 2 | 1 |
 | flowFormula | 2 | 1 |
+| flowParameter | 4 | 1 |
 | flowRecordLookup | 1 | 1 |
 | flowRecordUpdate | 2 | 1 |
 | flowRule | 3 | 2 |
@@ -96,6 +127,11 @@
 | flowStart | 4 | 1 |
 | flowSubflow | 1 | 1 |
 | flowVariable | 2 | 1 |
+| fxBinary | 2 | 0 |
+| fxMerge | 29 | 0 |
+| fxName | 49 | 0 |
+| fxNumber | 2 | 0 |
+| fxTemplate | 23 | 1 |
 | globalValue | 6 | 3 |
 | globalValueSet | 2 | 1 |
 | group | 2 | 1 |
@@ -109,12 +145,23 @@
 | loginFlow | 2 | 1 |
 | loginHours | 2 | 1 |
 | loginIpRange | 3 | 1 |
+| markupElement | 16 | 0 |
+| markupText | 4 | 0 |
+| matchingRule | 2 | 1 |
+| matchingRules | 2 | 1 |
+| messageChannel | 2 | 1 |
+| messageChannelField | 3 | 2 |
 | mutingPermissionSet | 2 | 1 |
 | namedCredential | 2 | 1 |
-| namedCredentialParameter | 2 | 1 |
+| namedCredentialParameter | 3 | 2 |
 | objectPermission | 13 | 4 |
+| pathAssistant | 2 | 1 |
+| pathAssistantStep | 3 | 1 |
 | permissionSet | 4 | 1 |
 | permissionSetGroup | 2 | 1 |
+| platformEventChannel | 2 | 1 |
+| platformEventChannelMember | 2 | 1 |
+| platformEventSubscriberConfig | 2 | 1 |
 | profile | 2 | 1 |
 | profileActionOverride | 2 | 0 |
 | queue | 2 | 1 |
@@ -125,10 +172,14 @@
 | remoteSiteSetting | 2 | 1 |
 | report | 2 | 1 |
 | reportColumn | 6 | 2 |
+| reportType | 2 | 1 |
+| reportTypeSection | 2 | 1 |
 | requiredPermission | 1 | 0 |
 | role | 2 | 1 |
+| settings | 2 | 1 |
 | sharingCriteriaRule | 3 | 2 |
 | sharingOwnerRule | 1 | 0 |
+| sharingPrincipals | 5 | 0 |
 | sharingRules | 2 | 1 |
 | standardValue | 5 | 2 |
 | standardValueSet | 2 | 1 |

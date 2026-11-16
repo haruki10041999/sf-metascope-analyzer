@@ -8,6 +8,7 @@ import {
     nonEmptyEntry,
     readProperties,
     readText,
+    unknownChildNames,
 } from '../commons/xmlJson';
 import { XmlElement, childrenOf } from '../commons/xml';
 
@@ -20,6 +21,8 @@ export type FieldSetItemJson = { field: string; isFieldManaged?: boolean; isRequ
 
 /** 項目セット (fieldSets/*.fieldSet-meta.xml)。displayedFields は表示順 */
 export type FieldSetJson = JsonType<'fieldSet'> & {
+    /** 読んでいない要素の名前 */
+    skippedElements?: string[];
     fullName: string;
     displayedFields?: FieldSetItemJson[];
 } & PropertiesOf<typeof FIELD_SET_SCHEMA>;
@@ -41,6 +44,14 @@ export const makeFieldSetJson = (
                     field: readText(item, 'field') ?? '',
                     ...readProperties(item, { isFieldManaged: 'boolean', isRequired: 'boolean' }),
                 })),
+            ),
+            ...nonEmptyEntry(
+                'skippedElements',
+                unknownChildNames(element, [
+                    'fullName',
+                    ...Object.keys(FIELD_SET_SCHEMA),
+                    'displayedFields',
+                ]),
             ),
         },
         element,

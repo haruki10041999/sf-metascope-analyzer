@@ -57,6 +57,20 @@ const makeIdUnitDiff = <R extends IdParseResult, Content>(
     after: R,
     content: ContentMaker<R, Content>,
 ): IdUnitDiff<R, Content> => {
+    // 同じ解析結果 (保存した単位を key が同じなので使い回したもの。docs/save-format-plan.md の S3) は、
+    // 中身の差分を作らずに unchanged にする (レポート・MCP は unchanged の中身を使わない)
+    if (before === after) {
+        return {
+            id: after.result.id,
+            status: 'unchanged',
+            filePath: after.filePath,
+            dataType: after.dataType,
+            resolvedError: makeResolvedErrorDiff(
+                before.resolvedError,
+                after.resolvedError,
+            ) as IdUnitDiff<R, Content>['resolvedError'],
+        };
+    }
     const sources = { before: before.result.sourceObject, after: after.result.sourceObject };
     const diff =
         before.dataType === content.dataType && after.dataType === content.dataType

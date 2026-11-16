@@ -1,7 +1,7 @@
 [
   {
     "status": "changed",
-    "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flexipages\\Invoice_Record_Page.flexipage-meta.xml",
     "lwc": "accountList",
     "flexiPage": "Invoice_Record_Page",
     "pageType": "RecordPage",
@@ -14,7 +14,7 @@
   },
   {
     "status": "added",
-    "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flexipages\\Invoice_Record_Page.flexipage-meta.xml",
     "lwc": "accountRow",
     "flexiPage": "Invoice_Record_Page",
     "pageType": "RecordPage",

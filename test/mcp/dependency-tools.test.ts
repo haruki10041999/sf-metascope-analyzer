@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'node:test';
+import { after, before, describe, it } from 'node:test';
 
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
@@ -29,7 +29,15 @@ const call = async (handler: Handler | undefined, args: Record<string, unknown> 
 
 describe('MCP の依存関係のツール', () => {
     const { server, tools } = fakeServer();
-    registerDependencyTools(server, repositoryOf('after'));
+    let tmp: string;
+    let processor: RepositoryProcessor;
+
+    before(async () => {
+        tmp = await mkdtemp(path.join(os.tmpdir(), 'dependency-tools-'));
+        processor = await RepositoryProcessor.create(tmp, repositoryOf('after'));
+        registerDependencyTools(server, processor);
+    });
+    after(() => rm(tmp, { recursive: true, force: true }));
 
     it('get_dependents: 項目を使っているもの', async () => {
         const result = await call(tools.get('get_dependents'), {
@@ -39,6 +47,14 @@ describe('MCP の依存関係のツール', () => {
         assert.ok(
             result.dependents.some((d: { id: string }) => d.id === 'permissionSet:Invoice_Manager'),
         );
+    });
+
+    it('processor の after のグラフを使い回し、reload で読み直す', async () => {
+        const graph = processor.getDependencyGraph();
+        await call(tools.get('get_missing_references'));
+        assert.equal(processor.getDependencyGraph(), graph);
+        await call(tools.get('get_missing_references'), { reload: true });
+        assert.notEqual(processor.getDependencyGraph(), graph);
     });
 
     it('get_missing_references と list_units', async () => {

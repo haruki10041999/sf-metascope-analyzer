@@ -23,11 +23,12 @@
             "type": "primitive",
             "primitiveType": "Decimal"
           },
+          "param": [],
           "modifier": {}
         }
       ],
       "modifier": {
-        "access": [
+        "keyword": [
           {
             "kind": "modifier",
             "sourceKeys": {},

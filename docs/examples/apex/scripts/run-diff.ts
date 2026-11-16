@@ -40,10 +40,12 @@ export const ALL_KINDS = {
         'enum',
         'enumConstant',
         'notSet',
+        'variant',
     ],
     ユニット: ['triggerCase'],
     '修飾子・パラメータ・型': ['modifier', 'annotation', 'parameter', 'type'],
     式: ['memberAccess'],
+    // 入れ子の { } (blockStatement) はサンプルにないので、test/converter/json-shapes.test.ts で確かめる
     文: [
         'break',
         'continue',
@@ -51,6 +53,7 @@ export const ALL_KINDS = {
         'doWhile',
         'expression',
         'for',
+        'forEach',
         'if',
         'insert',
         'localVariable',
@@ -65,16 +68,8 @@ export const ALL_KINDS = {
         'upsert',
         'while',
     ],
-    文の補助ノード: [
-        'doWhileCondition',
-        'forCondition',
-        'ifCondition',
-        'runAsCondition',
-        'switchVariant',
-        'switchCondition',
-        'catchCondition',
-        'whileCondition',
-    ],
+    // 条件を包むノード (ifCondition など) は段階 A4 でなくした (docs/json-redesign-plan.md)
+    文の補助ノード: ['switchCondition'],
     SOQL: [
         'soql',
         'subQuery',

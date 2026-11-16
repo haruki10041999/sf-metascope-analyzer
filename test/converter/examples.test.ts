@@ -30,17 +30,76 @@ const searchTermOf = (value: string): string =>
         ?.slice(1)
         .find((v) => v !== undefined) ?? value;
 
-const countValues = (target: unknown, skip: Set<string>, out = new Map<string, number>()) => {
+const ESCAPED: Record<string, string> = {
+    '\n': '\\n',
+    '\t': '\\t',
+    '\r': '\\r',
+    '\b': '\\b',
+    '\f': '\\f',
+};
+
+/** 文字列を Apex の書き方 (引用符つき、エスケープしたもの) に戻す */
+const quoted = (value: unknown): string =>
+    `'${String(value).replace(/[\\'\n\t\r\b\f]/g, (c) => ESCAPED[c] ?? `\\${c}`)}'`;
+
+/**
+ * 式の JSON (段階 A2) で、ソースの書き方を持たなくなった値を、IR の書き方に戻して数える
+ * (文字列のリテラルは引用符なし、boolean は真偽値、null は値なし、new の List / Set / Map・{} は型の JSON)
+ */
+const sourceFormsOf = (node: Record<string, unknown>): string[] => {
+    switch (node.kind) {
+        case 'string':
+            return [quoted(node.value)];
+        case 'integer':
+        case 'long':
+            // when の値の符号は値の前につなぐ (段階 A4)。IR は符号を別に持つ
+            return [...(String(node.value).match(/^[+-]+/)?.[0] ?? '')];
+        case 'boolean':
+        case 'null':
+            return [node.kind === 'null' ? 'null' : String(node.value)];
+        case 'classLiteral':
+            return node.classType === 'void' ? ['void.class'] : [];
+        // ALL ROWS は値を持たない (段階 A6)
+        case 'allRowsClause':
+            return ['ALL ROWS'];
+        case 'new': {
+            const created = node.newType as { type: string; elementType?: { type: string } };
+            // new List<String>[2] は List の配列
+            const newType = created.type === 'array' ? created.elementType! : created;
+            const empty =
+                (Array.isArray(node.elements) && node.elements.length === 0) ||
+                (Array.isArray(node.entries) && node.entries.length === 0);
+            return [
+                ...({ list: ['List'], set: ['Set'], map: ['Map'] }[newType.type] ?? []),
+                ...(empty ? ['{}'] : []),
+            ];
+        }
+        default:
+            // FORMULA('...') の数式は引用符を除いて持つ (段階 A6)
+            return node.type === 'formula' ? [quoted(node.value)] : [];
+    }
+};
+
+const countValues = (
+    target: unknown,
+    skip: Set<string>,
+    out = new Map<string, number>(),
+    /** JSON の側だけ、ソースの書き方に戻した値も数える */
+    json = false,
+) => {
     if (Array.isArray(target)) {
-        target.forEach((item) => countValues(item, skip, out));
+        target.forEach((item) => countValues(item, skip, out, json));
     } else if (target !== null && typeof target === 'object') {
+        for (const form of json ? sourceFormsOf(target as Record<string, unknown>) : []) {
+            out.set(form, (out.get(form) ?? 0) + 1);
+        }
         for (const [key, value] of Object.entries(target)) {
             if (skip.has(key)) continue;
             if (typeof value === 'string' || typeof value === 'number') {
                 const text = searchTermOf(String(value));
                 out.set(text, (out.get(text) ?? 0) + 1);
             } else {
-                countValues(value, skip, out);
+                countValues(value, skip, out, json);
             }
         }
     } else if (typeof target === 'string') {
@@ -57,7 +116,7 @@ describe('JSON 出力 / docs/examples/repository (Apex の構文のサンプル)
             assert.equal(find(json, (n) => n.kind === 'error').length, 0);
 
             const expected = countValues(dumpIr(ir), META_KEYS);
-            const actual = countValues(json, new Set(['sourceKeys']));
+            const actual = countValues(json, new Set(['sourceKeys']), new Map(), true);
             const missing = [...expected]
                 .filter(([value, count]) => (actual.get(value) ?? 0) < count)
                 .map(([value, count]) => `${value} x${count - (actual.get(value) ?? 0)}`);
@@ -141,11 +200,12 @@ describe('JSON 出力 / docs/examples/repository (Apex の構文のサンプル)
     it('SOSL の検索語だけを find に持つ', async () => {
         const { json } = await convert(0);
         const finds = find(json, (n) => n.kind === 'sosl').map((n) => n.find);
-        assert.ok(finds.includes('test'));
-        assert.ok(finds.includes('a@example.com'));
-        finds
-            .filter((f) => typeof f === 'string')
-            .forEach((f) => assert.equal(/FIND/i.test(f), false));
+        // リテラルは { type: 'literal', value }、バインド (:x) は { type: 'bind', value: 式 } (段階 A1)
+        const literals = finds.filter((f) => f.type === 'literal').map((f) => f.value);
+        assert.ok(literals.includes('test'));
+        assert.ok(literals.includes('a@example.com'));
+        assert.ok(finds.some((f) => f.type === 'bind'));
+        literals.forEach((f) => assert.equal(/FIND/i.test(f), false));
     });
 
     it('トリガー名・対象 SObject・トリガー条件を保持する', async () => {

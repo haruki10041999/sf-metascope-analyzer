@@ -1,7 +1,7 @@
 import {
     AnonymousUnitJson,
     CompilationUnitJson,
-    MemberStatementJson,
+    StatementJson,
     TriggerCaseJson,
     TriggerUnitJson,
     ApexClassMetaJson,
@@ -36,6 +36,7 @@ import {
     makeApexTriggerMetaDiff,
 } from './meta';
 import { BlockDiff, makeBlockDiff } from './statement';
+import { APEX_STATEMENT_KINDS } from '../walker';
 
 // 方針: docs/apex-implementation.md、docs/apex-implementation.md 7.3
 
@@ -87,55 +88,23 @@ export const makeTypeDeclarationDiff = (
 // ---------------------------------------------------------------------------
 
 type BlockMemberJson = AnonymousUnitJson['block'][number];
-type NonStatementMemberJson = Exclude<BlockMemberJson, MemberStatementJson>;
-/**
- * 本文の文 (`kind: 'statement'` の要素) の差分。文の差分 (BlockDiff の要素) に、文に付いた修飾子の差分を足した形。
- * 修飾子は文のノードの外にあるので、クラスメンバーと同じく外側の modifier に持つ
- */
-export type MemberStatementJsonDiff = BlockDiff[number] & { modifier: ModifiersJsonDiff };
+type NonStatementMemberJson = Exclude<BlockMemberJson, StatementJson>;
 
 /**
  * 宣言と文が混ざった本文。宣言はクラス本文と同じ方法 (makeClassBodyDiff)、
- * 文 (`kind: 'statement'`) は GumTree で比べる。index はそれぞれのグループの中での位置。
+ * 文は GumTree で比べる (BlockDiff)。index はそれぞれのグループの中での位置。
+ * 文は修飾子を持たない (段階 A5 で、文を包む入れ物と、いつも空の修飾子をなくした)
  */
 export type BlockMembersDiff = {
     member: ClassBodyDiff[];
-    statement: MemberStatementJsonDiff[];
+    statement: BlockDiff;
 };
 
-const isStatementMember = (member: BlockMemberJson): member is MemberStatementJson =>
-    member.kind === 'statement';
+const isStatementMember = (member: BlockMemberJson): member is StatementJson =>
+    APEX_STATEMENT_KINDS.has(member.kind);
 
 const isNonStatementMember = (member: BlockMemberJson): member is NonStatementMemberJson =>
     !isStatementMember(member);
-
-const makeMemberStatementsDiff = (
-    before: MemberStatementJson[],
-    after: MemberStatementJson[],
-    sources?: Sources,
-): MemberStatementJsonDiff[] => {
-    const statementDiffs: BlockDiff = makeBlockDiff(
-        before.map((member) => member.statement),
-        after.map((member) => member.statement),
-        sources,
-    );
-    const modifiersOf = (member: MemberStatementJson | undefined) =>
-        makeTypedModifierJsons(member?.modifier ?? {});
-
-    return statementDiffs.map((diff): MemberStatementJsonDiff => {
-        const index = (diff as { index: number | { before: number; after: number } }).index;
-        const [beforeMember, afterMember] =
-            typeof index === 'number'
-                ? (diff as { status: string }).status === 'removed'
-                    ? [before[index], undefined]
-                    : [undefined, after[index]]
-                : [before[index.before], after[index.after]];
-        return {
-            ...diff,
-            modifier: makeModifierItemsDiff(modifiersOf(beforeMember), modifiersOf(afterMember)),
-        } as MemberStatementJsonDiff;
-    });
-};
 
 export const makeBlockMembersDiff = (
     before: BlockMemberJson[],
@@ -148,7 +117,7 @@ export const makeBlockMembersDiff = (
             after.filter(isNonStatementMember),
             sources,
         ),
-        statement: makeMemberStatementsDiff(
+        statement: makeBlockDiff(
             before.filter(isStatementMember),
             after.filter(isStatementMember),
             sources,

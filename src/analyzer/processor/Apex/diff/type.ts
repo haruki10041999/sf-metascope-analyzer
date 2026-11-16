@@ -50,7 +50,7 @@ export type GenericDiff =
 
 export type CustomTypeShapeDiff = {
     type: 'custom';
-    customType: ValueDiff<string | string[]> | { status: 'changed'; parts: CustomTypePartDiff[] };
+    customType: ValueDiff<string[]> | { status: 'changed'; parts: CustomTypePartDiff[] };
     generic: GenericDiff[];
 };
 
@@ -95,7 +95,7 @@ const makeCustomTypeNameDiff = (
     before: CustomTypeContentJson['customType'],
     after: CustomTypeContentJson['customType'],
 ): CustomTypeShapeDiff['customType'] => {
-    if (!Array.isArray(before) || !Array.isArray(after) || isSameValue(before, after)) {
+    if (isSameValue(before, after)) {
         return makeValueDiff(before, after);
     }
 

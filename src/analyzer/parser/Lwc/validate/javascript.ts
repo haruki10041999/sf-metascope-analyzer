@@ -96,7 +96,9 @@ export type ValidateScriptOptions = {
     /** 名前空間 (c) */
     namespace?: string;
     language: ScriptLanguage;
-    /** TS のとき、構文解析の AST (tokens: true)。渡せば eraseTypes で parse し直さない */
+    /** JS が Flow (// @flow) か。Flow の型を空白にしてから検証する */
+    flow?: boolean;
+    /** TS・Flow のとき、構文解析の AST (tokens: true)。渡せば eraseTypes で parse し直さない */
     ast?: File;
 };
 
@@ -108,8 +110,8 @@ export const validateScript = (source: string, options: ValidateScriptOptions): 
     let code = source;
     let filename = options.filePath;
 
-    if (options.language === 'ts') {
-        const erased = eraseTypes(source, options.ast);
+    if (options.language === 'ts' || options.flow) {
+        const erased = eraseTypes(source, options.ast, { flow: options.language !== 'ts' });
         if (erased.unsupported.length > 0) {
             return erased.unsupported.map((item) => ({
                 code: 'TS_UNSUPPORTED',

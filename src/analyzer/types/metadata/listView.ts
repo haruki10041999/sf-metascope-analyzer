@@ -9,24 +9,33 @@ import {
     readProperties,
     readText,
     readTexts,
+    unknownChildNames,
 } from '../commons/xmlJson';
-import { XmlElement, childrenOf } from '../commons/xml';
+import { XmlElement } from '../commons/xml';
+import { type CriterionJson, type CriterionNames, readCriteria } from './criteria';
 
 export const LIST_VIEW_SCHEMA = {
     label: 'string',
     filterScope: 'string',
-    booleanFilter: 'string',
+    booleanFilter: 'filterLogic',
     language: 'string',
 } as const;
 
-/** リストビューの検索条件。booleanFilter の番号は filters の並び順 (1 始まり) を指す */
-export type ListViewFilterJson = { field: string; operation: string; value?: string };
+/** リストビューの検索条件の要素名。booleanFilter の番号は filters の並び順 (1 始まり) を指す */
+const LIST_VIEW_FILTER_NAMES: CriterionNames = {
+    left: 'field',
+    operator: 'operation',
+    value: 'value',
+};
 
 /** リストビュー (listViews/*.listView-meta.xml) */
 export type ListViewJson = JsonType<'listView'> & {
+    /** 読んでいない要素の名前 */
+    skippedElements?: string[];
     fullName: string;
     columns?: string[];
-    filters?: ListViewFilterJson[];
+    /** 検索条件 (書いた順。段階 M5 で criterion にした) */
+    filters?: CriterionJson[];
 } & PropertiesOf<typeof LIST_VIEW_SCHEMA>;
 
 export const makeListViewJson = (
@@ -39,18 +48,20 @@ export const makeListViewJson = (
         'listView',
         {
             fullName: readText(element, 'fullName') ?? fullName,
-            ...readProperties(element, LIST_VIEW_SCHEMA),
+            ...readProperties(element, LIST_VIEW_SCHEMA, { file, registry }),
             ...nonEmptyEntry('columns', readTexts(element, 'columns')),
             ...nonEmptyEntry(
                 'filters',
-                childrenOf(element, 'filters').map((filter) => {
-                    const value = readText(filter, 'value');
-                    return {
-                        field: readText(filter, 'field') ?? '',
-                        operation: readText(filter, 'operation') ?? '',
-                        ...(value !== undefined ? { value } : {}),
-                    };
-                }),
+                readCriteria(element, 'filters', LIST_VIEW_FILTER_NAMES, { file, registry }),
+            ),
+            ...nonEmptyEntry(
+                'skippedElements',
+                unknownChildNames(element, [
+                    'fullName',
+                    ...Object.keys(LIST_VIEW_SCHEMA),
+                    'columns',
+                    'filters',
+                ]),
             ),
         },
         element,

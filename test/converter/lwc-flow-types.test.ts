@@ -15,9 +15,10 @@ import type {
 
 const moduleOf = (file: string, source: string): LwcModuleJson => {
     const parsed = parseLwcModule(file, source);
-    // 構文エラーはない (LWC Compiler は Flow を読まないので、検証の LWC1007 は出てよい)
+    // 構文エラーも、LWC Compiler の検証のエラーもない (Flow の型を空白にしてから検証する。json-redesign-plan.md 4 章の 7)。
+    // enum は TS と同じく型を空白にできない (実行時の値を作る) ので、検証しない旨の TS_UNSUPPORTED だけは出てよい
     assert.deepEqual(
-        parsed.resolvedError.filter((e) => e.code === 'JS_SYNTAX' || e.code === 'TS_SYNTAX'),
+        parsed.resolvedError.filter((e) => e.code !== 'TS_UNSUPPORTED').map((e) => e.code),
         [],
     );
     const { module } = convertLwcModule(parsed);
@@ -122,7 +123,7 @@ describe('LWC の JSON: Flow の型', () => {
         assert.deepEqual(shape(fieldType(flow, 'seen')), {
             kind: 'lwcType',
             type: 'typeof',
-            target: 'Color',
+            target: ['Color'],
         });
 
         const method = (module: LwcModuleJson) =>
@@ -225,14 +226,14 @@ type Big = 1n;
                     variance: 'plus',
                 },
             ],
-            spreads: [{ type: 'custom', customType: 'Base' }],
+            spreads: [{ type: 'custom', customType: ['Base'] }],
             exactness: 'inexact',
         });
         assert.deepEqual(variant('Keys'), {
             kind: 'lwcType',
             type: 'custom',
-            customType: '$Keys',
-            generic: [{ type: 'custom', customType: 'Base' }],
+            customType: ['$Keys'],
+            generic: [{ type: 'custom', customType: ['Base'] }],
         });
         assert.deepEqual(variant('Any'), {
             kind: 'lwcType',
@@ -243,7 +244,7 @@ type Big = 1n;
             kind: 'lwcType',
             type: 'function',
             params: [
-                { name: 'this', paramType: { type: 'custom', customType: 'Base' } },
+                { name: 'this', paramType: { type: 'custom', customType: ['Base'] } },
                 { paramType: { type: 'primitive', primitiveType: 'string' } },
             ],
             returnType: { type: 'primitive', primitiveType: 'void' },
@@ -263,7 +264,7 @@ type Big = 1n;
                     name: 'run',
                     memberType: {
                         type: 'custom',
-                        customType: 'Promise',
+                        customType: ['Promise'],
                         generic: [{ type: 'primitive', primitiveType: 'void' }],
                     },
                     optional: false,
@@ -284,7 +285,10 @@ type Big = 1n;
 
         const named = typeDeclaration(module, 'Named');
         assert.equal(named.declarationType, 'interface');
-        assert.deepEqual(named.extend, ['Base']);
+        assert.deepEqual(
+            named.extend?.map((t) => shape(t)),
+            [{ kind: 'lwcType', type: 'custom', customType: ['Base'] }],
+        );
         assert.deepEqual(named.members, [
             {
                 name: 'name',
@@ -295,8 +299,127 @@ type Big = 1n;
         ]);
     });
 
+    it('Flow の型を空白にしてから LWC Compiler で検証する (検証のエラーが出ない・本当の違反は出る)', () => {
+        const source = `// @flow
+import { LightningElement, api } from 'lwc';
+import type { Row } from 'c/types';
+import typeof Lib from 'c/lib';
+import { type Other, helper } from 'c/helper';
+export type Id = string;
+opaque type Secret = string;
+export interface Named { name: string }
+declare var g: number;
+function isText(x: mixed): boolean %checks {
+    return typeof x === 'string';
+}
+export default class Sample extends LightningElement implements Named {
+    @api record: ?Row = null;
+    +name: string = 'x';
+    static count: number = 0;
+    pick<T>(items: Array<T>, index?: number = 0): T {
+        const first = (items[0]: any);
+        return first;
+    }
+    check(x: mixed): boolean {
+        return isText(x);
+    }
+}
+`;
+        const parsed = parseLwcModule('sample/sample.js', source);
+        assert.deepEqual(
+            parsed.resolvedError.map((e) => `${e.code}: ${e.errorMessage}`),
+            [],
+        );
+        // 型を消しても LWC の違反 (@api の名前の禁止など) は出る
+        const invalid = parseLwcModule(
+            'sample/sample.js',
+            `// @flow
+import { LightningElement, api } from 'lwc';
+export default class Sample extends LightningElement {
+    @api slot: string;
+}
+`,
+        );
+        // 構文エラー (LWC1007) ではなく、本当の違反 (LWC1110: slot は予約の名前)
+        assert.deepEqual(
+            invalid.resolvedError.map((e) => e.code),
+            ['LWC1110'],
+        );
+    });
+
     it('@flow のない .js は型の宣言を持たない (今までどおり)', () => {
         const module = moduleOf('plain/plain.js', 'export const a = 1;\n');
         assert.equal(module.typeDeclarations, undefined);
+    });
+});
+
+describe('LWC の型: 種類ごとの型 (other をなくした。lwc-json-types.md 8.8 の残り)', () => {
+    it('条件型・マップ型・インデックスアクセス型・keyof・テンプレートリテラル型・import()・infer・型述語・コンストラクタの型', () => {
+        const module = moduleOf(
+            'lwc/c/types.ts',
+            [
+                "type Cond<T> = T extends string ? 'a' : 'b';",
+                'type Mapped<T> = { readonly [K in keyof T]?: T[K] };',
+                'type Index = Row["id"];',
+                'type Keys = keyof Row;',
+                'type Tpl = `id-${number}`;',
+                "type Imp = import('./x').Y<string>;",
+                'type Inf<T> = T extends Promise<infer U> ? U : never;',
+                'type Pred = (x: unknown) => x is string;',
+                'type Ctor = new (n: number) => Row;',
+                'type Row = { id: string };',
+            ].join('\n'),
+        );
+        const typeOf = (name: string) => shape(typeDeclaration(module, name).variantType) as never;
+        assert.deepEqual(typeOf('Cond'), {
+            kind: 'lwcType',
+            type: 'conditional',
+            checkType: { type: 'custom', customType: ['T'] },
+            extendsType: { type: 'primitive', primitiveType: 'string' },
+            trueType: { type: 'literal', value: "'a'" },
+            falseType: { type: 'literal', value: "'b'" },
+        });
+        assert.deepEqual(typeOf('Mapped'), {
+            kind: 'lwcType',
+            type: 'mapped',
+            key: 'K',
+            constraint: {
+                type: 'operator',
+                operator: 'keyof',
+                argument: { type: 'custom', customType: ['T'] },
+            },
+            valueType: {
+                type: 'indexedAccess',
+                objectType: { type: 'custom', customType: ['T'] },
+                indexType: { type: 'custom', customType: ['K'] },
+            },
+            readonly: '+',
+            optional: '+',
+        });
+        assert.equal((typeOf('Index') as { type: string }).type, 'indexedAccess');
+        assert.deepEqual(typeOf('Tpl'), {
+            kind: 'lwcType',
+            type: 'templateLiteral',
+            quasis: ['id-', ''],
+            types: [{ type: 'primitive', primitiveType: 'number' }],
+        });
+        assert.deepEqual(typeOf('Imp'), {
+            kind: 'lwcType',
+            type: 'import',
+            source: './x',
+            qualifier: ['Y'],
+            generic: [{ type: 'primitive', primitiveType: 'string' }],
+        });
+        assert.equal(JSON.stringify(typeOf('Inf')).includes('"type":"infer","name":"U"'), true);
+        const pred = typeOf('Pred') as { returnType: unknown };
+        assert.deepEqual(pred.returnType, {
+            type: 'predicate',
+            parameterName: 'x',
+            asserts: false,
+            predicateType: { type: 'primitive', primitiveType: 'string' },
+        });
+        assert.equal((typeOf('Ctor') as { construct?: boolean }).construct, true);
+        // どれにも当たらない型はない
+        assert.ok(!JSON.stringify(module).includes('"type":"unknown"'));
     });
 });

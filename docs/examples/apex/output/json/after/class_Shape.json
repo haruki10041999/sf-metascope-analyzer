@@ -14,7 +14,7 @@
           "kind": "class",
           "sourceKeys": {
             "base": {
-              "objectKey": "classDeclaration_d9bcafd18fe67ae3",
+              "objectKey": "classDeclaration_1706a1abe9a3e1bb",
               "sourceKey": "classDeclaration_1a606c18644285c2"
             },
             "name": {
@@ -28,7 +28,7 @@
               "kind": "method",
               "sourceKeys": {
                 "base": {
-                  "objectKey": "methodDeclaration_99d5df9e37282375",
+                  "objectKey": "methodDeclaration_badab78845d0b1cb",
                   "sourceKey": "methodDeclaration_6ccb55517578df5e"
                 },
                 "name": {
@@ -40,28 +40,27 @@
               "returnType": {
                 "kind": "type",
                 "sourceKeys": {
-                  "objectKey": "typeRef_a51d4b1dbf7db086",
+                  "objectKey": "typeRef_1b7fc018b727beb8",
                   "sourceKey": "typeRef_8f46862c77a8a97a"
                 },
                 "type": "primitive",
                 "primitiveType": "Decimal"
               },
+              "param": [],
               "modifier": {
-                "access": [
+                "keyword": [
                   {
                     "kind": "modifier",
                     "sourceKeys": {
-                      "objectKey": "modifier_a04213395735c45e",
+                      "objectKey": "modifier_ff9740e1ee9f633a",
                       "sourceKey": "modifier_081b3f442c4302f1"
                     },
                     "name": "PUBLIC"
-                  }
-                ],
-                "declaration": [
+                  },
                   {
                     "kind": "modifier",
                     "sourceKeys": {
-                      "objectKey": "modifier_333c75df0493e7a3",
+                      "objectKey": "modifier_e57ca86d4bb29993",
                       "sourceKey": "modifier_e2b14d9f6c6a4cd9"
                     },
                     "name": "ABSTRACT"
@@ -71,21 +70,19 @@
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {
-                  "objectKey": "modifier_a04213395735c45e",
+                  "objectKey": "modifier_ff9740e1ee9f633a",
                   "sourceKey": "modifier_83442bd3f55cf1b2"
                 },
                 "name": "PUBLIC"
-              }
-            ],
-            "declaration": [
+              },
               {
                 "kind": "modifier",
                 "sourceKeys": {
-                  "objectKey": "modifier_333c75df0493e7a3",
+                  "objectKey": "modifier_e57ca86d4bb29993",
                   "sourceKey": "modifier_018690d2e536e59e"
                 },
                 "name": "ABSTRACT"
@@ -97,7 +94,7 @@
     },
     "sourceObject": [
       {
-        "objectKey": "classDeclaration_d9bcafd18fe67ae3",
+        "objectKey": "classDeclaration_1706a1abe9a3e1bb",
         "context": "class Shape {\n    public abstract Decimal area();\n}",
         "source": [
           {
@@ -135,7 +132,7 @@
         ]
       },
       {
-        "objectKey": "methodDeclaration_99d5df9e37282375",
+        "objectKey": "methodDeclaration_badab78845d0b1cb",
         "context": "Decimal area();",
         "source": [
           {
@@ -173,7 +170,7 @@
         ]
       },
       {
-        "objectKey": "typeRef_a51d4b1dbf7db086",
+        "objectKey": "typeRef_1b7fc018b727beb8",
         "context": "Decimal",
         "source": [
           {
@@ -192,7 +189,7 @@
         ]
       },
       {
-        "objectKey": "modifier_a04213395735c45e",
+        "objectKey": "modifier_ff9740e1ee9f633a",
         "context": "public",
         "source": [
           {
@@ -224,7 +221,7 @@
         ]
       },
       {
-        "objectKey": "modifier_333c75df0493e7a3",
+        "objectKey": "modifier_e57ca86d4bb29993",
         "context": "abstract",
         "source": [
           {

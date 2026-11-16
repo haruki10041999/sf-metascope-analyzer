@@ -10,6 +10,15 @@ import {
 } from './spanJson';
 
 import { XmlElement, childOf, childrenOf } from './xml';
+import type { FormulaValue, TemplateValue } from '../metadata/formula';
+import {
+    type FilterLogicValue,
+    readFilterLogic,
+    readFormula,
+    readTemplate,
+} from '../metadata/criteria';
+
+export { readFilterLogic, readFormula, readTemplate };
 
 // 方針: docs/metadata-implementation.md
 // kind / sourceKeys の付け方・ソース位置の登録は、HTML / CSS と共通の spanJson.ts (位置の範囲から JSON を作る部品)。
@@ -47,12 +56,31 @@ export const makeXmlJson = <T extends JsonType<string>>(
 // 子要素の値を読む
 // ---------------------------------------------------------------------------
 
-/** プロパティ名 (= XML の要素名) と値の型 */
-export type PropertySchema = Record<string, 'string' | 'boolean' | 'number'>;
+/**
+ * プロパティ名 (= XML の要素名) と値の型。formula は数式の JSON (types/metadata/formula.ts)、
+ * filterLogic は booleanFilter の木 (types/metadata/criteria.ts)。どちらも読めなければ文字列
+ */
+export type PropertySchema = Record<
+    string,
+    'string' | 'boolean' | 'number' | 'formula' | 'filterLogic' | 'template'
+>;
 
 export type PropertiesOf<S extends PropertySchema> = {
-    [K in keyof S]?: S[K] extends 'boolean' ? boolean : S[K] extends 'number' ? number : string;
+    [K in keyof S]?: S[K] extends 'boolean'
+        ? boolean
+        : S[K] extends 'number'
+          ? number
+          : S[K] extends 'formula'
+            ? FormulaValue
+            : S[K] extends 'filterLogic'
+              ? FilterLogicValue
+              : S[K] extends 'template'
+                ? TemplateValue
+                : string;
 };
+
+/** 数式・booleanFilter のプロパティを JSON にするための、読み込み中のファイルと登録先 */
+export type FormulaReadContext = { file: XmlFile; registry: XmlSourceRegistry };
 
 export const readText = (element: XmlElement, name: string): string | undefined =>
     childOf(element, name)?.text;
@@ -68,8 +96,12 @@ export const nonEmptyEntry = <K extends string, T>(key: K, items: T[]): Partial<
 export const readProperties = <S extends PropertySchema>(
     element: XmlElement | undefined,
     schema: S,
+    formula?: FormulaReadContext,
 ): PropertiesOf<S> => {
-    const properties: Record<string, string | boolean | number> = {};
+    const properties: Record<
+        string,
+        string | boolean | number | FormulaValue | FilterLogicValue | TemplateValue
+    > = {};
     if (!element) {
         return properties as PropertiesOf<S>;
     }
@@ -81,6 +113,12 @@ export const readProperties = <S extends PropertySchema>(
         } else if (type === 'number') {
             const value = Number(text);
             properties[name] = Number.isNaN(value) ? text : value;
+        } else if (type === 'formula' && formula) {
+            properties[name] = readFormula(childOf(element, name)!, formula);
+        } else if (type === 'filterLogic' && formula) {
+            properties[name] = readFilterLogic(childOf(element, name)!, formula);
+        } else if (type === 'template' && formula) {
+            properties[name] = readTemplate(childOf(element, name)!, formula);
         } else {
             properties[name] = text;
         }
@@ -104,7 +142,7 @@ export type ParsedXmlFile = XmlFile & {
 
 /** 読めなかったファイル・想定と違うルート要素。FileStructureType の resolvedError にする */
 export type XmlReadProblem = {
-    code: 'XML_SYNTAX' | 'UNEXPECTED_ROOT';
+    code: 'XML_SYNTAX' | 'UNEXPECTED_ROOT' | 'FORMULA_SYNTAX' | 'FILTER_LOGIC_SYNTAX';
     file: XmlFile;
     kindType: string;
     message: string;

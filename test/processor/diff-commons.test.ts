@@ -7,6 +7,7 @@ import {
     pairAsSet,
     pairByKey,
 } from '../../src/analyzer/processor/commons/diff/commons';
+import { makeIdUnitDiffs } from '../../src/analyzer/processor/commons/diff/unit';
 
 describe('diff pairing', () => {
     it('uses structural keys without depending on object property order', () => {
@@ -73,5 +74,34 @@ describe('diff pairing', () => {
                 { status: 'unchanged', match: 'identical', before: 2, after: 0 },
             ],
         );
+    });
+});
+
+describe('makeIdUnitDiffs (docs/save-format-plan.md の S3)', () => {
+    const result = (id: string, base: unknown) => ({
+        filePath: `units/${id}`,
+        resolvedError: [],
+        dataType: 'sample',
+        result: { id, base, sourceObject: [] },
+    });
+
+    it('同じ解析結果 (key が同じで使い回したもの) は中身の差分を作らずに unchanged にする', () => {
+        const shared = result('a', { value: 1 });
+        let made = 0;
+        const content = {
+            dataType: 'sample' as const,
+            make: () => {
+                made++;
+                return { status: 'changed' as const };
+            },
+        };
+        const [same] = makeIdUnitDiffs([shared], [shared], content);
+        assert.equal(same!.status, 'unchanged');
+        assert.equal(same!.content, undefined);
+        assert.equal(made, 0);
+        // 別のオブジェクトなら今までどおり中身を比べる
+        const [other] = makeIdUnitDiffs([shared], [result('a', { value: 2 })], content);
+        assert.equal(made, 1);
+        assert.equal(other!.status, 'changed');
     });
 });

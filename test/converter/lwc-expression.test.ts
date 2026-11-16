@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { type LwcTypeJson, lwcTypeTextOf } from '../../src/analyzer/types';
 import { describe, it } from 'node:test';
 
 import { convertLwcModule, parseLwcModule } from '../../src/analyzer/parser/Lwc/module';
@@ -198,9 +199,7 @@ describe('LWC の式の JSON (段階 2)', () => {
                     ],
                 },
             ],
-            typeArguments: [
-                { kind: 'lwcType', text: 'Detail', type: 'custom', customType: 'Detail' },
-            ],
+            typeArguments: [{ kind: 'lwcType', type: 'custom', customType: ['Detail'] }],
         });
         assert.deepEqual(shape(initOf("import('c/child')")), {
             kind: 'jsImportCall',
@@ -248,7 +247,7 @@ describe('LWC の式の JSON (段階 2)', () => {
             (arrow.param as { variant: string }[]).map((p) => p.variant),
             ['event'],
         );
-        assert.deepEqual((arrow.returnType as { text: string }).text, 'Promise<void>');
+        assert.equal(lwcTypeTextOf(arrow.returnType as LwcTypeJson), 'Promise<void>');
         assert.deepEqual(arrow.block, [
             { kind: 'jsExpression', value: { kind: 'jsCall', callee: id('run'), arg: [] } },
         ]);

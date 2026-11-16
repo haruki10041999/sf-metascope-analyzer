@@ -192,7 +192,7 @@ export const QUICK_ACTION_SPEC = {
         fieldOverrides: {
             kind: 'quickActionFieldOverride',
             key: ['field'],
-            schema: { field: 'string', formula: 'string', literalValue: 'string' },
+            schema: { field: 'string', formula: 'formula', literalValue: 'string' },
         },
     },
 } as const satisfies RecordSpec;
@@ -216,10 +216,11 @@ export const SHARING_RULES_SPEC = {
             key: ['fullName'],
             schema: {
                 ...SHARING_RULE_SCHEMA,
-                booleanFilter: 'string',
+                booleanFilter: 'filterLogic',
                 includeRecordsOwnedByAll: 'boolean',
             },
-            trees: { sharedTo: 'one', criteriaItems: 'many', accountSettings: 'one' },
+            trees: { sharedTo: 'one', accountSettings: 'one' },
+            criteria: ['criteriaItems'],
         },
         sharingOwnerRules: {
             kind: 'sharingOwnerRule',
@@ -232,10 +233,11 @@ export const SHARING_RULES_SPEC = {
             key: ['fullName'],
             schema: {
                 ...SHARING_RULE_SCHEMA,
-                booleanFilter: 'string',
+                booleanFilter: 'filterLogic',
                 includeHVUOwnedRecords: 'boolean',
             },
-            trees: { sharedTo: 'one', criteriaItems: 'many' },
+            trees: { sharedTo: 'one' },
+            criteria: ['criteriaItems'],
         },
         sharingTerritoryRules: {
             kind: 'sharingTerritoryRule',
@@ -297,7 +299,8 @@ export const EMAIL_TEMPLATE_META_SPEC = {
     schema: {
         name: 'string',
         description: 'string',
-        subject: 'string',
+        /** 件名 (差し込みを含めば fxTemplate。段階 M6) */
+        subject: 'template',
         type: 'string',
         style: 'string',
         uiType: 'string',
@@ -398,8 +401,9 @@ export const TRANSLATIONS_SPEC = {
             key: ['name'],
             schema: NAME_LABEL,
         },
+        // kind はオブジェクトの翻訳の子 (quickActionTranslation・webLinkTranslation) と形が違うので別の名前にする (段階 M7)
         quickActions: {
-            kind: 'quickActionTranslation',
+            kind: 'globalQuickActionTranslation',
             key: ['name'],
             schema: { ...NAME_LABEL, aspect: 'string' },
         },
@@ -415,7 +419,11 @@ export const TRANSLATIONS_SPEC = {
             schema: NAME_LABEL,
             trees: { sections: 'many' },
         },
-        customPageWebLinks: { kind: 'webLinkTranslation', key: ['name'], schema: NAME_LABEL },
+        customPageWebLinks: {
+            kind: 'customPageWebLinkTranslation',
+            key: ['name'],
+            schema: NAME_LABEL,
+        },
     },
 } as const satisfies RecordSpec;
 export type TranslationsJson = RecordJson<typeof TRANSLATIONS_SPEC>;
@@ -500,7 +508,7 @@ export const WORKFLOW_SPEC = {
                 description: 'string',
                 field: 'string',
                 literalValue: 'string',
-                formula: 'string',
+                formula: 'formula',
                 lookupValue: 'string',
                 lookupValueType: 'string',
                 operation: 'string',
@@ -533,11 +541,12 @@ export const WORKFLOW_SPEC = {
                 fullName: 'string',
                 description: 'string',
                 active: 'boolean',
-                formula: 'string',
-                booleanFilter: 'string',
+                formula: 'formula',
+                booleanFilter: 'filterLogic',
                 triggerType: 'string',
             },
-            trees: { actions: 'many', criteriaItems: 'many', workflowTimeTriggers: 'many' },
+            trees: { actions: 'many', workflowTimeTriggers: 'many' },
+            criteria: ['criteriaItems'],
         },
         tasks: {
             kind: 'workflowTask',
@@ -859,7 +868,7 @@ export const MATCHING_RULES_SPEC = {
                 label: 'string',
                 description: 'string',
                 ruleStatus: 'string',
-                booleanFilter: 'string',
+                booleanFilter: 'filterLogic',
             },
             trees: { matchingRuleItems: 'many' },
         },

@@ -1,6 +1,12 @@
 import type { ConvertKeys } from '../../types';
 
-import type { DependencyKind, UnitDefinition, UnitDependencies, UnitReference } from './types';
+import type {
+    ChildRelationship,
+    DependencyKind,
+    UnitDefinition,
+    UnitDependencies,
+    UnitReference,
+} from './types';
 
 // 依存関係のグラフ。単位ごとの定義・参照 (units.ts) を集めて作る (保存しない)。方針: docs/analysis-plan.md 3 章
 //
@@ -60,14 +66,6 @@ export type GraphUnit = { type: string; id: string; dependencies: UnitDependenci
 // 名前の突き合わせ
 // ---------------------------------------------------------------------------
 
-/** 参照の種類 → 定義の種類 (名前が違うもの) */
-const TARGET_ALIASES: Record<string, string> = {
-    visualforcePage: 'apexPage',
-    visualforceComponent: 'apexComponent',
-    auraComponent: 'aura',
-    component: 'aura',
-};
-
 /** よく使う標準オブジェクト (リポジトリになくても「ない」とは言わない。Apex の型がオブジェクトかの判断にも使う) */
 const STANDARD_OBJECTS = new Set(
     [
@@ -126,8 +124,13 @@ const STANDARD_OBJECTS = new Set(
 );
 
 const CUSTOM_SUFFIX = /__(c|mdt|e|x|b|share|history|feed|r)$/i;
+/**
+ * 名前空間付きの名前。ns__Name__c (接尾辞あり) と、接尾辞のない種類の ns__Name (メッセージチャネル・クラスなど)。
+ * Name__c (接尾辞だけ) は名前空間なし
+ */
 const isNamespaced = (name: string) =>
-    /^[A-Za-z][A-Za-z0-9]*__[A-Za-z]/.test(name) && /__.*__/.test(name);
+    /^[A-Za-z][A-Za-z0-9]*__[A-Za-z]/.test(name) &&
+    (/__.*__/.test(name) || !CUSTOM_SUFFIX.test(name));
 const isCustom = (name: string) => CUSTOM_SUFFIX.test(name);
 
 const nodeId = (type: string, name: string) => `${type}:${name}`;
@@ -209,6 +212,51 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
 
     const lookup = (type: string, name: string) => defined.get(keyOf(type, name));
 
+    /** 子リレーション (<親>.<名前> (小文字) → 子のオブジェクト) */
+    const childRelationships = new Map<string, ChildRelationship>();
+    for (const unit of units) {
+        for (const relationship of unit.dependencies.childRelationships ?? []) {
+            childRelationships.set(
+                `${relationship.parent}.${relationship.name}`.toLowerCase(),
+                relationship,
+            );
+        }
+    }
+
+    /**
+     * サブクエリの子リレーション (Account.Contacts) と、その項目 (Account.Contacts.LastName)。
+     * 子リレーションが分かれば子のオブジェクト・その項目にする
+     */
+    const resolveChildRelationship = (
+        refType: string,
+        target: string,
+    ): { refType: string; target: string } | string => {
+        const [parent = '', name = '', ...rest] = target.split('.');
+        const relationship = childRelationships.get(`${parent}.${name}`.toLowerCase());
+        if (relationship) {
+            return refType === 'childRelationship'
+                ? { refType: 'object', target: relationship.child }
+                : { refType: 'field', target: `${relationship.child}.${rest.join('.')}` };
+        }
+        // 標準の子リレーション (Contacts) はリポジトリにない。カスタム (__r) は、オブジェクトがあれば「ない」
+        const custom = /__r$/i.test(name);
+        const origin: NodeOrigin =
+            isNamespaced(name) || isNamespaced(parent)
+                ? 'managed'
+                : !custom
+                  ? 'standard'
+                  : refType === 'childRelationship' && definedTypes.has('object')
+                    ? 'missing'
+                    : 'unknown';
+        return addNode({
+            id: nodeId(refType, target),
+            type: refType,
+            name: target,
+            level: refType === 'childRelationship' ? 'unit' : 'member',
+            origin,
+        });
+    };
+
     /** Apex の型の名前を、クラスかオブジェクトか標準の型にする */
     const resolveApexType = (
         name: string,
@@ -231,8 +279,14 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
 
     /** 参照先のノード (なければ作る) */
     const resolveTarget = (reference: UnitReference, fromUnitNode: string): string => {
-        let refType = TARGET_ALIASES[reference.refType] ?? reference.refType;
+        // 参照の種類の名前は定義の種類と同じ (語彙は 1 つ。docs/json-redesign-plan.md の段階 M2)
+        let refType: string = reference.refType;
         let target = reference.target;
+        if (refType === 'childRelationship' || refType === 'childRelationshipField') {
+            const resolved = resolveChildRelationship(refType, target);
+            if (typeof resolved === 'string') return resolved;
+            ({ refType, target } = resolved);
+        }
         if (refType === 'apexType') {
             const resolved = resolveApexType(target, fromUnitNode);
             if (resolved.id) return resolved.id;

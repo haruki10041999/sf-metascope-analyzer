@@ -217,7 +217,6 @@
                       "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
                       "sourceKey": "tSStringKeyword_27be31612b5d8b6f"
                     },
-                    "text": "string",
                     "type": "primitive",
                     "primitiveType": "string"
                   },
@@ -229,7 +228,6 @@
                     },
                     "value": ""
                   },
-                  "references": [],
                   "optional": false,
                   "modifier": {
                     "decorator": [

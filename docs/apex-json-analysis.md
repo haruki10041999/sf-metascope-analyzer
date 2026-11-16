@@ -34,29 +34,32 @@ src/analyzer/processor/Apex/
 kind ごとの処理を登録して JSON を 1 回だけたどる。
 
 ```ts
-type Visitor<C> = {
-    [K in ApexKind]?: (node: JsonByKind<K>, context: C) => void;
-} & {
-    /** kind を持たない式（formula / cast など）。ラベルは getExpressionLabel で決める */
-    expression?: (node: unknown, label: string, context: C) => void;
+type ApexVisitor = {
+    [kind: string]: ((node: Json, context: ApexWalkContext) => void | boolean) | undefined;
 };
 
-walkApexJson(unit, visitor, initialContext);
+walkApexJson(root, visitor, initialApexWalkContext());
+walkApexParseResult(unit, visitor); // 解析結果 1 つ (ApexUnitParseResult)
 ```
 
-- kind を持たない式の種類分けは、GumTree の [tree.ts](../src/analyzer/processor/Apex/diff/gumtree/tree.ts) の `getExpressionLabel` を共通部品に移して使う（Diff と解析で同じ判定にする）。
-- 1 回の走査で複数の解析を同時に行えるよう、Visitor は合成できるようにする（`composeVisitors`）。
+- 実装は [Apex/walker.ts](../src/analyzer/processor/Apex/walker.ts)（段階 A3）。式はすべて `kind` を持つ（段階 A2）ので、`kind` を持たない式のための `expression` の処理・`getExpressionLabel` の推定はなくした。
+- `false` を返すとそのノードの中に入らない。1 回の走査で複数の解析を同時に行えるよう、Visitor は `composeApexVisitors` で合成する。
 
 ### 2.2 文脈（context）
 
-| 項目           | 内容                                                       | 使う解析                      |
-| -------------- | ---------------------------------------------------------- | ----------------------------- |
-| `typePath`     | 今いる型の入れ子（`Outer.Inner`）                          | シンボル名の解決              |
-| `member`       | 今いるメソッド・コンストラクタ・プロパティ・初期化ブロック | 呼び出しグラフ、メトリクス    |
-| `loopDepth`    | for / while / do の入れ子の深さ                            | ループ内の SOQL / DML の検出  |
-| `nestingDepth` | if / for / while / try / switch の入れ子の深さ             | ネストの深さ                  |
-| `scope`        | ローカル変数・パラメータ・フィールドの名前と型             | DML の対象の SObject 型の推定 |
-| `isTest`       | `@IsTest` のクラス・メソッドの中か                         | テストの解析                  |
+`ApexWalkContext`（[Apex/walker.ts](../src/analyzer/processor/Apex/walker.ts)）:
+
+| 項目           | 内容                                                                               | 使う解析                      |
+| -------------- | ---------------------------------------------------------------------------------- | ----------------------------- |
+| `className`    | 今いるクラス（入れ子は `Outer.Inner`）                                             | シンボル名の解決              |
+| `member`       | 今いるメンバー（`Outer.Inner.method`。クラスの直下はクラス、トリガーはトリガー名） | 呼び出しグラフ、依存関係      |
+| `memberKind`   | 今いるメンバーの種類                                                               | 依存関係                      |
+| `statement`    | 直前の文（宣言の直下ならその宣言）の `sourceKeys`                                  | 参照の位置                    |
+| `scopes`       | 変数のスコープ（外側から順。ローカル変数・パラメータ・項目の名前と型）             | DML の対象の SObject 型の推定 |
+| `loopDepth`    | for / while / do の入れ子の深さ（メンバーの境界で 0 に戻す）                       | ループ内の SOQL / DML の検出  |
+| `nestingDepth` | if / for / while / do / try / switch の入れ子の深さ                                | ネストの深さ                  |
+| `inTry`        | try の節の中か（catch・finally の節は含めない）                                    | 例外の扱いの解析              |
+| `isTest`       | `@IsTest` のクラス・メソッドの中か                                                 | テストの解析                  |
 
 ### 2.3 結果の形
 
@@ -193,6 +196,8 @@ before / after をそれぞれ解析し、Diff の結果と組み合わせる。
 | `triggerCase`                                                                                                             | `NodeDiff<'triggerCase', TriggerCaseJson, undefined>`（fields なし）              | 形だけ          |
 | `notSet`                                                                                                                  | クラス本文の中の `added` / `removed` / `unchanged` だけ                           | いいえ          |
 | 文・文の補助ノード・式・SOQL / SOSL                                                                                       | `GumTreeDiff`（`label` / `role` の文字列と、`fields: Record<string, …>`）         | **いいえ**      |
+
+（2026-11-16 追記）段階 A2〜A6（[json-redesign-plan.md](./json-redesign-plan.md)）で、文・式・SOQL / SOSL も `kind` ごとの型の差分（[diff/statement.ts](../src/analyzer/processor/Apex/diff/statement.ts)・[diff/expression.ts](../src/analyzer/processor/Apex/diff/expression.ts)・[diff/query/](../src/analyzer/processor/Apex/diff/query/)。まとめは [diff/typed.ts](../src/analyzer/processor/Apex/diff/typed.ts)）になった。GumTree はブロックの中の文の対応付けに使う。修飾子は `{ keyword, annotation }`（段階 A5）で、分類は解析（[Apex/modifiers.ts](../src/analyzer/processor/Apex/modifiers.ts)）で出す。上の表は段階 A2 より前の状態。
 
 `GumTreeDiff` は型からは「どの kind の、どのプロパティが変わったか」が分からない（`fields` は `Record<string, …>`、子は `children` の配列）。利用側が `label` の文字列で分岐する必要がある。
 

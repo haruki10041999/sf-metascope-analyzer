@@ -7,6 +7,8 @@ import {
     writeSaveDataInfo,
 } from '../parser';
 
+import type { SourceText } from '../types';
+
 import type { SourceTree } from './sourceTree';
 import {
     type AnyUnitType,
@@ -44,16 +46,16 @@ export const locateUnits = (
     );
 };
 
-/** 単位 1 つを木から読んで解析する。結果の filePath は木のルートからの絶対パス */
-export const parseUnitFromTree = async (
+/** 単位 1 つのファイル (filesOf) を木から読む。読めないファイルは除く */
+export const readUnitSources = async (
     tree: SourceTree,
     unitType: AnyUnitType,
     location: string,
-): Promise<UnitParseResult> => {
-    const files = unitType.filesOf(location, await tree.listFiles());
-    const sources = (
+    files?: readonly string[],
+): Promise<SourceText[]> =>
+    (
         await Promise.all(
-            files.map(async (filePath) => {
+            unitType.filesOf(location, files ?? (await tree.listFiles())).map(async (filePath) => {
                 const source = await tree.readFile(filePath);
                 return source === undefined
                     ? []
@@ -61,9 +63,30 @@ export const parseUnitFromTree = async (
             }),
         )
     ).flat();
+
+/** 読んだファイルで単位 1 つを解析する。結果の filePath は root からの絶対パス */
+export const parseUnitSources = async (
+    root: string,
+    unitType: AnyUnitType,
+    location: string,
+    sources: SourceText[],
+): Promise<UnitParseResult> => {
     const result = await unitType.parseUnit(location, sources);
-    return { ...result, filePath: path.join(tree.root, result.filePath) };
+    return { ...result, filePath: path.join(root, result.filePath) };
 };
+
+/** 単位 1 つを木から読んで解析する。結果の filePath は木のルートからの絶対パス */
+export const parseUnitFromTree = async (
+    tree: SourceTree,
+    unitType: AnyUnitType,
+    location: string,
+): Promise<UnitParseResult> =>
+    parseUnitSources(
+        tree.root,
+        unitType,
+        location,
+        await readUnitSources(tree, unitType, location),
+    );
 
 /** 単位の種類 → 解析結果 (id の順) */
 export class Repository {
@@ -71,6 +94,14 @@ export class Repository {
         readonly root: string,
         private readonly units: Map<string, UnitParseResult[]>,
     ) {}
+
+    /** 種類 → 解析結果から作る (解析結果は id の順に並べ替える) */
+    static of(root: string, units: Map<string, UnitParseResult[]>): Repository {
+        return new Repository(
+            root,
+            new Map([...units].map(([type, results]) => [type, sortById(results)])),
+        );
+    }
 
     /** 単位のないリポジトリ */
     static empty(root: string): Repository {

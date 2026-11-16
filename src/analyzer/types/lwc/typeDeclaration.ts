@@ -30,8 +30,8 @@ export type LwcTypeDeclarationJson = StructureJsonType<
     name: string;
     declarationType: 'interface' | 'type' | 'enum';
     exported: boolean;
-    /** interface の extends (Apex の extend に当たる) */
-    extend?: string[];
+    /** interface の extends (Apex の extend に当たる)。型の JSON の並び (lwc-json-types.md 8.8 の残りを直した) */
+    extend?: LwcTypeJson[];
     /** interface のメンバー */
     members?: LwcTypeMemberJson[];
     /** type の右辺 (Flow の opaque type は = の右の型) */
@@ -76,7 +76,7 @@ export const makeLwcTypeDeclarationJson = (
     switch (node.kind) {
         case 'tSInterfaceDeclaration': {
             const fields = (node as commons.TSInterfaceDeclarationTypeClass).getFields();
-            const extend = (fields.extends ?? []).map((e) => context.textOf(e));
+            const extend = (fields.extends ?? []).map((e) => makeLwcTypeJson(e, context));
             return makeStructureJson('lwcTypeDeclaration', sourceKeys, {
                 ...base,
                 declarationType: 'interface' as const,
@@ -89,7 +89,7 @@ export const makeLwcTypeDeclarationJson = (
         case 'interfaceDeclaration': {
             // Flow の interface。メンバーはオブジェクトの型 (body) のプロパティ
             const fields = (node as commons.InterfaceDeclarationTypeClass).getFields();
-            const extend = (fields.extends ?? []).map((e) => context.textOf(e));
+            const extend = (fields.extends ?? []).map((e) => makeLwcTypeJson(e, context));
             return makeStructureJson('lwcTypeDeclaration', sourceKeys, {
                 ...base,
                 declarationType: 'interface' as const,

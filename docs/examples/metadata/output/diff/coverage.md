@@ -5,7 +5,7 @@
 | kind | JSON | 差分 |
 | --- | --- | --- |
 | `object` | 14 | 6 |
-| `field` | 26 | 12 |
+| `field` | 26 | 11 |
 | `picklistValue` | 13 | 8 |
 | `validationRule` | 4 | 2 |
 | `recordType` | 2 | 1 |
@@ -18,13 +18,12 @@
 | `sharingReason` | 2 | 1 |
 | `objectActionOverride` | 2 | 1 |
 | `objectTranslation` | 8 | 3 |
-| `fieldTranslation` | 14 | 6 |
+| `fieldTranslation` | 14 | 5 |
 | `picklistValueTranslation` | 8 | 3 |
 | `recordTypeTranslation` | 2 | 1 |
 | `validationRuleTranslation` | 3 | 1 |
 | `webLinkTranslation` | 2 | 1 |
 | `fieldSetTranslation` | 2 | 1 |
 | `layoutTranslation` | 2 | 1 |
-| `error` | 3 | 3 |
 
 すべての kind が差分に現れた。

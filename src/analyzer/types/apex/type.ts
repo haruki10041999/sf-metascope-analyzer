@@ -42,7 +42,8 @@ export type PrimitiveTypeContentJson = {
 
 export type CustomTypeContentJson = {
     type: 'custom';
-    customType: string | string[];
+    /** 名前の並び (`a.b.C` は ['a', 'b', 'C']、`Account` は ['Account'])。いつも配列 */
+    customType: string[];
     generic?: TypeContentJson[];
 };
 
@@ -108,35 +109,27 @@ const nameOf = (item: TypeNameTypeClass): string => {
 const genericOf = (item: TypeNameTypeClass | undefined): readonly TypeRefTypeClass[] | null =>
     item?.getFields().generic?.getFields().elements.getFields().value ?? null;
 
-// dimension は配列の次元 (`[]` の数)。配列でなければ null
-const makeTypeContentJsonOf = (
-    elements: readonly TypeNameTypeClass[],
-    dimension: number | null,
+/**
+ * 名前の並び (`a.b.C`) と、最後の名前の型引数から、型の中身。型引数のない型は generic が null。
+ * new の型 (createdName) も同じ形で作る (docs/json-redesign-plan.md の段階 A2)
+ */
+export const makeTypeContentJsonOfNames = (
+    names: readonly string[],
+    generic: readonly TypeRefTypeClass[] | null,
 ): TypeContentJson => {
-    if (dimension) {
-        return {
-            type: 'array',
-            elementType: makeTypeContentJsonOf(elements, null),
-            dimension: dimension,
-        };
-    }
-
-    if (elements.length !== 1) {
-        const generic = genericOf(elements.at(-1));
+    if (names.length !== 1) {
         return {
             type: 'custom',
-            customType: elements.map(nameOf),
+            customType: [...names],
             ...(generic && generic.length > 0
                 ? { generic: generic.map((item) => makeTypeContentJson(item)) }
                 : {}),
         };
     }
 
-    const element = elements.at(0)!;
-    const elementName = nameOf(element);
-    const generic = genericOf(element);
+    const elementName = names[0]!;
 
-    if (isPrimitiveType(elementName) && !element.getFields().generic) {
+    if (isPrimitiveType(elementName) && !generic) {
         return {
             type: 'primitive',
             primitiveType: elementName,
@@ -160,11 +153,29 @@ const makeTypeContentJsonOf = (
 
     return {
         type: 'custom',
-        customType: elementName,
+        customType: [elementName],
         ...(generic && generic.length > 0
             ? { generic: generic.map((item) => makeTypeContentJson(item)) }
             : {}),
     };
+};
+
+// dimension は配列の次元 (`[]` の数)。配列でなければ null
+const makeTypeContentJsonOf = (
+    elements: readonly TypeNameTypeClass[],
+    dimension: number | null,
+): TypeContentJson => {
+    if (dimension) {
+        return {
+            type: 'array',
+            elementType: makeTypeContentJsonOf(elements, null),
+            dimension: dimension,
+        };
+    }
+    // 型引数の有無は最後の名前で見る (名前が 1 つのときは、その名前に < > があるか)
+    const last = elements.at(-1);
+    const generic = last?.getFields().generic ? (genericOf(last) ?? []) : null;
+    return makeTypeContentJsonOfNames(elements.map(nameOf), generic);
 };
 
 const makeTypeContentJson = (target: TypeRefTypeClass): TypeContentJson => {

@@ -1,7 +1,7 @@
 [
   {
     "status": "unchanged",
-    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
     "holder": {
       "type": "permissionSet",
       "name": "Invoice_Manager"
@@ -12,7 +12,7 @@
   },
   {
     "status": "added",
-    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
     "holder": {
       "type": "permissionSet",
       "name": "Invoice_Manager"
@@ -23,7 +23,7 @@
   },
   {
     "status": "added",
-    "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Payment_Clerk.permissionset-meta.xml",
     "holder": {
       "type": "permissionSet",
       "name": "Payment_Clerk"
@@ -34,7 +34,7 @@
   },
   {
     "status": "unchanged",
-    "filePath": "profiles/Sales.profile-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
     "holder": {
       "type": "profile",
       "name": "Sales"

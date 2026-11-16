@@ -22,11 +22,14 @@ import { ApexParser } from '../../src/analyzer/parser/Apex/parser';
 import { LwcParser } from '../../src/analyzer/parser/Lwc/parser';
 import { MetadataParser } from '../../src/analyzer/parser/Metadata/parser';
 import { ObjectTranslationParser } from '../../src/analyzer/parser/Metadata/objectTranslation';
+import { METADATA_UNIT_DIFFS, makeObjectUnitDiffs } from '../../src/analyzer/processor/Metadata';
 import {
-    METADATA_UNIT_DIFFS,
-    analyzeMetadataReferences,
-    makeObjectUnitDiffs,
-} from '../../src/analyzer/processor/Metadata';
+    buildDependencyGraph,
+    getDependents,
+    toLevel,
+} from '../../src/analyzer/processor/dependency/graph';
+import { getUnitDependencies } from '../../src/analyzer/processor/dependency/units';
+import { Repository, WorkingTree, analyzeDependencies } from '../../src/analyzer/unit';
 import type {
     ApexComponentJson,
     ApexPageJson,
@@ -36,6 +39,8 @@ import type {
     EmailTemplateJson,
     ReportJson,
 } from '../../src/analyzer/types';
+import { criterionTextsOf, templateTextOf } from '../../src/analyzer/types';
+import { markupTagsOf } from '../../src/analyzer/processor/Metadata/markup';
 
 // 優先度 B・C のメタデータ (docs/metadata-implementation.md) 10 章。サンプルは docs/examples/repository
 
@@ -186,7 +191,8 @@ describe('優先度 B: 本体のファイルを伴う種類・バンドル', () 
             extensions: 'InvoicePrintExt',
             renderAs: 'advanced_pdf',
         });
-        assert.deepEqual(page.markup.components, [
+        // 使っている部品は本体の木から出す (段階 M6)
+        assert.deepEqual(markupTagsOf(page.markup.body), [
             'apex:column',
             'apex:outputField',
             'apex:pageBlockTable',
@@ -227,7 +233,8 @@ describe('優先度 B: 本体のファイルを伴う種類・バンドル', () 
         const json = template!.result.base as EmailTemplateJson;
         assert.equal(json.fullName, 'Invoice_Templates/Invoice_Sent');
         assert.equal(json.available, true);
-        assert.ok(json.body!.startsWith('{!Invoice__c.Account__c} 様'));
+        // 本文は差し込みを含むので fxTemplate (段階 M6)
+        assert.ok(templateTextOf(json.body!).startsWith('{!Invoice__c.Account__c} 様'));
         const [diff] = await unitDiffs('emailTemplate');
         assert.equal((diff!.content!.fields!.body as { status: string }).status, 'changed');
         assert.equal((diff!.content!.fields!.subject as { status: string }).status, 'changed');
@@ -249,7 +256,11 @@ describe('優先度 B: 本体のファイルを伴う種類・バンドル', () 
             card.attributes!.map((a) => a.name),
             ['recordId', 'invoice', 'showLines'],
         );
-        assert.deepEqual(card.components, ['c:accountList', 'lightning:button', 'lightning:card']);
+        assert.deepEqual(markupTagsOf(card.body), [
+            'c:accountList',
+            'lightning:button',
+            'lightning:card',
+        ]);
         assert.deepEqual(card.javascript, {
             controller: ['doInit', 'handleClick', 'toggleLines'],
             helper: ['load'],
@@ -297,43 +308,47 @@ describe('優先度 B・C: すべての種類', () => {
     });
 });
 
-describe('種類をまたぐ参照 (analyzeMetadataReferences)', () => {
-    const all = async () =>
-        (await Promise.all(METADATA_FOLDER_PARSERS.map((p) => p.parseAll(root('after'))))).flat();
+// 種類をまたぐ参照の突き合わせは依存関係のグラフで見る (以前の analyzeMetadataReferences。docs/json-redesign-plan.md 6 章の 9)
+describe('種類をまたぐ参照 (依存関係のグラフ)', () => {
+    const graphOf = (results: MetadataFileParseResult[]) =>
+        buildDependencyGraph(
+            results.map((result) => ({
+                type: result.dataType,
+                id: result.result.id,
+                dependencies: getUnitDependencies(result.dataType, result),
+            })),
+        );
 
     it('サンプル: ない参照先を見つけ、参照先ごとの参照元 (逆引き) を作る', async () => {
-        const analysis = analyzeMetadataReferences({
-            metadata: await all(),
-            objects: await MetadataParser.parseObjects(path.join(root('after'), 'objects')),
-            apex: await ApexParser.parseApexUnits(path.resolve('docs/examples/repository/after')),
-            lwc: await LwcParser.parseLwcBundles(
-                path.resolve('docs/examples/repository/after/force-app/main/default/lwc'),
-            ),
-        });
-        assert.deepEqual(
-            analysis.findings.map((f) => `${f.code}:${f.from}:${f.target}`),
-            [
-                'UNKNOWN_FLEXI_PAGE:customApplication_Invoice_App:Invoice_Record_Page_V2',
-                'UNKNOWN_APEX_CLASS:apexPage_InvoicePrint:InvoicePrintExt',
-                'UNKNOWN_APEX_CLASS:aura_invoiceCard:InvoiceController',
-                'UNKNOWN_AURA:aura_invoiceCard:invoiceSelectedEvent',
-                'UNKNOWN_ROLE:role_Sales_Manager:CEO',
-            ],
+        const graph = analyzeDependencies(
+            await Repository.load(new WorkingTree(path.resolve('docs/examples/repository/after'))),
         );
-        assert.deepEqual(
-            analysis.usedBy['emailTemplate:Invoice_Templates/Invoice_Sent'],
-            undefined,
+        const findings = graph.findings.map(
+            (f) => `${f.code}:${toLevel(graph, f.from, 'unit')}:${f.target}`,
         );
-        assert.deepEqual(analysis.usedBy['report:Invoice_Reports/Open_Invoices'], [
-            'dashboard_Invoice_Dashboards.Invoice_Overview',
+        for (const expected of [
+            'UNKNOWN_FLEXI_PAGE:customApplication:Invoice_App:flexiPage:Invoice_Record_Page_V2',
+            'UNKNOWN_APEX_CLASS:apexPage:InvoicePrint:apexClass:InvoicePrintExt',
+            'UNKNOWN_APEX_CLASS:aura:invoiceCard:apexClass:InvoiceController',
+            'UNKNOWN_AURA:aura:invoiceCard:aura:invoiceSelectedEvent',
+            'UNKNOWN_ROLE:role:Sales_Manager:role:CEO',
+        ]) {
+            assert.ok(findings.includes(expected), expected);
+        }
+        const usedBy = (id: string) =>
+            [...getDependents(graph, id, { level: 'unit' }).keys()].sort();
+        assert.deepEqual(usedBy('emailTemplate:Invoice_Templates/Invoice_Sent'), []);
+        assert.deepEqual(usedBy('report:Invoice_Reports/Open_Invoices'), [
+            'dashboard:Invoice_Dashboards/Invoice_Overview',
         ]);
-        assert.deepEqual(analysis.usedBy['customLabel:AccountListTitle']!.sort(), [
-            'apexPage_InvoicePrint',
-            'aura_invoiceCard',
-            'translations_ja',
+        assert.deepEqual(usedBy('customLabel:AccountListTitle'), [
+            'apexPage:InvoicePrint',
+            'aura:invoiceCard',
+            'flow:Account_Wizard',
+            'translations:ja',
         ]);
         // Aura の c: の部品は LWC か Aura のどちらかにあればよい
-        assert.ok(analysis.usedBy['lwc:accountList']!.includes('aura_invoiceCard'));
+        assert.ok(usedBy('lwc:accountList').includes('aura:invoiceCard'));
     });
 
     it('権限セットのカスタム権限・タブ・アプリへの参照も確かめる。名前空間付き・標準のタブは確かめない', () => {
@@ -354,13 +369,21 @@ describe('種類をまたぐ参照 (analyzeMetadataReferences)', () => {
             'tabs/Invoice__c.tab-meta.xml',
             `<CustomTab ${NS}><customObject>true</customObject></CustomTab>`,
         );
-        const analysis = analyzeMetadataReferences({ metadata: [permissionSet, permission, tab] });
+        const graph = graphOf([permissionSet, permission, tab]);
         assert.deepEqual(
-            analysis.findings.map((f) => `${f.code}:${f.target}`),
-            ['UNKNOWN_CUSTOM_PERMISSION:Missing_Permission', 'UNKNOWN_CUSTOM_TAB:Missing_Tab'],
+            graph.findings.map((f) => `${f.code}:${f.target}`),
+            [
+                'UNKNOWN_CUSTOM_PERMISSION:customPermission:Missing_Permission',
+                'UNKNOWN_CUSTOM_TAB:customTab:Missing_Tab',
+            ],
         );
-        // アプリの解析結果がないので、アプリは確かめない (この入力にはアプリへの参照もない)
-        assert.ok(!analysis.findings.some((f) => f.refType === 'customApplication'));
+        // 権限は与えるもの (grants)
+        assert.ok(
+            graph.edges.some(
+                (e) => e.to === 'customPermission:Missing_Permission' && e.kind === 'grants',
+            ),
+        );
+        assert.equal(graph.nodes.get('customPermission:acme__Packaged')?.origin, 'managed');
     });
 });
 
@@ -384,9 +407,11 @@ describe('オブジェクトの読んでいなかった子・文字列からの 
         assert.equal(json.sharingReasons![0]!.kind, 'sharingReason');
         const account = json.fields!.find((f) => f.kind === 'field' && f.apiName === 'Account__c');
         assert.ok(account && account.kind === 'field');
-        assert.deepEqual(account.lookupFilter!.filterItems, [
-            { field: 'Account.Tier__c', operation: 'notEqual', value: 'Bronze' },
+        // 条件の行は criterion (段階 M5)
+        assert.deepEqual(account.lookupFilter!.filterItems.map(criterionTextsOf), [
+            { left: 'Account.Tier__c', right: 'Bronze' },
         ]);
+        assert.equal(account.lookupFilter!.filterItems[0]!.operator, 'notEqual');
 
         const diffs = makeObjectUnitDiffs(before, after);
         const fieldsOf = (id: string) =>

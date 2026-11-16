@@ -7,7 +7,7 @@
     "base": {
       "kind": "approvalProcess",
       "sourceKeys": {
-        "objectKey": "approvalProcess_a854833d3aaf406b",
+        "objectKey": "approvalProcess_ccd7eb037e96941e",
         "sourceKey": "approvalProcess_797f4ded05aef36f"
       },
       "fullName": "Invoice__c.Large_Invoice_Approval",
@@ -23,16 +23,34 @@
       ],
       "entryCriteria": {
         "criteriaItems": {
-          "field": "Invoice__c.Amount__c",
-          "operation": "greaterThan",
-          "value": "50000"
+          "kind": "criterion",
+          "sourceKeys": {
+            "objectKey": "criterion_b4b2aa2434742c71",
+            "sourceKey": "criterion_37115b46372a125f"
+          },
+          "left": {
+            "kind": "fxName",
+            "sourceKeys": {
+              "objectKey": "fxName_86e26a6f63586c94",
+              "sourceKey": "fxName_2b3025924237c031"
+            },
+            "path": [
+              "Invoice__c",
+              "Amount__c"
+            ]
+          },
+          "operator": "greaterThan",
+          "right": {
+            "type": "value",
+            "value": "50000"
+          }
         }
       },
       "approvalStep": [
         {
           "kind": "approvalStep",
           "sourceKeys": {
-            "objectKey": "approvalStep_e32b3431c5a52a55",
+            "objectKey": "approvalStep_47acee5cab333a4e",
             "sourceKey": "approvalStep_7a098d24f77d604e"
           },
           "name": "Manager",
@@ -40,6 +58,11 @@
           "allowDelegate": false,
           "assignedApprover": {
             "approver": {
+              "kind": "approver",
+              "sourceKeys": {
+                "objectKey": "approver_9ceb3ec371c0184e",
+                "sourceKey": "approver_1f22615fcfe92cab"
+              },
               "type": "userHierarchyField"
             }
           }
@@ -47,7 +70,7 @@
         {
           "kind": "approvalStep",
           "sourceKeys": {
-            "objectKey": "approvalStep_a2f8f9ffe93925c9",
+            "objectKey": "approvalStep_e21964b96b5b47d8",
             "sourceKey": "approvalStep_6415cf69cbd55d21"
           },
           "name": "Finance",
@@ -55,6 +78,11 @@
           "allowDelegate": false,
           "assignedApprover": {
             "approver": {
+              "kind": "approver",
+              "sourceKeys": {
+                "objectKey": "approver_9ceb3ec371c0184e",
+                "sourceKey": "approver_fa7e813239a4cc01"
+              },
               "type": "userHierarchyField"
             }
           }
@@ -63,7 +91,81 @@
     },
     "sourceObject": [
       {
-        "objectKey": "approvalStep_e32b3431c5a52a55",
+        "objectKey": "fxName_86e26a6f63586c94",
+        "context": "Invoice__c.Amount__c",
+        "source": [
+          {
+            "sourceKey": "fxName_2b3025924237c031",
+            "filePath": "approvalProcesses/Invoice__c.Large_Invoice_Approval.approvalProcess-meta.xml",
+            "start": {
+              "offset": 895,
+              "line": 30,
+              "column": 19
+            },
+            "end": {
+              "offset": 915,
+              "line": 30,
+              "column": 39
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "criterion_b4b2aa2434742c71",
+        "context": "<criteriaItems>\n            <field>Invoice__c.Amount__c</field>\n            <operation>greaterThan</operation>\n            <value>50000</value>\n        </criteriaItems>",
+        "source": [
+          {
+            "sourceKey": "criterion_37115b46372a125f",
+            "filePath": "approvalProcesses/Invoice__c.Large_Invoice_Approval.approvalProcess-meta.xml",
+            "start": {
+              "offset": 860,
+              "line": 29,
+              "column": 8
+            },
+            "end": {
+              "offset": 1028,
+              "line": 33,
+              "column": 24
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "approver_9ceb3ec371c0184e",
+        "context": "<approver>\n                <type>userHierarchyField</type>\n            </approver>",
+        "source": [
+          {
+            "sourceKey": "approver_1f22615fcfe92cab",
+            "filePath": "approvalProcesses/Invoice__c.Large_Invoice_Approval.approvalProcess-meta.xml",
+            "start": {
+              "offset": 347,
+              "line": 11,
+              "column": 12
+            },
+            "end": {
+              "offset": 429,
+              "line": 13,
+              "column": 23
+            }
+          },
+          {
+            "sourceKey": "approver_fa7e813239a4cc01",
+            "filePath": "approvalProcesses/Invoice__c.Large_Invoice_Approval.approvalProcess-meta.xml",
+            "start": {
+              "offset": 641,
+              "line": 21,
+              "column": 12
+            },
+            "end": {
+              "offset": 723,
+              "line": 23,
+              "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "approvalStep_47acee5cab333a4e",
         "context": "<approvalStep>\n        <allowDelegate>false</allowDelegate>\n        <assignedApprover>\n            <approver>\n                <type>userHierarchyField</type>\n            </approver>\n        </assignedApprover>\n        <label>Manager</label>\n        <name>Manager</name>\n    </approvalStep>",
         "source": [
           {
@@ -83,7 +185,7 @@
         ]
       },
       {
-        "objectKey": "approvalStep_a2f8f9ffe93925c9",
+        "objectKey": "approvalStep_e21964b96b5b47d8",
         "context": "<approvalStep>\n        <allowDelegate>false</allowDelegate>\n        <assignedApprover>\n            <approver>\n                <type>userHierarchyField</type>\n            </approver>\n        </assignedApprover>\n        <label>Finance</label>\n        <name>Finance</name>\n    </approvalStep>",
         "source": [
           {
@@ -103,7 +205,7 @@
         ]
       },
       {
-        "objectKey": "approvalProcess_a854833d3aaf406b",
+        "objectKey": "approvalProcess_ccd7eb037e96941e",
         "context": "<ApprovalProcess xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <active>true</active>\n    <allowRecall>false</allowRecall>\n    <allowedSubmitters>\n        <type>owner</type>\n    </allowedSubmitters>\n    <approvalStep>\n        <allowDelegate>false</allowDelegate>\n        <assignedApprover>\n            <approver>\n                <type>userHierarchyField</type>\n            </approver>\n        </assignedApprover>\n        <label>Manager</label>\n        <name>Manager</name>\n    </approvalStep>\n    <approvalStep>\n        <allowDelegate>false</allowDelegate>\n        <assignedApprover>\n            <approver>\n                <type>userHierarchyField</type>\n            </approver>\n        </assignedApprover>\n        <label>Finance</label>\n        <name>Finance</name>\n    </approvalStep>\n    <entryCriteria>\n        <criteriaItems>\n            <field>Invoice__c.Amount__c</field>\n            <operation>greaterThan</operation>\n            <value>50000</value>\n        </criteriaItems>\n    </entryCriteria>\n    <label>Large Invoice Approval</label>\n    <recordEditability>AdminOnly</recordEditability>\n    <showApprovalHistory>true</showApprovalHistory>\n</ApprovalProcess>",
         "source": [
           {

@@ -327,9 +327,9 @@ JS で Apex と違う形が要るところ:
 
 ### 6.3 保存の版
 
-- 保存データは `SAVE_FORMAT_VERSION`（[parser/commons.ts](../src/analyzer/parser/commons.ts#L40-L46)、今は 4）が違うと読まず、解析し直す。
-- JSON の形を変える段階を出すたびに上げ、コメントに何を変えたかを書く（例: `5: LWC の本体に関数のフィールドの中身・references を足した`）。
-- 同じリリースに入れる段階はまとめて 1 回上げてもよい。版は Apex・メタデータと共通なので、上げると全部が解析し直しになる。
+- （2026-11-16 に変えた。[save-format-plan.md](./save-format-plan.md) の S1・S2）版は 2 つに分けた。`SAVE_FORMAT_VERSION`（[parser/commons.ts](../src/analyzer/parser/commons.ts)、今は 8）は置き場所・入れ物の版。JSON の形の版は系統ごと（`apex`・`lwc`・`object`・`objectTranslation`・`metadata`）で、[unit/unitType.ts](../src/analyzer/unit/unitType.ts) の `UNIT_FORMAT_VERSIONS`（`lwc` は今は 1）。
+- LWC の JSON の形を変えたら `UNIT_FORMAT_VERSIONS.lwc` を 1 つ上げ、コメントに何を変えたかを書く。版の違う系統の単位だけを、保存したソースから parse し直す（ほかの系統は読み直さない）。
+- 同じリリースに入れる段階はまとめて 1 回上げてもよい。
 
 ## 7. 決めたこと（2026-11-10）
 
@@ -349,7 +349,7 @@ JS で Apex と違う形が要るところ:
 
 ## 8. 進み具合
 
-段階 1〜6 を入れた（2026-11-10）。`SAVE_FORMAT_VERSION` はまだ上げていない（6.3。まとめて上げる）。
+段階 1〜6 を入れた（2026-11-10）。保存の版は、その後の系統ごとの版（6.3）で `lwc` を 1 にした（2026-11-16）。
 
 ### 8.1 段階 1（足すだけの変更）
 
@@ -515,6 +515,8 @@ types/lwc の component・module・expression・statement・import の JSON の�
 | `LwcTypeDeclarationJson.extend`（typeDeclaration.ts）                                                | `interface A extends B<T>` の `B<T>` の文字列                                     | 型。案: `LwcTypeJson[]` にする（上と合わせる）                                                                                                                                                                                                                               |
 | 計算されたキーのメンバー名（`[expr]: ...` の `name`）                                                | `[` + 式のソースの文字列 + `]`                                                    | メンバーの名前は Diff のキー（D. キー対応）なので残す。まれ。案: `computedKey?: LwcJsExpressionJson` を足し、`name` はキーだけに使う                                                                                                                                         |
 
+（2026-11-16 追記）上の表の 1〜3 行目は直した（[json-redesign-plan.md](./json-redesign-plan.md) 4 章の 1・2）: `LwcTypeJson.text` をなくし（GumTree の葉は中身で比べる）、`other` を種類ごとの型（`conditional`・`mapped`・`indexedAccess`・`operator`・`templateLiteral`・`import`・`infer`・`predicate`、コンストラクタは `function` の `construct`。どれでもないものは `unknown` と IR のノードの種類）にした。`custom.customType`・`typeof.target` は名前の並び（`string[]`。Apex の `customType` と同じ）、interface の `extend` は型の JSON の並び（`LwcTypeJson[]`）。`literal.value` は値なのでそのまま。表示は `lwcTypeTextOf`。保存の版は `lwc` 2。4 行目も直した（4 章の 3）: クラスのメンバー（`lwcField`・`lwcMethod`・`lwcProperty`）の計算されたキーは、`name`（`[式]`。Diff のキー）のほかにキーの式 `computedKey`（`LwcJsExpressionJson`）を持つ。走査はそのまま中に入る（キーの式の中の参照も読む）。interface・型リテラルのメンバーの計算されたキー（`[Symbol.iterator](): T`）は型の中なので名前のまま。保存の版は `lwc` 3。
+
 #### 解析の走査（walker）
 
 [processor/Lwc/walker.ts](../src/analyzer/processor/Lwc/walker.ts)。Apex の案（[apex-json-analysis.md](./apex-json-analysis.md) 2.1・2.2）と同じ形にした。
@@ -539,6 +541,8 @@ types/lwc の component・module・expression・statement・import の JSON の�
 - **解析なら文脈を足せる。** 呼び出しは `context`（`functionDepth`・`loopDepth`・`nestingDepth`・`inTry`）を持つ（5.5 の `apexCall` の `inTry` に当たるもの）。直下の文（`statements`）の呼び出しも出す（`ownerKind: 'module'`）。
 
 `references`（本体・初期値の import の参照）は JSON に残した。本体の外（フィールド・宣言の初期値・wire の設定）にもあり、解析（`resolveSchema`）がメンバー単位で使うため。式の JSON から出すこともできるが（`LwcCallInfo.references` はそうしている）、型の中の名前（`lwcType` は文字列の `customType`）の扱いを決めてからにする。
+
+（2026-11-16 追記）型の中の名前を決めたので（4 章の 1・2）、`references` も JSON から消して解析に移した（[json-redesign-plan.md](./json-redesign-plan.md) 4 章の 4）。解析は [processor/Lwc/calls.ts](../src/analyzer/processor/Lwc/calls.ts) の `lwcImportReferencesOf`（式・文の JSON。wire の設定は `value`）・`lwcBodyReferencesOf`（本体の `block` とアロー関数の式の本体 `expression`。メソッド・getter / setter・関数・`function` 宣言）・`lwcInitReferencesOf`（フィールド・変数の初期値。初期値が関数なら引数の既定値を含む関数全体）。走査（`walkLwcJson`）の `jsIdentifier` だけを見るので、型の中（`lwcType`）は見ない。移す前に、サンプルとゴールデンの全バンドル（103 か所）で JSON の `references` と同じもの（順まで）が出ることを確かめた。違ったのは、IR の識別子をすべて見ていた今までのやり方が、オブジェクトのキー（`{ NAME_FIELD: 1 }`）・メンバー名（`x.NAME_FIELD`）も import の参照と数えていたところ（解析は数えない。サンプルにはない）。また、引数の既定値（`(a = LABEL) =>` の `LABEL`）が JSON になかったので、引数に `init`（既定値の式）と `rest`（`...rest` のときだけ `true`）を足した。使う側: 解析の `resolveSchema`（フィールドの初期値の `@salesforce/schema` の import）は `lwcInitReferencesOf` を使う。Diff の `references`（B. 集合）はなくした（変わったことは文・式の差分に出る）。ゴールデンは、古いゴールデンから `references`（90 か所）を消すと全 38 ファイルで新しい出力（引数の `init`・`rest` を除く）と同じになることを確かめてから作り直した（`init` は 1 か所、`sourceObject` は 1 つ増えた）。保存の版は `lwc` 3（`computedKey` と同じ版）。
 
 使う側の変更:
 

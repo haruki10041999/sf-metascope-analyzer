@@ -1,4 +1,4 @@
-import { JsonType, ConvertKeys } from '../commons';
+import { JsonType } from '../commons';
 import type {
     ArrayExpressionTypeClass,
     Arth1ExpressionTypeClass,
@@ -14,7 +14,6 @@ import type {
     CoalExpressionTypeClass,
     CondExpressionTypeClass,
     CreatedNameTypeClass,
-    CreatorRestTypeClass,
     DotExpressionTypeClass,
     EqualityExpressionTypeClass,
     ExpressionListTypeClass,
@@ -28,24 +27,43 @@ import type {
     PostOpExpressionTypeClass,
     PreOpExpressionTypeClass,
     SubExpressionTypeClass,
+    TypeRefTypeClass,
 } from '../apex_IR';
 
-import { keysOf, makeNodeJson } from './commons/node';
-import { makeTypeJson, TypeJson } from './type';
-import { PrimaryJson, makePrimaryJson } from './primary';
+import { makeNodeJson } from './commons/node';
+import {
+    type TypeContentJson,
+    type TypeJson,
+    makeTypeContentJsonOfNames,
+    makeTypeJson,
+} from './type';
+import {
+    type ClassLiteralJson,
+    type IdentifierJson,
+    type LiteralJson,
+    type SuperJson,
+    type ThisJson,
+    type UnsupportedJson,
+    makePrimaryJson,
+} from './primary';
+import type { SoqlJson } from './query/soql';
+import type { SoslJson } from './query/sosl';
 
-/**
- * ラベルのない式 (ExpressionContext そのもの)。ANTLR の回復でしかできず、ふだんは作られない。
- * v1 と同じく、テキストをそのまま返す
- */
-const makeExpressionJson = (target: ExpressionTypeClass): string => {
-    return target.getFields().value;
-};
+// Apex の式の JSON (docs/apex-json-review.md 2.2・6.1 の C。docs/json-redesign-plan.md の段階 A2)。
+// - 式はすべて kind と sourceKeys を持つ (LWC の js* と同じ考え。名前は接頭辞なし。json-redesign-plan 6 章の 1)
+// - ソースの文字列・定数 (引用符つきのリテラル、'()'、'{}'、'list || set'、回復のときの getText()) は持たない
+// - 数のリテラルは精度のため文字列のまま (6 章の 3)
 
-const makeExpressionListJson = (target: ExpressionListTypeClass): BaseExpressionJson[] => {
-    return target.getFields().value.map((v) => makeExpressionJsonConvert(v));
-};
+export type { ClassLiteralJson, IdentifierJson, LiteralJson, SuperJson, ThisJson, UnsupportedJson };
 
+/** ラベルのない式 (ExpressionContext そのもの)。ANTLR の回復でしかできず、ふだんは作られない */
+const makeUnsupportedExpressionJson = (target: ExpressionTypeClass): UnsupportedJson =>
+    makeNodeJson<UnsupportedJson>('unsupported', target, { nodeType: 'expression' });
+
+export const makeExpressionListJson = (target: ExpressionListTypeClass): BaseExpressionJson[] =>
+    target.getFields().value.map((v) => makeExpressionJsonConvert(v));
+
+/** a.b / a.b(...) / a?.b */
 export type DotMethodCallJson = JsonType<'memberAccess'> & {
     type: 'object' | 'method';
     object: BaseExpressionJson;
@@ -80,242 +98,197 @@ const makeDotMethodCallJson = (target: DotExpressionTypeClass): DotMethodCallJso
     }
 };
 
-export type MethodCallJson = JsonType<'memberAccess'> & {
-    type: 'method';
-    member: 'this' | 'super' | string;
-    memberArg?: BaseExpressionJson[];
-    ref?: 'this' | 'super';
+/** 名前の呼び出し f(...)、this(...) / super(...) (コンストラクターの呼び出し) */
+export type CallJson = JsonType<'call'> & {
+    callee: IdentifierJson | ThisJson | SuperJson;
+    arg: BaseExpressionJson[];
 };
 
-const makeMethodCallJson = (target: MethodCallExpressionTypeClass): MethodCallJson => {
-    const methodCall = target.getFields().value.getFields();
-    const memberArg = methodCall.param ? makeExpressionListJson(methodCall.param) : null;
-
-    // this(...) / super(...) は member に 'this' / 'super' を入れる (v1 と同じく ref は持たない。
-    // v1 でも、メソッド名がある呼び出しの ref はいつも null だったので出なかった)
-    const member =
-        methodCall.kind === 'method' ? methodCall.value.getFields().value : methodCall.kind;
-
-    return makeNodeJson<MethodCallJson>('memberAccess', target, {
-        type: 'method',
-        member: member,
-        ...(memberArg ? { memberArg: memberArg } : {}),
+const makeCallJson = (target: MethodCallExpressionTypeClass): CallJson => {
+    const call = target.getFields().value;
+    const fields = call.getFields();
+    const callee: CallJson['callee'] =
+        fields.kind === 'method'
+            ? makeNodeJson<IdentifierJson>('identifier', fields.value, {
+                  name: fields.value.getFields().value,
+              })
+            : makeNodeJson<ThisJson | SuperJson>(fields.kind, call);
+    return makeNodeJson<CallJson>('call', target, {
+        callee,
+        arg: fields.param ? makeExpressionListJson(fields.param) : [],
     });
 };
 
-export type InstanceNameJson = {
-    collection: string[];
-    generic?: TypeJson[];
-};
-
-export const makeInstanceNameJson = (target: CreatedNameTypeClass): InstanceNameJson => {
-    const pairs = target.getFields().value;
-    const collection = pairs.map((pair) => pair.getFields().left.getFields().value);
-
-    // 型引数は最後の名前のものだけを見る
-    const generic = pairs.at(-1)?.getFields().right ?? null;
-    const genericTypes = generic ? generic.getFields().value : [];
-
-    return {
-        collection: collection,
-        ...(genericTypes.length > 0
-            ? {
-                  generic: genericTypes.map((v) => {
-                      return makeTypeJson(v);
-                  }),
-              }
-            : {}),
-    };
-};
-
-export type ArrayInitInstanceJson = {
-    initType: 'array';
-    init?: BaseExpressionJson[];
+/**
+ * new。作る型は型の JSON (newType)。初期化は種類ごと:
+ * - new X(...) は arg、new List<X>{ ... } / new X[]{ ... } は elements、new Map<K, V>{ k => v } は entries、
+ *   new X[n] は size。new X[] (初期化なし) はどれも持たない。{} (空) は elements か entries の空の配列
+ */
+export type NewJson = JsonType<'new'> & {
+    newType: TypeJson;
+    arg?: BaseExpressionJson[];
+    elements?: BaseExpressionJson[];
+    entries?: NewEntryJson[];
     size?: BaseExpressionJson;
 };
 
-export type ClassInitInstanceJson = {
-    initType: 'class';
-    arg?: BaseExpressionJson[];
+/** new Map の初期化の 1 組 (kind を持たない入れ物) */
+export type NewEntryJson = { key: BaseExpressionJson; value: BaseExpressionJson };
+
+/** new の型の名前 (List<Account> / Outer.Inner / X[]) */
+const makeNewTypeJson = (target: CreatedNameTypeClass, array: boolean): TypeJson => {
+    const pairs = target.getFields().value;
+    const names = pairs.map((pair) => pair.getFields().left.getFields().value);
+    // 型引数は最後の名前のものだけを見る
+    const generic: readonly TypeRefTypeClass[] | null =
+        pairs.at(-1)?.getFields().right?.getFields().value ?? null;
+    const content: TypeContentJson = makeTypeContentJsonOfNames(names, generic);
+    return makeNodeJson<TypeJson>(
+        'type',
+        target,
+        array ? { type: 'array', elementType: content, dimension: 1 } : content,
+    );
 };
 
-export type MapInitInstanceJson = {
-    initType: 'map';
-    init?: {
-        key: BaseExpressionJson;
-        value: BaseExpressionJson;
-    }[];
-};
-
-export type NoInitInstanceJson = {
-    initType: 'no';
-    value: string;
-};
-
-export type SetInitInstanceJson = {
-    initType: 'list || set';
-    init?: BaseExpressionJson[];
-};
-
-export type InitInstanceJson =
-    | ArrayInitInstanceJson
-    | ClassInitInstanceJson
-    | MapInitInstanceJson
-    | NoInitInstanceJson
-    | SetInitInstanceJson;
-
-export const makeInitInstanceJson = (target: CreatorRestTypeClass): InitInstanceJson => {
-    switch (target.kind) {
+const makeNewJson = (target: NewExpressionTypeClass): NewJson => {
+    const creator = target.getFields().value.getFields();
+    const rest = creator.content;
+    const newType = makeNewTypeJson(creator.value, rest.kind === 'arrayCreatorRest');
+    const isMap = newType.type === 'map';
+    switch (rest.kind) {
         case 'arrayCreatorRest': {
-            const rest = target.getFields();
-            // `new X[n]` は size、`new X[]{ ... }` は init。`new X[]` (初期化子なし) はどちらも持たない
-            if (rest.kind === 'sized') {
-                return { initType: 'array', size: makeExpressionJsonConvert(rest.size) };
+            const array = rest.getFields();
+            if (array.kind === 'sized') {
+                return makeNodeJson<NewJson>('new', target, {
+                    newType,
+                    size: makeExpressionJsonConvert(array.size),
+                });
             }
-            return {
-                initType: 'array',
-                ...(rest.initializer
+            return makeNodeJson<NewJson>('new', target, {
+                newType,
+                ...(array.initializer
                     ? {
-                          init: rest.initializer
+                          elements: array.initializer
                               .getFields()
                               .element.map((v) => makeExpressionJsonConvert(v)),
                       }
                     : {}),
-            };
+            });
         }
         case 'classCreatorRest': {
-            const elements = target.getFields().value.getFields().elements;
-            if (!elements) {
-                return { initType: 'class' };
-            }
-            return { initType: 'class', arg: makeExpressionListJson(elements) };
+            const elements = rest.getFields().value.getFields().elements;
+            return makeNodeJson<NewJson>('new', target, {
+                newType,
+                arg: elements ? makeExpressionListJson(elements) : [],
+            });
         }
-        case 'mapCreatorRest': {
-            const pairs = target.getFields().value;
-            return {
-                initType: 'map',
-                ...(pairs.length > 0
-                    ? {
-                          init: pairs.map((v) => {
-                              const { left, right } = v.getFields();
-                              return {
-                                  key: makeExpressionJsonConvert(left),
-                                  value: makeExpressionJsonConvert(right),
-                              };
-                          }),
-                      }
-                    : {}),
-            };
-        }
+        case 'mapCreatorRest':
+            return makeNodeJson<NewJson>('new', target, {
+                newType,
+                entries: rest.getFields().value.map((v) => {
+                    const { left, right } = v.getFields();
+                    return {
+                        key: makeExpressionJsonConvert(left),
+                        value: makeExpressionJsonConvert(right),
+                    };
+                }),
+            });
         case 'noRest':
-            return {
-                initType: 'no',
-                value: target.getFields().value,
-            };
+            return makeNodeJson<NewJson>(
+                'new',
+                target,
+                isMap ? { newType, entries: [] } : { newType, elements: [] },
+            );
         case 'setCreatorRest':
-            // v1 と同じく、要素が 0 個でも init (空の配列) を持つ
-            return {
-                initType: 'list || set',
-                init: target.getFields().value.map((v) => makeExpressionJsonConvert(v)),
-            };
+            return makeNodeJson<NewJson>('new', target, {
+                newType,
+                elements: rest.getFields().value.map((v) => makeExpressionJsonConvert(v)),
+            });
     }
 };
 
-/**
- * kind を持たない式の位置。kind を持たないので JSON ノード (Diff の対象のノード) ではないが、
- * findings の位置 (ハードコードされた ID など) を式の単位で指せるように持つ。Diff の値の比較では無視する
- */
-export type ExpressionValueKeys = { sourceKeys: ConvertKeys };
-
-const valueKeysOf = (target: BasedExpressionTypeClass): ExpressionValueKeys => ({
-    sourceKeys: keysOf(target),
-});
-
-export type NewInstanceJson = InstanceNameJson & InitInstanceJson & ExpressionValueKeys;
-
-const makeNewInstanceJson = (target: NewExpressionTypeClass): NewInstanceJson => {
-    const creator = target.getFields().value.getFields();
-    return {
-        ...valueKeysOf(target),
-        ...makeInstanceNameJson(creator.value),
-        ...makeInitInstanceJson(creator.content),
-    };
-};
-
-export type CastJson = ExpressionValueKeys & {
-    target: BaseExpressionJson;
+/** (Type) expression */
+export type CastJson = JsonType<'cast'> & {
+    expression: BaseExpressionJson;
     convertType: TypeJson;
 };
 
 const makeCastJson = (target: CastExpressionTypeClass): CastJson => {
     const { value, valueType } = target.getFields();
-    const typeJson = makeTypeJson(valueType);
-    return {
-        ...valueKeysOf(target),
-        target: makeExpressionJsonConvert(value),
-        convertType: typeJson,
-    };
+    return makeNodeJson<CastJson>('cast', target, {
+        expression: makeExpressionJsonConvert(value),
+        convertType: makeTypeJson(valueType),
+    });
 };
 
-export type SubJson = ExpressionValueKeys & {
-    value: BaseExpressionJson;
-    parentheses: '()';
+/** ( expression ) */
+export type ParenthesizedJson = JsonType<'parenthesized'> & {
+    expression: BaseExpressionJson;
 };
 
-const makeSubJson = (target: SubExpressionTypeClass): SubJson => {
-    return {
-        ...valueKeysOf(target),
-        value: makeExpressionJsonConvert(target.getFields().value),
-        parentheses: '()',
-    };
-};
+const makeParenthesizedJson = (target: SubExpressionTypeClass): ParenthesizedJson =>
+    makeNodeJson<ParenthesizedJson>('parenthesized', target, {
+        expression: makeExpressionJsonConvert(target.getFields().value),
+    });
 
-export type ArrayJson = ExpressionValueKeys & {
-    variant: BaseExpressionJson;
+/** object[index] */
+export type IndexJson = JsonType<'index'> & {
+    object: BaseExpressionJson;
     index: BaseExpressionJson;
 };
 
-const makeArrayJson = (target: ArrayExpressionTypeClass): ArrayJson => {
+const makeIndexJson = (target: ArrayExpressionTypeClass): IndexJson => {
     const { value, index } = target.getFields();
-    return {
-        ...valueKeysOf(target),
-        variant: makeExpressionJsonConvert(value),
+    return makeNodeJson<IndexJson>('index', target, {
+        object: makeExpressionJsonConvert(value),
         index: makeExpressionJsonConvert(index),
-    };
+    });
 };
 
-export type FormulaJson = ExpressionValueKeys & {
+/** 論理の演算子 (&& / || / ??) */
+export type LogicalOperator = '&&' | '||' | '??';
+
+/** 代入の演算子 */
+export type AssignmentOperator =
+    '=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '>>>=' | '<<=';
+
+/** 二項の演算子 (論理・代入を除く) */
+export type BinaryOperator =
+    | '*'
+    | '/'
+    | '+'
+    | '-'
+    | '&'
+    | '^'
+    | '|'
+    | '<<'
+    | '>>'
+    | '>>>'
+    | '<'
+    | '>'
+    | '<='
+    | '>='
+    | '==='
+    | '!=='
+    | '=='
+    | '!='
+    | '<>';
+
+export type BinaryJson = JsonType<'binary'> & {
     left: BaseExpressionJson;
-    operator:
-        | '*'
-        | '/'
-        | '+'
-        | '-'
-        | '='
-        | '+='
-        | '-='
-        | '*='
-        | '/='
-        | '&='
-        | '|='
-        | '^='
-        | '>>='
-        | '>>>='
-        | '<<='
-        | '&'
-        | '^'
-        | '|'
-        | '??'
-        | '==='
-        | '!=='
-        | '=='
-        | '!='
-        | '<>'
-        | '&&'
-        | '||'
-        | '~'
-        | '!'
-        | string;
+    operator: BinaryOperator;
+    right: BaseExpressionJson;
+};
+
+export type LogicalJson = JsonType<'logical'> & {
+    left: BaseExpressionJson;
+    operator: LogicalOperator;
+    right: BaseExpressionJson;
+};
+
+export type AssignmentJson = JsonType<'assignment'> & {
+    left: BaseExpressionJson;
+    operator: AssignmentOperator;
     right: BaseExpressionJson;
 };
 
@@ -334,39 +307,55 @@ type FormulaExpressionTypeClass =
     | LogAndExpressionTypeClass
     | LogOrExpressionTypeClass;
 
-const makeFormulaJson = (target: FormulaExpressionTypeClass): FormulaJson => {
+const LOGICAL_OPERATORS = new Set<string>(['&&', '||', '??']);
+
+const makeOperatorJson = (
+    target: FormulaExpressionTypeClass,
+): BinaryJson | LogicalJson | AssignmentJson => {
     const { left, operator, right } = target.getFields();
-    return {
-        ...valueKeysOf(target),
+    const properties = {
         left: makeExpressionJsonConvert(left),
-        operator: operator,
         right: makeExpressionJsonConvert(right),
     };
+    // 比べる演算子の空白 (> > など) は parser の字句のままなので、空白を除いて持つ
+    const op = String(operator).replace(/\s+/g, '');
+    if (target.kind === 'assignExpression') {
+        return makeNodeJson<AssignmentJson>('assignment', target, {
+            ...properties,
+            operator: op as AssignmentOperator,
+        });
+    }
+    if (LOGICAL_OPERATORS.has(op)) {
+        return makeNodeJson<LogicalJson>('logical', target, {
+            ...properties,
+            operator: op as LogicalOperator,
+        });
+    }
+    return makeNodeJson<BinaryJson>('binary', target, {
+        ...properties,
+        operator: op as BinaryOperator,
+    });
 };
 
-export type InstanceofJson = ExpressionValueKeys & {
-    target: BaseExpressionJson;
-    operator: 'instanceof';
-    type: TypeJson;
+/** expression instanceof Type */
+export type InstanceofJson = JsonType<'instanceof'> & {
+    expression: BaseExpressionJson;
+    checkType: TypeJson;
 };
 
 const makeInstanceofJson = (target: InstanceOfExpressionTypeClass): InstanceofJson => {
-    const { left, operator, right } = target.getFields();
-    const typeJson = makeTypeJson(right);
-
-    return {
-        ...valueKeysOf(target),
-        target: makeExpressionJsonConvert(left),
-        operator: operator,
-        type: typeJson,
-    };
+    const { left, right } = target.getFields();
+    return makeNodeJson<InstanceofJson>('instanceof', target, {
+        expression: makeExpressionJsonConvert(left),
+        checkType: makeTypeJson(right),
+    });
 };
 
-export type UnaryJson = ExpressionValueKeys & {
-    variant: BaseExpressionJson;
-} & {
+/** 単項の式 (!x / -x / ++x / x++ など) */
+export type UnaryJson = JsonType<'unary'> & {
     operator: '~' | '!' | '++' | '--' | '+' | '-';
     operatorLocation: 'front' | 'back';
+    argument: BaseExpressionJson;
 };
 
 type UnaryExpressionTypeClass =
@@ -374,66 +363,113 @@ type UnaryExpressionTypeClass =
 
 const makeUnaryJson = (target: UnaryExpressionTypeClass): UnaryJson => {
     const { value, operator } = target.getFields();
-    return {
-        ...valueKeysOf(target),
-        variant: makeExpressionJsonConvert(value),
+    return makeNodeJson<UnaryJson>('unary', target, {
         operator: operator,
         operatorLocation: target.kind === 'postOpExpression' ? 'back' : 'front',
-    };
+        argument: makeExpressionJsonConvert(value),
+    });
 };
 
-export type TernaryJson = ExpressionValueKeys & {
+/** condition ? trueValue : falseValue */
+export type ConditionalJson = JsonType<'conditional'> & {
     condition: BaseExpressionJson;
     trueValue: BaseExpressionJson;
     falseValue: BaseExpressionJson;
 };
 
-const makeTernaryJson = (target: CondExpressionTypeClass): TernaryJson => {
+const makeConditionalJson = (target: CondExpressionTypeClass): ConditionalJson => {
     const { condition, trueValue, falseValue } = target.getFields();
-    return {
-        ...valueKeysOf(target),
+    return makeNodeJson<ConditionalJson>('conditional', target, {
         condition: makeExpressionJsonConvert(condition),
         trueValue: makeExpressionJsonConvert(trueValue),
         falseValue: makeExpressionJsonConvert(falseValue),
-    };
+    });
 };
 
+/** 式 (どれも kind と sourceKeys を持つ) */
 export type BaseExpressionJson =
-    | string
-    | PrimaryJson
+    | IdentifierJson
+    | ThisJson
+    | SuperJson
+    | LiteralJson
+    | ClassLiteralJson
+    | UnsupportedJson
+    | SoqlJson
+    | SoslJson
     | DotMethodCallJson
-    | MethodCallJson
-    | NewInstanceJson
+    | CallJson
+    | NewJson
     | CastJson
-    | SubJson
-    | ArrayJson
-    | FormulaJson
+    | ParenthesizedJson
+    | IndexJson
+    | BinaryJson
+    | LogicalJson
+    | AssignmentJson
     | InstanceofJson
     | UnaryJson
-    | TernaryJson;
+    | ConditionalJson;
+
+/** 式の kind */
+export type ExpressionKind = BaseExpressionJson['kind'];
+
+/** 式の kind の一覧 (文の kind と分ける。docs/apex-json-review.md 2.5) */
+export const EXPRESSION_KINDS: ReadonlySet<string> = new Set<ExpressionKind>([
+    'identifier',
+    'this',
+    'super',
+    'string',
+    'integer',
+    'long',
+    'decimal',
+    'boolean',
+    'null',
+    'classLiteral',
+    'unsupported',
+    'soql',
+    'sosl',
+    'memberAccess',
+    'call',
+    'new',
+    'cast',
+    'parenthesized',
+    'index',
+    'binary',
+    'logical',
+    'assignment',
+    'instanceof',
+    'unary',
+    'conditional',
+]);
+
+/** 値が式の JSON か */
+export const isExpressionJson = (value: unknown): value is BaseExpressionJson =>
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    EXPRESSION_KINDS.has(String((value as { kind?: unknown }).kind));
 
 export const makeExpressionJsonConvert = (target: BasedExpressionTypeClass): BaseExpressionJson => {
     switch (target.kind) {
         case 'expression':
-            return makeExpressionJson(target);
+            return makeUnsupportedExpressionJson(target);
         case 'primaryExpression':
             return makePrimaryJson(target.getFields().value);
         case 'dotExpression':
             return makeDotMethodCallJson(target);
         case 'methodCallExpression':
-            return makeMethodCallJson(target);
+            return makeCallJson(target);
         case 'newExpression':
-            return makeNewInstanceJson(target);
+            return makeNewJson(target);
         case 'castExpression':
             return makeCastJson(target);
         case 'subExpression':
-            return makeSubJson(target);
+            return makeParenthesizedJson(target);
         case 'arrayExpression':
-            return makeArrayJson(target);
+            return makeIndexJson(target);
         case 'instanceOfExpression':
             return makeInstanceofJson(target);
         case 'condExpression':
-            return makeTernaryJson(target);
+            return makeConditionalJson(target);
         case 'preOpExpression':
         case 'postOpExpression':
         case 'negExpression':
@@ -450,6 +486,6 @@ export const makeExpressionJsonConvert = (target: BasedExpressionTypeClass): Bas
         case 'equalityExpression':
         case 'logAndExpression':
         case 'logOrExpression':
-            return makeFormulaJson(target);
+            return makeOperatorJson(target);
     }
 };

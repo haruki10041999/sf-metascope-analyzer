@@ -86,17 +86,6 @@ export class LwcJsonContext {
     }
 }
 
-/** 部分木のすべてのノード (前順で、自身を含む)。enter が false を返したノードの中には入らない */
-export const walkNodes = (root: LwcNode, enter: (node: LwcNode) => boolean | void): void => {
-    const walk = (node: LwcNode): void => {
-        if (enter(node) === false) {
-            return;
-        }
-        node.getChildNodes().forEach((child) => walk(child as LwcNode));
-    };
-    walk(root);
-};
-
 /** 式を包むノード (括弧・TS の型アサーション x as T / x! / <T>x / x satisfies T・Flow の型キャスト) */
 const WRAPPER_TYPES = new Set([
     'parenthesizedExpression',

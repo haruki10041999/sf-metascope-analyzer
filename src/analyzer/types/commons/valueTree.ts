@@ -22,6 +22,11 @@ export type ValueTreeOptions = {
     skip?: ReadonlySet<string> | ((name: string) => boolean);
     /** 値の要素の名前 (既定は VALUE_TYPES。Flow は apexValue なども足す) */
     valueTypes?: ReadonlySet<string>;
+    /**
+     * 要素を型の JSON にする (条件の行・数式など。段階 M7)。undefined を返した要素は値の木のまま。
+     * 返した JSON (kind と sourceKeys を持つノードなど) は値の木の中にそのまま置く
+     */
+    convert?: (element: XmlElement) => unknown;
 };
 
 const isSkipped = (options: ValueTreeOptions, name: string): boolean =>
@@ -47,6 +52,8 @@ const attributesOf = (element: XmlElement) =>
 
 /** 要素 1 つを値にする */
 export const toValueTree = (element: XmlElement, options: ValueTreeOptions = {}): ValueTree => {
+    const converted = options.convert?.(element);
+    if (converted !== undefined) return converted as ValueTree;
     const attributes = attributesOf(element);
     if (element.children.length === 0) {
         if (!attributes.length) return scalar(element.text);

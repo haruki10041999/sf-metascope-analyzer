@@ -1,4 +1,4 @@
-import { JsonType, SingleConditionJson, WhereJson } from '../../../../types';
+import { LogicalConditionJson, SingleConditionJson, WhereJson } from '../../../../types';
 
 import {
     ValueDiff,
@@ -9,19 +9,9 @@ import {
 import { TypedListDiff } from '../../../commons/diff/list';
 import { makeUnorderedValueListDiff } from './commons';
 
-type WhereSingleJson =
-    | (JsonType<'singleCondition'> & {
-          field: string;
-          operator: SingleConditionJson['operator'];
-          value: SingleConditionJson['value'];
-      })
-    | SingleConditionJson;
-export type LogicalCondition = {
-    condition: (WhereSingleJson | LogicalCondition)[];
-    operator?: 'AND' | 'OR' | 'NOT';
-};
+export type LogicalCondition = LogicalConditionJson;
 
-type ConditionItem = WhereSingleJson | LogicalCondition;
+type ConditionItem = SingleConditionJson | LogicalConditionJson;
 
 export type LogicalConditionJsonDiff =
     | ValueDiff<LogicalCondition>

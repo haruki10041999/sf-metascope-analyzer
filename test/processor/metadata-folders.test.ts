@@ -5,6 +5,9 @@ import path from 'node:path';
 import { after, before, describe, it } from 'node:test';
 
 import { ApexParser } from '../../src/analyzer/parser/Apex/parser';
+import { buildDependencyGraph, getDependents } from '../../src/analyzer/processor/dependency/graph';
+import { getUnitDependencies } from '../../src/analyzer/processor/dependency/units';
+import { analyzeFlowRefs } from '../../src/analyzer/processor/Metadata/flowRefs';
 import { MetadataParser } from '../../src/analyzer/parser/Metadata/parser';
 import {
     CustomLabelsParser,
@@ -22,7 +25,6 @@ import {
 } from '../../src/analyzer/parser/Metadata';
 import {
     analyzeAutomation,
-    analyzeCustomLabels,
     apexContextOf,
     getApexTriggers,
     makeFlexiPageUnitDiffs,
@@ -279,18 +281,30 @@ describe('カスタム表示ラベル', () => {
                 ['Invoice_Overdue', 'apex', 'class_Greeter'],
             ],
         );
-        const analysis = analyzeCustomLabels(
-            (await CustomLabelsParser.parseAll(root('after'))) as never,
-            { usages },
+        // ないラベル・使われていないラベルは依存関係のグラフで見る (以前の analyzeCustomLabels。
+        // docs/json-redesign-plan.md 6 章の 9)
+        const graph = buildDependencyGraph(
+            [
+                await ApexParser.parseApexUnit(file),
+                ...(await CustomLabelsParser.parseAll(root('after'))),
+            ].map((result) => {
+                const type = result.dataType === 'customLabels' ? 'customLabels' : 'apexClass';
+                return {
+                    type,
+                    id: result.result.id,
+                    dependencies: getUnitDependencies(type, result),
+                };
+            }),
         );
         assert.deepEqual(
-            analysis.findings.map((f) => `${f.code}:${f.target}`),
-            [
-                'UNKNOWN_CUSTOM_LABEL:Greeting',
-                'UNUSED_CUSTOM_LABEL:AccountListTitle',
-                'UNUSED_CUSTOM_LABEL:Invoice_Approved',
-            ],
+            graph.findings.map((f) => `${f.code}:${f.target}`),
+            ['UNKNOWN_CUSTOM_LABEL:customLabel:Greeting'],
         );
+        const unused = [...graph.nodes.values()]
+            .filter((node) => node.type === 'customLabel' && node.origin === 'repository')
+            .filter((node) => getDependents(graph, node.id).size === 0)
+            .map((node) => node.name);
+        assert.deepEqual(unused, ['AccountListTitle', 'Invoice_Approved']);
     });
 });
 
@@ -312,13 +326,15 @@ describe('Flow', () => {
                 ['Set_Status', 'rules[Large].connector'],
             ],
         );
-        const update = flow.elements!.find((e) => e.name === 'Set_Status')!;
+        // 使っているものは JSON に持たず、解析で出す (段階 M3)
+        assert.ok(!json.includes('"references"'));
+        const refsOf = (element: string) =>
+            analyzeFlowRefs(flow)
+                .filter((r) => r.element === element)
+                .map((r) => [r.refType, r.target]);
         // レコードの更新の対象は $Record (実行時に Flow が作るもの)
-        assert.deepEqual(update.references, [{ refType: 'global', value: '$Record' }]);
-        const decision = flow.elements!.find((e) => e.name === 'Check_Amount')!;
-        assert.deepEqual(decision.references, [
-            { refType: 'field', value: 'Invoice__c.Amount__c' },
-        ]);
+        assert.deepEqual(refsOf('Set_Status'), [['globalVariable', '$Record']]);
+        assert.deepEqual(refsOf('Check_Amount'), [['field', 'Invoice__c.Amount__c']]);
     });
 
     it('位置だけ変えた要素は unchanged、つなぎ替えは edges の差分に出る', async () => {

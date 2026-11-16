@@ -7,7 +7,7 @@
     "base": {
       "kind": "flow",
       "sourceKeys": {
-        "objectKey": "flow_fc1e0abf6667d623",
+        "objectKey": "flow_92ab63e9aeb2e6a1",
         "sourceKey": "flow_d4644307fbdfb0f0"
       },
       "name": "Account_Wizard",
@@ -26,7 +26,7 @@
         {
           "kind": "flowScreen",
           "sourceKeys": {
-            "objectKey": "flowScreen_86f29b8538383a41",
+            "objectKey": "flowScreen_d3f2973c89da0b5a",
             "sourceKey": "flowScreen_94c37acfb163af1a"
           },
           "name": "Welcome",
@@ -42,19 +42,47 @@
             {
               "kind": "flowScreenField",
               "sourceKeys": {
-                "objectKey": "flowScreenField_e902bc49f286b771",
+                "objectKey": "flowScreenField_31111bdda40f6265",
                 "sourceKey": "flowScreenField_f776e41dcfd58430"
               },
               "name": "Intro",
               "fieldType": "DisplayText",
               "properties": {
-                "fieldText": "<p>{!$Label.AccountListTitle}</p>"
+                "fieldText": {
+                  "kind": "fxTemplate",
+                  "sourceKeys": {
+                    "objectKey": "fxTemplate_82b8e072a6d82ea0",
+                    "sourceKey": "fxTemplate_d30e25c163bd1056"
+                  },
+                  "parts": [
+                    "<p>",
+                    {
+                      "kind": "fxMerge",
+                      "sourceKeys": {
+                        "objectKey": "fxMerge_0fcdf4beba792b53",
+                        "sourceKey": "fxMerge_c88a0f1cfca36618"
+                      },
+                      "expression": {
+                        "kind": "fxName",
+                        "sourceKeys": {
+                          "objectKey": "fxName_7bc7140facb20a05",
+                          "sourceKey": "fxName_a391097869a004b6"
+                        },
+                        "path": [
+                          "$Label",
+                          "AccountListTitle"
+                        ]
+                      }
+                    },
+                    "</p>"
+                  ]
+                }
               }
             },
             {
               "kind": "flowScreenField",
               "sourceKeys": {
-                "objectKey": "flowScreenField_c15902d9b4a349df",
+                "objectKey": "flowScreenField_a414f3e017494082",
                 "sourceKey": "flowScreenField_e4594ac05c78f983"
               },
               "name": "Accounts",
@@ -63,6 +91,11 @@
               "properties": {
                 "inputParameters": [
                   {
+                    "kind": "flowParameter",
+                    "sourceKeys": {
+                      "objectKey": "flowParameter_64b31abdc07109ce",
+                      "sourceKey": "flowParameter_e8cf8f5378698a5d"
+                    },
                     "name": "title",
                     "value": {
                       "type": "stringValue",
@@ -77,16 +110,6 @@
                 ]
               }
             }
-          ],
-          "references": [
-            {
-              "refType": "lwc",
-              "value": "accountList"
-            },
-            {
-              "refType": "label",
-              "value": "AccountListTitle"
-            }
           ]
         }
       ],
@@ -100,7 +123,67 @@
     },
     "sourceObject": [
       {
-        "objectKey": "flowScreenField_e902bc49f286b771",
+        "objectKey": "fxName_7bc7140facb20a05",
+        "context": "$Label.AccountListTitle",
+        "source": [
+          {
+            "sourceKey": "fxName_a391097869a004b6",
+            "filePath": "flows/Account_Wizard.flow-meta.xml",
+            "start": {
+              "offset": 902,
+              "line": 28,
+              "column": 34
+            },
+            "end": {
+              "offset": 925,
+              "line": 28,
+              "column": 57
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxMerge_0fcdf4beba792b53",
+        "context": "{!$Label.AccountListTitle}",
+        "source": [
+          {
+            "sourceKey": "fxMerge_c88a0f1cfca36618",
+            "filePath": "flows/Account_Wizard.flow-meta.xml",
+            "start": {
+              "offset": 900,
+              "line": 28,
+              "column": 32
+            },
+            "end": {
+              "offset": 926,
+              "line": 28,
+              "column": 58
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxTemplate_82b8e072a6d82ea0",
+        "context": "&lt;p&gt;{!$Label.AccountListTitle}&lt;/p&gt;",
+        "source": [
+          {
+            "sourceKey": "fxTemplate_d30e25c163bd1056",
+            "filePath": "flows/Account_Wizard.flow-meta.xml",
+            "start": {
+              "offset": 891,
+              "line": 28,
+              "column": 23
+            },
+            "end": {
+              "offset": 936,
+              "line": 28,
+              "column": 68
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flowScreenField_31111bdda40f6265",
         "context": "<fields>\n            <name>Intro</name>\n            <fieldText>&lt;p&gt;{!$Label.AccountListTitle}&lt;/p&gt;</fieldText>\n            <fieldType>DisplayText</fieldType>\n        </fields>",
         "source": [
           {
@@ -120,7 +203,27 @@
         ]
       },
       {
-        "objectKey": "flowScreenField_c15902d9b4a349df",
+        "objectKey": "flowParameter_64b31abdc07109ce",
+        "context": "<inputParameters>\n                <name>title</name>\n                <value>\n                    <stringValue>Accounts</stringValue>\n                </value>\n            </inputParameters>",
+        "source": [
+          {
+            "sourceKey": "flowParameter_e8cf8f5378698a5d",
+            "filePath": "flows/Account_Wizard.flow-meta.xml",
+            "start": {
+              "offset": 1187,
+              "line": 35,
+              "column": 12
+            },
+            "end": {
+              "offset": 1375,
+              "line": 40,
+              "column": 30
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flowScreenField_a414f3e017494082",
         "context": "<fields>\n            <name>Accounts</name>\n            <extensionName>c:accountList</extensionName>\n            <fieldType>ComponentInstance</fieldType>\n            <inputParameters>\n                <name>title</name>\n                <value>\n                    <stringValue>Accounts</stringValue>\n                </value>\n            </inputParameters>\n            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>\n            <isRequired>true</isRequired>\n            <storeOutputAutomatically>true</storeOutputAutomatically>\n        </fields>",
         "source": [
           {
@@ -140,7 +243,7 @@
         ]
       },
       {
-        "objectKey": "flowScreen_86f29b8538383a41",
+        "objectKey": "flowScreen_d3f2973c89da0b5a",
         "context": "<screens>\n        <name>Welcome</name>\n        <label>Welcome</label>\n        <locationX>176</locationX>\n        <locationY>134</locationY>\n        <allowBack>true</allowBack>\n        <allowFinish>true</allowFinish>\n        <allowPause>false</allowPause>\n        <fields>\n            <name>Intro</name>\n            <fieldText>&lt;p&gt;{!$Label.AccountListTitle}&lt;/p&gt;</fieldText>\n            <fieldType>DisplayText</fieldType>\n        </fields>\n        <fields>\n            <name>Accounts</name>\n            <extensionName>c:accountList</extensionName>\n            <fieldType>ComponentInstance</fieldType>\n            <inputParameters>\n                <name>title</name>\n                <value>\n                    <stringValue>Accounts</stringValue>\n                </value>\n            </inputParameters>\n            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>\n            <isRequired>true</isRequired>\n            <storeOutputAutomatically>true</storeOutputAutomatically>\n        </fields>\n        <showFooter>true</showFooter>\n        <showHeader>true</showHeader>\n    </screens>",
         "source": [
           {
@@ -180,7 +283,7 @@
         ]
       },
       {
-        "objectKey": "flow_fc1e0abf6667d623",
+        "objectKey": "flow_92ab63e9aeb2e6a1",
         "context": "<Flow xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <apiVersion>62.0</apiVersion>\n    <label>Account Wizard</label>\n    <processMetadataValues>\n        <name>BuilderType</name>\n        <value>\n            <stringValue>LightningFlowBuilder</stringValue>\n        </value>\n    </processMetadataValues>\n    <processMetadataValues>\n        <name>CanvasMode</name>\n        <value>\n            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>\n        </value>\n    </processMetadataValues>\n    <processType>Flow</processType>\n    <screens>\n        <name>Welcome</name>\n        <label>Welcome</label>\n        <locationX>176</locationX>\n        <locationY>134</locationY>\n        <allowBack>true</allowBack>\n        <allowFinish>true</allowFinish>\n        <allowPause>false</allowPause>\n        <fields>\n            <name>Intro</name>\n            <fieldText>&lt;p&gt;{!$Label.AccountListTitle}&lt;/p&gt;</fieldText>\n            <fieldType>DisplayText</fieldType>\n        </fields>\n        <fields>\n            <name>Accounts</name>\n            <extensionName>c:accountList</extensionName>\n            <fieldType>ComponentInstance</fieldType>\n            <inputParameters>\n                <name>title</name>\n                <value>\n                    <stringValue>Accounts</stringValue>\n                </value>\n            </inputParameters>\n            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>\n            <isRequired>true</isRequired>\n            <storeOutputAutomatically>true</storeOutputAutomatically>\n        </fields>\n        <showFooter>true</showFooter>\n        <showHeader>true</showHeader>\n    </screens>\n    <start>\n        <locationX>50</locationX>\n        <locationY>0</locationY>\n        <connector>\n            <targetReference>Welcome</targetReference>\n        </connector>\n    </start>\n    <status>Draft</status>\n</Flow>",
         "source": [
           {

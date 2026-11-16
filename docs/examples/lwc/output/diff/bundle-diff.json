@@ -644,11 +644,9 @@
                                 "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
                                 "sourceKey": "tSStringKeyword_96c99393203ea04e"
                               },
-                              "text": "string",
                               "type": "primitive",
                               "primitiveType": "string"
                             },
-                            "references": [],
                             "optional": false,
                             "modifier": {
                               "decorator": [
@@ -708,7 +706,6 @@
                               },
                               "status": "unchanged",
                               "value": {
-                                "text": "string",
                                 "type": "primitive",
                                 "primitiveType": "string"
                               }
@@ -736,16 +733,6 @@
                                 "value": "Accounts"
                               }
                             },
-                            "references": [
-                              {
-                                "status": "removed",
-                                "index": 0,
-                                "value": {
-                                  "local": "TITLE_LABEL",
-                                  "source": "@salesforce/label/c.AccountListTitle"
-                                }
-                              }
-                            ],
                             "optional": {
                               "status": "unchanged",
                               "value": false
@@ -811,7 +798,6 @@
                               },
                               "status": "unchanged",
                               "value": {
-                                "text": "number",
                                 "type": "primitive",
                                 "primitiveType": "number"
                               }
@@ -836,7 +822,6 @@
                                 "value": 20
                               }
                             },
-                            "references": [],
                             "optional": {
                               "status": "unchanged",
                               "value": true
@@ -890,11 +875,12 @@
                                 "objectKey": "tSArrayType_a0fe78f2e0d47552",
                                 "sourceKey": "tSArrayType_edc88454fb20d102"
                               },
-                              "text": "Row[]",
                               "type": "array",
                               "elementType": {
                                 "type": "custom",
-                                "customType": "Row"
+                                "customType": [
+                                  "Row"
+                                ]
                               }
                             },
                             "init": {
@@ -905,7 +891,6 @@
                               },
                               "elements": []
                             },
-                            "references": [],
                             "optional": false,
                             "modifier": {
                               "access": "private",
@@ -954,9 +939,10 @@
                                 "objectKey": "tSTypeReference_03b0988df6c4c74e",
                                 "sourceKey": "tSTypeReference_cf94f6ee21343c11"
                               },
-                              "text": "ViewMode",
                               "type": "custom",
-                              "customType": "ViewMode"
+                              "customType": [
+                                "ViewMode"
+                              ]
                             },
                             "init": {
                               "kind": "jsString",
@@ -966,7 +952,6 @@
                               },
                               "value": "table"
                             },
-                            "references": [],
                             "optional": false,
                             "modifier": {}
                           },
@@ -1002,9 +987,10 @@
                                 "objectKey": "tSTypeReference_0c387e84f24247b0",
                                 "sourceKey": "tSTypeReference_536e32898edb91b4"
                               },
-                              "text": "SortDirection",
                               "type": "custom",
-                              "customType": "SortDirection"
+                              "customType": [
+                                "SortDirection"
+                              ]
                             },
                             "init": {
                               "kind": "jsString",
@@ -1014,7 +1000,6 @@
                               },
                               "value": "asc"
                             },
-                            "references": [],
                             "optional": false,
                             "modifier": {}
                           },
@@ -1050,11 +1035,9 @@
                                 "objectKey": "tSUnknownKeyword_6ef5499dc7a933b0",
                                 "sourceKey": "tSUnknownKeyword_f8a880adac41334b"
                               },
-                              "text": "unknown",
                               "type": "primitive",
                               "primitiveType": "unknown"
                             },
-                            "references": [],
                             "optional": true,
                             "modifier": {}
                           },
@@ -1090,7 +1073,6 @@
                                 "objectKey": "tSTypeLiteral_3516310d780b8119",
                                 "sourceKey": "tSTypeLiteral_16d8eebaafc31827"
                               },
-                              "text": "{ data?: unknown; error?: unknown }",
                               "type": "object",
                               "members": [
                                 {
@@ -1113,7 +1095,6 @@
                                 }
                               ]
                             },
-                            "references": [],
                             "optional": true,
                             "modifier": {
                               "decorator": [
@@ -1220,8 +1201,7 @@
                                           },
                                           "value": "$recordId"
                                         },
-                                        "reactive": "recordId",
-                                        "references": []
+                                        "reactive": "recordId"
                                       },
                                       {
                                         "kind": "lwcWireConfig",
@@ -1254,25 +1234,7 @@
                                               "name": "INDUSTRY_FIELD"
                                             }
                                           ]
-                                        },
-                                        "references": [
-                                          {
-                                            "local": "NAME_FIELD",
-                                            "source": "@salesforce/schema/Account.Name",
-                                            "schema": {
-                                              "objectApiName": "Account",
-                                              "fieldApiName": "Name"
-                                            }
-                                          },
-                                          {
-                                            "local": "INDUSTRY_FIELD",
-                                            "source": "@salesforce/schema/Account.Industry",
-                                            "schema": {
-                                              "objectApiName": "Account",
-                                              "fieldApiName": "Industry"
-                                            }
-                                          }
-                                        ]
+                                        }
                                       }
                                     ]
                                   }
@@ -1312,7 +1274,6 @@
                                 "objectKey": "tSTypeLiteral_3516310d780b8119",
                                 "sourceKey": "tSTypeLiteral_2595afb3c522170e"
                               },
-                              "text": "{ data?: unknown; error?: unknown }",
                               "type": "object",
                               "members": [
                                 {
@@ -1335,7 +1296,6 @@
                                 }
                               ]
                             },
-                            "references": [],
                             "optional": true,
                             "modifier": {
                               "decorator": [
@@ -1460,8 +1420,7 @@
                                           },
                                           "value": "$recordId"
                                         },
-                                        "reactive": "recordId",
-                                        "references": []
+                                        "reactive": "recordId"
                                       },
                                       {
                                         "kind": "lwcWireConfig",
@@ -1487,7 +1446,6 @@
                                             }
                                           ]
                                         },
-                                        "references": [],
                                         "fieldNames": [
                                           "Account.Name"
                                         ]
@@ -1516,7 +1474,6 @@
                                             }
                                           ]
                                         },
-                                        "references": [],
                                         "fieldNames": [
                                           "Account.Industry"
                                         ]
@@ -1571,7 +1528,6 @@
                               },
                               "status": "unchanged",
                               "value": {
-                                "text": "void",
                                 "type": "primitive",
                                 "primitiveType": "void"
                               }
@@ -1637,7 +1593,6 @@
                                       "objectKey": "tSTypeLiteral_d39a31443410d9aa",
                                       "sourceKey": "tSTypeLiteral_625f4cff6691a18e"
                                     },
-                                    "text": "{ data?: unknown[]; error?: unknown }",
                                     "type": "object",
                                     "members": [
                                       {
@@ -1881,8 +1836,7 @@
                                                   },
                                                   "value": "$recordId"
                                                 },
-                                                "reactive": "recordId",
-                                                "references": []
+                                                "reactive": "recordId"
                                               },
                                               "index": {
                                                 "before": 0,
@@ -1909,8 +1863,7 @@
                                                   },
                                                   "value": "$maxRows"
                                                 },
-                                                "reactive": "maxRows",
-                                                "references": []
+                                                "reactive": "maxRows"
                                               },
                                               "index": {
                                                 "before": 1,
@@ -1935,8 +1888,7 @@
                                                   },
                                                   "value": "$industry"
                                                 },
-                                                "reactive": "industry",
-                                                "references": []
+                                                "reactive": "industry"
                                               }
                                             }
                                           ]
@@ -2097,20 +2049,6 @@
                                   ]
                                 }
                               }
-                            ],
-                            "references": [
-                              {
-                                "status": "unchanged",
-                                "match": "identical",
-                                "index": {
-                                  "before": 0,
-                                  "after": 0
-                                },
-                                "value": {
-                                  "local": "toRows",
-                                  "source": "c/utils"
-                                }
-                              }
                             ]
                           },
                           "index": {
@@ -2215,7 +2153,6 @@
                                         "objectKey": "tSUnionType_d71bdc98b2d1d7b4",
                                         "sourceKey": "tSUnionType_52f3c0974ed0876d"
                                       },
-                                      "text": "string | undefined",
                                       "type": "union",
                                       "types": [
                                         {
@@ -2230,20 +2167,6 @@
                                     }
                                   }
                                 }
-                              ],
-                              "references": [
-                                {
-                                  "local": "getFieldValue",
-                                  "source": "lightning/uiRecordApi"
-                                },
-                                {
-                                  "local": "NAME_FIELD",
-                                  "source": "@salesforce/schema/Account.Name",
-                                  "schema": {
-                                    "objectApiName": "Account",
-                                    "fieldApiName": "Name"
-                                  }
-                                }
                               ]
                             },
                             "variantType": {
@@ -2252,7 +2175,6 @@
                                 "objectKey": "tSUnionType_d71bdc98b2d1d7b4",
                                 "sourceKey": "tSUnionType_dffbf2e319f62a8e"
                               },
-                              "text": "string | undefined",
                               "type": "union",
                               "types": [
                                 {
@@ -2347,8 +2269,7 @@
                                     }
                                   }
                                 }
-                              ],
-                              "references": []
+                              ]
                             },
                             "variantType": {
                               "kind": "lwcType",
@@ -2356,7 +2277,6 @@
                                 "objectKey": "tSBooleanKeyword_b0b50aed2fda45e2",
                                 "sourceKey": "tSBooleanKeyword_71dfbf773bb9d04c"
                               },
-                              "text": "boolean",
                               "type": "primitive",
                               "primitiveType": "boolean"
                             }
@@ -2427,8 +2347,7 @@
                                     }
                                   }
                                 }
-                              ],
-                              "references": []
+                              ]
                             },
                             "variantType": {
                               "kind": "lwcType",
@@ -2436,7 +2355,6 @@
                                 "objectKey": "tSBooleanKeyword_b0b50aed2fda45e2",
                                 "sourceKey": "tSBooleanKeyword_51023bfee401499b"
                               },
-                              "text": "boolean",
                               "type": "primitive",
                               "primitiveType": "boolean"
                             }
@@ -2618,12 +2536,6 @@
                                     ]
                                   }
                                 }
-                              ],
-                              "references": [
-                                {
-                                  "local": "formatAmount",
-                                  "source": "c/utils"
-                                }
                               ]
                             },
                             "variantType": {
@@ -2632,7 +2544,6 @@
                                 "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
                                 "sourceKey": "tSStringKeyword_ac013b5ff3e882b9"
                               },
-                              "text": "string",
                               "type": "primitive",
                               "primitiveType": "string"
                             }
@@ -2681,7 +2592,6 @@
                               },
                               "status": "unchanged",
                               "value": {
-                                "text": "void",
                                 "type": "primitive",
                                 "primitiveType": "void"
                               }
@@ -2705,13 +2615,16 @@
                                       "objectKey": "tSTypeReference_e893d8e0cbf7dc78",
                                       "sourceKey": "tSTypeReference_3e36e2f84e12be15"
                                     },
-                                    "text": "CustomEvent<SelectDetail>",
                                     "type": "custom",
-                                    "customType": "CustomEvent",
+                                    "customType": [
+                                      "CustomEvent"
+                                    ],
                                     "generic": [
                                       {
                                         "type": "custom",
-                                        "customType": "SelectDetail"
+                                        "customType": [
+                                          "SelectDetail"
+                                        ]
                                       }
                                     ]
                                   },
@@ -3208,9 +3121,10 @@
                                                       "objectKey": "tSTypeReference_dc3f59726576c2d5",
                                                       "sourceKey": "tSTypeReference_ac5316761699a629"
                                                     },
-                                                    "text": "SelectDetail",
                                                     "type": "custom",
-                                                    "customType": "SelectDetail"
+                                                    "customType": [
+                                                      "SelectDetail"
+                                                    ]
                                                   }
                                                 ]
                                               }
@@ -3358,20 +3272,6 @@
                                   }
                                 }
                               }
-                            ],
-                            "references": [
-                              {
-                                "status": "unchanged",
-                                "match": "identical",
-                                "index": {
-                                  "before": 0,
-                                  "after": 0
-                                },
-                                "value": {
-                                  "local": "NavigationMixin",
-                                  "source": "lightning/navigation"
-                                }
-                              }
                             ]
                           },
                           "index": {
@@ -3406,9 +3306,10 @@
                                 "objectKey": "tSTypeReference_aa759821558f9ef7",
                                 "sourceKey": "tSTypeReference_0d34655042058763"
                               },
-                              "text": "Promise<void>",
                               "type": "custom",
-                              "customType": "Promise",
+                              "customType": [
+                                "Promise"
+                              ],
                               "generic": [
                                 {
                                   "type": "primitive",
@@ -3430,9 +3331,10 @@
                                     "objectKey": "tSTypeReference_b55498f58a5aeb62",
                                     "sourceKey": "tSTypeReference_3f08254b8c07acd7"
                                   },
-                                  "text": "Event",
                                   "type": "custom",
-                                  "customType": "Event"
+                                  "customType": [
+                                    "Event"
+                                  ]
                                 },
                                 "optional": false,
                                 "modifier": {}
@@ -3520,9 +3422,10 @@
                                                   "objectKey": "tSTypeReference_badd8cdca7e3947f",
                                                   "sourceKey": "tSTypeReference_a60f83369f005c52"
                                                 },
-                                                "text": "HTMLElement",
                                                 "type": "custom",
-                                                "customType": "HTMLElement"
+                                                "customType": [
+                                                  "HTMLElement"
+                                                ]
                                               }
                                             }
                                           },
@@ -3746,20 +3649,6 @@
                                   }
                                 ]
                               }
-                            ],
-                            "references": [
-                              {
-                                "local": "deleteAccount",
-                                "source": "@salesforce/apex/AccountController.deleteAccount",
-                                "apex": {
-                                  "className": "AccountController",
-                                  "methodName": "deleteAccount"
-                                }
-                              },
-                              {
-                                "local": "ShowToastEvent",
-                                "source": "lightning/platformShowToastEvent"
-                              }
                             ]
                           },
                           "index": {
@@ -3794,7 +3683,6 @@
                                 "objectKey": "tSVoidKeyword_9a0d7732e44e61dc",
                                 "sourceKey": "tSVoidKeyword_aa90602dfbc91b89"
                               },
-                              "text": "void",
                               "type": "primitive",
                               "primitiveType": "void"
                             },
@@ -3859,8 +3747,7 @@
                                   "memberArg": []
                                 }
                               }
-                            ],
-                            "references": []
+                            ]
                           },
                           "index": {
                             "before": 16,
@@ -3888,16 +3775,6 @@
                           "status": "unchanged",
                           "value": {
                             "name": "handleReload",
-                            "references": [
-                              {
-                                "local": "refreshApex",
-                                "source": "@salesforce/apex"
-                              },
-                              {
-                                "local": "updateRecord",
-                                "source": "lightning/uiRecordApi"
-                              }
-                            ],
                             "function": {
                               "arrow": true,
                               "param": [],
@@ -3907,9 +3784,10 @@
                                   "objectKey": "tSTypeReference_aa759821558f9ef7",
                                   "sourceKey": "tSTypeReference_666d3231e1e289b9"
                                 },
-                                "text": "Promise<void>",
                                 "type": "custom",
-                                "customType": "Promise",
+                                "customType": [
+                                  "Promise"
+                                ],
                                 "generic": [
                                   {
                                     "type": "primitive",
@@ -4295,7 +4173,6 @@
                                                 "objectKey": "tSUnknownKeyword_6ef5499dc7a933b0",
                                                 "sourceKey": "tSUnknownKeyword_782bc7c594cab006"
                                               },
-                                              "text": "unknown",
                                               "type": "primitive",
                                               "primitiveType": "unknown"
                                             },
@@ -4349,16 +4226,6 @@
                                     ]
                                   }
                                 }
-                              ],
-                              "references": [
-                                {
-                                  "local": "refreshApex",
-                                  "source": "@salesforce/apex"
-                                },
-                                {
-                                  "local": "updateRecord",
-                                  "source": "lightning/uiRecordApi"
-                                }
                               ]
                             },
                             "optional": false,
@@ -4390,12 +4257,6 @@
                           "status": "unchanged",
                           "value": {
                             "name": "handleOpenList",
-                            "references": [
-                              {
-                                "local": "NavigationMixin",
-                                "source": "lightning/navigation"
-                              }
-                            ],
                             "function": {
                               "arrow": true,
                               "param": [],
@@ -4405,7 +4266,6 @@
                                   "objectKey": "tSVoidKeyword_9a0d7732e44e61dc",
                                   "sourceKey": "tSVoidKeyword_b7c2307e1a832221"
                                 },
-                                "text": "void",
                                 "type": "primitive",
                                 "primitiveType": "void"
                               },
@@ -4568,12 +4428,6 @@
                                     ]
                                   }
                                 }
-                              ],
-                              "references": [
-                                {
-                                  "local": "NavigationMixin",
-                                  "source": "lightning/navigation"
-                                }
                               ]
                             },
                             "optional": false,
@@ -4611,7 +4465,6 @@
                                 "objectKey": "tSVoidKeyword_9a0d7732e44e61dc",
                                 "sourceKey": "tSVoidKeyword_59dcbc9c22833cc6"
                               },
-                              "text": "void",
                               "type": "primitive",
                               "primitiveType": "void"
                             },
@@ -4671,8 +4524,7 @@
                                   ]
                                 }
                               }
-                            ],
-                            "references": []
+                            ]
                           },
                           "index": {
                             "before": 19,
@@ -4701,11 +4553,9 @@
                                 "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
                                 "sourceKey": "tSStringKeyword_6fb761dd77eec7b0"
                               },
-                              "text": "string",
                               "type": "primitive",
                               "primitiveType": "string"
                             },
-                            "references": [],
                             "optional": true,
                             "modifier": {
                               "decorator": [
@@ -4744,9 +4594,10 @@
                                 "objectKey": "tSTypeReference_aa759821558f9ef7",
                                 "sourceKey": "tSTypeReference_68512edf4290390e"
                               },
-                              "text": "Promise<void>",
                               "type": "custom",
-                              "customType": "Promise",
+                              "customType": [
+                                "Promise"
+                              ],
                               "generic": [
                                 {
                                   "type": "primitive",
@@ -4768,13 +4619,16 @@
                                     "objectKey": "tSTypeReference_930cbee9806cb647",
                                     "sourceKey": "tSTypeReference_2968fcbe75f4f813"
                                   },
-                                  "text": "CustomEvent<Row>",
                                   "type": "custom",
-                                  "customType": "CustomEvent",
+                                  "customType": [
+                                    "CustomEvent"
+                                  ],
                                   "generic": [
                                     {
                                       "type": "custom",
-                                      "customType": "Row"
+                                      "customType": [
+                                        "Row"
+                                      ]
                                     }
                                   ]
                                 },
@@ -4949,16 +4803,6 @@
                                   ]
                                 }
                               }
-                            ],
-                            "references": [
-                              {
-                                "local": "updateAccount",
-                                "source": "@salesforce/apex/AccountController.updateAccount",
-                                "apex": {
-                                  "className": "AccountController",
-                                  "methodName": "updateAccount"
-                                }
-                              }
                             ]
                           }
                         }
@@ -5035,7 +4879,6 @@
                             "objectKey": "tSUnionType_0e40a3dd263ef55d",
                             "sourceKey": "tSUnionType_d627027f9001e388"
                           },
-                          "text": "'table' | 'tile'",
                           "type": "union",
                           "types": [
                             {
@@ -7331,11 +7174,9 @@
                         "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
                         "sourceKey": "tSStringKeyword_466faa2ace4db0d3"
                       },
-                      "text": "string",
                       "type": "primitive",
                       "primitiveType": "string"
                     },
-                    "references": [],
                     "optional": false,
                     "modifier": {
                       "decorator": [
@@ -7370,7 +7211,6 @@
                         "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
                         "sourceKey": "tSStringKeyword_e7b637aac420a4a5"
                       },
-                      "text": "string",
                       "type": "primitive",
                       "primitiveType": "string"
                     },
@@ -7382,7 +7222,6 @@
                       },
                       "value": ""
                     },
-                    "references": [],
                     "optional": false,
                     "modifier": {
                       "decorator": [
@@ -7417,11 +7256,9 @@
                         "objectKey": "tSNumberKeyword_850ba0354605a53c",
                         "sourceKey": "tSNumberKeyword_579064a0403c6288"
                       },
-                      "text": "number",
                       "type": "primitive",
                       "primitiveType": "number"
                     },
-                    "references": [],
                     "optional": true,
                     "modifier": {
                       "decorator": [
@@ -7512,12 +7349,6 @@
                             ]
                           }
                         }
-                      ],
-                      "references": [
-                        {
-                          "local": "formatAmount",
-                          "source": "c/utils"
-                        }
                       ]
                     },
                     "variantType": {
@@ -7526,7 +7357,6 @@
                         "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
                         "sourceKey": "tSStringKeyword_0a75a8439baa2b61"
                       },
-                      "text": "string",
                       "type": "primitive",
                       "primitiveType": "string"
                     }
@@ -7550,7 +7380,6 @@
                         "objectKey": "tSVoidKeyword_9a0d7732e44e61dc",
                         "sourceKey": "tSVoidKeyword_4d7de40c6a5c7e36"
                       },
-                      "text": "void",
                       "type": "primitive",
                       "primitiveType": "void"
                     },
@@ -7662,8 +7491,7 @@
                           ]
                         }
                       }
-                    ],
-                    "references": []
+                    ]
                   }
                 ]
               },
@@ -8121,7 +7949,6 @@
                         "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
                         "sourceKey": "tSStringKeyword_27be31612b5d8b6f"
                       },
-                      "text": "string",
                       "type": "primitive",
                       "primitiveType": "string"
                     },
@@ -8133,7 +7960,6 @@
                       },
                       "value": ""
                     },
-                    "references": [],
                     "optional": false,
                     "modifier": {
                       "decorator": [
@@ -8665,8 +8491,7 @@
                               ]
                             }
                           ]
-                        },
-                        "references": []
+                        }
                       },
                       "index": {
                         "before": 0,
@@ -8697,7 +8522,6 @@
                         "declarationType": "function",
                         "exported": true,
                         "variableKind": "const",
-                        "references": [],
                         "arrow": true,
                         "param": [
                           {
@@ -8713,7 +8537,6 @@
                                 "objectKey": "tSNumberKeyword_850ba0354605a53c",
                                 "sourceKey": "tSNumberKeyword_08b904dd7cec6830"
                               },
-                              "text": "number",
                               "type": "primitive",
                               "primitiveType": "number"
                             },
@@ -8727,7 +8550,6 @@
                             "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
                             "sourceKey": "tSStringKeyword_bc09120f0cf4f075"
                           },
-                          "text": "string",
                           "type": "primitive",
                           "primitiveType": "string"
                         },
@@ -8826,7 +8648,6 @@
                                   "objectKey": "tSArrayType_4570312153918599",
                                   "sourceKey": "tSArrayType_63b47a652f23eea8"
                                 },
-                                "text": "unknown[]",
                                 "type": "array",
                                 "elementType": {
                                   "type": "primitive",
@@ -8857,9 +8678,16 @@
                                   "objectKey": "tSNumberKeyword_850ba0354605a53c",
                                   "sourceKey": "tSNumberKeyword_c11b27c79e517021"
                                 },
-                                "text": "number",
                                 "type": "primitive",
                                 "primitiveType": "number"
+                              },
+                              "init": {
+                                "kind": "jsNumber",
+                                "sourceKeys": {
+                                  "objectKey": "numericLiteral_7b070bac424a99de",
+                                  "sourceKey": "numericLiteral_1a8a02360090805f"
+                                },
+                                "value": 50
                               },
                               "optional": true,
                               "modifier": {}
@@ -8877,11 +8705,12 @@
                           },
                           "status": "unchanged",
                           "value": {
-                            "text": "Row[]",
                             "type": "array",
                             "elementType": {
                               "type": "custom",
-                              "customType": "Row"
+                              "customType": [
+                                "Row"
+                              ]
                             }
                           }
                         },
@@ -9107,9 +8936,10 @@
                                               "objectKey": "tSTypeReference_eca924ff86bb9059",
                                               "sourceKey": "tSTypeReference_936d04eef2f63ac0"
                                             },
-                                            "text": "Row",
                                             "type": "custom",
-                                            "customType": "Row"
+                                            "customType": [
+                                              "Row"
+                                            ]
                                           }
                                         }
                                       }
@@ -9119,8 +8949,7 @@
                               }
                             ]
                           }
-                        ],
-                        "references": []
+                        ]
                       },
                       "index": {
                         "before": 2,
@@ -9171,7 +9000,6 @@
                               },
                               "value": 0
                             },
-                            "references": [],
                             "optional": false,
                             "modifier": {
                               "declaration": [
@@ -9214,7 +9042,6 @@
                                     "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
                                     "sourceKey": "tSStringKeyword_5345d3805a2e14e0"
                                   },
-                                  "text": "string",
                                   "type": "primitive",
                                   "primitiveType": "string"
                                 },
@@ -9224,13 +9051,13 @@
                                     "objectKey": "tSTypeReference_eca924ff86bb9059",
                                     "sourceKey": "tSTypeReference_6547be020caa4aeb"
                                   },
-                                  "text": "Row",
                                   "type": "custom",
-                                  "customType": "Row"
+                                  "customType": [
+                                    "Row"
+                                  ]
                                 }
                               ]
                             },
-                            "references": [],
                             "optional": false,
                             "modifier": {}
                           },
@@ -9286,8 +9113,7 @@
                                     "member": "size"
                                   }
                                 }
-                              ],
-                              "references": []
+                              ]
                             },
                             "variantType": {
                               "kind": "lwcType",
@@ -9295,7 +9121,6 @@
                                 "objectKey": "tSNumberKeyword_850ba0354605a53c",
                                 "sourceKey": "tSNumberKeyword_d7190008798f5282"
                               },
-                              "text": "number",
                               "type": "primitive",
                               "primitiveType": "number"
                             }
@@ -9319,7 +9144,6 @@
                                 "objectKey": "tSNumberKeyword_850ba0354605a53c",
                                 "sourceKey": "tSNumberKeyword_612f0c5609f0eb5d"
                               },
-                              "text": "number",
                               "type": "primitive",
                               "primitiveType": "number"
                             },
@@ -9337,11 +9161,12 @@
                                     "objectKey": "tSArrayType_a0fe78f2e0d47552",
                                     "sourceKey": "tSArrayType_bfabf6e34368de86"
                                   },
-                                  "text": "Row[]",
                                   "type": "array",
                                   "elementType": {
                                     "type": "custom",
-                                    "customType": "Row"
+                                    "customType": [
+                                      "Row"
+                                    ]
                                   }
                                 },
                                 "optional": false,
@@ -9609,8 +9434,7 @@
                                   "name": "count"
                                 }
                               }
-                            ],
-                            "references": []
+                            ]
                           }
                         ]
                       },
@@ -9668,7 +9492,6 @@
                           },
                           "status": "changed",
                           "before": {
-                            "text": "'asc' | 'desc'",
                             "type": "union",
                             "types": [
                               {
@@ -9682,7 +9505,6 @@
                             ]
                           },
                           "after": {
-                            "text": "'asc' | 'desc' | 'none'",
                             "type": "union",
                             "types": [
                               {

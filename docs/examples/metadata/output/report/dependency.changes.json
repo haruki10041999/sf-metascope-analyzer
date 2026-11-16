@@ -1,0 +1,416 @@
+[
+  {
+    "from": "apexClass:AccountService",
+    "to": "apexType:Queueable",
+    "kind": "implements",
+    "status": "added"
+  },
+  {
+    "from": "apexMethod:AccountService.expressions",
+    "to": "field:Account.Name",
+    "kind": "reads",
+    "status": "added"
+  },
+  {
+    "from": "apexMethod:AccountService.report",
+    "to": "apexType:System",
+    "kind": "calls",
+    "status": "added"
+  },
+  {
+    "from": "apexMethod:AccountService.search",
+    "to": "field:Account.Phone",
+    "kind": "reads",
+    "status": "added"
+  },
+  {
+    "from": "apexMethod:AccountService.search",
+    "to": "object:Lead",
+    "kind": "queries",
+    "status": "added"
+  },
+  {
+    "from": "apexMethod:AccountService.stats",
+    "to": "childRelationshipField:Account.Contacts.LastName",
+    "kind": "reads",
+    "status": "added"
+  },
+  {
+    "from": "customApplication:Invoice_App",
+    "to": "customTab:Account_List",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "customApplication:Invoice_App",
+    "to": "flexiPage:Invoice_Record_Page",
+    "kind": "uses",
+    "status": "removed"
+  },
+  {
+    "from": "customApplication:Invoice_App",
+    "to": "flexiPage:Invoice_Record_Page_V2",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "customMetadata:App_Setting.Sandbox",
+    "to": "field:App_Setting__mdt.Value__c",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "customMetadata:App_Setting.Sandbox",
+    "to": "object:App_Setting__mdt",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "customPermission:Approve_Invoice",
+    "to": "customPermission:View_Invoice",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "customTab:Account_List",
+    "to": "lwc:accountList",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "emailTemplate:Invoice_Templates/Invoice_Sent",
+    "to": "field:Invoice__c.Amount__c",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "field:Legacy_Item__c.Invoice__c",
+    "to": "object:Invoice__c",
+    "kind": "uses",
+    "status": "removed"
+  },
+  {
+    "from": "field:Payment__c.Invoice__c",
+    "to": "object:Invoice__c",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "flexiPage:Invoice_Record_Page",
+    "to": "field:Invoice__c.Missing__c",
+    "kind": "places",
+    "status": "added"
+  },
+  {
+    "from": "flexiPage:Invoice_Record_Page",
+    "to": "lwc:accountRow",
+    "kind": "places",
+    "status": "added"
+  },
+  {
+    "from": "flow:Account_Wizard",
+    "to": "field:Account.Name",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "flow:Account_Wizard",
+    "to": "field:Account.Tier__c",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "flow:Account_Wizard",
+    "to": "field:Account.Unknown__c",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "flow:Account_Wizard",
+    "to": "flow:Invoice_Status_Update",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "flow:Account_Wizard",
+    "to": "lwc:missingChart",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "flow:Account_Wizard",
+    "to": "object:Account",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "layout:Account-Account Layout",
+    "to": "field:Account.Missing__c",
+    "kind": "places",
+    "status": "added"
+  },
+  {
+    "from": "layout:Invoice__c-Invoice Detail",
+    "to": "field:Invoice__c.Amount__c",
+    "kind": "places",
+    "status": "added"
+  },
+  {
+    "from": "layout:Invoice__c-Invoice Detail",
+    "to": "field:Invoice__c.Name",
+    "kind": "places",
+    "status": "added"
+  },
+  {
+    "from": "layout:Invoice__c-Invoice Layout",
+    "to": "field:Invoice__c.Approved__c",
+    "kind": "places",
+    "status": "added"
+  },
+  {
+    "from": "layout:Invoice__c-Invoice Layout",
+    "to": "field:Invoice__c.Note__c",
+    "kind": "places",
+    "status": "removed"
+  },
+  {
+    "from": "lwc:accountList",
+    "to": "customLabel:AccountListTitle",
+    "kind": "uses",
+    "status": "removed"
+  },
+  {
+    "from": "lwc:newBanner",
+    "to": "customLabel:BannerMessage",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "matchingRules:Account",
+    "to": "field:Account.BillingCity",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "mutingPermissionSet:Invoice_Team_Muted",
+    "to": "field:Invoice__c.Approved__c",
+    "kind": "grants",
+    "status": "added"
+  },
+  {
+    "from": "namedCredential:Billing_API",
+    "to": "externalCredential:Billing_Auth",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "objectTranslation:Account-ja",
+    "to": "field:Account.Name",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "objectTranslation:Account-ja",
+    "to": "field:Account.Tier__c",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "objectTranslation:Account-ja",
+    "to": "object:Account",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "objectTranslation:Account-ja",
+    "to": "validationRule:Account.Name_Required",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "objectTranslation:Broken__c-ja",
+    "to": "field:Broken__c.Code__c",
+    "kind": "uses",
+    "status": "removed"
+  },
+  {
+    "from": "objectTranslation:Legacy_Item__c-ja",
+    "to": "field:Legacy_Item__c.Invoice__c",
+    "kind": "uses",
+    "status": "removed"
+  },
+  {
+    "from": "objectTranslation:Legacy_Item__c-ja",
+    "to": "object:Legacy_Item__c",
+    "kind": "uses",
+    "status": "removed"
+  },
+  {
+    "from": "pathAssistant:Invoice_Path",
+    "to": "field:Invoice__c.Approved__c",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "permissionSet:Invoice_Manager",
+    "to": "apexClass:NewHelper",
+    "kind": "grants",
+    "status": "added"
+  },
+  {
+    "from": "permissionSet:Invoice_Manager",
+    "to": "field:Invoice__c.Approved__c",
+    "kind": "grants",
+    "status": "added"
+  },
+  {
+    "from": "permissionSet:Invoice_Manager",
+    "to": "field:Invoice__c.Missing__c",
+    "kind": "grants",
+    "status": "added"
+  },
+  {
+    "from": "permissionSet:Invoice_Manager",
+    "to": "field:Invoice__c.Status__c",
+    "kind": "grants",
+    "status": "removed"
+  },
+  {
+    "from": "permissionSet:Invoice_Manager",
+    "to": "object:Payment__c",
+    "kind": "grants",
+    "status": "added"
+  },
+  {
+    "from": "permissionSet:Invoice_Viewer",
+    "to": "field:Invoice__c.Amount__c",
+    "kind": "grants",
+    "status": "removed"
+  },
+  {
+    "from": "permissionSet:Invoice_Viewer",
+    "to": "object:Invoice__c",
+    "kind": "grants",
+    "status": "removed"
+  },
+  {
+    "from": "permissionSet:Payment_Clerk",
+    "to": "apexClass:PaymentService",
+    "kind": "grants",
+    "status": "added"
+  },
+  {
+    "from": "permissionSet:Payment_Clerk",
+    "to": "field:Invoice__c.Amount__c",
+    "kind": "grants",
+    "status": "added"
+  },
+  {
+    "from": "permissionSet:Payment_Clerk",
+    "to": "object:Invoice__c",
+    "kind": "grants",
+    "status": "added"
+  },
+  {
+    "from": "permissionSet:Payment_Clerk",
+    "to": "object:Payment__c",
+    "kind": "grants",
+    "status": "added"
+  },
+  {
+    "from": "permissionSet:Payment_Clerk",
+    "to": "object:Receipt__c",
+    "kind": "grants",
+    "status": "added"
+  },
+  {
+    "from": "permissionSetGroup:Invoice_Team",
+    "to": "permissionSet:Payment_Clerk",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "profile:Sales",
+    "to": "layout:Invoice__c-Invoice Detail",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "profile:Sales",
+    "to": "layout:Invoice__c-Invoice Layout",
+    "kind": "uses",
+    "status": "removed"
+  },
+  {
+    "from": "queue:Invoice_Queue",
+    "to": "object:Payment__c",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "quickAction:Invoice__c.Approve",
+    "to": "field:Invoice__c.Approved__c",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "report:Invoice_Reports/Open_Invoices",
+    "to": "field:Invoice__c.Due_Date__c",
+    "kind": "uses",
+    "status": "removed"
+  },
+  {
+    "from": "report:Invoice_Reports/Open_Invoices",
+    "to": "field:Invoice__c.Status__c",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "reportType:Invoices_with_Lines",
+    "to": "field:Invoice__c.Due_Date__c",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "role:Sales_Manager",
+    "to": "role:CEO",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "sharingRules:Invoice__c",
+    "to": "group:Finance",
+    "kind": "uses",
+    "status": "removed"
+  },
+  {
+    "from": "translations:ja",
+    "to": "customLabel:BannerMessage",
+    "kind": "uses",
+    "status": "removed"
+  },
+  {
+    "from": "translations:ja",
+    "to": "customLabel:Invoice_Approved",
+    "kind": "uses",
+    "status": "added"
+  },
+  {
+    "from": "validationRule:Account.Name_Required",
+    "to": "field:Account.Name",
+    "kind": "reads",
+    "status": "added"
+  },
+  {
+    "from": "validationRule:Invoice__c.Due_Date_Required",
+    "to": "field:Invoice__c.Due_Date__c",
+    "kind": "reads",
+    "status": "added"
+  },
+  {
+    "from": "workflow:Invoice__c",
+    "to": "emailTemplate:Invoice_Templates/Invoice_Sent",
+    "kind": "uses",
+    "status": "removed"
+  }
+]

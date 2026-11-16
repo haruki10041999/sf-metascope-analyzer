@@ -123,7 +123,7 @@ if (result.dataType === 'object') {
 | `picklistValue`                                                                                       | `PicklistValueJsonDiff`                             | `fullName`（並び順の変化は報告しない）                                                                                                                                                                    |
 | `validationRule` / `recordType` / `listView` / `fieldSet` / `compactLayout` / `webLink`               | `*JsonDiff`                                         | `fullName`                                                                                                                                                                                                |
 | `businessProcess` / `sharingReason`                                                                   | `BusinessProcessJsonDiff` / `SharingReasonJsonDiff` | `fullName`（ビジネスプロセスの `values` は集合 B）                                                                                                                                                        |
-| 項目の `lookupFilter`                                                                                 | `CustomFieldJsonDiff` の `lookupFilter`             | 値として比べる（条件の行は `booleanFilter` の番号で組み合わせるので、まとめて 1 つの値）                                                                                                                  |
+| 項目の `lookupFilter`                                                                                 | `CustomFieldJsonDiff` の `lookupFilter`             | 値として比べる（条件の行（`criterion`。11 章）は `booleanFilter` の番号で組み合わせるので、まとめて 1 つの値）                                                                                            |
 | `recordTypePicklist`                                                                                  | `RecordTypePicklistJsonDiff`                        | `picklist`（中の `values` は集合 B）                                                                                                                                                                      |
 | リストビューの `columns` / `filters`、項目セットの `displayedFields`、コンパクトレイアウトの `fields` | `TypedListDiff`                                     | 並び順に意味があるので順序付き列（C）。並べ替えは `moved`                                                                                                                                                 |
 
@@ -241,15 +241,15 @@ npx ttsx --noCheck docs/examples/metadata/scripts/run-diff.ts    # output/diff/:
 
 ### 10.3 JSON
 
-| 種類                                                                                              | JSON の作り方                                                                                                                                                                                                                                                                   |
-| ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 権限（[types/metadata/permission.ts](../src/analyzer/types/metadata/permission.ts)）              | 権限の行（`objectPermissions` など）は、要素名 → kind・値のスキーマ・キーの表（`PERMISSION_SET_ROWS` / `PROFILE_ROWS`）で読む。Profile はすべての要素を読む。権限セットグループは含む権限セット・ミュート権限セットの名前の集合                                                 |
-| ラベル                                                                                            | ファイル 1 つが単位、ラベルは子（キー `fullName`）                                                                                                                                                                                                                              |
-| Flow                                                                                              | 要素・資源は名前をキーにする JSON ノード（中身は値の木 `properties`）。接続は要素の外の `edges`（`{ from, to, edgeType }`）。画面上の位置（`locationX` / `locationY`）と Flow Builder の設定は読まない。使っている項目・Apex・サブフロー・LWC・ラベルを `references` に取り出す |
-| Layout                                                                                            | 項目はセクションの入れ子にせず、位置（`{ section, column, row }`）付きの平らな並び                                                                                                                                                                                              |
-| FlexiPage                                                                                         | リージョン・部品・項目を平らに持ち、部品・項目は置かれているリージョンの名前（`region`）を持つ。リージョンは中の identifier の表示順（`items`）を持つ                                                                                                                           |
-| そのほか（[types/metadata/recordTypes.ts](../src/analyzer/types/metadata/recordTypes.ts)）        | 種類ごとの表（`RecordSpec`: 値の要素 `schema`・繰り返す値 `lists`・入れ子の構造 `trees`（値の木）・名前で対応付ける子 `children`）から JSON と型（`RecordJson<typeof 表>`）を作る。ファイルの名前は `fullName`                                                                  |
-| Visualforce・メール・Aura（[types/metadata/markup.ts](../src/analyzer/types/metadata/markup.ts)） | `-meta.xml` は表で読み、本体は構造だけ（ルートの属性・使っている部品・宣言・差し込み `expressions`）。メールは本文をそのまま持つ。Aura はバンドルの中のファイル・JS の関数の名前も持つ                                                                                          |
+| 種類                                                                                              | JSON の作り方                                                                                                                                                                                                                                                                                                               |
+| ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 権限（[types/metadata/permission.ts](../src/analyzer/types/metadata/permission.ts)）              | 権限の行（`objectPermissions` など）は、要素名 → kind・値のスキーマ・キーの表（`PERMISSION_SET_ROWS` / `PROFILE_ROWS`）で読む。Profile はすべての要素を読む。権限セットグループは含む権限セット・ミュート権限セットの名前の集合                                                                                             |
+| ラベル                                                                                            | ファイル 1 つが単位、ラベルは子（キー `fullName`）                                                                                                                                                                                                                                                                          |
+| Flow                                                                                              | 要素・資源は名前をキーにする JSON ノード（中身は値の木 `properties`。条件の行・数式・引数などは型の JSON。11 章）。接続は要素の外の `edges`（`{ from, to, edgeType }`）。画面上の位置（`locationX` / `locationY`）と Flow Builder の設定は読まない。使っている項目・Apex・サブフロー・LWC・ラベルを `references` に取り出す |
+| Layout                                                                                            | 項目はセクションの入れ子にせず、位置（`{ section, column, row }`）付きの平らな並び                                                                                                                                                                                                                                          |
+| FlexiPage                                                                                         | リージョン・部品・項目を平らに持ち、部品・項目は置かれているリージョンの名前（`region`）を持つ。リージョンは中の identifier の表示順（`items`）を持つ                                                                                                                                                                       |
+| そのほか（[types/metadata/recordTypes.ts](../src/analyzer/types/metadata/recordTypes.ts)）        | 種類ごとの表（`RecordSpec`: 値の要素 `schema`・繰り返す値 `lists`・入れ子の構造 `trees`（値の木）・名前で対応付ける子 `children`）から JSON と型（`RecordJson<typeof 表>`）を作る。ファイルの名前は `fullName`                                                                                                              |
+| Visualforce・メール・Aura（[types/metadata/markup.ts](../src/analyzer/types/metadata/markup.ts)） | `-meta.xml` は表で読み、本体は木（`body`。ルートの属性・宣言は別に持つ。11.4）。メールの本文・件名は `fxTemplate`。Aura はバンドルの中のファイル・JS の関数の名前も持つ                                                                                                                                                     |
 
 ### 10.4 Diff
 
@@ -257,13 +257,63 @@ npx ttsx --noCheck docs/examples/metadata/scripts/run-diff.ts    # output/diff/:
 
 ### 10.5 解析（[processor/Metadata/](../src/analyzer/processor/Metadata/)）
 
-| 解析                                   | 内容                                                                                                                                                                           |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `analyzePermissions`                   | 権限の表、権限セットグループの実際の権限（含む権限セットの和 − ミュート）、参照先の確認、デプロイで弾かれる矛盾、強い権限                                                      |
-| `analyzeCustomLabels`                  | ラベルの使用箇所（LWC・Apex・Flow）、使われていないラベル、ないラベルへの参照                                                                                                  |
-| `analyzeFlows`                         | Flow の一覧・図・オブジェクトごとの自動化、到達できない要素、失敗時の経路のない処理、参照先（`@InvocableMethod` を含む）                                                       |
-| `analyzeLayouts` / `analyzeFlexiPages` | 項目の確認、項目の必須とレイアウトの食い違い、LWC の公開・target・`targetConfigs` のプロパティ、LWC の配置先                                                                   |
-| `analyzeAutomation`                    | オブジェクトごとの自動化（レコードトリガーフロー・Apex トリガー・入力規則）                                                                                                    |
-| `analyzeMetadataReferences`            | 種類をまたぐ参照の取り出しと突き合わせ（タブ・アプリ・Visualforce・Aura・共有ルール・ワークフローなど）と逆引き。参照先の種類の解析結果が 1 つもなければ、その種類は確かめない |
+| 解析                                                                           | 内容                                                                                                                                                                                                            |
+| ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `analyzePermissions`                                                           | 権限の表、権限セットグループの実際の権限（含む権限セットの和 − ミュート）、参照先の確認、デプロイで弾かれる矛盾、強い権限                                                                                       |
+| ラベルの使用箇所                                                               | LWC・Apex・Flow のラベルの使用箇所（`getLwcLabelUsages`・`getApexLabelUsages`・Flow の参照）。使われていないラベル・ないラベルへの参照は依存関係のグラフで確かめる（段階 M2 で `analyzeCustomLabels` を消した） |
+| `analyzeFlows`                                                                 | Flow の一覧・図・オブジェクトごとの自動化、到達できない要素、失敗時の経路のない処理、参照先（`@InvocableMethod` を含む）                                                                                        |
+| `analyzeLayouts` / `analyzeFlexiPages`                                         | 項目の確認、項目の必須とレイアウトの食い違い、LWC の公開・target・`targetConfigs` のプロパティ、LWC の配置先                                                                                                    |
+| `analyzeAutomation`                                                            | オブジェクトごとの自動化（レコードトリガーフロー・Apex トリガー・入力規則）                                                                                                                                     |
+| `analyzeMetadataRefs`（[refs.ts](../src/analyzer/processor/Metadata/refs.ts)） | 種類をまたぐ参照の取り出し（単位 1 つの `MetadataRefInfo[]`）。突き合わせと逆引きは依存関係のグラフで行う（段階 M2 で `analyzeMetadataReferences` を消した）                                                    |
 
 レポートに渡すデータは [src/analyzer/report/](../src/analyzer/report/)（`REPORT_PROVIDERS`）。サンプルの動作は `docs/examples/metadata/scripts/run-folders.ts`、テストは `test/processor/metadata-folders.test.ts`・`metadata-bc.test.ts`・`report-providers.test.ts`。
+
+## 11. 数式・条件・マークアップ・値の木の型（段階 M4〜M8。2026-11-16）
+
+[json-redesign-plan.md](./json-redesign-plan.md) の段階 M4〜M8 で、文字列のまま持っていた構造を JSON にした。決めたことは同じ文書の 6 章（2・6・7・8・10）。
+
+### 11.1 共通の決まり
+
+- 数式・テンプレートのノードは `fx*`、条件の行は `criterion`。どれも `kind` と `sourceKeys` を持つ境界ノードで、位置は XML のテキスト・属性の値の中（実体参照・CDATA を戻した位置）。[types/commons/xml.ts](../src/analyzer/types/commons/xml.ts) の `XmlElement.content`・`attributeSpans`、`decodeRange`・`textOffsetsOf` で求める。
+- 読めない数式・`booleanFilter`・差し込みは文字列のまま持ち、`resolvedError` に `FORMULA_SYNTAX` / `FILTER_LOGIC_SYNTAX` を出す（parse の途中で `XmlSourceRegistry.problems` に集める）。
+- スキーマの値の型に `formula`・`filterLogic`・`template` を足した（`readProperties(element, schema, { file, registry })`）。値の木の中は、値の木を作るときの変換（`ValueTreeOptions.convert`。[criteria.ts](../src/analyzer/types/metadata/criteria.ts) の `flowTreeConverter`・`recordTreeConverter`）で型の JSON にする。
+- 走査（[processor/Metadata/walker.ts](../src/analyzer/processor/Metadata/walker.ts)）は `fx*` のノードを文脈（メンバー・直前の境界ノード）にしない。
+
+### 11.2 数式（[types/metadata/formula.ts](../src/analyzer/types/metadata/formula.ts)）
+
+| kind            | フィールド                                 | 例                               |
+| --------------- | ------------------------------------------ | -------------------------------- |
+| `fxName`        | `path: string[]`                           | `Account.Owner.Name`・`$User.Id` |
+| `fxCall`        | `name`（大文字）・`arg`                    | `ISPICKVAL(Status__c, 'Paid')`   |
+| `fxString` など | `value`（`fxNumber` は書いたままの文字列） | `'Paid'`・`100`・`TRUE`・`NULL`  |
+| `fxBinary`      | `left`・`operator`・`right`                | `a > 10`・`a && b`・`a & b`      |
+| `fxUnary`       | `operator`・`argument`                     | `-x`・`!x`（`NOT(x)` は関数）    |
+| `fxParen`       | `expression`                               | `(a + b)`                        |
+| `fxConditional` | `test`・`consequent`・`alternate`          | Aura の `v.a ? 'x' : 'y'`        |
+| `fxMerge`       | `expression`・`once?`（`{#...}`）          | `{!$Record.Amount__c}`           |
+| `fxTemplate`    | `parts: (string \| fxMerge)[]`             | `Hello {!Name}`                  |
+
+- 数式の対象: 項目の `formula`・`defaultValue`、入力規則、ワークフローのルール・項目自動更新、クイックアクションの項目、Flow の数式の資源の `expression`・起動の `filterFormula`・`formulaExpression` の値、承認・ルールの値の木の `formula`。
+- テンプレートの対象: Visualforce・Aura の属性値とテキスト、メールの本文・件名、ボタン・リンクの URL、Flow のテキストテンプレート・画面の `fieldText`・`helpText`。差し込みがなければ文字列のまま。
+- Diff は、両方が数式の木なら GumTree で対応付ける（[commons/diff/formula.ts](../src/analyzer/processor/commons/diff/formula.ts) の `makeFormulaDiff`。関数は名前ごとに対応付け、名前は `.` でつないだ値で比べる）。読めなかった数式は値として比べる。スキーマの `formula` のプロパティと Flow の数式に使う。
+- 参照は木の名前から取る（[dependency/formula.ts](../src/analyzer/processor/dependency/formula.ts) の `formulaReferencesOf`。参照ごとに名前のノードを `expression` に持つ）。文字列に戻すのは `formulaTextOf`・`templateTextOf`。
+
+### 11.3 条件の行と booleanFilter（[types/metadata/criteria.ts](../src/analyzer/types/metadata/criteria.ts)）
+
+- `criterion`: `left`（項目。数式の JSON）、`operator`（XML のまま）、`right`（`{ type: 'value', value, valueType? }` 書いた値 / `{ type: 'field' }` 別の項目 / `{ type: 'reference' }` Flow の資源の参照 / `{ type: 'formula' }` 差し込みを含む値）。
+- 対象: リストビューの `filters`、参照の絞り込みの `filterItems`、FlexiPage の表示条件、ワークフロー・共有ルール・承認・割り当て・エスカレーション・自動応答の `criteriaItems`、Flow の `conditions`・`filters`。
+- `booleanFilter` は木だけを持つ（`and` / `or`（同じ演算子の並びは 1 つ）/ `not` / `row`（行の番号））。Flow の `conditionLogic` は数字を含むときだけ木（`and` / `or` は文字列のまま）。表示は `filterLogicTextOf`、行の文字列は `criterionTextsOf`。
+- Diff は条件の行を書いた順（C）で比べ、`booleanFilter` は木を値として比べる。
+
+### 11.4 マークアップ（[types/metadata/markup.ts](../src/analyzer/types/metadata/markup.ts)）
+
+- Visualforce の `markup.body`・Aura の `body` は `markupElement`（`tag`・`attributes`（書いた順の `{ name, value }`）・`children`）と `markupText` の木。宣言（`apex:attribute`・`aura:attribute` など）は今までどおり別のプロパティに出し、木には持たない。
+- 使っている部品・差し込みの一覧は JSON に持たず、解析（[processor/Metadata/markup.ts](../src/analyzer/processor/Metadata/markup.ts) の `markupTagsOf`・`mergeTextsOf`）で木から出す。
+- Diff は本体の木を GumTree で対応付ける（[diff/markup.ts](../src/analyzer/processor/Metadata/diff/markup.ts)。要素はタグごとに対応付け、属性の違いは要素の `fields` に属性名で出る。テキストは葉）。
+
+### 11.5 値の木の型・名前（段階 M7・M8）
+
+- 値の木の中で `kind` と位置を付けたもの（中身は値の木のまま。`KindedTreeJson`）: Flow の引数（`flowParameter`）・割り当て（`flowAssignment`）・スケジュールの経路（`flowScheduledPath`）、共有先・共有元（`sharingPrincipals`）、承認者（`approver`）。
+- Flow の変数の型・入出力（`dataType`・`objectType`・`apexClass`・`isCollection`・`isInput`・`isOutput`）は変数のノードの直下（`FLOW_VARIABLE_SCHEMA`）。
+- 対象のオブジェクトは JSON の名前（XML のまま）を変えず、解析の `metadataBaseObjectOf` が種類ごとの要素名から 1 つにする。
+- FlexiPage の部品・項目の `properties` は `attributes`、template の `properties` は `templateAttributes`。組織の翻訳の子の `kind` は `globalQuickActionTranslation`・`customPageWebLinkTranslation`（オブジェクトの翻訳の子とぶつからないように）。

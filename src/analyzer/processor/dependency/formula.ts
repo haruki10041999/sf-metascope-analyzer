@@ -1,6 +1,13 @@
+import type { ConvertKeys } from '../../types/commons/json';
+import {
+    type FormulaValue,
+    type FxSyntax,
+    tryParseFormulaSyntax,
+} from '../../types/metadata/formula';
+
 // 数式 (数式項目・入力規則・既定値・Flow の数式・ワークフローの条件など) の参照の取り出し。
-// 数式の文法は小さく、要るのは名前の取り出しだけなので、字句に分けて名前を拾う (式の木は作らない)。
-// 方針: docs/analysis-plan.md 3.3・5.1
+// 数式の JSON (fx*。段階 M4) の名前 (fxName) から取る。値の木の中の数式 (文字列) は、同じ parser で木にしてから取る。
+// 読めない数式だけは、字句に分けて名前を拾う (以前のやり方)。方針: docs/analysis-plan.md 3.3・5.1
 
 /** 数式の中の参照 1 つ */
 export type FormulaReference =
@@ -65,11 +72,54 @@ export const tokenizeFormula = (formula: string): Token[] => {
 /** 関数でも項目でもない名前 (定数・演算子の名前) */
 const KEYWORDS = new Set(['true', 'false', 'null', 'and', 'or', 'not']);
 
+/** 数式の参照 1 つと、その名前のノード (数式の JSON から取ったときだけ) */
+export type FormulaReferenceAt = FormulaReference & { expression?: ConvertKeys };
+
+const isNodeRecord = (value: unknown): value is Record<string, unknown> =>
+    typeof value === 'object' && value !== null && !Array.isArray(value);
+
+/** 数式の木 (JSON か位置つきの木) の名前のノード (書いた順) */
+const namesOf = (node: unknown, out: Record<string, unknown>[] = []): Record<string, unknown>[] => {
+    if (Array.isArray(node)) {
+        node.forEach((item) => namesOf(item, out));
+    } else if (isNodeRecord(node)) {
+        if (node.kind === 'fxName') out.push(node);
+        for (const [key, child] of Object.entries(node)) {
+            if (key !== 'sourceKeys') namesOf(child, out);
+        }
+    }
+    return out;
+};
+
 /**
- * 数式の参照。object は数式の基準のオブジェクト (項目・入力規則のオブジェクト)。
- * 分からないとき (Flow の数式など) は undefined で、基準のオブジェクトの項目は取り出さない
+ * 数式 (JSON・位置つきの木・文字列) の参照。object は数式の基準のオブジェクト (項目・入力規則のオブジェクト)。
+ * 分からないとき (Flow の数式など) は undefined で、基準のオブジェクトの項目は取り出さない。
+ * JSON から取ったときは、参照ごとに最初に書いた名前のノードの sourceKeys を expression に持つ
  */
-export const getFormulaReferences = (formula: string, object?: string): FormulaReference[] => {
+export const formulaReferencesOf = (
+    formula: FormulaValue | FxSyntax,
+    object?: string,
+): FormulaReferenceAt[] => {
+    const tree = typeof formula === 'string' ? tryParseFormulaSyntax(formula) : formula;
+    if (!tree) return typeof formula === 'string' ? getTokenReferences(formula, object) : [];
+    const references: FormulaReferenceAt[] = [];
+    for (const name of namesOf(tree)) {
+        const path = (name.path as string[]).join('.');
+        if (KEYWORDS.has(path.toLowerCase())) continue;
+        const keys = isNodeRecord(name.sourceKeys) ? (name.sourceKeys as ConvertKeys) : undefined;
+        for (const reference of referencesOfName(path, object)) {
+            references.push(keys ? { ...reference, expression: keys } : reference);
+        }
+    }
+    return dedupe(references);
+};
+
+/** 数式の文字列の参照 (formulaReferencesOf の文字列のとき) */
+export const getFormulaReferences = (formula: string, object?: string): FormulaReference[] =>
+    formulaReferencesOf(formula, object);
+
+/** 読めない数式の参照 (字句に分けて名前を拾う) */
+const getTokenReferences = (formula: string, object?: string): FormulaReference[] => {
     const tokens = tokenizeFormula(formula);
     const references: FormulaReference[] = [];
     tokens.forEach((token, index) => {
@@ -171,10 +221,12 @@ const globalReferences = (head: string, rest: string[], object?: string): Formul
     }
 };
 
-const dedupe = (references: FormulaReference[]): FormulaReference[] => {
+/** 同じ参照は 1 つにする (最初のものを残す。名前のノードの位置は比べない) */
+const dedupe = <R extends FormulaReferenceAt>(references: R[]): R[] => {
     const seen = new Set<string>();
     return references.filter((reference) => {
-        const key = JSON.stringify(reference);
+        const { expression: _expression, ...rest } = reference;
+        const key = JSON.stringify(rest);
         if (seen.has(key)) return false;
         seen.add(key);
         return true;

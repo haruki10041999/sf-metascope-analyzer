@@ -141,13 +141,14 @@ MCP ツール ── get_data(provider, params) ──▶ 解析（data provider
 
 ### 2.6 自動化（Flow）
 
-| コンポーネント       | 用途                                                                                    | provider              | 優先度 | データ                                        |
-| -------------------- | --------------------------------------------------------------------------------------- | --------------------- | ------ | --------------------------------------------- |
-| `FlowList`           | Flow の一覧（種類・起動条件・対象オブジェクト・有効なバージョン）                       | `flow.list`           | A      | 済（provider）                                |
-| `FlowDiagram`        | 要素と接続の図（差分の色分け）。`Graph` を使う                                          | `flow.diagram`        | A      | 済（provider）                                |
-| `FlowDiffView`       | 要素ごとの差分（条件・割り当て・レコードの操作）                                        | `flow.diffs`          | A      | 済（provider）                                |
-| `FlowReferenceTable` | 参照する項目・Apex アクション・サブフロー・画面の LWC                                   | `flow.references`     | B      | 済（provider）                                |
-| `TriggerOrderTable`  | オブジェクトごとの自動化（Apex トリガー・レコードトリガーフロー・入力規則）の一覧と順序 | `automation.byObject` | B      | 済（provider。Flow・Apex トリガー・入力規則） |
+| コンポーネント       | 用途                                                                                    | provider              | 優先度 | データ                                               |
+| -------------------- | --------------------------------------------------------------------------------------- | --------------------- | ------ | ---------------------------------------------------- |
+| `FlowList`           | Flow の一覧（種類・起動条件・対象オブジェクト・有効なバージョン）                       | `flow.list`           | A      | 済（provider）                                       |
+| `FlowDiagram`        | 要素と接続の図（差分の色分け）。`Graph` を使う                                          | `flow.diagram`        | A      | 済（provider）                                       |
+| `FlowDiffView`       | 要素ごとの差分（条件・割り当て・レコードの操作）                                        | `flow.diffs`          | A      | 済（provider）                                       |
+| `FlowReferenceTable` | 参照する項目・Apex アクション・サブフロー・画面の LWC                                   | `flow.references`     | B      | 済（provider）                                       |
+| `FlowInterfaceTable` | Flow の入力・出力の変数（before を渡すと、増えた・減った・変わった入出力。意味の差分）  | `flow.interface`      | B      | 済（provider。2026-11-16。`onlyChanged` で変化だけ） |
+| `TriggerOrderTable`  | オブジェクトごとの自動化（Apex トリガー・レコードトリガーフロー・入力規則）の一覧と順序 | `automation.byObject` | B      | 済（provider。Flow・Apex トリガー・入力規則）        |
 
 ### 2.7 画面（Layout / FlexiPage / タブ・アプリ）
 

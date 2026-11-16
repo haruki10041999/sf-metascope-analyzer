@@ -196,7 +196,10 @@ const selectorPartsOf = (selector: string): Pick<LwcQueryInfo, 'tags' | 'dataAtt
 };
 
 /** 式の中で使っている import (識別子が import の名前のもの。同じ名前は 1 つ) */
-const referencesOf = (node: unknown, tables: LwcImportTables): LwcImportReferenceJson[] => {
+const referencesOf = (
+    node: unknown,
+    tables: Pick<LwcImportTables, 'imports'>,
+): LwcImportReferenceJson[] => {
     const references = new Map<string, LwcImportReferenceJson>();
     walkLwcJson(node, {
         jsIdentifier: (identifier) => {
@@ -206,6 +209,43 @@ const referencesOf = (node: unknown, tables: LwcImportTables): LwcImportReferenc
     });
     return [...references.values()];
 };
+
+// import の参照 (段階 6 のあとまで JSON の references に持っていたもの。docs/json-redesign-plan.md 4 章の 4)。
+// 派生の情報なので JSON から消し、式・文の JSON から解析で出す。型の中 (lwcType) は見ない
+
+/** 式・文の JSON (またはその並び) の中で使っている import (識別子が import の名前のもの。同じ名前は 1 つ) */
+export const lwcImportReferencesOf = (
+    node: unknown,
+    tables: Pick<LwcImportTables, 'imports'>,
+): LwcImportReferenceJson[] => referencesOf(node, tables);
+
+/**
+ * 本体 (文の並びと、アロー関数の式の本体) の中の import。
+ * メソッド・getter / setter・関数・function 宣言の本体の参照 (getFieldValue(..., NAME_FIELD) の NAME_FIELD など)
+ */
+export const lwcBodyReferencesOf = (
+    content: Pick<LwcBodyContentJson, 'block'> & { expression?: LwcJsExpressionJson },
+    tables: Pick<LwcImportTables, 'imports'>,
+): LwcImportReferenceJson[] => referencesOf([content.block, content.expression], tables);
+
+/**
+ * フィールド・変数の初期値の中の import (@api title = TITLE_LABEL の TITLE_LABEL など)。
+ * 初期値が関数なら、引数の既定値も含む関数全体 (フィールドの function、変数の宣言に開いた関数の中身)
+ */
+export const lwcInitReferencesOf = (
+    target: {
+        init?: LwcJsExpressionJson;
+        function?: unknown;
+        param?: unknown;
+        block?: unknown;
+        expression?: LwcJsExpressionJson;
+    },
+    tables: Pick<LwcImportTables, 'imports'>,
+): LwcImportReferenceJson[] =>
+    referencesOf(
+        [target.init, target.function, target.param, target.block, target.expression],
+        tables,
+    );
 
 /** メンバーの参照の名前 (計算されたメンバーは文字列のリテラルのときだけ) */
 const memberNameOf = (access: LwcJsMemberAccessJson) =>
@@ -559,7 +599,7 @@ export const analyzeLwcModuleCalls = (module: LwcModuleJson): LwcContentCalls[] 
         result.push({
             ownerKind: 'module',
             owner: null,
-            ...analyzeLwcBodyCalls({ block: module.statements, references: [] }, tables),
+            ...analyzeLwcBodyCalls({ block: module.statements }, tables),
         });
     }
     return result;

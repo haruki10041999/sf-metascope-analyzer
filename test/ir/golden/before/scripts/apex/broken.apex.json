@@ -5,133 +5,138 @@
     "content": {
       "block": [
         {
-          "kind": "statement",
-          "statement": {
-            "kind": "expression",
+          "kind": "expression",
+          "sourceKeys": {},
+          "value": {
+            "kind": "assignment",
             "sourceKeys": {},
-            "value": {
+            "left": {
+              "kind": "identifier",
               "sourceKeys": {},
-              "left": "x",
-              "operator": "=",
-              "right": {
+              "name": "x"
+            },
+            "right": {
+              "kind": "classLiteral",
+              "sourceKeys": {},
+              "classType": {
                 "kind": "type",
                 "sourceKeys": {},
                 "type": "list",
                 "elementType": {
                   "type": "custom",
-                  "customType": "Account"
-                }
-              }
-            }
-          },
-          "modifier": {}
-        },
-        {
-          "kind": "statement",
-          "statement": {
-            "kind": "expression",
-            "sourceKeys": {},
-            "value": {
-              "sourceKeys": {},
-              "left": "accs",
-              "operator": "=",
-              "right": {
-                "kind": "soql",
-                "sourceKeys": {},
-                "select": {
-                  "field": [
-                    {
-                      "kind": "selectEntry",
-                      "sourceKeys": {},
-                      "type": "field",
-                      "field": [
-                        "Id"
-                      ]
-                    }
-                  ]
-                },
-                "from": {
-                  "field": [
-                    {
-                      "kind": "fromField",
-                      "sourceKeys": {},
-                      "field": [
-                        "Account"
-                      ]
-                    }
+                  "customType": [
+                    "Account"
                   ]
                 }
               }
-            }
-          },
-          "modifier": {}
-        },
-        {
-          "kind": "statement",
-          "statement": {
-            "kind": "expression",
-            "sourceKeys": {},
-            "value": {
-              "sourceKeys": {},
-              "left": "Name",
-              "operator": "=",
-              "right": "LIMIT"
-            }
-          },
-          "modifier": {}
-        },
-        {
-          "kind": "statement",
-          "statement": {
-            "kind": "expression",
-            "sourceKeys": {},
-            "value": {
-              "sourceKeys": {},
-              "value": "1",
-              "valueType": "integer"
-            }
-          },
-          "modifier": {}
-        },
-        {
-          "kind": "statement",
-          "statement": {
-            "kind": "for",
-            "sourceKeys": {},
-            "condition": {
-              "kind": "forCondition",
-              "sourceKeys": {}
             },
-            "block": [
-              {
-                "kind": "expression",
-                "sourceKeys": {},
-                "value": {
-                  "kind": "memberAccess",
-                  "sourceKeys": {},
-                  "type": "method",
-                  "member": "foo",
-                  "memberArg": [
-                    {
-                      "sourceKeys": {},
-                      "value": "1",
-                      "valueType": "integer"
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          "modifier": {}
+            "operator": "="
+          }
         },
         {
-          "kind": "statement",
-          "statement": {
-            "kind": "return",
+          "kind": "expression",
+          "sourceKeys": {},
+          "value": {
+            "kind": "assignment",
             "sourceKeys": {},
-            "field": "x"
-          },
-          "modifier": {}
+            "left": {
+              "kind": "identifier",
+              "sourceKeys": {},
+              "name": "accs"
+            },
+            "right": {
+              "kind": "soql",
+              "sourceKeys": {},
+              "select": {
+                "field": [
+                  {
+                    "kind": "selectEntry",
+                    "sourceKeys": {},
+                    "type": "field",
+                    "field": [
+                      "Id"
+                    ]
+                  }
+                ]
+              },
+              "from": {
+                "field": [
+                  {
+                    "kind": "fromField",
+                    "sourceKeys": {},
+                    "field": [
+                      "Account"
+                    ]
+                  }
+                ]
+              }
+            },
+            "operator": "="
+          }
+        },
+        {
+          "kind": "expression",
+          "sourceKeys": {},
+          "value": {
+            "kind": "assignment",
+            "sourceKeys": {},
+            "left": {
+              "kind": "identifier",
+              "sourceKeys": {},
+              "name": "Name"
+            },
+            "right": {
+              "kind": "identifier",
+              "sourceKeys": {},
+              "name": "LIMIT"
+            },
+            "operator": "="
+          }
+        },
+        {
+          "kind": "expression",
+          "sourceKeys": {},
+          "value": {
+            "kind": "integer",
+            "sourceKeys": {},
+            "value": "1"
+          }
+        },
+        {
+          "kind": "for",
+          "sourceKeys": {},
+          "condition": {},
+          "block": [
+            {
+              "kind": "expression",
+              "sourceKeys": {},
+              "value": {
+                "kind": "call",
+                "sourceKeys": {},
+                "callee": {
+                  "kind": "identifier",
+                  "sourceKeys": {},
+                  "name": "foo"
+                },
+                "arg": [
+                  {
+                    "kind": "integer",
+                    "sourceKeys": {},
+                    "value": "1"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "return",
+          "sourceKeys": {},
+          "field": {
+            "kind": "identifier",
+            "sourceKeys": {},
+            "name": "x"
+          }
         }
       ]
     }
@@ -177,19 +182,6 @@
       }
     },
     {
-      "context": ";;",
-      "start": {
-        "offset": 87,
-        "line": 3,
-        "column": 5
-      },
-      "end": {
-        "offset": 89,
-        "line": 3,
-        "column": 7
-      }
-    },
-    {
       "context": "Account",
       "start": {
         "offset": 51,
@@ -213,6 +205,32 @@
         "offset": 45,
         "line": 2,
         "column": 31
+      }
+    },
+    {
+      "context": "LIMIT",
+      "start": {
+        "offset": 72,
+        "line": 2,
+        "column": 58
+      },
+      "end": {
+        "offset": 77,
+        "line": 2,
+        "column": 63
+      }
+    },
+    {
+      "context": "List<Account>",
+      "start": {
+        "offset": 14,
+        "line": 2,
+        "column": 0
+      },
+      "end": {
+        "offset": 27,
+        "line": 2,
+        "column": 13
       }
     },
     {
@@ -255,6 +273,19 @@
       }
     },
     {
+      "context": "Name",
+      "start": {
+        "offset": 65,
+        "line": 2,
+        "column": 51
+      },
+      "end": {
+        "offset": 69,
+        "line": 2,
+        "column": 55
+      }
+    },
+    {
       "context": "SELECT Id FROM Account WHERE",
       "start": {
         "offset": 36,
@@ -291,6 +322,32 @@
         "offset": 64,
         "line": 2,
         "column": 50
+      }
+    },
+    {
+      "context": "accs",
+      "start": {
+        "offset": 28,
+        "line": 2,
+        "column": 14
+      },
+      "end": {
+        "offset": 32,
+        "line": 2,
+        "column": 18
+      }
+    },
+    {
+      "context": "foo",
+      "start": {
+        "offset": 97,
+        "line": 4,
+        "column": 4
+      },
+      "end": {
+        "offset": 100,
+        "line": 4,
+        "column": 7
       }
     },
     {
@@ -369,6 +426,32 @@
         "offset": 27,
         "line": 2,
         "column": 13
+      }
+    },
+    {
+      "context": "x",
+      "start": {
+        "offset": 116,
+        "line": 6,
+        "column": 7
+      },
+      "end": {
+        "offset": 117,
+        "line": 6,
+        "column": 8
+      }
+    },
+    {
+      "context": "x",
+      "start": {
+        "offset": 8,
+        "line": 1,
+        "column": 8
+      },
+      "end": {
+        "offset": 9,
+        "line": 1,
+        "column": 9
       }
     }
   ],

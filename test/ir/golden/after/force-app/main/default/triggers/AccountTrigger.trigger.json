@@ -21,110 +21,119 @@
       ],
       "block": [
         {
-          "kind": "statement",
-          "statement": {
-            "kind": "expression",
+          "kind": "expression",
+          "sourceKeys": {},
+          "value": {
+            "kind": "memberAccess",
             "sourceKeys": {},
-            "value": {
-              "kind": "memberAccess",
+            "type": "method",
+            "object": {
+              "kind": "identifier",
               "sourceKeys": {},
-              "type": "method",
-              "object": "System",
-              "operator": ".",
-              "member": "debug",
-              "memberArg": [
-                {
-                  "sourceKeys": {},
-                  "value": "'start'",
-                  "valueType": "string"
-                }
-              ]
-            }
-          },
-          "modifier": {}
-        },
-        {
-          "kind": "statement",
-          "statement": {
-            "kind": "if",
-            "sourceKeys": {},
-            "conditionBlock": [
+              "name": "System"
+            },
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
               {
-                "condition": {
-                  "kind": "ifCondition",
-                  "sourceKeys": {},
-                  "condition": {
-                    "sourceKeys": {},
-                    "left": {
-                      "kind": "memberAccess",
-                      "sourceKeys": {},
-                      "type": "object",
-                      "object": "Trigger",
-                      "operator": ".",
-                      "member": "isBefore"
-                    },
-                    "operator": "&&",
-                    "right": {
-                      "kind": "memberAccess",
-                      "sourceKeys": {},
-                      "type": "object",
-                      "object": "Trigger",
-                      "operator": ".",
-                      "member": "isInsert"
-                    }
-                  }
-                },
-                "block": [
-                  {
-                    "kind": "expression",
-                    "sourceKeys": {},
-                    "value": {
-                      "kind": "memberAccess",
-                      "sourceKeys": {},
-                      "type": "method",
-                      "object": "AccountService",
-                      "operator": ".",
-                      "member": "validate",
-                      "memberArg": [
-                        {
-                          "kind": "memberAccess",
-                          "sourceKeys": {},
-                          "type": "object",
-                          "object": "Trigger",
-                          "operator": ".",
-                          "member": "new"
-                        }
-                      ]
-                    }
-                  }
-                ]
+                "kind": "string",
+                "sourceKeys": {},
+                "value": "start"
               }
             ]
-          },
-          "modifier": {}
+          }
         },
         {
-          "kind": "statement",
-          "statement": {
-            "kind": "expression",
-            "sourceKeys": {},
-            "value": {
-              "kind": "memberAccess",
-              "sourceKeys": {},
-              "type": "method",
-              "object": "System",
-              "operator": ".",
-              "member": "debug",
-              "memberArg": [
-                {
+          "kind": "if",
+          "sourceKeys": {},
+          "conditionBlock": [
+            {
+              "condition": {
+                "kind": "logical",
+                "sourceKeys": {},
+                "left": {
+                  "kind": "memberAccess",
                   "sourceKeys": {},
-                  "value": "'done'",
-                  "valueType": "string"
+                  "type": "object",
+                  "object": {
+                    "kind": "identifier",
+                    "sourceKeys": {},
+                    "name": "Trigger"
+                  },
+                  "operator": ".",
+                  "member": "isBefore"
+                },
+                "right": {
+                  "kind": "memberAccess",
+                  "sourceKeys": {},
+                  "type": "object",
+                  "object": {
+                    "kind": "identifier",
+                    "sourceKeys": {},
+                    "name": "Trigger"
+                  },
+                  "operator": ".",
+                  "member": "isInsert"
+                },
+                "operator": "&&"
+              },
+              "block": [
+                {
+                  "kind": "expression",
+                  "sourceKeys": {},
+                  "value": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {},
+                    "type": "method",
+                    "object": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "AccountService"
+                    },
+                    "operator": ".",
+                    "member": "validate",
+                    "memberArg": [
+                      {
+                        "kind": "memberAccess",
+                        "sourceKeys": {},
+                        "type": "object",
+                        "object": {
+                          "kind": "identifier",
+                          "sourceKeys": {},
+                          "name": "Trigger"
+                        },
+                        "operator": ".",
+                        "member": "new"
+                      }
+                    ]
+                  }
                 }
               ]
             }
-          },
-          "modifier": {}
+          ]
+        },
+        {
+          "kind": "expression",
+          "sourceKeys": {},
+          "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {},
+            "type": "method",
+            "object": {
+              "kind": "identifier",
+              "sourceKeys": {},
+              "name": "System"
+            },
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "kind": "string",
+                "sourceKeys": {},
+                "value": "done"
+              }
+            ]
+          }
         }
       ]
     }
@@ -157,16 +166,16 @@
       }
     },
     {
-      "context": "(Trigger.isBefore && Trigger.isInsert)",
+      "context": "AccountService",
       "start": {
-        "offset": 100,
-        "line": 3,
-        "column": 7
+        "offset": 149,
+        "line": 4,
+        "column": 8
       },
       "end": {
-        "offset": 138,
-        "line": 3,
-        "column": 45
+        "offset": 163,
+        "line": 4,
+        "column": 22
       }
     },
     {
@@ -193,6 +202,32 @@
         "offset": 186,
         "line": 4,
         "column": 45
+      }
+    },
+    {
+      "context": "System",
+      "start": {
+        "offset": 197,
+        "line": 6,
+        "column": 4
+      },
+      "end": {
+        "offset": 203,
+        "line": 6,
+        "column": 10
+      }
+    },
+    {
+      "context": "System",
+      "start": {
+        "offset": 70,
+        "line": 2,
+        "column": 4
+      },
+      "end": {
+        "offset": 76,
+        "line": 2,
+        "column": 10
       }
     },
     {
@@ -245,6 +280,45 @@
         "offset": 92,
         "line": 2,
         "column": 26
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 101,
+        "line": 3,
+        "column": 8
+      },
+      "end": {
+        "offset": 108,
+        "line": 3,
+        "column": 15
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 121,
+        "line": 3,
+        "column": 28
+      },
+      "end": {
+        "offset": 128,
+        "line": 3,
+        "column": 35
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 173,
+        "line": 4,
+        "column": 32
+      },
+      "end": {
+        "offset": 180,
+        "line": 4,
+        "column": 39
       }
     },
     {

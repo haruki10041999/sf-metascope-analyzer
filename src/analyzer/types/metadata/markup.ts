@@ -1,5 +1,14 @@
 import type { JsonType } from '../commons/json';
-import { childrenOf, parseXml, XmlSyntaxError, type XmlElement } from '../commons/xml';
+import {
+    childrenOf,
+    decodeRange,
+    parseXml,
+    trimDecoded,
+    XmlSyntaxError,
+    type XmlElement,
+} from '../commons/xml';
+import { makePositionOf } from '../commons/source';
+import { makeSpanJson } from '../commons/spanJson';
 import {
     makeMetadataJson,
     nonEmptyEntry,
@@ -11,6 +20,8 @@ import {
     type XmlSourceRegistry,
 } from '../commons/xmlJson';
 import { makeRecordJsonFromRoot, type RecordJson } from './record';
+import { readAttributeTemplate } from './criteria';
+import { type TemplateValue, makeTemplateJson } from './formula';
 import {
     APEX_COMPONENT_META_SPEC,
     APEX_PAGE_META_SPEC,
@@ -20,8 +31,9 @@ import {
 } from './recordTypes';
 
 // 本体のファイルを伴う種類 (Visualforce・メールテンプレート) と、バンドルの種類 (Aura)。方針: docs/metadata-implementation.md 10 章
-// -meta.xml は種類の表 (recordTypes.ts) で読み、本体のマークアップは構造 (ルートの属性・使っている部品・宣言) だけを JSON にする。
-// 中の差し込み ({!...}) などの参照は、参照の対応 (docs/analysis-plan.md) でまとめて扱う
+// -meta.xml は種類の表 (recordTypes.ts) で読む。本体のマークアップは木 (markupElement・markupText。段階 M6) にし、
+// 差し込み ({!...}) を含む属性値・テキストは fxTemplate にする。使っている部品・差し込みの一覧は派生の情報なので
+// JSON に持たず、解析 (processor/Metadata/markup.ts) で木から出す
 
 /** 本体のマークアップを XML として読む。読めなければ problems に理由を足し、null (JSON には持たない) */
 const parseMarkup = (
@@ -45,22 +57,92 @@ const parseMarkup = (
     }
 };
 
-/** 名前空間付きのタグ (apex:outputText・c:myComponent など) の一覧 (重複なし・名前の順)。exclude のタグは除く */
-const namespacedTags = (root: XmlElement, exclude: ReadonlySet<string> = new Set()): string[] => {
-    const tags = new Set<string>();
-    const visit = (element: XmlElement) => {
-        if (element.name.includes(':') && !exclude.has(element.name)) tags.add(element.name);
-        element.children.forEach(visit);
-    };
-    root.children.forEach(visit);
-    return [...tags].sort();
+/** 属性 1 つ。値は差し込みを含めば fxTemplate (段階 M6) */
+export type MarkupAttributeJson = { name: string; value: TemplateValue };
+
+/** マークアップの要素 (タグ・属性 (書いた順)・子) */
+export type MarkupElementJson = JsonType<'markupElement'> & {
+    tag: string;
+    attributes: MarkupAttributeJson[];
+    children: MarkupNodeJson[];
 };
 
-/** 差し込み ({!...}) の中身 (前後の空白を除く。重複なし・名前の順) */
-const expressionsOf = (source: string): string[] =>
-    [
-        ...new Set([...source.matchAll(/{!([^}]*)}/g)].map((m) => m[1]!.trim()).filter(Boolean)),
-    ].sort();
+/** 要素の間のテキスト (前後の空白を除いたもの。空白だけのものは持たない) */
+export type MarkupTextJson = JsonType<'markupText'> & { text: TemplateValue };
+
+export type MarkupNodeJson = MarkupElementJson | MarkupTextJson;
+
+const isNamespaceAttribute = (name: string) => name === 'xmlns' || name.startsWith('xmlns:');
+
+/** 要素の子 (要素とテキスト。書いた順) を木にする。exclude のタグの子要素 (宣言) は持たない */
+const makeMarkupNodes = (
+    element: XmlElement,
+    file: XmlFile,
+    registry: XmlSourceRegistry,
+    exclude: ReadonlySet<string> = new Set(),
+): MarkupNodeJson[] => {
+    if (!element.content) return [];
+    const positionOf = makePositionOf(file.source);
+    const nodes: MarkupNodeJson[] = [];
+    const pushText = (start: number, end: number) => {
+        const decoded = trimDecoded(decodeRange(file.source, start, end));
+        if (!decoded.text) return;
+        const span = {
+            start: positionOf(decoded.starts[0]!),
+            end: positionOf(decoded.ends[decoded.ends.length - 1]!),
+        };
+        nodes.push(
+            makeSpanJson<MarkupTextJson>(
+                'markupText',
+                {
+                    text: makeTemplateJson(decoded, file, registry, span, ({ message, offset }) =>
+                        registry.problems.push({
+                            code: 'FORMULA_SYNTAX',
+                            file,
+                            kindType: 'markupText',
+                            message,
+                            position: positionOf(offset),
+                        }),
+                    ),
+                },
+                span,
+                file,
+                registry,
+            ),
+        );
+    };
+    let index = element.content.start;
+    for (const child of element.children) {
+        pushText(index, child.start.offset);
+        index = child.end.offset;
+        if (exclude.has(child.name)) continue;
+        nodes.push(makeMarkupElement(child, file, registry));
+    }
+    pushText(index, element.content.end);
+    return nodes;
+};
+
+const makeMarkupElement = (
+    element: XmlElement,
+    file: XmlFile,
+    registry: XmlSourceRegistry,
+): MarkupElementJson =>
+    makeMetadataJson<MarkupElementJson>(
+        'markupElement',
+        {
+            tag: element.name,
+            attributes: Object.keys(element.attributes)
+                .filter((name) => !isNamespaceAttribute(name))
+                .map((name) => ({
+                    name,
+                    value: readAttributeTemplate(element, name, { file, registry }),
+                })),
+            children: makeMarkupNodes(element, file, registry),
+        },
+        element,
+        file,
+        registry,
+    );
 
 const attributesOf = (element: XmlElement): Record<string, string> =>
     Object.fromEntries(
@@ -109,10 +191,8 @@ export type VisualforceMarkupJson = JsonType<'visualforceMarkup'> & {
     root: string;
     /** ルートの属性 (controller・standardController・extensions など) */
     attributes: Record<string, string>;
-    /** 使っている部品のタグ */
-    components: string[];
-    /** 差し込み ({!...} の中身。重複なし・名前の順)。参照の解析で使う */
-    expressions?: string[];
+    /** ルートの中身の木 (apex:component の apex:attribute は componentAttributes に出すので持たない。段階 M6) */
+    body: MarkupNodeJson[];
     /** apex:component の apex:attribute */
     componentAttributes?: MarkupDeclarationJson<'visualforceAttribute'>[];
 };
@@ -141,8 +221,12 @@ const makeVisualforceMarkup = (
             {
                 root: parsed.root.name,
                 attributes: attributesOf(parsed.root),
-                components: namespacedTags(parsed.root, new Set(['apex:attribute'])),
-                ...nonEmptyEntry('expressions', expressionsOf(text.source)),
+                body: makeMarkupNodes(
+                    parsed.root,
+                    parsed.file,
+                    registry,
+                    new Set(['apex:attribute']),
+                ),
                 ...nonEmptyEntry(
                     'componentAttributes',
                     makeDeclarations(
@@ -198,8 +282,34 @@ export const makeApexComponentJson = (
 // メールテンプレート
 // ---------------------------------------------------------------------------
 
-/** メールテンプレート。-meta.xml の値 (件名・種類など) と本文 (.email。そのままの文字列) */
-export type EmailTemplateJson = RecordJson<typeof EMAIL_TEMPLATE_META_SPEC> & { body?: string };
+/**
+ * メールテンプレート。-meta.xml の値 (件名・種類など) と本文 (.email)。
+ * 本文は差し込みを含めば fxTemplate (段階 M6。なければ文字列のまま)
+ */
+export type EmailTemplateJson = RecordJson<typeof EMAIL_TEMPLATE_META_SPEC> & {
+    body?: TemplateValue;
+};
+
+/** メールの本文 (.email のファイル全体) をテンプレートにする */
+const makeEmailBody = (text: SourceText, registry: XmlSourceRegistry): TemplateValue => {
+    const file: XmlFile = { filePath: text.filePath, source: text.source };
+    const positionOf = makePositionOf(text.source);
+    const starts = Array.from({ length: text.source.length }, (_, i) => i);
+    return makeTemplateJson(
+        { text: text.source, starts, ends: starts.map((i) => i + 1) },
+        file,
+        registry,
+        { start: positionOf(0), end: positionOf(text.source.length) },
+        ({ message, offset }) =>
+            registry.problems.push({
+                code: 'FORMULA_SYNTAX',
+                file,
+                kindType: 'emailTemplate',
+                message,
+                position: positionOf(offset),
+            }),
+    );
+};
 
 export const makeEmailTemplateJson = (
     file: ParsedXmlFile,
@@ -215,7 +325,7 @@ export const makeEmailTemplateJson = (
         meta,
         file,
         registry,
-        body ? { body: body.source } : {},
+        body ? { body: makeEmailBody(body, registry) } : {},
     );
 };
 
@@ -252,10 +362,8 @@ export type AuraBundleJson = JsonType<'auraBundle'> & {
     dependencies?: string[];
     /** lightning:messageChannel の type (メッセージチャネル <名前>__c。重複なし・名前の順) */
     messageChannels?: string[];
-    /** 使っている部品のタグ (aura: の宣言のタグは除く) */
-    components: string[];
-    /** 差し込み ({!...} の中身。重複なし・名前の順)。参照の解析で使う */
-    expressions?: string[];
+    /** ルートの中身の木 (aura: の宣言 (attributes などに出すもの) は持たない。段階 M6) */
+    body: MarkupNodeJson[];
     /** Controller.js / Helper.js / Renderer.js の関数の名前 (書いた順)。キーは controller / helper / renderer */
     javascript?: Partial<Record<'controller' | 'helper' | 'renderer', string[]>>;
     /** バンドルの中のファイル (名前の順) */
@@ -357,8 +465,7 @@ export const makeAuraBundleJson = (
             ),
             ...nonEmptyEntry('dependencies', dependencies),
             ...nonEmptyEntry('messageChannels', [...messageChannels].sort()),
-            components: namespacedTags(root, AURA_DECLARATION_TAGS),
-            ...nonEmptyEntry('expressions', expressionsOf(file.source)),
+            body: makeMarkupNodes(root, file, registry, AURA_DECLARATION_TAGS),
             ...(javascript && Object.keys(javascript).length ? { javascript } : {}),
             files: [
                 file.filePath.split('/').pop()!,

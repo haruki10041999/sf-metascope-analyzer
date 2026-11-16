@@ -6,6 +6,8 @@ import {
     nonEmptyEntry,
     readProperties,
     readText,
+    readFormula,
+    readTemplate,
     readXmlRoot,
     unknownChildNames,
     type ParsedXmlFile,
@@ -14,6 +16,8 @@ import {
     type XmlReadProblem,
     type XmlSourceRegistry,
 } from '../commons/xmlJson';
+import type { FormulaValue, TemplateValue } from './formula';
+import { flowTreeConverter } from './criteria';
 
 // Flow (flows/<名前>.flow-meta.xml) の JSON。方針: docs/metadata-implementation.md 10 章
 // - 要素 (actionCalls など)・資源 (variables など) は name をキーに持つ JSON ノード。中身は要素の種類ごとに形が違い多いので、
@@ -21,7 +25,8 @@ import {
 // - 接続 (connector / defaultConnector / faultConnector など) は要素の外 (ルートの edges) に出す
 //   (つなぎ替えただけで要素の objectKey が変わらないように)
 // - Flow Builder の画面上の位置 (locationX / locationY) と画面の設定 (CanvasMode など) は読まない
-// - 使っている項目・変数・Apex・サブフロー・LWC・ラベルを references に取り出す (種類をまたぐ突き合わせは解析で行う)
+// - 使っている項目・変数・Apex・サブフロー・LWC・ラベルは JSON に持たず、解析で出す
+//   (processor/Metadata/flowRefs.ts。docs/json-redesign-plan.md の段階 M3)
 
 export const FLOW_SCHEMA = {
     label: 'string',
@@ -137,36 +142,6 @@ export type FlowValue =
 
 export type FlowProperties = Record<string, FlowValue>;
 
-/** 使っているもの */
-export type FlowReferenceType =
-    | 'object'
-    | 'field'
-    | 'element'
-    | 'global'
-    | 'apexClass'
-    | 'flow'
-    | 'lwc'
-    | 'component'
-    | 'label'
-    /** $Permission.<名前> */
-    | 'customPermission'
-    /** $CustomMetadata.<型>__mdt.<レコード> のレコード (<型 (__mdt なし)>.<レコード>) */
-    | 'customMetadata'
-    /** アクション (actionCalls) の emailAlert (ワークフローのメールアラート <オブジェクト>.<名前>) */
-    | 'emailAlert'
-    /** アクションの quickAction (<オブジェクト>.<名前> か、グローバルなら <名前>) */
-    | 'quickAction'
-    /** アクションの externalService (外部サービスの登録の名前。actionName の . の前) */
-    | 'externalService'
-    /** カスタム通知 (CustomNotificationType を DeveloperName で取得するもの) */
-    | 'customNotificationType';
-
-export type FlowReference = {
-    refType: FlowReferenceType;
-    /** object: Invoice__c / field: Invoice__c.Amount__c / element: 要素・資源の名前 / global: $User.Id など */
-    value: string;
-};
-
 /** 接続 (要素の外に出したもの)。edgeType は接続の要素名 (rules の中のものは rules[<名前>].connector) */
 export type FlowEdge = {
     from: string;
@@ -202,24 +177,28 @@ export type FlowElementJson = JsonType<FlowElementKind> & {
     rules?: FlowRuleJson[];
     /** screens の項目 */
     fields?: FlowScreenFieldJson[];
-    references?: FlowReference[];
 };
 
 /** 資源 1 つ */
 export type FlowResourceJson = JsonType<FlowResourceKind> & {
     name: string;
     description?: string;
-    properties?: FlowProperties;
-    references?: FlowReference[];
-};
+    /** 数式の資源 (formulas) の数式 (段階 M4。以前は properties の文字列) */
+    expression?: FormulaValue;
+    /** テキストテンプレート (textTemplates) の本文 (段階 M6。差し込みを含めば fxTemplate) */
+    text?: TemplateValue;
+} & PropertiesOf<typeof FLOW_VARIABLE_SCHEMA> & {
+        properties?: FlowProperties;
+    };
 
 /** 起動 (start)。レコードトリガーの対象と条件、スケジュール */
 export type FlowStartJson = JsonType<'flowStart'> & {
     object?: string;
     triggerType?: string;
     recordTriggerType?: string;
+    /** 起動の条件の数式 (段階 M4。以前は properties の文字列) */
+    filterFormula?: FormulaValue;
     properties?: FlowProperties;
-    references?: FlowReference[];
 };
 
 export type FlowJson = JsonType<'flow'> & {
@@ -247,9 +226,24 @@ const FLOW_VALUE_TREE: ValueTreeOptions = {
     valueTypes: VALUE_TYPES,
 };
 
-/** 子要素を値の木にする (共通の値の木。types/commons/valueTree.ts)。skip にある子要素・接続・位置は持たない */
-const toProperties = (element: XmlElement, skip: ReadonlySet<string> = new Set()): FlowProperties =>
-    toValueTreeProperties(element, FLOW_VALUE_TREE, skip) as FlowProperties;
+/**
+ * 子要素を値の木にする (共通の値の木。types/commons/valueTree.ts)。skip にある子要素・接続・位置は持たない。
+ * 条件の行・数式の値・画面のテキストは型の JSON にする (段階 M7。criteria.ts の flowTreeConverter)
+ */
+const toProperties = (
+    element: XmlElement,
+    file: XmlFile,
+    registry: XmlSourceRegistry,
+    skip: ReadonlySet<string> = new Set(),
+): FlowProperties =>
+    toValueTreeProperties(element, flowTreeOptions(file, registry), skip) as FlowProperties;
+
+/** Flow の値の木の決まりに、型の JSON への変換 (段階 M7・M8) を足したもの */
+const flowTreeOptions = (file: XmlFile, registry: XmlSourceRegistry): ValueTreeOptions => {
+    const options: ValueTreeOptions = { ...FLOW_VALUE_TREE };
+    options.convert = flowTreeConverter({ file, registry }, options);
+    return options;
+};
 
 const toValue = (element: XmlElement): FlowValue =>
     toValueTree(element, FLOW_VALUE_TREE) as FlowValue;
@@ -279,165 +273,6 @@ const collectEdges = (from: string, element: XmlElement, prefix = ''): FlowEdge[
     });
 
 // ---------------------------------------------------------------------------
-// 参照
-// ---------------------------------------------------------------------------
-
-const MERGE_FIELD = /\{!([^}]+)\}/g;
-const LABEL_IN_TEXT = /\$Label\.(\w+)/g;
-
-/** 参照として読む要素 (値が要素・資源の名前、または $Record.<項目> など) */
-const REFERENCE_NAMES = new Set([
-    'elementReference',
-    'leftValueReference',
-    'assignToReference',
-    'assignNextValueToReference',
-    'collectionReference',
-    'inputReference',
-    'outputReference',
-    'choiceReferences',
-    'dataTypeMappings',
-]);
-
-/** 参照を集める。startObject はレコードトリガーの対象 ($Record の項目をそのオブジェクトの項目にする) */
-const makeReferenceCollector = (startObject: string | undefined) => {
-    const refs: FlowReference[] = [];
-    const seen = new Set<string>();
-    const add = (refType: FlowReferenceType, value: string) => {
-        const key = `${refType}:${value}`;
-        if (!value || seen.has(key)) return;
-        seen.add(key);
-        refs.push({ refType, value });
-    };
-    /** {!...} の中や elementReference の値 */
-    const addPath = (path: string) => {
-        const trimmed = path.trim();
-        const label = trimmed.match(/^\$Label\.(\w+)/);
-        if (label) return add('label', label[1]!);
-        const record = trimmed.match(/^\$Record(?:__Prior)?\.(\w+)/);
-        if (record) {
-            return startObject
-                ? add('field', `${startObject}.${record[1]}`)
-                : add('global', trimmed);
-        }
-        // カスタム権限・カスタム設定・カスタムメタデータは、定義のある種類の参照にする (数式の解析と同じ。dependency/formula.ts)
-        const [head, first, second, third] = trimmed.split('.');
-        switch (head?.toLowerCase()) {
-            case '$permission':
-                if (first) return add('customPermission', first);
-                break;
-            case '$setup':
-                if (first) {
-                    add('object', first);
-                    if (second) add('field', `${first}.${second}`);
-                    return;
-                }
-                break;
-            case '$custommetadata':
-                if (first) {
-                    add('object', first);
-                    if (second) add('customMetadata', `${first.replace(/__mdt$/i, '')}.${second}`);
-                    if (third) add('field', `${first}.${third}`);
-                    return;
-                }
-                break;
-        }
-        if (trimmed.startsWith('$')) return add('global', trimmed.split('.').slice(0, 2).join('.'));
-        add('element', trimmed.split('.')[0]!);
-    };
-    /** 要素の中のすべての文字列・参照の要素 */
-    const scan = (element: XmlElement) => {
-        for (const child of element.children) {
-            if (isConnector(child.name)) continue;
-            if (child.children.length) {
-                scan(child);
-                continue;
-            }
-            if (REFERENCE_NAMES.has(child.name)) {
-                addPath(child.text);
-            }
-            for (const match of child.text.matchAll(MERGE_FIELD)) addPath(match[1]!);
-            for (const match of child.text.matchAll(LABEL_IN_TEXT)) add('label', match[1]!);
-        }
-    };
-    return { refs, add, scan };
-};
-
-/** レコードの操作 (Get / Create / Update / Delete) の対象オブジェクトと項目 */
-const RECORD_OPERATIONS = new Set([
-    'recordLookups',
-    'recordCreates',
-    'recordUpdates',
-    'recordDeletes',
-]);
-
-const collectReferences = (
-    elementName: string,
-    element: XmlElement,
-    startObject: string | undefined,
-): FlowReference[] => {
-    const collector = makeReferenceCollector(startObject);
-    const object = readText(element, 'object');
-    if ((RECORD_OPERATIONS.has(elementName) || elementName === 'start') && object) {
-        collector.add('object', object);
-        const fields = [
-            ...childrenOf(element, 'filters'),
-            ...childrenOf(element, 'inputAssignments'),
-            ...childrenOf(element, 'outputAssignments'),
-        ].flatMap((row) => {
-            const field = readText(row, 'field');
-            return field ? [field] : [];
-        });
-        [...fields, ...childrenOf(element, 'queriedFields').map((f) => f.text)].forEach((field) =>
-            collector.add('field', `${object}.${field}`),
-        );
-    }
-    if (elementName === 'actionCalls') {
-        const actionType = readText(element, 'actionType');
-        const actionName = readText(element, 'actionName');
-        if (actionName && actionType === 'apex') collector.add('apexClass', actionName);
-        if (actionName && actionType === 'flow') collector.add('flow', actionName);
-        if (actionName && actionType === 'emailAlert') collector.add('emailAlert', actionName);
-        if (actionName && actionType === 'quickAction') collector.add('quickAction', actionName);
-        // externalService の actionName は <登録の名前>.<操作>
-        if (actionName && actionType === 'externalService')
-            collector.add('externalService', actionName.split('.')[0]!);
-    }
-    // カスタム通知は Id で渡すので、CustomNotificationType を DeveloperName で取得するところから名前を取る
-    if (elementName === 'recordLookups' && object?.toLowerCase() === 'customnotificationtype') {
-        for (const filter of childrenOf(element, 'filters')) {
-            const value = childOf(filter, 'value');
-            const name = value && readText(value, 'stringValue');
-            if (readText(filter, 'field')?.toLowerCase() === 'developername' && name)
-                collector.add('customNotificationType', name);
-        }
-    }
-    if (elementName === 'apexPluginCalls') {
-        const apexClass = readText(element, 'apexClass');
-        if (apexClass) collector.add('apexClass', apexClass);
-    }
-    if (elementName === 'subflows') {
-        const flowName = readText(element, 'flowName');
-        if (flowName) collector.add('flow', flowName);
-    }
-    if (elementName === 'screens') {
-        const visit = (field: XmlElement) => {
-            const extension = readText(field, 'extensionName');
-            if (extension) {
-                const [namespace, component] = extension.split(':');
-                if (namespace === 'c' && component) collector.add('lwc', component);
-                else collector.add('component', extension);
-            }
-            childrenOf(field, 'fields').forEach(visit);
-        };
-        childrenOf(element, 'fields').forEach(visit);
-    }
-    collector.scan(element);
-    return collector.refs;
-};
-
-const referencesEntry = (references: FlowReference[]) => (references.length ? { references } : {});
-
-// ---------------------------------------------------------------------------
 // XML → JSON
 // ---------------------------------------------------------------------------
 
@@ -447,7 +282,7 @@ const makeRuleJson = (rule: XmlElement, file: XmlFile, registry: XmlSourceRegist
         {
             name: readText(rule, 'name') ?? '',
             ...(readText(rule, 'label') !== undefined ? { label: readText(rule, 'label')! } : {}),
-            ...propertiesEntry(toProperties(rule, new Set(['name', 'label']))),
+            ...propertiesEntry(toProperties(rule, file, registry, new Set(['name', 'label']))),
         },
         rule,
         file,
@@ -471,7 +306,12 @@ const makeScreenFieldJson = (
             ...(fieldType !== undefined ? { fieldType } : {}),
             ...(extensionName !== undefined ? { extensionName } : {}),
             ...propertiesEntry(
-                toProperties(field, new Set(['name', 'fieldType', 'extensionName', 'fields'])),
+                toProperties(
+                    field,
+                    file,
+                    registry,
+                    new Set(['name', 'fieldType', 'extensionName', 'fields']),
+                ),
             ),
             ...nonEmptyEntry('fields', fields),
         },
@@ -479,6 +319,32 @@ const makeScreenFieldJson = (
         file,
         registry,
     );
+};
+
+/** 子要素 name の数式。要素がなければ持たない */
+const formulaEntry = <K extends string>(
+    element: XmlElement,
+    name: K,
+    file: XmlFile,
+    registry: XmlSourceRegistry,
+): Partial<Record<K, FormulaValue>> => {
+    const child = childOf(element, name);
+    return child
+        ? ({ [name]: readFormula(child, { file, registry }) } as Record<K, FormulaValue>)
+        : {};
+};
+
+/** 子要素 name のテンプレート。要素がなければ持たない */
+const templateEntry = <K extends string>(
+    element: XmlElement,
+    name: K,
+    file: XmlFile,
+    registry: XmlSourceRegistry,
+): Partial<Record<K, TemplateValue>> => {
+    const child = childOf(element, name);
+    return child
+        ? ({ [name]: readTemplate(child, { file, registry }) } as Record<K, TemplateValue>)
+        : {};
 };
 
 const optionalText = <K extends string>(element: XmlElement, name: K) => {
@@ -489,7 +355,6 @@ const optionalText = <K extends string>(element: XmlElement, name: K) => {
 const makeElementJson = (
     elementName: keyof typeof FLOW_ELEMENT_KINDS,
     element: XmlElement,
-    startObject: string | undefined,
     file: XmlFile,
     registry: XmlSourceRegistry,
 ): FlowElementJson => {
@@ -512,10 +377,9 @@ const makeElementJson = (
             name: readText(element, 'name') ?? '',
             ...optionalText(element, 'label'),
             ...optionalText(element, 'description'),
-            ...propertiesEntry(toProperties(element, skip)),
+            ...propertiesEntry(toProperties(element, file, registry, skip)),
             ...nonEmptyEntry('rules', rules),
             ...nonEmptyEntry('fields', fields),
-            ...referencesEntry(collectReferences(elementName, element, startObject)),
         },
         element,
         file,
@@ -523,10 +387,19 @@ const makeElementJson = (
     );
 };
 
+/** 変数 (variables) の型と入出力 (段階 M8。以前は properties の値の木) */
+export const FLOW_VARIABLE_SCHEMA = {
+    dataType: 'string',
+    objectType: 'string',
+    apexClass: 'string',
+    isCollection: 'boolean',
+    isInput: 'boolean',
+    isOutput: 'boolean',
+} as const;
+
 const makeResourceJson = (
     elementName: keyof typeof FLOW_RESOURCE_KINDS,
     element: XmlElement,
-    startObject: string | undefined,
     file: XmlFile,
     registry: XmlSourceRegistry,
 ): FlowResourceJson =>
@@ -535,8 +408,27 @@ const makeResourceJson = (
         {
             name: readText(element, 'name') ?? '',
             ...optionalText(element, 'description'),
-            ...propertiesEntry(toProperties(element, new Set(['name', 'description']))),
-            ...referencesEntry(collectReferences(elementName, element, startObject)),
+            ...(elementName === 'formulas'
+                ? formulaEntry(element, 'expression', file, registry)
+                : {}),
+            ...(elementName === 'textTemplates'
+                ? templateEntry(element, 'text', file, registry)
+                : {}),
+            ...(elementName === 'variables' ? readProperties(element, FLOW_VARIABLE_SCHEMA) : {}),
+            ...propertiesEntry(
+                toProperties(
+                    element,
+                    file,
+                    registry,
+                    new Set([
+                        'name',
+                        'description',
+                        ...(elementName === 'formulas' ? ['expression'] : []),
+                        ...(elementName === 'textTemplates' ? ['text'] : []),
+                        ...(elementName === 'variables' ? Object.keys(FLOW_VARIABLE_SCHEMA) : []),
+                    ]),
+                ),
+            ),
         },
         element,
         file,
@@ -548,17 +440,21 @@ const makeStartJson = (
     file: XmlFile,
     registry: XmlSourceRegistry,
 ): FlowStartJson => {
-    const object = readText(element, 'object');
     return makeMetadataJson<FlowStartJson>(
         'flowStart',
         {
             ...optionalText(element, 'object'),
             ...optionalText(element, 'triggerType'),
             ...optionalText(element, 'recordTriggerType'),
+            ...formulaEntry(element, 'filterFormula', file, registry),
             ...propertiesEntry(
-                toProperties(element, new Set(['object', 'triggerType', 'recordTriggerType'])),
+                toProperties(
+                    element,
+                    file,
+                    registry,
+                    new Set(['object', 'triggerType', 'recordTriggerType', 'filterFormula']),
+                ),
             ),
-            ...referencesEntry(collectReferences('start', element, object)),
         },
         element,
         file,
@@ -578,20 +474,13 @@ export const makeFlowJson = (
     if (!root) return null;
 
     const startElement = childOf(root, 'start');
-    const startObject = startElement ? readText(startElement, 'object') : undefined;
 
     // 要素・資源は XML の順のまま (種類ごとにまとまっている)
     const elementXml = root.children.filter((child) =>
         (ELEMENT_NAMES as string[]).includes(child.name),
     );
     const elements = elementXml.map((element) =>
-        makeElementJson(
-            element.name as keyof typeof FLOW_ELEMENT_KINDS,
-            element,
-            startObject,
-            file,
-            registry,
-        ),
+        makeElementJson(element.name as keyof typeof FLOW_ELEMENT_KINDS, element, file, registry),
     );
     const resources = root.children
         .filter((child) => (RESOURCE_NAMES as string[]).includes(child.name))
@@ -599,7 +488,6 @@ export const makeFlowJson = (
             makeResourceJson(
                 element.name as keyof typeof FLOW_RESOURCE_KINDS,
                 element,
-                startObject,
                 file,
                 registry,
             ),

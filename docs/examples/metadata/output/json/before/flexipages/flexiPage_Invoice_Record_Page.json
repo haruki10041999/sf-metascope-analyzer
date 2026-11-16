@@ -7,7 +7,7 @@
     "base": {
       "kind": "flexiPage",
       "sourceKeys": {
-        "objectKey": "flexiPage_ec9c6456ae95fea1",
+        "objectKey": "flexiPage_dacf6de0d492dcc0",
         "sourceKey": "flexiPage_56bcf1bae0533cfb"
       },
       "name": "Invoice_Record_Page",
@@ -15,7 +15,7 @@
       "type": "RecordPage",
       "sobjectType": "Invoice__c",
       "template": "flexipage:recordHomeTemplateDesktop",
-      "templateProperties": {
+      "templateAttributes": {
         "enablePageActionConfig": "false"
       },
       "regions": [
@@ -62,13 +62,13 @@
         {
           "kind": "flexiPageComponent",
           "sourceKeys": {
-            "objectKey": "flexiPageComponent_9204e26f9059f131",
+            "objectKey": "flexiPageComponent_7226966d6de2594d",
             "sourceKey": "flexiPageComponent_e4908711351ddf69"
           },
           "identifier": "force_highlightsPanel",
           "componentName": "force:highlightsPanel",
           "region": "header",
-          "properties": {
+          "attributes": {
             "collapsed": "false"
           }
         },
@@ -85,13 +85,13 @@
         {
           "kind": "flexiPageComponent",
           "sourceKeys": {
-            "objectKey": "flexiPageComponent_86a7136aa12c2c97",
+            "objectKey": "flexiPageComponent_1a75f05fe1432078",
             "sourceKey": "flexiPageComponent_55d00a57c17c0052"
           },
           "identifier": "c_accountList",
           "componentName": "c:accountList",
           "region": "main",
-          "properties": {
+          "attributes": {
             "title": "取引先"
           }
         },
@@ -110,13 +110,13 @@
         {
           "kind": "flexiPageField",
           "sourceKeys": {
-            "objectKey": "flexiPageField_3badceb23152f968",
+            "objectKey": "flexiPageField_2fc235e0bc9814d6",
             "sourceKey": "flexiPageField_5c61138ba5aaab6c"
           },
           "identifier": "RecordAmountField",
           "fieldItem": "Record.Amount__c",
           "region": "main",
-          "properties": {
+          "attributes": {
             "uiBehavior": "none"
           }
         }
@@ -124,7 +124,7 @@
     },
     "sourceObject": [
       {
-        "objectKey": "flexiPageComponent_9204e26f9059f131",
+        "objectKey": "flexiPageComponent_7226966d6de2594d",
         "context": "<componentInstance>\n                <componentInstanceProperties>\n                    <name>collapsed</name>\n                    <value>false</value>\n                </componentInstanceProperties>\n                <componentName>force:highlightsPanel</componentName>\n                <identifier>force_highlightsPanel</identifier>\n            </componentInstance>",
         "source": [
           {
@@ -164,7 +164,7 @@
         ]
       },
       {
-        "objectKey": "flexiPageField_3badceb23152f968",
+        "objectKey": "flexiPageField_2fc235e0bc9814d6",
         "context": "<fieldInstance>\n                <fieldInstanceProperties>\n                    <name>uiBehavior</name>\n                    <value>none</value>\n                </fieldInstanceProperties>\n                <fieldItem>Record.Amount__c</fieldItem>\n                <identifier>RecordAmountField</identifier>\n            </fieldInstance>",
         "source": [
           {
@@ -184,7 +184,7 @@
         ]
       },
       {
-        "objectKey": "flexiPageComponent_86a7136aa12c2c97",
+        "objectKey": "flexiPageComponent_1a75f05fe1432078",
         "context": "<componentInstance>\n                <componentInstanceProperties>\n                    <name>title</name>\n                    <value>取引先</value>\n                </componentInstanceProperties>\n                <componentName>c:accountList</componentName>\n                <identifier>c_accountList</identifier>\n            </componentInstance>",
         "source": [
           {
@@ -284,7 +284,7 @@
         ]
       },
       {
-        "objectKey": "flexiPage_ec9c6456ae95fea1",
+        "objectKey": "flexiPage_dacf6de0d492dcc0",
         "context": "<FlexiPage xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <flexiPageRegions>\n        <itemInstances>\n            <componentInstance>\n                <componentInstanceProperties>\n                    <name>collapsed</name>\n                    <value>false</value>\n                </componentInstanceProperties>\n                <componentName>force:highlightsPanel</componentName>\n                <identifier>force_highlightsPanel</identifier>\n            </componentInstance>\n        </itemInstances>\n        <itemInstances>\n            <componentInstance>\n                <componentName>runtime_sales_pathassistant:pathAssistant</componentName>\n                <identifier>pathAssistant</identifier>\n            </componentInstance>\n        </itemInstances>\n        <name>header</name>\n        <type>Region</type>\n    </flexiPageRegions>\n    <flexiPageRegions>\n        <itemInstances>\n            <fieldInstance>\n                <fieldInstanceProperties>\n                    <name>uiBehavior</name>\n                    <value>none</value>\n                </fieldInstanceProperties>\n                <fieldItem>Record.Amount__c</fieldItem>\n                <identifier>RecordAmountField</identifier>\n            </fieldInstance>\n        </itemInstances>\n        <itemInstances>\n            <componentInstance>\n                <componentInstanceProperties>\n                    <name>title</name>\n                    <value>取引先</value>\n                </componentInstanceProperties>\n                <componentName>c:accountList</componentName>\n                <identifier>c_accountList</identifier>\n            </componentInstance>\n        </itemInstances>\n        <name>main</name>\n        <type>Region</type>\n    </flexiPageRegions>\n    <flexiPageRegions>\n        <itemInstances>\n            <componentInstance>\n                <componentName>force:relatedListContainer</componentName>\n                <identifier>force_relatedListContainer</identifier>\n            </componentInstance>\n        </itemInstances>\n        <name>sidebar</name>\n        <type>Region</type>\n    </flexiPageRegions>\n    <masterLabel>Invoice Record Page</masterLabel>\n    <sobjectType>Invoice__c</sobjectType>\n    <template>\n        <name>flexipage:recordHomeTemplateDesktop</name>\n        <properties>\n            <name>enablePageActionConfig</name>\n            <value>false</value>\n        </properties>\n    </template>\n    <type>RecordPage</type>\n</FlexiPage>",
         "source": [
           {

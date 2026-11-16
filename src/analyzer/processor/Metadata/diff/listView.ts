@@ -1,4 +1,4 @@
-import { LIST_VIEW_SCHEMA, ListViewFilterJson, ListViewJson } from '../../../types';
+import { CriterionJson, LIST_VIEW_SCHEMA, ListViewJson } from '../../../types';
 
 import {
     Match,
@@ -28,8 +28,8 @@ export type ListViewJsonDiff = NodeDiff<
         fullName: ValueDiff<string>;
         columns?: PresentDiff<string[], TypedListDiff<string, ValueDiff<string>>>;
         filters?: PresentDiff<
-            ListViewFilterJson[],
-            TypedListDiff<ListViewFilterJson, ValueDiff<ListViewFilterJson>>
+            CriterionJson[],
+            TypedListDiff<CriterionJson, ValueDiff<CriterionJson>>
         >;
     } & PropertiesDiff<typeof LIST_VIEW_SCHEMA>
 >;

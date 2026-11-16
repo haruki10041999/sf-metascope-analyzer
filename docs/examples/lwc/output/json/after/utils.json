@@ -211,8 +211,7 @@
                       ]
                     }
                   ]
-                },
-                "references": []
+                }
               },
               {
                 "kind": "lwcDeclaration",
@@ -230,7 +229,6 @@
                 "declarationType": "function",
                 "exported": true,
                 "variableKind": "const",
-                "references": [],
                 "arrow": true,
                 "param": [
                   {
@@ -246,7 +244,6 @@
                         "objectKey": "tSNumberKeyword_850ba0354605a53c",
                         "sourceKey": "tSNumberKeyword_2fcf03249a327969"
                       },
-                      "text": "number",
                       "type": "primitive",
                       "primitiveType": "number"
                     },
@@ -260,7 +257,6 @@
                     "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
                     "sourceKey": "tSStringKeyword_23f45f5da4ea75ed"
                   },
-                  "text": "string",
                   "type": "primitive",
                   "primitiveType": "string"
                 },
@@ -310,7 +306,6 @@
                 "name": "toRows",
                 "declarationType": "function",
                 "exported": true,
-                "references": [],
                 "arrow": false,
                 "param": [
                   {
@@ -326,7 +321,6 @@
                         "objectKey": "tSArrayType_4570312153918599",
                         "sourceKey": "tSArrayType_5a087270f7b0e0d5"
                       },
-                      "text": "unknown[]",
                       "type": "array",
                       "elementType": {
                         "type": "primitive",
@@ -349,9 +343,16 @@
                         "objectKey": "tSNumberKeyword_850ba0354605a53c",
                         "sourceKey": "tSNumberKeyword_c11b27c79e517021"
                       },
-                      "text": "number",
                       "type": "primitive",
                       "primitiveType": "number"
+                    },
+                    "init": {
+                      "kind": "jsNumber",
+                      "sourceKeys": {
+                        "objectKey": "numericLiteral_7b070bac424a99de",
+                        "sourceKey": "numericLiteral_1a8a02360090805f"
+                      },
+                      "value": 50
                     },
                     "optional": true,
                     "modifier": {}
@@ -363,11 +364,12 @@
                     "objectKey": "tSArrayType_a0fe78f2e0d47552",
                     "sourceKey": "tSArrayType_44ba7b2e873405e0"
                   },
-                  "text": "Row[]",
                   "type": "array",
                   "elementType": {
                     "type": "custom",
-                    "customType": "Row"
+                    "customType": [
+                      "Row"
+                    ]
                   }
                 },
                 "async": false,
@@ -467,9 +469,10 @@
                                 "objectKey": "tSTypeReference_eca924ff86bb9059",
                                 "sourceKey": "tSTypeReference_936d04eef2f63ac0"
                               },
-                              "text": "Row",
                               "type": "custom",
-                              "customType": "Row"
+                              "customType": [
+                                "Row"
+                              ]
                             }
                           }
                         }
@@ -514,7 +517,6 @@
                       },
                       "value": 0
                     },
-                    "references": [],
                     "optional": false,
                     "modifier": {
                       "declaration": [
@@ -557,7 +559,6 @@
                             "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
                             "sourceKey": "tSStringKeyword_4dfc916ac7e76fa9"
                           },
-                          "text": "string",
                           "type": "primitive",
                           "primitiveType": "string"
                         },
@@ -567,13 +568,13 @@
                             "objectKey": "tSTypeReference_eca924ff86bb9059",
                             "sourceKey": "tSTypeReference_7eb0520b3d88d2b4"
                           },
-                          "text": "Row",
                           "type": "custom",
-                          "customType": "Row"
+                          "customType": [
+                            "Row"
+                          ]
                         }
                       ]
                     },
-                    "references": [],
                     "optional": false,
                     "modifier": {}
                   },
@@ -629,8 +630,7 @@
                             "member": "size"
                           }
                         }
-                      ],
-                      "references": []
+                      ]
                     },
                     "variantType": {
                       "kind": "lwcType",
@@ -638,7 +638,6 @@
                         "objectKey": "tSNumberKeyword_850ba0354605a53c",
                         "sourceKey": "tSNumberKeyword_6356bc174fec2a51"
                       },
-                      "text": "number",
                       "type": "primitive",
                       "primitiveType": "number"
                     }
@@ -662,7 +661,6 @@
                         "objectKey": "tSNumberKeyword_850ba0354605a53c",
                         "sourceKey": "tSNumberKeyword_c1c42cb102cfa933"
                       },
-                      "text": "number",
                       "type": "primitive",
                       "primitiveType": "number"
                     },
@@ -680,11 +678,12 @@
                             "objectKey": "tSArrayType_a0fe78f2e0d47552",
                             "sourceKey": "tSArrayType_c6de6c4c64e12c5e"
                           },
-                          "text": "Row[]",
                           "type": "array",
                           "elementType": {
                             "type": "custom",
-                            "customType": "Row"
+                            "customType": [
+                              "Row"
+                            ]
                           }
                         },
                         "optional": false,
@@ -952,8 +951,7 @@
                           "name": "count"
                         }
                       }
-                    ],
-                    "references": []
+                    ]
                   }
                 ]
               }
@@ -980,7 +978,6 @@
                     "objectKey": "tSUnionType_0ef9d59498831908",
                     "sourceKey": "tSUnionType_e1a5e179314f5b8b"
                   },
-                  "text": "'asc' | 'desc' | 'none'",
                   "type": "union",
                   "types": [
                     {
@@ -1790,6 +1787,26 @@
               "offset": 420,
               "line": 19,
               "column": 43
+            },
+            "end": {
+              "offset": 438,
+              "line": 19,
+              "column": 61
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "numericLiteral_7b070bac424a99de",
+        "context": "50",
+        "source": [
+          {
+            "sourceKey": "numericLiteral_1a8a02360090805f",
+            "start": {
+              "offset": 436,
+              "line": 19,
+              "column": 59
             },
             "end": {
               "offset": 438,

@@ -27,7 +27,9 @@
                 "kind": "type",
                 "sourceKeys": {},
                 "type": "custom",
-                "customType": "SchedulableContext"
+                "customType": [
+                  "SchedulableContext"
+                ]
               },
               "modifier": {}
             }
@@ -47,6 +49,7 @@
             "type": "primitive",
             "primitiveType": "Integer"
           },
+          "param": [],
           "modifier": {}
         },
         {
@@ -62,7 +65,9 @@
             "type": "list",
             "elementType": {
               "type": "custom",
-              "customType": "Account"
+              "customType": [
+                "Account"
+              ]
             }
           },
           "param": [
@@ -115,7 +120,9 @@
               "type": "list",
               "elementType": {
                 "type": "custom",
-                "customType": "Contact"
+                "customType": [
+                  "Contact"
+                ]
               }
             }
           },
@@ -130,7 +137,9 @@
                 "type": "list",
                 "elementType": {
                   "type": "custom",
-                  "customType": "Account"
+                  "customType": [
+                    "Account"
+                  ]
                 }
               },
               "modifier": {}
@@ -163,7 +172,9 @@
                 "kind": "type",
                 "sourceKeys": {},
                 "type": "custom",
-                "customType": "SObject"
+                "customType": [
+                  "SObject"
+                ]
               },
               "modifier": {}
             }
@@ -176,17 +187,21 @@
           "kind": "type",
           "sourceKeys": {},
           "type": "custom",
-          "customType": "Comparable"
+          "customType": [
+            "Comparable"
+          ]
         },
         {
           "kind": "type",
           "sourceKeys": {},
           "type": "custom",
-          "customType": "Schedulable"
+          "customType": [
+            "Schedulable"
+          ]
         }
       ],
       "modifier": {
-        "access": [
+        "keyword": [
           {
             "kind": "modifier",
             "sourceKeys": {},

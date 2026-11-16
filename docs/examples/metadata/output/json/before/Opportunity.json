@@ -7,7 +7,7 @@
     "base": {
       "kind": "object",
       "sourceKeys": {
-        "objectKey": "object_69e61e2f6d8ddb69",
+        "objectKey": "object_df1f239b5e6304c7",
         "sourceKey": "object_64bf5e9bd583ac0d"
       },
       "apiName": "Opportunity",
@@ -18,7 +18,7 @@
         {
           "kind": "businessProcess",
           "sourceKeys": {
-            "objectKey": "businessProcess_3f33702e9ea90649",
+            "objectKey": "businessProcess_34ef889ace312093",
             "sourceKey": "businessProcess_7c8a9f1f54539254"
           },
           "fullName": "Standard_Sales",
@@ -26,14 +26,29 @@
           "isActive": true,
           "values": [
             {
+              "kind": "picklistValueSelection",
+              "sourceKeys": {
+                "objectKey": "picklistValueSelection_48e6e40b801ab829",
+                "sourceKey": "picklistValueSelection_3df125953a6108f5"
+              },
               "fullName": "Prospecting",
               "default": true
             },
             {
+              "kind": "picklistValueSelection",
+              "sourceKeys": {
+                "objectKey": "picklistValueSelection_4e910538b47bb3e4",
+                "sourceKey": "picklistValueSelection_2a7dc82290f79d82"
+              },
               "fullName": "Qualification",
               "default": false
             },
             {
+              "kind": "picklistValueSelection",
+              "sourceKeys": {
+                "objectKey": "picklistValueSelection_6d82df836d808d48",
+                "sourceKey": "picklistValueSelection_8f4f75f705136412"
+              },
               "fullName": "Closed Won",
               "default": false
             }
@@ -43,7 +58,67 @@
     },
     "sourceObject": [
       {
-        "objectKey": "businessProcess_3f33702e9ea90649",
+        "objectKey": "picklistValueSelection_48e6e40b801ab829",
+        "context": "<values>\n        <fullName>Prospecting</fullName>\n        <default>true</default>\n    </values>",
+        "source": [
+          {
+            "sourceKey": "picklistValueSelection_3df125953a6108f5",
+            "filePath": "Opportunity/businessProcesses/Standard_Sales.businessProcess-meta.xml",
+            "start": {
+              "offset": 220,
+              "line": 6,
+              "column": 4
+            },
+            "end": {
+              "offset": 315,
+              "line": 9,
+              "column": 13
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "picklistValueSelection_4e910538b47bb3e4",
+        "context": "<values>\n        <fullName>Qualification</fullName>\n        <default>false</default>\n    </values>",
+        "source": [
+          {
+            "sourceKey": "picklistValueSelection_2a7dc82290f79d82",
+            "filePath": "Opportunity/businessProcesses/Standard_Sales.businessProcess-meta.xml",
+            "start": {
+              "offset": 320,
+              "line": 10,
+              "column": 4
+            },
+            "end": {
+              "offset": 418,
+              "line": 13,
+              "column": 13
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "picklistValueSelection_6d82df836d808d48",
+        "context": "<values>\n        <fullName>Closed Won</fullName>\n        <default>false</default>\n    </values>",
+        "source": [
+          {
+            "sourceKey": "picklistValueSelection_8f4f75f705136412",
+            "filePath": "Opportunity/businessProcesses/Standard_Sales.businessProcess-meta.xml",
+            "start": {
+              "offset": 423,
+              "line": 14,
+              "column": 4
+            },
+            "end": {
+              "offset": 518,
+              "line": 17,
+              "column": 13
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "businessProcess_34ef889ace312093",
         "context": "<BusinessProcess xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Standard_Sales</fullName>\n    <description>標準の営業プロセス</description>\n    <isActive>true</isActive>\n    <values>\n        <fullName>Prospecting</fullName>\n        <default>true</default>\n    </values>\n    <values>\n        <fullName>Qualification</fullName>\n        <default>false</default>\n    </values>\n    <values>\n        <fullName>Closed Won</fullName>\n        <default>false</default>\n    </values>\n</BusinessProcess>",
         "source": [
           {
@@ -63,7 +138,7 @@
         ]
       },
       {
-        "objectKey": "object_69e61e2f6d8ddb69",
+        "objectKey": "object_df1f239b5e6304c7",
         "context": "<CustomObject xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <enableHistory>true</enableHistory>\n    <sharingModel>Private</sharingModel>\n</CustomObject>",
         "source": [
           {

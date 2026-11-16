@@ -35,18 +35,7 @@
             }
           }
         }
-      ],
-      "content": {
-        "kind": "error",
-        "sourceKeys": {
-          "objectKey": "error_b3b4ab8144e611e5",
-          "sourceKey": "error_28066d4b39f63361"
-        },
-        "status": "unchanged",
-        "value": {
-          "kindType": "permissionSet"
-        }
-      }
+      ]
     },
     {
       "id": "permissionSet_Invoice_Manager",
@@ -1341,8 +1330,8 @@
         "kind": "flow",
         "sourceKeys": {
           "objectKey": {
-            "before": "flow_fc1e0abf6667d623",
-            "after": "flow_0b0a1ab3bb581695"
+            "before": "flow_92ab63e9aeb2e6a1",
+            "after": "flow_d1886448fc511004"
           },
           "sourceKey": {
             "before": "flow_d4644307fbdfb0f0",
@@ -1390,8 +1379,8 @@
               "kind": "flowScreen",
               "sourceKeys": {
                 "objectKey": {
-                  "before": "flowScreen_86f29b8538383a41",
-                  "after": "flowScreen_89d74b343922c9ad"
+                  "before": "flowScreen_d3f2973c89da0b5a",
+                  "after": "flowScreen_09fb9feb6a5f3f31"
                 },
                 "sourceKey": {
                   "before": "flowScreen_94c37acfb163af1a",
@@ -1435,7 +1424,7 @@
                   {
                     "kind": "flowScreenField",
                     "sourceKeys": {
-                      "objectKey": "flowScreenField_e902bc49f286b771",
+                      "objectKey": "flowScreenField_31111bdda40f6265",
                       "sourceKey": {
                         "before": "flowScreenField_f776e41dcfd58430",
                         "after": "flowScreenField_0f0d7172f0fd8d72"
@@ -1446,7 +1435,35 @@
                       "name": "Intro",
                       "fieldType": "DisplayText",
                       "properties": {
-                        "fieldText": "<p>{!$Label.AccountListTitle}</p>"
+                        "fieldText": {
+                          "kind": "fxTemplate",
+                          "sourceKeys": {
+                            "objectKey": "fxTemplate_82b8e072a6d82ea0",
+                            "sourceKey": "fxTemplate_d30e25c163bd1056"
+                          },
+                          "parts": [
+                            "<p>",
+                            {
+                              "kind": "fxMerge",
+                              "sourceKeys": {
+                                "objectKey": "fxMerge_0fcdf4beba792b53",
+                                "sourceKey": "fxMerge_c88a0f1cfca36618"
+                              },
+                              "expression": {
+                                "kind": "fxName",
+                                "sourceKeys": {
+                                  "objectKey": "fxName_7bc7140facb20a05",
+                                  "sourceKey": "fxName_a391097869a004b6"
+                                },
+                                "path": [
+                                  "$Label",
+                                  "AccountListTitle"
+                                ]
+                              }
+                            },
+                            "</p>"
+                          ]
+                        }
                       }
                     },
                     "index": {
@@ -1458,8 +1475,8 @@
                     "kind": "flowScreenField",
                     "sourceKeys": {
                       "objectKey": {
-                        "before": "flowScreenField_c15902d9b4a349df",
-                        "after": "flowScreenField_a2acc9feae2238a4"
+                        "before": "flowScreenField_a414f3e017494082",
+                        "after": "flowScreenField_a8f8b469592e6b3f"
                       },
                       "sourceKey": {
                         "before": "flowScreenField_e4594ac05c78f983",
@@ -1484,6 +1501,17 @@
                       "properties": {
                         "inputParameters": [
                           {
+                            "kind": "flowParameter",
+                            "sourceKeys": {
+                              "objectKey": {
+                                "before": "flowParameter_64b31abdc07109ce",
+                                "after": "flowParameter_3df5007f5cc4babf"
+                              },
+                              "sourceKey": {
+                                "before": "flowParameter_e8cf8f5378698a5d",
+                                "after": "flowParameter_b75879eeb1eaf80e"
+                              }
+                            },
                             "status": "changed",
                             "before": {
                               "name": "title",
@@ -1549,40 +1577,6 @@
                       }
                     }
                   }
-                ],
-                "references": [
-                  {
-                    "status": "unchanged",
-                    "match": "identical",
-                    "index": {
-                      "before": 0,
-                      "after": 0
-                    },
-                    "value": {
-                      "refType": "lwc",
-                      "value": "accountList"
-                    }
-                  },
-                  {
-                    "status": "unchanged",
-                    "match": "identical",
-                    "index": {
-                      "before": 1,
-                      "after": 2
-                    },
-                    "value": {
-                      "refType": "label",
-                      "value": "AccountListTitle"
-                    }
-                  },
-                  {
-                    "status": "added",
-                    "index": 1,
-                    "value": {
-                      "refType": "lwc",
-                      "value": "missingChart"
-                    }
-                  }
                 ]
               },
               "index": {
@@ -1593,7 +1587,7 @@
             {
               "kind": "flowRecordLookup",
               "sourceKeys": {
-                "objectKey": "flowRecordLookup_9b7dd3866a1b6372",
+                "objectKey": "flowRecordLookup_dc6a5aa966b4cb45",
                 "sourceKey": "flowRecordLookup_7d3e549c22554faf"
               },
               "status": "added",
@@ -1606,11 +1600,26 @@
                   "filterLogic": "and",
                   "filters": [
                     {
-                      "field": "Tier__c",
+                      "kind": "criterion",
+                      "sourceKeys": {
+                        "objectKey": "criterion_0abd32bffb6bda0a",
+                        "sourceKey": "criterion_aa94f49701cf3b73"
+                      },
+                      "left": {
+                        "kind": "fxName",
+                        "sourceKeys": {
+                          "objectKey": "fxName_c216aa0634f349bf",
+                          "sourceKey": "fxName_39df539607f3233d"
+                        },
+                        "path": [
+                          "Tier__c"
+                        ]
+                      },
                       "operator": "EqualTo",
-                      "value": {
-                        "type": "stringValue",
-                        "value": "Gold"
+                      "right": {
+                        "type": "value",
+                        "value": "Gold",
+                        "valueType": "stringValue"
                       }
                     }
                   ],
@@ -1623,31 +1632,13 @@
                   "storeOutputAutomatically": [
                     true
                   ]
-                },
-                "references": [
-                  {
-                    "refType": "object",
-                    "value": "Account"
-                  },
-                  {
-                    "refType": "field",
-                    "value": "Account.Tier__c"
-                  },
-                  {
-                    "refType": "field",
-                    "value": "Account.Name"
-                  },
-                  {
-                    "refType": "field",
-                    "value": "Account.Unknown__c"
-                  }
-                ]
+                }
               }
             },
             {
               "kind": "flowSubflow",
               "sourceKeys": {
-                "objectKey": "flowSubflow_13e4b9c982e0656a",
+                "objectKey": "flowSubflow_eba4278201f9e44e",
                 "sourceKey": "flowSubflow_2661cc0ec003e395"
               },
               "status": "added",
@@ -1657,13 +1648,7 @@
                 "label": "Call Status",
                 "properties": {
                   "flowName": "Invoice_Status_Update"
-                },
-                "references": [
-                  {
-                    "refType": "flow",
-                    "value": "Invoice_Status_Update"
-                  }
-                ]
+                }
               }
             }
           ],
@@ -1727,8 +1712,8 @@
         "kind": "flow",
         "sourceKeys": {
           "objectKey": {
-            "before": "flow_caa69166e1902ae7",
-            "after": "flow_4d5288426dd7b67d"
+            "before": "flow_0a4b3f3bcbe5c471",
+            "after": "flow_8bd11fabbc495f15"
           },
           "sourceKey": {
             "before": "flow_b551f8c510b80190",
@@ -1779,8 +1764,8 @@
             "kind": "flowStart",
             "sourceKeys": {
               "objectKey": {
-                "before": "flowStart_6b2f7a99120e0346",
-                "after": "flowStart_d67f8dc88e3044ff"
+                "before": "flowStart_ed442157f4d3a34d",
+                "after": "flowStart_9f727bd8e7edde4f"
               },
               "sourceKey": {
                 "before": "flowStart_eb46c3982e1b5824",
@@ -1810,21 +1795,52 @@
                 },
                 "filters": [
                   {
+                    "kind": "criterion",
+                    "sourceKeys": {
+                      "objectKey": {
+                        "before": "criterion_8e6437c1c3501d9e",
+                        "after": "criterion_c8818509b729c2aa"
+                      },
+                      "sourceKey": {
+                        "before": "criterion_a09d7843f8ee7e36",
+                        "after": "criterion_cfd587bcd6f625dc"
+                      }
+                    },
                     "status": "changed",
                     "before": {
-                      "field": "Amount__c",
+                      "left": {
+                        "kind": "fxName",
+                        "sourceKeys": {
+                          "objectKey": "fxName_bd29178350e43d25",
+                          "sourceKey": "fxName_4b15fbc9e5017372"
+                        },
+                        "path": [
+                          "Amount__c"
+                        ]
+                      },
                       "operator": "GreaterThan",
-                      "value": {
-                        "type": "numberValue",
-                        "value": "0.0"
+                      "right": {
+                        "type": "value",
+                        "value": "0.0",
+                        "valueType": "numberValue"
                       }
                     },
                     "after": {
-                      "field": "Amount__c",
+                      "left": {
+                        "kind": "fxName",
+                        "sourceKeys": {
+                          "objectKey": "fxName_bd29178350e43d25",
+                          "sourceKey": "fxName_b75725dd9a7b14d6"
+                        },
+                        "path": [
+                          "Amount__c"
+                        ]
+                      },
                       "operator": "GreaterThanOrEqualTo",
-                      "value": {
-                        "type": "numberValue",
-                        "value": "0.0"
+                      "right": {
+                        "type": "value",
+                        "value": "0.0",
+                        "valueType": "numberValue"
                       }
                     },
                     "match": "slot",
@@ -1834,40 +1850,14 @@
                     }
                   }
                 ]
-              },
-              "references": [
-                {
-                  "status": "unchanged",
-                  "match": "identical",
-                  "index": {
-                    "before": 0,
-                    "after": 0
-                  },
-                  "value": {
-                    "refType": "object",
-                    "value": "Invoice__c"
-                  }
-                },
-                {
-                  "status": "unchanged",
-                  "match": "identical",
-                  "index": {
-                    "before": 1,
-                    "after": 1
-                  },
-                  "value": {
-                    "refType": "field",
-                    "value": "Invoice__c.Amount__c"
-                  }
-                }
-              ]
+              }
             }
           },
           "elements": [
             {
               "kind": "flowActionCall",
               "sourceKeys": {
-                "objectKey": "flowActionCall_6106dc47e2b6b402",
+                "objectKey": "flowActionCall_67365654dbc9b429",
                 "sourceKey": {
                   "before": "flowActionCall_9d730a3d8182e972",
                   "after": "flowActionCall_59a1e74900519d38"
@@ -1882,6 +1872,11 @@
                   "actionType": "apex",
                   "inputParameters": [
                     {
+                      "kind": "flowParameter",
+                      "sourceKeys": {
+                        "objectKey": "flowParameter_11bb49364b232b69",
+                        "sourceKey": "flowParameter_cfc79d2e9ca3027a"
+                      },
                       "name": "invoiceId",
                       "value": {
                         "type": "elementReference",
@@ -1889,17 +1884,7 @@
                       }
                     }
                   ]
-                },
-                "references": [
-                  {
-                    "refType": "apexClass",
-                    "value": "AccountService"
-                  },
-                  {
-                    "refType": "field",
-                    "value": "Invoice__c.Id"
-                  }
-                ]
+                }
               },
               "index": {
                 "before": 0,
@@ -1909,7 +1894,7 @@
             {
               "kind": "flowAssignment",
               "sourceKeys": {
-                "objectKey": "flowAssignment_801c0b1b2d95b570",
+                "objectKey": "flowAssignment_b782621cc6dce6cc",
                 "sourceKey": {
                   "before": "flowAssignment_8863260c8fabcdfc",
                   "after": "flowAssignment_5fb7c1145e8dc2a4"
@@ -1930,21 +1915,7 @@
                       }
                     }
                   ]
-                },
-                "references": [
-                  {
-                    "refType": "element",
-                    "value": "errorMessage"
-                  },
-                  {
-                    "refType": "label",
-                    "value": "Invoice_Overdue"
-                  },
-                  {
-                    "refType": "global",
-                    "value": "$Flow.FaultMessage"
-                  }
-                ]
+                }
               },
               "index": {
                 "before": 1,
@@ -1955,8 +1926,8 @@
               "kind": "flowDecision",
               "sourceKeys": {
                 "objectKey": {
-                  "before": "flowDecision_d2ec73d9c8dbd28c",
-                  "after": "flowDecision_d3316a123dd88079"
+                  "before": "flowDecision_d0e0b62e3af542d7",
+                  "after": "flowDecision_24f758921bd6f52b"
                 },
                 "sourceKey": {
                   "before": "flowDecision_3fdeaaa53292cdff",
@@ -1984,7 +1955,7 @@
                   {
                     "kind": "flowRule",
                     "sourceKeys": {
-                      "objectKey": "flowRule_abfa3df593efd727",
+                      "objectKey": "flowRule_1afe3deab77bcfe0",
                       "sourceKey": "flowRule_54c9b29198ef93f7"
                     },
                     "status": "added",
@@ -1996,11 +1967,27 @@
                         "conditionLogic": "and",
                         "conditions": [
                           {
-                            "leftValueReference": "$Record.Amount__c",
+                            "kind": "criterion",
+                            "sourceKeys": {
+                              "objectKey": "criterion_55e40737d87088f4",
+                              "sourceKey": "criterion_e33d7cdaab8ca02e"
+                            },
+                            "left": {
+                              "kind": "fxName",
+                              "sourceKeys": {
+                                "objectKey": "fxName_d4a2fdb269aec3b6",
+                                "sourceKey": "fxName_ba15b3379bf5f936"
+                              },
+                              "path": [
+                                "$Record",
+                                "Amount__c"
+                              ]
+                            },
                             "operator": "GreaterThan",
-                            "rightValue": {
-                              "type": "numberValue",
-                              "value": "1000.0"
+                            "right": {
+                              "type": "value",
+                              "value": "1000.0",
+                              "valueType": "numberValue"
                             }
                           }
                         ]
@@ -2011,8 +1998,8 @@
                     "kind": "flowRule",
                     "sourceKeys": {
                       "objectKey": {
-                        "before": "flowRule_a06ec475b90579ac",
-                        "after": "flowRule_0ae8f104a2dcf5c6"
+                        "before": "flowRule_5b1b80bc73e12adc",
+                        "after": "flowRule_a5e0aff790f7202b"
                       },
                       "sourceKey": {
                         "before": "flowRule_042802ca98f3d044",
@@ -2037,21 +2024,54 @@
                         },
                         "conditions": [
                           {
+                            "kind": "criterion",
+                            "sourceKeys": {
+                              "objectKey": {
+                                "before": "criterion_abc3cdafc37716e1",
+                                "after": "criterion_ec0565104a18e122"
+                              },
+                              "sourceKey": {
+                                "before": "criterion_29b5b3cffeb1f7cd",
+                                "after": "criterion_9e1d132a751532a0"
+                              }
+                            },
                             "status": "changed",
                             "before": {
-                              "leftValueReference": "$Record.Amount__c",
+                              "left": {
+                                "kind": "fxName",
+                                "sourceKeys": {
+                                  "objectKey": "fxName_d4a2fdb269aec3b6",
+                                  "sourceKey": "fxName_76ea35daf537b5c6"
+                                },
+                                "path": [
+                                  "$Record",
+                                  "Amount__c"
+                                ]
+                              },
                               "operator": "GreaterThan",
-                              "rightValue": {
-                                "type": "numberValue",
-                                "value": "10000.0"
+                              "right": {
+                                "type": "value",
+                                "value": "10000.0",
+                                "valueType": "numberValue"
                               }
                             },
                             "after": {
-                              "leftValueReference": "$Record.Amount__c",
+                              "left": {
+                                "kind": "fxName",
+                                "sourceKeys": {
+                                  "objectKey": "fxName_d4a2fdb269aec3b6",
+                                  "sourceKey": "fxName_7a8584293fcc1b47"
+                                },
+                                "path": [
+                                  "$Record",
+                                  "Amount__c"
+                                ]
+                              },
                               "operator": "GreaterThan",
-                              "rightValue": {
-                                "type": "numberValue",
-                                "value": "50000.0"
+                              "right": {
+                                "type": "value",
+                                "value": "50000.0",
+                                "valueType": "numberValue"
                               }
                             },
                             "match": "slot",
@@ -2068,20 +2088,6 @@
                       "after": 1
                     }
                   }
-                ],
-                "references": [
-                  {
-                    "status": "unchanged",
-                    "match": "identical",
-                    "index": {
-                      "before": 0,
-                      "after": 0
-                    },
-                    "value": {
-                      "refType": "field",
-                      "value": "Invoice__c.Amount__c"
-                    }
-                  }
                 ]
               },
               "index": {
@@ -2093,8 +2099,8 @@
               "kind": "flowRecordUpdate",
               "sourceKeys": {
                 "objectKey": {
-                  "before": "flowRecordUpdate_ab48407b027500d4",
-                  "after": "flowRecordUpdate_b6199bc8f077d22c"
+                  "before": "flowRecordUpdate_5839fe8180410fd8",
+                  "after": "flowRecordUpdate_8f868d2788a5c57d"
                 },
                 "sourceKey": {
                   "before": "flowRecordUpdate_17e74dc0f1788968",
@@ -2115,6 +2121,17 @@
                 "properties": {
                   "inputAssignments": [
                     {
+                      "kind": "flowAssignment",
+                      "sourceKeys": {
+                        "objectKey": {
+                          "before": "flowAssignment_61459ce24503460b",
+                          "after": "flowAssignment_5e1836c5b6ae6562"
+                        },
+                        "sourceKey": {
+                          "before": "flowAssignment_2738db5ebd382873",
+                          "after": "flowAssignment_e4feee11087f940b"
+                        }
+                      },
                       "status": "changed",
                       "before": {
                         "field": "Status__c",
@@ -2141,21 +2158,7 @@
                     "status": "unchanged",
                     "value": "$Record"
                   }
-                },
-                "references": [
-                  {
-                    "status": "unchanged",
-                    "match": "identical",
-                    "index": {
-                      "before": 0,
-                      "after": 0
-                    },
-                    "value": {
-                      "refType": "global",
-                      "value": "$Record"
-                    }
-                  }
-                ]
+                }
               },
               "index": {
                 "before": 3,
@@ -2165,7 +2168,7 @@
             {
               "kind": "flowAssignment",
               "sourceKeys": {
-                "objectKey": "flowAssignment_f241ed170a0ae999",
+                "objectKey": "flowAssignment_40db6797f827bfc6",
                 "sourceKey": "flowAssignment_2efea0209227521c"
               },
               "status": "added",
@@ -2184,13 +2187,7 @@
                       }
                     }
                   ]
-                },
-                "references": [
-                  {
-                    "refType": "element",
-                    "value": "Unknown_Var"
-                  }
-                ]
+                }
               }
             }
           ],
@@ -2199,8 +2196,8 @@
               "kind": "flowFormula",
               "sourceKeys": {
                 "objectKey": {
-                  "before": "flowFormula_6a54dcfdfe24abcd",
-                  "after": "flowFormula_823f529e8f159691"
+                  "before": "flowFormula_41b0ea99453a744f",
+                  "after": "flowFormula_bb82cb5aeeda3bae"
                 },
                 "sourceKey": {
                   "before": "flowFormula_66a526992e87a569",
@@ -2214,31 +2211,106 @@
                   "status": "unchanged",
                   "value": "IsLarge"
                 },
+                "expression": {
+                  "status": "changed",
+                  "tree": [
+                    {
+                      "label": "fxBinary",
+                      "role": "statement",
+                      "sourceKeys": {
+                        "before": {
+                          "objectKey": "fxBinary_4bd0ec9dae79a131",
+                          "sourceKey": "fxBinary_83c05977ef178500"
+                        },
+                        "after": {
+                          "objectKey": "fxBinary_309ca85dcb37924b",
+                          "sourceKey": "fxBinary_4ecb77e7169f0bd9"
+                        }
+                      },
+                      "index": {
+                        "before": 0,
+                        "after": 0
+                      },
+                      "status": "changed",
+                      "match": "similar",
+                      "fields": {
+                        "operator": {
+                          "status": "unchanged",
+                          "value": ">"
+                        }
+                      },
+                      "children": [
+                        {
+                          "label": "fxMerge",
+                          "role": "left",
+                          "sourceKeys": {
+                            "before": {
+                              "objectKey": "fxMerge_5234c6eae126a4b1",
+                              "sourceKey": "fxMerge_1b05eee5d9db4ad4"
+                            },
+                            "after": {
+                              "objectKey": "fxMerge_5234c6eae126a4b1",
+                              "sourceKey": "fxMerge_cfb73af46ec3e851"
+                            }
+                          },
+                          "index": {
+                            "before": 0,
+                            "after": 0
+                          },
+                          "status": "unchanged",
+                          "match": "identical",
+                          "value": {
+                            "expression": {
+                              "kind": "fxName",
+                              "sourceKeys": {
+                                "objectKey": "fxName_d4a2fdb269aec3b6",
+                                "sourceKey": "fxName_f26f2f46554fa537"
+                              },
+                              "path": [
+                                "$Record",
+                                "Amount__c"
+                              ]
+                            }
+                          }
+                        },
+                        {
+                          "label": "fxNumber",
+                          "role": "right",
+                          "sourceKeys": {
+                            "before": {
+                              "objectKey": "fxNumber_93590c563ba49287",
+                              "sourceKey": "fxNumber_101c70d0722f50da"
+                            },
+                            "after": {
+                              "objectKey": "fxNumber_372198186de5c7a9",
+                              "sourceKey": "fxNumber_54363502b44a07f0"
+                            }
+                          },
+                          "index": {
+                            "before": 1,
+                            "after": 1
+                          },
+                          "status": "changed",
+                          "match": "recovery",
+                          "fields": {
+                            "value": {
+                              "status": "changed",
+                              "before": "10000",
+                              "after": "50000"
+                            }
+                          },
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                },
                 "properties": {
                   "dataType": {
                     "status": "unchanged",
                     "value": "Boolean"
-                  },
-                  "expression": {
-                    "status": "changed",
-                    "before": "{!$Record.Amount__c} > 10000",
-                    "after": "{!$Record.Amount__c} > 50000"
                   }
-                },
-                "references": [
-                  {
-                    "status": "unchanged",
-                    "match": "identical",
-                    "index": {
-                      "before": 0,
-                      "after": 0
-                    },
-                    "value": {
-                      "refType": "field",
-                      "value": "Invoice__c.Amount__c"
-                    }
-                  }
-                ]
+                }
               },
               "index": {
                 "before": 0,
@@ -2249,8 +2321,8 @@
               "kind": "flowVariable",
               "sourceKeys": {
                 "objectKey": {
-                  "before": "flowVariable_0ffa512dba2911b9",
-                  "after": "flowVariable_0939288bae478f4a"
+                  "before": "flowVariable_732053a50ba2a7ab",
+                  "after": "flowVariable_d3b6c76c7d9c7200"
                 },
                 "sourceKey": {
                   "before": "flowVariable_f400ef797136751e",
@@ -2264,24 +2336,22 @@
                   "status": "unchanged",
                   "value": "errorMessage"
                 },
-                "properties": {
-                  "dataType": {
-                    "status": "unchanged",
-                    "value": "String"
-                  },
-                  "isCollection": {
-                    "status": "unchanged",
-                    "value": false
-                  },
-                  "isInput": {
-                    "status": "unchanged",
-                    "value": false
-                  },
-                  "isOutput": {
-                    "status": "changed",
-                    "before": false,
-                    "after": true
-                  }
+                "dataType": {
+                  "status": "unchanged",
+                  "value": "String"
+                },
+                "isCollection": {
+                  "status": "unchanged",
+                  "value": false
+                },
+                "isInput": {
+                  "status": "unchanged",
+                  "value": false
+                },
+                "isOutput": {
+                  "status": "changed",
+                  "before": false,
+                  "after": true
                 }
               },
               "index": {
@@ -3054,8 +3124,8 @@
         "kind": "flexiPage",
         "sourceKeys": {
           "objectKey": {
-            "before": "flexiPage_ec9c6456ae95fea1",
-            "after": "flexiPage_d8ea489b72934ba1"
+            "before": "flexiPage_dacf6de0d492dcc0",
+            "after": "flexiPage_49ba9fd2be13ca35"
           },
           "sourceKey": {
             "before": "flexiPage_56bcf1bae0533cfb",
@@ -3085,7 +3155,7 @@
             "status": "unchanged",
             "value": "flexipage:recordHomeTemplateDesktop"
           },
-          "templateProperties": {
+          "templateAttributes": {
             "enablePageActionConfig": {
               "status": "changed",
               "before": "false",
@@ -3244,7 +3314,7 @@
             {
               "kind": "flexiPageComponent",
               "sourceKeys": {
-                "objectKey": "flexiPageComponent_9204e26f9059f131",
+                "objectKey": "flexiPageComponent_7226966d6de2594d",
                 "sourceKey": {
                   "before": "flexiPageComponent_e4908711351ddf69",
                   "after": "flexiPageComponent_4d0abf1bc86d3fb6"
@@ -3255,7 +3325,7 @@
                 "identifier": "force_highlightsPanel",
                 "componentName": "force:highlightsPanel",
                 "region": "header",
-                "properties": {
+                "attributes": {
                   "collapsed": "false"
                 }
               },
@@ -3288,8 +3358,8 @@
               "kind": "flexiPageComponent",
               "sourceKeys": {
                 "objectKey": {
-                  "before": "flexiPageComponent_86a7136aa12c2c97",
-                  "after": "flexiPageComponent_940f1642a10f092c"
+                  "before": "flexiPageComponent_1a75f05fe1432078",
+                  "after": "flexiPageComponent_f32bef42c44a894a"
                 },
                 "sourceKey": {
                   "before": "flexiPageComponent_55d00a57c17c0052",
@@ -3312,7 +3382,7 @@
                   "before": "main",
                   "after": "sidebar"
                 },
-                "properties": {
+                "attributes": {
                   "title": {
                     "status": "changed",
                     "before": "取引先",
@@ -3328,9 +3398,34 @@
                   "value": {
                     "criteria": [
                       {
-                        "leftValue": "{!Record.Status__c}",
+                        "kind": "criterion",
+                        "sourceKeys": {
+                          "objectKey": "criterion_b456fbf319c5d6d7",
+                          "sourceKey": "criterion_3fa8b1fe770c32fe"
+                        },
+                        "left": {
+                          "kind": "fxMerge",
+                          "sourceKeys": {
+                            "objectKey": "fxMerge_2b1dcb085ae9a903",
+                            "sourceKey": "fxMerge_6bd91feca8158608"
+                          },
+                          "expression": {
+                            "kind": "fxName",
+                            "sourceKeys": {
+                              "objectKey": "fxName_e018598a6d2bac1e",
+                              "sourceKey": "fxName_6927f8a5059b24e5"
+                            },
+                            "path": [
+                              "Record",
+                              "Status__c"
+                            ]
+                          }
+                        },
                         "operator": "EQUAL",
-                        "rightValue": "Approved"
+                        "right": {
+                          "type": "value",
+                          "value": "Approved"
+                        }
                       }
                     ]
                   }
@@ -3380,7 +3475,7 @@
             {
               "kind": "flexiPageField",
               "sourceKeys": {
-                "objectKey": "flexiPageField_3badceb23152f968",
+                "objectKey": "flexiPageField_2fc235e0bc9814d6",
                 "sourceKey": "flexiPageField_5c61138ba5aaab6c"
               },
               "status": "unchanged",
@@ -3388,7 +3483,7 @@
                 "identifier": "RecordAmountField",
                 "fieldItem": "Record.Amount__c",
                 "region": "main",
-                "properties": {
+                "attributes": {
                   "uiBehavior": "none"
                 }
               },
@@ -3400,7 +3495,7 @@
             {
               "kind": "flexiPageField",
               "sourceKeys": {
-                "objectKey": "flexiPageField_bb1439dba9136747",
+                "objectKey": "flexiPageField_f522e46504069696",
                 "sourceKey": "flexiPageField_760854506638aa36"
               },
               "status": "added",
@@ -3409,7 +3504,7 @@
                 "identifier": "RecordMissingField",
                 "fieldItem": "Record.Missing__c",
                 "region": "main",
-                "properties": {
+                "attributes": {
                   "uiBehavior": "none"
                 }
               }
@@ -4099,8 +4194,8 @@
         "kind": "sharingRules",
         "sourceKeys": {
           "objectKey": {
-            "before": "sharingRules_b8c9affebe56d941",
-            "after": "sharingRules_c77ab8f6b35c1616"
+            "before": "sharingRules_6df512d6ef9de150",
+            "after": "sharingRules_f5a90bf36d77674c"
           },
           "sourceKey": {
             "before": "sharingRules_171d2d36e712dc32",
@@ -4119,8 +4214,8 @@
               "kind": "sharingCriteriaRule",
               "sourceKeys": {
                 "objectKey": {
-                  "before": "sharingCriteriaRule_3dc1fed87e84c6da",
-                  "after": "sharingCriteriaRule_44d2046d33cfca92"
+                  "before": "sharingCriteriaRule_244108abb11ccc52",
+                  "after": "sharingCriteriaRule_2b9fe12391f7b00a"
                 },
                 "sourceKey": "sharingCriteriaRule_0153393cdf4a4266"
               },
@@ -4145,6 +4240,11 @@
                   "value": true
                 },
                 "sharedTo": {
+                  "kind": "sharingPrincipals",
+                  "sourceKeys": {
+                    "objectKey": "sharingPrincipals_6be78ffecc9fc3ce",
+                    "sourceKey": "sharingPrincipals_6979fa96e9807cae"
+                  },
                   "status": "unchanged",
                   "value": {
                     "role": "Sales_Manager"
@@ -4152,16 +4252,48 @@
                 },
                 "criteriaItems": [
                   {
+                    "kind": "criterion",
+                    "sourceKeys": {
+                      "objectKey": {
+                        "before": "criterion_e543e340233d6cf0",
+                        "after": "criterion_75ce0098d460f628"
+                      },
+                      "sourceKey": "criterion_fb588f0dbe34ccc2"
+                    },
                     "status": "changed",
                     "before": {
-                      "field": "Amount__c",
-                      "operation": "greaterThan",
-                      "value": "10000"
+                      "left": {
+                        "kind": "fxName",
+                        "sourceKeys": {
+                          "objectKey": "fxName_bd29178350e43d25",
+                          "sourceKey": "fxName_e8234e87bf455245"
+                        },
+                        "path": [
+                          "Amount__c"
+                        ]
+                      },
+                      "operator": "greaterThan",
+                      "right": {
+                        "type": "value",
+                        "value": "10000"
+                      }
                     },
                     "after": {
-                      "field": "Amount__c",
-                      "operation": "greaterThan",
-                      "value": "50000"
+                      "left": {
+                        "kind": "fxName",
+                        "sourceKeys": {
+                          "objectKey": "fxName_bd29178350e43d25",
+                          "sourceKey": "fxName_e8234e87bf455245"
+                        },
+                        "path": [
+                          "Amount__c"
+                        ]
+                      },
+                      "operator": "greaterThan",
+                      "right": {
+                        "type": "value",
+                        "value": "50000"
+                      }
                     },
                     "match": "slot",
                     "index": {
@@ -4179,7 +4311,7 @@
             {
               "kind": "sharingCriteriaRule",
               "sourceKeys": {
-                "objectKey": "sharingCriteriaRule_463cddb3e054da83",
+                "objectKey": "sharingCriteriaRule_8933548d0a91825a",
                 "sourceKey": "sharingCriteriaRule_83d322fd43604732"
               },
               "status": "added",
@@ -4190,13 +4322,35 @@
                 "accessLevel": "Read",
                 "includeRecordsOwnedByAll": true,
                 "sharedTo": {
+                  "kind": "sharingPrincipals",
+                  "sourceKeys": {
+                    "objectKey": "sharingPrincipals_6be78ffecc9fc3ce",
+                    "sourceKey": "sharingPrincipals_f86850b26ab62bda"
+                  },
                   "role": "Sales_Manager"
                 },
                 "criteriaItems": [
                   {
-                    "field": "Amount__c",
-                    "operation": "lessThan",
-                    "value": "1000"
+                    "kind": "criterion",
+                    "sourceKeys": {
+                      "objectKey": "criterion_69265cf0777126c8",
+                      "sourceKey": "criterion_aa26ceeee43078c6"
+                    },
+                    "left": {
+                      "kind": "fxName",
+                      "sourceKeys": {
+                        "objectKey": "fxName_bd29178350e43d25",
+                        "sourceKey": "fxName_7c8681ae1d571fff"
+                      },
+                      "path": [
+                        "Amount__c"
+                      ]
+                    },
+                    "operator": "lessThan",
+                    "right": {
+                      "type": "value",
+                      "value": "1000"
+                    }
                   }
                 ]
               }
@@ -4208,7 +4362,7 @@
               {
                 "kind": "sharingOwnerRule",
                 "sourceKeys": {
-                  "objectKey": "sharingOwnerRule_ece9fe48a6f9cb8a",
+                  "objectKey": "sharingOwnerRule_7a34bf021481debe",
                   "sourceKey": "sharingOwnerRule_0a35bb31c1d5f826"
                 },
                 "value": {
@@ -4216,9 +4370,19 @@
                   "label": "Sales Team",
                   "accessLevel": "Read",
                   "sharedTo": {
+                    "kind": "sharingPrincipals",
+                    "sourceKeys": {
+                      "objectKey": "sharingPrincipals_c716bf76cecd859a",
+                      "sourceKey": "sharingPrincipals_d20ea893699dbf85"
+                    },
                     "group": "Finance"
                   },
                   "sharedFrom": {
+                    "kind": "sharingPrincipals",
+                    "sourceKeys": {
+                      "objectKey": "sharingPrincipals_6be78ffecc9fc3ce",
+                      "sourceKey": "sharingPrincipals_ec4a01feb51e8c89"
+                    },
                     "role": "Sales_Manager"
                   }
                 }
@@ -4240,8 +4404,8 @@
         "kind": "apexPage",
         "sourceKeys": {
           "objectKey": {
-            "before": "apexPage_c76f454c98633113",
-            "after": "apexPage_d5c89b258e0fa03b"
+            "before": "apexPage_477a5b651979004c",
+            "after": "apexPage_17248dbeb7fed887"
           },
           "sourceKey": "apexPage_69568e92420dff25"
         },
@@ -4264,8 +4428,8 @@
             "kind": "visualforceMarkup",
             "sourceKeys": {
               "objectKey": {
-                "before": "visualforceMarkup_b35b51556d645f20",
-                "after": "visualforceMarkup_b0020e3f602b5522"
+                "before": "visualforceMarkup_f69ee1947d66a5c5",
+                "after": "visualforceMarkup_6efa7a39e93a04dd"
               },
               "sourceKey": {
                 "before": "visualforceMarkup_45bc1856c875cd83",
@@ -4294,73 +4458,272 @@
                   "after": "advanced_pdf"
                 }
               },
-              "components": [
+              "body": [
                 {
-                  "status": "unchanged",
-                  "match": "identical",
-                  "index": {
-                    "before": 0,
-                    "after": 1
+                  "label": "element:c:invoiceHeader",
+                  "role": "statement",
+                  "sourceKeys": {
+                    "before": {
+                      "objectKey": "markupElement_2a430ff71b33347b",
+                      "sourceKey": "markupElement_27bf05fc2497d831"
+                    },
+                    "after": {
+                      "objectKey": "markupElement_2a430ff71b33347b",
+                      "sourceKey": "markupElement_2b46f7a594bfb8e6"
+                    }
                   },
-                  "value": "apex:outputField"
-                },
-                {
-                  "status": "unchanged",
-                  "match": "identical",
-                  "index": {
-                    "before": 1,
-                    "after": 3
-                  },
-                  "value": "c:invoiceHeader"
-                },
-                {
-                  "status": "added",
-                  "index": 0,
-                  "value": "apex:column"
-                },
-                {
-                  "status": "added",
-                  "index": 2,
-                  "value": "apex:pageBlockTable"
-                }
-              ],
-              "expressions": [
-                {
-                  "status": "unchanged",
-                  "match": "identical",
                   "index": {
                     "before": 0,
                     "after": 0
                   },
-                  "value": "$Label.AccountListTitle"
-                },
-                {
                   "status": "unchanged",
                   "match": "identical",
+                  "value": {
+                    "tag": "c:invoiceHeader",
+                    "attributes": [
+                      {
+                        "name": "invoice",
+                        "value": {
+                          "kind": "fxTemplate",
+                          "sourceKeys": {
+                            "objectKey": "fxTemplate_fcd9f71a1ee893f0",
+                            "sourceKey": "fxTemplate_e8671a7e21364232"
+                          },
+                          "parts": [
+                            {
+                              "kind": "fxMerge",
+                              "sourceKeys": {
+                                "objectKey": "fxMerge_bf9cd19acf6f30b0",
+                                "sourceKey": "fxMerge_e8671a7e21364232"
+                              },
+                              "expression": {
+                                "kind": "fxName",
+                                "sourceKeys": {
+                                  "objectKey": "fxName_c514ec111936d591",
+                                  "sourceKey": "fxName_6fc2f0072f7e18a0"
+                                },
+                                "path": [
+                                  "Invoice__c"
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ],
+                    "children": []
+                  }
+                },
+                {
+                  "label": "element:apex:outputField",
+                  "role": "statement",
+                  "sourceKeys": {
+                    "before": {
+                      "objectKey": "markupElement_1d0dd8fbd68198d1",
+                      "sourceKey": "markupElement_c50bbfd52de0fc3d"
+                    },
+                    "after": {
+                      "objectKey": "markupElement_1d0dd8fbd68198d1",
+                      "sourceKey": "markupElement_f37432bb319d9aaa"
+                    }
+                  },
                   "index": {
                     "before": 1,
                     "after": 1
                   },
-                  "value": "Invoice__c"
-                },
-                {
                   "status": "unchanged",
                   "match": "identical",
+                  "value": {
+                    "tag": "apex:outputField",
+                    "attributes": [
+                      {
+                        "name": "value",
+                        "value": {
+                          "kind": "fxTemplate",
+                          "sourceKeys": {
+                            "objectKey": "fxTemplate_c6034dd676c9d648",
+                            "sourceKey": "fxTemplate_0e583679d3550957"
+                          },
+                          "parts": [
+                            {
+                              "kind": "fxMerge",
+                              "sourceKeys": {
+                                "objectKey": "fxMerge_f8fbb0fd2e6bcfc5",
+                                "sourceKey": "fxMerge_0e583679d3550957"
+                              },
+                              "expression": {
+                                "kind": "fxName",
+                                "sourceKeys": {
+                                  "objectKey": "fxName_86e26a6f63586c94",
+                                  "sourceKey": "fxName_9e3fc5be641ff3af"
+                                },
+                                "path": [
+                                  "Invoice__c",
+                                  "Amount__c"
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ],
+                    "children": []
+                  }
+                },
+                {
+                  "label": "element:apex:pageBlockTable",
+                  "role": "statement",
+                  "sourceKeys": {
+                    "after": {
+                      "objectKey": "markupElement_d064acd26636e90d",
+                      "sourceKey": "markupElement_6984bfa3d648d66a"
+                    }
+                  },
                   "index": {
-                    "before": 2,
                     "after": 2
                   },
-                  "value": "Invoice__c.Amount__c"
+                  "status": "added",
+                  "value": {
+                    "tag": "apex:pageBlockTable",
+                    "attributes": [
+                      {
+                        "name": "value",
+                        "value": {
+                          "kind": "fxTemplate",
+                          "sourceKeys": {
+                            "objectKey": "fxTemplate_ec54554b072e4923",
+                            "sourceKey": "fxTemplate_1c5dfd123c60c758"
+                          },
+                          "parts": [
+                            {
+                              "kind": "fxMerge",
+                              "sourceKeys": {
+                                "objectKey": "fxMerge_6a03905b61db94bd",
+                                "sourceKey": "fxMerge_1c5dfd123c60c758"
+                              },
+                              "expression": {
+                                "kind": "fxName",
+                                "sourceKeys": {
+                                  "objectKey": "fxName_e432062b5cbbae7f",
+                                  "sourceKey": "fxName_dc3d48db76ae9722"
+                                },
+                                "path": [
+                                  "lines"
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "name": "var",
+                        "value": "line"
+                      }
+                    ],
+                    "children": [
+                      {
+                        "kind": "markupElement",
+                        "sourceKeys": {
+                          "objectKey": "markupElement_a116c220bb6429c2",
+                          "sourceKey": "markupElement_0c69923830993036"
+                        },
+                        "tag": "apex:column",
+                        "attributes": [
+                          {
+                            "name": "value",
+                            "value": {
+                              "kind": "fxTemplate",
+                              "sourceKeys": {
+                                "objectKey": "fxTemplate_900ccf19d41b4675",
+                                "sourceKey": "fxTemplate_89eb4b0cfe3fa586"
+                              },
+                              "parts": [
+                                {
+                                  "kind": "fxMerge",
+                                  "sourceKeys": {
+                                    "objectKey": "fxMerge_533de3f78d3baa41",
+                                    "sourceKey": "fxMerge_89eb4b0cfe3fa586"
+                                  },
+                                  "expression": {
+                                    "kind": "fxName",
+                                    "sourceKeys": {
+                                      "objectKey": "fxName_366598eff1aa17f6",
+                                      "sourceKey": "fxName_28c3824d12923960"
+                                    },
+                                    "path": [
+                                      "line",
+                                      "Quantity__c"
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ],
+                        "children": []
+                      }
+                    ]
+                  }
                 },
                 {
-                  "status": "added",
-                  "index": 3,
-                  "value": "line.Quantity__c"
-                },
-                {
-                  "status": "added",
-                  "index": 4,
-                  "value": "lines"
+                  "label": "element:p",
+                  "role": "statement",
+                  "sourceKeys": {
+                    "before": {
+                      "objectKey": "markupElement_8fd0d002463f843a",
+                      "sourceKey": "markupElement_2d8a70bb9149b354"
+                    },
+                    "after": {
+                      "objectKey": "markupElement_8fd0d002463f843a",
+                      "sourceKey": "markupElement_908ec99a7fc9e968"
+                    }
+                  },
+                  "index": {
+                    "before": 2,
+                    "after": 3
+                  },
+                  "status": "unchanged",
+                  "match": "identical",
+                  "value": {
+                    "tag": "p",
+                    "attributes": [],
+                    "children": [
+                      {
+                        "kind": "markupText",
+                        "sourceKeys": {
+                          "objectKey": "markupText_0e8eabb0c3964e8a",
+                          "sourceKey": "markupText_6be8ae8f8fc278e8"
+                        },
+                        "text": {
+                          "kind": "fxTemplate",
+                          "sourceKeys": {
+                            "objectKey": "fxTemplate_27f6a79e2ae905ed",
+                            "sourceKey": "fxTemplate_6be8ae8f8fc278e8"
+                          },
+                          "parts": [
+                            {
+                              "kind": "fxMerge",
+                              "sourceKeys": {
+                                "objectKey": "fxMerge_0fcdf4beba792b53",
+                                "sourceKey": "fxMerge_6be8ae8f8fc278e8"
+                              },
+                              "expression": {
+                                "kind": "fxName",
+                                "sourceKeys": {
+                                  "objectKey": "fxName_7bc7140facb20a05",
+                                  "sourceKey": "fxName_847e9de435a8c5fe"
+                                },
+                                "path": [
+                                  "$Label",
+                                  "AccountListTitle"
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
                 }
               ]
             }
@@ -4380,8 +4743,8 @@
         "kind": "apexComponent",
         "sourceKeys": {
           "objectKey": {
-            "before": "apexComponent_bc2a26bdb66db742",
-            "after": "apexComponent_1bdc92bd2d7ed9cb"
+            "before": "apexComponent_516e14608e67cf78",
+            "after": "apexComponent_b53a8f517c77f930"
           },
           "sourceKey": "apexComponent_7bee9d595f513d33"
         },
@@ -4404,8 +4767,8 @@
             "kind": "visualforceMarkup",
             "sourceKeys": {
               "objectKey": {
-                "before": "visualforceMarkup_44dfade3a05c5eec",
-                "after": "visualforceMarkup_9a8397268a628eb4"
+                "before": "visualforceMarkup_963a7453ba4bb993",
+                "after": "visualforceMarkup_f518da8b178d600e"
               },
               "sourceKey": {
                 "before": "visualforceMarkup_c4faf857d1b95589",
@@ -4420,16 +4783,66 @@
                 "value": "apex:component"
               },
               "attributes": {},
-              "components": [],
-              "expressions": [
+              "body": [
                 {
-                  "status": "unchanged",
-                  "match": "identical",
+                  "label": "element:h1",
+                  "role": "statement",
+                  "sourceKeys": {
+                    "before": {
+                      "objectKey": "markupElement_db54f12d544f81fc",
+                      "sourceKey": "markupElement_20d2ef83340e9f38"
+                    },
+                    "after": {
+                      "objectKey": "markupElement_db54f12d544f81fc",
+                      "sourceKey": "markupElement_1991566a9da17960"
+                    }
+                  },
                   "index": {
                     "before": 0,
                     "after": 0
                   },
-                  "value": "invoice.Name"
+                  "status": "unchanged",
+                  "match": "identical",
+                  "value": {
+                    "tag": "h1",
+                    "attributes": [],
+                    "children": [
+                      {
+                        "kind": "markupText",
+                        "sourceKeys": {
+                          "objectKey": "markupText_5312abf71f71b407",
+                          "sourceKey": "markupText_d5412fcf64184bec"
+                        },
+                        "text": {
+                          "kind": "fxTemplate",
+                          "sourceKeys": {
+                            "objectKey": "fxTemplate_5d1c65656c89cdac",
+                            "sourceKey": "fxTemplate_d5412fcf64184bec"
+                          },
+                          "parts": [
+                            {
+                              "kind": "fxMerge",
+                              "sourceKeys": {
+                                "objectKey": "fxMerge_e12b6d7ecdebfb2b",
+                                "sourceKey": "fxMerge_d5412fcf64184bec"
+                              },
+                              "expression": {
+                                "kind": "fxName",
+                                "sourceKeys": {
+                                  "objectKey": "fxName_236f6fb415c55d88",
+                                  "sourceKey": "fxName_3d93764756ca718f"
+                                },
+                                "path": [
+                                  "invoice",
+                                  "Name"
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
                 }
               ],
               "componentAttributes": [
@@ -4545,8 +4958,8 @@
         "kind": "auraBundle",
         "sourceKeys": {
           "objectKey": {
-            "before": "auraBundle_0cc819767d59ab0b",
-            "after": "auraBundle_4651d651d52e5642"
+            "before": "auraBundle_1cc648385acd2f50",
+            "after": "auraBundle_ae4e8ae75454db28"
           },
           "sourceKey": {
             "before": "auraBundle_2f030bba3c653a82",
@@ -4711,85 +5124,177 @@
               }
             ]
           },
-          "components": [
+          "body": [
             {
-              "status": "unchanged",
-              "match": "identical",
+              "label": "element:lightning:card",
+              "role": "statement",
+              "sourceKeys": {
+                "before": {
+                  "objectKey": "markupElement_490edccae82f83d9",
+                  "sourceKey": "markupElement_60429db745d97d34"
+                },
+                "after": {
+                  "objectKey": "markupElement_490edccae82f83d9",
+                  "sourceKey": "markupElement_484406e0a90a7cac"
+                }
+              },
               "index": {
                 "before": 0,
                 "after": 0
               },
-              "value": "c:accountList"
-            },
-            {
               "status": "unchanged",
               "match": "identical",
-              "index": {
-                "before": 1,
-                "after": 1
-              },
-              "value": "lightning:button"
-            },
-            {
-              "status": "unchanged",
-              "match": "identical",
-              "index": {
-                "before": 2,
-                "after": 2
-              },
-              "value": "lightning:card"
-            }
-          ],
-          "expressions": [
-            {
-              "status": "unchanged",
-              "match": "identical",
-              "index": {
-                "before": 0,
-                "after": 0
-              },
-              "value": "$Label.c.AccountListTitle"
-            },
-            {
-              "status": "unchanged",
-              "match": "identical",
-              "index": {
-                "before": 1,
-                "after": 1
-              },
-              "value": "c.doInit"
-            },
-            {
-              "status": "unchanged",
-              "match": "identical",
-              "index": {
-                "before": 2,
-                "after": 2
-              },
-              "value": "c.handleClick"
-            },
-            {
-              "status": "removed",
-              "index": 3,
-              "value": "this"
-            },
-            {
-              "status": "unchanged",
-              "match": "identical",
-              "index": {
-                "before": 4,
-                "after": 3
-              },
-              "value": "v.invoice.Name"
-            },
-            {
-              "status": "unchanged",
-              "match": "identical",
-              "index": {
-                "before": 5,
-                "after": 4
-              },
-              "value": "v.recordId"
+              "value": {
+                "tag": "lightning:card",
+                "attributes": [
+                  {
+                    "name": "title",
+                    "value": {
+                      "kind": "fxTemplate",
+                      "sourceKeys": {
+                        "objectKey": "fxTemplate_254c742b1c922a29",
+                        "sourceKey": "fxTemplate_830fc736e9c0603f"
+                      },
+                      "parts": [
+                        {
+                          "kind": "fxMerge",
+                          "sourceKeys": {
+                            "objectKey": "fxMerge_ec7631a2cd2eaebe",
+                            "sourceKey": "fxMerge_830fc736e9c0603f"
+                          },
+                          "expression": {
+                            "kind": "fxName",
+                            "sourceKeys": {
+                              "objectKey": "fxName_45bfa1fdc7f89acd",
+                              "sourceKey": "fxName_d698623b0da36663"
+                            },
+                            "path": [
+                              "v",
+                              "invoice",
+                              "Name"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "children": [
+                  {
+                    "kind": "markupElement",
+                    "sourceKeys": {
+                      "objectKey": "markupElement_2bf4ee50e17b0b7d",
+                      "sourceKey": "markupElement_8949d88a508b7060"
+                    },
+                    "tag": "c:accountList",
+                    "attributes": [
+                      {
+                        "name": "recordId",
+                        "value": {
+                          "kind": "fxTemplate",
+                          "sourceKeys": {
+                            "objectKey": "fxTemplate_3e9130b1698d0233",
+                            "sourceKey": "fxTemplate_4f18a1dd8aa7058c"
+                          },
+                          "parts": [
+                            {
+                              "kind": "fxMerge",
+                              "sourceKeys": {
+                                "objectKey": "fxMerge_d17b115a75a5f027",
+                                "sourceKey": "fxMerge_4f18a1dd8aa7058c"
+                              },
+                              "expression": {
+                                "kind": "fxName",
+                                "sourceKeys": {
+                                  "objectKey": "fxName_9d47365440471700",
+                                  "sourceKey": "fxName_97d74daba9c13a97"
+                                },
+                                "path": [
+                                  "v",
+                                  "recordId"
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ],
+                    "children": []
+                  },
+                  {
+                    "kind": "markupElement",
+                    "sourceKeys": {
+                      "objectKey": "markupElement_3a49b284b4fb974d",
+                      "sourceKey": "markupElement_f1609ed660f438c4"
+                    },
+                    "tag": "lightning:button",
+                    "attributes": [
+                      {
+                        "name": "label",
+                        "value": {
+                          "kind": "fxTemplate",
+                          "sourceKeys": {
+                            "objectKey": "fxTemplate_2172631d56d3a77f",
+                            "sourceKey": "fxTemplate_e6a34b5dbbae7bbf"
+                          },
+                          "parts": [
+                            {
+                              "kind": "fxMerge",
+                              "sourceKeys": {
+                                "objectKey": "fxMerge_9d57e9b13c092b30",
+                                "sourceKey": "fxMerge_e6a34b5dbbae7bbf"
+                              },
+                              "expression": {
+                                "kind": "fxName",
+                                "sourceKeys": {
+                                  "objectKey": "fxName_8727c9984c39e825",
+                                  "sourceKey": "fxName_aea2be10e3959b9c"
+                                },
+                                "path": [
+                                  "$Label",
+                                  "c",
+                                  "AccountListTitle"
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "name": "onclick",
+                        "value": {
+                          "kind": "fxTemplate",
+                          "sourceKeys": {
+                            "objectKey": "fxTemplate_a3377315cd0f657f",
+                            "sourceKey": "fxTemplate_e758ce00041991ea"
+                          },
+                          "parts": [
+                            {
+                              "kind": "fxMerge",
+                              "sourceKeys": {
+                                "objectKey": "fxMerge_487c21ba63c4e481",
+                                "sourceKey": "fxMerge_e758ce00041991ea"
+                              },
+                              "expression": {
+                                "kind": "fxName",
+                                "sourceKeys": {
+                                  "objectKey": "fxName_ee826d8bd12ad335",
+                                  "sourceKey": "fxName_8337e3addff7c9da"
+                                },
+                                "path": [
+                                  "c",
+                                  "handleClick"
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ],
+                    "children": []
+                  }
+                ]
+              }
             }
           ],
           "javascript": {
@@ -4954,8 +5459,8 @@
         "kind": "emailTemplate",
         "sourceKeys": {
           "objectKey": {
-            "before": "emailTemplate_9fd2a3697b002851",
-            "after": "emailTemplate_f1b73238ce47fd4a"
+            "before": "emailTemplate_6b3eb4604e3e7286",
+            "after": "emailTemplate_d8a41e3dca1f7036"
           },
           "sourceKey": {
             "before": "emailTemplate_4161a5375c481016",
@@ -4974,9 +5479,41 @@
             "value": "Invoice Sent"
           },
           "subject": {
+            "kind": {
+              "after": "fxTemplate"
+            },
+            "sourceKeys": {
+              "after": {
+                "objectKey": "fxTemplate_46dbd9ce1d8e3ef5",
+                "sourceKey": "fxTemplate_2c6329ce06624dd9"
+              }
+            },
             "status": "changed",
             "before": "請求書の送付",
-            "after": "請求書 {!Invoice__c.Name} を送付しました"
+            "after": {
+              "parts": [
+                "請求書 ",
+                {
+                  "kind": "fxMerge",
+                  "sourceKeys": {
+                    "objectKey": "fxMerge_c61f37ffb1a6248f",
+                    "sourceKey": "fxMerge_0601fb3bd51e547b"
+                  },
+                  "expression": {
+                    "kind": "fxName",
+                    "sourceKeys": {
+                      "objectKey": "fxName_1f4ea12a861db411",
+                      "sourceKey": "fxName_439f0cb31d2d005f"
+                    },
+                    "path": [
+                      "Invoice__c",
+                      "Name"
+                    ]
+                  }
+                },
+                " を送付しました"
+              ]
+            }
           },
           "type": {
             "status": "unchanged",
@@ -4999,9 +5536,121 @@
             "value": true
           },
           "body": {
+            "kind": "fxTemplate",
+            "sourceKeys": {
+              "objectKey": {
+                "before": "fxTemplate_86c04e6815bf0109",
+                "after": "fxTemplate_e49cc41dc4609365"
+              },
+              "sourceKey": {
+                "before": "fxTemplate_5d9c89e19575e2d2",
+                "after": "fxTemplate_efff601f26b90cd6"
+              }
+            },
             "status": "changed",
-            "before": "{!Invoice__c.Account__c} 様\n\n請求書 {!Invoice__c.Name} を送付しました。\n",
-            "after": "{!Invoice__c.Account__c} 様\n\n請求書 {!Invoice__c.Name} を送付しました。\n金額: {!Invoice__c.Amount__c}\n"
+            "before": {
+              "parts": [
+                {
+                  "kind": "fxMerge",
+                  "sourceKeys": {
+                    "objectKey": "fxMerge_e0fe66fbb664f723",
+                    "sourceKey": "fxMerge_23da7f1ffdf3f2f9"
+                  },
+                  "expression": {
+                    "kind": "fxName",
+                    "sourceKeys": {
+                      "objectKey": "fxName_41f2edbf5398de0d",
+                      "sourceKey": "fxName_6836244a1fabbed5"
+                    },
+                    "path": [
+                      "Invoice__c",
+                      "Account__c"
+                    ]
+                  }
+                },
+                " 様\n\n請求書 ",
+                {
+                  "kind": "fxMerge",
+                  "sourceKeys": {
+                    "objectKey": "fxMerge_c61f37ffb1a6248f",
+                    "sourceKey": "fxMerge_2bfb1ad6837c70fe"
+                  },
+                  "expression": {
+                    "kind": "fxName",
+                    "sourceKeys": {
+                      "objectKey": "fxName_1f4ea12a861db411",
+                      "sourceKey": "fxName_ba366462a4ae0603"
+                    },
+                    "path": [
+                      "Invoice__c",
+                      "Name"
+                    ]
+                  }
+                },
+                " を送付しました。\n"
+              ]
+            },
+            "after": {
+              "parts": [
+                {
+                  "kind": "fxMerge",
+                  "sourceKeys": {
+                    "objectKey": "fxMerge_e0fe66fbb664f723",
+                    "sourceKey": "fxMerge_23da7f1ffdf3f2f9"
+                  },
+                  "expression": {
+                    "kind": "fxName",
+                    "sourceKeys": {
+                      "objectKey": "fxName_41f2edbf5398de0d",
+                      "sourceKey": "fxName_6836244a1fabbed5"
+                    },
+                    "path": [
+                      "Invoice__c",
+                      "Account__c"
+                    ]
+                  }
+                },
+                " 様\n\n請求書 ",
+                {
+                  "kind": "fxMerge",
+                  "sourceKeys": {
+                    "objectKey": "fxMerge_c61f37ffb1a6248f",
+                    "sourceKey": "fxMerge_2bfb1ad6837c70fe"
+                  },
+                  "expression": {
+                    "kind": "fxName",
+                    "sourceKeys": {
+                      "objectKey": "fxName_1f4ea12a861db411",
+                      "sourceKey": "fxName_ba366462a4ae0603"
+                    },
+                    "path": [
+                      "Invoice__c",
+                      "Name"
+                    ]
+                  }
+                },
+                " を送付しました。\n金額: ",
+                {
+                  "kind": "fxMerge",
+                  "sourceKeys": {
+                    "objectKey": "fxMerge_f8fbb0fd2e6bcfc5",
+                    "sourceKey": "fxMerge_4122b1d32cd2dd3f"
+                  },
+                  "expression": {
+                    "kind": "fxName",
+                    "sourceKeys": {
+                      "objectKey": "fxName_86e26a6f63586c94",
+                      "sourceKey": "fxName_54da0a2d32b21346"
+                    },
+                    "path": [
+                      "Invoice__c",
+                      "Amount__c"
+                    ]
+                  }
+                },
+                "\n"
+              ]
+            }
           }
         }
       }
@@ -5018,8 +5667,8 @@
         "kind": "report",
         "sourceKeys": {
           "objectKey": {
-            "before": "report_e80984dcf2367d25",
-            "after": "report_9a31918763738a26"
+            "before": "report_d81dc0b5bc98ce04",
+            "after": "report_2c717e065bfe58eb"
           },
           "sourceKey": {
             "before": "report_5203ed8c3818d56b",
@@ -5057,18 +5706,30 @@
             "status": "changed",
             "before": {
               "criteriaItems": {
-                "column": "Invoice__c.Status__c",
-                "isUnlocked": true,
-                "operator": "notEqual",
-                "value": "Paid"
+                "kind": "criterion",
+                "sourceKeys": {
+                  "objectKey": "criterion_719c0e2ca14420fa",
+                  "sourceKey": "criterion_21889b2f4023296d"
+                },
+                "left": "",
+                "right": {
+                  "type": "value",
+                  "value": "Paid"
+                }
               }
             },
             "after": {
               "criteriaItems": {
-                "column": "Invoice__c.Status__c",
-                "isUnlocked": true,
-                "operator": "notEqual",
-                "value": "Paid,Approved"
+                "kind": "criterion",
+                "sourceKeys": {
+                  "objectKey": "criterion_9732e950b920314d",
+                  "sourceKey": "criterion_05954e358a67d16e"
+                },
+                "left": "",
+                "right": {
+                  "type": "value",
+                  "value": "Paid,Approved"
+                }
               }
             }
           },
@@ -5367,9 +6028,12 @@
         "sourceKeys": {
           "objectKey": {
             "before": "namedCredential_c9f5798b5ea3f0a8",
-            "after": "namedCredential_70650772f3a7ec8d"
+            "after": "namedCredential_39e8cd3e5c337459"
           },
-          "sourceKey": "namedCredential_9ad8019ac37078f9"
+          "sourceKey": {
+            "before": "namedCredential_9ad8019ac37078f9",
+            "after": "namedCredential_a90c2a31a9e4eb7a"
+          }
         },
         "status": "changed",
         "match": "key",
@@ -5428,6 +6092,20 @@
               "index": {
                 "before": 0,
                 "after": 0
+              }
+            },
+            {
+              "kind": "namedCredentialParameter",
+              "sourceKeys": {
+                "objectKey": "namedCredentialParameter_79efd0cb55300c3a",
+                "sourceKey": "namedCredentialParameter_0a0fd963e5f5541c"
+              },
+              "status": "added",
+              "index": 1,
+              "value": {
+                "parameterName": "ExternalCredential",
+                "parameterType": "Authentication",
+                "externalCredential": "Billing_Auth"
               }
             }
           ]
@@ -5489,8 +6167,8 @@
         "kind": "workflow",
         "sourceKeys": {
           "objectKey": {
-            "before": "workflow_4fd2698182e4081e",
-            "after": "workflow_bc45a1d200620cce"
+            "before": "workflow_55ba8eed95343d86",
+            "after": "workflow_32e675b46ce159ec"
           },
           "sourceKey": {
             "before": "workflow_67623a94717a9082",
@@ -5585,8 +6263,8 @@
               "kind": "workflowRule",
               "sourceKeys": {
                 "objectKey": {
-                  "before": "workflowRule_6166383baec7abb2",
-                  "after": "workflowRule_2f1545b36d5dc11f"
+                  "before": "workflowRule_671d13efc8282aab",
+                  "after": "workflowRule_0a4019f532484330"
                 },
                 "sourceKey": {
                   "before": "workflowRule_646a9b3209791e5b",
@@ -5625,6 +6303,14 @@
                 ],
                 "criteriaItems": [
                   {
+                    "kind": "criterion",
+                    "sourceKeys": {
+                      "objectKey": "criterion_a5fffcf8d8b11a8f",
+                      "sourceKey": {
+                        "before": "criterion_205e1499c894f41e",
+                        "after": "criterion_780b208dcfd34c0e"
+                      }
+                    },
                     "status": "unchanged",
                     "match": "identical",
                     "index": {
@@ -5632,9 +6318,22 @@
                       "after": 0
                     },
                     "value": {
-                      "field": "Invoice__c.Is_Overdue__c",
-                      "operation": "equals",
-                      "value": "True"
+                      "left": {
+                        "kind": "fxName",
+                        "sourceKeys": {
+                          "objectKey": "fxName_3cd80b72f824ef18",
+                          "sourceKey": "fxName_a4fe7b0f10052149"
+                        },
+                        "path": [
+                          "Invoice__c",
+                          "Is_Overdue__c"
+                        ]
+                      },
+                      "operator": "equals",
+                      "right": {
+                        "type": "value",
+                        "value": "True"
+                      }
                     }
                   }
                 ]
@@ -5660,8 +6359,8 @@
         "kind": "approvalProcess",
         "sourceKeys": {
           "objectKey": {
-            "before": "approvalProcess_f0f6b5d7f2196bc6",
-            "after": "approvalProcess_a854833d3aaf406b"
+            "before": "approvalProcess_95aea71538911771",
+            "after": "approvalProcess_ccd7eb037e96941e"
           },
           "sourceKey": {
             "before": "approvalProcess_5dd0a99afe11363d",
@@ -5712,16 +6411,52 @@
             "status": "changed",
             "before": {
               "criteriaItems": {
-                "field": "Invoice__c.Amount__c",
-                "operation": "greaterThan",
-                "value": "10000"
+                "kind": "criterion",
+                "sourceKeys": {
+                  "objectKey": "criterion_e30351a24c7cdf86",
+                  "sourceKey": "criterion_0d3957e3b99e63c8"
+                },
+                "left": {
+                  "kind": "fxName",
+                  "sourceKeys": {
+                    "objectKey": "fxName_86e26a6f63586c94",
+                    "sourceKey": "fxName_7a2f6eeb22d975d8"
+                  },
+                  "path": [
+                    "Invoice__c",
+                    "Amount__c"
+                  ]
+                },
+                "operator": "greaterThan",
+                "right": {
+                  "type": "value",
+                  "value": "10000"
+                }
               }
             },
             "after": {
               "criteriaItems": {
-                "field": "Invoice__c.Amount__c",
-                "operation": "greaterThan",
-                "value": "50000"
+                "kind": "criterion",
+                "sourceKeys": {
+                  "objectKey": "criterion_b4b2aa2434742c71",
+                  "sourceKey": "criterion_37115b46372a125f"
+                },
+                "left": {
+                  "kind": "fxName",
+                  "sourceKeys": {
+                    "objectKey": "fxName_86e26a6f63586c94",
+                    "sourceKey": "fxName_2b3025924237c031"
+                  },
+                  "path": [
+                    "Invoice__c",
+                    "Amount__c"
+                  ]
+                },
+                "operator": "greaterThan",
+                "right": {
+                  "type": "value",
+                  "value": "50000"
+                }
               }
             }
           },
@@ -5729,7 +6464,7 @@
             {
               "kind": "approvalStep",
               "sourceKeys": {
-                "objectKey": "approvalStep_e32b3431c5a52a55",
+                "objectKey": "approvalStep_47acee5cab333a4e",
                 "sourceKey": "approvalStep_7a098d24f77d604e"
               },
               "status": "unchanged",
@@ -5739,6 +6474,11 @@
                 "allowDelegate": false,
                 "assignedApprover": {
                   "approver": {
+                    "kind": "approver",
+                    "sourceKeys": {
+                      "objectKey": "approver_9ceb3ec371c0184e",
+                      "sourceKey": "approver_1f22615fcfe92cab"
+                    },
                     "type": "userHierarchyField"
                   }
                 }
@@ -5751,7 +6491,7 @@
             {
               "kind": "approvalStep",
               "sourceKeys": {
-                "objectKey": "approvalStep_a2f8f9ffe93925c9",
+                "objectKey": "approvalStep_e21964b96b5b47d8",
                 "sourceKey": "approvalStep_6415cf69cbd55d21"
               },
               "status": "added",
@@ -5762,6 +6502,11 @@
                 "allowDelegate": false,
                 "assignedApprover": {
                   "approver": {
+                    "kind": "approver",
+                    "sourceKeys": {
+                      "objectKey": "approver_9ceb3ec371c0184e",
+                      "sourceKey": "approver_fa7e813239a4cc01"
+                    },
                     "type": "userHierarchyField"
                   }
                 }
@@ -5935,6 +6680,1316 @@
           "mayForecastManagerShare": {
             "status": "unchanged",
             "value": false
+          }
+        }
+      }
+    }
+  ],
+  "messageChannel": [
+    {
+      "id": "messageChannel_Invoice_Selected",
+      "status": "changed",
+      "filePath": "messageChannels/Invoice_Selected.messageChannel-meta.xml",
+      "dataType": "messageChannel",
+      "resolvedError": [],
+      "content": {
+        "kind": "messageChannel",
+        "sourceKeys": {
+          "objectKey": {
+            "before": "messageChannel_8e66fb9342ddeb6b",
+            "after": "messageChannel_64ee926c333aa62e"
+          },
+          "sourceKey": {
+            "before": "messageChannel_f796122ad014b159",
+            "after": "messageChannel_5f86733021c07e23"
+          }
+        },
+        "status": "changed",
+        "match": "key",
+        "fields": {
+          "fullName": {
+            "status": "unchanged",
+            "value": "Invoice_Selected"
+          },
+          "masterLabel": {
+            "status": "unchanged",
+            "value": "Invoice Selected"
+          },
+          "description": {
+            "status": "unchanged",
+            "value": "請求書の選択"
+          },
+          "isExposed": {
+            "status": "unchanged",
+            "value": true
+          },
+          "lightningMessageFields": [
+            {
+              "kind": "messageChannelField",
+              "sourceKeys": {
+                "objectKey": {
+                  "before": "messageChannelField_1a30a559819b3c8a",
+                  "after": "messageChannelField_f25bd321847f5257"
+                },
+                "sourceKey": {
+                  "before": "messageChannelField_f2beb84e3251536b",
+                  "after": "messageChannelField_1a81f68267b89f08"
+                }
+              },
+              "status": "changed",
+              "match": "key",
+              "fields": {
+                "fieldName": {
+                  "status": "unchanged",
+                  "value": "invoiceId"
+                },
+                "description": {
+                  "status": "changed",
+                  "before": "選択した請求書の Id",
+                  "after": "選択した請求書の Id (レコードページから)"
+                }
+              },
+              "index": {
+                "before": 0,
+                "after": 0
+              }
+            },
+            {
+              "kind": "messageChannelField",
+              "sourceKeys": {
+                "objectKey": "messageChannelField_26db23212add839d",
+                "sourceKey": "messageChannelField_87fd3ab2f2ab8ac9"
+              },
+              "status": "added",
+              "index": 1,
+              "value": {
+                "fieldName": "source",
+                "description": "選択した部品の名前"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "externalCredential": [
+    {
+      "id": "externalCredential_Billing_Auth",
+      "status": "changed",
+      "filePath": "externalCredentials/Billing_Auth.externalCredential-meta.xml",
+      "dataType": "externalCredential",
+      "resolvedError": [],
+      "content": {
+        "kind": "externalCredential",
+        "sourceKeys": {
+          "objectKey": {
+            "before": "externalCredential_e8b6e44f014ec352",
+            "after": "externalCredential_e7622c691ce8cace"
+          },
+          "sourceKey": "externalCredential_04bc8773d3dffed0"
+        },
+        "status": "changed",
+        "match": "key",
+        "fields": {
+          "fullName": {
+            "status": "unchanged",
+            "value": "Billing_Auth"
+          },
+          "label": {
+            "status": "unchanged",
+            "value": "Billing Auth"
+          },
+          "authenticationProtocol": {
+            "status": "unchanged",
+            "value": "Custom"
+          },
+          "externalCredentialParameters": [
+            {
+              "kind": "externalCredentialParameter",
+              "sourceKeys": {
+                "objectKey": "externalCredentialParameter_ebe7a7331fb56273",
+                "sourceKey": "externalCredentialParameter_0661e24481d94663"
+              },
+              "status": "unchanged",
+              "value": {
+                "parameterName": "Billing",
+                "parameterType": "NamedPrincipal",
+                "parameterGroup": "Billing",
+                "sequenceNumber": 1
+              },
+              "index": {
+                "before": 0,
+                "after": 0
+              }
+            },
+            {
+              "kind": "externalCredentialParameter",
+              "sourceKeys": {
+                "objectKey": {
+                  "before": "externalCredentialParameter_89c02117700e1669",
+                  "after": "externalCredentialParameter_11dba025828d768e"
+                },
+                "sourceKey": "externalCredentialParameter_33c3d93a554dfa6c"
+              },
+              "status": "changed",
+              "match": "key",
+              "fields": {
+                "parameterName": {
+                  "status": "unchanged",
+                  "value": "Authorization"
+                },
+                "parameterType": {
+                  "status": "unchanged",
+                  "value": "AuthHeader"
+                },
+                "parameterGroup": {
+                  "status": "unchanged",
+                  "value": "DefaultGroup"
+                },
+                "parameterValue": {
+                  "status": "changed",
+                  "before": "ApiKey {!$Credential.Billing_Auth.Token}",
+                  "after": "Bearer {!$Credential.Billing_Auth.Token}"
+                },
+                "sequenceNumber": {
+                  "status": "unchanged",
+                  "value": 1
+                }
+              },
+              "index": {
+                "before": 1,
+                "after": 1
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "customNotificationType": [
+    {
+      "id": "customNotificationType_Invoice_Overdue",
+      "status": "changed",
+      "filePath": "notificationtypes/Invoice_Overdue.notiftype-meta.xml",
+      "dataType": "customNotificationType",
+      "resolvedError": [],
+      "content": {
+        "kind": "customNotificationType",
+        "sourceKeys": {
+          "objectKey": {
+            "before": "customNotificationType_7ffc914c64fed178",
+            "after": "customNotificationType_b23ff9e7480b0eb3"
+          },
+          "sourceKey": {
+            "before": "customNotificationType_87f0a55000ba190c",
+            "after": "customNotificationType_cd28795a97c581a7"
+          }
+        },
+        "status": "changed",
+        "match": "key",
+        "fields": {
+          "fullName": {
+            "status": "unchanged",
+            "value": "Invoice_Overdue"
+          },
+          "customNotifTypeName": {
+            "status": "unchanged",
+            "value": "Invoice Overdue"
+          },
+          "masterLabel": {
+            "status": "unchanged",
+            "value": "Invoice Overdue"
+          },
+          "description": {
+            "status": "unchanged",
+            "value": "支払期限を過ぎた請求書の通知"
+          },
+          "desktop": {
+            "status": "unchanged",
+            "value": true
+          },
+          "mobile": {
+            "status": "changed",
+            "before": false,
+            "after": true
+          }
+        }
+      }
+    }
+  ],
+  "reportType": [
+    {
+      "id": "reportType_Invoices_with_Lines",
+      "status": "changed",
+      "filePath": "reportTypes/Invoices_with_Lines.reportType-meta.xml",
+      "dataType": "reportType",
+      "resolvedError": [],
+      "content": {
+        "kind": "reportType",
+        "sourceKeys": {
+          "objectKey": {
+            "before": "reportType_dd287a3276ec8c1e",
+            "after": "reportType_2cce44e466e89428"
+          },
+          "sourceKey": {
+            "before": "reportType_10755669ee44de50",
+            "after": "reportType_78dc2e1256f0f763"
+          }
+        },
+        "status": "changed",
+        "match": "key",
+        "fields": {
+          "fullName": {
+            "status": "unchanged",
+            "value": "Invoices_with_Lines"
+          },
+          "label": {
+            "status": "unchanged",
+            "value": "Invoices with Lines"
+          },
+          "description": {
+            "status": "unchanged",
+            "value": "請求書と明細"
+          },
+          "baseObject": {
+            "status": "unchanged",
+            "value": "Invoice__c"
+          },
+          "category": {
+            "status": "unchanged",
+            "value": "other"
+          },
+          "deployed": {
+            "status": "unchanged",
+            "value": true
+          },
+          "join": {
+            "status": "unchanged",
+            "value": {
+              "outerJoin": true,
+              "relationship": "Lines__r"
+            }
+          },
+          "sections": [
+            {
+              "kind": "reportTypeSection",
+              "sourceKeys": {
+                "objectKey": {
+                  "before": "reportTypeSection_82117cf93756737d",
+                  "after": "reportTypeSection_c304b0b352d5be09"
+                },
+                "sourceKey": {
+                  "before": "reportTypeSection_5bc209dbbded5322",
+                  "after": "reportTypeSection_2bd0e5d92fc0238e"
+                }
+              },
+              "status": "changed",
+              "match": "key",
+              "fields": {
+                "masterLabel": {
+                  "status": "unchanged",
+                  "value": "Invoices"
+                },
+                "columns": [
+                  {
+                    "status": "unchanged",
+                    "match": "identical",
+                    "index": {
+                      "before": 0,
+                      "after": 0
+                    },
+                    "value": {
+                      "checkedByDefault": true,
+                      "field": "Amount__c",
+                      "table": "Invoice__c"
+                    }
+                  },
+                  {
+                    "status": "added",
+                    "index": 1,
+                    "value": {
+                      "checkedByDefault": false,
+                      "field": "Due_Date__c",
+                      "table": "Invoice__c"
+                    }
+                  }
+                ]
+              },
+              "index": {
+                "before": 0,
+                "after": 0
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "assignmentRules": [
+    {
+      "id": "assignmentRules_Case",
+      "status": "changed",
+      "filePath": "assignmentRules/Case.assignmentRules-meta.xml",
+      "dataType": "assignmentRules",
+      "resolvedError": [],
+      "content": {
+        "kind": "assignmentRules",
+        "sourceKeys": {
+          "objectKey": {
+            "before": "assignmentRules_3a472bb39685d90a",
+            "after": "assignmentRules_8d1125ebec5e9f3c"
+          },
+          "sourceKey": {
+            "before": "assignmentRules_687b862e029632d1",
+            "after": "assignmentRules_cc5bb98f1765fa24"
+          }
+        },
+        "status": "changed",
+        "match": "key",
+        "fields": {
+          "fullName": {
+            "status": "unchanged",
+            "value": "Case"
+          },
+          "assignmentRule": [
+            {
+              "kind": "assignmentRule",
+              "sourceKeys": {
+                "objectKey": {
+                  "before": "assignmentRule_36ed6787ce874ea0",
+                  "after": "assignmentRule_feda5ef86358d03d"
+                },
+                "sourceKey": {
+                  "before": "assignmentRule_b5993c4ab5eb0fea",
+                  "after": "assignmentRule_cb48939bb91513ed"
+                }
+              },
+              "status": "changed",
+              "match": "key",
+              "fields": {
+                "fullName": {
+                  "status": "unchanged",
+                  "value": "Standard"
+                },
+                "active": {
+                  "status": "unchanged",
+                  "value": true
+                },
+                "ruleEntry": [
+                  {
+                    "status": "unchanged",
+                    "match": "identical",
+                    "index": {
+                      "before": 0,
+                      "after": 0
+                    },
+                    "value": {
+                      "assignedTo": "Invoice_Queue",
+                      "assignedToType": "Queue",
+                      "criteriaItems": {
+                        "kind": "criterion",
+                        "sourceKeys": {
+                          "objectKey": "criterion_87679aec2d738bf0",
+                          "sourceKey": "criterion_b2cd5e9cf48c031c"
+                        },
+                        "left": {
+                          "kind": "fxName",
+                          "sourceKeys": {
+                            "objectKey": "fxName_1223796801f904c8",
+                            "sourceKey": "fxName_3dfdf963dba408e5"
+                          },
+                          "path": [
+                            "Case",
+                            "Origin"
+                          ]
+                        },
+                        "operator": "equals",
+                        "right": {
+                          "type": "value",
+                          "value": "Web"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "status": "added",
+                    "index": 1,
+                    "value": {
+                      "assignedTo": "Invoice_Queue",
+                      "assignedToType": "Queue",
+                      "criteriaItems": {
+                        "kind": "criterion",
+                        "sourceKeys": {
+                          "objectKey": "criterion_d293db7119747ceb",
+                          "sourceKey": "criterion_4c58f1cd077cae0b"
+                        },
+                        "left": {
+                          "kind": "fxName",
+                          "sourceKeys": {
+                            "objectKey": "fxName_1223796801f904c8",
+                            "sourceKey": "fxName_f0b1b57a08ac5dae"
+                          },
+                          "path": [
+                            "Case",
+                            "Origin"
+                          ]
+                        },
+                        "operator": "equals",
+                        "right": {
+                          "type": "value",
+                          "value": "Email"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "index": {
+                "before": 0,
+                "after": 0
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "autoResponseRules": [
+    {
+      "id": "autoResponseRules_Case",
+      "status": "changed",
+      "filePath": "autoResponseRules/Case.autoResponseRules-meta.xml",
+      "dataType": "autoResponseRules",
+      "resolvedError": [],
+      "content": {
+        "kind": "autoResponseRules",
+        "sourceKeys": {
+          "objectKey": {
+            "before": "autoResponseRules_6e44245916e275fd",
+            "after": "autoResponseRules_6e827bd92a3f4b9e"
+          },
+          "sourceKey": {
+            "before": "autoResponseRules_41386dfbdeafb711",
+            "after": "autoResponseRules_23636ed88e05b7d7"
+          }
+        },
+        "status": "changed",
+        "match": "key",
+        "fields": {
+          "fullName": {
+            "status": "unchanged",
+            "value": "Case"
+          },
+          "autoResponseRule": [
+            {
+              "kind": "autoResponseRule",
+              "sourceKeys": {
+                "objectKey": {
+                  "before": "autoResponseRule_ee67a217c8f99a60",
+                  "after": "autoResponseRule_c978ade2f5bb8c5b"
+                },
+                "sourceKey": {
+                  "before": "autoResponseRule_9a4b5bbcdbc2c934",
+                  "after": "autoResponseRule_8c9da7dfcb92fffb"
+                }
+              },
+              "status": "changed",
+              "match": "key",
+              "fields": {
+                "fullName": {
+                  "status": "unchanged",
+                  "value": "Web_Response"
+                },
+                "active": {
+                  "status": "unchanged",
+                  "value": true
+                },
+                "ruleEntry": [
+                  {
+                    "status": "changed",
+                    "before": {
+                      "criteriaItems": {
+                        "kind": "criterion",
+                        "sourceKeys": {
+                          "objectKey": "criterion_87679aec2d738bf0",
+                          "sourceKey": "criterion_c0ab268d3acd83b1"
+                        },
+                        "left": {
+                          "kind": "fxName",
+                          "sourceKeys": {
+                            "objectKey": "fxName_1223796801f904c8",
+                            "sourceKey": "fxName_986bfce596c1a7db"
+                          },
+                          "path": [
+                            "Case",
+                            "Origin"
+                          ]
+                        },
+                        "operator": "equals",
+                        "right": {
+                          "type": "value",
+                          "value": "Web"
+                        }
+                      },
+                      "senderEmail": "support@example.com",
+                      "senderName": "Support"
+                    },
+                    "after": {
+                      "criteriaItems": {
+                        "kind": "criterion",
+                        "sourceKeys": {
+                          "objectKey": "criterion_87679aec2d738bf0",
+                          "sourceKey": "criterion_c0ab268d3acd83b1"
+                        },
+                        "left": {
+                          "kind": "fxName",
+                          "sourceKeys": {
+                            "objectKey": "fxName_1223796801f904c8",
+                            "sourceKey": "fxName_986bfce596c1a7db"
+                          },
+                          "path": [
+                            "Case",
+                            "Origin"
+                          ]
+                        },
+                        "operator": "equals",
+                        "right": {
+                          "type": "value",
+                          "value": "Web"
+                        }
+                      },
+                      "senderEmail": "support@example.com",
+                      "senderName": "Billing Support"
+                    },
+                    "match": "slot",
+                    "index": {
+                      "before": 0,
+                      "after": 0
+                    }
+                  }
+                ]
+              },
+              "index": {
+                "before": 0,
+                "after": 0
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "escalationRules": [
+    {
+      "id": "escalationRules_Case",
+      "status": "changed",
+      "filePath": "escalationRules/Case.escalationRules-meta.xml",
+      "dataType": "escalationRules",
+      "resolvedError": [],
+      "content": {
+        "kind": "escalationRules",
+        "sourceKeys": {
+          "objectKey": {
+            "before": "escalationRules_e05a455a818c0559",
+            "after": "escalationRules_7bb1031f03eb9f4a"
+          },
+          "sourceKey": "escalationRules_e6cfb82feb5d75b6"
+        },
+        "status": "changed",
+        "match": "key",
+        "fields": {
+          "fullName": {
+            "status": "unchanged",
+            "value": "Case"
+          },
+          "escalationRule": [
+            {
+              "kind": "escalationRule",
+              "sourceKeys": {
+                "objectKey": {
+                  "before": "escalationRule_b91ce0a23130b014",
+                  "after": "escalationRule_105d995d093220fe"
+                },
+                "sourceKey": "escalationRule_7c39548f562c44d1"
+              },
+              "status": "changed",
+              "match": "key",
+              "fields": {
+                "fullName": {
+                  "status": "unchanged",
+                  "value": "Standard"
+                },
+                "active": {
+                  "status": "unchanged",
+                  "value": true
+                },
+                "ruleEntry": [
+                  {
+                    "status": "changed",
+                    "before": {
+                      "businessHoursSource": "Organization",
+                      "criteriaItems": {
+                        "kind": "criterion",
+                        "sourceKeys": {
+                          "objectKey": "criterion_ad92ef195da7ceba",
+                          "sourceKey": "criterion_3774f20daaba11e2"
+                        },
+                        "left": {
+                          "kind": "fxName",
+                          "sourceKeys": {
+                            "objectKey": "fxName_dad904266ec0b06c",
+                            "sourceKey": "fxName_91888ef636d3d980"
+                          },
+                          "path": [
+                            "Case",
+                            "Priority"
+                          ]
+                        },
+                        "operator": "equals",
+                        "right": {
+                          "type": "value",
+                          "value": "High"
+                        }
+                      },
+                      "escalationAction": {
+                        "assignedTo": "Invoice_Queue",
+                        "assignedToType": "Queue",
+                        "minutesToEscalation": "60",
+                        "notifyCaseOwner": false
+                      },
+                      "escalationStartTime": "CaseCreation"
+                    },
+                    "after": {
+                      "businessHoursSource": "Organization",
+                      "criteriaItems": {
+                        "kind": "criterion",
+                        "sourceKeys": {
+                          "objectKey": "criterion_ad92ef195da7ceba",
+                          "sourceKey": "criterion_3774f20daaba11e2"
+                        },
+                        "left": {
+                          "kind": "fxName",
+                          "sourceKeys": {
+                            "objectKey": "fxName_dad904266ec0b06c",
+                            "sourceKey": "fxName_91888ef636d3d980"
+                          },
+                          "path": [
+                            "Case",
+                            "Priority"
+                          ]
+                        },
+                        "operator": "equals",
+                        "right": {
+                          "type": "value",
+                          "value": "High"
+                        }
+                      },
+                      "escalationAction": {
+                        "assignedTo": "Invoice_Queue",
+                        "assignedToType": "Queue",
+                        "minutesToEscalation": "30",
+                        "notifyCaseOwner": false
+                      },
+                      "escalationStartTime": "CaseCreation"
+                    },
+                    "match": "slot",
+                    "index": {
+                      "before": 0,
+                      "after": 0
+                    }
+                  }
+                ]
+              },
+              "index": {
+                "before": 0,
+                "after": 0
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "pathAssistant": [
+    {
+      "id": "pathAssistant_Invoice_Path",
+      "status": "changed",
+      "filePath": "pathAssistants/Invoice_Path.pathAssistant-meta.xml",
+      "dataType": "pathAssistant",
+      "resolvedError": [],
+      "content": {
+        "kind": "pathAssistant",
+        "sourceKeys": {
+          "objectKey": {
+            "before": "pathAssistant_2145f9938e0b9c64",
+            "after": "pathAssistant_309ddcfe6b619200"
+          },
+          "sourceKey": {
+            "before": "pathAssistant_563d5614415c0392",
+            "after": "pathAssistant_99c30416a572f920"
+          }
+        },
+        "status": "changed",
+        "match": "key",
+        "fields": {
+          "fullName": {
+            "status": "unchanged",
+            "value": "Invoice_Path"
+          },
+          "masterLabel": {
+            "status": "unchanged",
+            "value": "Invoice Path"
+          },
+          "active": {
+            "status": "unchanged",
+            "value": true
+          },
+          "entityName": {
+            "status": "unchanged",
+            "value": "Invoice__c"
+          },
+          "fieldName": {
+            "status": "unchanged",
+            "value": "Status__c"
+          },
+          "recordTypeName": {
+            "status": "unchanged",
+            "value": "__MASTER__"
+          },
+          "pathAssistantSteps": [
+            {
+              "kind": "pathAssistantStep",
+              "sourceKeys": {
+                "objectKey": "pathAssistantStep_f32c33b3c4381b64",
+                "sourceKey": "pathAssistantStep_113c229e9c5b7f20"
+              },
+              "status": "unchanged",
+              "value": {
+                "picklistValueName": "Draft",
+                "info": "期日を入れる",
+                "fieldNames": [
+                  "Due_Date__c"
+                ]
+              },
+              "index": {
+                "before": 0,
+                "after": 0
+              }
+            },
+            {
+              "kind": "pathAssistantStep",
+              "sourceKeys": {
+                "objectKey": "pathAssistantStep_f2cfa0c946fb6508",
+                "sourceKey": "pathAssistantStep_b4a4c3e19c90bf1a"
+              },
+              "status": "added",
+              "index": 1,
+              "value": {
+                "picklistValueName": "Paid",
+                "info": "入金を確かめる",
+                "fieldNames": [
+                  "Due_Date__c",
+                  "Approved__c"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "duplicateRule": [
+    {
+      "id": "duplicateRule_Account.Account_Name_Duplicate",
+      "status": "changed",
+      "filePath": "duplicateRules/Account.Account_Name_Duplicate.duplicateRule-meta.xml",
+      "dataType": "duplicateRule",
+      "resolvedError": [],
+      "content": {
+        "kind": "duplicateRule",
+        "sourceKeys": {
+          "objectKey": {
+            "before": "duplicateRule_ef6f540b1af1b704",
+            "after": "duplicateRule_b454d2b657446c82"
+          },
+          "sourceKey": {
+            "before": "duplicateRule_7281d8053a299c31",
+            "after": "duplicateRule_2d01b4ad897074ad"
+          }
+        },
+        "status": "changed",
+        "match": "key",
+        "fields": {
+          "fullName": {
+            "status": "unchanged",
+            "value": "Account.Account_Name_Duplicate"
+          },
+          "masterLabel": {
+            "status": "unchanged",
+            "value": "Account Name Duplicate"
+          },
+          "description": {
+            "status": "unchanged",
+            "value": "取引先の名前の重複"
+          },
+          "isActive": {
+            "status": "changed",
+            "before": true,
+            "after": false
+          },
+          "actionOnInsert": {
+            "status": "unchanged",
+            "value": "Allow"
+          },
+          "actionOnUpdate": {
+            "status": "unchanged",
+            "value": "Allow"
+          },
+          "alertText": {
+            "status": "unchanged",
+            "value": "同じ名前の取引先があります"
+          },
+          "securityOption": {
+            "status": "unchanged",
+            "value": "EnforceSharingRules"
+          },
+          "sortOrder": {
+            "status": "unchanged",
+            "value": 1
+          },
+          "operationsOnInsert": [
+            {
+              "status": "unchanged",
+              "match": "identical",
+              "index": {
+                "before": 0,
+                "after": 0
+              },
+              "value": "Alert"
+            },
+            {
+              "status": "unchanged",
+              "match": "identical",
+              "index": {
+                "before": 1,
+                "after": 1
+              },
+              "value": "Report"
+            }
+          ],
+          "operationsOnUpdate": [
+            {
+              "status": "unchanged",
+              "match": "identical",
+              "index": {
+                "before": 0,
+                "after": 0
+              },
+              "value": "Alert"
+            }
+          ],
+          "duplicateRuleMatchRules": [
+            {
+              "kind": "duplicateRuleMatchRule",
+              "sourceKeys": {
+                "objectKey": "duplicateRuleMatchRule_30affd7b5efef2f4",
+                "sourceKey": "duplicateRuleMatchRule_d01e5653267d6fa5"
+              },
+              "status": "unchanged",
+              "value": {
+                "matchRuleSObjectType": "Account",
+                "matchingRule": "Account_Name_Match"
+              },
+              "index": {
+                "before": 0,
+                "after": 0
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "matchingRules": [
+    {
+      "id": "matchingRules_Account",
+      "status": "changed",
+      "filePath": "matchingRules/Account.matchingRule-meta.xml",
+      "dataType": "matchingRules",
+      "resolvedError": [],
+      "content": {
+        "kind": "matchingRules",
+        "sourceKeys": {
+          "objectKey": {
+            "before": "matchingRules_def0ce9723afa10e",
+            "after": "matchingRules_ee628d0a420975cf"
+          },
+          "sourceKey": {
+            "before": "matchingRules_4d63aaffd105ac17",
+            "after": "matchingRules_74e076a2d9582370"
+          }
+        },
+        "status": "changed",
+        "match": "key",
+        "fields": {
+          "fullName": {
+            "status": "unchanged",
+            "value": "Account"
+          },
+          "matchingRules": [
+            {
+              "kind": "matchingRule",
+              "sourceKeys": {
+                "objectKey": {
+                  "before": "matchingRule_e9cbd38134291196",
+                  "after": "matchingRule_4d5e275c01fbbe97"
+                },
+                "sourceKey": {
+                  "before": "matchingRule_f15357e84f19a6db",
+                  "after": "matchingRule_c56d5872df05895c"
+                }
+              },
+              "status": "changed",
+              "match": "key",
+              "fields": {
+                "fullName": {
+                  "status": "unchanged",
+                  "value": "Account_Name_Match"
+                },
+                "label": {
+                  "status": "unchanged",
+                  "value": "Account Name Match"
+                },
+                "ruleStatus": {
+                  "status": "unchanged",
+                  "value": "Active"
+                },
+                "matchingRuleItems": [
+                  {
+                    "status": "unchanged",
+                    "match": "identical",
+                    "index": {
+                      "before": 0,
+                      "after": 0
+                    },
+                    "value": {
+                      "blankValueBehavior": "NullNotAllowed",
+                      "fieldName": "Name",
+                      "matchingMethod": "Exact"
+                    }
+                  },
+                  {
+                    "status": "added",
+                    "index": 1,
+                    "value": {
+                      "blankValueBehavior": "NullNotAllowed",
+                      "fieldName": "BillingCity",
+                      "matchingMethod": "Exact"
+                    }
+                  }
+                ]
+              },
+              "index": {
+                "before": 0,
+                "after": 0
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "platformEventChannel": [
+    {
+      "id": "platformEventChannel_Invoice_Changes__chn",
+      "status": "changed",
+      "filePath": "platformEventChannels/Invoice_Changes__chn.platformEventChannel-meta.xml",
+      "dataType": "platformEventChannel",
+      "resolvedError": [],
+      "content": {
+        "kind": "platformEventChannel",
+        "sourceKeys": {
+          "objectKey": {
+            "before": "platformEventChannel_59a97b37ccf5cce0",
+            "after": "platformEventChannel_ef4850eb1693b7f4"
+          },
+          "sourceKey": {
+            "before": "platformEventChannel_2ed06c1aa5c8b825",
+            "after": "platformEventChannel_addd54b1cf1e8c3d"
+          }
+        },
+        "status": "changed",
+        "match": "key",
+        "fields": {
+          "fullName": {
+            "status": "unchanged",
+            "value": "Invoice_Changes__chn"
+          },
+          "label": {
+            "status": "changed",
+            "before": "Invoice Changes",
+            "after": "Invoice Change Events"
+          },
+          "channelType": {
+            "status": "unchanged",
+            "value": "data"
+          }
+        }
+      }
+    }
+  ],
+  "platformEventChannelMember": [
+    {
+      "id": "platformEventChannelMember_Invoice_Changes_chn_Invoice_ChangeEvent",
+      "status": "changed",
+      "filePath": "platformEventChannelMembers/Invoice_Changes_chn_Invoice_ChangeEvent.platformEventChannelMember-meta.xml",
+      "dataType": "platformEventChannelMember",
+      "resolvedError": [],
+      "content": {
+        "kind": "platformEventChannelMember",
+        "sourceKeys": {
+          "objectKey": {
+            "before": "platformEventChannelMember_db7b1e635279498d",
+            "after": "platformEventChannelMember_97334b6e9342a264"
+          },
+          "sourceKey": {
+            "before": "platformEventChannelMember_622d9f64def49f5c",
+            "after": "platformEventChannelMember_44a05fdad56046f7"
+          }
+        },
+        "status": "changed",
+        "match": "key",
+        "fields": {
+          "fullName": {
+            "status": "unchanged",
+            "value": "Invoice_Changes_chn_Invoice_ChangeEvent"
+          },
+          "eventChannel": {
+            "status": "unchanged",
+            "value": "Invoice_Changes__chn"
+          },
+          "selectedEntity": {
+            "status": "unchanged",
+            "value": "Invoice__ChangeEvent"
+          },
+          "enrichedFields": [
+            {
+              "status": "unchanged",
+              "match": "identical",
+              "index": {
+                "before": 0,
+                "after": 0
+              },
+              "value": {
+                "name": "Status__c"
+              }
+            },
+            {
+              "status": "added",
+              "index": 1,
+              "value": {
+                "name": "Due_Date__c"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "platformEventSubscriberConfig": [
+    {
+      "id": "platformEventSubscriberConfig_AccountTriggerConfig",
+      "status": "changed",
+      "filePath": "PlatformEventSubscriberConfigs/AccountTriggerConfig.platformEventSubscriberConfig-meta.xml",
+      "dataType": "platformEventSubscriberConfig",
+      "resolvedError": [],
+      "content": {
+        "kind": "platformEventSubscriberConfig",
+        "sourceKeys": {
+          "objectKey": {
+            "before": "platformEventSubscriberConfig_bdf9107f7b24b905",
+            "after": "platformEventSubscriberConfig_aac37910286aae1f"
+          },
+          "sourceKey": "platformEventSubscriberConfig_19f299fd3009730c"
+        },
+        "status": "changed",
+        "match": "key",
+        "fields": {
+          "fullName": {
+            "status": "unchanged",
+            "value": "AccountTriggerConfig"
+          },
+          "masterLabel": {
+            "status": "unchanged",
+            "value": "Account Trigger Config"
+          },
+          "platformEventConsumer": {
+            "status": "unchanged",
+            "value": "AccountTrigger"
+          },
+          "batchSize": {
+            "status": "changed",
+            "before": 200,
+            "after": 100
+          }
+        }
+      }
+    }
+  ],
+  "cspTrustedSite": [
+    {
+      "id": "cspTrustedSite_Billing_API",
+      "status": "changed",
+      "filePath": "cspTrustedSites/Billing_API.cspTrustedSite-meta.xml",
+      "dataType": "cspTrustedSite",
+      "resolvedError": [],
+      "content": {
+        "kind": "cspTrustedSite",
+        "sourceKeys": {
+          "objectKey": {
+            "before": "cspTrustedSite_122510695181d9e7",
+            "after": "cspTrustedSite_eceb2b5c87e525bf"
+          },
+          "sourceKey": {
+            "before": "cspTrustedSite_aa3a5c42aaeb3e49",
+            "after": "cspTrustedSite_d5ccc86591339373"
+          }
+        },
+        "status": "changed",
+        "match": "key",
+        "fields": {
+          "fullName": {
+            "status": "unchanged",
+            "value": "Billing_API"
+          },
+          "endpointUrl": {
+            "status": "unchanged",
+            "value": "https://billing.example.com"
+          },
+          "context": {
+            "status": "unchanged",
+            "value": "All"
+          },
+          "isActive": {
+            "status": "unchanged",
+            "value": true
+          },
+          "isApplicableToConnectSrc": {
+            "status": "unchanged",
+            "value": true
+          },
+          "isApplicableToImgSrc": {
+            "status": "changed",
+            "before": false,
+            "after": true
+          }
+        }
+      }
+    }
+  ],
+  "externalDataSource": [
+    {
+      "id": "externalDataSource_Billing_Data",
+      "status": "changed",
+      "filePath": "dataSources/Billing_Data.dataSource-meta.xml",
+      "dataType": "externalDataSource",
+      "resolvedError": [],
+      "content": {
+        "kind": "externalDataSource",
+        "sourceKeys": {
+          "objectKey": {
+            "before": "externalDataSource_ac58a4c88b13708f",
+            "after": "externalDataSource_30d3e8ce69711e88"
+          },
+          "sourceKey": {
+            "before": "externalDataSource_ecf33a26ab44cd8b",
+            "after": "externalDataSource_f4e1ade983617093"
+          }
+        },
+        "status": "changed",
+        "match": "key",
+        "fields": {
+          "fullName": {
+            "status": "unchanged",
+            "value": "Billing_Data"
+          },
+          "label": {
+            "status": "unchanged",
+            "value": "Billing Data"
+          },
+          "type": {
+            "status": "unchanged",
+            "value": "OData4"
+          },
+          "endpoint": {
+            "status": "unchanged",
+            "value": "https://billing.example.com/odata"
+          },
+          "principalType": {
+            "status": "unchanged",
+            "value": "Anonymous"
+          },
+          "protocol": {
+            "status": "unchanged",
+            "value": "NoAuthentication"
+          },
+          "isWritable": {
+            "status": "changed",
+            "before": false,
+            "after": true
+          }
+        }
+      }
+    }
+  ],
+  "settings": [
+    {
+      "id": "settings_Security",
+      "status": "changed",
+      "filePath": "settings/Security.settings-meta.xml",
+      "dataType": "settings",
+      "resolvedError": [],
+      "content": {
+        "kind": "settings",
+        "sourceKeys": {
+          "objectKey": {
+            "before": "settings_28dd6c14040c0513",
+            "after": "settings_a585a9f2787f62ea"
+          },
+          "sourceKey": {
+            "before": "settings_e5c4d45b7c8a11cc",
+            "after": "settings_295d7e3538c04ab7"
+          }
+        },
+        "status": "changed",
+        "match": "key",
+        "fields": {
+          "fullName": {
+            "status": "unchanged",
+            "value": "Security"
+          },
+          "properties": {
+            "passwordPolicies": {
+              "status": "changed",
+              "before": {
+                "minimumPasswordLength": "8",
+                "passwordComplexity": "AlphaNumeric"
+              },
+              "after": {
+                "minimumPasswordLength": "12",
+                "passwordComplexity": "AlphaNumeric"
+              }
+            },
+            "sessionSettings": {
+              "status": "changed",
+              "before": {
+                "sessionTimeout": "TwoHours"
+              },
+              "after": {
+                "sessionTimeout": "TwoHours",
+                "forceLogoutOnSessionTimeout": true
+              }
+            }
           }
         }
       }

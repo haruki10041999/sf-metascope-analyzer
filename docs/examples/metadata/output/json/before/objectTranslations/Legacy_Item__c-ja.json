@@ -7,7 +7,7 @@
     "base": {
       "kind": "objectTranslation",
       "sourceKeys": {
-        "objectKey": "objectTranslation_c3d7df0e327a0cef",
+        "objectKey": "objectTranslation_eeb73ded9a4088ea",
         "sourceKey": "objectTranslation_142972ca2b4932a1"
       },
       "objectApiName": "Legacy_Item__c",
@@ -17,7 +17,7 @@
         {
           "kind": "fieldTranslation",
           "sourceKeys": {
-            "objectKey": "fieldTranslation_505d1a0991427ba9",
+            "objectKey": "fieldTranslation_4844ed45c5971a6e",
             "sourceKey": "fieldTranslation_442eb4ee3001b55d"
           },
           "name": "Invoice__c",
@@ -27,7 +27,7 @@
     },
     "sourceObject": [
       {
-        "objectKey": "fieldTranslation_505d1a0991427ba9",
+        "objectKey": "fieldTranslation_4844ed45c5971a6e",
         "context": "<CustomFieldTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <label>請求書</label>\n    <name>Invoice__c</name>\n</CustomFieldTranslation>",
         "source": [
           {
@@ -47,7 +47,7 @@
         ]
       },
       {
-        "objectKey": "objectTranslation_c3d7df0e327a0cef",
+        "objectKey": "objectTranslation_eeb73ded9a4088ea",
         "context": "<CustomObjectTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <nameFieldLabel>旧品目名</nameFieldLabel>\n</CustomObjectTranslation>",
         "source": [
           {

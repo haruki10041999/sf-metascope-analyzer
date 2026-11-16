@@ -81,9 +81,13 @@ const makeFieldSpecJson = (target: FieldSpecTypeClass): FieldSpecJson => {
     };
 };
 
+/** FIND の検索語。リテラル (FIND 'term' / FIND {term}) は検索語、バインド (FIND :term) は式 */
+export type SoslFindJson =
+    { type: 'literal'; value: string } | { type: 'bind'; value: BaseExpressionJson };
+
 // SOSL 全体の位置を持つノード
 export type SoslJson = JsonType<'sosl'> & {
-    find: string | BaseExpressionJson;
+    find: SoslFindJson;
     group?: 'ALL' | 'EMAIL' | 'NAME' | 'PHONE' | 'SIDEBAR';
     fieldSpec?: FieldSpecJson[];
     with?: SoslWithJson[];
@@ -93,7 +97,7 @@ export type SoslJson = JsonType<'sosl'> & {
 
 // soslPrimary から来るのは soslLiteral だけ (soslLiteralAlt は v1 と同じく、文法にはあるが今は通らない)
 export const makeSoslJson = (target: SoslLiteralTypeClass | SoslLiteralAltTypeClass): SoslJson => {
-    let find: string | BaseExpressionJson;
+    let find: SoslFindJson;
     let clauses: SoslClausesTypeClass;
     switch (target.kind) {
         case 'soslLiteral': {
@@ -101,14 +105,17 @@ export const makeSoslJson = (target: SoslLiteralTypeClass | SoslLiteralAltTypeCl
             // 検索語は FIND リテラルのトークンから取り出す。バインド式 (:var) は中の式を出す
             find =
                 search.kind === 'literal'
-                    ? extractFindSearchTerm(search.text)
-                    : makeExpressionJsonConvert(search.expr.getFields().value);
+                    ? { type: 'literal', value: extractFindSearchTerm(search.text) }
+                    : {
+                          type: 'bind',
+                          value: makeExpressionJsonConvert(search.expr.getFields().value),
+                      };
             clauses = soslClauses;
             break;
         }
         case 'soslLiteralAlt': {
             const { value, soslClauses } = target.getFields();
-            find = extractFindSearchTerm(value);
+            find = { type: 'literal', value: extractFindSearchTerm(value) };
             clauses = soslClauses;
             break;
         }

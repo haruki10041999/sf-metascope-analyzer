@@ -50,12 +50,12 @@ describe('Apex string-argument references (文字列の引数などの参照)', 
             '        return System.Page.Last;',
             '    }',
         ]);
-        assert.deepEqual(refsOf(dependencies, ['visualforcePage']).sort(), [
-            'uses visualforcePage:Detail (Page)',
-            'uses visualforcePage:Last (Page)',
-            'uses visualforcePage:MyPage (Page)',
-            'uses visualforcePage:Other (PageReference)',
-            'uses visualforcePage:ns__Packaged (PageReference)',
+        assert.deepEqual(refsOf(dependencies, ['apexPage']).sort(), [
+            'uses apexPage:Detail (Page)',
+            'uses apexPage:Last (Page)',
+            'uses apexPage:MyPage (Page)',
+            'uses apexPage:Other (PageReference)',
+            'uses apexPage:ns__Packaged (PageReference)',
         ]);
         const graph = buildDependencyGraph([
             { type: 'apexClass', id: 'class_Pages', dependencies },
@@ -72,7 +72,7 @@ describe('Apex string-argument references (文字列の引数などの参照)', 
             '        String n = page.Name;',
             '    }',
         ]);
-        assert.deepEqual(refsOf(dependencies, ['visualforcePage']), []);
+        assert.deepEqual(refsOf(dependencies, ['apexPage']), []);
     });
 
     it('references static resources from forResource and the StaticResource SOQL', async () => {

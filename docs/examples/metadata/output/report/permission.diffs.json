@@ -1,7 +1,7 @@
 [
   {
     "status": "changed",
-    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
     "sourceKeys": {
       "objectKey": "permissionSet_c63b3dd9be5e8b8b",
       "sourceKey": "permissionSet_66c65958a93475fc"
@@ -22,7 +22,7 @@
   },
   {
     "status": "added",
-    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
     "sourceKeys": {
       "objectKey": "classAccess_7f23a5503647ae62",
       "sourceKey": "classAccess_a5757912708f2557"
@@ -46,7 +46,7 @@
   },
   {
     "status": "changed",
-    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
     "sourceKeys": {
       "objectKey": "fieldPermission_aaa100381ce7d463",
       "sourceKey": "fieldPermission_b654c9c9429748a1"
@@ -67,7 +67,7 @@
   },
   {
     "status": "added",
-    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
     "sourceKeys": {
       "objectKey": "fieldPermission_b17d02b8f2e293b6",
       "sourceKey": "fieldPermission_e3b8dd9a1c70e02e"
@@ -95,7 +95,7 @@
   },
   {
     "status": "added",
-    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
     "sourceKeys": {
       "objectKey": "fieldPermission_25a2eabf84d5a698",
       "sourceKey": "fieldPermission_7a4e2c75d3aeb07a"
@@ -123,7 +123,7 @@
   },
   {
     "status": "removed",
-    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
     "sourceKeys": {
       "objectKey": "fieldPermission_7c00fe3e4f8005f4",
       "sourceKey": "fieldPermission_83bfe206bd236c09"
@@ -151,7 +151,7 @@
   },
   {
     "status": "changed",
-    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
     "sourceKeys": {
       "objectKey": "objectPermission_248af890aac730b8",
       "sourceKey": "objectPermission_3268943b95374199"
@@ -177,7 +177,7 @@
   },
   {
     "status": "added",
-    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
     "sourceKeys": {
       "objectKey": "objectPermission_55784922962ae9d2",
       "sourceKey": "objectPermission_b8f7b5ded3d9ab4d"
@@ -221,7 +221,7 @@
   },
   {
     "status": "changed",
-    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
     "sourceKeys": {
       "objectKey": "recordTypeVisibility_29a6facabc64db34",
       "sourceKey": "recordTypeVisibility_28922c73b72d3563"
@@ -242,7 +242,7 @@
   },
   {
     "status": "added",
-    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
     "sourceKeys": {
       "objectKey": "userPermission_59cc70777c966e65",
       "sourceKey": "userPermission_970cc408087788ec"
@@ -266,7 +266,7 @@
   },
   {
     "status": "added",
-    "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Payment_Clerk.permissionset-meta.xml",
     "sourceKeys": {
       "objectKey": "permissionSet_dd3a595e9c73a854",
       "sourceKey": "permissionSet_02f916d6d4992d22"
@@ -281,7 +281,7 @@
   },
   {
     "status": "removed",
-    "filePath": "permissionsets/Invoice_Viewer.permissionset-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\permissionsets\\Invoice_Viewer.permissionset-meta.xml",
     "sourceKeys": {
       "objectKey": "permissionSet_44df74550694e293",
       "sourceKey": "permissionSet_6c0634ef2e3d9eb6"
@@ -296,7 +296,7 @@
   },
   {
     "status": "added",
-    "filePath": "mutingpermissionsets/Invoice_Team_Muted.mutingpermissionset-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\mutingpermissionsets\\Invoice_Team_Muted.mutingpermissionset-meta.xml",
     "sourceKeys": {
       "objectKey": "fieldPermission_6c1a53216036c5cd",
       "sourceKey": "fieldPermission_99d5034a91fd483a"
@@ -324,7 +324,7 @@
   },
   {
     "status": "changed",
-    "filePath": "mutingpermissionsets/Invoice_Team_Muted.mutingpermissionset-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\mutingpermissionsets\\Invoice_Team_Muted.mutingpermissionset-meta.xml",
     "sourceKeys": {
       "objectKey": "objectPermission_b0f1e6c05e1c1721",
       "sourceKey": "objectPermission_f6c0b17cded170d2"
@@ -350,7 +350,7 @@
   },
   {
     "status": "added",
-    "filePath": "mutingpermissionsets/Invoice_Team_Muted.mutingpermissionset-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\mutingpermissionsets\\Invoice_Team_Muted.mutingpermissionset-meta.xml",
     "sourceKeys": {
       "objectKey": "userPermission_59cc70777c966e65",
       "sourceKey": "userPermission_a663e2397977f29e"
@@ -374,7 +374,7 @@
   },
   {
     "status": "changed",
-    "filePath": "profiles/Sales.profile-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
     "sourceKeys": {
       "objectKey": "profile_aa995c352c049dca",
       "sourceKey": "profile_7e45bb132eea17be"
@@ -411,7 +411,7 @@
   },
   {
     "status": "changed",
-    "filePath": "profiles/Sales.profile-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
     "sourceKeys": {
       "objectKey": "fieldPermission_d9faa032db9ea76e",
       "sourceKey": "fieldPermission_3d5cad74fdaea5ec"
@@ -432,7 +432,7 @@
   },
   {
     "status": "changed",
-    "filePath": "profiles/Sales.profile-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
     "sourceKeys": {
       "objectKey": "fieldPermission_8f813990a36b0899",
       "sourceKey": "fieldPermission_e99e3342cd85c0bc"
@@ -458,7 +458,7 @@
   },
   {
     "status": "changed",
-    "filePath": "profiles/Sales.profile-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
     "sourceKeys": {
       "objectKey": "objectPermission_b4ee98627615aa0a",
       "sourceKey": "objectPermission_ae7f5f7145fe728a"
@@ -479,7 +479,7 @@
   },
   {
     "status": "changed",
-    "filePath": "profiles/Sales.profile-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
     "sourceKeys": {
       "objectKey": "userPermission_82d47dd746f97527",
       "sourceKey": "userPermission_72a87f341c776ac6"
@@ -500,7 +500,7 @@
   },
   {
     "status": "changed",
-    "filePath": "profiles/Sales.profile-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
     "sourceKeys": {
       "objectKey": "tabVisibility_c0e48d164a0d2bc3",
       "sourceKey": "tabVisibility_90e57b04518f11ba"
@@ -521,7 +521,7 @@
   },
   {
     "status": "added",
-    "filePath": "profiles/Sales.profile-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
     "sourceKeys": {
       "objectKey": "layoutAssignment_9bd20196e2fe46ae",
       "sourceKey": "layoutAssignment_14b32ce4a99430f5"
@@ -545,7 +545,7 @@
   },
   {
     "status": "removed",
-    "filePath": "profiles/Sales.profile-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
     "sourceKeys": {
       "objectKey": "layoutAssignment_5337685612ad6f4a",
       "sourceKey": "layoutAssignment_09ba7cf71fae5eee"
@@ -569,7 +569,7 @@
   },
   {
     "status": "added",
-    "filePath": "profiles/Sales.profile-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
     "sourceKeys": {
       "objectKey": "loginIpRange_3eed0834b567201b",
       "sourceKey": "loginIpRange_d158d7194fd3b5fe"
@@ -597,7 +597,7 @@
   },
   {
     "status": "changed",
-    "filePath": "profiles/Sales.profile-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
     "sourceKeys": {
       "objectKey": "loginFlow_c79b77657c881c44",
       "sourceKey": "loginFlow_c2a35eeaace313c0"
@@ -618,7 +618,7 @@
   },
   {
     "status": "changed",
-    "filePath": "profiles/Sales.profile-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
     "sourceKeys": {
       "objectKey": "categoryGroupVisibility_64bf5c085216196d",
       "sourceKey": "categoryGroupVisibility_17024ceb174d2cb1"
@@ -645,7 +645,7 @@
   },
   {
     "status": "changed",
-    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsetgroups\\Invoice_Team.permissionsetgroup-meta.xml",
     "sourceKeys": {
       "objectKey": "permissionSetGroup_977542f490e5eb01",
       "sourceKey": "permissionSetGroup_ca71a1ddc6196f2a"

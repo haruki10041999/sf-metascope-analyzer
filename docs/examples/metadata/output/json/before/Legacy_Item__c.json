@@ -7,7 +7,7 @@
     "base": {
       "kind": "object",
       "sourceKeys": {
-        "objectKey": "object_99859d88c21a4eff",
+        "objectKey": "object_5e898081803d4926",
         "sourceKey": "object_2f75641dfb4d0bf7"
       },
       "apiName": "Legacy_Item__c",
@@ -20,7 +20,7 @@
         {
           "kind": "field",
           "sourceKeys": {
-            "objectKey": "field_d3f023f9bb515b13",
+            "objectKey": "field_44cda2721758c7f7",
             "sourceKey": "field_ad0a1b317ae2f9d0"
           },
           "apiName": "Invoice__c",
@@ -34,7 +34,7 @@
     },
     "sourceObject": [
       {
-        "objectKey": "field_d3f023f9bb515b13",
+        "objectKey": "field_44cda2721758c7f7",
         "context": "<CustomField xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Invoice__c</fullName>\n    <deleteConstraint>SetNull</deleteConstraint>\n    <label>Invoice</label>\n    <referenceTo>Invoice__c</referenceTo>\n    <relationshipName>Legacy_Items</relationshipName>\n    <type>Lookup</type>\n</CustomField>",
         "source": [
           {
@@ -54,7 +54,7 @@
         ]
       },
       {
-        "objectKey": "object_99859d88c21a4eff",
+        "objectKey": "object_5e898081803d4926",
         "context": "<CustomObject xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <deploymentStatus>Deployed</deploymentStatus>\n    <label>Legacy Item</label>\n    <pluralLabel>Legacy Items</pluralLabel>\n    <sharingModel>ReadWrite</sharingModel>\n</CustomObject>",
         "source": [
           {

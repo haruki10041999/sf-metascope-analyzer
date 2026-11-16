@@ -51,354 +51,407 @@
       ],
       "block": [
         {
-          "kind": "statement",
-          "statement": {
-            "kind": "expression",
+          "kind": "expression",
+          "sourceKeys": {},
+          "value": {
+            "kind": "memberAccess",
             "sourceKeys": {},
-            "value": {
-              "kind": "memberAccess",
+            "type": "method",
+            "object": {
+              "kind": "identifier",
               "sourceKeys": {},
-              "type": "method",
-              "object": "System",
-              "operator": ".",
-              "member": "debug",
-              "memberArg": [
-                {
-                  "kind": "memberAccess",
+              "name": "System"
+            },
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "kind": "memberAccess",
+                "sourceKeys": {},
+                "type": "object",
+                "object": {
+                  "kind": "identifier",
                   "sourceKeys": {},
-                  "type": "object",
-                  "object": "Trigger",
-                  "operator": ".",
-                  "member": "isExecuting"
-                }
-              ]
-            }
-          },
-          "modifier": {}
+                  "name": "Trigger"
+                },
+                "operator": ".",
+                "member": "isExecuting"
+              }
+            ]
+          }
         },
         {
-          "kind": "statement",
-          "statement": {
-            "kind": "expression",
+          "kind": "expression",
+          "sourceKeys": {},
+          "value": {
+            "kind": "memberAccess",
             "sourceKeys": {},
-            "value": {
-              "kind": "memberAccess",
+            "type": "method",
+            "object": {
+              "kind": "identifier",
               "sourceKeys": {},
-              "type": "method",
-              "object": "System",
-              "operator": ".",
-              "member": "debug",
-              "memberArg": [
-                {
-                  "kind": "memberAccess",
+              "name": "System"
+            },
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "kind": "memberAccess",
+                "sourceKeys": {},
+                "type": "object",
+                "object": {
+                  "kind": "identifier",
                   "sourceKeys": {},
-                  "type": "object",
-                  "object": "Trigger",
-                  "operator": ".",
-                  "member": "isBefore"
-                }
-              ]
-            }
-          },
-          "modifier": {}
+                  "name": "Trigger"
+                },
+                "operator": ".",
+                "member": "isBefore"
+              }
+            ]
+          }
         },
         {
-          "kind": "statement",
-          "statement": {
-            "kind": "expression",
+          "kind": "expression",
+          "sourceKeys": {},
+          "value": {
+            "kind": "memberAccess",
             "sourceKeys": {},
-            "value": {
-              "kind": "memberAccess",
+            "type": "method",
+            "object": {
+              "kind": "identifier",
               "sourceKeys": {},
-              "type": "method",
-              "object": "System",
-              "operator": ".",
-              "member": "debug",
-              "memberArg": [
-                {
-                  "kind": "memberAccess",
+              "name": "System"
+            },
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "kind": "memberAccess",
+                "sourceKeys": {},
+                "type": "object",
+                "object": {
+                  "kind": "identifier",
                   "sourceKeys": {},
-                  "type": "object",
-                  "object": "Trigger",
-                  "operator": ".",
-                  "member": "isAfter"
-                }
-              ]
-            }
-          },
-          "modifier": {}
+                  "name": "Trigger"
+                },
+                "operator": ".",
+                "member": "isAfter"
+              }
+            ]
+          }
         },
         {
-          "kind": "statement",
-          "statement": {
-            "kind": "expression",
+          "kind": "expression",
+          "sourceKeys": {},
+          "value": {
+            "kind": "memberAccess",
             "sourceKeys": {},
-            "value": {
-              "kind": "memberAccess",
+            "type": "method",
+            "object": {
+              "kind": "identifier",
               "sourceKeys": {},
-              "type": "method",
-              "object": "System",
-              "operator": ".",
-              "member": "debug",
-              "memberArg": [
-                {
-                  "kind": "memberAccess",
+              "name": "System"
+            },
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "kind": "memberAccess",
+                "sourceKeys": {},
+                "type": "object",
+                "object": {
+                  "kind": "identifier",
                   "sourceKeys": {},
-                  "type": "object",
-                  "object": "Trigger",
-                  "operator": ".",
-                  "member": "isInsert"
-                }
-              ]
-            }
-          },
-          "modifier": {}
+                  "name": "Trigger"
+                },
+                "operator": ".",
+                "member": "isInsert"
+              }
+            ]
+          }
         },
         {
-          "kind": "statement",
-          "statement": {
-            "kind": "expression",
+          "kind": "expression",
+          "sourceKeys": {},
+          "value": {
+            "kind": "memberAccess",
             "sourceKeys": {},
-            "value": {
-              "kind": "memberAccess",
+            "type": "method",
+            "object": {
+              "kind": "identifier",
               "sourceKeys": {},
-              "type": "method",
-              "object": "System",
-              "operator": ".",
-              "member": "debug",
-              "memberArg": [
-                {
-                  "kind": "memberAccess",
+              "name": "System"
+            },
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "kind": "memberAccess",
+                "sourceKeys": {},
+                "type": "object",
+                "object": {
+                  "kind": "identifier",
                   "sourceKeys": {},
-                  "type": "object",
-                  "object": "Trigger",
-                  "operator": ".",
-                  "member": "isUpdate"
-                }
-              ]
-            }
-          },
-          "modifier": {}
+                  "name": "Trigger"
+                },
+                "operator": ".",
+                "member": "isUpdate"
+              }
+            ]
+          }
         },
         {
-          "kind": "statement",
-          "statement": {
-            "kind": "expression",
+          "kind": "expression",
+          "sourceKeys": {},
+          "value": {
+            "kind": "memberAccess",
             "sourceKeys": {},
-            "value": {
-              "kind": "memberAccess",
+            "type": "method",
+            "object": {
+              "kind": "identifier",
               "sourceKeys": {},
-              "type": "method",
-              "object": "System",
-              "operator": ".",
-              "member": "debug",
-              "memberArg": [
-                {
-                  "kind": "memberAccess",
+              "name": "System"
+            },
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "kind": "memberAccess",
+                "sourceKeys": {},
+                "type": "object",
+                "object": {
+                  "kind": "identifier",
                   "sourceKeys": {},
-                  "type": "object",
-                  "object": "Trigger",
-                  "operator": ".",
-                  "member": "isDelete"
-                }
-              ]
-            }
-          },
-          "modifier": {}
+                  "name": "Trigger"
+                },
+                "operator": ".",
+                "member": "isDelete"
+              }
+            ]
+          }
         },
         {
-          "kind": "statement",
-          "statement": {
-            "kind": "expression",
+          "kind": "expression",
+          "sourceKeys": {},
+          "value": {
+            "kind": "memberAccess",
             "sourceKeys": {},
-            "value": {
-              "kind": "memberAccess",
+            "type": "method",
+            "object": {
+              "kind": "identifier",
               "sourceKeys": {},
-              "type": "method",
-              "object": "System",
-              "operator": ".",
-              "member": "debug",
-              "memberArg": [
-                {
-                  "kind": "memberAccess",
+              "name": "System"
+            },
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "kind": "memberAccess",
+                "sourceKeys": {},
+                "type": "object",
+                "object": {
+                  "kind": "identifier",
                   "sourceKeys": {},
-                  "type": "object",
-                  "object": "Trigger",
-                  "operator": ".",
-                  "member": "isUndelete"
-                }
-              ]
-            }
-          },
-          "modifier": {}
+                  "name": "Trigger"
+                },
+                "operator": ".",
+                "member": "isUndelete"
+              }
+            ]
+          }
         },
         {
-          "kind": "statement",
-          "statement": {
-            "kind": "expression",
+          "kind": "expression",
+          "sourceKeys": {},
+          "value": {
+            "kind": "memberAccess",
             "sourceKeys": {},
-            "value": {
-              "kind": "memberAccess",
+            "type": "method",
+            "object": {
+              "kind": "identifier",
               "sourceKeys": {},
-              "type": "method",
-              "object": "System",
-              "operator": ".",
-              "member": "debug",
-              "memberArg": [
-                {
-                  "kind": "memberAccess",
+              "name": "System"
+            },
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "kind": "memberAccess",
+                "sourceKeys": {},
+                "type": "object",
+                "object": {
+                  "kind": "identifier",
                   "sourceKeys": {},
-                  "type": "object",
-                  "object": "Trigger",
-                  "operator": ".",
-                  "member": "new"
-                }
-              ]
-            }
-          },
-          "modifier": {}
+                  "name": "Trigger"
+                },
+                "operator": ".",
+                "member": "new"
+              }
+            ]
+          }
         },
         {
-          "kind": "statement",
-          "statement": {
-            "kind": "expression",
+          "kind": "expression",
+          "sourceKeys": {},
+          "value": {
+            "kind": "memberAccess",
             "sourceKeys": {},
-            "value": {
-              "kind": "memberAccess",
+            "type": "method",
+            "object": {
+              "kind": "identifier",
               "sourceKeys": {},
-              "type": "method",
-              "object": "System",
-              "operator": ".",
-              "member": "debug",
-              "memberArg": [
-                {
-                  "kind": "memberAccess",
+              "name": "System"
+            },
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "kind": "memberAccess",
+                "sourceKeys": {},
+                "type": "object",
+                "object": {
+                  "kind": "identifier",
                   "sourceKeys": {},
-                  "type": "object",
-                  "object": "Trigger",
-                  "operator": ".",
-                  "member": "old"
-                }
-              ]
-            }
-          },
-          "modifier": {}
+                  "name": "Trigger"
+                },
+                "operator": ".",
+                "member": "old"
+              }
+            ]
+          }
         },
         {
-          "kind": "statement",
-          "statement": {
-            "kind": "expression",
+          "kind": "expression",
+          "sourceKeys": {},
+          "value": {
+            "kind": "memberAccess",
             "sourceKeys": {},
-            "value": {
-              "kind": "memberAccess",
+            "type": "method",
+            "object": {
+              "kind": "identifier",
               "sourceKeys": {},
-              "type": "method",
-              "object": "System",
-              "operator": ".",
-              "member": "debug",
-              "memberArg": [
-                {
-                  "kind": "memberAccess",
+              "name": "System"
+            },
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "kind": "memberAccess",
+                "sourceKeys": {},
+                "type": "object",
+                "object": {
+                  "kind": "identifier",
                   "sourceKeys": {},
-                  "type": "object",
-                  "object": "Trigger",
-                  "operator": ".",
-                  "member": "newMap"
-                }
-              ]
-            }
-          },
-          "modifier": {}
+                  "name": "Trigger"
+                },
+                "operator": ".",
+                "member": "newMap"
+              }
+            ]
+          }
         },
         {
-          "kind": "statement",
-          "statement": {
-            "kind": "expression",
+          "kind": "expression",
+          "sourceKeys": {},
+          "value": {
+            "kind": "memberAccess",
             "sourceKeys": {},
-            "value": {
-              "kind": "memberAccess",
+            "type": "method",
+            "object": {
+              "kind": "identifier",
               "sourceKeys": {},
-              "type": "method",
-              "object": "System",
-              "operator": ".",
-              "member": "debug",
-              "memberArg": [
-                {
-                  "kind": "memberAccess",
+              "name": "System"
+            },
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "kind": "memberAccess",
+                "sourceKeys": {},
+                "type": "object",
+                "object": {
+                  "kind": "identifier",
                   "sourceKeys": {},
-                  "type": "object",
-                  "object": "Trigger",
-                  "operator": ".",
-                  "member": "oldMap"
-                }
-              ]
-            }
-          },
-          "modifier": {}
+                  "name": "Trigger"
+                },
+                "operator": ".",
+                "member": "oldMap"
+              }
+            ]
+          }
         },
         {
-          "kind": "statement",
-          "statement": {
-            "kind": "expression",
+          "kind": "expression",
+          "sourceKeys": {},
+          "value": {
+            "kind": "memberAccess",
             "sourceKeys": {},
-            "value": {
-              "kind": "memberAccess",
+            "type": "method",
+            "object": {
+              "kind": "identifier",
               "sourceKeys": {},
-              "type": "method",
-              "object": "System",
-              "operator": ".",
-              "member": "debug",
-              "memberArg": [
-                {
-                  "kind": "memberAccess",
+              "name": "System"
+            },
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "kind": "memberAccess",
+                "sourceKeys": {},
+                "type": "object",
+                "object": {
+                  "kind": "identifier",
                   "sourceKeys": {},
-                  "type": "object",
-                  "object": "Trigger",
-                  "operator": ".",
-                  "member": "operationType"
-                }
-              ]
-            }
-          },
-          "modifier": {}
+                  "name": "Trigger"
+                },
+                "operator": ".",
+                "member": "operationType"
+              }
+            ]
+          }
         },
         {
-          "kind": "statement",
-          "statement": {
-            "kind": "expression",
+          "kind": "expression",
+          "sourceKeys": {},
+          "value": {
+            "kind": "memberAccess",
             "sourceKeys": {},
-            "value": {
-              "kind": "memberAccess",
+            "type": "method",
+            "object": {
+              "kind": "identifier",
               "sourceKeys": {},
-              "type": "method",
-              "object": "System",
-              "operator": ".",
-              "member": "debug",
-              "memberArg": [
-                {
-                  "kind": "memberAccess",
+              "name": "System"
+            },
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "kind": "memberAccess",
+                "sourceKeys": {},
+                "type": "object",
+                "object": {
+                  "kind": "identifier",
                   "sourceKeys": {},
-                  "type": "object",
-                  "object": "Trigger",
-                  "operator": ".",
-                  "member": "size"
-                }
-              ]
-            }
-          },
-          "modifier": {}
+                  "name": "Trigger"
+                },
+                "operator": ".",
+                "member": "size"
+              }
+            ]
+          }
         },
         {
           "kind": "field",
           "sourceKeys": {},
           "variants": [
             {
+              "kind": "variant",
               "sourceKeys": {},
               "name": "PREFIX",
               "init": {
+                "kind": "string",
                 "sourceKeys": {},
-                "value": "'Trigger: '",
-                "valueType": "string"
+                "value": "Trigger: "
               }
             }
           ],
@@ -409,14 +462,12 @@
             "primitiveType": "String"
           },
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
                 "name": "PRIVATE"
-              }
-            ],
-            "declaration": [
+              },
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -435,12 +486,13 @@
           "sourceKeys": {},
           "variants": [
             {
+              "kind": "variant",
               "sourceKeys": {},
               "name": "invocationCount",
               "init": {
+                "kind": "integer",
                 "sourceKeys": {},
-                "value": "0",
-                "valueType": "integer"
+                "value": "0"
               }
             }
           ],
@@ -451,7 +503,7 @@
             "primitiveType": "Integer"
           },
           "modifier": {
-            "declaration": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -482,7 +534,7 @@
             "modifier": {}
           },
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -521,22 +573,35 @@
                 "kind": "memberAccess",
                 "sourceKeys": {},
                 "type": "method",
-                "object": "System",
+                "object": {
+                  "kind": "identifier",
+                  "sourceKeys": {},
+                  "name": "System"
+                },
                 "operator": ".",
                 "member": "debug",
                 "memberArg": [
                   {
+                    "kind": "binary",
                     "sourceKeys": {},
-                    "left": "PREFIX",
-                    "operator": "+",
-                    "right": "message"
+                    "left": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "PREFIX"
+                    },
+                    "right": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "message"
+                    },
+                    "operator": "+"
                   }
                 ]
               }
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -561,6 +626,7 @@
               },
               "name": "run",
               "returnType": "void",
+              "param": [],
               "block": [
                 {
                   "kind": "expression",
@@ -569,21 +635,25 @@
                     "kind": "memberAccess",
                     "sourceKeys": {},
                     "type": "method",
-                    "object": "System",
+                    "object": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "System"
+                    },
                     "operator": ".",
                     "member": "debug",
                     "memberArg": [
                       {
+                        "kind": "string",
                         "sourceKeys": {},
-                        "value": "'helper'",
-                        "valueType": "string"
+                        "value": "helper"
                       }
                     ]
                   }
                 }
               ],
               "modifier": {
-                "access": [
+                "keyword": [
                   {
                     "kind": "modifier",
                     "sourceKeys": {},
@@ -594,7 +664,7 @@
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -619,11 +689,12 @@
               },
               "name": "handle",
               "returnType": "void",
+              "param": [],
               "modifier": {}
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -652,7 +723,7 @@
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -662,1420 +733,1596 @@
           }
         },
         {
-          "kind": "statement",
-          "statement": {
-            "kind": "switch",
+          "kind": "switch",
+          "sourceKeys": {},
+          "value": {
+            "kind": "memberAccess",
             "sourceKeys": {},
-            "variant": {
-              "kind": "switchVariant",
+            "type": "object",
+            "object": {
+              "kind": "identifier",
               "sourceKeys": {},
-              "variant": {
-                "kind": "memberAccess",
-                "sourceKeys": {},
-                "type": "object",
-                "object": "Trigger",
-                "operator": ".",
-                "member": "operationType"
-              }
+              "name": "Trigger"
             },
-            "block": [
-              {
-                "condition": {
-                  "kind": "switchCondition",
-                  "sourceKeys": {},
-                  "condition": [
-                    {
-                      "value": [
-                        "BEFORE_INSERT"
-                      ],
-                      "valueType": "id"
-                    },
-                    {
-                      "value": [
-                        "BEFORE_UPDATE"
-                      ],
-                      "valueType": "id"
-                    }
-                  ]
-                },
-                "block": [
-                  {
-                    "kind": "expression",
-                    "sourceKeys": {},
-                    "value": {
-                      "sourceKeys": {},
-                      "variant": "invocationCount",
-                      "operator": "++",
-                      "operatorLocation": "back"
-                    }
-                  }
-                ]
-              },
-              {
-                "condition": {
-                  "kind": "switchCondition",
-                  "sourceKeys": {},
-                  "condition": [
-                    {
-                      "value": [
-                        "AFTER_DELETE"
-                      ],
-                      "valueType": "id"
-                    }
-                  ]
-                },
-                "block": [
-                  {
-                    "kind": "expression",
-                    "sourceKeys": {},
-                    "value": {
-                      "sourceKeys": {},
-                      "variant": "invocationCount",
-                      "operator": "--",
-                      "operatorLocation": "back"
-                    }
-                  }
-                ]
-              },
-              {
-                "condition": {
-                  "kind": "switchCondition",
-                  "sourceKeys": {},
-                  "condition": "else"
-                },
-                "block": [
-                  {
-                    "kind": "expression",
-                    "sourceKeys": {},
-                    "value": {
-                      "sourceKeys": {},
-                      "left": "invocationCount",
-                      "operator": "+=",
-                      "right": {
-                        "sourceKeys": {},
-                        "value": "0",
-                        "valueType": "integer"
-                      }
-                    }
-                  }
-                ]
-              }
-            ]
+            "operator": ".",
+            "member": "operationType"
           },
-          "modifier": {}
-        },
-        {
-          "kind": "statement",
-          "statement": {
-            "kind": "if",
-            "sourceKeys": {},
-            "conditionBlock": [
-              {
-                "condition": {
-                  "kind": "ifCondition",
+          "when": [
+            {
+              "condition": {
+                "kind": "switchCondition",
+                "sourceKeys": {},
+                "condition": [
+                  {
+                    "kind": "identifier",
+                    "sourceKeys": {},
+                    "name": "BEFORE_INSERT"
+                  },
+                  {
+                    "kind": "identifier",
+                    "sourceKeys": {},
+                    "name": "BEFORE_UPDATE"
+                  }
+                ]
+              },
+              "block": [
+                {
+                  "kind": "expression",
                   "sourceKeys": {},
-                  "condition": {
+                  "value": {
+                    "kind": "unary",
+                    "sourceKeys": {},
+                    "operator": "++",
+                    "operatorLocation": "back",
+                    "argument": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "invocationCount"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "condition": {
+                "kind": "switchCondition",
+                "sourceKeys": {},
+                "condition": [
+                  {
+                    "kind": "identifier",
+                    "sourceKeys": {},
+                    "name": "AFTER_DELETE"
+                  }
+                ]
+              },
+              "block": [
+                {
+                  "kind": "expression",
+                  "sourceKeys": {},
+                  "value": {
+                    "kind": "unary",
+                    "sourceKeys": {},
+                    "operator": "--",
+                    "operatorLocation": "back",
+                    "argument": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "invocationCount"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "condition": {
+                "kind": "switchCondition",
+                "sourceKeys": {},
+                "condition": "else"
+              },
+              "block": [
+                {
+                  "kind": "expression",
+                  "sourceKeys": {},
+                  "value": {
+                    "kind": "assignment",
                     "sourceKeys": {},
                     "left": {
-                      "kind": "memberAccess",
+                      "kind": "identifier",
                       "sourceKeys": {},
-                      "type": "object",
-                      "object": "Trigger",
-                      "operator": ".",
-                      "member": "isBefore"
+                      "name": "invocationCount"
                     },
-                    "operator": "&&",
                     "right": {
-                      "kind": "memberAccess",
+                      "kind": "integer",
                       "sourceKeys": {},
-                      "type": "object",
-                      "object": "Trigger",
-                      "operator": ".",
-                      "member": "isInsert"
-                    }
+                      "value": "0"
+                    },
+                    "operator": "+="
                   }
-                },
-                "block": [
-                  {
-                    "kind": "for",
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "if",
+          "sourceKeys": {},
+          "conditionBlock": [
+            {
+              "condition": {
+                "kind": "logical",
+                "sourceKeys": {},
+                "left": {
+                  "kind": "memberAccess",
+                  "sourceKeys": {},
+                  "type": "object",
+                  "object": {
+                    "kind": "identifier",
                     "sourceKeys": {},
-                    "condition": {
-                      "kind": "forCondition",
+                    "name": "Trigger"
+                  },
+                  "operator": ".",
+                  "member": "isBefore"
+                },
+                "right": {
+                  "kind": "memberAccess",
+                  "sourceKeys": {},
+                  "type": "object",
+                  "object": {
+                    "kind": "identifier",
+                    "sourceKeys": {},
+                    "name": "Trigger"
+                  },
+                  "operator": ".",
+                  "member": "isInsert"
+                },
+                "operator": "&&"
+              },
+              "block": [
+                {
+                  "kind": "forEach",
+                  "sourceKeys": {},
+                  "variant": "account",
+                  "variantType": {
+                    "kind": "type",
+                    "sourceKeys": {},
+                    "type": "custom",
+                    "customType": [
+                      "Account"
+                    ]
+                  },
+                  "right": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {},
+                    "type": "object",
+                    "object": {
+                      "kind": "identifier",
                       "sourceKeys": {},
-                      "initializer": "account",
-                      "initializeType": {
+                      "name": "Trigger"
+                    },
+                    "operator": ".",
+                    "member": "new"
+                  },
+                  "block": [
+                    {
+                      "kind": "if",
+                      "sourceKeys": {},
+                      "conditionBlock": [
+                        {
+                          "condition": {
+                            "kind": "memberAccess",
+                            "sourceKeys": {},
+                            "type": "method",
+                            "object": {
+                              "kind": "identifier",
+                              "sourceKeys": {},
+                              "name": "String"
+                            },
+                            "operator": ".",
+                            "member": "isBlank",
+                            "memberArg": [
+                              {
+                                "kind": "memberAccess",
+                                "sourceKeys": {},
+                                "type": "object",
+                                "object": {
+                                  "kind": "identifier",
+                                  "sourceKeys": {},
+                                  "name": "account"
+                                },
+                                "operator": ".",
+                                "member": "Name"
+                              }
+                            ]
+                          },
+                          "block": [
+                            {
+                              "kind": "expression",
+                              "sourceKeys": {},
+                              "value": {
+                                "kind": "assignment",
+                                "sourceKeys": {},
+                                "left": {
+                                  "kind": "memberAccess",
+                                  "sourceKeys": {},
+                                  "type": "object",
+                                  "object": {
+                                    "kind": "identifier",
+                                    "sourceKeys": {},
+                                    "name": "account"
+                                  },
+                                  "operator": ".",
+                                  "member": "Name"
+                                },
+                                "right": {
+                                  "kind": "string",
+                                  "sourceKeys": {},
+                                  "value": "Default Account"
+                                },
+                                "operator": "="
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "expression",
+                      "sourceKeys": {},
+                      "value": {
+                        "kind": "assignment",
+                        "sourceKeys": {},
+                        "left": {
+                          "kind": "memberAccess",
+                          "sourceKeys": {},
+                          "type": "object",
+                          "object": {
+                            "kind": "identifier",
+                            "sourceKeys": {},
+                            "name": "account"
+                          },
+                          "operator": ".",
+                          "member": "Description"
+                        },
+                        "right": {
+                          "kind": "string",
+                          "sourceKeys": {},
+                          "value": "Created by trigger"
+                        },
+                        "operator": "="
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "if",
+          "sourceKeys": {},
+          "conditionBlock": [
+            {
+              "condition": {
+                "kind": "logical",
+                "sourceKeys": {},
+                "left": {
+                  "kind": "memberAccess",
+                  "sourceKeys": {},
+                  "type": "object",
+                  "object": {
+                    "kind": "identifier",
+                    "sourceKeys": {},
+                    "name": "Trigger"
+                  },
+                  "operator": ".",
+                  "member": "isBefore"
+                },
+                "right": {
+                  "kind": "memberAccess",
+                  "sourceKeys": {},
+                  "type": "object",
+                  "object": {
+                    "kind": "identifier",
+                    "sourceKeys": {},
+                    "name": "Trigger"
+                  },
+                  "operator": ".",
+                  "member": "isUpdate"
+                },
+                "operator": "&&"
+              },
+              "block": [
+                {
+                  "kind": "forEach",
+                  "sourceKeys": {},
+                  "variant": "account",
+                  "variantType": {
+                    "kind": "type",
+                    "sourceKeys": {},
+                    "type": "custom",
+                    "customType": [
+                      "Account"
+                    ]
+                  },
+                  "right": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {},
+                    "type": "object",
+                    "object": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "Trigger"
+                    },
+                    "operator": ".",
+                    "member": "new"
+                  },
+                  "block": [
+                    {
+                      "kind": "localVariable",
+                      "sourceKeys": {},
+                      "variantType": {
                         "kind": "type",
                         "sourceKeys": {},
                         "type": "custom",
-                        "customType": "Account"
+                        "customType": [
+                          "Account"
+                        ]
                       },
-                      "baseObject": {
-                        "kind": "memberAccess",
-                        "sourceKeys": {},
-                        "type": "object",
-                        "object": "Trigger",
-                        "operator": ".",
-                        "member": "new"
-                      }
-                    },
-                    "block": [
-                      {
-                        "kind": "if",
-                        "sourceKeys": {},
-                        "conditionBlock": [
-                          {
-                            "condition": {
-                              "kind": "ifCondition",
+                      "modifier": {},
+                      "variants": [
+                        {
+                          "kind": "variant",
+                          "sourceKeys": {},
+                          "name": "oldAccount",
+                          "init": {
+                            "kind": "memberAccess",
+                            "sourceKeys": {},
+                            "type": "method",
+                            "object": {
+                              "kind": "memberAccess",
                               "sourceKeys": {},
-                              "condition": {
+                              "type": "object",
+                              "object": {
+                                "kind": "identifier",
+                                "sourceKeys": {},
+                                "name": "Trigger"
+                              },
+                              "operator": ".",
+                              "member": "oldMap"
+                            },
+                            "operator": ".",
+                            "member": "get",
+                            "memberArg": [
+                              {
                                 "kind": "memberAccess",
                                 "sourceKeys": {},
-                                "type": "method",
-                                "object": "String",
-                                "operator": ".",
-                                "member": "isBlank",
-                                "memberArg": [
-                                  {
-                                    "kind": "memberAccess",
-                                    "sourceKeys": {},
-                                    "type": "object",
-                                    "object": "account",
-                                    "operator": ".",
-                                    "member": "Name"
-                                  }
-                                ]
-                              }
-                            },
-                            "block": [
-                              {
-                                "kind": "expression",
-                                "sourceKeys": {},
-                                "value": {
+                                "type": "object",
+                                "object": {
+                                  "kind": "identifier",
                                   "sourceKeys": {},
-                                  "left": {
-                                    "kind": "memberAccess",
-                                    "sourceKeys": {},
-                                    "type": "object",
-                                    "object": "account",
-                                    "operator": ".",
-                                    "member": "Name"
-                                  },
-                                  "operator": "=",
-                                  "right": {
-                                    "sourceKeys": {},
-                                    "value": "'Default Account'",
-                                    "valueType": "string"
-                                  }
-                                }
+                                  "name": "account"
+                                },
+                                "operator": ".",
+                                "member": "Id"
                               }
                             ]
                           }
-                        ]
-                      },
-                      {
-                        "kind": "expression",
-                        "sourceKeys": {},
-                        "value": {
-                          "sourceKeys": {},
-                          "left": {
-                            "kind": "memberAccess",
-                            "sourceKeys": {},
-                            "type": "object",
-                            "object": "account",
-                            "operator": ".",
-                            "member": "Description"
-                          },
-                          "operator": "=",
-                          "right": {
-                            "sourceKeys": {},
-                            "value": "'Created by trigger'",
-                            "valueType": "string"
-                          }
                         }
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          "modifier": {}
-        },
-        {
-          "kind": "statement",
-          "statement": {
-            "kind": "if",
-            "sourceKeys": {},
-            "conditionBlock": [
-              {
-                "condition": {
-                  "kind": "ifCondition",
-                  "sourceKeys": {},
-                  "condition": {
-                    "sourceKeys": {},
-                    "left": {
-                      "kind": "memberAccess",
-                      "sourceKeys": {},
-                      "type": "object",
-                      "object": "Trigger",
-                      "operator": ".",
-                      "member": "isBefore"
+                      ]
                     },
-                    "operator": "&&",
-                    "right": {
-                      "kind": "memberAccess",
+                    {
+                      "kind": "if",
                       "sourceKeys": {},
-                      "type": "object",
-                      "object": "Trigger",
-                      "operator": ".",
-                      "member": "isUpdate"
-                    }
-                  }
-                },
-                "block": [
-                  {
-                    "kind": "for",
-                    "sourceKeys": {},
-                    "condition": {
-                      "kind": "forCondition",
-                      "sourceKeys": {},
-                      "initializer": "account",
-                      "initializeType": {
-                        "kind": "type",
-                        "sourceKeys": {},
-                        "type": "custom",
-                        "customType": "Account"
-                      },
-                      "baseObject": {
-                        "kind": "memberAccess",
-                        "sourceKeys": {},
-                        "type": "object",
-                        "object": "Trigger",
-                        "operator": ".",
-                        "member": "new"
-                      }
-                    },
-                    "block": [
-                      {
-                        "kind": "localVariable",
-                        "sourceKeys": {},
-                        "variable": {
-                          "variants": [
-                            {
+                      "conditionBlock": [
+                        {
+                          "condition": {
+                            "kind": "binary",
+                            "sourceKeys": {},
+                            "left": {
+                              "kind": "memberAccess",
                               "sourceKeys": {},
-                              "name": "oldAccount",
-                              "init": {
+                              "type": "object",
+                              "object": {
+                                "kind": "identifier",
+                                "sourceKeys": {},
+                                "name": "account"
+                              },
+                              "operator": ".",
+                              "member": "Name"
+                            },
+                            "right": {
+                              "kind": "memberAccess",
+                              "sourceKeys": {},
+                              "type": "object",
+                              "object": {
+                                "kind": "identifier",
+                                "sourceKeys": {},
+                                "name": "oldAccount"
+                              },
+                              "operator": ".",
+                              "member": "Name"
+                            },
+                            "operator": "!="
+                          },
+                          "block": [
+                            {
+                              "kind": "expression",
+                              "sourceKeys": {},
+                              "value": {
+                                "kind": "assignment",
+                                "sourceKeys": {},
+                                "left": {
+                                  "kind": "memberAccess",
+                                  "sourceKeys": {},
+                                  "type": "object",
+                                  "object": {
+                                    "kind": "identifier",
+                                    "sourceKeys": {},
+                                    "name": "account"
+                                  },
+                                  "operator": ".",
+                                  "member": "Description"
+                                },
+                                "right": {
+                                  "kind": "string",
+                                  "sourceKeys": {},
+                                  "value": "Name changed"
+                                },
+                                "operator": "="
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "if",
+                      "sourceKeys": {},
+                      "conditionBlock": [
+                        {
+                          "condition": {
+                            "kind": "binary",
+                            "sourceKeys": {},
+                            "left": {
+                              "kind": "memberAccess",
+                              "sourceKeys": {},
+                              "type": "object",
+                              "object": {
+                                "kind": "identifier",
+                                "sourceKeys": {},
+                                "name": "account"
+                              },
+                              "operator": ".",
+                              "member": "AnnualRevenue"
+                            },
+                            "right": {
+                              "kind": "integer",
+                              "sourceKeys": {},
+                              "value": "0"
+                            },
+                            "operator": "<"
+                          },
+                          "block": [
+                            {
+                              "kind": "expression",
+                              "sourceKeys": {},
+                              "value": {
                                 "kind": "memberAccess",
                                 "sourceKeys": {},
                                 "type": "method",
                                 "object": {
-                                  "kind": "memberAccess",
+                                  "kind": "identifier",
                                   "sourceKeys": {},
-                                  "type": "object",
-                                  "object": "Trigger",
-                                  "operator": ".",
-                                  "member": "oldMap"
+                                  "name": "account"
                                 },
                                 "operator": ".",
-                                "member": "get",
+                                "member": "addError",
                                 "memberArg": [
                                   {
-                                    "kind": "memberAccess",
+                                    "kind": "string",
                                     "sourceKeys": {},
-                                    "type": "object",
-                                    "object": "account",
-                                    "operator": ".",
-                                    "member": "Id"
+                                    "value": "AnnualRevenue must be positive"
                                   }
                                 ]
                               }
                             }
-                          ],
-                          "variantsType": {
-                            "kind": "type",
-                            "sourceKeys": {},
-                            "type": "custom",
-                            "customType": "Account"
-                          },
-                          "modifier": {}
-                        }
-                      },
-                      {
-                        "kind": "if",
-                        "sourceKeys": {},
-                        "conditionBlock": [
-                          {
-                            "condition": {
-                              "kind": "ifCondition",
-                              "sourceKeys": {},
-                              "condition": {
-                                "sourceKeys": {},
-                                "left": {
-                                  "kind": "memberAccess",
-                                  "sourceKeys": {},
-                                  "type": "object",
-                                  "object": "account",
-                                  "operator": ".",
-                                  "member": "Name"
-                                },
-                                "operator": "!=",
-                                "right": {
-                                  "kind": "memberAccess",
-                                  "sourceKeys": {},
-                                  "type": "object",
-                                  "object": "oldAccount",
-                                  "operator": ".",
-                                  "member": "Name"
-                                }
-                              }
-                            },
-                            "block": [
-                              {
-                                "kind": "expression",
-                                "sourceKeys": {},
-                                "value": {
-                                  "sourceKeys": {},
-                                  "left": {
-                                    "kind": "memberAccess",
-                                    "sourceKeys": {},
-                                    "type": "object",
-                                    "object": "account",
-                                    "operator": ".",
-                                    "member": "Description"
-                                  },
-                                  "operator": "=",
-                                  "right": {
-                                    "sourceKeys": {},
-                                    "value": "'Name changed'",
-                                    "valueType": "string"
-                                  }
-                                }
-                              }
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "kind": "if",
-                        "sourceKeys": {},
-                        "conditionBlock": [
-                          {
-                            "condition": {
-                              "kind": "ifCondition",
-                              "sourceKeys": {},
-                              "condition": {
-                                "sourceKeys": {},
-                                "left": {
-                                  "kind": "memberAccess",
-                                  "sourceKeys": {},
-                                  "type": "object",
-                                  "object": "account",
-                                  "operator": ".",
-                                  "member": "AnnualRevenue"
-                                },
-                                "operator": "<",
-                                "right": {
-                                  "sourceKeys": {},
-                                  "value": "0",
-                                  "valueType": "integer"
-                                }
-                              }
-                            },
-                            "block": [
-                              {
-                                "kind": "expression",
-                                "sourceKeys": {},
-                                "value": {
-                                  "kind": "memberAccess",
-                                  "sourceKeys": {},
-                                  "type": "method",
-                                  "object": "account",
-                                  "operator": ".",
-                                  "member": "addError",
-                                  "memberArg": [
-                                    {
-                                      "sourceKeys": {},
-                                      "value": "'AnnualRevenue must be positive'",
-                                      "valueType": "string"
-                                    }
-                                  ]
-                                }
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          "modifier": {}
-        },
-        {
-          "kind": "statement",
-          "statement": {
-            "kind": "if",
-            "sourceKeys": {},
-            "conditionBlock": [
-              {
-                "condition": {
-                  "kind": "ifCondition",
-                  "sourceKeys": {},
-                  "condition": {
-                    "sourceKeys": {},
-                    "left": {
-                      "kind": "memberAccess",
-                      "sourceKeys": {},
-                      "type": "object",
-                      "object": "Trigger",
-                      "operator": ".",
-                      "member": "isBefore"
-                    },
-                    "operator": "&&",
-                    "right": {
-                      "kind": "memberAccess",
-                      "sourceKeys": {},
-                      "type": "object",
-                      "object": "Trigger",
-                      "operator": ".",
-                      "member": "isDelete"
-                    }
-                  }
-                },
-                "block": [
-                  {
-                    "kind": "for",
-                    "sourceKeys": {},
-                    "condition": {
-                      "kind": "forCondition",
-                      "sourceKeys": {},
-                      "initializer": "account",
-                      "initializeType": {
-                        "kind": "type",
-                        "sourceKeys": {},
-                        "type": "custom",
-                        "customType": "Account"
-                      },
-                      "baseObject": {
-                        "kind": "memberAccess",
-                        "sourceKeys": {},
-                        "type": "object",
-                        "object": "Trigger",
-                        "operator": ".",
-                        "member": "old"
-                      }
-                    },
-                    "block": [
-                      {
-                        "kind": "expression",
-                        "sourceKeys": {},
-                        "value": {
-                          "kind": "memberAccess",
-                          "sourceKeys": {},
-                          "type": "method",
-                          "object": "System",
-                          "operator": ".",
-                          "member": "debug",
-                          "memberArg": [
-                            {
-                              "sourceKeys": {},
-                              "left": {
-                                "sourceKeys": {},
-                                "value": "'Deleting: '",
-                                "valueType": "string"
-                              },
-                              "operator": "+",
-                              "right": {
-                                "kind": "memberAccess",
-                                "sourceKeys": {},
-                                "type": "object",
-                                "object": "account",
-                                "operator": ".",
-                                "member": "Name"
-                              }
-                            }
                           ]
                         }
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          "modifier": {}
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
-          "kind": "statement",
-          "statement": {
-            "kind": "if",
-            "sourceKeys": {},
-            "conditionBlock": [
-              {
-                "condition": {
-                  "kind": "ifCondition",
+          "kind": "if",
+          "sourceKeys": {},
+          "conditionBlock": [
+            {
+              "condition": {
+                "kind": "logical",
+                "sourceKeys": {},
+                "left": {
+                  "kind": "memberAccess",
                   "sourceKeys": {},
-                  "condition": {
+                  "type": "object",
+                  "object": {
+                    "kind": "identifier",
                     "sourceKeys": {},
-                    "left": {
-                      "kind": "memberAccess",
-                      "sourceKeys": {},
-                      "type": "object",
-                      "object": "Trigger",
-                      "operator": ".",
-                      "member": "isAfter"
-                    },
-                    "operator": "&&",
-                    "right": {
-                      "kind": "memberAccess",
-                      "sourceKeys": {},
-                      "type": "object",
-                      "object": "Trigger",
-                      "operator": ".",
-                      "member": "isInsert"
-                    }
-                  }
-                },
-                "block": [
-                  {
-                    "kind": "localVariable",
-                    "sourceKeys": {},
-                    "variable": {
-                      "variants": [
-                        {
-                          "sourceKeys": {},
-                          "name": "contacts",
-                          "init": {
-                            "sourceKeys": {},
-                            "collection": [
-                              "List"
-                            ],
-                            "generic": [
-                              {
-                                "kind": "type",
-                                "sourceKeys": {},
-                                "type": "custom",
-                                "customType": "Contact"
-                              }
-                            ],
-                            "initType": "class"
-                          }
-                        }
-                      ],
-                      "variantsType": {
-                        "kind": "type",
-                        "sourceKeys": {},
-                        "type": "list",
-                        "elementType": {
-                          "type": "custom",
-                          "customType": "Contact"
-                        }
-                      },
-                      "modifier": {}
-                    }
+                    "name": "Trigger"
                   },
-                  {
-                    "kind": "for",
+                  "operator": ".",
+                  "member": "isBefore"
+                },
+                "right": {
+                  "kind": "memberAccess",
+                  "sourceKeys": {},
+                  "type": "object",
+                  "object": {
+                    "kind": "identifier",
                     "sourceKeys": {},
-                    "condition": {
-                      "kind": "forCondition",
-                      "sourceKeys": {},
-                      "initializer": "account",
-                      "initializeType": {
-                        "kind": "type",
-                        "sourceKeys": {},
-                        "type": "custom",
-                        "customType": "Account"
-                      },
-                      "baseObject": {
-                        "kind": "memberAccess",
-                        "sourceKeys": {},
-                        "type": "object",
-                        "object": "Trigger",
-                        "operator": ".",
-                        "member": "new"
-                      }
-                    },
-                    "block": [
-                      {
-                        "kind": "expression",
-                        "sourceKeys": {},
-                        "value": {
-                          "kind": "memberAccess",
-                          "sourceKeys": {},
-                          "type": "method",
-                          "object": "contacts",
-                          "operator": ".",
-                          "member": "add",
-                          "memberArg": [
-                            {
-                              "sourceKeys": {},
-                              "collection": [
-                                "Contact"
-                              ],
-                              "initType": "class",
-                              "arg": [
-                                {
-                                  "sourceKeys": {},
-                                  "left": "LastName",
-                                  "operator": "=",
-                                  "right": {
-                                    "kind": "memberAccess",
-                                    "sourceKeys": {},
-                                    "type": "object",
-                                    "object": "account",
-                                    "operator": ".",
-                                    "member": "Name"
-                                  }
-                                },
-                                {
-                                  "sourceKeys": {},
-                                  "left": "AccountId",
-                                  "operator": "=",
-                                  "right": {
-                                    "kind": "memberAccess",
-                                    "sourceKeys": {},
-                                    "type": "object",
-                                    "object": "account",
-                                    "operator": ".",
-                                    "member": "Id"
-                                  }
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      }
+                    "name": "Trigger"
+                  },
+                  "operator": ".",
+                  "member": "isDelete"
+                },
+                "operator": "&&"
+              },
+              "block": [
+                {
+                  "kind": "forEach",
+                  "sourceKeys": {},
+                  "variant": "account",
+                  "variantType": {
+                    "kind": "type",
+                    "sourceKeys": {},
+                    "type": "custom",
+                    "customType": [
+                      "Account"
                     ]
                   },
-                  {
-                    "kind": "if",
+                  "right": {
+                    "kind": "memberAccess",
                     "sourceKeys": {},
-                    "conditionBlock": [
-                      {
-                        "condition": {
-                          "kind": "ifCondition",
+                    "type": "object",
+                    "object": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "Trigger"
+                    },
+                    "operator": ".",
+                    "member": "old"
+                  },
+                  "block": [
+                    {
+                      "kind": "expression",
+                      "sourceKeys": {},
+                      "value": {
+                        "kind": "memberAccess",
+                        "sourceKeys": {},
+                        "type": "method",
+                        "object": {
+                          "kind": "identifier",
                           "sourceKeys": {},
-                          "condition": {
+                          "name": "System"
+                        },
+                        "operator": ".",
+                        "member": "debug",
+                        "memberArg": [
+                          {
+                            "kind": "binary",
                             "sourceKeys": {},
-                            "variant": {
+                            "left": {
+                              "kind": "string",
+                              "sourceKeys": {},
+                              "value": "Deleting: "
+                            },
+                            "right": {
                               "kind": "memberAccess",
                               "sourceKeys": {},
-                              "type": "method",
-                              "object": "contacts",
+                              "type": "object",
+                              "object": {
+                                "kind": "identifier",
+                                "sourceKeys": {},
+                                "name": "account"
+                              },
                               "operator": ".",
-                              "member": "isEmpty"
+                              "member": "Name"
                             },
-                            "operator": "!",
-                            "operatorLocation": "front"
-                          }
-                        },
-                        "block": [
-                          {
-                            "kind": "insert",
-                            "sourceKeys": {},
-                            "field": "contacts",
-                            "accessLevel": "USER"
+                            "operator": "+"
                           }
                         ]
                       }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          "modifier": {}
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
-          "kind": "statement",
-          "statement": {
-            "kind": "if",
-            "sourceKeys": {},
-            "conditionBlock": [
-              {
-                "condition": {
-                  "kind": "ifCondition",
+          "kind": "if",
+          "sourceKeys": {},
+          "conditionBlock": [
+            {
+              "condition": {
+                "kind": "logical",
+                "sourceKeys": {},
+                "left": {
+                  "kind": "memberAccess",
                   "sourceKeys": {},
-                  "condition": {
+                  "type": "object",
+                  "object": {
+                    "kind": "identifier",
                     "sourceKeys": {},
-                    "left": {
-                      "kind": "memberAccess",
-                      "sourceKeys": {},
-                      "type": "object",
-                      "object": "Trigger",
-                      "operator": ".",
-                      "member": "isAfter"
-                    },
-                    "operator": "&&",
-                    "right": {
-                      "kind": "memberAccess",
-                      "sourceKeys": {},
-                      "type": "object",
-                      "object": "Trigger",
-                      "operator": ".",
-                      "member": "isUpdate"
-                    }
-                  }
+                    "name": "Trigger"
+                  },
+                  "operator": ".",
+                  "member": "isAfter"
                 },
-                "block": [
-                  {
-                    "kind": "localVariable",
+                "right": {
+                  "kind": "memberAccess",
+                  "sourceKeys": {},
+                  "type": "object",
+                  "object": {
+                    "kind": "identifier",
                     "sourceKeys": {},
-                    "variable": {
-                      "variants": [
-                        {
-                          "sourceKeys": {},
-                          "name": "accountIds",
-                          "init": {
-                            "sourceKeys": {},
-                            "collection": [
-                              "Set"
-                            ],
-                            "generic": [
-                              {
-                                "kind": "type",
-                                "sourceKeys": {},
-                                "type": "primitive",
-                                "primitiveType": "Id"
-                              }
-                            ],
-                            "initType": "class"
-                          }
-                        }
-                      ],
-                      "variantsType": {
-                        "kind": "type",
-                        "sourceKeys": {},
-                        "type": "set",
-                        "elementType": {
-                          "type": "primitive",
-                          "primitiveType": "Id"
-                        }
-                      },
-                      "modifier": {}
+                    "name": "Trigger"
+                  },
+                  "operator": ".",
+                  "member": "isInsert"
+                },
+                "operator": "&&"
+              },
+              "block": [
+                {
+                  "kind": "localVariable",
+                  "sourceKeys": {},
+                  "variantType": {
+                    "kind": "type",
+                    "sourceKeys": {},
+                    "type": "list",
+                    "elementType": {
+                      "type": "custom",
+                      "customType": [
+                        "Contact"
+                      ]
                     }
                   },
-                  {
-                    "kind": "expression",
-                    "sourceKeys": {},
-                    "value": {
-                      "kind": "memberAccess",
+                  "modifier": {},
+                  "variants": [
+                    {
+                      "kind": "variant",
                       "sourceKeys": {},
-                      "type": "method",
-                      "object": "accountIds",
-                      "operator": ".",
-                      "member": "addAll",
-                      "memberArg": [
-                        {
+                      "name": "contacts",
+                      "init": {
+                        "kind": "new",
+                        "sourceKeys": {},
+                        "newType": {
+                          "kind": "type",
+                          "sourceKeys": {},
+                          "type": "list",
+                          "elementType": {
+                            "type": "custom",
+                            "customType": [
+                              "Contact"
+                            ]
+                          }
+                        },
+                        "arg": []
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "forEach",
+                  "sourceKeys": {},
+                  "variant": "account",
+                  "variantType": {
+                    "kind": "type",
+                    "sourceKeys": {},
+                    "type": "custom",
+                    "customType": [
+                      "Account"
+                    ]
+                  },
+                  "right": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {},
+                    "type": "object",
+                    "object": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "Trigger"
+                    },
+                    "operator": ".",
+                    "member": "new"
+                  },
+                  "block": [
+                    {
+                      "kind": "expression",
+                      "sourceKeys": {},
+                      "value": {
+                        "kind": "memberAccess",
+                        "sourceKeys": {},
+                        "type": "method",
+                        "object": {
+                          "kind": "identifier",
+                          "sourceKeys": {},
+                          "name": "contacts"
+                        },
+                        "operator": ".",
+                        "member": "add",
+                        "memberArg": [
+                          {
+                            "kind": "new",
+                            "sourceKeys": {},
+                            "newType": {
+                              "kind": "type",
+                              "sourceKeys": {},
+                              "type": "custom",
+                              "customType": [
+                                "Contact"
+                              ]
+                            },
+                            "arg": [
+                              {
+                                "kind": "assignment",
+                                "sourceKeys": {},
+                                "left": {
+                                  "kind": "identifier",
+                                  "sourceKeys": {},
+                                  "name": "LastName"
+                                },
+                                "right": {
+                                  "kind": "memberAccess",
+                                  "sourceKeys": {},
+                                  "type": "object",
+                                  "object": {
+                                    "kind": "identifier",
+                                    "sourceKeys": {},
+                                    "name": "account"
+                                  },
+                                  "operator": ".",
+                                  "member": "Name"
+                                },
+                                "operator": "="
+                              },
+                              {
+                                "kind": "assignment",
+                                "sourceKeys": {},
+                                "left": {
+                                  "kind": "identifier",
+                                  "sourceKeys": {},
+                                  "name": "AccountId"
+                                },
+                                "right": {
+                                  "kind": "memberAccess",
+                                  "sourceKeys": {},
+                                  "type": "object",
+                                  "object": {
+                                    "kind": "identifier",
+                                    "sourceKeys": {},
+                                    "name": "account"
+                                  },
+                                  "operator": ".",
+                                  "member": "Id"
+                                },
+                                "operator": "="
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "if",
+                  "sourceKeys": {},
+                  "conditionBlock": [
+                    {
+                      "condition": {
+                        "kind": "unary",
+                        "sourceKeys": {},
+                        "operator": "!",
+                        "operatorLocation": "front",
+                        "argument": {
                           "kind": "memberAccess",
                           "sourceKeys": {},
                           "type": "method",
                           "object": {
-                            "kind": "memberAccess",
+                            "kind": "identifier",
                             "sourceKeys": {},
-                            "type": "object",
-                            "object": "Trigger",
-                            "operator": ".",
-                            "member": "newMap"
+                            "name": "contacts"
                           },
                           "operator": ".",
-                          "member": "keySet"
+                          "member": "isEmpty"
+                        }
+                      },
+                      "block": [
+                        {
+                          "kind": "insert",
+                          "sourceKeys": {},
+                          "field": {
+                            "kind": "identifier",
+                            "sourceKeys": {},
+                            "name": "contacts"
+                          },
+                          "accessLevel": "USER"
                         }
                       ]
                     }
-                  },
-                  {
-                    "kind": "localVariable",
-                    "sourceKeys": {},
-                    "variable": {
-                      "variants": [
-                        {
-                          "sourceKeys": {},
-                          "name": "accounts",
-                          "init": {
-                            "kind": "soql",
-                            "sourceKeys": {},
-                            "select": {
-                              "field": [
-                                {
-                                  "kind": "selectEntry",
-                                  "sourceKeys": {},
-                                  "type": "field",
-                                  "field": [
-                                    "Id"
-                                  ]
-                                },
-                                {
-                                  "kind": "selectEntry",
-                                  "sourceKeys": {},
-                                  "type": "field",
-                                  "field": [
-                                    "Name"
-                                  ]
-                                },
-                                {
-                                  "kind": "selectEntry",
-                                  "sourceKeys": {},
-                                  "type": "field",
-                                  "field": [
-                                    "Industry"
-                                  ]
-                                },
-                                {
-                                  "kind": "subQuery",
-                                  "sourceKeys": {},
-                                  "select": {
-                                    "field": [
-                                      {
-                                        "kind": "selectEntry",
-                                        "sourceKeys": {},
-                                        "type": "field",
-                                        "field": [
-                                          "Id"
-                                        ]
-                                      },
-                                      {
-                                        "kind": "selectEntry",
-                                        "sourceKeys": {},
-                                        "type": "field",
-                                        "field": [
-                                          "FirstName"
-                                        ]
-                                      },
-                                      {
-                                        "kind": "selectEntry",
-                                        "sourceKeys": {},
-                                        "type": "field",
-                                        "field": [
-                                          "LastName"
-                                        ]
-                                      }
-                                    ]
-                                  },
-                                  "from": {
-                                    "field": [
-                                      {
-                                        "kind": "fromField",
-                                        "sourceKeys": {},
-                                        "field": [
-                                          "Contacts"
-                                        ]
-                                      }
-                                    ]
-                                  }
-                                }
-                              ]
-                            },
-                            "from": {
-                              "field": [
-                                {
-                                  "kind": "fromField",
-                                  "sourceKeys": {},
-                                  "field": [
-                                    "Account"
-                                  ]
-                                }
-                              ]
-                            },
-                            "where": {
-                              "condition": {
-                                "condition": [
-                                  {
-                                    "kind": "singleCondition",
-                                    "sourceKeys": {},
-                                    "field": {
-                                      "type": "field",
-                                      "field": [
-                                        "Id"
-                                      ]
-                                    },
-                                    "operator": "IN",
-                                    "value": {
-                                      "type": "bind",
-                                      "value": "accountIds"
-                                    }
-                                  }
-                                ]
-                              }
-                            }
-                          }
-                        }
-                      ],
-                      "variantsType": {
-                        "kind": "type",
-                        "sourceKeys": {},
-                        "type": "list",
-                        "elementType": {
-                          "type": "custom",
-                          "customType": "Account"
-                        }
-                      },
-                      "modifier": {}
-                    }
-                  },
-                  {
-                    "kind": "localVariable",
-                    "sourceKeys": {},
-                    "variable": {
-                      "variants": [
-                        {
-                          "sourceKeys": {},
-                          "name": "toUpdate",
-                          "init": {
-                            "sourceKeys": {},
-                            "collection": [
-                              "List"
-                            ],
-                            "generic": [
-                              {
-                                "kind": "type",
-                                "sourceKeys": {},
-                                "type": "custom",
-                                "customType": "Contact"
-                              }
-                            ],
-                            "initType": "class"
-                          }
-                        }
-                      ],
-                      "variantsType": {
-                        "kind": "type",
-                        "sourceKeys": {},
-                        "type": "list",
-                        "elementType": {
-                          "type": "custom",
-                          "customType": "Contact"
-                        }
-                      },
-                      "modifier": {}
-                    }
-                  },
-                  {
-                    "kind": "for",
-                    "sourceKeys": {},
-                    "condition": {
-                      "kind": "forCondition",
-                      "sourceKeys": {},
-                      "initializer": "account",
-                      "initializeType": {
-                        "kind": "type",
-                        "sourceKeys": {},
-                        "type": "custom",
-                        "customType": "Account"
-                      },
-                      "baseObject": "accounts"
-                    },
-                    "block": [
-                      {
-                        "kind": "for",
-                        "sourceKeys": {},
-                        "condition": {
-                          "kind": "forCondition",
-                          "sourceKeys": {},
-                          "initializer": "contact",
-                          "initializeType": {
-                            "kind": "type",
-                            "sourceKeys": {},
-                            "type": "custom",
-                            "customType": "Contact"
-                          },
-                          "baseObject": {
-                            "kind": "memberAccess",
-                            "sourceKeys": {},
-                            "type": "object",
-                            "object": "account",
-                            "operator": ".",
-                            "member": "Contacts"
-                          }
-                        },
-                        "block": [
-                          {
-                            "kind": "expression",
-                            "sourceKeys": {},
-                            "value": {
-                              "sourceKeys": {},
-                              "left": {
-                                "kind": "memberAccess",
-                                "sourceKeys": {},
-                                "type": "object",
-                                "object": "contact",
-                                "operator": ".",
-                                "member": "Description"
-                              },
-                              "operator": "=",
-                              "right": {
-                                "kind": "memberAccess",
-                                "sourceKeys": {},
-                                "type": "object",
-                                "object": "account",
-                                "operator": ".",
-                                "member": "Name"
-                              }
-                            }
-                          },
-                          {
-                            "kind": "expression",
-                            "sourceKeys": {},
-                            "value": {
-                              "kind": "memberAccess",
-                              "sourceKeys": {},
-                              "type": "method",
-                              "object": "toUpdate",
-                              "operator": ".",
-                              "member": "add",
-                              "memberArg": [
-                                "contact"
-                              ]
-                            }
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "kind": "update",
-                    "sourceKeys": {},
-                    "field": "toUpdate"
-                  }
-                ]
-              }
-            ]
-          },
-          "modifier": {}
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
-          "kind": "statement",
-          "statement": {
-            "kind": "if",
-            "sourceKeys": {},
-            "conditionBlock": [
-              {
-                "condition": {
-                  "kind": "ifCondition",
+          "kind": "if",
+          "sourceKeys": {},
+          "conditionBlock": [
+            {
+              "condition": {
+                "kind": "logical",
+                "sourceKeys": {},
+                "left": {
+                  "kind": "memberAccess",
                   "sourceKeys": {},
-                  "condition": {
+                  "type": "object",
+                  "object": {
+                    "kind": "identifier",
                     "sourceKeys": {},
-                    "left": {
-                      "kind": "memberAccess",
-                      "sourceKeys": {},
-                      "type": "object",
-                      "object": "Trigger",
-                      "operator": ".",
-                      "member": "isAfter"
-                    },
-                    "operator": "&&",
-                    "right": {
-                      "kind": "memberAccess",
-                      "sourceKeys": {},
-                      "type": "object",
-                      "object": "Trigger",
-                      "operator": ".",
-                      "member": "isDelete"
-                    }
-                  }
+                    "name": "Trigger"
+                  },
+                  "operator": ".",
+                  "member": "isAfter"
                 },
-                "block": [
-                  {
-                    "kind": "localVariable",
+                "right": {
+                  "kind": "memberAccess",
+                  "sourceKeys": {},
+                  "type": "object",
+                  "object": {
+                    "kind": "identifier",
                     "sourceKeys": {},
-                    "variable": {
-                      "variants": [
-                        {
-                          "sourceKeys": {},
-                          "name": "tasks",
-                          "init": {
-                            "kind": "soql",
-                            "sourceKeys": {},
-                            "select": {
-                              "field": [
-                                {
-                                  "kind": "selectEntry",
-                                  "sourceKeys": {},
-                                  "type": "field",
-                                  "field": [
-                                    "Id"
-                                  ]
-                                }
-                              ]
-                            },
-                            "from": {
-                              "field": [
-                                {
-                                  "kind": "fromField",
-                                  "sourceKeys": {},
-                                  "field": [
-                                    "Task"
-                                  ]
-                                }
-                              ]
-                            },
-                            "where": {
-                              "condition": {
-                                "condition": [
-                                  {
-                                    "kind": "singleCondition",
-                                    "sourceKeys": {},
-                                    "field": {
-                                      "type": "field",
-                                      "field": [
-                                        "WhatId"
-                                      ]
-                                    },
-                                    "operator": "IN",
-                                    "value": {
-                                      "type": "bind",
-                                      "value": {
-                                        "kind": "memberAccess",
-                                        "sourceKeys": {},
-                                        "type": "method",
-                                        "object": {
-                                          "kind": "memberAccess",
-                                          "sourceKeys": {},
-                                          "type": "object",
-                                          "object": "Trigger",
-                                          "operator": ".",
-                                          "member": "oldMap"
-                                        },
-                                        "operator": ".",
-                                        "member": "keySet"
-                                      }
-                                    }
-                                  }
-                                ]
-                              }
-                            },
-                            "allRows": {
-                              "kind": "allRowsClause",
-                              "sourceKeys": {},
-                              "value": "ALL ROWS"
-                            }
-                          }
-                        }
-                      ],
-                      "variantsType": {
-                        "kind": "type",
-                        "sourceKeys": {},
-                        "type": "list",
-                        "elementType": {
-                          "type": "custom",
-                          "customType": "Task"
-                        }
-                      },
-                      "modifier": {}
+                    "name": "Trigger"
+                  },
+                  "operator": ".",
+                  "member": "isUpdate"
+                },
+                "operator": "&&"
+              },
+              "block": [
+                {
+                  "kind": "localVariable",
+                  "sourceKeys": {},
+                  "variantType": {
+                    "kind": "type",
+                    "sourceKeys": {},
+                    "type": "set",
+                    "elementType": {
+                      "type": "primitive",
+                      "primitiveType": "Id"
                     }
                   },
-                  {
-                    "kind": "delete",
-                    "sourceKeys": {},
-                    "field": "tasks"
-                  },
-                  {
-                    "kind": "for",
-                    "sourceKeys": {},
-                    "condition": {
-                      "kind": "forCondition",
+                  "modifier": {},
+                  "variants": [
+                    {
+                      "kind": "variant",
                       "sourceKeys": {},
-                      "initializer": "account",
-                      "initializeType": {
-                        "kind": "type",
+                      "name": "accountIds",
+                      "init": {
+                        "kind": "new",
                         "sourceKeys": {},
-                        "type": "custom",
-                        "customType": "Account"
-                      },
-                      "baseObject": {
+                        "newType": {
+                          "kind": "type",
+                          "sourceKeys": {},
+                          "type": "set",
+                          "elementType": {
+                            "type": "primitive",
+                            "primitiveType": "Id"
+                          }
+                        },
+                        "arg": []
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "expression",
+                  "sourceKeys": {},
+                  "value": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {},
+                    "type": "method",
+                    "object": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "accountIds"
+                    },
+                    "operator": ".",
+                    "member": "addAll",
+                    "memberArg": [
+                      {
                         "kind": "memberAccess",
                         "sourceKeys": {},
-                        "type": "object",
-                        "object": "Trigger",
-                        "operator": ".",
-                        "member": "old"
-                      }
-                    },
-                    "block": [
-                      {
-                        "kind": "expression",
-                        "sourceKeys": {},
-                        "value": {
+                        "type": "method",
+                        "object": {
                           "kind": "memberAccess",
                           "sourceKeys": {},
-                          "type": "method",
-                          "object": "System",
+                          "type": "object",
+                          "object": {
+                            "kind": "identifier",
+                            "sourceKeys": {},
+                            "name": "Trigger"
+                          },
                           "operator": ".",
-                          "member": "debug",
-                          "memberArg": [
+                          "member": "newMap"
+                        },
+                        "operator": ".",
+                        "member": "keySet"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "kind": "localVariable",
+                  "sourceKeys": {},
+                  "variantType": {
+                    "kind": "type",
+                    "sourceKeys": {},
+                    "type": "list",
+                    "elementType": {
+                      "type": "custom",
+                      "customType": [
+                        "Account"
+                      ]
+                    }
+                  },
+                  "modifier": {},
+                  "variants": [
+                    {
+                      "kind": "variant",
+                      "sourceKeys": {},
+                      "name": "accounts",
+                      "init": {
+                        "kind": "soql",
+                        "sourceKeys": {},
+                        "select": {
+                          "field": [
                             {
+                              "kind": "selectEntry",
                               "sourceKeys": {},
-                              "left": {
-                                "sourceKeys": {},
-                                "value": "'Deleted: '",
-                                "valueType": "string"
+                              "type": "field",
+                              "field": [
+                                "Id"
+                              ]
+                            },
+                            {
+                              "kind": "selectEntry",
+                              "sourceKeys": {},
+                              "type": "field",
+                              "field": [
+                                "Name"
+                              ]
+                            },
+                            {
+                              "kind": "selectEntry",
+                              "sourceKeys": {},
+                              "type": "field",
+                              "field": [
+                                "Industry"
+                              ]
+                            },
+                            {
+                              "kind": "subQuery",
+                              "sourceKeys": {},
+                              "select": {
+                                "field": [
+                                  {
+                                    "kind": "selectEntry",
+                                    "sourceKeys": {},
+                                    "type": "field",
+                                    "field": [
+                                      "Id"
+                                    ]
+                                  },
+                                  {
+                                    "kind": "selectEntry",
+                                    "sourceKeys": {},
+                                    "type": "field",
+                                    "field": [
+                                      "FirstName"
+                                    ]
+                                  },
+                                  {
+                                    "kind": "selectEntry",
+                                    "sourceKeys": {},
+                                    "type": "field",
+                                    "field": [
+                                      "LastName"
+                                    ]
+                                  }
+                                ]
                               },
-                              "operator": "+",
-                              "right": {
-                                "kind": "memberAccess",
-                                "sourceKeys": {},
-                                "type": "object",
-                                "object": "account",
-                                "operator": ".",
-                                "member": "Id"
+                              "from": {
+                                "field": [
+                                  {
+                                    "kind": "fromField",
+                                    "sourceKeys": {},
+                                    "field": [
+                                      "Contacts"
+                                    ]
+                                  }
+                                ]
                               }
                             }
                           ]
-                        }
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          "modifier": {}
-        },
-        {
-          "kind": "statement",
-          "statement": {
-            "kind": "if",
-            "sourceKeys": {},
-            "conditionBlock": [
-              {
-                "condition": {
-                  "kind": "ifCondition",
-                  "sourceKeys": {},
-                  "condition": {
-                    "sourceKeys": {},
-                    "left": {
-                      "kind": "memberAccess",
-                      "sourceKeys": {},
-                      "type": "object",
-                      "object": "Trigger",
-                      "operator": ".",
-                      "member": "isAfter"
-                    },
-                    "operator": "&&",
-                    "right": {
-                      "kind": "memberAccess",
-                      "sourceKeys": {},
-                      "type": "object",
-                      "object": "Trigger",
-                      "operator": ".",
-                      "member": "isUndelete"
-                    }
-                  }
-                },
-                "block": [
-                  {
-                    "kind": "try",
-                    "sourceKeys": {},
-                    "block": [
-                      {
-                        "condition": "try",
-                        "block": [
-                          {
-                            "kind": "for",
-                            "sourceKeys": {},
-                            "condition": {
-                              "kind": "forCondition",
+                        },
+                        "from": {
+                          "field": [
+                            {
+                              "kind": "fromField",
                               "sourceKeys": {},
-                              "initializer": "account",
-                              "initializeType": {
-                                "kind": "type",
-                                "sourceKeys": {},
-                                "type": "custom",
-                                "customType": "Account"
-                              },
-                              "baseObject": {
-                                "kind": "memberAccess",
-                                "sourceKeys": {},
-                                "type": "object",
-                                "object": "Trigger",
-                                "operator": ".",
-                                "member": "new"
-                              }
-                            },
-                            "block": [
+                              "field": [
+                                "Account"
+                              ]
+                            }
+                          ]
+                        },
+                        "where": {
+                          "condition": {
+                            "condition": [
                               {
-                                "kind": "expression",
+                                "kind": "singleCondition",
                                 "sourceKeys": {},
-                                "value": {
-                                  "kind": "memberAccess",
-                                  "sourceKeys": {},
-                                  "type": "method",
-                                  "member": "log",
-                                  "memberArg": [
-                                    {
-                                      "sourceKeys": {},
-                                      "left": {
-                                        "sourceKeys": {},
-                                        "value": "'Restored: '",
-                                        "valueType": "string"
-                                      },
-                                      "operator": "+",
-                                      "right": {
-                                        "kind": "memberAccess",
-                                        "sourceKeys": {},
-                                        "type": "object",
-                                        "object": "account",
-                                        "operator": ".",
-                                        "member": "Id"
-                                      }
-                                    }
+                                "field": {
+                                  "type": "field",
+                                  "field": [
+                                    "Id"
                                   ]
+                                },
+                                "operator": "IN",
+                                "value": {
+                                  "type": "bind",
+                                  "value": {
+                                    "kind": "identifier",
+                                    "sourceKeys": {},
+                                    "name": "accountIds"
+                                  }
                                 }
                               }
                             ]
                           }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "localVariable",
+                  "sourceKeys": {},
+                  "variantType": {
+                    "kind": "type",
+                    "sourceKeys": {},
+                    "type": "list",
+                    "elementType": {
+                      "type": "custom",
+                      "customType": [
+                        "Contact"
+                      ]
+                    }
+                  },
+                  "modifier": {},
+                  "variants": [
+                    {
+                      "kind": "variant",
+                      "sourceKeys": {},
+                      "name": "toUpdate",
+                      "init": {
+                        "kind": "new",
+                        "sourceKeys": {},
+                        "newType": {
+                          "kind": "type",
+                          "sourceKeys": {},
+                          "type": "list",
+                          "elementType": {
+                            "type": "custom",
+                            "customType": [
+                              "Contact"
+                            ]
+                          }
+                        },
+                        "arg": []
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "forEach",
+                  "sourceKeys": {},
+                  "variant": "account",
+                  "variantType": {
+                    "kind": "type",
+                    "sourceKeys": {},
+                    "type": "custom",
+                    "customType": [
+                      "Account"
+                    ]
+                  },
+                  "right": {
+                    "kind": "identifier",
+                    "sourceKeys": {},
+                    "name": "accounts"
+                  },
+                  "block": [
+                    {
+                      "kind": "forEach",
+                      "sourceKeys": {},
+                      "variant": "contact",
+                      "variantType": {
+                        "kind": "type",
+                        "sourceKeys": {},
+                        "type": "custom",
+                        "customType": [
+                          "Contact"
                         ]
                       },
-                      {
-                        "condition": "catch",
-                        "catchCondition": {
-                          "kind": "catchCondition",
-                          "sourceKeys": {
-                            "base": {},
-                            "exception": {},
-                            "exceptionType": {}
-                          },
-                          "exception": "e",
-                          "exceptionType": [
-                            "Exception"
-                          ],
-                          "modifier": []
+                      "right": {
+                        "kind": "memberAccess",
+                        "sourceKeys": {},
+                        "type": "object",
+                        "object": {
+                          "kind": "identifier",
+                          "sourceKeys": {},
+                          "name": "account"
                         },
-                        "block": [
-                          {
-                            "kind": "expression",
+                        "operator": ".",
+                        "member": "Contacts"
+                      },
+                      "block": [
+                        {
+                          "kind": "expression",
+                          "sourceKeys": {},
+                          "value": {
+                            "kind": "assignment",
                             "sourceKeys": {},
-                            "value": {
+                            "left": {
                               "kind": "memberAccess",
                               "sourceKeys": {},
-                              "type": "method",
-                              "object": "System",
+                              "type": "object",
+                              "object": {
+                                "kind": "identifier",
+                                "sourceKeys": {},
+                                "name": "contact"
+                              },
                               "operator": ".",
-                              "member": "debug",
-                              "memberArg": [
-                                {
-                                  "kind": "memberAccess",
-                                  "sourceKeys": {},
-                                  "type": "method",
-                                  "object": "e",
-                                  "operator": ".",
-                                  "member": "getMessage"
-                                }
+                              "member": "Description"
+                            },
+                            "right": {
+                              "kind": "memberAccess",
+                              "sourceKeys": {},
+                              "type": "object",
+                              "object": {
+                                "kind": "identifier",
+                                "sourceKeys": {},
+                                "name": "account"
+                              },
+                              "operator": ".",
+                              "member": "Name"
+                            },
+                            "operator": "="
+                          }
+                        },
+                        {
+                          "kind": "expression",
+                          "sourceKeys": {},
+                          "value": {
+                            "kind": "memberAccess",
+                            "sourceKeys": {},
+                            "type": "method",
+                            "object": {
+                              "kind": "identifier",
+                              "sourceKeys": {},
+                              "name": "toUpdate"
+                            },
+                            "operator": ".",
+                            "member": "add",
+                            "memberArg": [
+                              {
+                                "kind": "identifier",
+                                "sourceKeys": {},
+                                "name": "contact"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "kind": "update",
+                  "sourceKeys": {},
+                  "field": {
+                    "kind": "identifier",
+                    "sourceKeys": {},
+                    "name": "toUpdate"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "if",
+          "sourceKeys": {},
+          "conditionBlock": [
+            {
+              "condition": {
+                "kind": "logical",
+                "sourceKeys": {},
+                "left": {
+                  "kind": "memberAccess",
+                  "sourceKeys": {},
+                  "type": "object",
+                  "object": {
+                    "kind": "identifier",
+                    "sourceKeys": {},
+                    "name": "Trigger"
+                  },
+                  "operator": ".",
+                  "member": "isAfter"
+                },
+                "right": {
+                  "kind": "memberAccess",
+                  "sourceKeys": {},
+                  "type": "object",
+                  "object": {
+                    "kind": "identifier",
+                    "sourceKeys": {},
+                    "name": "Trigger"
+                  },
+                  "operator": ".",
+                  "member": "isDelete"
+                },
+                "operator": "&&"
+              },
+              "block": [
+                {
+                  "kind": "localVariable",
+                  "sourceKeys": {},
+                  "variantType": {
+                    "kind": "type",
+                    "sourceKeys": {},
+                    "type": "list",
+                    "elementType": {
+                      "type": "custom",
+                      "customType": [
+                        "Task"
+                      ]
+                    }
+                  },
+                  "modifier": {},
+                  "variants": [
+                    {
+                      "kind": "variant",
+                      "sourceKeys": {},
+                      "name": "tasks",
+                      "init": {
+                        "kind": "soql",
+                        "sourceKeys": {},
+                        "select": {
+                          "field": [
+                            {
+                              "kind": "selectEntry",
+                              "sourceKeys": {},
+                              "type": "field",
+                              "field": [
+                                "Id"
                               ]
                             }
+                          ]
+                        },
+                        "from": {
+                          "field": [
+                            {
+                              "kind": "fromField",
+                              "sourceKeys": {},
+                              "field": [
+                                "Task"
+                              ]
+                            }
+                          ]
+                        },
+                        "where": {
+                          "condition": {
+                            "condition": [
+                              {
+                                "kind": "singleCondition",
+                                "sourceKeys": {},
+                                "field": {
+                                  "type": "field",
+                                  "field": [
+                                    "WhatId"
+                                  ]
+                                },
+                                "operator": "IN",
+                                "value": {
+                                  "type": "bind",
+                                  "value": {
+                                    "kind": "memberAccess",
+                                    "sourceKeys": {},
+                                    "type": "method",
+                                    "object": {
+                                      "kind": "memberAccess",
+                                      "sourceKeys": {},
+                                      "type": "object",
+                                      "object": {
+                                        "kind": "identifier",
+                                        "sourceKeys": {},
+                                        "name": "Trigger"
+                                      },
+                                      "operator": ".",
+                                      "member": "oldMap"
+                                    },
+                                    "operator": ".",
+                                    "member": "keySet"
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        "allRows": {
+                          "kind": "allRowsClause",
+                          "sourceKeys": {}
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "delete",
+                  "sourceKeys": {},
+                  "field": {
+                    "kind": "identifier",
+                    "sourceKeys": {},
+                    "name": "tasks"
+                  }
+                },
+                {
+                  "kind": "forEach",
+                  "sourceKeys": {},
+                  "variant": "account",
+                  "variantType": {
+                    "kind": "type",
+                    "sourceKeys": {},
+                    "type": "custom",
+                    "customType": [
+                      "Account"
+                    ]
+                  },
+                  "right": {
+                    "kind": "memberAccess",
+                    "sourceKeys": {},
+                    "type": "object",
+                    "object": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "Trigger"
+                    },
+                    "operator": ".",
+                    "member": "old"
+                  },
+                  "block": [
+                    {
+                      "kind": "expression",
+                      "sourceKeys": {},
+                      "value": {
+                        "kind": "memberAccess",
+                        "sourceKeys": {},
+                        "type": "method",
+                        "object": {
+                          "kind": "identifier",
+                          "sourceKeys": {},
+                          "name": "System"
+                        },
+                        "operator": ".",
+                        "member": "debug",
+                        "memberArg": [
+                          {
+                            "kind": "binary",
+                            "sourceKeys": {},
+                            "left": {
+                              "kind": "string",
+                              "sourceKeys": {},
+                              "value": "Deleted: "
+                            },
+                            "right": {
+                              "kind": "memberAccess",
+                              "sourceKeys": {},
+                              "type": "object",
+                              "object": {
+                                "kind": "identifier",
+                                "sourceKeys": {},
+                                "name": "account"
+                              },
+                              "operator": ".",
+                              "member": "Id"
+                            },
+                            "operator": "+"
                           }
                         ]
                       }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          "modifier": {}
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "if",
+          "sourceKeys": {},
+          "conditionBlock": [
+            {
+              "condition": {
+                "kind": "logical",
+                "sourceKeys": {},
+                "left": {
+                  "kind": "memberAccess",
+                  "sourceKeys": {},
+                  "type": "object",
+                  "object": {
+                    "kind": "identifier",
+                    "sourceKeys": {},
+                    "name": "Trigger"
+                  },
+                  "operator": ".",
+                  "member": "isAfter"
+                },
+                "right": {
+                  "kind": "memberAccess",
+                  "sourceKeys": {},
+                  "type": "object",
+                  "object": {
+                    "kind": "identifier",
+                    "sourceKeys": {},
+                    "name": "Trigger"
+                  },
+                  "operator": ".",
+                  "member": "isUndelete"
+                },
+                "operator": "&&"
+              },
+              "block": [
+                {
+                  "kind": "try",
+                  "sourceKeys": {},
+                  "block": [
+                    {
+                      "condition": "try",
+                      "block": [
+                        {
+                          "kind": "forEach",
+                          "sourceKeys": {},
+                          "variant": "account",
+                          "variantType": {
+                            "kind": "type",
+                            "sourceKeys": {},
+                            "type": "custom",
+                            "customType": [
+                              "Account"
+                            ]
+                          },
+                          "right": {
+                            "kind": "memberAccess",
+                            "sourceKeys": {},
+                            "type": "object",
+                            "object": {
+                              "kind": "identifier",
+                              "sourceKeys": {},
+                              "name": "Trigger"
+                            },
+                            "operator": ".",
+                            "member": "new"
+                          },
+                          "block": [
+                            {
+                              "kind": "expression",
+                              "sourceKeys": {},
+                              "value": {
+                                "kind": "call",
+                                "sourceKeys": {},
+                                "callee": {
+                                  "kind": "identifier",
+                                  "sourceKeys": {},
+                                  "name": "log"
+                                },
+                                "arg": [
+                                  {
+                                    "kind": "binary",
+                                    "sourceKeys": {},
+                                    "left": {
+                                      "kind": "string",
+                                      "sourceKeys": {},
+                                      "value": "Restored: "
+                                    },
+                                    "right": {
+                                      "kind": "memberAccess",
+                                      "sourceKeys": {},
+                                      "type": "object",
+                                      "object": {
+                                        "kind": "identifier",
+                                        "sourceKeys": {},
+                                        "name": "account"
+                                      },
+                                      "operator": ".",
+                                      "member": "Id"
+                                    },
+                                    "operator": "+"
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "condition": "catch",
+                      "variant": "e",
+                      "variantType": {
+                        "kind": "type",
+                        "sourceKeys": {},
+                        "type": "custom",
+                        "customType": [
+                          "Exception"
+                        ]
+                      },
+                      "modifier": [],
+                      "block": [
+                        {
+                          "kind": "expression",
+                          "sourceKeys": {},
+                          "value": {
+                            "kind": "memberAccess",
+                            "sourceKeys": {},
+                            "type": "method",
+                            "object": {
+                              "kind": "identifier",
+                              "sourceKeys": {},
+                              "name": "System"
+                            },
+                            "operator": ".",
+                            "member": "debug",
+                            "memberArg": [
+                              {
+                                "kind": "memberAccess",
+                                "sourceKeys": {},
+                                "type": "method",
+                                "object": {
+                                  "kind": "identifier",
+                                  "sourceKeys": {},
+                                  "name": "e"
+                                },
+                                "operator": ".",
+                                "member": "getMessage"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     }
@@ -2251,149 +2498,6 @@
       }
     },
     {
-      "context": "(!contacts.isEmpty())",
-      "start": {
-        "offset": 3848,
-        "line": 145,
-        "column": 11
-      },
-      "end": {
-        "offset": 3869,
-        "line": 145,
-        "column": 32
-      }
-    },
-    {
-      "context": "(String.isBlank(account.Name))",
-      "start": {
-        "offset": 2261,
-        "line": 86,
-        "column": 15
-      },
-      "end": {
-        "offset": 2291,
-        "line": 86,
-        "column": 45
-      }
-    },
-    {
-      "context": "(Trigger.isAfter && Trigger.isDelete)",
-      "start": {
-        "offset": 5012,
-        "line": 191,
-        "column": 7
-      },
-      "end": {
-        "offset": 5049,
-        "line": 191,
-        "column": 44
-      }
-    },
-    {
-      "context": "(Trigger.isAfter && Trigger.isInsert)",
-      "start": {
-        "offset": 3508,
-        "line": 132,
-        "column": 7
-      },
-      "end": {
-        "offset": 3545,
-        "line": 132,
-        "column": 44
-      }
-    },
-    {
-      "context": "(Trigger.isAfter && Trigger.isUndelete)",
-      "start": {
-        "offset": 5459,
-        "line": 207,
-        "column": 7
-      },
-      "end": {
-        "offset": 5498,
-        "line": 207,
-        "column": 46
-      }
-    },
-    {
-      "context": "(Trigger.isAfter && Trigger.isUpdate)",
-      "start": {
-        "offset": 4091,
-        "line": 155,
-        "column": 7
-      },
-      "end": {
-        "offset": 4128,
-        "line": 155,
-        "column": 44
-      }
-    },
-    {
-      "context": "(Trigger.isBefore && Trigger.isDelete)",
-      "start": {
-        "offset": 3183,
-        "line": 120,
-        "column": 7
-      },
-      "end": {
-        "offset": 3221,
-        "line": 120,
-        "column": 45
-      }
-    },
-    {
-      "context": "(Trigger.isBefore && Trigger.isInsert)",
-      "start": {
-        "offset": 2157,
-        "line": 82,
-        "column": 7
-      },
-      "end": {
-        "offset": 2195,
-        "line": 82,
-        "column": 45
-      }
-    },
-    {
-      "context": "(Trigger.isBefore && Trigger.isUpdate)",
-      "start": {
-        "offset": 2598,
-        "line": 99,
-        "column": 7
-      },
-      "end": {
-        "offset": 2636,
-        "line": 99,
-        "column": 45
-      }
-    },
-    {
-      "context": "(account.AnnualRevenue < 0)",
-      "start": {
-        "offset": 2888,
-        "line": 109,
-        "column": 15
-      },
-      "end": {
-        "offset": 2915,
-        "line": 109,
-        "column": 42
-      }
-    },
-    {
-      "context": "(account.Name != oldAccount.Name)",
-      "start": {
-        "offset": 2768,
-        "line": 105,
-        "column": 15
-      },
-      "end": {
-        "offset": 2801,
-        "line": 105,
-        "column": 48
-      }
-    },
-    {
       "context": "0",
       "start": {
         "offset": 1163,
@@ -2446,6 +2550,19 @@
       }
     },
     {
+      "context": "AFTER_DELETE",
+      "start": {
+        "offset": 1864,
+        "line": 69,
+        "column": 13
+      },
+      "end": {
+        "offset": 1876,
+        "line": 69,
+        "column": 25
+      }
+    },
+    {
       "context": "AFTER_PHASE",
       "start": {
         "offset": 1528,
@@ -2469,97 +2586,6 @@
         "offset": 5150,
         "line": 193,
         "column": 97
-      }
-    },
-    {
-      "context": "Account account : Trigger.new",
-      "start": {
-        "offset": 2212,
-        "line": 84,
-        "column": 13
-      },
-      "end": {
-        "offset": 2241,
-        "line": 84,
-        "column": 42
-      }
-    },
-    {
-      "context": "Account account : Trigger.new",
-      "start": {
-        "offset": 2653,
-        "line": 101,
-        "column": 13
-      },
-      "end": {
-        "offset": 2682,
-        "line": 101,
-        "column": 42
-      }
-    },
-    {
-      "context": "Account account : Trigger.new",
-      "start": {
-        "offset": 3617,
-        "line": 136,
-        "column": 13
-      },
-      "end": {
-        "offset": 3646,
-        "line": 136,
-        "column": 42
-      }
-    },
-    {
-      "context": "Account account : Trigger.new",
-      "start": {
-        "offset": 5533,
-        "line": 210,
-        "column": 17
-      },
-      "end": {
-        "offset": 5562,
-        "line": 210,
-        "column": 46
-      }
-    },
-    {
-      "context": "Account account : Trigger.old",
-      "start": {
-        "offset": 3238,
-        "line": 122,
-        "column": 13
-      },
-      "end": {
-        "offset": 3267,
-        "line": 122,
-        "column": 42
-      }
-    },
-    {
-      "context": "Account account : Trigger.old",
-      "start": {
-        "offset": 5190,
-        "line": 197,
-        "column": 13
-      },
-      "end": {
-        "offset": 5219,
-        "line": 197,
-        "column": 42
-      }
-    },
-    {
-      "context": "Account account : accounts",
-      "start": {
-        "offset": 4614,
-        "line": 176,
-        "column": 13
-      },
-      "end": {
-        "offset": 4640,
-        "line": 176,
-        "column": 39
       }
     },
     {
@@ -2706,6 +2732,32 @@
       }
     },
     {
+      "context": "AccountId",
+      "start": {
+        "offset": 3770,
+        "line": 140,
+        "column": 20
+      },
+      "end": {
+        "offset": 3779,
+        "line": 140,
+        "column": 29
+      }
+    },
+    {
+      "context": "BEFORE_INSERT",
+      "start": {
+        "offset": 1779,
+        "line": 66,
+        "column": 13
+      },
+      "end": {
+        "offset": 1792,
+        "line": 66,
+        "column": 26
+      }
+    },
+    {
       "context": "BEFORE_INSERT, BEFORE_UPDATE",
       "start": {
         "offset": 1779,
@@ -2732,42 +2784,29 @@
       }
     },
     {
-      "context": "Contact contact : account.Contacts",
+      "context": "BEFORE_UPDATE",
       "start": {
-        "offset": 4661,
-        "line": 177,
-        "column": 17
+        "offset": 1794,
+        "line": 66,
+        "column": 28
       },
       "end": {
-        "offset": 4695,
-        "line": 177,
-        "column": 51
+        "offset": 1807,
+        "line": 66,
+        "column": 41
       }
     },
     {
       "context": "Contact",
       "start": {
-        "offset": 3591,
-        "line": 134,
-        "column": 42
+        "offset": 3696,
+        "line": 138,
+        "column": 20
       },
       "end": {
-        "offset": 3598,
-        "line": 134,
-        "column": 49
-      }
-    },
-    {
-      "context": "Contact",
-      "start": {
-        "offset": 4588,
-        "line": 174,
-        "column": 42
-      },
-      "end": {
-        "offset": 4595,
-        "line": 174,
-        "column": 49
+        "offset": 3703,
+        "line": 138,
+        "column": 27
       }
     },
     {
@@ -2833,19 +2872,6 @@
         "offset": 4533,
         "line": 171,
         "column": 35
-      }
-    },
-    {
-      "context": "Id",
-      "start": {
-        "offset": 4169,
-        "line": 157,
-        "column": 37
-      },
-      "end": {
-        "offset": 4171,
-        "line": 157,
-        "column": 39
       }
     },
     {
@@ -2942,6 +2968,19 @@
     {
       "context": "LastName",
       "start": {
+        "offset": 3725,
+        "line": 139,
+        "column": 20
+      },
+      "end": {
+        "offset": 3733,
+        "line": 139,
+        "column": 28
+      }
+    },
+    {
+      "context": "LastName",
+      "start": {
         "offset": 4412,
         "line": 167,
         "column": 42
@@ -3020,6 +3059,19 @@
     {
       "context": "List<Contact>",
       "start": {
+        "offset": 3586,
+        "line": 134,
+        "column": 37
+      },
+      "end": {
+        "offset": 3599,
+        "line": 134,
+        "column": 50
+      }
+    },
+    {
+      "context": "List<Contact>",
+      "start": {
         "offset": 4554,
         "line": 174,
         "column": 8
@@ -3028,6 +3080,19 @@
         "offset": 4567,
         "line": 174,
         "column": 21
+      }
+    },
+    {
+      "context": "List<Contact>",
+      "start": {
+        "offset": 4583,
+        "line": 174,
+        "column": 37
+      },
+      "end": {
+        "offset": 4596,
+        "line": 174,
+        "column": 50
       }
     },
     {
@@ -3093,6 +3158,19 @@
         "offset": 1123,
         "line": 35,
         "column": 52
+      }
+    },
+    {
+      "context": "PREFIX",
+      "start": {
+        "offset": 1266,
+        "line": 42,
+        "column": 21
+      },
+      "end": {
+        "offset": 1272,
+        "line": 42,
+        "column": 27
       }
     },
     {
@@ -3174,6 +3252,19 @@
       }
     },
     {
+      "context": "Set<Id>",
+      "start": {
+        "offset": 4165,
+        "line": 157,
+        "column": 33
+      },
+      "end": {
+        "offset": 4172,
+        "line": 157,
+        "column": 40
+      }
+    },
+    {
       "context": "String PREFIX = 'Trigger: ';",
       "start": {
         "offset": 1096,
@@ -3252,6 +3343,19 @@
       }
     },
     {
+      "context": "String",
+      "start": {
+        "offset": 2262,
+        "line": 86,
+        "column": 16
+      },
+      "end": {
+        "offset": 2268,
+        "line": 86,
+        "column": 22
+      }
+    },
+    {
       "context": "String.isBlank(account.Name)",
       "start": {
         "offset": 2262,
@@ -3262,6 +3366,240 @@
         "offset": 2290,
         "line": 86,
         "column": 44
+      }
+    },
+    {
+      "context": "System",
+      "start": {
+        "offset": 1253,
+        "line": 42,
+        "column": 8
+      },
+      "end": {
+        "offset": 1259,
+        "line": 42,
+        "column": 14
+      }
+    },
+    {
+      "context": "System",
+      "start": {
+        "offset": 1365,
+        "line": 47,
+        "column": 12
+      },
+      "end": {
+        "offset": 1371,
+        "line": 47,
+        "column": 18
+      }
+    },
+    {
+      "context": "System",
+      "start": {
+        "offset": 3283,
+        "line": 123,
+        "column": 12
+      },
+      "end": {
+        "offset": 3289,
+        "line": 123,
+        "column": 18
+      }
+    },
+    {
+      "context": "System",
+      "start": {
+        "offset": 407,
+        "line": 16,
+        "column": 4
+      },
+      "end": {
+        "offset": 413,
+        "line": 16,
+        "column": 10
+      }
+    },
+    {
+      "context": "System",
+      "start": {
+        "offset": 446,
+        "line": 17,
+        "column": 4
+      },
+      "end": {
+        "offset": 452,
+        "line": 17,
+        "column": 10
+      }
+    },
+    {
+      "context": "System",
+      "start": {
+        "offset": 482,
+        "line": 18,
+        "column": 4
+      },
+      "end": {
+        "offset": 488,
+        "line": 18,
+        "column": 10
+      }
+    },
+    {
+      "context": "System",
+      "start": {
+        "offset": 517,
+        "line": 19,
+        "column": 4
+      },
+      "end": {
+        "offset": 523,
+        "line": 19,
+        "column": 10
+      }
+    },
+    {
+      "context": "System",
+      "start": {
+        "offset": 5235,
+        "line": 198,
+        "column": 12
+      },
+      "end": {
+        "offset": 5241,
+        "line": 198,
+        "column": 18
+      }
+    },
+    {
+      "context": "System",
+      "start": {
+        "offset": 553,
+        "line": 20,
+        "column": 4
+      },
+      "end": {
+        "offset": 559,
+        "line": 20,
+        "column": 10
+      }
+    },
+    {
+      "context": "System",
+      "start": {
+        "offset": 5672,
+        "line": 214,
+        "column": 12
+      },
+      "end": {
+        "offset": 5678,
+        "line": 214,
+        "column": 18
+      }
+    },
+    {
+      "context": "System",
+      "start": {
+        "offset": 589,
+        "line": 21,
+        "column": 4
+      },
+      "end": {
+        "offset": 595,
+        "line": 21,
+        "column": 10
+      }
+    },
+    {
+      "context": "System",
+      "start": {
+        "offset": 625,
+        "line": 22,
+        "column": 4
+      },
+      "end": {
+        "offset": 631,
+        "line": 22,
+        "column": 10
+      }
+    },
+    {
+      "context": "System",
+      "start": {
+        "offset": 663,
+        "line": 23,
+        "column": 4
+      },
+      "end": {
+        "offset": 669,
+        "line": 23,
+        "column": 10
+      }
+    },
+    {
+      "context": "System",
+      "start": {
+        "offset": 694,
+        "line": 24,
+        "column": 4
+      },
+      "end": {
+        "offset": 700,
+        "line": 24,
+        "column": 10
+      }
+    },
+    {
+      "context": "System",
+      "start": {
+        "offset": 725,
+        "line": 25,
+        "column": 4
+      },
+      "end": {
+        "offset": 731,
+        "line": 25,
+        "column": 10
+      }
+    },
+    {
+      "context": "System",
+      "start": {
+        "offset": 759,
+        "line": 26,
+        "column": 4
+      },
+      "end": {
+        "offset": 765,
+        "line": 26,
+        "column": 10
+      }
+    },
+    {
+      "context": "System",
+      "start": {
+        "offset": 793,
+        "line": 27,
+        "column": 4
+      },
+      "end": {
+        "offset": 799,
+        "line": 27,
+        "column": 10
+      }
+    },
+    {
+      "context": "System",
+      "start": {
+        "offset": 834,
+        "line": 28,
+        "column": 4
+      },
+      "end": {
+        "offset": 840,
+        "line": 28,
+        "column": 10
       }
     },
     {
@@ -3743,6 +4081,487 @@
         "offset": 5100,
         "line": 193,
         "column": 47
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 1742,
+        "line": 65,
+        "column": 14
+      },
+      "end": {
+        "offset": 1749,
+        "line": 65,
+        "column": 21
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 2158,
+        "line": 82,
+        "column": 8
+      },
+      "end": {
+        "offset": 2165,
+        "line": 82,
+        "column": 15
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 2178,
+        "line": 82,
+        "column": 28
+      },
+      "end": {
+        "offset": 2185,
+        "line": 82,
+        "column": 35
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 2230,
+        "line": 84,
+        "column": 31
+      },
+      "end": {
+        "offset": 2237,
+        "line": 84,
+        "column": 38
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 2599,
+        "line": 99,
+        "column": 8
+      },
+      "end": {
+        "offset": 2606,
+        "line": 99,
+        "column": 15
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 2619,
+        "line": 99,
+        "column": 28
+      },
+      "end": {
+        "offset": 2626,
+        "line": 99,
+        "column": 35
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 2671,
+        "line": 101,
+        "column": 31
+      },
+      "end": {
+        "offset": 2678,
+        "line": 101,
+        "column": 38
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 2720,
+        "line": 103,
+        "column": 33
+      },
+      "end": {
+        "offset": 2727,
+        "line": 103,
+        "column": 40
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 3184,
+        "line": 120,
+        "column": 8
+      },
+      "end": {
+        "offset": 3191,
+        "line": 120,
+        "column": 15
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 3204,
+        "line": 120,
+        "column": 28
+      },
+      "end": {
+        "offset": 3211,
+        "line": 120,
+        "column": 35
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 3256,
+        "line": 122,
+        "column": 31
+      },
+      "end": {
+        "offset": 3263,
+        "line": 122,
+        "column": 38
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 3509,
+        "line": 132,
+        "column": 8
+      },
+      "end": {
+        "offset": 3516,
+        "line": 132,
+        "column": 15
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 3528,
+        "line": 132,
+        "column": 27
+      },
+      "end": {
+        "offset": 3535,
+        "line": 132,
+        "column": 34
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 3635,
+        "line": 136,
+        "column": 31
+      },
+      "end": {
+        "offset": 3642,
+        "line": 136,
+        "column": 38
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 4092,
+        "line": 155,
+        "column": 8
+      },
+      "end": {
+        "offset": 4099,
+        "line": 155,
+        "column": 15
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 4111,
+        "line": 155,
+        "column": 27
+      },
+      "end": {
+        "offset": 4118,
+        "line": 155,
+        "column": 34
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 420,
+        "line": 16,
+        "column": 17
+      },
+      "end": {
+        "offset": 427,
+        "line": 16,
+        "column": 24
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 4203,
+        "line": 159,
+        "column": 26
+      },
+      "end": {
+        "offset": 4210,
+        "line": 159,
+        "column": 33
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 459,
+        "line": 17,
+        "column": 17
+      },
+      "end": {
+        "offset": 466,
+        "line": 17,
+        "column": 24
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 495,
+        "line": 18,
+        "column": 17
+      },
+      "end": {
+        "offset": 502,
+        "line": 18,
+        "column": 24
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 5013,
+        "line": 191,
+        "column": 8
+      },
+      "end": {
+        "offset": 5020,
+        "line": 191,
+        "column": 15
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 5032,
+        "line": 191,
+        "column": 27
+      },
+      "end": {
+        "offset": 5039,
+        "line": 191,
+        "column": 34
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 5118,
+        "line": 193,
+        "column": 65
+      },
+      "end": {
+        "offset": 5125,
+        "line": 193,
+        "column": 72
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 5208,
+        "line": 197,
+        "column": 31
+      },
+      "end": {
+        "offset": 5215,
+        "line": 197,
+        "column": 38
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 530,
+        "line": 19,
+        "column": 17
+      },
+      "end": {
+        "offset": 537,
+        "line": 19,
+        "column": 24
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 5460,
+        "line": 207,
+        "column": 8
+      },
+      "end": {
+        "offset": 5467,
+        "line": 207,
+        "column": 15
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 5479,
+        "line": 207,
+        "column": 27
+      },
+      "end": {
+        "offset": 5486,
+        "line": 207,
+        "column": 34
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 5551,
+        "line": 210,
+        "column": 35
+      },
+      "end": {
+        "offset": 5558,
+        "line": 210,
+        "column": 42
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 566,
+        "line": 20,
+        "column": 17
+      },
+      "end": {
+        "offset": 573,
+        "line": 20,
+        "column": 24
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 602,
+        "line": 21,
+        "column": 17
+      },
+      "end": {
+        "offset": 609,
+        "line": 21,
+        "column": 24
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 638,
+        "line": 22,
+        "column": 17
+      },
+      "end": {
+        "offset": 645,
+        "line": 22,
+        "column": 24
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 676,
+        "line": 23,
+        "column": 17
+      },
+      "end": {
+        "offset": 683,
+        "line": 23,
+        "column": 24
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 707,
+        "line": 24,
+        "column": 17
+      },
+      "end": {
+        "offset": 714,
+        "line": 24,
+        "column": 24
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 738,
+        "line": 25,
+        "column": 17
+      },
+      "end": {
+        "offset": 745,
+        "line": 25,
+        "column": 24
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 772,
+        "line": 26,
+        "column": 17
+      },
+      "end": {
+        "offset": 779,
+        "line": 26,
+        "column": 24
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 806,
+        "line": 27,
+        "column": 17
+      },
+      "end": {
+        "offset": 813,
+        "line": 27,
+        "column": 24
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 847,
+        "line": 28,
+        "column": 17
+      },
+      "end": {
+        "offset": 854,
+        "line": 28,
+        "column": 24
       }
     },
     {
@@ -4396,6 +5215,201 @@
       }
     },
     {
+      "context": "account",
+      "start": {
+        "offset": 2277,
+        "line": 86,
+        "column": 31
+      },
+      "end": {
+        "offset": 2284,
+        "line": 86,
+        "column": 38
+      }
+    },
+    {
+      "context": "account",
+      "start": {
+        "offset": 2310,
+        "line": 87,
+        "column": 16
+      },
+      "end": {
+        "offset": 2317,
+        "line": 87,
+        "column": 23
+      }
+    },
+    {
+      "context": "account",
+      "start": {
+        "offset": 2371,
+        "line": 90,
+        "column": 12
+      },
+      "end": {
+        "offset": 2378,
+        "line": 90,
+        "column": 19
+      }
+    },
+    {
+      "context": "account",
+      "start": {
+        "offset": 2739,
+        "line": 103,
+        "column": 52
+      },
+      "end": {
+        "offset": 2746,
+        "line": 103,
+        "column": 59
+      }
+    },
+    {
+      "context": "account",
+      "start": {
+        "offset": 2769,
+        "line": 105,
+        "column": 16
+      },
+      "end": {
+        "offset": 2776,
+        "line": 105,
+        "column": 23
+      }
+    },
+    {
+      "context": "account",
+      "start": {
+        "offset": 2820,
+        "line": 106,
+        "column": 16
+      },
+      "end": {
+        "offset": 2827,
+        "line": 106,
+        "column": 23
+      }
+    },
+    {
+      "context": "account",
+      "start": {
+        "offset": 2889,
+        "line": 109,
+        "column": 16
+      },
+      "end": {
+        "offset": 2896,
+        "line": 109,
+        "column": 23
+      }
+    },
+    {
+      "context": "account",
+      "start": {
+        "offset": 2934,
+        "line": 110,
+        "column": 16
+      },
+      "end": {
+        "offset": 2941,
+        "line": 110,
+        "column": 23
+      }
+    },
+    {
+      "context": "account",
+      "start": {
+        "offset": 3311,
+        "line": 123,
+        "column": 40
+      },
+      "end": {
+        "offset": 3318,
+        "line": 123,
+        "column": 47
+      }
+    },
+    {
+      "context": "account",
+      "start": {
+        "offset": 3736,
+        "line": 139,
+        "column": 31
+      },
+      "end": {
+        "offset": 3743,
+        "line": 139,
+        "column": 38
+      }
+    },
+    {
+      "context": "account",
+      "start": {
+        "offset": 3782,
+        "line": 140,
+        "column": 32
+      },
+      "end": {
+        "offset": 3789,
+        "line": 140,
+        "column": 39
+      }
+    },
+    {
+      "context": "account",
+      "start": {
+        "offset": 4679,
+        "line": 177,
+        "column": 35
+      },
+      "end": {
+        "offset": 4686,
+        "line": 177,
+        "column": 42
+      }
+    },
+    {
+      "context": "account",
+      "start": {
+        "offset": 4737,
+        "line": 178,
+        "column": 38
+      },
+      "end": {
+        "offset": 4744,
+        "line": 178,
+        "column": 45
+      }
+    },
+    {
+      "context": "account",
+      "start": {
+        "offset": 5262,
+        "line": 198,
+        "column": 39
+      },
+      "end": {
+        "offset": 5269,
+        "line": 198,
+        "column": 46
+      }
+    },
+    {
+      "context": "account",
+      "start": {
+        "offset": 5601,
+        "line": 211,
+        "column": 35
+      },
+      "end": {
+        "offset": 5608,
+        "line": 211,
+        "column": 42
+      }
+    },
+    {
       "context": "account.AnnualRevenue < 0",
       "start": {
         "offset": 2889,
@@ -4721,6 +5735,32 @@
       }
     },
     {
+      "context": "accountIds",
+      "start": {
+        "offset": 4185,
+        "line": 159,
+        "column": 8
+      },
+      "end": {
+        "offset": 4195,
+        "line": 159,
+        "column": 18
+      }
+    },
+    {
+      "context": "accountIds",
+      "start": {
+        "offset": 4523,
+        "line": 171,
+        "column": 25
+      },
+      "end": {
+        "offset": 4533,
+        "line": 171,
+        "column": 35
+      }
+    },
+    {
       "context": "accountIds.addAll(Trigger.newMap.keySet())",
       "start": {
         "offset": 4185,
@@ -4757,6 +5797,19 @@
         "offset": 4543,
         "line": 172,
         "column": 9
+      }
+    },
+    {
+      "context": "accounts",
+      "start": {
+        "offset": 4632,
+        "line": 176,
+        "column": 31
+      },
+      "end": {
+        "offset": 4640,
+        "line": 176,
+        "column": 39
       }
     },
     {
@@ -4851,19 +5904,6 @@
       }
     },
     {
-      "context": "catch (Exception e) {\n            System.debug(e.getMessage());\n        }",
-      "start": {
-        "offset": 5638,
-        "line": 213,
-        "column": 10
-      },
-      "end": {
-        "offset": 5711,
-        "line": 215,
-        "column": 9
-      }
-    },
-    {
       "context": "class TriggerHelper {\n        public void run() {\n            System.debug('helper');\n        }\n    }",
       "start": {
         "offset": 1303,
@@ -4874,6 +5914,32 @@
         "offset": 1404,
         "line": 49,
         "column": 5
+      }
+    },
+    {
+      "context": "contact",
+      "start": {
+        "offset": 4715,
+        "line": 178,
+        "column": 16
+      },
+      "end": {
+        "offset": 4722,
+        "line": 178,
+        "column": 23
+      }
+    },
+    {
+      "context": "contact",
+      "start": {
+        "offset": 4780,
+        "line": 179,
+        "column": 29
+      },
+      "end": {
+        "offset": 4787,
+        "line": 179,
+        "column": 36
       }
     },
     {
@@ -4926,6 +5992,45 @@
         "offset": 3601,
         "line": 134,
         "column": 52
+      }
+    },
+    {
+      "context": "contacts",
+      "start": {
+        "offset": 3662,
+        "line": 137,
+        "column": 12
+      },
+      "end": {
+        "offset": 3670,
+        "line": 137,
+        "column": 20
+      }
+    },
+    {
+      "context": "contacts",
+      "start": {
+        "offset": 3850,
+        "line": 145,
+        "column": 13
+      },
+      "end": {
+        "offset": 3858,
+        "line": 145,
+        "column": 21
+      }
+    },
+    {
+      "context": "contacts",
+      "start": {
+        "offset": 3899,
+        "line": 146,
+        "column": 27
+      },
+      "end": {
+        "offset": 3907,
+        "line": 146,
+        "column": 35
       }
     },
     {
@@ -4983,14 +6088,14 @@
     {
       "context": "e",
       "start": {
-        "offset": 5655,
-        "line": 213,
-        "column": 27
+        "offset": 5685,
+        "line": 214,
+        "column": 25
       },
       "end": {
-        "offset": 5656,
-        "line": 213,
-        "column": 28
+        "offset": 5686,
+        "line": 214,
+        "column": 26
       }
     },
     {
@@ -5371,6 +6476,45 @@
       }
     },
     {
+      "context": "invocationCount",
+      "start": {
+        "offset": 1822,
+        "line": 67,
+        "column": 12
+      },
+      "end": {
+        "offset": 1837,
+        "line": 67,
+        "column": 27
+      }
+    },
+    {
+      "context": "invocationCount",
+      "start": {
+        "offset": 1891,
+        "line": 70,
+        "column": 12
+      },
+      "end": {
+        "offset": 1906,
+        "line": 70,
+        "column": 27
+      }
+    },
+    {
+      "context": "invocationCount",
+      "start": {
+        "offset": 1952,
+        "line": 73,
+        "column": 12
+      },
+      "end": {
+        "offset": 1967,
+        "line": 73,
+        "column": 27
+      }
+    },
+    {
       "context": "invocationCount++",
       "start": {
         "offset": 1822,
@@ -5449,6 +6593,19 @@
       }
     },
     {
+      "context": "log",
+      "start": {
+        "offset": 5582,
+        "line": 211,
+        "column": 16
+      },
+      "end": {
+        "offset": 5585,
+        "line": 211,
+        "column": 19
+      }
+    },
+    {
       "context": "log('Restored: ' + account.Id)",
       "start": {
         "offset": 5582,
@@ -5472,6 +6629,19 @@
         "offset": 5613,
         "line": 211,
         "column": 47
+      }
+    },
+    {
+      "context": "message",
+      "start": {
+        "offset": 1275,
+        "line": 42,
+        "column": 30
+      },
+      "end": {
+        "offset": 1282,
+        "line": 42,
+        "column": 37
       }
     },
     {
@@ -5537,6 +6707,19 @@
         "offset": 2750,
         "line": 103,
         "column": 63
+      }
+    },
+    {
+      "context": "oldAccount",
+      "start": {
+        "offset": 2785,
+        "line": 105,
+        "column": 32
+      },
+      "end": {
+        "offset": 2795,
+        "line": 105,
+        "column": 42
       }
     },
     {
@@ -5709,6 +6892,19 @@
       }
     },
     {
+      "context": "tasks",
+      "start": {
+        "offset": 5169,
+        "line": 195,
+        "column": 15
+      },
+      "end": {
+        "offset": 5174,
+        "line": 195,
+        "column": 20
+      }
+    },
+    {
       "context": "toUpdate = new List<Contact>()",
       "start": {
         "offset": 4568,
@@ -5719,6 +6915,32 @@
         "offset": 4598,
         "line": 174,
         "column": 52
+      }
+    },
+    {
+      "context": "toUpdate",
+      "start": {
+        "offset": 4767,
+        "line": 179,
+        "column": 16
+      },
+      "end": {
+        "offset": 4775,
+        "line": 179,
+        "column": 24
+      }
+    },
+    {
+      "context": "toUpdate",
+      "start": {
+        "offset": 4830,
+        "line": 183,
+        "column": 15
+      },
+      "end": {
+        "offset": 4838,
+        "line": 183,
+        "column": 23
       }
     },
     {

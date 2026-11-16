@@ -1,5 +1,10 @@
 import type { FlexiPageParseResult, LayoutParseResult } from '../../parser/Metadata/page';
-import type { ConvertKeys, FlexiPageJson, LayoutJson } from '../../types';
+import {
+    type ConvertKeys,
+    type FlexiPageJson,
+    type LayoutJson,
+    criterionTextsOf,
+} from '../../types';
 import {
     MetadataContext,
     MetadataFinding,
@@ -284,15 +289,15 @@ export const analyzeFlexiPages = (
         };
 
         for (const component of json.components ?? []) {
-            const ruleTexts = (component.visibilityRule?.criteria ?? []).flatMap((c) => [
-                c.leftValue ?? '',
-                c.rightValue ?? '',
-            ]);
+            const ruleTexts = (component.visibilityRule?.criteria ?? []).flatMap((c) => {
+                const { left, right } = criterionTextsOf(c);
+                return [left, right];
+            });
             checkRecordFields(ruleTexts, component.sourceKeys);
 
             const [namespace, name] = component.componentName.split(':');
             if (namespace !== 'c' || !name) continue;
-            const properties = Object.keys(component.properties ?? {});
+            const properties = Object.keys(component.attributes ?? {});
             placements.push({
                 lwc: name,
                 flexiPage: json.name,
@@ -343,10 +348,10 @@ export const analyzeFlexiPages = (
             checkRecordFields(
                 [
                     field.fieldItem,
-                    ...(field.visibilityRule?.criteria ?? []).flatMap((c) => [
-                        c.leftValue ?? '',
-                        c.rightValue ?? '',
-                    ]),
+                    ...(field.visibilityRule?.criteria ?? []).flatMap((c) => {
+                        const { left, right } = criterionTextsOf(c);
+                        return [left, right];
+                    }),
                 ],
                 field.sourceKeys,
             );

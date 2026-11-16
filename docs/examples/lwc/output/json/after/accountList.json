@@ -467,11 +467,9 @@
                       "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
                       "sourceKey": "tSStringKeyword_fe6b7f3cc9324762"
                     },
-                    "text": "string",
                     "type": "primitive",
                     "primitiveType": "string"
                   },
-                  "references": [],
                   "optional": false,
                   "modifier": {
                     "decorator": [
@@ -506,7 +504,6 @@
                       "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
                       "sourceKey": "tSStringKeyword_88d45541cac3f413"
                     },
-                    "text": "string",
                     "type": "primitive",
                     "primitiveType": "string"
                   },
@@ -518,7 +515,6 @@
                     },
                     "value": "Accounts"
                   },
-                  "references": [],
                   "optional": false,
                   "modifier": {
                     "decorator": [
@@ -553,7 +549,6 @@
                       "objectKey": "tSNumberKeyword_850ba0354605a53c",
                       "sourceKey": "tSNumberKeyword_b31d702e16767bfc"
                     },
-                    "text": "number",
                     "type": "primitive",
                     "primitiveType": "number"
                   },
@@ -565,7 +560,6 @@
                     },
                     "value": 20
                   },
-                  "references": [],
                   "optional": true,
                   "modifier": {
                     "decorator": [
@@ -600,11 +594,9 @@
                       "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
                       "sourceKey": "tSStringKeyword_6fb761dd77eec7b0"
                     },
-                    "text": "string",
                     "type": "primitive",
                     "primitiveType": "string"
                   },
-                  "references": [],
                   "optional": true,
                   "modifier": {
                     "decorator": [
@@ -639,11 +631,12 @@
                       "objectKey": "tSArrayType_a0fe78f2e0d47552",
                       "sourceKey": "tSArrayType_84e651be02776bb6"
                     },
-                    "text": "Row[]",
                     "type": "array",
                     "elementType": {
                       "type": "custom",
-                      "customType": "Row"
+                      "customType": [
+                        "Row"
+                      ]
                     }
                   },
                   "init": {
@@ -654,7 +647,6 @@
                     },
                     "elements": []
                   },
-                  "references": [],
                   "optional": false,
                   "modifier": {
                     "access": "private",
@@ -690,9 +682,10 @@
                       "objectKey": "tSTypeReference_03b0988df6c4c74e",
                       "sourceKey": "tSTypeReference_28fe3f7a642f2be3"
                     },
-                    "text": "ViewMode",
                     "type": "custom",
-                    "customType": "ViewMode"
+                    "customType": [
+                      "ViewMode"
+                    ]
                   },
                   "init": {
                     "kind": "jsString",
@@ -702,7 +695,6 @@
                     },
                     "value": "table"
                   },
-                  "references": [],
                   "optional": false,
                   "modifier": {}
                 },
@@ -725,9 +717,10 @@
                       "objectKey": "tSTypeReference_0c387e84f24247b0",
                       "sourceKey": "tSTypeReference_93b1b5f6bd9331fa"
                     },
-                    "text": "SortDirection",
                     "type": "custom",
-                    "customType": "SortDirection"
+                    "customType": [
+                      "SortDirection"
+                    ]
                   },
                   "init": {
                     "kind": "jsString",
@@ -737,7 +730,6 @@
                     },
                     "value": "asc"
                   },
-                  "references": [],
                   "optional": false,
                   "modifier": {}
                 },
@@ -760,11 +752,9 @@
                       "objectKey": "tSUnknownKeyword_6ef5499dc7a933b0",
                       "sourceKey": "tSUnknownKeyword_b718893442fcd139"
                     },
-                    "text": "unknown",
                     "type": "primitive",
                     "primitiveType": "unknown"
                   },
-                  "references": [],
                   "optional": true,
                   "modifier": {}
                 },
@@ -787,7 +777,6 @@
                       "objectKey": "tSTypeLiteral_3516310d780b8119",
                       "sourceKey": "tSTypeLiteral_082006f31e0de227"
                     },
-                    "text": "{ data?: unknown; error?: unknown }",
                     "type": "object",
                     "members": [
                       {
@@ -810,7 +799,6 @@
                       }
                     ]
                   },
-                  "references": [],
                   "optional": true,
                   "modifier": {
                     "decorator": [
@@ -917,8 +905,7 @@
                                 },
                                 "value": "$recordId"
                               },
-                              "reactive": "recordId",
-                              "references": []
+                              "reactive": "recordId"
                             },
                             {
                               "kind": "lwcWireConfig",
@@ -951,25 +938,7 @@
                                     "name": "INDUSTRY_FIELD"
                                   }
                                 ]
-                              },
-                              "references": [
-                                {
-                                  "local": "NAME_FIELD",
-                                  "source": "@salesforce/schema/Account.Name",
-                                  "schema": {
-                                    "objectApiName": "Account",
-                                    "fieldApiName": "Name"
-                                  }
-                                },
-                                {
-                                  "local": "INDUSTRY_FIELD",
-                                  "source": "@salesforce/schema/Account.Industry",
-                                  "schema": {
-                                    "objectApiName": "Account",
-                                    "fieldApiName": "Industry"
-                                  }
-                                }
-                              ]
+                              }
                             }
                           ]
                         }
@@ -996,7 +965,6 @@
                       "objectKey": "tSTypeLiteral_3516310d780b8119",
                       "sourceKey": "tSTypeLiteral_e745b7fbfb8e7eb2"
                     },
-                    "text": "{ data?: unknown; error?: unknown }",
                     "type": "object",
                     "members": [
                       {
@@ -1019,7 +987,6 @@
                       }
                     ]
                   },
-                  "references": [],
                   "optional": true,
                   "modifier": {
                     "decorator": [
@@ -1144,8 +1111,7 @@
                                 },
                                 "value": "$recordId"
                               },
-                              "reactive": "recordId",
-                              "references": []
+                              "reactive": "recordId"
                             },
                             {
                               "kind": "lwcWireConfig",
@@ -1171,7 +1137,6 @@
                                   }
                                 ]
                               },
-                              "references": [],
                               "fieldNames": [
                                 "Account.Name"
                               ]
@@ -1200,7 +1165,6 @@
                                   }
                                 ]
                               },
-                              "references": [],
                               "fieldNames": [
                                 "Account.Industry"
                               ]
@@ -1230,7 +1194,6 @@
                       "objectKey": "tSVoidKeyword_9a0d7732e44e61dc",
                       "sourceKey": "tSVoidKeyword_f54342acb6a4d976"
                     },
-                    "text": "void",
                     "type": "primitive",
                     "primitiveType": "void"
                   },
@@ -1290,7 +1253,6 @@
                           "objectKey": "tSTypeLiteral_d39a31443410d9aa",
                           "sourceKey": "tSTypeLiteral_fc0f683be28ff011"
                         },
-                        "text": "{ data?: unknown[]; error?: unknown }",
                         "type": "object",
                         "members": [
                           {
@@ -1430,8 +1392,7 @@
                                 },
                                 "value": "$recordId"
                               },
-                              "reactive": "recordId",
-                              "references": []
+                              "reactive": "recordId"
                             },
                             {
                               "kind": "lwcWireConfig",
@@ -1448,8 +1409,7 @@
                                 },
                                 "value": "$maxRows"
                               },
-                              "reactive": "maxRows",
-                              "references": []
+                              "reactive": "maxRows"
                             },
                             {
                               "kind": "lwcWireConfig",
@@ -1466,8 +1426,7 @@
                                 },
                                 "value": "$industry"
                               },
-                              "reactive": "industry",
-                              "references": []
+                              "reactive": "industry"
                             }
                           ]
                         }
@@ -1605,12 +1564,6 @@
                         }
                       ]
                     }
-                  ],
-                  "references": [
-                    {
-                      "local": "toRows",
-                      "source": "c/utils"
-                    }
                   ]
                 },
                 {
@@ -1702,7 +1655,6 @@
                               "objectKey": "tSUnionType_d71bdc98b2d1d7b4",
                               "sourceKey": "tSUnionType_5ba7599b034b660e"
                             },
-                            "text": "string | undefined",
                             "type": "union",
                             "types": [
                               {
@@ -1717,20 +1669,6 @@
                           }
                         }
                       }
-                    ],
-                    "references": [
-                      {
-                        "local": "getFieldValue",
-                        "source": "lightning/uiRecordApi"
-                      },
-                      {
-                        "local": "NAME_FIELD",
-                        "source": "@salesforce/schema/Account.Name",
-                        "schema": {
-                          "objectApiName": "Account",
-                          "fieldApiName": "Name"
-                        }
-                      }
                     ]
                   },
                   "variantType": {
@@ -1739,7 +1677,6 @@
                       "objectKey": "tSUnionType_d71bdc98b2d1d7b4",
                       "sourceKey": "tSUnionType_a0ebaec2ac04b2f8"
                     },
-                    "text": "string | undefined",
                     "type": "union",
                     "types": [
                       {
@@ -1821,8 +1758,7 @@
                           }
                         }
                       }
-                    ],
-                    "references": []
+                    ]
                   },
                   "variantType": {
                     "kind": "lwcType",
@@ -1830,7 +1766,6 @@
                       "objectKey": "tSBooleanKeyword_b0b50aed2fda45e2",
                       "sourceKey": "tSBooleanKeyword_8f0f782afabcca59"
                     },
-                    "text": "boolean",
                     "type": "primitive",
                     "primitiveType": "boolean"
                   }
@@ -2003,12 +1938,6 @@
                           ]
                         }
                       }
-                    ],
-                    "references": [
-                      {
-                        "local": "formatAmount",
-                        "source": "c/utils"
-                      }
                     ]
                   },
                   "variantType": {
@@ -2017,7 +1946,6 @@
                       "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
                       "sourceKey": "tSStringKeyword_7aa7e67104276944"
                     },
-                    "text": "string",
                     "type": "primitive",
                     "primitiveType": "string"
                   }
@@ -2041,7 +1969,6 @@
                       "objectKey": "tSVoidKeyword_9a0d7732e44e61dc",
                       "sourceKey": "tSVoidKeyword_fdc3b93684b77c41"
                     },
-                    "text": "void",
                     "type": "primitive",
                     "primitiveType": "void"
                   },
@@ -2059,13 +1986,16 @@
                           "objectKey": "tSTypeReference_e893d8e0cbf7dc78",
                           "sourceKey": "tSTypeReference_61dbc1278eadb0a2"
                         },
-                        "text": "CustomEvent<SelectDetail>",
                         "type": "custom",
-                        "customType": "CustomEvent",
+                        "customType": [
+                          "CustomEvent"
+                        ],
                         "generic": [
                           {
                             "type": "custom",
-                            "customType": "SelectDetail"
+                            "customType": [
+                              "SelectDetail"
+                            ]
                           }
                         ]
                       },
@@ -2303,9 +2233,10 @@
                                   "objectKey": "tSTypeReference_dc3f59726576c2d5",
                                   "sourceKey": "tSTypeReference_ac5316761699a629"
                                 },
-                                "text": "SelectDetail",
                                 "type": "custom",
-                                "customType": "SelectDetail"
+                                "customType": [
+                                  "SelectDetail"
+                                ]
                               }
                             ]
                           }
@@ -2433,12 +2364,6 @@
                         ]
                       }
                     }
-                  ],
-                  "references": [
-                    {
-                      "local": "NavigationMixin",
-                      "source": "lightning/navigation"
-                    }
                   ]
                 },
                 {
@@ -2460,9 +2385,10 @@
                       "objectKey": "tSTypeReference_aa759821558f9ef7",
                       "sourceKey": "tSTypeReference_cf0033a5e925fa92"
                     },
-                    "text": "Promise<void>",
                     "type": "custom",
-                    "customType": "Promise",
+                    "customType": [
+                      "Promise"
+                    ],
                     "generic": [
                       {
                         "type": "primitive",
@@ -2484,9 +2410,10 @@
                           "objectKey": "tSTypeReference_b55498f58a5aeb62",
                           "sourceKey": "tSTypeReference_4e31a4a84011e4c3"
                         },
-                        "text": "Event",
                         "type": "custom",
-                        "customType": "Event"
+                        "customType": [
+                          "Event"
+                        ]
                       },
                       "optional": false,
                       "modifier": {}
@@ -2574,9 +2501,10 @@
                                         "objectKey": "tSTypeReference_badd8cdca7e3947f",
                                         "sourceKey": "tSTypeReference_8473c27cd654bc1d"
                                       },
-                                      "text": "HTMLElement",
                                       "type": "custom",
-                                      "customType": "HTMLElement"
+                                      "customType": [
+                                        "HTMLElement"
+                                      ]
                                     }
                                   }
                                 },
@@ -2800,20 +2728,6 @@
                         }
                       ]
                     }
-                  ],
-                  "references": [
-                    {
-                      "local": "deleteAccount",
-                      "source": "@salesforce/apex/AccountController.deleteAccount",
-                      "apex": {
-                        "className": "AccountController",
-                        "methodName": "deleteAccount"
-                      }
-                    },
-                    {
-                      "local": "ShowToastEvent",
-                      "source": "lightning/platformShowToastEvent"
-                    }
                   ]
                 },
                 {
@@ -2835,9 +2749,10 @@
                       "objectKey": "tSTypeReference_aa759821558f9ef7",
                       "sourceKey": "tSTypeReference_68512edf4290390e"
                     },
-                    "text": "Promise<void>",
                     "type": "custom",
-                    "customType": "Promise",
+                    "customType": [
+                      "Promise"
+                    ],
                     "generic": [
                       {
                         "type": "primitive",
@@ -2859,13 +2774,16 @@
                           "objectKey": "tSTypeReference_930cbee9806cb647",
                           "sourceKey": "tSTypeReference_2968fcbe75f4f813"
                         },
-                        "text": "CustomEvent<Row>",
                         "type": "custom",
-                        "customType": "CustomEvent",
+                        "customType": [
+                          "CustomEvent"
+                        ],
                         "generic": [
                           {
                             "type": "custom",
-                            "customType": "Row"
+                            "customType": [
+                              "Row"
+                            ]
                           }
                         ]
                       },
@@ -3040,16 +2958,6 @@
                         ]
                       }
                     }
-                  ],
-                  "references": [
-                    {
-                      "local": "updateAccount",
-                      "source": "@salesforce/apex/AccountController.updateAccount",
-                      "apex": {
-                        "className": "AccountController",
-                        "methodName": "updateAccount"
-                      }
-                    }
                   ]
                 },
                 {
@@ -3071,7 +2979,6 @@
                       "objectKey": "tSVoidKeyword_9a0d7732e44e61dc",
                       "sourceKey": "tSVoidKeyword_cce02ec334a1ed63"
                     },
-                    "text": "void",
                     "type": "primitive",
                     "primitiveType": "void"
                   },
@@ -3136,8 +3043,7 @@
                         "memberArg": []
                       }
                     }
-                  ],
-                  "references": []
+                  ]
                 },
                 {
                   "kind": "lwcField",
@@ -3152,16 +3058,6 @@
                     }
                   },
                   "name": "handleReload",
-                  "references": [
-                    {
-                      "local": "refreshApex",
-                      "source": "@salesforce/apex"
-                    },
-                    {
-                      "local": "updateRecord",
-                      "source": "lightning/uiRecordApi"
-                    }
-                  ],
                   "function": {
                     "arrow": true,
                     "param": [],
@@ -3171,9 +3067,10 @@
                         "objectKey": "tSTypeReference_aa759821558f9ef7",
                         "sourceKey": "tSTypeReference_303717128980313a"
                       },
-                      "text": "Promise<void>",
                       "type": "custom",
-                      "customType": "Promise",
+                      "customType": [
+                        "Promise"
+                      ],
                       "generic": [
                         {
                           "type": "primitive",
@@ -3559,7 +3456,6 @@
                                       "objectKey": "tSUnknownKeyword_6ef5499dc7a933b0",
                                       "sourceKey": "tSUnknownKeyword_e6d727788a846a63"
                                     },
-                                    "text": "unknown",
                                     "type": "primitive",
                                     "primitiveType": "unknown"
                                   },
@@ -3613,16 +3509,6 @@
                           ]
                         }
                       }
-                    ],
-                    "references": [
-                      {
-                        "local": "refreshApex",
-                        "source": "@salesforce/apex"
-                      },
-                      {
-                        "local": "updateRecord",
-                        "source": "lightning/uiRecordApi"
-                      }
                     ]
                   },
                   "optional": false,
@@ -3641,12 +3527,6 @@
                     }
                   },
                   "name": "handleOpenList",
-                  "references": [
-                    {
-                      "local": "NavigationMixin",
-                      "source": "lightning/navigation"
-                    }
-                  ],
                   "function": {
                     "arrow": true,
                     "param": [],
@@ -3656,7 +3536,6 @@
                         "objectKey": "tSVoidKeyword_9a0d7732e44e61dc",
                         "sourceKey": "tSVoidKeyword_9fd96547c3087136"
                       },
-                      "text": "void",
                       "type": "primitive",
                       "primitiveType": "void"
                     },
@@ -3819,12 +3698,6 @@
                           ]
                         }
                       }
-                    ],
-                    "references": [
-                      {
-                        "local": "NavigationMixin",
-                        "source": "lightning/navigation"
-                      }
                     ]
                   },
                   "optional": false,
@@ -3849,7 +3722,6 @@
                       "objectKey": "tSVoidKeyword_9a0d7732e44e61dc",
                       "sourceKey": "tSVoidKeyword_0d2ff215500ae1a5"
                     },
-                    "text": "void",
                     "type": "primitive",
                     "primitiveType": "void"
                   },
@@ -3909,8 +3781,7 @@
                         ]
                       }
                     }
-                  ],
-                  "references": []
+                  ]
                 }
               ]
             },
@@ -3950,7 +3821,6 @@
                     "objectKey": "tSUnionType_0e40a3dd263ef55d",
                     "sourceKey": "tSUnionType_687626fe56901807"
                   },
-                  "text": "'table' | 'tile'",
                   "type": "union",
                   "types": [
                     {

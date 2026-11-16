@@ -59,7 +59,6 @@
           "variantType": {
             "kind": "lwcType",
             "sourceKeys": {},
-            "text": "string",
             "type": "primitive",
             "primitiveType": "string"
           },
@@ -68,7 +67,6 @@
             "sourceKeys": {},
             "value": ""
           },
-          "references": [],
           "optional": false,
           "modifier": {
             "decorator": [

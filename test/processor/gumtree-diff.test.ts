@@ -51,7 +51,7 @@ const toExpression = async (expression: string) => {
         unitRules.cls,
     );
     const [statement] = find(json, (node) => node.kind === 'localVariable');
-    return statement.variable.variants[0].init;
+    return statement.variants[0].init;
 };
 
 /** 差分の木を前順にたどって [label, status] を並べる */
@@ -83,7 +83,8 @@ describe('gumtree tree', () => {
         assert.deepEqual(
             branches.map((b) => [b.label, b.children.map((c) => c.label)]),
             [
-                ['if.branch', ['ifCondition', 'block']],
+                // 条件は式そのもの (段階 A4 で ifCondition をなくした)
+                ['if.branch', ['identifier', 'block']],
                 ['if.branch', ['block']],
             ],
         );
@@ -157,7 +158,8 @@ describe('gumtree block diff', () => {
             ['localVariable', 'changed'],
             ['break', 'unchanged'],
         ]);
-        const literal = flatten(diffs).find((d) => d.label === 'literal');
+        // リテラルは kind で種類を持つ (段階 A2。以前は形から 'literal' と推定した)
+        const literal = flatten(diffs).find((d) => d.label === 'integer');
         assert.ok(literal && literal.status === 'changed');
         assert.deepEqual(literal.fields.value, { status: 'changed', before: '1', after: '2' });
     });
@@ -173,10 +175,10 @@ describe('gumtree block diff', () => {
         // 条件だけが変わり、中のブロックはそのまま
         assert.deepEqual(
             flatten(ifDiff.children)
-                .filter((d) => d.label === 'ifCondition' || d.label === 'block')
+                .filter((d) => d.label === 'identifier' || d.label === 'block')
                 .map((d) => [d.label, d.status]),
             [
-                ['ifCondition', 'changed'],
+                ['identifier', 'changed'],
                 ['block', 'unchanged'],
             ],
         );
@@ -217,6 +219,15 @@ describe('expression and statement diff entry points', () => {
         assert.ok(literal && literal.status === 'changed');
     });
 
+    it('compares the object of a method call (accA.save() → accB.save())', async () => {
+        const before = await toExpression('accA.save(1)');
+        const after = await toExpression('accB.save(1)');
+        const diffs = flattenTypedDiff(makeExpressionDiff(before, after));
+        assert.ok(
+            diffs.some((d) => d.status === 'changed' && d.before === 'accA' && d.after === 'accB'),
+        );
+    });
+
     it('compares one statement and its nested expression through makeStatementDiff', async () => {
         const before = (await toBody('Integer value = 1;')).block[0] as StatementJson;
         const after = (await toBody('Integer value = 2;')).block[0] as StatementJson;
@@ -236,13 +247,21 @@ describe('expression and statement diff entry points', () => {
         const before: UpsertStatementJson = {
             kind: 'upsert',
             sourceKeys: { objectKey: 'before', sourceKey: 'before-source' },
-            field: 'Account',
+            field: {
+                kind: 'identifier',
+                sourceKeys: { objectKey: 'acc', sourceKey: 'acc-1' },
+                name: 'acc',
+            },
             key: ['ExternalId__c'],
         };
         const after: UpsertStatementJson = {
             kind: 'upsert',
             sourceKeys: { objectKey: 'after', sourceKey: 'after-source' },
-            field: 'Account',
+            field: {
+                kind: 'identifier',
+                sourceKeys: { objectKey: 'acc', sourceKey: 'acc-2' },
+                name: 'acc',
+            },
             key: ['ExternalId__c', 'Namespace__c'],
         };
         const diff: StatementJsonDiff<UpsertStatementJson> | ReplacementDiff<StatementValue> =
@@ -384,9 +403,9 @@ describe('typed statement diff follows the policy', () => {
             "Map<String, Integer> m = new Map<String, Integer>{ 'a' => 1 };",
             "Map<String, Integer> m = new Map<String, Integer>{ 'a' => 2 };",
         );
-        const init = flattenTypedDiff(diff).find((item) => 'collection' in fieldsOfOrEmpty(item));
+        const init = flattenTypedDiff(diff).find((item) => 'newType' in fieldsOfOrEmpty(item));
 
-        assert.ok(init, 'new Map の差分が fields (collection / generic / init) を持つ');
+        assert.ok(init, 'new Map の差分が fields (newType / entries) を持つ');
         assert.ok(
             flattenTypedDiff(diff).some(
                 (item) => item.status === 'changed' && item.before === '1' && item.after === '2',
@@ -399,7 +418,7 @@ describe('typed statement diff follows the policy', () => {
             'switch on x { when 1, 2 { a(); } when else { b(); } }',
             'switch on x { when 2, 1 { a(); } when else { b(); } }',
         );
-        const when = fieldsOf(fieldsOf(diff[0]).block[0]);
+        const when = fieldsOf(fieldsOf(diff[0]).when[0]);
         const literals = fieldsOf(when.condition).condition as { status: string }[];
 
         assert.deepEqual(
@@ -427,7 +446,7 @@ describe('typed statement diff follows the policy', () => {
 
     it('pairs local variables by name', async () => {
         const diff = await blockDiff('Integer a = 1, b = 2;', 'Integer b = 2, a = 3;');
-        const variants = fieldsOf(fieldsOf(diff[0]).variable).variants as {
+        const variants = fieldsOf(diff[0]).variants as {
             status: string;
             match: string;
             index: unknown;

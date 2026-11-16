@@ -166,7 +166,7 @@ const createServer = (context: AppContext): McpServer => {
         },
     );
 
-    registerDependencyTools(server, context.repogitoryRoot);
+    registerDependencyTools(server, context.metadataContext.metadata);
     registerReportTools(server, context.metadataContext.metadata);
 
     return server;

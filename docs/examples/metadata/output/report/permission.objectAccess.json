@@ -26,7 +26,7 @@
   "cells": {
     "Account": {
       "profile:Sales": {
-        "filePath": "profiles/Sales.profile-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
         "before": {
           "allowCreate": true,
           "allowRead": true,
@@ -50,7 +50,7 @@
     },
     "Invoice__c": {
       "permissionSet:Invoice_Manager": {
-        "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
         "before": {
           "allowCreate": true,
           "allowRead": true,
@@ -72,7 +72,7 @@
         "status": "changed"
       },
       "permissionSet:Invoice_Viewer": {
-        "filePath": "permissionsets/Invoice_Viewer.permissionset-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\permissionsets\\Invoice_Viewer.permissionset-meta.xml",
         "before": {
           "allowCreate": false,
           "allowRead": true,
@@ -85,7 +85,7 @@
         "status": "removed"
       },
       "profile:Sales": {
-        "filePath": "profiles/Sales.profile-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
         "before": {
           "allowCreate": false,
           "allowRead": true,
@@ -107,7 +107,7 @@
         "status": "changed"
       },
       "permissionSet:Payment_Clerk": {
-        "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Payment_Clerk.permissionset-meta.xml",
         "after": {
           "allowCreate": false,
           "allowRead": true,
@@ -122,7 +122,7 @@
     },
     "Payment__c": {
       "permissionSet:Invoice_Manager": {
-        "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
         "after": {
           "allowCreate": false,
           "allowRead": false,
@@ -135,7 +135,7 @@
         "status": "added"
       },
       "permissionSet:Payment_Clerk": {
-        "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Payment_Clerk.permissionset-meta.xml",
         "after": {
           "allowCreate": true,
           "allowRead": true,
@@ -150,7 +150,7 @@
     },
     "Receipt__c": {
       "permissionSet:Payment_Clerk": {
-        "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Payment_Clerk.permissionset-meta.xml",
         "after": {
           "allowCreate": false,
           "allowRead": true,

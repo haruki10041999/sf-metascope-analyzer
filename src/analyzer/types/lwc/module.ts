@@ -16,7 +16,7 @@ import {
 } from '../commons/json';
 import type { commons, standardizedVisitor } from '../lwc_IR';
 
-import { nameOf, unwrapExpression, walkNodes, type LwcJsonContext, type LwcNode } from './commons';
+import { nameOf, unwrapExpression, type LwcJsonContext, type LwcNode } from './commons';
 import {
     makeLwcBodyContentJson,
     makeLwcClassMembersJson,
@@ -25,7 +25,6 @@ import {
     makeLwcImportTables,
     type LwcBodyContentJson,
     type LwcComponentJson,
-    type LwcImportReferenceJson,
     type LwcImportTables,
     type LwcMemberJson,
     type LwcParameterJson,
@@ -58,8 +57,6 @@ export type LwcDeclarationJson = StructureJsonType<'lwcDeclaration', { name: Con
         variantType?: LwcTypeJson;
         /** 変数の初期値の式 (5.4)。初期値がそのまま関数のときは持たない (関数は本体の中身で表す) */
         init?: LwcJsExpressionJson;
-        /** 初期値の中で使っている import */
-        references: LwcImportReferenceJson[];
         /** 関数 (と、関数を初期値にした変数) の中身 (LwcFunctionContentJson と同じ) */
         arrow?: boolean;
         param?: LwcParameterJson[];
@@ -160,19 +157,6 @@ const declaredNames = (
     }
 };
 
-/** 式の中で使っている import (識別子が import の名前のもの) */
-const referencesIn = (node: LwcNode, tables: LwcImportTables): LwcImportReferenceJson[] => {
-    const found = new Map<string, LwcImportReferenceJson>();
-    walkNodes(node, (child) => {
-        if (child.kind === 'identifier') {
-            const name = (child as commons.IdentifierTypeClass).getFields().name;
-            const reference = tables.imports.get(name);
-            if (reference) found.set(name, reference);
-        }
-    });
-    return [...found.values()];
-};
-
 /**
  * 変数 (と export default <式>) の宣言 → lwcDeclaration。
  * 初期値がそのまま関数なら関数の中身 (本体の文・引数など) で表し、初期値の式・文字列は持たない
@@ -188,16 +172,13 @@ const makeVariableJson = (
 ): LwcDeclarationJson => {
     const fn = init ? makeLwcFunctionContentJson(unwrapExpression(init), tables, context) : null;
     const onlyFunction = fn !== null && init !== null && unwrapExpression(init) === init;
-    // 変数の references は初期値全体 (関数なら引数の既定値も含む) の import の参照
-    const { references: _bodyReferences, ...content } =
-        fn ?? makeLwcBodyContentJson(init, tables, context);
+    const content = fn ?? makeLwcBodyContentJson(init, tables, context);
     return makeStructureJson('lwcDeclaration', sourceKeys, {
         name,
         declarationType: fn ? ('function' as const) : ('variable' as const),
         exported,
         ...variable,
         ...(init && !onlyFunction ? { init: makeLwcExpressionJson(init, tables, context) } : {}),
-        references: init ? referencesIn(init, tables) : [],
         ...content,
     });
 };
@@ -211,13 +192,11 @@ const makeFunctionJson = (
 ): LwcDeclarationJson => {
     const id = declaration.getFields().id;
     const sourceKeys = context.structureKeysOf(declaration, { name: id });
-    // function 宣言の references は本体の中の import の参照
-    const { references, ...content } = makeLwcFunctionContentJson(declaration, tables, context)!;
+    const content = makeLwcFunctionContentJson(declaration, tables, context)!;
     return makeStructureJson('lwcDeclaration', sourceKeys, {
         name: id ? id.getFields().name : 'default',
         declarationType: 'function' as const,
         exported,
-        references,
         ...content,
     });
 };

@@ -11,6 +11,18 @@
       {
         "origin": "flow",
         "unit": "flow_Account_Wizard"
+      },
+      {
+        "origin": "apexPage",
+        "unit": "apexPage_InvoicePrint"
+      },
+      {
+        "origin": "aura",
+        "unit": "aura_invoiceCard"
+      },
+      {
+        "origin": "translations",
+        "unit": "translations_ja"
       }
     ]
   },
@@ -37,7 +49,12 @@
     },
     "name": "Invoice_Approved",
     "value": "承認しました",
-    "usages": []
+    "usages": [
+      {
+        "origin": "translations",
+        "unit": "translations_ja"
+      }
+    ]
   },
   {
     "status": "removed",
@@ -47,6 +64,11 @@
     },
     "name": "BannerMessage",
     "value": "お知らせ",
-    "usages": []
+    "usages": [
+      {
+        "origin": "translations",
+        "unit": "translations_ja"
+      }
+    ]
   }
 ]

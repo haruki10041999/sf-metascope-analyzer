@@ -1,0 +1,134 @@
+[
+  {
+    "id": "apexClass:Broken",
+    "type": "apexClass",
+    "name": "Broken",
+    "origin": "repository",
+    "sourceKeys": {
+      "objectKey": "classDeclaration_097b407b64e401be",
+      "sourceKey": "classDeclaration_316ccc84364cdbc4"
+    }
+  },
+  {
+    "id": "apexClass:Level",
+    "type": "apexClass",
+    "name": "Level",
+    "origin": "repository",
+    "sourceKeys": {
+      "objectKey": "enumDeclaration_bb8616d1e7c0c120",
+      "sourceKey": "enumDeclaration_c435a86df91b037e"
+    }
+  },
+  {
+    "id": "apexClass:ParserEnum",
+    "type": "apexClass",
+    "name": "ParserEnum",
+    "origin": "repository",
+    "sourceKeys": {
+      "objectKey": "enumDeclaration_42428ec88d8048fc",
+      "sourceKey": "enumDeclaration_4c54cd95b55d5eeb"
+    }
+  },
+  {
+    "id": "apexClass:ParserTest",
+    "type": "apexClass",
+    "name": "ParserTest",
+    "origin": "repository",
+    "sourceKeys": {
+      "objectKey": "classDeclaration_9c5bf812682d2124",
+      "sourceKey": "classDeclaration_2353063bb0f0782f"
+    }
+  },
+  {
+    "id": "apexClass:Shape",
+    "type": "apexClass",
+    "name": "Shape",
+    "origin": "repository",
+    "sourceKeys": {
+      "objectKey": "classDeclaration_1706a1abe9a3e1bb",
+      "sourceKey": "classDeclaration_1a606c18644285c2"
+    }
+  },
+  {
+    "id": "apexClass:Unchanged",
+    "type": "apexClass",
+    "name": "Unchanged",
+    "origin": "repository",
+    "sourceKeys": {
+      "objectKey": "classDeclaration_73f0dcfaf88787f0",
+      "sourceKey": "classDeclaration_fd596ab2d2aa4bcb"
+    }
+  },
+  {
+    "id": "field:Invoice_Line__c.Invoice__c",
+    "type": "field",
+    "name": "Invoice_Line__c.Invoice__c",
+    "origin": "repository",
+    "sourceKeys": {
+      "objectKey": "field_dbf01ecbdab951de",
+      "sourceKey": "field_0a6d60509fda0d7c"
+    }
+  },
+  {
+    "id": "field:Invoice_Line__c.Product__c",
+    "type": "field",
+    "name": "Invoice_Line__c.Product__c",
+    "origin": "repository",
+    "sourceKeys": {
+      "objectKey": "field_70acdb4e7a2d1b60",
+      "sourceKey": "field_ac821ce419745792"
+    }
+  },
+  {
+    "id": "field:Invoice_Line__c.Quantity__c",
+    "type": "field",
+    "name": "Invoice_Line__c.Quantity__c",
+    "origin": "repository",
+    "sourceKeys": {
+      "objectKey": "field_728c8b425d80cb21",
+      "sourceKey": "field_cec9f4879c00dbe3"
+    }
+  },
+  {
+    "id": "field:Payment__c.Invoice__c",
+    "type": "field",
+    "name": "Payment__c.Invoice__c",
+    "origin": "repository",
+    "sourceKeys": {
+      "objectKey": "field_1edc183c1b5e5395",
+      "sourceKey": "field_04beaf30fa5fb9b0"
+    }
+  },
+  {
+    "id": "field:Payment__c.Paid_At__c",
+    "type": "field",
+    "name": "Payment__c.Paid_At__c",
+    "origin": "repository",
+    "sourceKeys": {
+      "objectKey": "field_809a86e5355c178f",
+      "sourceKey": "field_9688c3386967cd79"
+    }
+  },
+  {
+    "id": "lwc:broken",
+    "type": "lwc",
+    "name": "broken",
+    "origin": "repository"
+  },
+  {
+    "id": "lwc:newBanner",
+    "type": "lwc",
+    "name": "newBanner",
+    "origin": "repository"
+  },
+  {
+    "id": "staticResource:logo",
+    "type": "staticResource",
+    "name": "logo",
+    "origin": "repository",
+    "sourceKeys": {
+      "objectKey": "staticResource_0821ce06b1317b1e",
+      "sourceKey": "staticResource_c7d35038628fb145"
+    }
+  }
+]

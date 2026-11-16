@@ -1,12 +1,11 @@
 import type { ApexUnitParseResult } from '../../parser/Apex/unit';
-import type { CustomLabelsParseResult } from '../../parser/Metadata/customLabels';
 import type { LwcBundleParseResult } from '../../parser/Lwc/parser';
-import type { ConvertKeys, CustomLabelsJson } from '../../types';
-import type { MetadataFinding } from './references';
+import type { ConvertKeys } from '../../types';
+import { apexDottedNameOf, walkApexParseResult } from '../Apex/walker';
 
-// カスタム表示ラベルの解析。方針: docs/metadata-implementation.md 10 章
-// ラベルの使用箇所 (LWC の @salesforce/label/c.<名前>、Apex の System.Label.<名前> / Label.<名前>、Flow の $Label.<名前>)、
-// 使われていないラベル、ないラベルへの参照
+// カスタム表示ラベルの使用箇所 (LWC の @salesforce/label/c.<名前>、Apex の System.Label.<名前> / Label.<名前>、
+// Flow の $Label.<名前>)。使われていないラベル・ないラベルへの参照は、依存関係のグラフで見る
+// (UNUSED_CUSTOM_LABEL はレポートの crossRef、UNKNOWN_CUSTOM_LABEL はグラフの指摘。docs/json-redesign-plan.md 6 章の 9)
 
 export type LabelUsageOrigin = 'lwc' | 'apex' | 'flow';
 
@@ -19,34 +18,6 @@ export type LabelUsage = {
     unit: string;
     /** 使っているところ (import・式など) の sourceKeys */
     sourceKeys?: ConvertKeys;
-};
-
-export type CustomLabelInfo = {
-    name: string;
-    value?: string;
-    language?: string;
-    protected?: boolean;
-    categories: string[];
-    /** ラベルのファイルの id (customLabels_CustomLabels) */
-    unit: string;
-    sourceKeys: ConvertKeys;
-    usages: LabelUsage[];
-};
-
-export type LabelAnalysisCode = 'UNKNOWN_CUSTOM_LABEL' | 'UNUSED_CUSTOM_LABEL';
-
-export type LabelFinding = MetadataFinding<LabelAnalysisCode> & { unit: string };
-
-export type LabelAnalysis = {
-    labels: CustomLabelInfo[];
-    findings: LabelFinding[];
-};
-
-export type LabelUsageInputs = {
-    lwc?: LwcBundleParseResult[];
-    apex?: ApexUnitParseResult[];
-    /** Flow など、ほかの解析で取り出した使用箇所 (flowAnalysis の getFlowLabelUsages) */
-    usages?: LabelUsage[];
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -86,89 +57,24 @@ export const getLwcLabelUsages = (bundles: LwcBundleParseResult[]): LabelUsage[]
         return usages;
     });
 
-/** Apex の式の . でつないだ名前 (System.Label.Greeting)。名前だけの並びでなければ undefined */
-const dottedName = (value: unknown): string | undefined => {
-    if (typeof value === 'string') return value;
-    if (isRecord(value) && value.kind === 'memberAccess' && value.type === 'object') {
-        const object = dottedName(value.object);
-        return object === undefined ? undefined : `${object}.${String(value.member)}`;
-    }
-    return undefined;
-};
-
 const APEX_LABEL = /^(?:System\.)?Label\.(\w+)$/i;
 
 /** Apex の System.Label.<名前> / Label.<名前> */
 export const getApexLabelUsages = (units: ApexUnitParseResult[]): LabelUsage[] =>
     units.flatMap((unit) => {
         const usages: LabelUsage[] = [];
-        walkJsonNodes(unit.result.base, (node) => {
-            if (node.kind !== 'memberAccess') return;
-            const match = dottedName(node)?.match(APEX_LABEL);
-            if (!match) return;
-            usages.push({
-                name: match[1]!,
-                origin: 'apex',
-                unit: unit.result.id,
-                sourceKeys: node.sourceKeys as ConvertKeys,
-            });
+        // Apex の共通の走査 (docs/json-redesign-plan.md の段階 A3)
+        walkApexParseResult(unit, {
+            memberAccess: (node) => {
+                const match = apexDottedNameOf(node)?.match(APEX_LABEL);
+                if (!match) return;
+                usages.push({
+                    name: match[1]!,
+                    origin: 'apex',
+                    unit: unit.result.id,
+                    sourceKeys: node.sourceKeys as ConvertKeys,
+                });
+            },
         });
         return usages;
     });
-
-/** カスタム表示ラベルの解析 */
-export const analyzeCustomLabels = (
-    labelFiles: CustomLabelsParseResult[],
-    inputs: LabelUsageInputs = {},
-): LabelAnalysis => {
-    const usages = [
-        ...getLwcLabelUsages(inputs.lwc ?? []),
-        ...getApexLabelUsages(inputs.apex ?? []),
-        ...(inputs.usages ?? []),
-    ];
-    const usagesByName = new Map<string, LabelUsage[]>();
-    usages.forEach((usage) => {
-        const key = usage.name.toLowerCase();
-        usagesByName.set(key, [...(usagesByName.get(key) ?? []), usage]);
-    });
-
-    const labels: CustomLabelInfo[] = labelFiles.flatMap((file) => {
-        if (file.dataType !== 'customLabels') return [];
-        const json = file.result.base as CustomLabelsJson;
-        return (json.labels ?? []).map((label) => ({
-            name: label.fullName,
-            ...(label.value !== undefined ? { value: label.value } : {}),
-            ...(label.language !== undefined ? { language: label.language } : {}),
-            ...(label.protected !== undefined ? { protected: label.protected } : {}),
-            categories: label.categories ?? [],
-            unit: file.result.id,
-            sourceKeys: label.sourceKeys,
-            usages: usagesByName.get(label.fullName.toLowerCase()) ?? [],
-        }));
-    });
-
-    const known = new Set(labels.map((label) => label.name.toLowerCase()));
-    const findings: LabelFinding[] = [
-        ...usages
-            .filter((usage) => !known.has(usage.name.toLowerCase()))
-            .map((usage): LabelFinding => ({
-                code: 'UNKNOWN_CUSTOM_LABEL',
-                severity: 'warning',
-                unit: usage.unit,
-                target: usage.name,
-                message: `カスタム表示ラベル ${usage.name} がリポジトリにない`,
-                ...(usage.sourceKeys ? { sourceKeys: usage.sourceKeys } : {}),
-            })),
-        ...labels
-            .filter((label) => label.usages.length === 0)
-            .map((label): LabelFinding => ({
-                code: 'UNUSED_CUSTOM_LABEL',
-                severity: 'info',
-                unit: label.unit,
-                target: label.name,
-                message: `カスタム表示ラベル ${label.name} はリポジトリの中で使われていない`,
-                sourceKeys: label.sourceKeys,
-            })),
-    ];
-    return { labels, findings };
-};

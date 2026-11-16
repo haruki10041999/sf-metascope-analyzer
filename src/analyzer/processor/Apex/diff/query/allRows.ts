@@ -1,20 +1,12 @@
 import { AllRowsJson } from '../../../../types';
 
-import {
-    Match,
-    NodeDiff,
-    ValueDiff,
-    makeNodeDiff,
-    makeValueDiff,
-} from '../../../commons/diff/commons';
+import { Match, NodeDiff, makeNodeDiff } from '../../../commons/diff/commons';
 
-export type AllRowsJsonDiff = NodeDiff<'allRowsClause', AllRowsJson, { value: ValueDiff<string> }>;
+// ALL ROWS は値を持たないので、比べるのは位置だけ
+export type AllRowsJsonDiff = NodeDiff<'allRowsClause', AllRowsJson, Record<string, never>>;
 
 export const makeAllRowsDiff = (
     before: AllRowsJson,
     after: AllRowsJson,
     match: Match = 'slot',
-): AllRowsJsonDiff =>
-    makeNodeDiff('allRowsClause', before, after, match, (b, a) => ({
-        value: makeValueDiff(b.value, a.value),
-    }));
+): AllRowsJsonDiff => makeNodeDiff('allRowsClause', before, after, match, () => ({}));

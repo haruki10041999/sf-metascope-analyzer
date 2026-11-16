@@ -3,6 +3,7 @@ import {
     FIELD_SCHEMA,
     PICKLIST_VALUE_SCHEMA,
     PicklistValueJson,
+    PicklistValueSettingJson,
     ValueSetJson,
     LookupFilterJson,
 } from '../../../types';
@@ -57,6 +58,11 @@ export type ValueSetJsonDiff = {
     valueSetName?: PresentDiff<string, ValueDiff<string>>;
     controllingField?: PresentDiff<string, ValueDiff<string>>;
     values?: PresentDiff<PicklistValueJson[], PicklistValuesDiff[]>;
+    /** 依存する選択リストの対応表は B. 集合 (値ごとの組) */
+    valueSettings?: PresentDiff<
+        PicklistValueSettingJson[],
+        TypedListDiff<PicklistValueSettingJson, never>
+    >;
 };
 
 export const makeValueSetDiff = (
@@ -90,6 +96,20 @@ export const makeValueSetDiff = (
             ),
         ),
     ),
+    ...presentEntry(
+        'valueSettings',
+        makePresentDiff(
+            before.valueSettings?.map(sortSetting),
+            after.valueSettings?.map(sortSetting),
+            makeUnorderedValuesDiff,
+        ),
+    ),
+});
+
+/** 制御項目の値の並びは順に意味がないので、名前の順にしてから比べる */
+const sortSetting = (setting: PicklistValueSettingJson): PicklistValueSettingJson => ({
+    ...setting,
+    controllingFieldValues: [...setting.controllingFieldValues].sort(),
 });
 
 export type CustomFieldJsonDiff = NodeDiff<

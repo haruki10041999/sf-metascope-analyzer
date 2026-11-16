@@ -13,7 +13,7 @@ import { buildLwcIr } from '../../types/lwc_IR/commonVisitor';
 import { fileTypePair, type FileTypeClass } from '../../types/lwc_IR/standardizedVisitor/file';
 
 import { LwcCommonErrorListener, type LwcResolvedError } from './errorListener';
-import { getScriptLanguage, parseScript, type ScriptLanguage } from './script';
+import { getScriptLanguage, hasFlowPragma, parseScript, type ScriptLanguage } from './script';
 import { validateScript } from './validate/javascript';
 
 export type LwcModuleParseOptions = {
@@ -74,6 +74,8 @@ export const parseLwcModule = (
             name: path.posix.basename(path.posix.dirname(filePath)) || 'unknown',
             ...(options.namespace ? { namespace: options.namespace } : {}),
             language,
+            // Flow (// @flow の .js) は型を空白にしてから検証する (LWC Compiler は Flow を読まない)
+            flow: language === 'js' && hasFlowPragma(source),
             ast,
         }).forEach((diagnostic) => listener.lwcDiagnostic(diagnostic));
     }

@@ -114,11 +114,9 @@
                       "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
                       "sourceKey": "tSStringKeyword_466faa2ace4db0d3"
                     },
-                    "text": "string",
                     "type": "primitive",
                     "primitiveType": "string"
                   },
-                  "references": [],
                   "optional": false,
                   "modifier": {
                     "decorator": [
@@ -153,7 +151,6 @@
                       "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
                       "sourceKey": "tSStringKeyword_e7b637aac420a4a5"
                     },
-                    "text": "string",
                     "type": "primitive",
                     "primitiveType": "string"
                   },
@@ -165,7 +162,6 @@
                     },
                     "value": ""
                   },
-                  "references": [],
                   "optional": false,
                   "modifier": {
                     "decorator": [
@@ -200,11 +196,9 @@
                       "objectKey": "tSNumberKeyword_850ba0354605a53c",
                       "sourceKey": "tSNumberKeyword_579064a0403c6288"
                     },
-                    "text": "number",
                     "type": "primitive",
                     "primitiveType": "number"
                   },
-                  "references": [],
                   "optional": true,
                   "modifier": {
                     "decorator": [
@@ -295,12 +289,6 @@
                           ]
                         }
                       }
-                    ],
-                    "references": [
-                      {
-                        "local": "formatAmount",
-                        "source": "c/utils"
-                      }
                     ]
                   },
                   "variantType": {
@@ -309,7 +297,6 @@
                       "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
                       "sourceKey": "tSStringKeyword_0a75a8439baa2b61"
                     },
-                    "text": "string",
                     "type": "primitive",
                     "primitiveType": "string"
                   }
@@ -333,7 +320,6 @@
                       "objectKey": "tSVoidKeyword_9a0d7732e44e61dc",
                       "sourceKey": "tSVoidKeyword_4d7de40c6a5c7e36"
                     },
-                    "text": "void",
                     "type": "primitive",
                     "primitiveType": "void"
                   },
@@ -445,8 +431,7 @@
                         ]
                       }
                     }
-                  ],
-                  "references": []
+                  ]
                 }
               ]
             },

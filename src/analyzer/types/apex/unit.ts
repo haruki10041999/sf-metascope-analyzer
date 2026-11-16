@@ -28,26 +28,19 @@ import { ModifiersJson, makeModifiersJson } from './modifier';
 // IR の木にはエラーのノードがないので、unit の中にエラーのノードは出てこない (エラーは resolvedError に出る)。
 // ファイル全体を読めなかったとき (buildApexIr が木を返さなかったとき) は、呼び出す側 (parser/Apex/source.ts) が扱う
 
-export type MemberStatementJson = {
-    kind: 'statement';
-    statement: StatementJson;
-    modifier: ModifiersJson;
-};
-
-type BlockMemberJson = (MemberDeclarationJson & { modifier: ModifiersJson }) | MemberStatementJson;
+/**
+ * トリガー・匿名 Apex の本文の要素。宣言は修飾子を持ち、文はそのまま置く
+ * (文を包む入れ物 MemberStatementJson は段階 A5 でなくした。文法上、文に修飾子は付かない)
+ */
+export type BlockMemberJson = (MemberDeclarationJson & { modifier: ModifiersJson }) | StatementJson;
 
 const makeBlockMemberJson = (
     target: AnonymousBlockMemberTypeClass | TriggerBlockMemberTypeClass,
 ): BlockMemberJson => {
     const member = target.getFields();
     switch (member.kind) {
-        // 文法上、文には修飾子が付かないので空の ModifiersJson にする (v1 と同じ)
         case 'statement':
-            return {
-                kind: 'statement',
-                statement: makeStatementJson(member.statement),
-                modifier: makeModifiersJson([]),
-            };
+            return makeStatementJson(member.statement);
         case 'declaration':
             return {
                 ...makeMemberDeclarationJson(member.declaration),

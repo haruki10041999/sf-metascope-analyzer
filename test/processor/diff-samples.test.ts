@@ -174,12 +174,16 @@ describe('diff samples (docs/examples/repository)', () => {
             nodes.filter((n) => n.kind === 'triggerCase').map((n) => n.status),
             ['removed', 'unchanged', 'added'],
         );
-        const condition = nodes.find((n) => n.kind === 'ifCondition' && n.status === 'changed');
-        assert.ok(condition && 'fields' in condition);
-        const expression = condition.fields.condition;
+        // 条件は式そのもの (段階 A4 で ifCondition をなくした)。if の節の condition が式の差分
+        const ifDiff = nodes.find((n) => n.kind === 'if' && n.status === 'changed');
+        assert.ok(ifDiff && 'fields' in ifDiff);
+        const branch = (ifDiff.fields.conditionBlock as Node[]).find(
+            (b) => b.status === 'changed',
+        )!;
+        const expression = (branch as unknown as { fields: { condition: Node } }).fields.condition;
         assert.equal(expression.status, 'changed');
-        // kind / sourceKeys は中身から分ける。after の && の式は JSON ノードではないので before 側だけを持つ
-        assert.deepEqual(expression.kind, { before: 'memberAccess' });
+        // 式はどれも kind を持つ (段階 A2)。kind が違うので置き換えになり、kind は before / after を持つ
+        assert.deepEqual(expression.kind, { before: 'memberAccess', after: 'logical' });
         assert.equal(expression.after.operator, '&&');
     });
 

@@ -121,8 +121,7 @@
               ]
             }
           ]
-        },
-        "references": []
+        }
       },
       {
         "kind": "lwcDeclaration",
@@ -134,7 +133,6 @@
         "declarationType": "function",
         "exported": true,
         "variableKind": "const",
-        "references": [],
         "arrow": true,
         "param": [
           {
@@ -144,7 +142,6 @@
             "variantType": {
               "kind": "lwcType",
               "sourceKeys": {},
-              "text": "number",
               "type": "primitive",
               "primitiveType": "number"
             },
@@ -155,7 +152,6 @@
         "returnType": {
           "kind": "lwcType",
           "sourceKeys": {},
-          "text": "string",
           "type": "primitive",
           "primitiveType": "string"
         },
@@ -190,7 +186,6 @@
         "name": "toRows",
         "declarationType": "function",
         "exported": true,
-        "references": [],
         "arrow": false,
         "param": [
           {
@@ -200,7 +195,6 @@
             "variantType": {
               "kind": "lwcType",
               "sourceKeys": {},
-              "text": "unknown[]",
               "type": "array",
               "elementType": {
                 "type": "primitive",
@@ -217,9 +211,13 @@
             "variantType": {
               "kind": "lwcType",
               "sourceKeys": {},
-              "text": "number",
               "type": "primitive",
               "primitiveType": "number"
+            },
+            "init": {
+              "kind": "jsNumber",
+              "sourceKeys": {},
+              "value": 50
             },
             "optional": true,
             "modifier": {}
@@ -228,11 +226,12 @@
         "returnType": {
           "kind": "lwcType",
           "sourceKeys": {},
-          "text": "Row[]",
           "type": "array",
           "elementType": {
             "type": "custom",
-            "customType": "Row"
+            "customType": [
+              "Row"
+            ]
           }
         },
         "async": false,
@@ -299,9 +298,10 @@
                     "convertType": {
                       "kind": "lwcType",
                       "sourceKeys": {},
-                      "text": "Row",
                       "type": "custom",
-                      "customType": "Row"
+                      "customType": [
+                        "Row"
+                      ]
                     }
                   }
                 }
@@ -331,7 +331,6 @@
               "sourceKeys": {},
               "value": 0
             },
-            "references": [],
             "optional": false,
             "modifier": {
               "declaration": [
@@ -359,20 +358,19 @@
                 {
                   "kind": "lwcType",
                   "sourceKeys": {},
-                  "text": "string",
                   "type": "primitive",
                   "primitiveType": "string"
                 },
                 {
                   "kind": "lwcType",
                   "sourceKeys": {},
-                  "text": "Row",
                   "type": "custom",
-                  "customType": "Row"
+                  "customType": [
+                    "Row"
+                  ]
                 }
               ]
             },
-            "references": [],
             "optional": false,
             "modifier": {}
           },
@@ -410,13 +408,11 @@
                     "member": "size"
                   }
                 }
-              ],
-              "references": []
+              ]
             },
             "variantType": {
               "kind": "lwcType",
               "sourceKeys": {},
-              "text": "number",
               "type": "primitive",
               "primitiveType": "number"
             }
@@ -431,7 +427,6 @@
             "returnType": {
               "kind": "lwcType",
               "sourceKeys": {},
-              "text": "number",
               "type": "primitive",
               "primitiveType": "number"
             },
@@ -443,11 +438,12 @@
                 "variantType": {
                   "kind": "lwcType",
                   "sourceKeys": {},
-                  "text": "Row[]",
                   "type": "array",
                   "elementType": {
                     "type": "custom",
-                    "customType": "Row"
+                    "customType": [
+                      "Row"
+                    ]
                   }
                 },
                 "optional": false,
@@ -628,8 +624,7 @@
                   "name": "count"
                 }
               }
-            ],
-            "references": []
+            ]
           }
         ]
       }
@@ -647,7 +642,6 @@
         "variantType": {
           "kind": "lwcType",
           "sourceKeys": {},
-          "text": "'asc' | 'desc' | 'none'",
           "type": "union",
           "types": [
             {
@@ -884,6 +878,19 @@
         "offset": 781,
         "line": 34,
         "column": 21
+      }
+    },
+    {
+      "context": "50",
+      "start": {
+        "offset": 436,
+        "line": 19,
+        "column": 59
+      },
+      "end": {
+        "offset": 438,
+        "line": 19,
+        "column": 61
       }
     },
     {

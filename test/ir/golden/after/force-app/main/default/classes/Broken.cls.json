@@ -18,52 +18,59 @@
           },
           "name": "run",
           "returnType": "void",
+          "param": [],
           "block": [
             {
               "kind": "localVariable",
               "sourceKeys": {},
-              "variable": {
-                "variants": [
-                  {
-                    "sourceKeys": {},
-                    "name": "x",
-                    "init": {
-                      "kind": "memberAccess",
-                      "sourceKeys": {},
-                      "type": "method",
-                      "member": "foo",
-                      "memberArg": [
-                        {
-                          "sourceKeys": {},
-                          "value": "1",
-                          "valueType": "integer"
-                        }
-                      ]
-                    }
-                  }
-                ],
-                "variantsType": {
-                  "kind": "type",
+              "variantType": {
+                "kind": "type",
+                "sourceKeys": {},
+                "type": "primitive",
+                "primitiveType": "Integer"
+              },
+              "modifier": {},
+              "variants": [
+                {
+                  "kind": "variant",
                   "sourceKeys": {},
-                  "type": "primitive",
-                  "primitiveType": "Integer"
-                },
-                "modifier": {}
-              }
+                  "name": "x",
+                  "init": {
+                    "kind": "call",
+                    "sourceKeys": {},
+                    "callee": {
+                      "kind": "identifier",
+                      "sourceKeys": {},
+                      "name": "foo"
+                    },
+                    "arg": [
+                      {
+                        "kind": "integer",
+                        "sourceKeys": {},
+                        "value": "1"
+                      }
+                    ]
+                  }
+                }
+              ]
             },
             {
               "kind": "expression",
               "sourceKeys": {},
               "value": {
-                "kind": "memberAccess",
+                "kind": "call",
                 "sourceKeys": {},
-                "type": "method",
-                "member": "b"
+                "callee": {
+                  "kind": "identifier",
+                  "sourceKeys": {},
+                  "name": "b"
+                },
+                "arg": []
               }
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -74,7 +81,7 @@
         }
       ],
       "modifier": {
-        "access": [
+        "keyword": [
           {
             "kind": "modifier",
             "sourceKeys": {},
@@ -151,6 +158,19 @@
       }
     },
     {
+      "context": "b",
+      "start": {
+        "offset": 94,
+        "line": 5,
+        "column": 8
+      },
+      "end": {
+        "offset": 95,
+        "line": 5,
+        "column": 9
+      }
+    },
+    {
       "context": "b()",
       "start": {
         "offset": 94,
@@ -187,6 +207,19 @@
         "offset": 106,
         "line": 7,
         "column": 1
+      }
+    },
+    {
+      "context": "foo",
+      "start": {
+        "offset": 76,
+        "line": 4,
+        "column": 8
+      },
+      "end": {
+        "offset": 79,
+        "line": 4,
+        "column": 11
       }
     },
     {

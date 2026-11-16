@@ -131,7 +131,6 @@ describe('LWC の文の JSON (段階 4)', () => {
                         target: id('n'),
                         variantType: {
                             kind: 'lwcType',
-                            text: 'number',
                             type: 'primitive',
                             primitiveType: 'number',
                         },
@@ -284,7 +283,6 @@ describe('LWC の文の JSON (段階 4)', () => {
                         param: id('error'),
                         variantType: {
                             kind: 'lwcType',
-                            text: 'unknown',
                             type: 'primitive',
                             primitiveType: 'unknown',
                         },
@@ -333,7 +331,6 @@ describe('LWC の文の JSON (段階 4)', () => {
                     variant: 'a',
                     variantType: {
                         kind: 'lwcType',
-                        text: 'number',
                         type: 'primitive',
                         primitiveType: 'number',
                     },
@@ -343,7 +340,6 @@ describe('LWC の文の JSON (段階 4)', () => {
             ],
             returnType: {
                 kind: 'lwcType',
-                text: 'number',
                 type: 'primitive',
                 primitiveType: 'number',
             },

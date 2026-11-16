@@ -15,3 +15,4 @@ export * from './flow';
 export * from './page';
 export * from './record';
 export * from './businessProcess';
+export * from './markup';

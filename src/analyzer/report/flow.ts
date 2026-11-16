@@ -1,11 +1,17 @@
 import { analyzeAutomation } from '../processor/Metadata/automation';
-import { analyzeFlows } from '../processor/Metadata/flowAnalysis';
+import {
+    type FlowInterfaceVariable,
+    analyzeFlows,
+    flowInterfaceOf,
+} from '../processor/Metadata/flowAnalysis';
+import { analyzeFlowRefs } from '../processor/Metadata/flowRefs';
 import { FLOW_START, type FlowEdge, type FlowJson } from '../types';
 import { changedProps, compareKeyed, contextOf, readable, rowBase } from './commons';
 import type {
     AutomationRow,
     FlowDiagram,
     FlowDiffRow,
+    FlowInterfaceRow,
     FlowListRow,
     FlowReferenceRow,
     MetadataSnapshot,
@@ -181,29 +187,22 @@ export const getFlowReferences = (input: SnapshotInput): FlowReferenceRow[] => {
         analysis.findings.map((f) => [`${f.flow}:${f.target}:${f.sourceKeys?.sourceKey}`, f.code]),
     );
     return (flowsOf(input.after) ?? []).flatMap(({ json, filePath }) => {
-        const owners = [
-            ...(json.start ? [{ element: FLOW_START, node: json.start }] : []),
-            ...(json.elements ?? []).map((node) => ({ element: node.name, node })),
-            ...(json.resources ?? []).map((node) => ({ element: node.name, node })),
-        ];
-        return owners.flatMap(({ element, node }) =>
-            (node.references ?? [])
-                .filter((ref) => ref.refType !== 'element' && ref.refType !== 'global')
-                .map((ref) => {
-                    const problem = problems.get(
-                        `${json.name}:${ref.value}:${node.sourceKeys.sourceKey}`,
-                    );
-                    return {
-                        filePath,
-                        sourceKeys: node.sourceKeys,
-                        flow: json.name,
-                        element,
-                        refType: ref.refType,
-                        value: ref.value,
-                        ...(problem ? { problem } : {}),
-                    };
-                }),
-        );
+        // 使っているものは解析で出す (Metadata/flowRefs.ts。段階 M3 で JSON の references から移した)
+        return analyzeFlowRefs(json)
+            .filter((ref) => ref.refType !== 'element' && ref.refType !== 'globalVariable')
+            .map((ref) => {
+                const sourceKeys = ref.sourceKeys!;
+                const problem = problems.get(`${json.name}:${ref.target}:${sourceKeys.sourceKey}`);
+                return {
+                    filePath,
+                    sourceKeys,
+                    flow: json.name,
+                    element: ref.element,
+                    refType: ref.refType,
+                    value: ref.target,
+                    ...(problem ? { problem } : {}),
+                };
+            });
     });
 };
 
@@ -282,3 +281,40 @@ export const getAutomationByObject = (input: SnapshotInput): AutomationRow[] => 
         };
     });
 };
+
+/**
+ * flow.interface: Flow の入力・出力の変数 (段階 M8 の #11。意味の差分)。
+ * before を渡すと、2 つの時点の解析の結果 (flowInterfaceOf) を比べ、増えた・減った・変わった入出力に status を付ける。
+ * onlyChanged なら unchanged を出さない
+ */
+export const getFlowInterface = (
+    input: SnapshotInput,
+    args: { onlyChanged?: boolean } = {},
+): FlowInterfaceRow[] =>
+    compareFlows(input).flatMap((compared) => {
+        const flow = (compared.after ?? compared.before)!;
+        const variables = compareKeyed<FlowInterfaceVariable>(
+            compared.before ? flowInterfaceOf(compared.before.json) : undefined,
+            compared.after ? flowInterfaceOf(compared.after.json) : undefined,
+            (v) => v.name,
+            input.before !== undefined,
+            (b, a) => changedProps(b, a, ['sourceKeys']).length === 0,
+        );
+        return variables
+            .filter((v) => !args.onlyChanged || (v.status && v.status !== 'unchanged'))
+            .map((v): FlowInterfaceRow => {
+                const variable = (v.after ?? v.before)!;
+                const { name, sourceKeys: _sourceKeys, ...rest } = variable;
+                const changed =
+                    v.status === 'changed'
+                        ? changedProps(v.before, v.after, ['sourceKeys']).map((c) => c.name)
+                        : [];
+                return {
+                    ...rowBase(v, variable, flow.filePath),
+                    flow: flow.json.name,
+                    variable: name,
+                    ...rest,
+                    ...(changed.length ? { changedProperties: changed } : {}),
+                };
+            });
+    });

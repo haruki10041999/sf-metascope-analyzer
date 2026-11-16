@@ -51,9 +51,65 @@ export type UnitParseResult = IdParseResult;
 /** 単位の差分 (どの種類も同じ形) */
 export type UnitDiff = IdUnitDiff<UnitParseResult, unknown>;
 
+/**
+ * parser の系統。JSON の形の版 (UNIT_FORMAT_VERSIONS) は系統ごとに持つ (docs/save-format-plan.md 3.1 D)。
+ * metadata はフォルダ単位のメタデータ (権限セット・Flow・レイアウトなど 50 種類ほど) をまとめたもの
+ */
+export type UnitLineage = 'apex' | 'lwc' | 'object' | 'objectTranslation' | 'metadata';
+
+/**
+ * 系統ごとの JSON の形の版。その系統の JSON の形・キーの作り方を変えたら 1 つ上げる
+ * (保存データのうち、その系統の単位だけを parse し直す)。入れ物・置き場所の版は SAVE_FORMAT_VERSION。
+ * 1 種類だけ変えるときは、UnitType.formatVersion (既定 0) を上げてもよい
+ * - apex 1: 系統ごとの版を入れた (2026-11-16)
+ * - apex 2: SOSL の find を { type: 'literal' | 'bind', value } にした (docs/json-redesign-plan.md の A1)
+ * - apex 3: 式に kind を付け、ソースの文字列・定数をなくした (identifier・call・new・binary など。A2)
+ * - apex 4: 文の形を LWC にそろえた (条件を包む kind をなくし、本体はいつも配列、for / forEach、catch の型の JSON。A4)
+ * - apex 5: 修飾子を { keyword, annotation } にし (分類は解析で出す)、アノテーションの引数をリテラルの式の配列にした。
+ *   初期化ブロックに sourceKeys を持たせ、文を包む入れ物 (kind: 'statement') をなくした (A5)
+ * - apex 6: 型の customType をいつも名前の並びにし、SOQL の FORMULA を { type: 'formula', value }、
+ *   WITH の条件を { mode: 'EXPRESSION', condition }、TYPEOF の節を typeOfWhen (位置つき) にし、ALL ROWS の値をなくした。
+ *   merge を master / merged に分け、メソッド・コンストラクタの param をいつも配列にした (A6)
+ * - lwc 1 / object 1 / objectTranslation 1 / metadata 1: 系統ごとの版を入れた (2026-11-16)
+ * - object 2: 子 (レコードタイプ・リストビューなど 8 種類) に skippedElements、選択リストの valueSettings、
+ *   ボタン・リンクの page を足した (docs/json-redesign-plan.md の M3)
+ * - metadata 2: Flow の references を JSON から消し (解析 processor/Metadata/flowRefs.ts に移した)、
+ *   FlexiPage の部品の valueLists を足した (M3)
+ * - object 3 / metadata 3: 数式を JSON (fx*) にした。項目の formula・defaultValue、入力規則の errorConditionFormula、
+ *   ワークフローのルール・項目自動更新、クイックアクションの項目の formula、Flow の数式の資源の expression・起動の filterFormula。
+ *   読めない数式は文字列のまま (理由は resolvedError の FORMULA_SYNTAX)。M4 は文字列と並べる段を置かず 1 回で移した
+ * - object 4 / metadata 4: 条件の行 (リストビューの filters・参照の絞り込みの filterItems・FlexiPage の表示条件・
+ *   ワークフロー / 共有ルールの criteriaItems) を criterion にし、booleanFilter を木にした (M5)
+ * - object 5 / metadata 5: Visualforce・Aura の本体を木 (markupElement・markupText) にし、使っている部品・差し込みの一覧を
+ *   JSON から消した。差し込みを含む属性値・テキスト・メールの件名と本文・ボタンの URL・Flow のテキストテンプレートを fxTemplate にした (M6)
+ * - metadata 6: 値の木の中の条件の行 (Flow の conditions・filters、承認・割り当てなどの criteriaItems) を criterion、
+ *   数式 (formulaExpression・formula) を fx*、booleanFilter・独自の conditionLogic を木、画面のテキストを fxTemplate にした。
+ *   組織の翻訳の子の kind を globalQuickActionTranslation・customPageWebLinkTranslation にした (M7)
+ * - metadata 7: Flow の引数・割り当て・スケジュールの経路 (flowParameter・flowAssignment・flowScheduledPath)、
+ *   共有先・承認者 (sharingPrincipals・approver) に kind と位置を付け、Flow の変数の型・入出力をノードの直下にした。
+ *   FlexiPage の部品・項目の properties を attributes (template の properties は templateAttributes) にした (M8)
+ * - object 6: レコードタイプ・ビジネスプロセスの使える選択リスト値に kind (picklistValueSelection) と位置を付けた (M8)
+ * - lwc 2: 型の JSON の text (書いた文字列) をなくし、other を種類ごとの型 (conditional・mapped・indexedAccess・operator・
+ *   templateLiteral・import・infer・predicate・コンストラクタの function、ほかは unknown) にした。customType・typeof の target を
+ *   名前の並びにし、interface の extends を型の JSON の並びにした (docs/lwc-json-types.md 8.8 の残り)
+ * - lwc 3: クラスのメンバーの計算されたキー ([expr]) に、キーの式 computedKey を足した。import の参照 (references) を JSON から
+ *   消して解析 (processor/Lwc/calls.ts) に移し、引数に既定値の式 init と rest を足した (docs/lwc-json-types.md 8.8 の残り)
+ */
+export const UNIT_FORMAT_VERSIONS: Readonly<Record<UnitLineage, number>> = {
+    apex: 6,
+    lwc: 3,
+    object: 6,
+    objectTranslation: 1,
+    metadata: 7,
+};
+
 export type UnitType<R extends UnitParseResult = UnitParseResult> = {
     /** 種類 ('apexClass' / 'lwc' / 'object' / 'permissionSet' など) */
     readonly type: string;
+    /** parser の系統 (JSON の形の版の単位) */
+    readonly lineage: UnitLineage;
+    /** この種類だけの JSON の形の版 (系統の版に足す。既定 0) */
+    readonly formatVersion?: number;
     /** 保存名の接頭辞 (<接頭辞><名前>) */
     readonly prefix: string;
     /** ファイル (リポジトリからの相対パス) が属する単位の場所。この種類のファイルでなければ undefined */
@@ -125,6 +181,7 @@ const apexUnitType = (type: string, unitType: ApexUnitType): UnitType<ApexUnitPa
     const extension = APEX_SOURCE_EXTENSIONS[unitType];
     return {
         type,
+        lineage: 'apex',
         prefix,
         locate: (filePath) => {
             if (filePath.split('/').includes('node_modules')) return undefined;
@@ -167,6 +224,7 @@ const apexUnitType = (type: string, unitType: ApexUnitType): UnitType<ApexUnitPa
 
 const lwcUnitType: UnitType<LwcBundleParseResult> = {
     type: 'lwc',
+    lineage: 'lwc',
     prefix: LWC_SAVE_PREFIX,
     locate: (filePath) => locateFolderUnit(filePath, 'lwc'),
     exists: () => true,
@@ -202,6 +260,7 @@ const OBJECT_MDAPI_SUFFIX = '.object';
 
 const objectUnitType: UnitType<ObjectParseResult> = {
     type: 'object',
+    lineage: 'object',
     prefix: OBJECT_SAVE_PREFIX,
     locate: (filePath) => {
         // メタデータ API の形式: objects/<API 名>.object (1 ファイルの中に項目などを書く)
@@ -232,6 +291,7 @@ const objectUnitType: UnitType<ObjectParseResult> = {
 
 const objectTranslationUnitType: UnitType<ObjectTranslationParseResult> = {
     type: 'objectTranslation',
+    lineage: 'objectTranslation',
     prefix: OBJECT_TRANSLATION_SAVE_PREFIX,
     locate: (filePath) => locateFolderUnit(filePath, 'objectTranslations'),
     exists: () => true,
@@ -332,6 +392,7 @@ export const metadataFolderUnitType = (
 
     return {
         type,
+        lineage: 'metadata',
         prefix: parser.prefix,
         locate: (filePath) => {
             const parts = filePath.split('/');
@@ -448,6 +509,10 @@ export const UNIT_TYPES: readonly AnyUnitType[] = [
     objectTranslationUnitType,
     ...METADATA_FOLDER_PARSERS.map(metadataFolderUnitType),
 ] as AnyUnitType[];
+
+/** 単位の種類の JSON の形の版 (<系統の版>.<種類の版>) */
+export const unitFormatVersionOf = (unitType: AnyUnitType): string =>
+    `${UNIT_FORMAT_VERSIONS[unitType.lineage]}.${unitType.formatVersion ?? 0}`;
 
 /** 種類の名前から */
 export const findUnitType = (type: string): AnyUnitType | undefined =>

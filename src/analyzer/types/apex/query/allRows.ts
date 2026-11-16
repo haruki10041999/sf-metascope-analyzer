@@ -5,15 +5,10 @@ import type { AllRowsClauseTypeClass } from '../../apex_IR';
 
 import { makeNodeJson } from '../commons/node';
 
-export type AllRowsJson = JsonType<'allRowsClause'> & {
-    value: string;
-};
+/** ALL ROWS。値は持たない (いつも ALL ROWS なので) */
+export type AllRowsJson = JsonType<'allRowsClause'>;
 
 export const isAllRowsJson = typia.createIs<AllRowsJson>();
 
-// v2 の value は常に 'ALL ROWS' (ソースの大文字・小文字にかかわらずそろえる)
-export const makeAllRowsJson = (target: AllRowsClauseTypeClass): AllRowsJson => {
-    return makeNodeJson<AllRowsJson>('allRowsClause', target, {
-        value: target.getFields().value,
-    });
-};
+export const makeAllRowsJson = (target: AllRowsClauseTypeClass): AllRowsJson =>
+    makeNodeJson<AllRowsJson>('allRowsClause', target);

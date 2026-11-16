@@ -7,7 +7,7 @@
     "base": {
       "kind": "flow",
       "sourceKeys": {
-        "objectKey": "flow_0b0a1ab3bb581695",
+        "objectKey": "flow_d1886448fc511004",
         "sourceKey": "flow_533601b48e7551a1"
       },
       "name": "Account_Wizard",
@@ -26,7 +26,7 @@
         {
           "kind": "flowRecordLookup",
           "sourceKeys": {
-            "objectKey": "flowRecordLookup_9b7dd3866a1b6372",
+            "objectKey": "flowRecordLookup_dc6a5aa966b4cb45",
             "sourceKey": "flowRecordLookup_7d3e549c22554faf"
           },
           "name": "Get_Account",
@@ -36,11 +36,26 @@
             "filterLogic": "and",
             "filters": [
               {
-                "field": "Tier__c",
+                "kind": "criterion",
+                "sourceKeys": {
+                  "objectKey": "criterion_0abd32bffb6bda0a",
+                  "sourceKey": "criterion_aa94f49701cf3b73"
+                },
+                "left": {
+                  "kind": "fxName",
+                  "sourceKeys": {
+                    "objectKey": "fxName_c216aa0634f349bf",
+                    "sourceKey": "fxName_39df539607f3233d"
+                  },
+                  "path": [
+                    "Tier__c"
+                  ]
+                },
                 "operator": "EqualTo",
-                "value": {
-                  "type": "stringValue",
-                  "value": "Gold"
+                "right": {
+                  "type": "value",
+                  "value": "Gold",
+                  "valueType": "stringValue"
                 }
               }
             ],
@@ -53,30 +68,12 @@
             "storeOutputAutomatically": [
               true
             ]
-          },
-          "references": [
-            {
-              "refType": "object",
-              "value": "Account"
-            },
-            {
-              "refType": "field",
-              "value": "Account.Tier__c"
-            },
-            {
-              "refType": "field",
-              "value": "Account.Name"
-            },
-            {
-              "refType": "field",
-              "value": "Account.Unknown__c"
-            }
-          ]
+          }
         },
         {
           "kind": "flowScreen",
           "sourceKeys": {
-            "objectKey": "flowScreen_89d74b343922c9ad",
+            "objectKey": "flowScreen_09fb9feb6a5f3f31",
             "sourceKey": "flowScreen_da78defa1b5d2b8a"
           },
           "name": "Welcome",
@@ -92,19 +89,47 @@
             {
               "kind": "flowScreenField",
               "sourceKeys": {
-                "objectKey": "flowScreenField_e902bc49f286b771",
+                "objectKey": "flowScreenField_31111bdda40f6265",
                 "sourceKey": "flowScreenField_0f0d7172f0fd8d72"
               },
               "name": "Intro",
               "fieldType": "DisplayText",
               "properties": {
-                "fieldText": "<p>{!$Label.AccountListTitle}</p>"
+                "fieldText": {
+                  "kind": "fxTemplate",
+                  "sourceKeys": {
+                    "objectKey": "fxTemplate_82b8e072a6d82ea0",
+                    "sourceKey": "fxTemplate_f083f56e91a13cfe"
+                  },
+                  "parts": [
+                    "<p>",
+                    {
+                      "kind": "fxMerge",
+                      "sourceKeys": {
+                        "objectKey": "fxMerge_0fcdf4beba792b53",
+                        "sourceKey": "fxMerge_9a154c20319fceda"
+                      },
+                      "expression": {
+                        "kind": "fxName",
+                        "sourceKeys": {
+                          "objectKey": "fxName_7bc7140facb20a05",
+                          "sourceKey": "fxName_973439b717d85317"
+                        },
+                        "path": [
+                          "$Label",
+                          "AccountListTitle"
+                        ]
+                      }
+                    },
+                    "</p>"
+                  ]
+                }
               }
             },
             {
               "kind": "flowScreenField",
               "sourceKeys": {
-                "objectKey": "flowScreenField_a2acc9feae2238a4",
+                "objectKey": "flowScreenField_a8f8b469592e6b3f",
                 "sourceKey": "flowScreenField_760cc507d450af4b"
               },
               "name": "Accounts",
@@ -113,6 +138,11 @@
               "properties": {
                 "inputParameters": [
                   {
+                    "kind": "flowParameter",
+                    "sourceKeys": {
+                      "objectKey": "flowParameter_3df5007f5cc4babf",
+                      "sourceKey": "flowParameter_b75879eeb1eaf80e"
+                    },
                     "name": "title",
                     "value": {
                       "type": "stringValue",
@@ -140,39 +170,19 @@
                 "isRequired": false
               }
             }
-          ],
-          "references": [
-            {
-              "refType": "lwc",
-              "value": "accountList"
-            },
-            {
-              "refType": "lwc",
-              "value": "missingChart"
-            },
-            {
-              "refType": "label",
-              "value": "AccountListTitle"
-            }
           ]
         },
         {
           "kind": "flowSubflow",
           "sourceKeys": {
-            "objectKey": "flowSubflow_13e4b9c982e0656a",
+            "objectKey": "flowSubflow_eba4278201f9e44e",
             "sourceKey": "flowSubflow_2661cc0ec003e395"
           },
           "name": "Call_Status",
           "label": "Call Status",
           "properties": {
             "flowName": "Invoice_Status_Update"
-          },
-          "references": [
-            {
-              "refType": "flow",
-              "value": "Invoice_Status_Update"
-            }
-          ]
+          }
         }
       ],
       "edges": [
@@ -200,7 +210,47 @@
     },
     "sourceObject": [
       {
-        "objectKey": "flowRecordLookup_9b7dd3866a1b6372",
+        "objectKey": "fxName_c216aa0634f349bf",
+        "context": "Tier__c",
+        "source": [
+          {
+            "sourceKey": "fxName_39df539607f3233d",
+            "filePath": "flows/Account_Wizard.flow-meta.xml",
+            "start": {
+              "offset": 1080,
+              "line": 32,
+              "column": 19
+            },
+            "end": {
+              "offset": 1087,
+              "line": 32,
+              "column": 26
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "criterion_0abd32bffb6bda0a",
+        "context": "<filters>\n            <field>Tier__c</field>\n            <operator>EqualTo</operator>\n            <value>\n                <stringValue>Gold</stringValue>\n            </value>\n        </filters>",
+        "source": [
+          {
+            "sourceKey": "criterion_aa94f49701cf3b73",
+            "filePath": "flows/Account_Wizard.flow-meta.xml",
+            "start": {
+              "offset": 1051,
+              "line": 31,
+              "column": 8
+            },
+            "end": {
+              "offset": 1244,
+              "line": 37,
+              "column": 18
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flowRecordLookup_dc6a5aa966b4cb45",
         "context": "<recordLookups>\n        <name>Get_Account</name>\n        <label>Get Account</label>\n        <locationX>176</locationX>\n        <locationY>134</locationY>\n        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>\n        <connector>\n            <targetReference>Welcome</targetReference>\n        </connector>\n        <faultConnector>\n            <targetReference>Welcome</targetReference>\n        </faultConnector>\n        <filterLogic>and</filterLogic>\n        <filters>\n            <field>Tier__c</field>\n            <operator>EqualTo</operator>\n            <value>\n                <stringValue>Gold</stringValue>\n            </value>\n        </filters>\n        <getFirstRecordOnly>true</getFirstRecordOnly>\n        <object>Account</object>\n        <queriedFields>Name</queriedFields>\n        <queriedFields>Unknown__c</queriedFields>\n        <storeOutputAutomatically>true</storeOutputAutomatically>\n    </recordLookups>",
         "source": [
           {
@@ -220,7 +270,67 @@
         ]
       },
       {
-        "objectKey": "flowScreenField_e902bc49f286b771",
+        "objectKey": "fxName_7bc7140facb20a05",
+        "context": "$Label.AccountListTitle",
+        "source": [
+          {
+            "sourceKey": "fxName_973439b717d85317",
+            "filePath": "flows/Account_Wizard.flow-meta.xml",
+            "start": {
+              "offset": 1954,
+              "line": 57,
+              "column": 34
+            },
+            "end": {
+              "offset": 1977,
+              "line": 57,
+              "column": 57
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxMerge_0fcdf4beba792b53",
+        "context": "{!$Label.AccountListTitle}",
+        "source": [
+          {
+            "sourceKey": "fxMerge_9a154c20319fceda",
+            "filePath": "flows/Account_Wizard.flow-meta.xml",
+            "start": {
+              "offset": 1952,
+              "line": 57,
+              "column": 32
+            },
+            "end": {
+              "offset": 1978,
+              "line": 57,
+              "column": 58
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxTemplate_82b8e072a6d82ea0",
+        "context": "&lt;p&gt;{!$Label.AccountListTitle}&lt;/p&gt;",
+        "source": [
+          {
+            "sourceKey": "fxTemplate_f083f56e91a13cfe",
+            "filePath": "flows/Account_Wizard.flow-meta.xml",
+            "start": {
+              "offset": 1943,
+              "line": 57,
+              "column": 23
+            },
+            "end": {
+              "offset": 1988,
+              "line": 57,
+              "column": 68
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flowScreenField_31111bdda40f6265",
         "context": "<fields>\n            <name>Intro</name>\n            <fieldText>&lt;p&gt;{!$Label.AccountListTitle}&lt;/p&gt;</fieldText>\n            <fieldType>DisplayText</fieldType>\n        </fields>",
         "source": [
           {
@@ -240,7 +350,27 @@
         ]
       },
       {
-        "objectKey": "flowScreenField_a2acc9feae2238a4",
+        "objectKey": "flowParameter_3df5007f5cc4babf",
+        "context": "<inputParameters>\n                <name>title</name>\n                <value>\n                    <stringValue>Gold accounts</stringValue>\n                </value>\n            </inputParameters>",
+        "source": [
+          {
+            "sourceKey": "flowParameter_b75879eeb1eaf80e",
+            "filePath": "flows/Account_Wizard.flow-meta.xml",
+            "start": {
+              "offset": 2239,
+              "line": 64,
+              "column": 12
+            },
+            "end": {
+              "offset": 2432,
+              "line": 69,
+              "column": 30
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "flowScreenField_a8f8b469592e6b3f",
         "context": "<fields>\n            <name>Accounts</name>\n            <extensionName>c:accountList</extensionName>\n            <fieldType>ComponentInstance</fieldType>\n            <inputParameters>\n                <name>title</name>\n                <value>\n                    <stringValue>Gold accounts</stringValue>\n                </value>\n            </inputParameters>\n            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>\n            <isRequired>true</isRequired>\n            <storeOutputAutomatically>true</storeOutputAutomatically>\n        </fields>",
         "source": [
           {
@@ -280,7 +410,7 @@
         ]
       },
       {
-        "objectKey": "flowScreen_89d74b343922c9ad",
+        "objectKey": "flowScreen_09fb9feb6a5f3f31",
         "context": "<screens>\n        <name>Welcome</name>\n        <label>Welcome</label>\n        <locationX>176</locationX>\n        <locationY>242</locationY>\n        <allowBack>true</allowBack>\n        <allowFinish>true</allowFinish>\n        <allowPause>false</allowPause>\n        <connector>\n            <targetReference>Call_Status</targetReference>\n        </connector>\n        <fields>\n            <name>Intro</name>\n            <fieldText>&lt;p&gt;{!$Label.AccountListTitle}&lt;/p&gt;</fieldText>\n            <fieldType>DisplayText</fieldType>\n        </fields>\n        <fields>\n            <name>Accounts</name>\n            <extensionName>c:accountList</extensionName>\n            <fieldType>ComponentInstance</fieldType>\n            <inputParameters>\n                <name>title</name>\n                <value>\n                    <stringValue>Gold accounts</stringValue>\n                </value>\n            </inputParameters>\n            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>\n            <isRequired>true</isRequired>\n            <storeOutputAutomatically>true</storeOutputAutomatically>\n        </fields>\n        <fields>\n            <name>Chart</name>\n            <extensionName>c:missingChart</extensionName>\n            <fieldType>ComponentInstance</fieldType>\n            <isRequired>false</isRequired>\n        </fields>\n        <showFooter>true</showFooter>\n        <showHeader>true</showHeader>\n    </screens>",
         "source": [
           {
@@ -300,7 +430,7 @@
         ]
       },
       {
-        "objectKey": "flowSubflow_13e4b9c982e0656a",
+        "objectKey": "flowSubflow_eba4278201f9e44e",
         "context": "<subflows>\n        <name>Call_Status</name>\n        <label>Call Status</label>\n        <locationX>176</locationX>\n        <locationY>350</locationY>\n        <flowName>Invoice_Status_Update</flowName>\n    </subflows>",
         "source": [
           {
@@ -340,7 +470,7 @@
         ]
       },
       {
-        "objectKey": "flow_0b0a1ab3bb581695",
+        "objectKey": "flow_d1886448fc511004",
         "context": "<Flow xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <apiVersion>62.0</apiVersion>\n    <label>Account Wizard</label>\n    <processMetadataValues>\n        <name>BuilderType</name>\n        <value>\n            <stringValue>LightningFlowBuilder</stringValue>\n        </value>\n    </processMetadataValues>\n    <processMetadataValues>\n        <name>CanvasMode</name>\n        <value>\n            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>\n        </value>\n    </processMetadataValues>\n    <processType>Flow</processType>\n    <recordLookups>\n        <name>Get_Account</name>\n        <label>Get Account</label>\n        <locationX>176</locationX>\n        <locationY>134</locationY>\n        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>\n        <connector>\n            <targetReference>Welcome</targetReference>\n        </connector>\n        <faultConnector>\n            <targetReference>Welcome</targetReference>\n        </faultConnector>\n        <filterLogic>and</filterLogic>\n        <filters>\n            <field>Tier__c</field>\n            <operator>EqualTo</operator>\n            <value>\n                <stringValue>Gold</stringValue>\n            </value>\n        </filters>\n        <getFirstRecordOnly>true</getFirstRecordOnly>\n        <object>Account</object>\n        <queriedFields>Name</queriedFields>\n        <queriedFields>Unknown__c</queriedFields>\n        <storeOutputAutomatically>true</storeOutputAutomatically>\n    </recordLookups>\n    <screens>\n        <name>Welcome</name>\n        <label>Welcome</label>\n        <locationX>176</locationX>\n        <locationY>242</locationY>\n        <allowBack>true</allowBack>\n        <allowFinish>true</allowFinish>\n        <allowPause>false</allowPause>\n        <connector>\n            <targetReference>Call_Status</targetReference>\n        </connector>\n        <fields>\n            <name>Intro</name>\n            <fieldText>&lt;p&gt;{!$Label.AccountListTitle}&lt;/p&gt;</fieldText>\n            <fieldType>DisplayText</fieldType>\n        </fields>\n        <fields>\n            <name>Accounts</name>\n            <extensionName>c:accountList</extensionName>\n            <fieldType>ComponentInstance</fieldType>\n            <inputParameters>\n                <name>title</name>\n                <value>\n                    <stringValue>Gold accounts</stringValue>\n                </value>\n            </inputParameters>\n            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>\n            <isRequired>true</isRequired>\n            <storeOutputAutomatically>true</storeOutputAutomatically>\n        </fields>\n        <fields>\n            <name>Chart</name>\n            <extensionName>c:missingChart</extensionName>\n            <fieldType>ComponentInstance</fieldType>\n            <isRequired>false</isRequired>\n        </fields>\n        <showFooter>true</showFooter>\n        <showHeader>true</showHeader>\n    </screens>\n    <start>\n        <locationX>50</locationX>\n        <locationY>0</locationY>\n        <connector>\n            <targetReference>Get_Account</targetReference>\n        </connector>\n    </start>\n    <status>Active</status>\n    <subflows>\n        <name>Call_Status</name>\n        <label>Call Status</label>\n        <locationX>176</locationX>\n        <locationY>350</locationY>\n        <flowName>Invoice_Status_Update</flowName>\n    </subflows>\n</Flow>",
         "source": [
           {

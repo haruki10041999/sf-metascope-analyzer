@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
+import { apexModifierCategoryOf } from '../../src/analyzer/processor/Apex/modifiers';
+
 import { find, toJson, unitRules } from './helpers';
 
 // 修飾子の JSON (makeModifiersJson)。IR v2 の木から作る (docs/ir-integration.md)
@@ -14,35 +16,60 @@ const memberModifier = async (member: string) => {
 };
 
 describe('makeModifiersJson', () => {
-    it('分類ごとにまとめ、各修飾子が自分の sourceKeys を持つ', async () => {
-        const { modifier } = await memberModifier('public static void run() {}');
+    it('修飾子とアノテーションを書いた順に持ち、各修飾子が自分の sourceKeys を持つ (分類は持たない。段階 A5)', async () => {
+        const { modifier } = await memberModifier(
+            '@AuraEnabled(cacheable=true) @TestVisible public static void run() {}',
+        );
 
         assert.deepEqual(
-            modifier.access.map((m: { kind: string; name: string }) => [m.kind, m.name]),
-            [['modifier', 'PUBLIC']],
+            modifier.keyword.map((m: { kind: string; name: string }) => [m.kind, m.name]),
+            [
+                ['modifier', 'PUBLIC'],
+                ['modifier', 'STATIC'],
+            ],
         );
         assert.deepEqual(
-            modifier.declaration.map((m: { name: string }) => m.name),
-            ['STATIC'],
+            modifier.annotation.map((a: { name: string }) => a.name),
+            ['AuraEnabled', 'TestVisible'],
         );
-        const [access] = modifier.access;
-        const [declaration] = modifier.declaration;
+        const [access, declaration] = modifier.keyword;
         assert.ok(access.sourceKeys.objectKey.startsWith('modifier_'));
         assert.notEqual(access.sourceKeys.sourceKey, declaration.sourceKeys.sourceKey);
+        // 分類のキー (access・lwcAnnotation など) は持たない
+        assert.deepEqual(Object.keys(modifier).sort(), ['annotation', 'keyword']);
     });
 
-    it('アクセス・宣言のどちらでもない修飾子を other に入れる', async () => {
-        const { modifier } = await memberModifier('transient Integer x;');
-
+    it('アノテーションの引数はリテラルの式の配列 (引用符を持たない)', async () => {
+        const { modifier } = await memberModifier(
+            "@InvocableMethod(label='Run it' callout=true) public static void run() {}",
+        );
+        const [annotation] = modifier.annotation;
         assert.deepEqual(
-            modifier.other.map((m: { name: string }) => m.name),
-            ['TRANSIENT'],
+            annotation.arg.map((a: { key: string; value: { kind: string; value: unknown } }) => [
+                a.key,
+                a.value.kind,
+                a.value.value,
+            ]),
+            [
+                ['label', 'string', 'Run it'],
+                ['callout', 'boolean', true],
+            ],
         );
     });
 
-    it('IR v2 の木から作るので、error の分類は出ない', async () => {
-        const { modifier } = await memberModifier('public static void run() {}');
+    it('分類は解析で出す (どれにも当たらない修飾子は other)', async () => {
+        const { modifier } = await memberModifier('@Future transient Integer x;');
+        assert.deepEqual(
+            [...modifier.keyword, ...modifier.annotation].map(
+                (item: Parameters<typeof apexModifierCategoryOf>[0]) =>
+                    apexModifierCategoryOf(item),
+            ),
+            ['other', 'asyncAnnotation'],
+        );
+    });
 
-        assert.equal(Object.hasOwn(modifier, 'error'), false);
+    it('修飾子がなければ持たない', async () => {
+        const { modifier } = await memberModifier('void run() {}');
+        assert.deepEqual(modifier, {});
     });
 });

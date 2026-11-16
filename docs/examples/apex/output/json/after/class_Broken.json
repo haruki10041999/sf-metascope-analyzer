@@ -80,7 +80,7 @@
           "kind": "class",
           "sourceKeys": {
             "base": {
-              "objectKey": "classDeclaration_6277dfd88690ad3f",
+              "objectKey": "classDeclaration_097b407b64e401be",
               "sourceKey": "classDeclaration_316ccc84364cdbc4"
             },
             "name": {
@@ -94,7 +94,7 @@
               "kind": "method",
               "sourceKeys": {
                 "base": {
-                  "objectKey": "methodDeclaration_46961846746fd755",
+                  "objectKey": "methodDeclaration_212a200eab1e77ba",
                   "sourceKey": "methodDeclaration_c53faf02d9d77339"
                 },
                 "name": {
@@ -104,38 +104,90 @@
               },
               "name": "run",
               "returnType": "void",
+              "param": [],
               "block": [
                 {
-                  "kind": "error",
+                  "kind": "localVariable",
                   "sourceKeys": {
-                    "objectKey": "localVariableDeclarationStatement_38f9de9d850f6e75",
+                    "objectKey": "localVariableDeclarationStatement_f5620a9cada75371",
                     "sourceKey": "localVariableDeclarationStatement_d25e8760c6200a2d"
                   },
-                  "kindType": "localVariable"
+                  "variantType": {
+                    "kind": "type",
+                    "sourceKeys": {
+                      "objectKey": "typeRef_8c83bc51944df63a",
+                      "sourceKey": "typeRef_5ecfc55f879d7042"
+                    },
+                    "type": "primitive",
+                    "primitiveType": "Integer"
+                  },
+                  "modifier": {},
+                  "variants": [
+                    {
+                      "kind": "variant",
+                      "sourceKeys": {
+                        "objectKey": "variableDeclarator_67d45e4bee0e9107",
+                        "sourceKey": "variableDeclarator_cb8cc038ad448609"
+                      },
+                      "name": "x",
+                      "init": {
+                        "kind": "call",
+                        "sourceKeys": {
+                          "objectKey": "methodCallExpression_cb3827595d8fcd2d",
+                          "sourceKey": "methodCallExpression_eae497d98f273dfe"
+                        },
+                        "callee": {
+                          "kind": "identifier",
+                          "sourceKeys": {
+                            "objectKey": "id_96a9e32fcc6db411",
+                            "sourceKey": "id_dd9a68b248c39d95"
+                          },
+                          "name": "foo"
+                        },
+                        "arg": [
+                          {
+                            "kind": "integer",
+                            "sourceKeys": {
+                              "objectKey": "literal_fb5627d59521b262",
+                              "sourceKey": "literal_5800c3cacceb99e3"
+                            },
+                            "value": "1"
+                          }
+                        ]
+                      }
+                    }
+                  ]
                 },
                 {
                   "kind": "expression",
                   "sourceKeys": {
-                    "objectKey": "expressionStatement_6ed1f6aa0c97c626",
+                    "objectKey": "expressionStatement_7ecef7076ecea609",
                     "sourceKey": "expressionStatement_d89d2ba3e73ebfbd"
                   },
                   "value": {
-                    "kind": "memberAccess",
+                    "kind": "call",
                     "sourceKeys": {
-                      "objectKey": "methodCallExpression_069fe4c03ea6ad3a",
+                      "objectKey": "methodCallExpression_46b4233832d6f817",
                       "sourceKey": "methodCallExpression_7556b14cde0fb501"
                     },
-                    "type": "method",
-                    "member": "b"
+                    "callee": {
+                      "kind": "identifier",
+                      "sourceKeys": {
+                        "objectKey": "id_511bbb809f6a10da",
+                        "sourceKey": "id_ccf4ac21111835f7"
+                      },
+                      "name": "b"
+                    },
+                    "arg": []
                   }
                 }
               ],
               "modifier": {
-                "access": [
+                "keyword": [
                   {
                     "kind": "modifier",
                     "sourceKeys": {
-                      "objectKey": "modifier_a04213395735c45e",
+                      "objectKey": "modifier_ff9740e1ee9f633a",
                       "sourceKey": "modifier_dddead3737a66fc7"
                     },
                     "name": "PUBLIC"
@@ -145,11 +197,11 @@
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {
-                  "objectKey": "modifier_a04213395735c45e",
+                  "objectKey": "modifier_ff9740e1ee9f633a",
                   "sourceKey": "modifier_83442bd3f55cf1b2"
                 },
                 "name": "PUBLIC"
@@ -160,19 +212,12 @@
       },
       "meta": {
         "fileName": "Broken.cls-meta.xml",
-        "meta": {
-          "kind": "error",
-          "sourceKeys": {
-            "objectKey": "error_10bbdac40cad3a46",
-            "sourceKey": "error_6e2ec2b8089b8f7e"
-          },
-          "kindType": "apexClassMeta"
-        }
+        "meta": null
       }
     },
     "sourceObject": [
       {
-        "objectKey": "classDeclaration_6277dfd88690ad3f",
+        "objectKey": "classDeclaration_097b407b64e401be",
         "context": "class Broken {\n    public void run() {\n        Integer x = ;\n        foo(1, );\n        b();\n    }\n}",
         "source": [
           {
@@ -210,7 +255,7 @@
         ]
       },
       {
-        "objectKey": "methodDeclaration_46961846746fd755",
+        "objectKey": "methodDeclaration_212a200eab1e77ba",
         "context": "void run() {\n        Integer x = ;\n        foo(1, );\n        b();\n    }",
         "source": [
           {
@@ -248,7 +293,7 @@
         ]
       },
       {
-        "objectKey": "localVariableDeclarationStatement_38f9de9d850f6e75",
+        "objectKey": "localVariableDeclarationStatement_f5620a9cada75371",
         "context": "Integer x = ;\n        foo(1, );",
         "source": [
           {
@@ -267,7 +312,102 @@
         ]
       },
       {
-        "objectKey": "expressionStatement_6ed1f6aa0c97c626",
+        "objectKey": "typeRef_8c83bc51944df63a",
+        "context": "Integer",
+        "source": [
+          {
+            "sourceKey": "typeRef_5ecfc55f879d7042",
+            "start": {
+              "offset": 54,
+              "line": 3,
+              "column": 8
+            },
+            "end": {
+              "offset": 61,
+              "line": 3,
+              "column": 15
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "variableDeclarator_67d45e4bee0e9107",
+        "context": "x = ;\n        foo(1, )",
+        "source": [
+          {
+            "sourceKey": "variableDeclarator_cb8cc038ad448609",
+            "start": {
+              "offset": 62,
+              "line": 3,
+              "column": 16
+            },
+            "end": {
+              "offset": 84,
+              "line": 4,
+              "column": 16
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "methodCallExpression_cb3827595d8fcd2d",
+        "context": ";\n        foo(1, )",
+        "source": [
+          {
+            "sourceKey": "methodCallExpression_eae497d98f273dfe",
+            "start": {
+              "offset": 66,
+              "line": 3,
+              "column": 20
+            },
+            "end": {
+              "offset": 84,
+              "line": 4,
+              "column": 16
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_96a9e32fcc6db411",
+        "context": "foo",
+        "source": [
+          {
+            "sourceKey": "id_dd9a68b248c39d95",
+            "start": {
+              "offset": 76,
+              "line": 4,
+              "column": 8
+            },
+            "end": {
+              "offset": 79,
+              "line": 4,
+              "column": 11
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "literal_fb5627d59521b262",
+        "context": "1",
+        "source": [
+          {
+            "sourceKey": "literal_5800c3cacceb99e3",
+            "start": {
+              "offset": 80,
+              "line": 4,
+              "column": 12
+            },
+            "end": {
+              "offset": 81,
+              "line": 4,
+              "column": 13
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "expressionStatement_7ecef7076ecea609",
         "context": "b();",
         "source": [
           {
@@ -286,7 +426,7 @@
         ]
       },
       {
-        "objectKey": "methodCallExpression_069fe4c03ea6ad3a",
+        "objectKey": "methodCallExpression_46b4233832d6f817",
         "context": "b()",
         "source": [
           {
@@ -305,7 +445,26 @@
         ]
       },
       {
-        "objectKey": "modifier_a04213395735c45e",
+        "objectKey": "id_511bbb809f6a10da",
+        "context": "b",
+        "source": [
+          {
+            "sourceKey": "id_ccf4ac21111835f7",
+            "start": {
+              "offset": 94,
+              "line": 5,
+              "column": 8
+            },
+            "end": {
+              "offset": 95,
+              "line": 5,
+              "column": 9
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifier_ff9740e1ee9f633a",
         "context": "public",
         "source": [
           {
@@ -332,26 +491,6 @@
               "offset": 6,
               "line": 1,
               "column": 6
-            }
-          }
-        ]
-      },
-      {
-        "objectKey": "error_10bbdac40cad3a46",
-        "context": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<ApexClass xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <apiVersion>61.0</apiVersion>\n    <status>Active</Status>\n</ApexClass>\n",
-        "source": [
-          {
-            "sourceKey": "error_6e2ec2b8089b8f7e",
-            "filePath": "Broken.cls-meta.xml",
-            "start": {
-              "offset": 159,
-              "line": 4,
-              "column": 26
-            },
-            "end": {
-              "offset": 159,
-              "line": 4,
-              "column": 26
             }
           }
         ]

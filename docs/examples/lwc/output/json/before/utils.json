@@ -176,8 +176,7 @@
                       ]
                     }
                   ]
-                },
-                "references": []
+                }
               },
               {
                 "kind": "lwcDeclaration",
@@ -195,7 +194,6 @@
                 "declarationType": "function",
                 "exported": true,
                 "variableKind": "const",
-                "references": [],
                 "arrow": true,
                 "param": [
                   {
@@ -211,7 +209,6 @@
                         "objectKey": "tSNumberKeyword_850ba0354605a53c",
                         "sourceKey": "tSNumberKeyword_08b904dd7cec6830"
                       },
-                      "text": "number",
                       "type": "primitive",
                       "primitiveType": "number"
                     },
@@ -225,7 +222,6 @@
                     "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
                     "sourceKey": "tSStringKeyword_bc09120f0cf4f075"
                   },
-                  "text": "string",
                   "type": "primitive",
                   "primitiveType": "string"
                 },
@@ -275,7 +271,6 @@
                 "name": "toRows",
                 "declarationType": "function",
                 "exported": true,
-                "references": [],
                 "arrow": false,
                 "param": [
                   {
@@ -291,7 +286,6 @@
                         "objectKey": "tSArrayType_4570312153918599",
                         "sourceKey": "tSArrayType_63b47a652f23eea8"
                       },
-                      "text": "unknown[]",
                       "type": "array",
                       "elementType": {
                         "type": "primitive",
@@ -308,11 +302,12 @@
                     "objectKey": "tSArrayType_a0fe78f2e0d47552",
                     "sourceKey": "tSArrayType_2dff81cc0b3b1ab0"
                   },
-                  "text": "Row[]",
                   "type": "array",
                   "elementType": {
                     "type": "custom",
-                    "customType": "Row"
+                    "customType": [
+                      "Row"
+                    ]
                   }
                 },
                 "async": false,
@@ -384,9 +379,10 @@
                                 "objectKey": "tSTypeReference_eca924ff86bb9059",
                                 "sourceKey": "tSTypeReference_e5f7270e58e13785"
                               },
-                              "text": "Row",
                               "type": "custom",
-                              "customType": "Row"
+                              "customType": [
+                                "Row"
+                              ]
                             }
                           }
                         }
@@ -431,7 +427,6 @@
                       },
                       "value": 0
                     },
-                    "references": [],
                     "optional": false,
                     "modifier": {
                       "declaration": [
@@ -474,7 +469,6 @@
                             "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
                             "sourceKey": "tSStringKeyword_5345d3805a2e14e0"
                           },
-                          "text": "string",
                           "type": "primitive",
                           "primitiveType": "string"
                         },
@@ -484,13 +478,13 @@
                             "objectKey": "tSTypeReference_eca924ff86bb9059",
                             "sourceKey": "tSTypeReference_6547be020caa4aeb"
                           },
-                          "text": "Row",
                           "type": "custom",
-                          "customType": "Row"
+                          "customType": [
+                            "Row"
+                          ]
                         }
                       ]
                     },
-                    "references": [],
                     "optional": false,
                     "modifier": {}
                   },
@@ -546,8 +540,7 @@
                             "member": "size"
                           }
                         }
-                      ],
-                      "references": []
+                      ]
                     },
                     "variantType": {
                       "kind": "lwcType",
@@ -555,7 +548,6 @@
                         "objectKey": "tSNumberKeyword_850ba0354605a53c",
                         "sourceKey": "tSNumberKeyword_d7190008798f5282"
                       },
-                      "text": "number",
                       "type": "primitive",
                       "primitiveType": "number"
                     }
@@ -579,7 +571,6 @@
                         "objectKey": "tSNumberKeyword_850ba0354605a53c",
                         "sourceKey": "tSNumberKeyword_612f0c5609f0eb5d"
                       },
-                      "text": "number",
                       "type": "primitive",
                       "primitiveType": "number"
                     },
@@ -597,11 +588,12 @@
                             "objectKey": "tSArrayType_a0fe78f2e0d47552",
                             "sourceKey": "tSArrayType_bfabf6e34368de86"
                           },
-                          "text": "Row[]",
                           "type": "array",
                           "elementType": {
                             "type": "custom",
-                            "customType": "Row"
+                            "customType": [
+                              "Row"
+                            ]
                           }
                         },
                         "optional": false,
@@ -869,8 +861,7 @@
                           "name": "count"
                         }
                       }
-                    ],
-                    "references": []
+                    ]
                   }
                 ]
               }
@@ -897,7 +888,6 @@
                     "objectKey": "tSUnionType_0511c2d9c55ef0a0",
                     "sourceKey": "tSUnionType_3b543bc82d404c6c"
                   },
-                  "text": "'asc' | 'desc'",
                   "type": "union",
                   "types": [
                     {

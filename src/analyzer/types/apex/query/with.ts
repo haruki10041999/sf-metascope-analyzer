@@ -47,7 +47,7 @@ export type WithJson =
     | {
           mode: 'SYSTEM_MODE' | 'USER_MODE' | 'SECURITY_ENFORCED';
       }
-    | { mode: LogicalConditionJson }
+    | { mode: 'EXPRESSION'; condition: LogicalConditionJson }
     | { mode: 'DATA_CATEGORY'; selection: DataCategorySelectionJson[] };
 
 export const isWithJson = typia.createIs<WithJson>();
@@ -74,7 +74,8 @@ export const makeWithJson = (target: WithClauseTypeClass): WithJson => {
             };
         case 'EXPRESSION':
             return {
-                mode: makeLogicalConditionJson(fields.expression),
+                mode: 'EXPRESSION',
+                condition: makeLogicalConditionJson(fields.expression),
             };
     }
 };

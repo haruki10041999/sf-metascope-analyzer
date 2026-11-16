@@ -14,7 +14,7 @@
           "kind": "class",
           "sourceKeys": {
             "base": {
-              "objectKey": "classDeclaration_e303a56f7711a767",
+              "objectKey": "classDeclaration_70e26f31cfc1cdb2",
               "sourceKey": "classDeclaration_7f477543a4289086"
             },
             "name": {
@@ -28,7 +28,7 @@
               "kind": "method",
               "sourceKeys": {
                 "base": {
-                  "objectKey": "methodDeclaration_9d0a020011424162",
+                  "objectKey": "methodDeclaration_7f6e09e48b81e775",
                   "sourceKey": "methodDeclaration_27764ef519ccd4c7"
                 },
                 "name": {
@@ -38,23 +38,22 @@
               },
               "name": "run",
               "returnType": "void",
+              "param": [],
               "block": [],
               "modifier": {
-                "access": [
+                "keyword": [
                   {
                     "kind": "modifier",
                     "sourceKeys": {
-                      "objectKey": "modifier_a04213395735c45e",
+                      "objectKey": "modifier_ff9740e1ee9f633a",
                       "sourceKey": "modifier_60b41f70bbefad77"
                     },
                     "name": "PUBLIC"
-                  }
-                ],
-                "declaration": [
+                  },
                   {
                     "kind": "modifier",
                     "sourceKeys": {
-                      "objectKey": "modifier_355af635756cc383",
+                      "objectKey": "modifier_23a705c64839d5bb",
                       "sourceKey": "modifier_7f4a014187c1b3da"
                     },
                     "name": "STATIC"
@@ -64,11 +63,11 @@
             }
           ],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {
-                  "objectKey": "modifier_a04213395735c45e",
+                  "objectKey": "modifier_ff9740e1ee9f633a",
                   "sourceKey": "modifier_83442bd3f55cf1b2"
                 },
                 "name": "PUBLIC"
@@ -92,7 +91,7 @@
     },
     "sourceObject": [
       {
-        "objectKey": "classDeclaration_e303a56f7711a767",
+        "objectKey": "classDeclaration_70e26f31cfc1cdb2",
         "context": "class OldHelper {\n    public static void run() {}\n}",
         "source": [
           {
@@ -130,7 +129,7 @@
         ]
       },
       {
-        "objectKey": "methodDeclaration_9d0a020011424162",
+        "objectKey": "methodDeclaration_7f6e09e48b81e775",
         "context": "void run() {}",
         "source": [
           {
@@ -168,7 +167,7 @@
         ]
       },
       {
-        "objectKey": "modifier_a04213395735c45e",
+        "objectKey": "modifier_ff9740e1ee9f633a",
         "context": "public",
         "source": [
           {
@@ -200,7 +199,7 @@
         ]
       },
       {
-        "objectKey": "modifier_355af635756cc383",
+        "objectKey": "modifier_23a705c64839d5bb",
         "context": "static",
         "source": [
           {

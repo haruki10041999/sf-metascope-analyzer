@@ -1,6 +1,5 @@
 import typia from 'typia';
 
-import { JsonType } from '../../commons';
 import type {
     WhereClauseTypeClass,
     WhereFieldExpressionTypeClass,
@@ -10,45 +9,30 @@ import type {
 import { makeNodeJson } from '../commons/node';
 import {
     makeComparisonOperatorJson,
-    ValueJson,
     makeValueJson,
     SingleConditionJson,
     makeSingleConditionJson,
+    LogicalConditionJson,
 } from './commons';
+import { unquoteApexString } from '../primary';
 
-type WhereSingleConditionJson =
-    | (JsonType<'singleCondition'> & {
-          field: string;
-          operator:
-              | '='
-              | '!='
-              | '<'
-              | '>'
-              | '<='
-              | '>='
-              | '<>'
-              | 'LIKE'
-              | 'IN'
-              | 'NOT IN'
-              | 'INCLUDES'
-              | 'EXCLUDES';
-          value: ValueJson;
-      })
-    | SingleConditionJson;
+/** FORMULA('...') の条件の左辺。value は数式 (引用符を除き、エスケープを戻したもの) */
+export type FormulaFieldJson = {
+    type: 'formula';
+    value: string;
+};
 
-export const isWhereSingleConditionJson = typia.createIs<WhereSingleConditionJson>();
-
+/** WHERE の条件 1 つ (FORMULA('...') も同じ singleCondition。field の type で分かれる) */
 export const makeWhereSingleConditionJson = (
     target: WhereFieldExpressionTypeClass,
-): WhereSingleConditionJson => {
+): SingleConditionJson => {
     const fields = target.getFields();
     switch (fields.kind) {
         case 'formula':
-            // FORMULA('...') の field は、v1 と同じく `FORMULA(` + 文字列リテラル (引用符つき) + `)` の形にする
-            return makeNodeJson<WhereSingleConditionJson>('singleCondition', target, {
-                value: makeValueJson(fields.right),
-                field: `FORMULA(${fields.formula})`,
+            return makeNodeJson<SingleConditionJson>('singleCondition', target, {
+                field: { type: 'formula', value: unquoteApexString(fields.formula) },
                 operator: makeComparisonOperatorJson(fields.operator),
+                value: makeValueJson(fields.right),
             });
         case 'field':
             // fieldExpression は fieldExpression 自身のキーを持つ
@@ -56,30 +40,22 @@ export const makeWhereSingleConditionJson = (
     }
 };
 
-type WhereLogicalExpressionJson = {
-    condition: (WhereSingleConditionJson | WhereLogicalExpressionJson)[];
-    operator?: 'AND' | 'OR' | 'NOT';
-};
-
-export const isWhereLogicalExpressionJson = typia.createIs<WhereLogicalExpressionJson>();
-
+/** WHERE の条件 (HAVING・WITH の条件と同じ LogicalConditionJson) */
 export const makeWhereLogicalExpressionJson = (
     target: WhereLogicalExpressionTypeClass,
-): WhereLogicalExpressionJson => {
+): LogicalConditionJson => {
     const fields = target.getFields();
     // AND・OR は 2 つ以上、NOT と演算子なし (条件が 1 つだけ) は 1 つの被演算子
     const operands = 'operands' in fields ? fields.operands : [fields.operand];
-    const condition: (WhereSingleConditionJson | WhereLogicalExpressionJson)[] = operands.map(
-        (v) => {
-            const value = v.getFields().value;
-            switch (value.kind) {
-                case 'whereLogicalExpression':
-                    return makeWhereLogicalExpressionJson(value);
-                case 'whereFieldExpression':
-                    return makeWhereSingleConditionJson(value);
-            }
-        },
-    );
+    const condition: (SingleConditionJson | LogicalConditionJson)[] = operands.map((v) => {
+        const value = v.getFields().value;
+        switch (value.kind) {
+            case 'whereLogicalExpression':
+                return makeWhereLogicalExpressionJson(value);
+            case 'whereFieldExpression':
+                return makeWhereSingleConditionJson(value);
+        }
+    });
     return {
         condition: condition,
         ...(fields.operator !== null ? { operator: fields.operator } : {}),
@@ -87,7 +63,7 @@ export const makeWhereLogicalExpressionJson = (
 };
 
 export type WhereJson = {
-    condition: WhereLogicalExpressionJson;
+    condition: LogicalConditionJson;
 };
 
 export const isWhereJson = typia.createIs<WhereJson>();

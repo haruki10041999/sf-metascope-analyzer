@@ -18,12 +18,19 @@ export type DependencyTargetType =
     | 'apexType'
     /** <型>.<メンバー> (型が変数の型のときなど。クラスのメンバーか項目かは、グラフで決める) */
     | 'apexTypeMember'
+    /** <親のオブジェクト>.<子リレーションの名前> (Apex の SOQL のサブクエリ。子のオブジェクトはグラフで決める) */
+    | 'childRelationship'
+    /** <親のオブジェクト>.<子リレーションの名前>.<項目> (サブクエリの項目。子のオブジェクトの項目はグラフで決める) */
+    | 'childRelationshipField'
     | 'customLabel'
     | 'customPermission'
     | 'staticResource'
     | 'messageChannel'
     | 'lwc'
-    | 'auraComponent'
+    | 'aura'
+    /** Visualforce のページ・コンポーネント */
+    | 'apexPage'
+    | 'apexComponent'
     | 'flow'
     | 'globalVariable'
     | (string & {});
@@ -82,8 +89,25 @@ export type UnitDefinition = {
     sourceKeys?: ConvertKeys;
 };
 
+/**
+ * 子リレーション (参照項目の relationshipName)。SOQL のサブクエリ (SELECT ... FROM Contacts) の
+ * 子のオブジェクトを、グラフで決めるのに使う
+ */
+export type ChildRelationship = {
+    /** 親のオブジェクト (参照先。Account) */
+    parent: string;
+    /** SOQL で使う名前 (Contacts / Invoices__r) */
+    name: string;
+    /** 子のオブジェクト (参照項目を持つもの。Contact) */
+    child: string;
+    /** 参照項目 (Contact.AccountId) */
+    field: string;
+};
+
 /** 単位 1 つの定義と参照 */
 export type UnitDependencies = {
     definitions: UnitDefinition[];
     references: UnitReference[];
+    /** 子リレーション (オブジェクトの単位だけ) */
+    childRelationships?: ChildRelationship[];
 };

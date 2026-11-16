@@ -33,9 +33,22 @@ export type SpanSourceJson = {
     source: ({ sourceKey: string } & Omit<SpanSourceInfo, 'context'>)[];
 };
 
-/** 1 つの解析の単位を読む間に集めるソース位置 */
+/** 読めなかった中身 (数式など)。JSON には文字列のまま置き、理由は resolvedError に出す */
+export type SpanProblem = {
+    code: 'FORMULA_SYNTAX' | 'FILTER_LOGIC_SYNTAX';
+    file: SourceFile;
+    /** 何として読もうとしたか (要素名など) */
+    kindType: string;
+    message: string;
+    position: SourcePosition;
+};
+
+/** 1 つの解析の単位を読む間に集めるソース位置 (と、読めなかった中身) */
 export class SpanSourceRegistry {
     private readonly sourceObjects = new Map<string, SpanSourceJson>();
+
+    /** 読めなかった中身 (数式など)。parser が resolvedError に足す */
+    readonly problems: SpanProblem[] = [];
 
     register(keys: ConvertKeys, info: SpanSourceInfo): void {
         const { context, ...content } = info;

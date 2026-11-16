@@ -30,8 +30,11 @@ export type LwcTypeIndexerContentJson = {
 export type LwcTypeContentJson =
     /** string / number / unknown など (Apex の primitive)。Flow の mixed・empty・存在型 (*) も */
     | { type: 'primitive'; primitiveType: string }
-    /** Row / Promise<Row[]> / a.B (Apex の custom。generic は型引数)。Flow の $Keys<T> なども */
-    | { type: 'custom'; customType: string; generic?: LwcTypeContentJson[] }
+    /**
+     * Row / Promise<Row[]> / a.B (Apex の custom。generic は型引数)。Flow の $Keys<T> なども。
+     * customType は名前の並び (a.B は ['a', 'B']。Apex の customType と同じ。lwc-json-types.md 8.8 の残りを直した)
+     */
+    | { type: 'custom'; customType: string[]; generic?: LwcTypeContentJson[] }
     | { type: 'array'; elementType: LwcTypeContentJson }
     /** Flow の ?T は T | null | void の union */
     | { type: 'union' | 'intersection'; types: LwcTypeContentJson[] }
@@ -50,17 +53,66 @@ export type LwcTypeContentJson =
           /** 名前は Flow の名前のない引数 ((string) => void) では持たない。残りの引数は ...args */
           params: { name?: string; paramType?: LwcTypeContentJson }[];
           returnType?: LwcTypeContentJson;
+          /** new (...) => T (TS のコンストラクタの型)。abstract new は abstract も持つ */
+          construct?: true;
+          abstract?: true;
       }
     | { type: 'tuple'; elementTypes: LwcTypeContentJson[] }
-    /** typeof x / typeof a.b (target は名前) */
-    | { type: 'typeof'; target: string }
-    /** 上以外 (条件型・マップ型・インデックスアクセス型など)。境界ノードの text だけを持つ */
-    | { type: 'other' };
+    /** typeof x / typeof a.b (target は名前の並び) */
+    | { type: 'typeof'; target: string[] }
+    /** A extends B ? C : D */
+    | {
+          type: 'conditional';
+          checkType: LwcTypeContentJson;
+          extendsType: LwcTypeContentJson;
+          trueType: LwcTypeContentJson;
+          falseType: LwcTypeContentJson;
+      }
+    /** { [K in T as N]?: V } (readonly・optional は '+' (書いただけのときも) か '-') */
+    | {
+          type: 'mapped';
+          key: string;
+          constraint: LwcTypeContentJson;
+          nameType?: LwcTypeContentJson;
+          valueType?: LwcTypeContentJson;
+          readonly?: '+' | '-';
+          optional?: '+' | '-';
+      }
+    /** T[K] (Flow の T?.[K] は optional) */
+    | {
+          type: 'indexedAccess';
+          objectType: LwcTypeContentJson;
+          indexType: LwcTypeContentJson;
+          optional?: true;
+      }
+    /** keyof T / readonly T[] / unique symbol */
+    | { type: 'operator'; operator: string; argument: LwcTypeContentJson }
+    /** `a${T}b` (quasis は書いた文字列。types より 1 つ多い) */
+    | { type: 'templateLiteral'; quasis: string[]; types: LwcTypeContentJson[] }
+    /** import('x').A<T> */
+    | {
+          type: 'import';
+          source: string;
+          qualifier?: string[];
+          generic?: LwcTypeContentJson[];
+      }
+    /** infer U extends C */
+    | { type: 'infer'; name: string; constraint?: LwcTypeContentJson }
+    /** x is T / asserts x / asserts x is T (parameterName の this は 'this') */
+    | {
+          type: 'predicate';
+          parameterName: string;
+          asserts: boolean;
+          predicateType?: LwcTypeContentJson;
+      }
+    /** 上のどれでもない型 (nodeType は IR のノードの種類)。Apex の unsupported に当たる */
+    | { type: 'unknown'; nodeType: string };
 
-export type LwcTypeJson = JsonType<'lwcType'> & {
-    /** 書かれた型の文字列 (':' を含まない) */
-    text: string;
-} & LwcTypeContentJson;
+/**
+ * 型の境界ノード。書かれた型の文字列 (text) は持たない (段階 6 の残り。lwc-json-types.md 8.8)。
+ * 表示には lwcTypeTextOf で中身から作る
+ */
+export type LwcTypeJson = JsonType<'lwcType'> & LwcTypeContentJson;
 
 const PRIMITIVES: Record<string, string> = {
     tSAnyKeyword: 'any',
@@ -282,9 +334,16 @@ const makeFlowFunctionParamContentJson = (
     };
 };
 
+/** 名前 (a.B・Identifier・TSQualifiedName・QualifiedTypeIdentifier) を名前の並びにする */
+const namePartsOf = (node: LwcNode, context: LwcJsonContext): string[] =>
+    context
+        .textOf(node)
+        .split('.')
+        .map((part) => part.trim());
+
 /** 型引数のある名前の型 (TS の型参照・implements、Flow の generic・implements) */
 const makeCustomContentJson = (
-    customType: string,
+    customType: string[],
     typeArguments: readonly LwcNode[] | undefined,
     context: LwcJsonContext,
 ): LwcTypeContentJson => {
@@ -292,14 +351,14 @@ const makeCustomContentJson = (
     return { type: 'custom', customType, ...(generic.length > 0 ? { generic } : {}) };
 };
 
-/** typeof の対象 (名前)。名前でなければ (typeof import('x') など) null */
-const typeofTargetOf = (target: LwcNode, context: LwcJsonContext): string | null => {
+/** typeof の対象 (名前の並び)。名前でなければ (typeof import('x') など) null */
+const typeofTargetOf = (target: LwcNode, context: LwcJsonContext): string[] | null => {
     switch (target.kind) {
         case 'identifier':
-            return (target as commons.IdentifierTypeClass).getFields().name;
+            return [(target as commons.IdentifierTypeClass).getFields().name];
         case 'tSQualifiedName':
         case 'qualifiedTypeIdentifier':
-            return context.textOf(target);
+            return namePartsOf(target, context);
         case 'genericTypeAnnotation':
             return typeofTargetOf(
                 (target as commons.GenericTypeAnnotationTypeClass).getFields().id,
@@ -343,7 +402,7 @@ export const makeLwcTypeContentJson = (
                 node as commons.TSTypeReferenceTypeClass
             ).getFields();
             return makeCustomContentJson(
-                context.textOf(typeName),
+                namePartsOf(typeName, context),
                 typeArguments?.getFields().params,
                 context,
             );
@@ -354,7 +413,7 @@ export const makeLwcTypeContentJson = (
                 node as commons.GenericTypeAnnotationTypeClass
             ).getFields();
             return makeCustomContentJson(
-                context.textOf(id),
+                namePartsOf(id, context),
                 typeParameters?.getFields().params,
                 context,
             );
@@ -364,7 +423,7 @@ export const makeLwcTypeContentJson = (
                 node as commons.TSClassImplementsTypeClass
             ).getFields();
             return makeCustomContentJson(
-                context.textOf(expression),
+                namePartsOf(expression, context),
                 typeArguments?.getFields().params,
                 context,
             );
@@ -374,7 +433,7 @@ export const makeLwcTypeContentJson = (
                 node as flowVisitor.ClassImplementsTypeClass
             ).getFields();
             return makeCustomContentJson(
-                id.getFields().name,
+                [id.getFields().name],
                 typeParameters?.getFields().params,
                 context,
             );
@@ -383,7 +442,7 @@ export const makeLwcTypeContentJson = (
             // Flow の型注釈の中が名前だけのとき
             return {
                 type: 'custom',
-                customType: (node as commons.IdentifierTypeClass).getFields().name,
+                customType: [(node as commons.IdentifierTypeClass).getFields().name],
             };
         case 'tSArrayType':
         case 'arrayTypeAnnotation':
@@ -512,11 +571,191 @@ export const makeLwcTypeContentJson = (
                 context,
             );
             return typeofTarget === null
-                ? { type: 'other' }
+                ? { type: 'unknown', nodeType: node.kind }
                 : { type: 'typeof', target: typeofTarget };
         }
+        case 'tSInterfaceHeritage': {
+            // interface A extends B<T> の B<T>
+            const { expression, typeArguments } = (
+                node as commons.TSInterfaceHeritageTypeClass
+            ).getFields();
+            return makeCustomContentJson(
+                namePartsOf(expression, context),
+                typeArguments?.getFields().params,
+                context,
+            );
+        }
+        case 'interfaceExtends': {
+            const { id, typeParameters } = (
+                node as flowVisitor.InterfaceExtendsTypeClass
+            ).getFields();
+            return makeCustomContentJson(
+                namePartsOf(id, context),
+                typeParameters?.getFields().params,
+                context,
+            );
+        }
+        case 'tSConditionalType': {
+            const fields = (node as commons.TSConditionalTypeTypeClass).getFields();
+            return {
+                type: 'conditional',
+                checkType: content(fields.checkType),
+                extendsType: content(fields.extendsType),
+                trueType: content(fields.trueType),
+                falseType: content(fields.falseType),
+            };
+        }
+        case 'tSMappedType': {
+            const fields = (node as commons.TSMappedTypeTypeClass).getFields();
+            return {
+                type: 'mapped',
+                key: fields.key.getFields().name,
+                constraint: content(fields.constraint),
+                ...(fields.nameType ? { nameType: content(fields.nameType) } : {}),
+                ...(fields.typeAnnotation ? { valueType: content(fields.typeAnnotation) } : {}),
+                ...(fields.readonly ? { readonly: fields.readonly } : {}),
+                ...(fields.optional ? { optional: fields.optional } : {}),
+            };
+        }
+        case 'tSIndexedAccessType':
+        case 'indexedAccessType':
+        case 'optionalIndexedAccessType': {
+            const fields = (
+                node as
+                    | commons.TSIndexedAccessTypeTypeClass
+                    | commons.IndexedAccessTypeTypeClass
+                    | commons.OptionalIndexedAccessTypeTypeClass
+            ).getFields();
+            return {
+                type: 'indexedAccess',
+                objectType: content(fields.objectType),
+                indexType: content(fields.indexType),
+                ...('optional' in fields && fields.optional ? { optional: true as const } : {}),
+            };
+        }
+        case 'tSTypeOperator': {
+            const fields = (node as commons.TSTypeOperatorTypeClass).getFields();
+            return {
+                type: 'operator',
+                operator: fields.operator,
+                argument: content(fields.typeAnnotation),
+            };
+        }
+        case 'tSTemplateLiteralType': {
+            const { head, spans } = (node as commons.TSTemplateLiteralTypeTypeClass).getFields();
+            return {
+                type: 'templateLiteral',
+                quasis: [head, ...spans.map((span) => span.tail)].map(
+                    (element) => element.getFields().value.raw,
+                ),
+                types: spans.map((span) => content(span.type)),
+            };
+        }
+        case 'tSImportType': {
+            const { source, qualifier, typeArguments } = (
+                node as commons.TSImportTypeTypeClass
+            ).getFields();
+            const generic = (typeArguments?.getFields().params ?? []).map(content);
+            return {
+                type: 'import',
+                source: source.getFields().value,
+                ...(qualifier ? { qualifier: namePartsOf(qualifier, context) } : {}),
+                ...(generic.length > 0 ? { generic } : {}),
+            };
+        }
+        case 'tSInferType': {
+            const parameter = (node as commons.TSInferTypeTypeClass).getFields().typeParameter;
+            const { name, constraint } = parameter.getFields();
+            return {
+                type: 'infer',
+                name: name.getFields().name,
+                ...(constraint ? { constraint: content(constraint) } : {}),
+            };
+        }
+        case 'tSTypePredicate': {
+            const fields = (node as commons.TSTypePredicateTypeClass).getFields();
+            const parameter = fields.parameterName;
+            return {
+                type: 'predicate',
+                parameterName:
+                    parameter.kind === 'identifier'
+                        ? (parameter as commons.IdentifierTypeClass).getFields().name
+                        : 'this',
+                asserts: fields.asserts,
+                ...(fields.typeAnnotation ? { predicateType: content(fields.typeAnnotation) } : {}),
+            };
+        }
+        case 'tSConstructorType': {
+            const { params, returnType, abstract } = (
+                node as commons.TSConstructorTypeTypeClass
+            ).getFields();
+            return {
+                type: 'function',
+                params: params.map((param) => makeFunctionParamContentJson(param, context)),
+                ...(returnType ? { returnType: content(returnType) } : {}),
+                construct: true,
+                ...(abstract ? { abstract: true as const } : {}),
+            };
+        }
         default:
-            return { type: 'other' };
+            return { type: 'unknown', nodeType: node.kind };
+    }
+};
+
+/** 型の中身を TS の書き方の文字列にする (表示用。書いたとおりではない) */
+export const lwcTypeTextOf = (type: LwcTypeContentJson): string => {
+    const text = lwcTypeTextOf;
+    const list = (types: LwcTypeContentJson[]) => types.map(text).join(', ');
+    switch (type.type) {
+        case 'primitive':
+            return type.primitiveType;
+        case 'custom':
+            return `${type.customType.join('.')}${type.generic ? `<${list(type.generic)}>` : ''}`;
+        case 'array':
+            return `${text(type.elementType)}[]`;
+        case 'union':
+        case 'intersection':
+            return type.types.map(text).join(type.type === 'union' ? ' | ' : ' & ');
+        case 'literal':
+            return type.value;
+        case 'object':
+            return `{ ${type.members
+                .map(
+                    (m) =>
+                        `${m.name}${m.optional ? '?' : ''}: ${m.memberType ? text(m.memberType) : 'any'}`,
+                )
+                .join('; ')} }`;
+        case 'function':
+            return `${type.construct ? 'new ' : ''}(${type.params
+                .map(
+                    (p) =>
+                        `${p.name ?? ''}${p.paramType ? `${p.name ? ': ' : ''}${text(p.paramType)}` : ''}`,
+                )
+                .join(', ')}) => ${type.returnType ? text(type.returnType) : 'void'}`;
+        case 'tuple':
+            return `[${list(type.elementTypes)}]`;
+        case 'typeof':
+            return `typeof ${type.target.join('.')}`;
+        case 'conditional':
+            return `${text(type.checkType)} extends ${text(type.extendsType)} ? ${text(type.trueType)} : ${text(type.falseType)}`;
+        case 'mapped':
+            return `{ [${type.key} in ${text(type.constraint)}]: ${type.valueType ? text(type.valueType) : 'any'} }`;
+        case 'indexedAccess':
+            return `${text(type.objectType)}[${text(type.indexType)}]`;
+        case 'operator':
+            return `${type.operator} ${text(type.argument)}`;
+        case 'templateLiteral':
+            return `\`${type.quasis
+                .map((q, i) => (i < type.types.length ? `${q}\${${text(type.types[i]!)}}` : q))
+                .join('')}\``;
+        case 'import':
+            return `import('${type.source}')${type.qualifier ? `.${type.qualifier.join('.')}` : ''}`;
+        case 'infer':
+            return `infer ${type.name}`;
+        case 'predicate':
+            return `${type.asserts ? 'asserts ' : ''}${type.parameterName}${type.predicateType ? ` is ${text(type.predicateType)}` : ''}`;
+        case 'unknown':
+            return type.nodeType;
     }
 };
 
@@ -530,7 +769,6 @@ export const makeLwcTypeJson = (target: LwcNode, context: LwcJsonContext): LwcTy
     return {
         kind: 'lwcType',
         sourceKeys: context.keysOf(node),
-        text: context.textOf(node),
         ...makeLwcTypeContentJson(node, context),
     };
 };

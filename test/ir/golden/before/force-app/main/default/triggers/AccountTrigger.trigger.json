@@ -21,75 +21,79 @@
       ],
       "block": [
         {
-          "kind": "statement",
-          "statement": {
-            "kind": "if",
-            "sourceKeys": {},
-            "conditionBlock": [
-              {
-                "condition": {
-                  "kind": "ifCondition",
+          "kind": "if",
+          "sourceKeys": {},
+          "conditionBlock": [
+            {
+              "condition": {
+                "kind": "memberAccess",
+                "sourceKeys": {},
+                "type": "object",
+                "object": {
+                  "kind": "identifier",
                   "sourceKeys": {},
-                  "condition": {
+                  "name": "Trigger"
+                },
+                "operator": ".",
+                "member": "isBefore"
+              },
+              "block": [
+                {
+                  "kind": "expression",
+                  "sourceKeys": {},
+                  "value": {
                     "kind": "memberAccess",
                     "sourceKeys": {},
-                    "type": "object",
-                    "object": "Trigger",
-                    "operator": ".",
-                    "member": "isBefore"
-                  }
-                },
-                "block": [
-                  {
-                    "kind": "expression",
-                    "sourceKeys": {},
-                    "value": {
-                      "kind": "memberAccess",
+                    "type": "method",
+                    "object": {
+                      "kind": "identifier",
                       "sourceKeys": {},
-                      "type": "method",
-                      "object": "AccountService",
-                      "operator": ".",
-                      "member": "validate",
-                      "memberArg": [
-                        {
-                          "kind": "memberAccess",
+                      "name": "AccountService"
+                    },
+                    "operator": ".",
+                    "member": "validate",
+                    "memberArg": [
+                      {
+                        "kind": "memberAccess",
+                        "sourceKeys": {},
+                        "type": "object",
+                        "object": {
+                          "kind": "identifier",
                           "sourceKeys": {},
-                          "type": "object",
-                          "object": "Trigger",
-                          "operator": ".",
-                          "member": "new"
-                        }
-                      ]
-                    }
+                          "name": "Trigger"
+                        },
+                        "operator": ".",
+                        "member": "new"
+                      }
+                    ]
                   }
-                ]
-              }
-            ]
-          },
-          "modifier": {}
-        },
-        {
-          "kind": "statement",
-          "statement": {
-            "kind": "expression",
-            "sourceKeys": {},
-            "value": {
-              "kind": "memberAccess",
-              "sourceKeys": {},
-              "type": "method",
-              "object": "System",
-              "operator": ".",
-              "member": "debug",
-              "memberArg": [
-                {
-                  "sourceKeys": {},
-                  "value": "'done'",
-                  "valueType": "string"
                 }
               ]
             }
-          },
-          "modifier": {}
+          ]
+        },
+        {
+          "kind": "expression",
+          "sourceKeys": {},
+          "value": {
+            "kind": "memberAccess",
+            "sourceKeys": {},
+            "type": "method",
+            "object": {
+              "kind": "identifier",
+              "sourceKeys": {},
+              "name": "System"
+            },
+            "operator": ".",
+            "member": "debug",
+            "memberArg": [
+              {
+                "kind": "string",
+                "sourceKeys": {},
+                "value": "done"
+              }
+            ]
+          }
         }
       ]
     }
@@ -109,16 +113,16 @@
       }
     },
     {
-      "context": "(Trigger.isBefore)",
+      "context": "AccountService",
       "start": {
-        "offset": 73,
-        "line": 2,
-        "column": 7
+        "offset": 102,
+        "line": 3,
+        "column": 8
       },
       "end": {
-        "offset": 91,
-        "line": 2,
-        "column": 25
+        "offset": 116,
+        "line": 3,
+        "column": 22
       }
     },
     {
@@ -148,6 +152,19 @@
       }
     },
     {
+      "context": "System",
+      "start": {
+        "offset": 150,
+        "line": 5,
+        "column": 4
+      },
+      "end": {
+        "offset": 156,
+        "line": 5,
+        "column": 10
+      }
+    },
+    {
       "context": "System.debug('done')",
       "start": {
         "offset": 150,
@@ -171,6 +188,32 @@
         "offset": 171,
         "line": 5,
         "column": 25
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 126,
+        "line": 3,
+        "column": 32
+      },
+      "end": {
+        "offset": 133,
+        "line": 3,
+        "column": 39
+      }
+    },
+    {
+      "context": "Trigger",
+      "start": {
+        "offset": 74,
+        "line": 2,
+        "column": 8
+      },
+      "end": {
+        "offset": 81,
+        "line": 2,
+        "column": 15
       }
     },
     {

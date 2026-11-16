@@ -11,29 +11,37 @@ import {
 } from '../analyzer/processor/dependency/graph';
 import {
     ProjectTree,
-    Repository,
+    type Repository,
     WorkingTree,
-    analyzeDependencies,
     changedUnits,
+    dependencyGraphOf,
     locateUnits,
     relativeGitFiles,
 } from '../analyzer/unit';
+import type { RepositoryProcessor } from '../analyzer/unit/processor';
 
 // 依存関係を問い合わせる MCP のツール。方針: docs/analysis-plan.md 3.5
 // 名前・種類・位置だけを返す (値は返さないので、機密の値 (5.7) は出ない)
 
 const levelSchema = z.enum(['unit', 'member', 'site']).optional();
 
+/** true なら、リポジトリを読み直してから返す */
+const reloadSchema = z.boolean().optional();
+
 const text = (value: unknown) => ({
     content: [{ type: 'text' as const, text: JSON.stringify(value, null, 2) }],
 });
 
-/** リポジトリ (sfdx-project.json の packageDirectories・.forceignore の範囲) のグラフ */
+/**
+ * リポジトリ (sfdx-project.json の packageDirectories・.forceignore の範囲) のグラフ。
+ * processor の after (今の状態) のグラフを使い回す。reload なら読み直す (docs/save-format-plan.md の S0)
+ */
 const loadGraph = async (
-    root: string,
+    processor: RepositoryProcessor,
+    reload: boolean | undefined,
 ): Promise<{ graph: DependencyGraph; repository: Repository }> => {
-    const repository = await Repository.load(new ProjectTree(new WorkingTree(root)));
-    return { graph: analyzeDependencies(repository), repository };
+    if (reload) await processor.reset();
+    return { graph: dependencyGraphOf(processor.after), repository: processor.after };
 };
 
 const describeNodes = (graph: DependencyGraph, found: Map<string, number>) =>
@@ -42,7 +50,11 @@ const describeNodes = (graph: DependencyGraph, found: Map<string, number>) =>
         return { id, type: node.type, name: node.name, origin: node.origin, depth };
     });
 
-export const registerDependencyTools = (server: McpServer, repositoryRoot: string): void => {
+export const registerDependencyTools = (
+    server: McpServer,
+    processor: RepositoryProcessor,
+): void => {
+    const { repositoryRoot } = processor;
     server.registerTool(
         'get_dependents',
         {
@@ -52,10 +64,11 @@ export const registerDependencyTools = (server: McpServer, repositoryRoot: strin
                 target: z.string().min(1),
                 depth: z.number().int().min(1).max(10).optional(),
                 level: levelSchema,
+                reload: reloadSchema,
             },
         },
-        async ({ target, depth, level }) => {
-            const { graph } = await loadGraph(repositoryRoot);
+        async ({ target, depth, level, reload }) => {
+            const { graph } = await loadGraph(processor, reload);
             if (!graph.nodes.has(target)) return text({ target, found: false, dependents: [] });
             return text({
                 target,
@@ -77,10 +90,11 @@ export const registerDependencyTools = (server: McpServer, repositoryRoot: strin
                 target: z.string().min(1),
                 depth: z.number().int().min(1).max(10).optional(),
                 level: levelSchema,
+                reload: reloadSchema,
             },
         },
-        async ({ target, depth, level }) => {
-            const { graph } = await loadGraph(repositoryRoot);
+        async ({ target, depth, level, reload }) => {
+            const { graph } = await loadGraph(processor, reload);
             if (!graph.nodes.has(target)) return text({ target, found: false, dependencies: [] });
             return text({
                 target,
@@ -101,16 +115,18 @@ export const registerDependencyTools = (server: McpServer, repositoryRoot: strin
             inputSchema: {
                 from: z.string().optional(),
                 depth: z.number().int().min(1).max(10).optional(),
+                /** 既定は true (git の変更と、今の作業ツリーの解析をそろえる) */
+                reload: reloadSchema,
             },
         },
-        async ({ from, depth }) => {
+        async ({ from, depth, reload }) => {
             const target: GitDiffTarget = from
                 ? { mode: 'committed', from, to: 'HEAD' }
                 : { mode: 'unstaged', includeUntracked: true };
             const diff = await GitParser.getDiffFiles(target, { cwd: repositoryRoot });
             const subdirectory = repositoryRoot.slice(diff.root.length).replace(/^[\\/]+/, '');
             const changed = changedUnits(relativeGitFiles(diff.files, subdirectory));
-            const { graph, repository } = await loadGraph(repositoryRoot);
+            const { graph, repository } = await loadGraph(processor, reload ?? true);
             // 変わった単位の場所 → グラフの単位のノード
             const changedNodes = [...graph.nodes.values()]
                 .filter((node) => {
@@ -137,10 +153,10 @@ export const registerDependencyTools = (server: McpServer, repositoryRoot: strin
         {
             description:
                 'リポジトリにない参照先 (存在しない項目・クラス・コンポーネント・ラベルなど) と、参照している場所を返します',
-            inputSchema: {},
+            inputSchema: { reload: reloadSchema },
         },
-        async () => {
-            const { graph } = await loadGraph(repositoryRoot);
+        async ({ reload }) => {
+            const { graph } = await loadGraph(processor, reload);
             return text(
                 graph.findings.map((finding) => ({
                     code: finding.code,

@@ -24,19 +24,18 @@ import { LwcParser } from '../../../../src/analyzer/parser/Lwc/parser';
 import { ApexParser } from '../../../../src/analyzer/parser/Apex/parser';
 import {
     analyzeAutomation,
-    analyzeCustomLabels,
     apexContextOf,
     analyzeFlexiPages,
     analyzeFlows,
     analyzeLayouts,
     analyzeObject,
     analyzePermissions,
-    getFlowLabelUsages,
     lwcContextOf,
     METADATA_UNIT_DIFFS,
     type MetadataContext,
 } from '../../../../src/analyzer/processor/Metadata';
 import { REPORT_PROVIDERS, getReferenceUsages } from '../../../../src/analyzer/report';
+import { getDependents, toLevel } from '../../../../src/analyzer/processor/dependency/graph';
 import { Repository, WorkingTree, dependencyGraphOf } from '../../../../src/analyzer/unit';
 import { SIDES, repositoryOf, sourceOf } from '../../paths';
 
@@ -145,7 +144,8 @@ const summarizeFiles = (side: Side, parsed: Parsed): string[] => {
     Object.values(parsed)
         .flat()
         .forEach((result) => {
-            const base = result.result.base as Record<string, unknown>;
+            // 読めなかった単位 (dataType: error) の base は null
+            const base = (result.result.base ?? {}) as Record<string, unknown>;
             const rows =
                 result.dataType === 'error'
                     ? '-'
@@ -208,27 +208,28 @@ const summarizePermissions = (parsed: Parsed, context: MetadataContext): string[
     return lines;
 };
 
-/** ラベルの使用箇所 (LWC・Flow) */
-const summarizeLabels = async (side: Side, parsed: Parsed): Promise<string[]> => {
-    const analysis = analyzeCustomLabels(parsed.customLabels as never, {
-        lwc: await lwcSamples(side),
-        usages: getFlowLabelUsages(parsed.flow as never),
-    });
+/** ラベルの使用箇所と指摘 (依存関係のグラフ。docs/json-redesign-plan.md 6 章の 9) */
+const summarizeLabels = async (side: Side, _parsed: Parsed): Promise<string[]> => {
+    const graph = dependencyGraphOf(await repositoryFor(side));
     const lines = [
-        '### カスタム表示ラベル (analyzeCustomLabels)',
+        '### カスタム表示ラベル (依存関係のグラフ)',
         '',
-        '| ラベル | 値 | 使っているところ |',
-        '| --- | --- | --- |',
+        '| ラベル | 使っている単位 |',
+        '| --- | --- |',
     ];
-    analysis.labels.forEach((label) =>
-        lines.push(
-            `| ${label.name} | ${label.value ?? '-'} | ${label.usages.map((u) => `${u.origin}:${u.unit}`).join(', ') || '-'} |`,
-        ),
-    );
-    lines.push('', '| 重要度 | code | 対象 | 内容 |', '| --- | --- | --- | --- |');
-    analysis.findings.forEach((f) =>
-        lines.push(`| ${f.severity} | ${f.code} | ${f.target} | ${f.message} |`),
-    );
+    const labels = [...graph.nodes.values()]
+        .filter((node) => node.type === 'customLabel' && node.origin === 'repository')
+        .sort((a, b) => a.name.localeCompare(b.name));
+    for (const label of labels) {
+        const users = [...getDependents(graph, label.id, { level: 'unit' }).keys()].sort();
+        lines.push(`| ${label.name} | ${users.join(', ') || '-'} |`);
+    }
+    lines.push('', '| code | 対象 | 参照元 |', '| --- | --- | --- |');
+    graph.findings
+        .filter((f) => f.code === 'UNKNOWN_CUSTOM_LABEL')
+        .forEach((f) =>
+            lines.push(`| ${f.code} | ${f.target} | ${toLevel(graph, f.from, 'unit')} |`),
+        );
     lines.push('');
     return lines;
 };

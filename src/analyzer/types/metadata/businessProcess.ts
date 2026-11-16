@@ -8,8 +8,10 @@ import {
     nonEmptyEntry,
     readProperties,
     readText,
+    unknownChildNames,
 } from '../commons/xmlJson';
-import { XmlElement, childrenOf } from '../commons/xml';
+import { XmlElement } from '../commons/xml';
+import { type PicklistValueSelectionJson, readPicklistValueSelections } from './recordType';
 
 // オブジェクトの子のうち、ビジネスプロセスと共有の理由。方針: docs/metadata-implementation.md
 
@@ -19,10 +21,13 @@ export const BUSINESS_PROCESS_SCHEMA = {
 } as const;
 
 /** ビジネスプロセスで使える選択リスト値 (商談のフェーズ・ケースの状況など) */
-export type BusinessProcessValue = { fullName: string; default?: boolean };
+/** ビジネスプロセスで使える選択リスト値 (段階 M8 で kind と位置を持つ picklistValueSelection にした) */
+export type BusinessProcessValue = PicklistValueSelectionJson;
 
 /** ビジネスプロセス (businessProcesses/*.businessProcess-meta.xml) */
 export type BusinessProcessJson = JsonType<'businessProcess'> & {
+    /** 読んでいない要素の名前 */
+    skippedElements?: string[];
     fullName: string;
     values?: BusinessProcessValue[];
 } & PropertiesOf<typeof BUSINESS_PROCESS_SCHEMA>;
@@ -38,12 +43,14 @@ export const makeBusinessProcessJson = (
         {
             fullName: readText(element, 'fullName') ?? fullName,
             ...readProperties(element, BUSINESS_PROCESS_SCHEMA),
+            ...nonEmptyEntry('values', readPicklistValueSelections(element, file, registry)),
             ...nonEmptyEntry(
-                'values',
-                childrenOf(element, 'values').map((value) => ({
-                    fullName: readText(value, 'fullName') ?? '',
-                    ...readProperties(value, { default: 'boolean' }),
-                })),
+                'skippedElements',
+                unknownChildNames(element, [
+                    'fullName',
+                    ...Object.keys(BUSINESS_PROCESS_SCHEMA),
+                    'values',
+                ]),
             ),
         },
         element,
@@ -57,6 +64,8 @@ export const SHARING_REASON_SCHEMA = {
 
 /** 共有の理由 (sharingReasons/*.sharingReason-meta.xml。Apex の共有で使う) */
 export type SharingReasonJson = JsonType<'sharingReason'> & {
+    /** 読んでいない要素の名前 */
+    skippedElements?: string[];
     fullName: string;
 } & PropertiesOf<typeof SHARING_REASON_SCHEMA>;
 
@@ -71,6 +80,10 @@ export const makeSharingReasonJson = (
         {
             fullName: readText(element, 'fullName') ?? fullName,
             ...readProperties(element, SHARING_REASON_SCHEMA),
+            ...nonEmptyEntry(
+                'skippedElements',
+                unknownChildNames(element, ['fullName', ...Object.keys(SHARING_REASON_SCHEMA)]),
+            ),
         },
         element,
         file,

@@ -4,3 +4,4 @@ export * from './repository';
 export * from './project';
 export * from './dependencies';
 export * from './processor';
+export * from './store';

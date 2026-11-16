@@ -3,50 +3,6 @@
   "resolvedError": [
     {
       "sourceKeys": {
-        "objectKey": "error_4baf9d30ada9149f",
-        "sourceKey": "error_ad227c7f8a469882"
-      },
-      "phase": "analyzer",
-      "code": "EXCEPTION",
-      "contextType": "AnonymousBlockMemberContext",
-      "context": "",
-      "errorMessage": "値が異常です。AnonymousBlockMemberContext: ",
-      "start": {
-        "offset": 0,
-        "line": 1,
-        "column": 0
-      },
-      "end": {
-        "offset": 0,
-        "line": 1,
-        "column": 0
-      },
-      "filePath": "broken.apex"
-    },
-    {
-      "sourceKeys": {
-        "objectKey": "error_42fbd3dd48befd5d",
-        "sourceKey": "error_11523a219594fa1f"
-      },
-      "phase": "analyzer",
-      "code": "EXCEPTION",
-      "contextType": "AnonymousBlockMemberContext",
-      "context": "Integer",
-      "errorMessage": "値が異常です。AnonymousBlockMemberContext: Integer",
-      "start": {
-        "offset": 0,
-        "line": 1,
-        "column": 0
-      },
-      "end": {
-        "offset": 7,
-        "line": 1,
-        "column": 7
-      },
-      "filePath": "broken.apex"
-    },
-    {
-      "sourceKeys": {
         "objectKey": "error_a1356b5a3de06661",
         "sourceKey": "error_72e399335f100684"
       },
@@ -108,28 +64,6 @@
         "offset": 29,
         "line": 2,
         "column": 15
-      },
-      "filePath": "broken.apex"
-    },
-    {
-      "sourceKeys": {
-        "objectKey": "error_d5e23f18c419e891",
-        "sourceKey": "error_f2f5e05f63dfd8f1"
-      },
-      "phase": "analyzer",
-      "code": "EXCEPTION",
-      "contextType": "WhereLogicalExpressionContext",
-      "context": "",
-      "errorMessage": "値が異常です。WhereLogicalExpressionContext: ",
-      "start": {
-        "offset": 65,
-        "line": 2,
-        "column": 51
-      },
-      "end": {
-        "offset": 65,
-        "line": 2,
-        "column": 51
       },
       "filePath": "broken.apex"
     },
@@ -256,142 +190,210 @@
         "content": {
           "block": [
             {
-              "kind": "error",
+              "kind": "expression",
               "sourceKeys": {
-                "objectKey": "error_df0ab11517eaaaa5",
-                "sourceKey": "error_3073eafee1bd752d"
+                "objectKey": "expressionStatement_baa9730435509821",
+                "sourceKey": "expressionStatement_c95936b8d5868dce"
               },
-              "kindType": "unit"
-            },
-            {
-              "kind": "error",
-              "sourceKeys": {
-                "objectKey": "error_df0ab11517eaaaa5",
-                "sourceKey": "error_01511f3fe2baf675"
-              },
-              "kindType": "unit"
-            },
-            {
-              "kind": "statement",
-              "statement": {
-                "kind": "expression",
+              "value": {
+                "kind": "assignment",
                 "sourceKeys": {
-                  "objectKey": "expressionStatement_9d811488d0f4b137",
-                  "sourceKey": "expressionStatement_c95936b8d5868dce"
+                  "objectKey": "assignExpression_c6dbdb4b70e48448",
+                  "sourceKey": "assignExpression_c95936b8d5868dce"
                 },
-                "value": {
+                "left": {
+                  "kind": "identifier",
                   "sourceKeys": {
-                    "objectKey": "assignExpression_e17323b769696885",
-                    "sourceKey": "assignExpression_c95936b8d5868dce"
+                    "objectKey": "idPrimary_84168ac6b7862232",
+                    "sourceKey": "idPrimary_f0e1eca17244e259"
                   },
-                  "left": "x",
-                  "operator": "=",
-                  "right": {
+                  "name": "x"
+                },
+                "right": {
+                  "kind": "classLiteral",
+                  "sourceKeys": {
+                    "objectKey": "typeRefPrimary_208d386d1294cf3b",
+                    "sourceKey": "typeRefPrimary_57fe09ac89b098f8"
+                  },
+                  "classType": {
                     "kind": "type",
                     "sourceKeys": {
-                      "objectKey": "typeRef_ea7c57f43a96c57c",
+                      "objectKey": "typeRef_3618fb8568f22cae",
                       "sourceKey": "typeRef_57fe09ac89b098f8"
                     },
                     "type": "list",
                     "elementType": {
                       "type": "custom",
-                      "customType": "Account"
+                      "customType": [
+                        "Account"
+                      ]
                     }
                   }
-                }
-              },
-              "modifier": {}
+                },
+                "operator": "="
+              }
             },
             {
-              "kind": "statement",
-              "statement": {
-                "kind": "error",
-                "sourceKeys": {
-                  "objectKey": "expressionStatement_d0a7e40e43c55606",
-                  "sourceKey": "expressionStatement_346702cfd490f55c"
-                },
-                "kindType": "expression"
+              "kind": "expression",
+              "sourceKeys": {
+                "objectKey": "expressionStatement_035d59df0df3612f",
+                "sourceKey": "expressionStatement_346702cfd490f55c"
               },
-              "modifier": {}
-            },
-            {
-              "kind": "statement",
-              "statement": {
-                "kind": "expression",
+              "value": {
+                "kind": "assignment",
                 "sourceKeys": {
-                  "objectKey": "expressionStatement_76ca866b6c778f14",
-                  "sourceKey": "expressionStatement_015e6e5781543649"
+                  "objectKey": "assignExpression_d0295eeb1381a36f",
+                  "sourceKey": "assignExpression_346702cfd490f55c"
                 },
-                "value": {
+                "left": {
+                  "kind": "identifier",
                   "sourceKeys": {
-                    "objectKey": "assignExpression_75391c940c0b95f0",
-                    "sourceKey": "assignExpression_015e6e5781543649"
+                    "objectKey": "idPrimary_cfda67f5a7cd22de",
+                    "sourceKey": "idPrimary_0a9e45c4af03c92d"
                   },
-                  "left": "Name",
-                  "operator": "=",
-                  "right": "LIMIT"
-                }
-              },
-              "modifier": {}
-            },
-            {
-              "kind": "statement",
-              "statement": {
-                "kind": "expression",
-                "sourceKeys": {
-                  "objectKey": "expressionStatement_b679657725f1f6ad",
-                  "sourceKey": "expressionStatement_7c2e55fda39bf653"
+                  "name": "accs"
                 },
-                "value": {
+                "right": {
+                  "kind": "soql",
                   "sourceKeys": {
-                    "objectKey": "literal_fb5627d59521b262",
-                    "sourceKey": "literal_d4e9c69c9782aed4"
+                    "objectKey": "query_bc12d588e569ab12",
+                    "sourceKey": "query_2ccf7969867f44dc"
                   },
-                  "value": "1",
-                  "valueType": "integer"
-                }
-              },
-              "modifier": {}
-            },
-            {
-              "kind": "statement",
-              "statement": {
-                "kind": "for",
-                "sourceKeys": {
-                  "objectKey": "forStatement_186bef5b3fa2b6ce",
-                  "sourceKey": "forStatement_01d8b263e55411cd"
-                },
-                "condition": {
-                  "kind": "forCondition",
-                  "sourceKeys": {
-                    "objectKey": "forControl_c61f17853a7581d9",
-                    "sourceKey": "forControl_1f53a2e33bcea6a7"
+                  "select": {
+                    "field": [
+                      {
+                        "kind": "selectEntry",
+                        "sourceKeys": {
+                          "objectKey": "selectEntry_60f7e9358613f5bb",
+                          "sourceKey": "selectEntry_145bd877bd157847"
+                        },
+                        "type": "field",
+                        "field": [
+                          "Id"
+                        ]
+                      }
+                    ]
+                  },
+                  "from": {
+                    "field": [
+                      {
+                        "kind": "fromField",
+                        "sourceKeys": {
+                          "objectKey": "fromName_5a00adc85e29acaf",
+                          "sourceKey": "fromName_de22d2280df94eb7"
+                        },
+                        "field": [
+                          "Account"
+                        ]
+                      }
+                    ]
                   }
                 },
-                "block": [
-                  {
-                    "kind": "error",
+                "operator": "="
+              }
+            },
+            {
+              "kind": "expression",
+              "sourceKeys": {
+                "objectKey": "expressionStatement_52f18ae5349d61e3",
+                "sourceKey": "expressionStatement_015e6e5781543649"
+              },
+              "value": {
+                "kind": "assignment",
+                "sourceKeys": {
+                  "objectKey": "assignExpression_5688cf355d8ff699",
+                  "sourceKey": "assignExpression_015e6e5781543649"
+                },
+                "left": {
+                  "kind": "identifier",
+                  "sourceKeys": {
+                    "objectKey": "idPrimary_e8b3081e5915d845",
+                    "sourceKey": "idPrimary_616a367dcabe098a"
+                  },
+                  "name": "Name"
+                },
+                "right": {
+                  "kind": "identifier",
+                  "sourceKeys": {
+                    "objectKey": "idPrimary_efb62eaf0238921b",
+                    "sourceKey": "idPrimary_356d49808bb7ba13"
+                  },
+                  "name": "LIMIT"
+                },
+                "operator": "="
+              }
+            },
+            {
+              "kind": "expression",
+              "sourceKeys": {
+                "objectKey": "expressionStatement_c177ba45e0de7679",
+                "sourceKey": "expressionStatement_7c2e55fda39bf653"
+              },
+              "value": {
+                "kind": "integer",
+                "sourceKeys": {
+                  "objectKey": "literal_fb5627d59521b262",
+                  "sourceKey": "literal_d4e9c69c9782aed4"
+                },
+                "value": "1"
+              }
+            },
+            {
+              "kind": "for",
+              "sourceKeys": {
+                "objectKey": "forStatement_79667c34129de295",
+                "sourceKey": "forStatement_01d8b263e55411cd"
+              },
+              "condition": {},
+              "block": [
+                {
+                  "kind": "expression",
+                  "sourceKeys": {
+                    "objectKey": "expressionStatement_c3d5c7d728dc64c9",
+                    "sourceKey": "expressionStatement_87a546387de7e1f3"
+                  },
+                  "value": {
+                    "kind": "call",
                     "sourceKeys": {
-                      "objectKey": "expressionStatement_c2cf4fb9db6822f6",
-                      "sourceKey": "expressionStatement_87a546387de7e1f3"
+                      "objectKey": "methodCallExpression_cb3827595d8fcd2d",
+                      "sourceKey": "methodCallExpression_25d9ef61ad70dd4b"
                     },
-                    "kindType": "expression"
+                    "callee": {
+                      "kind": "identifier",
+                      "sourceKeys": {
+                        "objectKey": "id_96a9e32fcc6db411",
+                        "sourceKey": "id_e5b63225792c5939"
+                      },
+                      "name": "foo"
+                    },
+                    "arg": [
+                      {
+                        "kind": "integer",
+                        "sourceKeys": {
+                          "objectKey": "literal_fb5627d59521b262",
+                          "sourceKey": "literal_dac313331819d07d"
+                        },
+                        "value": "1"
+                      }
+                    ]
                   }
-                ]
-              },
-              "modifier": {}
+                }
+              ]
             },
             {
-              "kind": "statement",
-              "statement": {
-                "kind": "return",
-                "sourceKeys": {
-                  "objectKey": "returnStatement_f80ab14f3b18a0e7",
-                  "sourceKey": "returnStatement_153a288e5c27dbdc"
-                },
-                "field": "x"
+              "kind": "return",
+              "sourceKeys": {
+                "objectKey": "returnStatement_52c416dfa9a95bb2",
+                "sourceKey": "returnStatement_153a288e5c27dbdc"
               },
-              "modifier": {}
+              "field": {
+                "kind": "identifier",
+                "sourceKeys": {
+                  "objectKey": "idPrimary_84168ac6b7862232",
+                  "sourceKey": "idPrimary_202c10030d779f50"
+                },
+                "name": "x"
+              }
             }
           ]
         }
@@ -399,39 +401,7 @@
     },
     "sourceObject": [
       {
-        "objectKey": "error_df0ab11517eaaaa5",
-        "context": "",
-        "source": [
-          {
-            "sourceKey": "error_3073eafee1bd752d",
-            "start": {
-              "offset": 0,
-              "line": 1,
-              "column": 0
-            },
-            "end": {
-              "offset": 0,
-              "line": 1,
-              "column": 0
-            }
-          },
-          {
-            "sourceKey": "error_01511f3fe2baf675",
-            "start": {
-              "offset": 0,
-              "line": 1,
-              "column": 0
-            },
-            "end": {
-              "offset": 7,
-              "line": 1,
-              "column": 7
-            }
-          }
-        ]
-      },
-      {
-        "objectKey": "expressionStatement_9d811488d0f4b137",
+        "objectKey": "expressionStatement_baa9730435509821",
         "context": "x = ;\nList<Account>",
         "source": [
           {
@@ -450,7 +420,7 @@
         ]
       },
       {
-        "objectKey": "assignExpression_e17323b769696885",
+        "objectKey": "assignExpression_c6dbdb4b70e48448",
         "context": "x = ;\nList<Account>",
         "source": [
           {
@@ -469,7 +439,58 @@
         ]
       },
       {
-        "objectKey": "typeRef_ea7c57f43a96c57c",
+        "objectKey": "idPrimary_84168ac6b7862232",
+        "context": "x",
+        "source": [
+          {
+            "sourceKey": "idPrimary_f0e1eca17244e259",
+            "start": {
+              "offset": 8,
+              "line": 1,
+              "column": 8
+            },
+            "end": {
+              "offset": 9,
+              "line": 1,
+              "column": 9
+            }
+          },
+          {
+            "sourceKey": "idPrimary_202c10030d779f50",
+            "start": {
+              "offset": 116,
+              "line": 6,
+              "column": 7
+            },
+            "end": {
+              "offset": 117,
+              "line": 6,
+              "column": 8
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "typeRefPrimary_208d386d1294cf3b",
+        "context": "List<Account>",
+        "source": [
+          {
+            "sourceKey": "typeRefPrimary_57fe09ac89b098f8",
+            "start": {
+              "offset": 14,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 27,
+              "line": 2,
+              "column": 13
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "typeRef_3618fb8568f22cae",
         "context": "List<Account>",
         "source": [
           {
@@ -488,7 +509,7 @@
         ]
       },
       {
-        "objectKey": "expressionStatement_d0a7e40e43c55606",
+        "objectKey": "expressionStatement_035d59df0df3612f",
         "context": "accs = [SELECT Id FROM Account WHERE",
         "source": [
           {
@@ -507,7 +528,102 @@
         ]
       },
       {
-        "objectKey": "expressionStatement_76ca866b6c778f14",
+        "objectKey": "assignExpression_d0295eeb1381a36f",
+        "context": "accs = [SELECT Id FROM Account WHERE",
+        "source": [
+          {
+            "sourceKey": "assignExpression_346702cfd490f55c",
+            "start": {
+              "offset": 28,
+              "line": 2,
+              "column": 14
+            },
+            "end": {
+              "offset": 64,
+              "line": 2,
+              "column": 50
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "idPrimary_cfda67f5a7cd22de",
+        "context": "accs",
+        "source": [
+          {
+            "sourceKey": "idPrimary_0a9e45c4af03c92d",
+            "start": {
+              "offset": 28,
+              "line": 2,
+              "column": 14
+            },
+            "end": {
+              "offset": 32,
+              "line": 2,
+              "column": 18
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "query_bc12d588e569ab12",
+        "context": "SELECT Id FROM Account WHERE",
+        "source": [
+          {
+            "sourceKey": "query_2ccf7969867f44dc",
+            "start": {
+              "offset": 36,
+              "line": 2,
+              "column": 22
+            },
+            "end": {
+              "offset": 64,
+              "line": 2,
+              "column": 50
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "selectEntry_60f7e9358613f5bb",
+        "context": "Id",
+        "source": [
+          {
+            "sourceKey": "selectEntry_145bd877bd157847",
+            "start": {
+              "offset": 43,
+              "line": 2,
+              "column": 29
+            },
+            "end": {
+              "offset": 45,
+              "line": 2,
+              "column": 31
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fromName_5a00adc85e29acaf",
+        "context": "Account",
+        "source": [
+          {
+            "sourceKey": "fromName_de22d2280df94eb7",
+            "start": {
+              "offset": 51,
+              "line": 2,
+              "column": 37
+            },
+            "end": {
+              "offset": 58,
+              "line": 2,
+              "column": 44
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "expressionStatement_52f18ae5349d61e3",
         "context": "Name = LIMIT",
         "source": [
           {
@@ -526,7 +642,7 @@
         ]
       },
       {
-        "objectKey": "assignExpression_75391c940c0b95f0",
+        "objectKey": "assignExpression_5688cf355d8ff699",
         "context": "Name = LIMIT",
         "source": [
           {
@@ -545,7 +661,45 @@
         ]
       },
       {
-        "objectKey": "expressionStatement_b679657725f1f6ad",
+        "objectKey": "idPrimary_e8b3081e5915d845",
+        "context": "Name",
+        "source": [
+          {
+            "sourceKey": "idPrimary_616a367dcabe098a",
+            "start": {
+              "offset": 65,
+              "line": 2,
+              "column": 51
+            },
+            "end": {
+              "offset": 69,
+              "line": 2,
+              "column": 55
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "idPrimary_efb62eaf0238921b",
+        "context": "LIMIT",
+        "source": [
+          {
+            "sourceKey": "idPrimary_356d49808bb7ba13",
+            "start": {
+              "offset": 72,
+              "line": 2,
+              "column": 58
+            },
+            "end": {
+              "offset": 77,
+              "line": 2,
+              "column": 63
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "expressionStatement_c177ba45e0de7679",
         "context": "1];",
         "source": [
           {
@@ -579,11 +733,24 @@
               "line": 2,
               "column": 65
             }
+          },
+          {
+            "sourceKey": "literal_dac313331819d07d",
+            "start": {
+              "offset": 101,
+              "line": 4,
+              "column": 8
+            },
+            "end": {
+              "offset": 102,
+              "line": 4,
+              "column": 9
+            }
           }
         ]
       },
       {
-        "objectKey": "forStatement_186bef5b3fa2b6ce",
+        "objectKey": "forStatement_79667c34129de295",
         "context": "for (;;) {\n    foo(1, );\n}",
         "source": [
           {
@@ -602,26 +769,7 @@
         ]
       },
       {
-        "objectKey": "forControl_c61f17853a7581d9",
-        "context": ";;",
-        "source": [
-          {
-            "sourceKey": "forControl_1f53a2e33bcea6a7",
-            "start": {
-              "offset": 87,
-              "line": 3,
-              "column": 5
-            },
-            "end": {
-              "offset": 89,
-              "line": 3,
-              "column": 7
-            }
-          }
-        ]
-      },
-      {
-        "objectKey": "expressionStatement_c2cf4fb9db6822f6",
+        "objectKey": "expressionStatement_c3d5c7d728dc64c9",
         "context": "foo(1, );",
         "source": [
           {
@@ -640,7 +788,45 @@
         ]
       },
       {
-        "objectKey": "returnStatement_f80ab14f3b18a0e7",
+        "objectKey": "methodCallExpression_cb3827595d8fcd2d",
+        "context": "foo(1, )",
+        "source": [
+          {
+            "sourceKey": "methodCallExpression_25d9ef61ad70dd4b",
+            "start": {
+              "offset": 97,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 105,
+              "line": 4,
+              "column": 12
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "id_96a9e32fcc6db411",
+        "context": "foo",
+        "source": [
+          {
+            "sourceKey": "id_e5b63225792c5939",
+            "start": {
+              "offset": 97,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 100,
+              "line": 4,
+              "column": 7
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "returnStatement_52c416dfa9a95bb2",
         "context": "return x +;",
         "source": [
           {

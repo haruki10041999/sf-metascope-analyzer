@@ -18,16 +18,15 @@
           },
           "name": "run",
           "returnType": "void",
+          "param": [],
           "block": [],
           "modifier": {
-            "access": [
+            "keyword": [
               {
                 "kind": "modifier",
                 "sourceKeys": {},
                 "name": "PUBLIC"
-              }
-            ],
-            "declaration": [
+              },
               {
                 "kind": "modifier",
                 "sourceKeys": {},
@@ -38,7 +37,7 @@
         }
       ],
       "modifier": {
-        "access": [
+        "keyword": [
           {
             "kind": "modifier",
             "sourceKeys": {},

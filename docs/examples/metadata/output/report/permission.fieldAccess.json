@@ -27,7 +27,7 @@
   "cells": {
     "Account.Tier__c": {
       "profile:Sales": {
-        "filePath": "profiles/Sales.profile-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
         "before": {
           "readable": true,
           "editable": false
@@ -41,7 +41,7 @@
     },
     "Invoice__c.Amount__c": {
       "permissionSet:Invoice_Manager": {
-        "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
         "before": {
           "readable": true,
           "editable": false
@@ -53,7 +53,7 @@
         "status": "changed"
       },
       "permissionSet:Invoice_Viewer": {
-        "filePath": "permissionsets/Invoice_Viewer.permissionset-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\permissionsets\\Invoice_Viewer.permissionset-meta.xml",
         "before": {
           "readable": true,
           "editable": false
@@ -61,7 +61,7 @@
         "status": "removed"
       },
       "permissionSet:Payment_Clerk": {
-        "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Payment_Clerk.permissionset-meta.xml",
         "after": {
           "readable": true,
           "editable": false
@@ -71,7 +71,7 @@
     },
     "Invoice__c.Approved__c": {
       "permissionSet:Invoice_Manager": {
-        "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
         "after": {
           "readable": true,
           "editable": true
@@ -81,7 +81,7 @@
     },
     "Invoice__c.Missing__c": {
       "permissionSet:Invoice_Manager": {
-        "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
         "after": {
           "readable": true,
           "editable": false
@@ -91,7 +91,7 @@
     },
     "Invoice__c.Status__c": {
       "permissionSet:Invoice_Manager": {
-        "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
         "before": {
           "readable": true,
           "editable": true
@@ -99,7 +99,7 @@
         "status": "removed"
       },
       "profile:Sales": {
-        "filePath": "profiles/Sales.profile-meta.xml",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
         "before": {
           "readable": true,
           "editable": false

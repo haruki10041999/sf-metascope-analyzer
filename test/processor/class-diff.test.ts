@@ -51,11 +51,10 @@ const param = (objectKey: string, variant: string, type = 'Integer'): ParameterJ
 const statement = (objectKey: string): StatementJson => ({
     kind: 'break',
     sourceKeys: keys(objectKey),
-    value: 'break',
 });
 
 const modifier = (objectKey: string, name: ModifierJson['name']): ModifiersJson => ({
-    access: [{ kind: 'modifier', sourceKeys: keys(objectKey), name }],
+    keyword: [{ kind: 'modifier', sourceKeys: keys(objectKey), name }],
 });
 
 const method = (
@@ -89,17 +88,22 @@ const field = (objectKey: string, names: string[], init?: string): FieldDeclarat
     kind: 'field',
     sourceKeys: keys(objectKey),
     variantType: primitive(`${objectKey}-type`, 'Integer'),
+    // 変数は kind を持つ (段階 A4)
     variants: names.map((name) => ({
+        kind: 'variant' as const,
         sourceKeys: keys(`${objectKey}-${name}`),
         name,
-        ...(init ? { init } : {}),
+        // 初期値は整数のリテラル (式はどれも kind を持つ。段階 A2)
+        ...(init
+            ? { init: { kind: 'integer', sourceKeys: keys(`${objectKey}-init`), value: init } }
+            : {}),
     })),
 });
 
 const initializer = (block: StatementJson[], isStatic = false): InitializerBlockJson => ({
     kind: 'initializer',
+    sourceKeys: keys(`initializer-${isStatic}-${block.length}`),
     block,
-    modifier: {},
     isStatic,
 });
 

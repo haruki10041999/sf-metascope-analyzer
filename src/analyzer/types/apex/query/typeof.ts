@@ -1,5 +1,7 @@
 import typia from 'typia';
 
+import { JsonType } from '../../commons';
+
 import type {
     ElseClauseTypeClass,
     FieldNameListTypeClass,
@@ -8,15 +10,13 @@ import type {
     WhenClauseTypeClass,
 } from '../../apex_IR';
 
-export type TypeOfBlockJson =
-    | {
-          object: string[];
-          field: string[][];
-      }
-    | {
-          object: 'else';
-          field: string[][];
-      };
+import { makeNodeJson } from '../commons/node';
+
+/** TYPEOF の WHEN / ELSE の節 1 つ (ELSE は object が 'else') */
+export type TypeOfBlockJson = JsonType<'typeOfWhen'> & {
+    object: string[] | 'else';
+    field: string[][];
+};
 export const isTypeOfBlockJson = typia.createIs<TypeOfBlockJson>();
 
 const makeFieldNameJson = (target: FieldNameTypeClass): string[] =>
@@ -27,17 +27,17 @@ const makeFieldNameListJson = (target: FieldNameListTypeClass): string[][] =>
 
 const makeWhenJson = (target: WhenClauseTypeClass): TypeOfBlockJson => {
     const { value, field } = target.getFields();
-    return {
+    return makeNodeJson<TypeOfBlockJson>('typeOfWhen', target, {
         object: makeFieldNameJson(value),
         field: makeFieldNameListJson(field),
-    };
+    });
 };
 
 const makeElseJson = (target: ElseClauseTypeClass): TypeOfBlockJson => {
-    return {
+    return makeNodeJson<TypeOfBlockJson>('typeOfWhen', target, {
         object: 'else',
         field: makeFieldNameListJson(target.getFields().value),
-    };
+    });
 };
 
 export type TypeOfJson = {

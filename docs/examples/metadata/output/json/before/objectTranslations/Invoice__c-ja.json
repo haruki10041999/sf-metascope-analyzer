@@ -7,7 +7,7 @@
     "base": {
       "kind": "objectTranslation",
       "sourceKeys": {
-        "objectKey": "objectTranslation_3c2d655c83ab504d",
+        "objectKey": "objectTranslation_c0a602ece322bb83",
         "sourceKey": "objectTranslation_53a3b33d94e742a5"
       },
       "objectApiName": "Invoice__c",
@@ -17,7 +17,7 @@
         {
           "kind": "fieldTranslation",
           "sourceKeys": {
-            "objectKey": "fieldTranslation_cbed259110d83caf",
+            "objectKey": "fieldTranslation_6f5eb1b473907672",
             "sourceKey": "fieldTranslation_8e74997381ee1e7c"
           },
           "name": "Account__c",
@@ -27,7 +27,7 @@
         {
           "kind": "fieldTranslation",
           "sourceKeys": {
-            "objectKey": "fieldTranslation_d198782cd6dfe89b",
+            "objectKey": "fieldTranslation_bc56e2c0fc555a62",
             "sourceKey": "fieldTranslation_005de5cefe19657e"
           },
           "name": "Amount__c",
@@ -36,7 +36,7 @@
         {
           "kind": "fieldTranslation",
           "sourceKeys": {
-            "objectKey": "fieldTranslation_25324e98b71d3440",
+            "objectKey": "fieldTranslation_259bf4ea6b37e47e",
             "sourceKey": "fieldTranslation_511f7a0f359a3a36"
           },
           "name": "Due_Date__c",
@@ -45,7 +45,7 @@
         {
           "kind": "fieldTranslation",
           "sourceKeys": {
-            "objectKey": "fieldTranslation_fb4f41ba2c92fbf5",
+            "objectKey": "fieldTranslation_127d7ee147661ce3",
             "sourceKey": "fieldTranslation_4fb21aac7bf9d56d"
           },
           "name": "Note__c",
@@ -54,7 +54,7 @@
         {
           "kind": "fieldTranslation",
           "sourceKeys": {
-            "objectKey": "fieldTranslation_5e8702097780253c",
+            "objectKey": "fieldTranslation_d478d59851ffda03",
             "sourceKey": "fieldTranslation_a59ac1df752a8704"
           },
           "name": "Status__c",
@@ -94,7 +94,7 @@
         {
           "kind": "recordTypeTranslation",
           "sourceKeys": {
-            "objectKey": "recordTypeTranslation_7ca05a4432a58e3a",
+            "objectKey": "recordTypeTranslation_26c9a05cdc92e3d7",
             "sourceKey": "recordTypeTranslation_c302b44ca1a22640"
           },
           "name": "Standard",
@@ -105,7 +105,7 @@
         {
           "kind": "validationRuleTranslation",
           "sourceKeys": {
-            "objectKey": "validationRuleTranslation_184cc1335101582d",
+            "objectKey": "validationRuleTranslation_bb966b9406089386",
             "sourceKey": "validationRuleTranslation_961e1937b6216236"
           },
           "name": "Amount_Positive",
@@ -116,7 +116,7 @@
         {
           "kind": "webLinkTranslation",
           "sourceKeys": {
-            "objectKey": "webLinkTranslation_fb636f42c8a7f613",
+            "objectKey": "webLinkTranslation_2c420ec1b4e554f0",
             "sourceKey": "webLinkTranslation_5871df9a7a22bb22"
           },
           "name": "Send_Invoice",
@@ -127,7 +127,7 @@
         {
           "kind": "fieldSetTranslation",
           "sourceKeys": {
-            "objectKey": "fieldSetTranslation_44a8995d9bb799a8",
+            "objectKey": "fieldSetTranslation_924054dc75d5aa4f",
             "sourceKey": "fieldSetTranslation_edd5182d9b37e436"
           },
           "name": "Summary",
@@ -138,7 +138,7 @@
         {
           "kind": "layoutTranslation",
           "sourceKeys": {
-            "objectKey": "layoutTranslation_3a2124ee9e969dee",
+            "objectKey": "layoutTranslation_a6db85e749b4f21c",
             "sourceKey": "layoutTranslation_f9bd716cd023e9f5"
           },
           "layout": "Invoice Layout",
@@ -153,7 +153,7 @@
     },
     "sourceObject": [
       {
-        "objectKey": "fieldTranslation_cbed259110d83caf",
+        "objectKey": "fieldTranslation_6f5eb1b473907672",
         "context": "<CustomFieldTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <label>取引先</label>\n    <name>Account__c</name>\n    <relationshipLabel>請求書</relationshipLabel>\n</CustomFieldTranslation>",
         "source": [
           {
@@ -173,7 +173,7 @@
         ]
       },
       {
-        "objectKey": "fieldTranslation_d198782cd6dfe89b",
+        "objectKey": "fieldTranslation_bc56e2c0fc555a62",
         "context": "<CustomFieldTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <label>金額</label>\n    <name>Amount__c</name>\n</CustomFieldTranslation>",
         "source": [
           {
@@ -193,7 +193,7 @@
         ]
       },
       {
-        "objectKey": "fieldTranslation_25324e98b71d3440",
+        "objectKey": "fieldTranslation_259bf4ea6b37e47e",
         "context": "<CustomFieldTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <label>Due Date</label>\n    <name>Due_Date__c</name>\n</CustomFieldTranslation>",
         "source": [
           {
@@ -213,7 +213,7 @@
         ]
       },
       {
-        "objectKey": "fieldTranslation_fb4f41ba2c92fbf5",
+        "objectKey": "fieldTranslation_127d7ee147661ce3",
         "context": "<CustomFieldTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <label>メモ</label>\n    <name>Note__c</name>\n</CustomFieldTranslation>",
         "source": [
           {
@@ -293,7 +293,7 @@
         ]
       },
       {
-        "objectKey": "fieldTranslation_5e8702097780253c",
+        "objectKey": "fieldTranslation_d478d59851ffda03",
         "context": "<CustomFieldTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <label>ステータス</label>\n    <name>Status__c</name>\n    <picklistValues>\n        <masterLabel>Draft</masterLabel>\n        <translation>下書き</translation>\n    </picklistValues>\n    <picklistValues>\n        <masterLabel>Sent</masterLabel>\n        <translation>送付済み</translation>\n    </picklistValues>\n    <picklistValues>\n        <masterLabel>Paid</masterLabel>\n        <translation>支払済み</translation>\n    </picklistValues>\n</CustomFieldTranslation>",
         "source": [
           {
@@ -313,7 +313,7 @@
         ]
       },
       {
-        "objectKey": "recordTypeTranslation_7ca05a4432a58e3a",
+        "objectKey": "recordTypeTranslation_26c9a05cdc92e3d7",
         "context": "<recordTypes>\n        <label>標準</label>\n        <name>Standard</name>\n    </recordTypes>",
         "source": [
           {
@@ -333,7 +333,7 @@
         ]
       },
       {
-        "objectKey": "validationRuleTranslation_184cc1335101582d",
+        "objectKey": "validationRuleTranslation_bb966b9406089386",
         "context": "<validationRules>\n        <errorMessage>金額は正の値にしてください。</errorMessage>\n        <name>Amount_Positive</name>\n    </validationRules>",
         "source": [
           {
@@ -353,7 +353,7 @@
         ]
       },
       {
-        "objectKey": "webLinkTranslation_fb636f42c8a7f613",
+        "objectKey": "webLinkTranslation_2c420ec1b4e554f0",
         "context": "<webLinks>\n        <label>請求書を送付</label>\n        <name>Send_Invoice</name>\n    </webLinks>",
         "source": [
           {
@@ -373,7 +373,7 @@
         ]
       },
       {
-        "objectKey": "fieldSetTranslation_44a8995d9bb799a8",
+        "objectKey": "fieldSetTranslation_924054dc75d5aa4f",
         "context": "<fieldSets>\n        <label>概要</label>\n        <name>Summary</name>\n    </fieldSets>",
         "source": [
           {
@@ -393,7 +393,7 @@
         ]
       },
       {
-        "objectKey": "layoutTranslation_3a2124ee9e969dee",
+        "objectKey": "layoutTranslation_a6db85e749b4f21c",
         "context": "<layouts>\n        <layout>Invoice Layout</layout>\n        <sections>\n            <label>請求情報</label>\n            <section>Information</section>\n        </sections>\n    </layouts>",
         "source": [
           {
@@ -413,7 +413,7 @@
         ]
       },
       {
-        "objectKey": "objectTranslation_3c2d655c83ab504d",
+        "objectKey": "objectTranslation_c0a602ece322bb83",
         "context": "<CustomObjectTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fieldSets>\n        <label>概要</label>\n        <name>Summary</name>\n    </fieldSets>\n    <layouts>\n        <layout>Invoice Layout</layout>\n        <sections>\n            <label>請求情報</label>\n            <section>Information</section>\n        </sections>\n    </layouts>\n    <nameFieldLabel>請求書番号</nameFieldLabel>\n    <recordTypes>\n        <label>標準</label>\n        <name>Standard</name>\n    </recordTypes>\n    <validationRules>\n        <errorMessage>金額は正の値にしてください。</errorMessage>\n        <name>Amount_Positive</name>\n    </validationRules>\n    <webLinks>\n        <label>請求書を送付</label>\n        <name>Send_Invoice</name>\n    </webLinks>\n</CustomObjectTranslation>",
         "source": [
           {

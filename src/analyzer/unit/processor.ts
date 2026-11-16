@@ -1,7 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import { hasCurrentSavedData } from '../parser/commons';
 import type { ObjectParseResult } from '../parser/Metadata/parser';
 import type { ObjectTranslationParseResult } from '../parser/Metadata/objectTranslation';
 import type { DependencyGraph } from '../processor/dependency/graph';
@@ -30,6 +29,7 @@ import { dependencyGraphOf } from './dependencies';
 import { ProjectTree } from './project';
 import { type RepositoryUnitDiff, Repository, diffRepositories } from './repository';
 import { WorkingTree } from './sourceTree';
+import { UnitStore } from './store';
 import { type AnyUnitType, UNIT_TYPES } from './unitType';
 
 // 保存しておいた前回の解析結果 (before) と、リポジトリの今の状態 (after) を Repository で持ち、
@@ -78,15 +78,23 @@ export class RepositoryProcessor {
     /** リポジトリの今の状態 */
     after: Repository;
     private diffs?: Map<string, RepositoryUnitDiff[]> | undefined;
+    /** 保存の置き場 (目録・ソース・解析結果)。docs/save-format-plan.md 4.1 */
+    readonly store: UnitStore;
 
     private constructor(
         readonly repositoryRoot: string,
-        /** 保存先 (<savingRoot>/units) */
-        readonly savedDir: string,
+        /** 保存先の親フォルダ (置き場は <savingRoot>/store) */
+        readonly savingRoot: string,
         private readonly types: readonly AnyUnitType[],
     ) {
         this.before = Repository.empty(repositoryRoot);
         this.after = Repository.empty(repositoryRoot);
+        this.store = new UnitStore(path.join(savingRoot, 'store'), repositoryRoot, types);
+    }
+
+    /** 置き場 (<savingRoot>/store) */
+    get savedDir(): string {
+        return this.store.dir;
     }
 
     /** savingRoot は保存先の親フォルダ、repositoryRoot は sfdx のプロジェクト (sfdx-project.json の場所) */
@@ -97,34 +105,41 @@ export class RepositoryProcessor {
     ): Promise<RepositoryProcessor> {
         const processor = new RepositoryProcessor(
             repositoryRoot,
-            path.join(savingRoot, 'units'),
+            savingRoot,
             options.types ?? UNIT_TYPES,
         );
         await processor.reset();
         return processor;
     }
 
-    /** 保存データとリポジトリを読み直す */
+    /**
+     * 保存データとリポジトリを読み直す。中身の変わっていない単位は parse し直さない
+     * (保存した解析結果・前回読んだ解析結果を使う。docs/save-format-plan.md の S3)
+     */
     async reset(): Promise<void> {
-        this.before = await Repository.loadSaved(this.repositoryRoot, this.savedDir, this.types);
-        this.after = await Repository.load(
+        this.before = await this.store.loadBefore();
+        this.after = await this.store.loadTree(
             new ProjectTree(new WorkingTree(this.repositoryRoot)),
-            this.types,
         );
+        this.store.retain(this.before, this.after);
         this.diffs = undefined;
     }
 
-    /** 前回の解析結果 (今の版) を保存しているか。版が古ければ保存していないとみなす */
+    /** 前回の解析結果 (今の置き場所の版の目録) を保存しているか */
     hasSaved(): Promise<boolean> {
-        return hasCurrentSavedData(this.savedDir);
+        return this.store.hasSaved();
     }
 
-    /** 今の解析結果を保存し、次の差分の基準 (before) にする。リポジトリにない単位の保存データは消す */
+    /**
+     * 今の解析結果を保存し、次の差分の基準 (before) にする。リポジトリにない単位の保存データは消す。
+     * 保存したものは after と同じなので、読み直さず after をそのまま before にする (docs/save-format-plan.md の S0)
+     */
     async save(): Promise<void> {
-        await fs.rm(this.savedDir, { recursive: true, force: true });
-        await fs.mkdir(this.savedDir, { recursive: true });
-        await this.after.save(this.savedDir, this.types);
-        await this.reset();
+        await this.store.save(this.after);
+        // 版 7 までの置き場 (<savingRoot>/units) は移行せずに消す
+        await fs.rm(path.join(this.savingRoot, 'units'), { recursive: true, force: true });
+        this.before = this.after;
+        this.diffs = undefined;
     }
 
     /** 単位の種類ごとの差分 (before → after) */

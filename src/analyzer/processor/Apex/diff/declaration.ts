@@ -126,7 +126,6 @@ export const getMemberIdentity = (member: JsonNode & { modifier?: ModifiersJson 
 export const getInitializerKey = (initializer: InitializerBlockJson): string => {
     return [
         initializer.isStatic ? 'static' : '',
-        getModifiersKey(initializer.modifier),
         initializer.block.map(getStatementKey).join(','),
     ].join('|');
 };
@@ -500,7 +499,6 @@ export type InitializerBlockJsonDiff = { kind: 'initializer' } & (
           match: Match;
           fields: {
               isStatic: ValueDiff<boolean>;
-              modifier: ModifiersJsonDiff;
               block: BlockDiff;
           };
       }
@@ -513,7 +511,7 @@ export const makeInitializerDiff = (
     sources?: Sources,
 ): InitializerBlockJsonDiff => {
     if (getInitializerKey(before) === getInitializerKey(after)) {
-        const { kind: _kind, ...value } = before;
+        const { kind: _kind, sourceKeys: _sourceKeys, ...value } = before;
         return { kind: 'initializer', status: 'unchanged', value };
     }
 
@@ -523,7 +521,6 @@ export const makeInitializerDiff = (
         match,
         fields: {
             isStatic: makeValueDiff(before.isStatic, after.isStatic),
-            modifier: makeModifierDiff(before.modifier, after.modifier),
             block: makeBlockDiff(before.block, after.block, sources),
         },
     };

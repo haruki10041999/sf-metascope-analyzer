@@ -3,6 +3,7 @@ import {
     getAutomationByObject,
     getFlowDiagrams,
     getFlowDiffs,
+    getFlowInterface,
     getFlowList,
     getFlowReferences,
 } from './flow';
@@ -59,6 +60,8 @@ export const REPORT_PROVIDERS = {
         getFlowDiagrams(snapshotInputOf(input), args.flows),
     'flow.diffs': (input: ReportInput) => getFlowDiffs(snapshotInputOf(input)),
     'flow.references': (input: ReportInput) => getFlowReferences(snapshotInputOf(input)),
+    'flow.interface': (input: ReportInput, args: { onlyChanged?: boolean } = {}) =>
+        getFlowInterface(snapshotInputOf(input), args),
     'automation.byObject': (input: ReportInput) => getAutomationByObject(snapshotInputOf(input)),
     'layout.detail': (input: ReportInput, args: { layouts?: string[] } = {}) =>
         getLayoutDetails(snapshotInputOf(input), args.layouts),

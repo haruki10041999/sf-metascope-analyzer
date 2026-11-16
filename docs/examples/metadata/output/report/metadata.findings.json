@@ -2,25 +2,11 @@
   {
     "source": "permission",
     "unit": "permissionSet:Invoice_Manager",
-    "code": "UNKNOWN_FIELD",
-    "severity": "warning",
-    "target": "Invoice__c.Missing__c",
-    "message": "項目 Invoice__c.Missing__c がメタデータにない",
-    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
-    "sourceKeys": {
-      "objectKey": "fieldPermission_25a2eabf84d5a698",
-      "sourceKey": "fieldPermission_7a4e2c75d3aeb07a"
-    },
-    "status": "added"
-  },
-  {
-    "source": "permission",
-    "unit": "permissionSet:Invoice_Manager",
     "code": "OBJECT_PERMISSION_DEPENDENCY",
     "severity": "error",
     "target": "Payment__c",
     "message": "Payment__c の allowEdit には allowRead が要る",
-    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
     "sourceKeys": {
       "objectKey": "objectPermission_55784922962ae9d2",
       "sourceKey": "objectPermission_b8f7b5ded3d9ab4d"
@@ -34,7 +20,7 @@
     "severity": "info",
     "target": "ApiEnabled",
     "message": "強い権限 ApiEnabled を与える",
-    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
     "sourceKeys": {
       "objectKey": "userPermission_71d47d725591d358",
       "sourceKey": "userPermission_5f23d88982946349"
@@ -48,7 +34,7 @@
     "severity": "info",
     "target": "ModifyAllData",
     "message": "強い権限 ModifyAllData を与える",
-    "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
     "sourceKeys": {
       "objectKey": "userPermission_59cc70777c966e65",
       "sourceKey": "userPermission_970cc408087788ec"
@@ -57,54 +43,12 @@
   },
   {
     "source": "permission",
-    "unit": "permissionSet:Payment_Clerk",
-    "code": "UNKNOWN_OBJECT",
-    "severity": "warning",
-    "target": "Receipt__c",
-    "message": "オブジェクト Receipt__c がメタデータにない",
-    "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
-    "sourceKeys": {
-      "objectKey": "objectPermission_938f20afa0216043",
-      "sourceKey": "objectPermission_023909c270126261"
-    },
-    "status": "added"
-  },
-  {
-    "source": "permission",
-    "unit": "permissionSet:Payment_Clerk",
-    "code": "UNKNOWN_APEX_CLASS",
-    "severity": "warning",
-    "target": "PaymentService",
-    "message": "Apex クラス PaymentService がリポジトリにない",
-    "filePath": "permissionsets/Payment_Clerk.permissionset-meta.xml",
-    "sourceKeys": {
-      "objectKey": "classAccess_02cb20c07a614a8e",
-      "sourceKey": "classAccess_4e3e921febc7217b"
-    },
-    "status": "added"
-  },
-  {
-    "source": "permission",
-    "unit": "profile:Sales",
-    "code": "UNKNOWN_FLOW",
-    "severity": "warning",
-    "target": "Login_Check",
-    "message": "Flow Login_Check がリポジトリにない",
-    "filePath": "profiles/Sales.profile-meta.xml",
-    "sourceKeys": {
-      "objectKey": "loginFlow_c79b77657c881c44",
-      "sourceKey": "loginFlow_c2a35eeaace313c0"
-    },
-    "status": "unchanged"
-  },
-  {
-    "source": "permission",
     "unit": "profile:Sales",
     "code": "FIELD_EDIT_WITHOUT_READ",
     "severity": "error",
     "target": "Invoice__c.Status__c",
     "message": "Invoice__c.Status__c は編集できるが参照できない",
-    "filePath": "profiles/Sales.profile-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
     "sourceKeys": {
       "objectKey": "fieldPermission_8f813990a36b0899",
       "sourceKey": "fieldPermission_e99e3342cd85c0bc"
@@ -118,7 +62,7 @@
     "severity": "info",
     "target": "ApiEnabled",
     "message": "強い権限 ApiEnabled を与える",
-    "filePath": "profiles/Sales.profile-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
     "sourceKeys": {
       "objectKey": "userPermission_71d47d725591d358",
       "sourceKey": "userPermission_7dc4eaa92ffc2ba0"
@@ -132,50 +76,10 @@
     "severity": "info",
     "target": "ViewSetup",
     "message": "強い権限 ViewSetup を与える",
-    "filePath": "profiles/Sales.profile-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
     "sourceKeys": {
       "objectKey": "userPermission_82d47dd746f97527",
       "sourceKey": "userPermission_72a87f341c776ac6"
-    },
-    "status": "added"
-  },
-  {
-    "source": "permission",
-    "unit": "permissionSetGroup:Invoice_Team",
-    "code": "UNKNOWN_PERMISSION_SET",
-    "severity": "warning",
-    "target": "Invoice_Viewer",
-    "message": "権限セット Invoice_Viewer がリポジトリにない",
-    "filePath": "permissionsetgroups/Invoice_Team.permissionsetgroup-meta.xml",
-    "sourceKeys": {
-      "objectKey": "permissionSetGroup_977542f490e5eb01",
-      "sourceKey": "permissionSetGroup_ca71a1ddc6196f2a"
-    },
-    "status": "added"
-  },
-  {
-    "source": "label",
-    "unit": "lwc_newBanner",
-    "code": "UNKNOWN_CUSTOM_LABEL",
-    "severity": "warning",
-    "target": "BannerMessage",
-    "message": "カスタム表示ラベル BannerMessage がリポジトリにない",
-    "sourceKeys": {
-      "objectKey": "importDeclaration_488735bacb8ab5b8",
-      "sourceKey": "importDeclaration_e988dfac11d6694e"
-    },
-    "status": "added"
-  },
-  {
-    "source": "label",
-    "unit": "customLabels_CustomLabels",
-    "code": "UNUSED_CUSTOM_LABEL",
-    "severity": "info",
-    "target": "Invoice_Approved",
-    "message": "カスタム表示ラベル Invoice_Approved はリポジトリの中で使われていない",
-    "sourceKeys": {
-      "objectKey": "customLabel_ec07e26e192ce19e",
-      "sourceKey": "customLabel_463d8edf82418099"
     },
     "status": "added"
   },
@@ -186,24 +90,10 @@
     "severity": "info",
     "target": "Call_Status",
     "message": "要素 Call_Status に失敗時の経路 (faultConnector) がない",
-    "filePath": "flows/Account_Wizard.flow-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Account_Wizard.flow-meta.xml",
     "sourceKeys": {
-      "objectKey": "flowSubflow_13e4b9c982e0656a",
+      "objectKey": "flowSubflow_eba4278201f9e44e",
       "sourceKey": "flowSubflow_2661cc0ec003e395"
-    },
-    "status": "added"
-  },
-  {
-    "source": "flow",
-    "unit": "Account_Wizard",
-    "code": "UNKNOWN_FIELD",
-    "severity": "warning",
-    "target": "Account.Unknown__c",
-    "message": "項目 Account.Unknown__c がメタデータにない",
-    "filePath": "flows/Account_Wizard.flow-meta.xml",
-    "sourceKeys": {
-      "objectKey": "flowRecordLookup_9b7dd3866a1b6372",
-      "sourceKey": "flowRecordLookup_7d3e549c22554faf"
     },
     "status": "added"
   },
@@ -214,26 +104,12 @@
     "severity": "warning",
     "target": "accountList",
     "message": "LWC accountList の targets に lightning__FlowScreen がない",
-    "filePath": "flows/Account_Wizard.flow-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Account_Wizard.flow-meta.xml",
     "sourceKeys": {
-      "objectKey": "flowScreen_89d74b343922c9ad",
+      "objectKey": "flowScreen_09fb9feb6a5f3f31",
       "sourceKey": "flowScreen_da78defa1b5d2b8a"
     },
     "status": "unchanged"
-  },
-  {
-    "source": "flow",
-    "unit": "Account_Wizard",
-    "code": "UNKNOWN_LWC",
-    "severity": "warning",
-    "target": "missingChart",
-    "message": "LWC missingChart がリポジトリにない",
-    "filePath": "flows/Account_Wizard.flow-meta.xml",
-    "sourceKeys": {
-      "objectKey": "flowScreen_89d74b343922c9ad",
-      "sourceKey": "flowScreen_da78defa1b5d2b8a"
-    },
-    "status": "added"
   },
   {
     "source": "flow",
@@ -242,9 +118,9 @@
     "severity": "warning",
     "target": "Orphan",
     "message": "要素 Orphan は起動からたどれない",
-    "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Invoice_Status_Update.flow-meta.xml",
     "sourceKeys": {
-      "objectKey": "flowAssignment_f241ed170a0ae999",
+      "objectKey": "flowAssignment_40db6797f827bfc6",
       "sourceKey": "flowAssignment_2efea0209227521c"
     },
     "status": "added"
@@ -256,9 +132,9 @@
     "severity": "warning",
     "target": "AccountService",
     "message": "Apex クラス AccountService に @InvocableMethod がない",
-    "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Invoice_Status_Update.flow-meta.xml",
     "sourceKeys": {
-      "objectKey": "flowActionCall_6106dc47e2b6b402",
+      "objectKey": "flowActionCall_67365654dbc9b429",
       "sourceKey": "flowActionCall_59a1e74900519d38"
     },
     "status": "unchanged"
@@ -270,24 +146,10 @@
     "severity": "error",
     "target": "Unknown_Var",
     "message": "要素・資源 Unknown_Var が Flow の中にない",
-    "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Invoice_Status_Update.flow-meta.xml",
     "sourceKeys": {
-      "objectKey": "flowAssignment_f241ed170a0ae999",
+      "objectKey": "flowAssignment_40db6797f827bfc6",
       "sourceKey": "flowAssignment_2efea0209227521c"
-    },
-    "status": "added"
-  },
-  {
-    "source": "layout",
-    "unit": "Account-Account Layout",
-    "code": "UNKNOWN_FIELD",
-    "severity": "warning",
-    "target": "Account.Missing__c",
-    "message": "項目 Account.Missing__c がメタデータにない",
-    "filePath": "layouts/Account-Account Layout.layout-meta.xml",
-    "sourceKeys": {
-      "objectKey": "layoutItem_302e9fb7ab4081bb",
-      "sourceKey": "layoutItem_c766fc743282482a"
     },
     "status": "added"
   },
@@ -298,7 +160,7 @@
     "severity": "warning",
     "target": "Invoice__c.Amount__c",
     "message": "必須の項目 Invoice__c.Amount__c がレイアウト Invoice__c-Invoice Detail で参照のみ",
-    "filePath": "layouts/Invoice__c-Invoice Detail.layout-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\layouts\\Invoice__c-Invoice Detail.layout-meta.xml",
     "sourceKeys": {
       "objectKey": "layoutItem_c2da30ac705dfd51",
       "sourceKey": "layoutItem_df850b793be876d2"
@@ -313,7 +175,7 @@
     "target": "Invoice__c.Account__c",
     "message": "項目 Invoice__c.Account__c はどのレイアウトにもない",
     "sourceKeys": {
-      "objectKey": "field_0c58fd3d9777982d",
+      "objectKey": "field_5a20d9c578f74572",
       "sourceKey": "field_6c3612f03a822541"
     },
     "status": "unchanged"
@@ -326,7 +188,7 @@
     "target": "Invoice__c.Is_Overdue__c",
     "message": "項目 Invoice__c.Is_Overdue__c はどのレイアウトにもない",
     "sourceKeys": {
-      "objectKey": "field_a7205ebd964bc5c5",
+      "objectKey": "field_ee488be950e6b610",
       "sourceKey": "field_be03fe263f3af0d1"
     },
     "status": "unchanged"
@@ -338,9 +200,9 @@
     "severity": "warning",
     "target": "accountList.pageSize",
     "message": "LWC accountList の targetConfigs (lightning__RecordPage) にプロパティ pageSize がない",
-    "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flexipages\\Invoice_Record_Page.flexipage-meta.xml",
     "sourceKeys": {
-      "objectKey": "flexiPageComponent_940f1642a10f092c",
+      "objectKey": "flexiPageComponent_f32bef42c44a894a",
       "sourceKey": "flexiPageComponent_da3384e401ebd3d3"
     },
     "status": "added"
@@ -352,7 +214,7 @@
     "severity": "warning",
     "target": "accountRow",
     "message": "LWC accountRow は isExposed でない",
-    "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flexipages\\Invoice_Record_Page.flexipage-meta.xml",
     "sourceKeys": {
       "objectKey": "flexiPageComponent_7ccd912d91566b74",
       "sourceKey": "flexiPageComponent_9cbd43b1ddda972e"
@@ -366,7 +228,7 @@
     "severity": "warning",
     "target": "accountRow",
     "message": "LWC accountRow の targets に lightning__RecordPage がない",
-    "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flexipages\\Invoice_Record_Page.flexipage-meta.xml",
     "sourceKeys": {
       "objectKey": "flexiPageComponent_7ccd912d91566b74",
       "sourceKey": "flexiPageComponent_9cbd43b1ddda972e"
@@ -374,27 +236,236 @@
     "status": "added"
   },
   {
-    "source": "flexiPage",
+    "source": "label",
+    "unit": "CustomLabels",
+    "code": "UNUSED_CUSTOM_LABEL",
+    "severity": "info",
+    "target": "Invoice_Approved",
+    "message": "カスタム表示ラベル Invoice_Approved はリポジトリの中で使われていない",
+    "sourceKeys": {
+      "objectKey": "customLabel_ec07e26e192ce19e",
+      "sourceKey": "customLabel_463d8edf82418099"
+    },
+    "status": "added"
+  },
+  {
+    "source": "reference",
+    "unit": "ParserTest",
+    "code": "UNKNOWN_FIELD",
+    "severity": "warning",
+    "target": "Account.Interests__c",
+    "message": "field Account.Interests__c is not in the repository (apexClass class_ParserTest, soql.where)",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_3fbfa2bbf0f88989",
+      "sourceKey": "query_6cee6cc97f3fddeb"
+    },
+    "status": "unchanged"
+  },
+  {
+    "source": "reference",
+    "unit": "ParserTest",
+    "code": "UNKNOWN_FIELD",
+    "severity": "warning",
+    "target": "Account.Birthdate__c",
+    "message": "field Account.Birthdate__c is not in the repository (apexClass class_ParserTest, soql.where)",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_3fbfa2bbf0f88989",
+      "sourceKey": "query_6cee6cc97f3fddeb"
+    },
+    "status": "unchanged"
+  },
+  {
+    "source": "reference",
+    "unit": "accountList",
+    "code": "UNKNOWN_LWC",
+    "severity": "warning",
+    "target": "errorPanel",
+    "message": "lwc errorPanel is not in the repository (lwc accountList, template)",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "lwcElement_ba6a69ced1e1eb24",
+      "sourceKey": "lwcElement_fa191c2761e26688"
+    },
+    "status": "unchanged"
+  },
+  {
+    "source": "reference",
+    "unit": "broken",
+    "code": "UNKNOWN_LWC",
+    "severity": "warning",
+    "target": "child",
+    "message": "lwc child is not in the repository (lwc broken, template)",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\broken",
+    "sourceKeys": {
+      "objectKey": "lwcElement_b5ab7359048d42ad",
+      "sourceKey": "lwcElement_dcd2df94fbc96369"
+    },
+    "status": "unchanged"
+  },
+  {
+    "source": "reference",
+    "unit": "newBanner",
+    "code": "UNKNOWN_CUSTOM_LABEL",
+    "severity": "warning",
+    "target": "BannerMessage",
+    "message": "customLabel BannerMessage is not in the repository (lwc newBanner, import)",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\newBanner",
+    "sourceKeys": {
+      "objectKey": "importDeclaration_b1d1e50d1ee13f4a",
+      "sourceKey": "importDeclaration_e988dfac11d6694e"
+    },
+    "status": "added"
+  },
+  {
+    "source": "reference",
+    "unit": "Invoice__c-ja",
+    "code": "UNKNOWN_FIELD",
+    "severity": "warning",
+    "target": "Invoice__c.Note__c",
+    "message": "field Invoice__c.Note__c is not in the repository (objectTranslation Invoice__c-ja, fields)",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+    "sourceKeys": {
+      "objectKey": "fieldTranslation_127d7ee147661ce3",
+      "sourceKey": "fieldTranslation_4fb21aac7bf9d56d"
+    },
+    "status": "added"
+  },
+  {
+    "source": "reference",
+    "unit": "Invoice_Manager",
+    "code": "UNKNOWN_FIELD",
+    "severity": "warning",
+    "target": "Invoice__c.Missing__c",
+    "message": "field Invoice__c.Missing__c is not in the repository (permissionSet permissionSet_Invoice_Manager, fieldPermissions.field)",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Invoice_Manager.permissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "fieldPermission_25a2eabf84d5a698",
+      "sourceKey": "fieldPermission_7a4e2c75d3aeb07a"
+    },
+    "status": "added"
+  },
+  {
+    "source": "reference",
+    "unit": "Payment_Clerk",
+    "code": "UNKNOWN_OBJECT",
+    "severity": "warning",
+    "target": "Receipt__c",
+    "message": "object Receipt__c is not in the repository (permissionSet permissionSet_Payment_Clerk, objectPermissions.object)",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Payment_Clerk.permissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "objectPermission_938f20afa0216043",
+      "sourceKey": "objectPermission_023909c270126261"
+    },
+    "status": "added"
+  },
+  {
+    "source": "reference",
+    "unit": "Payment_Clerk",
+    "code": "UNKNOWN_APEX_CLASS",
+    "severity": "warning",
+    "target": "PaymentService",
+    "message": "apexClass PaymentService is not in the repository (permissionSet permissionSet_Payment_Clerk, classAccesses.apexClass)",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsets\\Payment_Clerk.permissionset-meta.xml",
+    "sourceKeys": {
+      "objectKey": "classAccess_02cb20c07a614a8e",
+      "sourceKey": "classAccess_4e3e921febc7217b"
+    },
+    "status": "added"
+  },
+  {
+    "source": "reference",
+    "unit": "Sales",
+    "code": "UNKNOWN_FLOW",
+    "severity": "warning",
+    "target": "Login_Check",
+    "message": "flow Login_Check is not in the repository (profile profile_Sales, loginFlows.flow)",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\profiles\\Sales.profile-meta.xml",
+    "sourceKeys": {
+      "objectKey": "loginFlow_c79b77657c881c44",
+      "sourceKey": "loginFlow_c2a35eeaace313c0"
+    },
+    "status": "unchanged"
+  },
+  {
+    "source": "reference",
+    "unit": "Invoice_Team",
+    "code": "UNKNOWN_PERMISSION_SET",
+    "severity": "warning",
+    "target": "Invoice_Viewer",
+    "message": "permissionSet Invoice_Viewer is not in the repository (permissionSetGroup permissionSetGroup_Invoice_Team, permissionSets)",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\permissionsetgroups\\Invoice_Team.permissionsetgroup-meta.xml",
+    "sourceKeys": {
+      "objectKey": "permissionSetGroup_977542f490e5eb01",
+      "sourceKey": "permissionSetGroup_ca71a1ddc6196f2a"
+    },
+    "status": "added"
+  },
+  {
+    "source": "reference",
+    "unit": "Account_Wizard",
+    "code": "UNKNOWN_FIELD",
+    "severity": "warning",
+    "target": "Account.Unknown__c",
+    "message": "field Account.Unknown__c is not in the repository (flow flow_Account_Wizard, flow.flowRecordLookup)",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Account_Wizard.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flowRecordLookup_dc6a5aa966b4cb45",
+      "sourceKey": "flowRecordLookup_7d3e549c22554faf"
+    },
+    "status": "added"
+  },
+  {
+    "source": "reference",
+    "unit": "Account_Wizard",
+    "code": "UNKNOWN_LWC",
+    "severity": "warning",
+    "target": "missingChart",
+    "message": "lwc missingChart is not in the repository (flow flow_Account_Wizard, flow.flowScreen)",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Account_Wizard.flow-meta.xml",
+    "sourceKeys": {
+      "objectKey": "flowScreen_09fb9feb6a5f3f31",
+      "sourceKey": "flowScreen_da78defa1b5d2b8a"
+    },
+    "status": "added"
+  },
+  {
+    "source": "reference",
+    "unit": "Account-Account Layout",
+    "code": "UNKNOWN_FIELD",
+    "severity": "warning",
+    "target": "Account.Missing__c",
+    "message": "field Account.Missing__c is not in the repository (layout layout_Account-Account Layout, items.field)",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\layouts\\Account-Account Layout.layout-meta.xml",
+    "sourceKeys": {
+      "objectKey": "layoutItem_302e9fb7ab4081bb",
+      "sourceKey": "layoutItem_c766fc743282482a"
+    },
+    "status": "added"
+  },
+  {
+    "source": "reference",
     "unit": "Invoice_Record_Page",
     "code": "UNKNOWN_FIELD",
     "severity": "warning",
     "target": "Invoice__c.Missing__c",
-    "message": "項目 Invoice__c.Missing__c がメタデータにない",
-    "filePath": "flexipages/Invoice_Record_Page.flexipage-meta.xml",
+    "message": "field Invoice__c.Missing__c is not in the repository (flexiPage flexiPage_Invoice_Record_Page, fields.fieldItem)",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flexipages\\Invoice_Record_Page.flexipage-meta.xml",
     "sourceKeys": {
-      "objectKey": "flexiPageField_bb1439dba9136747",
+      "objectKey": "flexiPageField_f522e46504069696",
       "sourceKey": "flexiPageField_760854506638aa36"
     },
     "status": "added"
   },
   {
     "source": "reference",
-    "unit": "customApplication_Invoice_App",
+    "unit": "Invoice_App",
     "code": "UNKNOWN_FLEXI_PAGE",
     "severity": "warning",
     "target": "Invoice_Record_Page_V2",
-    "message": "flexiPage Invoice_Record_Page_V2 がリポジトリにない",
-    "filePath": "applications/Invoice_App.app-meta.xml",
+    "message": "flexiPage Invoice_Record_Page_V2 is not in the repository (customApplication customApplication_Invoice_App, actionOverrides.content)",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\applications\\Invoice_App.app-meta.xml",
     "sourceKeys": {
       "objectKey": "appActionOverride_e6aacd2873bccdd5",
       "sourceKey": "appActionOverride_14c30017cff80fe0"
@@ -403,40 +474,40 @@
   },
   {
     "source": "reference",
-    "unit": "apexPage_InvoicePrint",
+    "unit": "InvoicePrint",
     "code": "UNKNOWN_APEX_CLASS",
     "severity": "warning",
     "target": "InvoicePrintExt",
-    "message": "apexClass InvoicePrintExt がリポジトリにない",
-    "filePath": "pages/InvoicePrint.page-meta.xml",
+    "message": "apexClass InvoicePrintExt is not in the repository (apexPage apexPage_InvoicePrint, markup.extensions)",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\pages\\InvoicePrint.page-meta.xml",
     "sourceKeys": {
-      "objectKey": "visualforceMarkup_b0020e3f602b5522",
+      "objectKey": "visualforceMarkup_6efa7a39e93a04dd",
       "sourceKey": "visualforceMarkup_a4462fc44c960e86"
     },
     "status": "unchanged"
   },
   {
     "source": "reference",
-    "unit": "aura_invoiceCard",
+    "unit": "invoiceCard",
     "code": "UNKNOWN_APEX_CLASS",
     "severity": "warning",
     "target": "InvoiceController",
-    "message": "apexClass InvoiceController がリポジトリにない",
-    "filePath": "aura/invoiceCard",
+    "message": "apexClass InvoiceController is not in the repository (aura aura_invoiceCard, controller)",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\aura\\invoiceCard",
     "sourceKeys": {
-      "objectKey": "auraBundle_4651d651d52e5642",
+      "objectKey": "auraBundle_ae4e8ae75454db28",
       "sourceKey": "auraBundle_e4e8002a84c6c7e8"
     },
     "status": "unchanged"
   },
   {
     "source": "reference",
-    "unit": "aura_invoiceCard",
+    "unit": "invoiceCard",
     "code": "UNKNOWN_AURA",
     "severity": "warning",
     "target": "invoiceSelectedEvent",
-    "message": "aura invoiceSelectedEvent がリポジトリにない",
-    "filePath": "aura/invoiceCard",
+    "message": "aura invoiceSelectedEvent is not in the repository (aura aura_invoiceCard, registerEvents)",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\aura\\invoiceCard",
     "sourceKeys": {
       "objectKey": "auraRegisterEvent_4b6a1b3266c64687",
       "sourceKey": "auraRegisterEvent_2adfe1c3e55a764e"
@@ -445,30 +516,17 @@
   },
   {
     "source": "reference",
-    "unit": "role_Sales_Manager",
+    "unit": "Sales_Manager",
     "code": "UNKNOWN_ROLE",
     "severity": "warning",
     "target": "CEO",
-    "message": "role CEO がリポジトリにない",
-    "filePath": "roles/Sales_Manager.role-meta.xml",
+    "message": "role CEO is not in the repository (role role_Sales_Manager, parentRole)",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\roles\\Sales_Manager.role-meta.xml",
     "sourceKeys": {
       "objectKey": "role_fa0a4cb073b9f764",
       "sourceKey": "role_81175e88a0dc70a1"
     },
     "status": "added"
-  },
-  {
-    "source": "label",
-    "unit": "customLabels_CustomLabels",
-    "code": "UNUSED_CUSTOM_LABEL",
-    "severity": "info",
-    "target": "BannerMessage",
-    "message": "カスタム表示ラベル BannerMessage はリポジトリの中で使われていない",
-    "sourceKeys": {
-      "objectKey": "customLabel_cb4221f0503f2e6b",
-      "sourceKey": "customLabel_f6f9b118b5dff23e"
-    },
-    "status": "removed"
   },
   {
     "source": "flow",
@@ -477,10 +535,23 @@
     "severity": "info",
     "target": "Set_Status",
     "message": "要素 Set_Status に失敗時の経路 (faultConnector) がない",
-    "filePath": "flows/Invoice_Status_Update.flow-meta.xml",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\flows\\Invoice_Status_Update.flow-meta.xml",
     "sourceKeys": {
-      "objectKey": "flowRecordUpdate_ab48407b027500d4",
+      "objectKey": "flowRecordUpdate_5839fe8180410fd8",
       "sourceKey": "flowRecordUpdate_17e74dc0f1788968"
+    },
+    "status": "removed"
+  },
+  {
+    "source": "label",
+    "unit": "CustomLabels",
+    "code": "UNUSED_CUSTOM_LABEL",
+    "severity": "info",
+    "target": "BannerMessage",
+    "message": "カスタム表示ラベル BannerMessage はリポジトリの中で使われていない",
+    "sourceKeys": {
+      "objectKey": "customLabel_cb4221f0503f2e6b",
+      "sourceKey": "customLabel_f6f9b118b5dff23e"
     },
     "status": "removed"
   }

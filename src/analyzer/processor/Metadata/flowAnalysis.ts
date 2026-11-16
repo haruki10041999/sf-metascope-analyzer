@@ -1,5 +1,6 @@
 import type { FlowParseResult } from '../../parser/Metadata/flow';
-import { FLOW_START, type ConvertKeys, type FlowJson, type FlowReference } from '../../types';
+import { FLOW_START, type ConvertKeys, type FlowJson, type FlowResourceJson } from '../../types';
+import { type FlowRefInfo, analyzeFlowRefs } from './flowRefs';
 import type { LabelUsage } from './labelAnalysis';
 import {
     MetadataContext,
@@ -87,36 +88,24 @@ const readableFlows = (results: FlowParseResult[]) =>
         result.dataType === 'flow' ? [{ result, json: result.result.base as FlowJson }] : [],
     );
 
-/** Flow の中のすべての参照 (起動・要素・資源) と、見つけたノードの sourceKeys */
-const referencesOf = (json: FlowJson) => [
-    ...(json.start?.references ?? []).map((ref) => ({
+/**
+ * Flow の中のすべての参照 (起動・要素・資源) と、見つけたノードの sourceKeys。
+ * 段階 M3 で JSON の references から、解析 (flowRefs.ts) に移した
+ */
+const referencesOf = (json: FlowJson) =>
+    analyzeFlowRefs(json).map((ref) => ({
         ref,
-        kind: 'flowStart',
-        sourceKeys: json.start!.sourceKeys,
-    })),
-    ...(json.elements ?? []).flatMap((element) =>
-        (element.references ?? []).map((ref) => ({
-            ref,
-            kind: element.kind as string,
-            sourceKeys: element.sourceKeys,
-        })),
-    ),
-    ...(json.resources ?? []).flatMap((resource) =>
-        (resource.references ?? []).map((ref) => ({
-            ref,
-            kind: resource.kind as string,
-            sourceKeys: resource.sourceKeys,
-        })),
-    ),
-];
+        kind: ref.elementKind,
+        sourceKeys: ref.sourceKeys!,
+    }));
 
 /** Flow の中の $Label.<名前> (カスタム表示ラベルの解析に渡す) */
 export const getFlowLabelUsages = (results: FlowParseResult[]): LabelUsage[] =>
     readableFlows(results).flatMap(({ result, json }) =>
         referencesOf(json)
-            .filter(({ ref }) => ref.refType === 'label')
+            .filter(({ ref }) => ref.refType === 'customLabel')
             .map(({ ref, sourceKeys }) => ({
-                name: ref.value,
+                name: ref.target,
                 origin: 'flow' as const,
                 unit: result.result.id,
                 sourceKeys,
@@ -235,50 +224,50 @@ export const analyzeFlows = (
         const names = new Set(
             [...elements, ...(json.resources ?? [])].map((node) => node.name.toLowerCase()),
         );
-        const problemOf = (ref: FlowReference, kind: string): ReferenceProblem | undefined => {
+        const problemOf = (ref: FlowRefInfo, kind: string): ReferenceProblem | undefined => {
             switch (ref.refType) {
                 case 'object':
-                    return check.object(ref.value);
+                    return check.object(ref.target);
                 case 'field':
-                    return check.field(ref.value);
+                    return check.field(ref.target);
                 case 'apexClass': {
-                    const unknown = check.apexClass(ref.value);
+                    const unknown = check.apexClass(ref.target);
                     if (unknown) return unknown;
                     // Apex アクション (actionCalls) は @InvocableMethod を持つクラスだけを呼べる
                     const invocable = context.invocableApexClasses?.map((n) => n.toLowerCase());
                     return kind === 'flowActionCall' &&
                         invocable &&
-                        !invocable.includes(ref.value.toLowerCase())
+                        !invocable.includes(ref.target.toLowerCase())
                         ? {
                               code: 'APEX_NOT_INVOCABLE',
-                              target: ref.value,
-                              message: `Apex クラス ${ref.value} に @InvocableMethod がない`,
+                              target: ref.target,
+                              message: `Apex クラス ${ref.target} に @InvocableMethod がない`,
                           }
                         : undefined;
                 }
                 case 'flow':
-                    return check.flow(ref.value);
-                case 'label':
-                    return check.customLabel(ref.value);
+                    return check.flow(ref.target);
+                case 'customLabel':
+                    return check.customLabel(ref.target);
                 case 'lwc': {
-                    const unknown = check.lwc(ref.value);
+                    const unknown = check.lwc(ref.target);
                     if (unknown) return unknown;
-                    const meta = context.lwcMeta?.[ref.value];
+                    const meta = context.lwcMeta?.[ref.target];
                     return meta && !meta.targets.includes('lightning__FlowScreen')
                         ? {
                               code: 'LWC_NOT_FLOW_SCREEN',
-                              target: ref.value,
-                              message: `LWC ${ref.value} の targets に lightning__FlowScreen がない`,
+                              target: ref.target,
+                              message: `LWC ${ref.target} の targets に lightning__FlowScreen がない`,
                           }
                         : undefined;
                 }
                 case 'element':
-                    return names.has(ref.value.toLowerCase()) || BUILTIN_ELEMENTS.has(ref.value)
+                    return names.has(ref.target.toLowerCase()) || BUILTIN_ELEMENTS.has(ref.target)
                         ? undefined
                         : {
                               code: 'UNKNOWN_FLOW_ELEMENT',
-                              target: ref.value,
-                              message: `要素・資源 ${ref.value} が Flow の中にない`,
+                              target: ref.target,
+                              message: `要素・資源 ${ref.target} が Flow の中にない`,
                           };
                 default:
                     return undefined;
@@ -332,3 +321,57 @@ export const analyzeFlows = (
 
     return { flows: infos, graphs, automation, findings };
 };
+
+// ---------------------------------------------------------------------------
+// Flow の入出力 (段階 M8 の #11。意味の差分の材料)
+// ---------------------------------------------------------------------------
+
+/** Flow の入力・出力の変数 1 つ (サブフロー・Apex・API から渡せる・受け取れるもの) */
+export type FlowInterfaceVariable = {
+    name: string;
+    direction: 'input' | 'output' | 'inputOutput';
+    dataType?: string;
+    objectType?: string;
+    apexClass?: string;
+    isCollection: boolean;
+    sourceKeys?: FlowResourceJson['sourceKeys'];
+};
+
+const flagOf = (resource: FlowResourceJson, name: 'isInput' | 'isOutput' | 'isCollection') => {
+    // 段階 M8 から変数の型はノードの直下 (それより前の保存データは properties の値の木)
+    const own = resource[name];
+    if (typeof own === 'boolean') return own;
+    return resource.properties?.[name] === true;
+};
+
+const textOf = (resource: FlowResourceJson, name: 'dataType' | 'objectType' | 'apexClass') => {
+    const own = resource[name];
+    if (typeof own === 'string') return own;
+    const value = resource.properties?.[name];
+    return typeof value === 'string' ? value : undefined;
+};
+
+/** Flow の入出力 (isInput / isOutput の変数。名前の順) */
+export const flowInterfaceOf = (flow: FlowJson): FlowInterfaceVariable[] =>
+    (flow.resources ?? [])
+        .filter((resource) => resource.kind === 'flowVariable')
+        .flatMap((resource): FlowInterfaceVariable[] => {
+            const input = flagOf(resource, 'isInput');
+            const output = flagOf(resource, 'isOutput');
+            if (!input && !output) return [];
+            const dataType = textOf(resource, 'dataType');
+            const objectType = textOf(resource, 'objectType');
+            const apexClass = textOf(resource, 'apexClass');
+            return [
+                {
+                    name: resource.name,
+                    direction: input && output ? 'inputOutput' : input ? 'input' : 'output',
+                    ...(dataType !== undefined ? { dataType } : {}),
+                    ...(objectType !== undefined ? { objectType } : {}),
+                    ...(apexClass !== undefined ? { apexClass } : {}),
+                    isCollection: flagOf(resource, 'isCollection'),
+                    ...(resource.sourceKeys ? { sourceKeys: resource.sourceKeys } : {}),
+                },
+            ];
+        })
+        .sort((a, b) => a.name.localeCompare(b.name));

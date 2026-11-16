@@ -2,7 +2,7 @@ import type { ApexUnitParseResult } from '../../parser/Apex/unit';
 import type { LwcBundleParseResult } from '../../parser/Lwc/parser';
 import type { ConvertKeys } from '../../types';
 import type { ObjectInfo } from './analysis';
-import { walkJsonNodes } from './labelAnalysis';
+import { walkApexParseResult } from '../Apex/walker';
 
 // フォルダ単位のメタデータ (権限・ラベル・Flow・画面) の解析で共通の、ほかのメタデータへの参照の確かめ方。
 // 方針: docs/metadata-implementation.md 10 章 (種類をまたぐ突き合わせは保存する JSON に入れず、解析で行う)。
@@ -194,14 +194,12 @@ export const apexContextOf = (
         apexClasses: classes.map((unit) => unit.result.base.name),
         invocableApexClasses: classes
             .filter((unit) => {
+                // Apex の共通の走査 (docs/json-redesign-plan.md の段階 A3)
                 let invocable = false;
-                walkJsonNodes(unit.result.base.source, (node) => {
-                    if (
-                        node.kind === 'annotation' &&
-                        /^InvocableMethod$/i.test(String(node.name))
-                    ) {
-                        invocable = true;
-                    }
+                walkApexParseResult(unit, {
+                    annotation: (node) => {
+                        if (/^InvocableMethod$/i.test(String(node.name))) invocable = true;
+                    },
                 });
                 return invocable;
             })
