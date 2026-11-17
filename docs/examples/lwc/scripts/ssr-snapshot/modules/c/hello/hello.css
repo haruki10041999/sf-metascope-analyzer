@@ -1,1 +1,6 @@
-:host { display: block; } .empty { color: #706e6b; }
+:host {
+    display: block;
+}
+.empty {
+    color: #706e6b;
+}

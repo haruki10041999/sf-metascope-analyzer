@@ -1,4 +1,4 @@
-import type { SourceTree } from './sourceTree';
+import type { FileStat, SourceTree } from './sourceTree';
 
 // sfdx のプロジェクトの範囲: sfdx-project.json の packageDirectories と .forceignore で、読むファイルを絞る。
 // 方針: docs/analysis-plan.md 5.3
@@ -70,7 +70,12 @@ export class ProjectTree implements SourceTree {
     private files?: Promise<string[]>;
     private projectFile?: Promise<SfdxProject | undefined>;
 
-    constructor(private readonly tree: SourceTree) {}
+    /** 中の木が大きさ・更新時刻を返せるとき (作業ツリー) だけ持つ (UnitStore の S5) */
+    readonly statFile?: (filePath: string) => Promise<FileStat | undefined>;
+
+    constructor(private readonly tree: SourceTree) {
+        if (tree.statFile) this.statFile = (filePath) => tree.statFile!(filePath);
+    }
 
     get root(): string {
         return this.tree.root;

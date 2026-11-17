@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import { ConvertKeys, JsonType, StructureJsonType, makeStructureJson } from '../commons';
 
 import type {
@@ -73,8 +71,6 @@ export type MethodDeclarationJson = StructureJsonType<'method', DeclarationKeys>
     block?: StatementJson[];
 };
 
-export const isMethodDeclarationJson = typia.createIs<MethodDeclarationJson>();
-
 export const makeMethodDeclarationJson = (
     target: MethodDeclarationTypeClass,
 ): MethodDeclarationJson => {
@@ -120,8 +116,6 @@ export type InterfaceDeclarationJson = StructureJsonType<'interface', Declaratio
     extend?: TypeJson[];
 };
 
-export const isInterfaceDeclarationJson = typia.createIs<InterfaceDeclarationJson>();
-
 export const makeInterfaceDeclarationJson = (
     target: InterfaceDeclarationTypeClass,
 ): InterfaceDeclarationJson => {
@@ -158,8 +152,6 @@ export type ClassDeclarationJson = StructureJsonType<'class', DeclarationKeys> &
     extend?: TypeJson;
     implement?: TypeJson[];
 };
-
-export const isClassDeclarationJson = typia.createIs<ClassDeclarationJson>();
 
 export const makeClassDeclarationJson = (
     target: ClassDeclarationTypeClass,
@@ -205,8 +197,6 @@ export type EnumDeclarationJson = StructureJsonType<'enum', DeclarationKeys> & {
     members?: EnumConstantJson[];
 };
 
-export const isEnumDeclarationJson = typia.createIs<EnumDeclarationJson>();
-
 export const makeEnumDeclarationJson = (target: EnumDeclarationTypeClass): EnumDeclarationJson => {
     const { name, constants } = target.getFields();
     return makeStructureJson('enum', structureKeysOf<DeclarationKeys>(target, { name }), {
@@ -231,8 +221,6 @@ export type PropertyDeclarationJson = StructureJsonType<'property', DeclarationK
     isSetter: boolean;
     setterContent?: AccessorContentJson;
 };
-
-export const isPropertyDeclarationJson = typia.createIs<PropertyDeclarationJson>();
 
 export const makePropertyDeclarationJson = (
     target: PropertyDeclarationTypeClass,
@@ -273,8 +261,6 @@ export type FieldDeclarationJson = JsonType<'field'> & {
     variantType: TypeJson;
 };
 
-export const isFieldDeclarationJson = typia.createIs<FieldDeclarationJson>();
-
 export const makeFieldDeclarationJson = (
     target: FieldDeclarationTypeClass,
 ): FieldDeclarationJson => {
@@ -291,8 +277,6 @@ export type ConstructorDeclarationJson = StructureJsonType<'constructor', Declar
     param: ParameterJson[];
     block: StatementJson[];
 };
-
-export const isConstructorDeclarationJson = typia.createIs<ConstructorDeclarationJson>();
 
 export const makeConstructorDeclarationJson = (
     target: ConstructorDeclarationTypeClass,
@@ -313,8 +297,6 @@ export type LocalVariableDeclarationJson = {
     variantType: TypeJson;
     modifier: ModifiersJson;
 };
-
-export const isLocalVariableDeclarationJson = typia.createIs<LocalVariableDeclarationJson>();
 
 export const makeLocalVariableDeclarationJson = (
     target: LocalVariableDeclarationTypeClass,

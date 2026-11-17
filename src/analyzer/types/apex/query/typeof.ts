@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import { JsonType } from '../../commons';
 
 import type {
@@ -17,7 +15,6 @@ export type TypeOfBlockJson = JsonType<'typeOfWhen'> & {
     object: string[] | 'else';
     field: string[][];
 };
-export const isTypeOfBlockJson = typia.createIs<TypeOfBlockJson>();
 
 const makeFieldNameJson = (target: FieldNameTypeClass): string[] =>
     target.getFields().value.map((v) => v.getFields().value.getFields().value);
@@ -45,7 +42,6 @@ export type TypeOfJson = {
     field: string[];
     block: TypeOfBlockJson[];
 };
-export const isTypeOfJson = typia.createIs<TypeOfJson>();
 
 export const makeTypeOfJson = (target: TypeOfTypeClass): TypeOfJson => {
     const { value, whenClause, elseClause } = target.getFields();

@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import { JsonType } from '../commons';
 import type { FormalParameterTypeClass } from '../apex_IR';
 
@@ -12,8 +10,6 @@ export type ParameterJson = JsonType<'parameter'> & {
     variantType: TypeJson;
     modifier: ModifiersJson;
 };
-
-export const isParameterJson = typia.createIs<ParameterJson>();
 
 export const makeParameterJson = (target: FormalParameterTypeClass): ParameterJson => {
     const { name, valueType, modifiers } = target.getFields();

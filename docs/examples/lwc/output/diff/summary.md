@@ -25,15 +25,12 @@
 - `accountList.content.modules[accountList.ts].module.component.block[isTable]` (lwcProperty): **removed** {"name":"isTable","isGetter":true,"isSetter":false,"getterContent":{"modifier":{},"block":[{"kind":"jsReturn","field"...
 - `accountList.content.modules[accountList.ts].module.component.block[handleSelect]` (lwcMethod): **changed** match=key
 - `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1]` (jsExpression): **changed** match=similar
-- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].children[0]` (jsMemberAccess:method): **changed** match=similar
-- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].children[0].children[1]` (jsMemberAccess:method.memberArg): **changed** match=similar
-- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].children[0].children[1].children[0]` (jsNew): **changed** match=similar
-- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].children[0].children[1].children[0].children[1]` (jsNew.arg): **changed** match=similar
-- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].children[0].children[1].children[0].children[1].children[1]` (jsObject): **changed** match=similar
-- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].children[0].children[1].children[0].children[1].children[1].children[0]` (jsObject.properties): **changed** match=similar
-- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].children[0].children[1].children[0].children[1].children[1].children[0].children[composed]` (jsProperty): **changed** match=recovery
-- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].children[0].children[1].children[0].children[1].children[1].children[0].children[composed].children[0]` (jsBoolean): **changed** match=recovery
-- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].children[0].children[1].children[0].children[1].children[1].children[0].children[composed].children[0].value`: **changed** false → true
+- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].value` (jsMemberAccess): **changed** match=slot
+- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].value.memberArg[0]` (jsNew): **changed** match=slot
+- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].value.memberArg[0].arg[1]` (jsObject): **changed** match=slot
+- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].value.memberArg[0].arg[1].properties[composed]` (jsProperty): **changed** match=slot
+- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].value.memberArg[0].arg[1].properties[composed].value` (jsBoolean): **changed** match=slot
+- `accountList.content.modules[accountList.ts].module.component.block[handleSelect].block[1].value.memberArg[0].arg[1].properties[composed].value.value`: **changed** false → true
 - `accountList.content.modules[accountList.ts].module.component.block[industry]` (lwcField): **added** {"name":"industry","variantType":{"kind":"lwcType","type":"primitive","primitiveType":"string"},"optional":true,"modi...
 - `accountList.content.modules[accountList.ts].module.component.block[handleSave]` (lwcMethod): **added** {"name":"handleSave","returnType":{"kind":"lwcType","type":"custom","customType":["Promise"],"generic":[{"type":"prim...
 - `accountList.content.modules[accountList.ts].module.exports[AccountList]` (lwcExport): **changed** match=key
@@ -108,10 +105,8 @@
 - `utils.content.modules[utils.ts].module.declarations[toRows]` (lwcDeclaration): **changed** match=key
 - `utils.content.modules[utils.ts].module.declarations[toRows].param[1]` (lwcParameter): **added** {"variant":"limit","variantType":{"kind":"lwcType","type":"primitive","primitiveType":"number"},"init":{"kind":"jsNum...
 - `utils.content.modules[utils.ts].module.declarations[toRows].block[0]` (jsReturn): **changed** match=similar
-- `utils.content.modules[utils.ts].module.declarations[toRows].block[0].children[0]` (jsMemberAccess:method): **changed** match=similar
-- `utils.content.modules[utils.ts].module.declarations[toRows].block[0].children[0].children[0]` (jsMemberAccess:method): **added** {"type":"method","object":{"kind":"jsIdentifier","name":"records"},"operator":".","member":"slice","memberArg":[{"kin...
-- `utils.content.modules[utils.ts].module.declarations[toRows].block[0].children[0].children[0].children[records]` (jsIdentifier): **moved** match=identical {"name":"records"}
-- `utils.content.modules[utils.ts].module.declarations[toRows].block[0].children[0].children[0].children[1]` (jsMemberAccess:method.memberArg): **added** [{"kind":"jsNumber","value":0},{"kind":"jsIdentifier","name":"limit"}]
+- `utils.content.modules[utils.ts].module.declarations[toRows].block[0].field` (jsMemberAccess): **changed** match=slot
+- `utils.content.modules[utils.ts].module.declarations[toRows].block[0].field.object`: **changed** {"name":"records"} → {"type":"method","object":{"kind":"jsIdentifier","name":"records"},"operator":".","member":"slice","memberArg":[{"kin...
 - `utils.content.modules[utils.ts].module.typeDeclarations[SortDirection]` (lwcTypeDeclaration): **changed** match=key
 - `utils.content.modules[utils.ts].module.typeDeclarations[SortDirection].variantType` (lwcType): **changed** {"type":"union","types":[{"type":"literal","value":"'asc'"},{"type":"literal","value":"'desc'"}]} → {"type":"union","types":[{"type":"literal","value":"'asc'"},{"type":"literal","value":"'desc'"},{"type":"literal","va...
 - `utils.content.modules[utils.ts].module.typeDeclarations[Row]` (lwcTypeDeclaration): **changed** match=key

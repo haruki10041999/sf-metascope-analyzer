@@ -51,7 +51,7 @@ import {
     makeLwcParametersDiff,
     makeOptionalValueDiff,
 } from './component';
-import { LwcBlockDiff, makeLwcBlockDiff } from './gumtree/tree';
+import { LwcStatementBlockDiff, makeLwcStatementBlockDiff } from './body';
 
 // LWC のモジュール (1 つの JS / TS) の差分。方針: docs/lwc-implementation.md
 
@@ -347,7 +347,7 @@ export type LwcModuleJsonDiff = TypedObjectDiff<
             LwcTypeDeclarationJson[],
             ListItemDiff<'lwcTypeDeclaration', LwcTypeDeclarationJson, LwcTypeDeclarationJsonDiff>[]
         >;
-        statements?: PresentDiff<LwcJsStatementJson[], LwcBlockDiff>;
+        statements?: PresentDiff<LwcJsStatementJson[], LwcStatementBlockDiff>;
     }
 >;
 
@@ -396,6 +396,8 @@ export const makeLwcModuleDiff = (
         ),
         ...presentEntry(
             'statements',
-            makePresentDiff(b.statements, a.statements, (x, y) => makeLwcBlockDiff(x, y, sources)),
+            makePresentDiff(b.statements, a.statements, (x, y) =>
+                makeLwcStatementBlockDiff(x, y, sources),
+            ),
         ),
     }));

@@ -134,7 +134,7 @@ export const createClassPropertyInit = (
 };
 
 /**
- * 型注釈のまとまりを作る。usesTs は、TS だけの修飾子・フラグ (accessibility・readonly・declare など) があるか。
+ * 型注釈のまとまりを作る。usesTs は、TS だけの修飾子・フラグ (accessibility・readonly・abstract など) があるか。
  * TS と Flow が混ざっているときは IrBuildError (UNSUPPORTED_CONTEXT)
  */
 export const createClassMemberAnnotation = <TTsModifiers extends object>(
@@ -204,7 +204,7 @@ export const createClassPropertyAnnotation = (
         tsModifiers.readonly ||
         tsModifiers.override ||
         Boolean(target.abstract) ||
-        Boolean(target.declare) ||
+        // declare は Flow のクラスのフィールドにも書ける (declare x: T) ので、TS だけのものにしない
         Boolean(target.definite) ||
         Boolean(target.optional);
     return createClassMemberAnnotation(target, originalSource, visitorName, tsModifiers, usesTs);

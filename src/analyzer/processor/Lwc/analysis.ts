@@ -17,7 +17,8 @@ import {
 
 import type { ObjectInfo } from '../Metadata/analysis';
 
-import { analyzeLwcModuleCalls, lwcInitReferencesOf } from './calls';
+import { LWC_TOAST_EVENT_NAME, analyzeLwcModuleCalls, lwcInitReferencesOf } from './calls';
+import { lwcHeritageOf, walkLwcJson } from './walker';
 
 // LWC のバンドルをまたぐ解析 (docs/lwc-implementation.md)。
 // 子コンポーネントの @api・イベント・slot、lightning-* のカタログ、メタデータ (オブジェクト・項目) への参照を突き合わせる。
@@ -43,7 +44,9 @@ export type LwcAnalysisCode =
     | 'UNKNOWN_SLOT'
     | 'UNKNOWN_LIGHTNING_COMPONENT'
     | 'UNKNOWN_OBJECT'
-    | 'UNKNOWN_FIELD';
+    | 'UNKNOWN_FIELD'
+    /** @wire の設定の '$x' (プロパティに追従する値) の x が、コンポーネントのプロパティにない */
+    | 'UNKNOWN_WIRE_PARAM';
 
 /** 突き合わせで見つかったこと。誤検出がありうるので、すべて warning として扱う */
 export type LwcAnalysisFinding = {
@@ -117,6 +120,27 @@ const isApiProperty = (member: LwcMemberJson) => {
     return false;
 };
 
+/**
+ * @wire の設定の値の中の、プロパティに追従する値 ('$recordId'・'$record.data.Id' の $ のあと)。
+ * 値そのもの・配列・オブジェクトの中の文字列のリテラルを見る (書いた順、同じものは 1 つ)
+ */
+export const lwcWireReactiveParamsOf = (value: unknown): string[] => {
+    const params = new Set<string>();
+    walkLwcJson(value, {
+        jsString: (node) => {
+            if (/^\$[A-Za-z_$]/.test(node.value)) params.add(node.value.slice(1));
+        },
+    });
+    return [...params];
+};
+
+/** 継承元が LightningElement だけ (ほかに知らないメンバーを足すミックスイン・基底クラスがない) か */
+const KNOWN_MIXINS = new Set(['NavigationMixin']);
+const extendsOnlyLightningElement = (component: LwcComponentJson) => {
+    const { extend, mixins } = lwcHeritageOf(component.superClass);
+    return extend === 'LightningElement' && mixins.every((m) => m !== null && KNOWN_MIXINS.has(m));
+};
+
 /** メインのモジュールのコンポーネント (モジュールが読めなかった (null) ときはない) */
 const mainComponentOf = (bundle: LwcBundleJson): LwcComponentJson | undefined =>
     bundle.modules.find((m) => m.main)?.module?.component;
@@ -149,9 +173,11 @@ export const analyzeLwcComponent = (bundle: LwcBundleJson): LwcComponentInfo => 
     // メソッド・getter / setter・関数を初期値にしたフィールド (handleClick = () => {...}) の本体のイベント
     // (JSON には持たず、文の JSON から解析で出す。calls.ts)
     const main = bundle.modules.find((m) => m.main)?.module;
+    // トースト (ShowToastEvent) は親ではなくコンテナーが受け取るので、親が受け取れるイベントに入れない
     const events = (main ? analyzeLwcModuleCalls(main) : [])
         .filter((content) => content.ownerKind === 'lwcComponent')
-        .flatMap((content) => content.events);
+        .flatMap((content) => content.events)
+        .filter((event) => event.name !== LWC_TOAST_EVENT_NAME);
     const slots: string[] = [];
     templatesOf(bundle).forEach((template) =>
         walkElements(template.children, (element) => {
@@ -450,6 +476,40 @@ export const analyzeLwcBundles = (
         }
 
         dependencies.forEach(checkMetadata);
+
+        // @wire の設定の '$x' が、コンポーネントのプロパティ (フィールド・getter / setter) にあるか (デコレーターの引数の解析)。
+        // 継承元・ミックスインが足すメンバーは分からないので、LightningElement だけを継承するときに確かめる
+        if (component && extendsOnlyLightningElement(component)) {
+            const properties = new Set(
+                component.block.flatMap((m) =>
+                    m.kind === 'lwcField' || m.kind === 'lwcProperty' ? [m.name] : [],
+                ),
+            );
+            for (const member of component.block) {
+                if (member.kind === 'lwcStaticBlock' || member.kind === 'lwcConstructor') continue;
+                const decorators =
+                    member.kind === 'lwcProperty'
+                        ? [
+                              ...(member.getterContent?.modifier.decorator ?? []),
+                              ...(member.setterContent?.modifier.decorator ?? []),
+                          ]
+                        : (member.modifier.decorator ?? []);
+                for (const decorator of decorators) {
+                    for (const config of decorator.wire?.config ?? []) {
+                        for (const param of lwcWireReactiveParamsOf(config.value)) {
+                            const name = param.split('.')[0]!;
+                            if (properties.has(name)) continue;
+                            find(
+                                'UNKNOWN_WIRE_PARAM',
+                                param,
+                                `@wire (${member.name}) の ${config.key} の '$${param}' のプロパティ ${name} がない`,
+                                config.sourceKeys,
+                            );
+                        }
+                    }
+                }
+            }
+        }
 
         return {
             bundle: bundle.name,

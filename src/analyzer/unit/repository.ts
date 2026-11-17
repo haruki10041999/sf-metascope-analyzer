@@ -1,22 +1,11 @@
 import path from 'node:path';
 
-import {
-    type GitDiffFile,
-    listSavedIds,
-    SavedDataVersionError,
-    writeSaveDataInfo,
-} from '../parser';
+import type { GitDiffFile } from '../parser';
 
 import type { SourceText } from '../types';
 
 import type { SourceTree } from './sourceTree';
-import {
-    type AnyUnitType,
-    type UnitDiff,
-    type UnitParseResult,
-    UNIT_TYPES,
-    findUnitTypeBySaveId,
-} from './unitType';
+import { type AnyUnitType, type UnitDiff, type UnitParseResult, UNIT_TYPES } from './unitType';
 
 // ある時点のリポジトリ (単位の種類 → 解析結果の一覧) と、その作り方 (作業ツリー・git・保存データ)。
 // 方針: docs/analysis-plan.md 2 章
@@ -139,33 +128,6 @@ export class Repository {
         return new Repository(tree.root, units);
     }
 
-    /**
-     * 保存したリポジトリを読む (Repository.save で保存したもの)。
-     * 版の違う保存データが 1 つでもあれば、保存データなし (空のリポジトリ) とする
-     */
-    static async loadSaved(
-        root: string,
-        baseDir: string,
-        types: readonly AnyUnitType[] = UNIT_TYPES,
-    ): Promise<Repository> {
-        const units = new Map<string, UnitParseResult[]>(types.map((t) => [t.type, []]));
-        const typeNames = new Set(types.map((t) => t.type));
-        try {
-            for (const saveId of await listSavedIds(baseDir)) {
-                const unitType = findUnitTypeBySaveId(saveId);
-                if (!unitType || !typeNames.has(unitType.type)) continue;
-                units.get(unitType.type)!.push(await unitType.load(baseDir, saveId));
-            }
-        } catch (e) {
-            if (e instanceof SavedDataVersionError) return new Repository(root, new Map());
-            throw e;
-        }
-        return new Repository(
-            root,
-            new Map([...units].map(([type, results]) => [type, sortById(results)])),
-        );
-    }
-
     /** 単位の種類の一覧 (解析結果のある種類) */
     get types(): string[] {
         return [...this.units.keys()];
@@ -184,15 +146,6 @@ export class Repository {
     /** 単位の場所 (リポジトリからの相対パス) */
     locationOf(result: UnitParseResult): string {
         return toPosix(path.relative(this.root, result.filePath));
-    }
-
-    /** すべての単位を baseDir に保存する (本番用の msgpack。保存名は種類の接頭辞 + 名前) */
-    async save(baseDir: string, types: readonly AnyUnitType[] = UNIT_TYPES): Promise<void> {
-        for (const unitType of types) {
-            for (const result of this.get(unitType.type)) {
-                await writeSaveDataInfo(unitType.save(baseDir, result));
-            }
-        }
     }
 
     /**

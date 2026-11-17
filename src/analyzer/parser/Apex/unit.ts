@@ -2,7 +2,7 @@
 // - クラス: <名前>.cls と <名前>.cls-meta.xml (classes フォルダ)
 // - トリガー: <名前>.trigger と <名前>.trigger-meta.xml (triggers フォルダ)
 // - 匿名 Apex: <名前>.apex 1 ファイル (メタデータはない)
-// 1 単位 = 1 つの解析結果 = 1 つの保存ファイル (class_<名前> / trigger_<名前> / anonymous_<名前>)。
+// 1 単位 = 1 つの解析結果 = 置き場の 1 単位 (id は class_<名前> / trigger_<名前> / anonymous_<名前>)。
 // ここはファイルシステムに触らない (読み込みは folder.ts)
 import { getApexMetaSuffix, type SourceJson, type XmlSourceJson } from '../../types';
 import type { XmlResolvedError } from '../commons';

@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import { JsonType } from '../../commons';
 import type {
     FieldNameTypeClass,
@@ -19,8 +17,6 @@ export type FieldJson = {
     field: string[];
 };
 
-export const isFieldJson = typia.createIs<FieldJson>();
-
 export const makeFieldJson = (target: FieldNameTypeClass): FieldJson => {
     return {
         type: 'field',
@@ -33,7 +29,6 @@ export type SelectEntryJson = (
 ) & {
     alias?: string;
 };
-export const isSelectEntryJson = typia.createIs<SelectEntryJson>();
 
 type SelectEntryBodyJson = JsonType<'selectEntry'> & (FieldJson | SoqlFunctionJson | TypeOfJson);
 
@@ -75,8 +70,6 @@ const makeSelectEntryJson = (
 export type SelectJson = {
     field: SelectEntryJson[];
 };
-
-export const isSelectJson = typia.createIs<SelectJson>();
 
 export const makeSelectJson = (target: SelectListTypeClass | SubFieldListTypeClass): SelectJson => {
     const entries: readonly (SelectEntryTypeClass | SubFieldEntryTypeClass)[] =

@@ -20,6 +20,8 @@ import {
 } from '../analyzer/unit';
 import type { RepositoryProcessor } from '../analyzer/unit/processor';
 
+import { type ProcessorSource, processorGetter } from './context';
+
 // 依存関係を問い合わせる MCP のツール。方針: docs/analysis-plan.md 3.5
 // 名前・種類・位置だけを返す (値は返さないので、機密の値 (5.7) は出ない)
 
@@ -50,11 +52,8 @@ const describeNodes = (graph: DependencyGraph, found: Map<string, number>) =>
         return { id, type: node.type, name: node.name, origin: node.origin, depth };
     });
 
-export const registerDependencyTools = (
-    server: McpServer,
-    processor: RepositoryProcessor,
-): void => {
-    const { repositoryRoot } = processor;
+export const registerDependencyTools = (server: McpServer, source: ProcessorSource): void => {
+    const processorOf = processorGetter(source);
     server.registerTool(
         'get_dependents',
         {
@@ -68,7 +67,7 @@ export const registerDependencyTools = (
             },
         },
         async ({ target, depth, level, reload }) => {
-            const { graph } = await loadGraph(processor, reload);
+            const { graph } = await loadGraph(await processorOf(), reload);
             if (!graph.nodes.has(target)) return text({ target, found: false, dependents: [] });
             return text({
                 target,
@@ -94,7 +93,7 @@ export const registerDependencyTools = (
             },
         },
         async ({ target, depth, level, reload }) => {
-            const { graph } = await loadGraph(processor, reload);
+            const { graph } = await loadGraph(await processorOf(), reload);
             if (!graph.nodes.has(target)) return text({ target, found: false, dependencies: [] });
             return text({
                 target,
@@ -123,10 +122,11 @@ export const registerDependencyTools = (
             const target: GitDiffTarget = from
                 ? { mode: 'committed', from, to: 'HEAD' }
                 : { mode: 'unstaged', includeUntracked: true };
+            const { repositoryRoot } = await processorOf();
             const diff = await GitParser.getDiffFiles(target, { cwd: repositoryRoot });
             const subdirectory = repositoryRoot.slice(diff.root.length).replace(/^[\\/]+/, '');
             const changed = changedUnits(relativeGitFiles(diff.files, subdirectory));
-            const { graph, repository } = await loadGraph(processor, reload ?? true);
+            const { graph, repository } = await loadGraph(await processorOf(), reload ?? true);
             // 変わった単位の場所 → グラフの単位のノード
             const changedNodes = [...graph.nodes.values()]
                 .filter((node) => {
@@ -156,7 +156,7 @@ export const registerDependencyTools = (
             inputSchema: { reload: reloadSchema },
         },
         async ({ reload }) => {
-            const { graph } = await loadGraph(processor, reload);
+            const { graph } = await loadGraph(await processorOf(), reload);
             return text(
                 graph.findings.map((finding) => ({
                     code: finding.code,
@@ -175,6 +175,7 @@ export const registerDependencyTools = (
             inputSchema: {},
         },
         async () => {
+            const { repositoryRoot } = await processorOf();
             const tree = new ProjectTree(new WorkingTree(repositoryRoot));
             return text(Object.fromEntries(locateUnits(await tree.listFiles())));
         },

@@ -5,3 +5,17 @@ node_modules/
 
 # LWC のテンプレート (Prettier は {式} の属性を引用符で囲んで壊す)
 **/lwc/**/*.html
+
+# プログラムで作るもの (作り直すスクリプト・テストと同じ形のまま持つ)
+docs/catalog/
+docs/examples/*/output/
+test/ir/golden/
+dist/
+
+# サンプルの Salesforce のソース (解析の入力。位置がずれるので整形しない)
+docs/examples/repository/
+.sfdx/
+
+# 手元の一時ファイル
+tmp-*.ts
+*.tmp.ts

@@ -2,8 +2,8 @@
 
 Apex（クラス・トリガー・匿名 Apex と、クラス・トリガーの `-meta.xml`）を読み、JSON にし、前回との差分を取る実装の全体像。
 
-- JSON の型: [apex-implementation.md](./apex-implementation.md)
-- Diff: 全体の方針 [apex-implementation.md](./apex-implementation.md)、宣言 [apex-implementation.md](./apex-implementation.md)、文・ブロック（GumTree）[apex-implementation.md](./apex-implementation.md)
+- JSON の型: [types/apex/](../src/analyzer/types/apex/)（サンプルの JSON は [examples/apex/output/json/](./examples/apex/output/json/index.md)、見直しの調査は [apex-json-review.md](./apex-json-review.md)）
+- Diff: 全体の方針はこの文書の 4 章と [commons.md](./commons.md) 2.3（分類 A〜D は [commons/diff/commons.ts](../src/analyzer/processor/commons/diff/commons.ts)）、宣言 [diff/declaration.ts](../src/analyzer/processor/Apex/diff/declaration.ts)、文・ブロック（GumTree）[diff/statement.ts](../src/analyzer/processor/Apex/diff/statement.ts)（kind ごとの Diff 型は [apex-json-analysis.md](./apex-json-analysis.md) 6 章）
 - 解析（計画）: [apex-json-analysis.md](./apex-json-analysis.md)
 
 ## 1. 処理の流れ
@@ -18,13 +18,13 @@ parseApexUnitFiles (unit.ts。ファイルシステムに触らない)
    │              → JSON (make*Json。IR のノードを直接読む)                                     (source.ts)
    └─ -meta.xml   parseXml → JSON (makeApexMetaJson)                                            (meta.ts)
    ▼
-ApexUnitParseResult (1 単位 = 1 解析結果 = 1 保存ファイル class_<名前> / trigger_<名前> / anonymous_<名前>)
+ApexUnitParseResult (1 単位 = 1 解析結果 = 置き場 (SQLite) の 1 単位。id は class_<名前> / trigger_<名前> / anonymous_<名前>)
    └─ diff: makeApexUnitDiffs (processor/Apex/diff/unit.ts)
 ```
 
 ## 2. 単位
 
-| 単位      | ファイル                               | id・保存名         |
+| 単位      | ファイル                               | id                 |
 | --------- | -------------------------------------- | ------------------ |
 | クラス    | `Foo.cls` + `Foo.cls-meta.xml`         | `class_Foo`        |
 | トリガー  | `Bar.trigger` + `Bar.trigger-meta.xml` | `trigger_Bar`      |
@@ -45,13 +45,14 @@ src/analyzer/
 ├── types/apex/              JSON の型と make*Json (unit / declaration / statement / expression / query / modifier / param / type / meta)。IR のノードを getFields()・kind で読む
 │   └── commons/             node.ts: keysOf / structureKeysOf / makeNodeJson (キー)、source.ts: regenerateSourceObjects (JSON に残った位置だけにする)
 ├── parser/Apex/
-│   ├── parser.ts            ApexParser: searchApexUnits / parseApexUnit / parseApexUnits / saveApexUnit / readApexMsgPack / readSavedApexUnits
+│   ├── parser.ts            ApexParser: searchApexUnits / parseApexUnit / parseApexUnits (保存は UnitStore)
 │   ├── folder.ts            フォルダごとに単位にまとめて読む
 │   ├── unit.ts              単位の型と解析 (ファイルシステムに触らない)
 │   ├── source.ts  meta.ts   ソース・-meta.xml 1 つの解析 (ソースの文字列を受け取る)
 │   └── errorListener.ts     ANTLR の構文エラーと IR のエラーを ApexResolvedError にする
 ├── processor/Apex/diff/     unit (単位) / unitBody (ソース・-meta.xml の中身) / declaration / statement (GumTree) / expression / query / modifier / param / type
-└── worker/apexWorker.ts     ApexWorker (1 単位 = 1 タスク)
+├── processor/Apex/          walker.ts (JSON の共通の走査) / interface.ts (公開の形 apexInterfaceOf) / calls.ts (呼び出し・DML・クエリ analyzeApexUnit) / modifiers.ts (修飾子の分類)
+└── worker/unitWorker.ts     UnitWorker (すべての単位の種類で共通。1 単位 = 1 タスク)
 ```
 
 キーの作り方（Apex・LWC・メタデータで共通）:
@@ -73,7 +74,7 @@ src/analyzer/
 | ソース（`content.fields.source`）  | 種類が同じでどちらも読めれば `makeUnitContentDiff`（宣言・文・式・SOQL の型付きの差分）。そうでなければ値ごと |
 | -meta.xml（`content.fields.meta`） | 種類が同じでどちらも読めれば値ごとの差分（`apiVersion`・`status`・`packageVersions`）。そうでなければ値ごと   |
 
-宣言は名前で対応付け（D）、文の並びは GumTree で対応付けて移動を見つける。分類（A. スロット / B. 集合 / C. 順序付き列 / D. キー対応）・`status`・`match` は [apex-implementation.md](./apex-implementation.md)。
+宣言は名前で対応付け（D）、文の並びは GumTree で対応付けて移動を見つける。分類（A. スロット / B. 集合 / C. 順序付き列 / D. キー対応）・`status`・`match` は [commons.md](./commons.md) 2.3 と [commons/diff/commons.ts](../src/analyzer/processor/commons/diff/commons.ts)。
 
 ## 5. サンプルとテスト
 
@@ -84,5 +85,7 @@ src/analyzer/
 
 ## 6. 未実装
 
-- 解析（宣言の一覧、SOQL / DML、呼び出し関係、ファイルをまたぐ名前解決、メトリクス、ルール違反）: [apex-json-analysis.md](./apex-json-analysis.md)。
-- 文字列からの parse の入口は `parseApexUnitFiles`（git の before 側など、作業ツリーにない中身を読むのに使える）。git の範囲から before / after を組み立てる処理は未実装（[report-components-plan.md](./report-components-plan.md) 3.1）。
+- 解析は一部だけある（2026-11-17 時点）。
+    - あるもの: JSON の共通の走査（[walker.ts](../src/analyzer/processor/Apex/walker.ts)。依存関係の解析 [dependency/apex.ts](../src/analyzer/processor/dependency/apex.ts) とラベルの解析が使う）、公開の形（[interface.ts](../src/analyzer/processor/Apex/interface.ts) の `apexInterfaceOf`。レポートの provider `apex.interface`）、修飾子の分類（[modifiers.ts](../src/analyzer/processor/Apex/modifiers.ts)）、呼び出し・DML・クエリ・トリガーの文脈（[calls.ts](../src/analyzer/processor/Apex/calls.ts) の `analyzeApexUnit`。今はテストだけが使い、本番にはつないでいない）。
+    - 残り（型の解決、呼び出しグラフ、メトリクス、ルール違反など。クラスの概要 `apex.outline` とデータアクセス `apex.dataAccess` は 2026-11-17 に済んだ）: [todo.md](./todo.md) 2.2 章（Apex）・4 章。方針は [apex-json-analysis.md](./apex-json-analysis.md)。
+- 文字列からの parse の入口は `parseApexUnitFiles`（git の before 側など、作業ツリーにない中身を読むのに使える）。git の範囲から before / after を組み立てる処理は実装済み（[unit/gitRange.ts](../src/analyzer/unit/gitRange.ts) の `resolveCompareRange`。レポートの `compare`）。

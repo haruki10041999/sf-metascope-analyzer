@@ -39,7 +39,7 @@ import {
     makeUnorderedValuesDiff,
     presentEntry,
 } from '../../commons/diff/present';
-import { LwcBlockDiff, makeLwcBlockDiff } from './gumtree/tree';
+import { LwcStatementBlockDiff, makeLwcStatementBlockDiff } from './body';
 
 // LWC のコンポーネント (default export のクラス) の差分。方針: docs/lwc-implementation.md
 // 分類 (A. スロット / B. 集合 / C. 順序付き列 / D. キー対応) と出力の形は Apex と同じ (docs/apex-implementation.md)。
@@ -56,7 +56,7 @@ export type LwcTypeDiff = OptionalValueDiff<LwcTypeJson>;
 
 /**
  * 本体の外の式 (初期値・引数など。docs/lwc-json-types.md 5.4) は値として比べる (中身のハッシュの objectKey で比べる)。
- * 本体の文の中の式は、文の並びの GumTree (LwcBlockDiff) の中で比べる
+ * 本体の文の中の式は、文の並びの差分 (LwcStatementBlockDiff。body.ts) の中で比べる
  */
 export type LwcExpressionDiff = ValueDiff<LwcJsExpressionJson>;
 
@@ -193,11 +193,11 @@ export const makeLwcModifiersDiff = (
 // ---------------------------------------------------------------------------
 
 /**
- * 本体の中身。文の並びは GumTree (Apex の本体と同じ。文の追加・削除・移動・中の式の変更が分かる)。
+ * 本体の中身。文の並びは GumTree で対応付けた型付きの差分 (Apex の本体と同じ形。文の追加・削除・移動・中の式の変更が分かる。body.ts)。
  * 決まった形の呼び出し・イベントは JSON に持たない (解析で出す。processor/Lwc/calls.ts) ので、その変更も文の差分に出る
  */
 export type LwcBodyContentDiff = {
-    block?: PresentDiff<LwcJsStatementJson[], LwcBlockDiff>;
+    block?: PresentDiff<LwcJsStatementJson[], LwcStatementBlockDiff>;
 };
 
 export const makeLwcBodyContentDiff = (
@@ -207,7 +207,9 @@ export const makeLwcBodyContentDiff = (
 ): LwcBodyContentDiff => ({
     ...presentEntry(
         'block',
-        makePresentDiff(before.block, after.block, (b, a) => makeLwcBlockDiff(b, a, sources)),
+        makePresentDiff(before.block, after.block, (b, a) =>
+            makeLwcStatementBlockDiff(b, a, sources),
+        ),
     ),
 });
 

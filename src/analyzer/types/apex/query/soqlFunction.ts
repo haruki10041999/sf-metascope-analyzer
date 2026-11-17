@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import type {
     CoordinateValueTypeClass,
     DateFieldNameTypeClass,
@@ -20,7 +18,6 @@ export type DateFieldNameJson = {
     name: string[];
     isConvertTimeZone: boolean;
 };
-export const isDateFieldNameJson = typia.createIs<DateFieldNameJson>();
 const makeDateFieldNameJson = (target: DateFieldNameTypeClass): DateFieldNameJson => {
     const { value, isConvertTimeZone } = target.getFields();
 
@@ -127,7 +124,6 @@ export type DistanceValueJson = {
     target: LocationValueElementJson;
     unit: string;
 };
-export const isDistanceValueJson = typia.createIs<DistanceValueJson>();
 
 type DistanceParam = Extract<SoqlFunctionType, { kind: 'DISTANCE' }>['param'];
 
@@ -187,8 +183,6 @@ export type SoqlFunctionJson = { type: 'soqlFunction' } & (
           arg: DistanceValueJson;
       }
 );
-
-export const isSoqlFunctionJson = typia.createIs<SoqlFunctionJson>();
 
 export const makeSoqlFunctionJson = (target: SoqlFunctionTypeClass): SoqlFunctionJson => {
     const fields = target.getFields();

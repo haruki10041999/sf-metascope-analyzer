@@ -1,14 +1,21 @@
 import { createHash } from 'node:crypto';
-import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import { Packr } from 'msgpackr';
-
-import { SAVE_FORMAT_VERSION } from '../parser/commons';
+import { SAVE_FORMAT_VERSION as LAYOUT_VERSION } from '../parser/commons';
 import type { SourceText } from '../types';
 
+import { DERIVED_VERSION, primeUnitDependencies, unitDependenciesOf } from './dependencies';
 import { Repository, locateUnits, readUnitSources } from './repository';
 import type { SourceTree } from './sourceTree';
+import type {
+    FileStatEntry,
+    Manifest,
+    ManifestFile,
+    ManifestUnit,
+    StoreBackend,
+    UnitSourceFile,
+} from './storeBackend';
+import { SqliteStoreBackend } from './storeSqlite';
 import {
     type AnyUnitType,
     type UnitParseResult,
@@ -16,40 +23,27 @@ import {
     unitFormatVersionOf,
 } from './unitType';
 
-// 保存の置き場 (docs/save-format-plan.md 4.1。段階 S1〜S3)。
-//
-// <dir>/
-//   manifest.msgpack              before の目録 (置き場所の版・単位の一覧・各単位のファイルと hash・key)
-//   sources/<hash>.msgpack        ソース (LF にそろえた中身)。同じ中身は 1 つ
-//   parsed/<種類>/<key>.msgpack   解析結果 { layoutVersion, formatVersion, data }。data の filePath はリポジトリからの相対パス
+export type { Manifest, ManifestFile, ManifestUnit } from './storeBackend';
+
+// 保存の置き場 (docs/save-format-plan.md 4.1。段階 S1〜S5。保存の形は docs/implementation-roadmap.md 5 章の SQLite)。
+// 置き場は <savingRoot>/store/metascope.db (storeSqlite.ts)。ここは単位の判定・hash・parse の使い回しを行い、
+// 読み書きは backend (storeBackend.ts) に任せる。
 //
 // - 単位の key は (種類・場所・ファイルと中身の hash) の hash。同じ key の単位は parse し直さず、保存した解析結果を使う
 //   (after も。読み込んだ結果はメモリでも使い回すので、before と after で同じ単位は同じオブジェクトになる)
 // - 解析結果の版 (formatVersion) は系統ごと (unitFormatVersionOf)。版の違う解析結果は、保存したソースから parse し直す
 //   (版を上げても before が消えない)
-// - 目録は一時ファイルに書いてから名前を変える (保存が途中で止まっても、前の before が残る)。
-//   目録にない解析結果・ソースは、保存のあとに消す。解析結果は消えても作り直せる (困るのは目録とソースだけ)
+// - 保存は 1 つのトランザクション (途中で止まっても、前の before が残る)。目録にない解析結果・ソースは保存のときに消す
+// - 作業ツリーのファイルは、大きさ・更新時刻が前回 hash を取ったときと同じなら、読まずに前回の hash を使う (S5)。
+//   hash を取った時点で更新されたばかりだったファイル (同じ時刻のうちにもう一度書かれうる) は使わない (git の racy の考え方)
+// - 定義・参照の版 (DERIVED_VERSION) は解析結果の版と分ける。保存した解析結果を読んだ単位は、版の合う定義・参照も読み、
+//   作り直さない。取り出し方だけを変えたときは派生の版を上げれば、parse はやり直さずに定義・参照だけを作り直す
 
-/** 単位のファイル 1 つ (リポジトリからの相対パスと、中身の hash) */
-export type ManifestFile = { path: string; hash: string };
-
-/** 保存した時点の単位 1 つ */
-export type ManifestUnit = {
-    /** 単位の種類 */
-    type: string;
-    /** 単位の場所 (リポジトリからの相対パス) */
-    location: string;
-    /** filesOf のファイル (読めたもの。名前の順) */
-    files: ManifestFile[];
-    /** hash(type, location, files)。解析結果の保存名 */
-    key: string;
-};
-
-export type Manifest = { layoutVersion: number; units: ManifestUnit[] };
-
-type ParsedEnvelope = { layoutVersion: number; formatVersion: string; data: UnitParseResult };
-
-const packr = new Packr({ useRecords: true });
+/**
+ * 更新時刻と hash を取った時刻がこれより近いファイルは、大きさ・更新時刻が同じでも読み直す
+ * (同じ時刻のうちに書き直されても、更新時刻が変わらないことがあるため)
+ */
+const RACY_MS = 2000;
 
 const sha256 = (text: string) => createHash('sha256').update(text).digest('hex');
 
@@ -64,22 +58,6 @@ const manifestUnits = new WeakMap<UnitParseResult, ManifestUnit>();
 export const manifestUnitOf = (result: UnitParseResult): ManifestUnit | undefined =>
     manifestUnits.get(result);
 
-const readPacked = async <T>(file: string): Promise<T | undefined> => {
-    const content = await fs.readFile(file).catch(() => undefined);
-    if (!content) return undefined;
-    try {
-        return packr.unpack(content) as T;
-    } catch {
-        return undefined;
-    }
-};
-
-const exists = (file: string) =>
-    fs.stat(file).then(
-        () => true,
-        () => false,
-    );
-
 /** 置き場の数 (テスト・計測用) */
 export type UnitStoreStats = {
     /** parse した単位の数 */
@@ -88,6 +66,14 @@ export type UnitStoreStats = {
     loaded: number;
     /** メモリの解析結果を使った単位の数 */
     reused: number;
+    /** 保存した定義・参照を読んだ単位の数 (S4) */
+    derivedLoaded: number;
+    /** 定義・参照を保存した単位の数 (S4) */
+    derivedWritten: number;
+    /** 読んで hash を取ったファイルの数 (S5) */
+    hashed: number;
+    /** 大きさ・更新時刻が同じなので、読まずに前回の hash を使ったファイルの数 (S5) */
+    statHits: number;
 };
 
 export class UnitStore {
@@ -95,34 +81,78 @@ export class UnitStore {
     private readonly cache = new Map<string, UnitParseResult>();
     /** 最後に読んだ木のソース (hash → 中身)。保存のときに書く */
     private sources = new Map<string, string>();
-    readonly stats: UnitStoreStats = { parsed: 0, loaded: 0, reused: 0 };
+    /** 保存した定義・参照が今の版の key (保存のときに書かなくてよいもの) */
+    private readonly freshDerived = new Set<string>();
+    readonly stats: UnitStoreStats = {
+        parsed: 0,
+        loaded: 0,
+        reused: 0,
+        derivedLoaded: 0,
+        derivedWritten: 0,
+        hashed: 0,
+        statHits: 0,
+    };
+    /** 作業ツリーのファイル (絶対パス) → hash を取ったときの大きさ・更新時刻 (S5)。最初の loadTree で読む */
+    private fileStats?: Map<string, FileStatEntry>;
+    /** 最後に読んだ木 (保存のときに、読まずに済ませたソースを読む) */
+    private tree?: SourceTree;
+
+    /** 読み書き (SQLite) */
+    readonly backend: StoreBackend;
 
     /** dir は置き場 (<savingRoot>/store)、root はリポジトリのルート */
     constructor(
         readonly dir: string,
         readonly root: string,
         readonly types: readonly AnyUnitType[] = UNIT_TYPES,
-    ) {}
-
-    private get manifestFile(): string {
-        return path.join(this.dir, 'manifest.msgpack');
+    ) {
+        this.backend = new SqliteStoreBackend(dir);
     }
 
-    private sourceFile(hash: string): string {
-        return path.join(this.dir, 'sources', `${hash}.msgpack`);
+    /** データベースを閉じる (テスト・終わるとき) */
+    close(): void {
+        this.backend.close();
     }
 
-    private parsedFile(type: string, key: string): string {
-        return path.join(this.dir, 'parsed', type, `${key}.msgpack`);
+    private async loadFileStats(): Promise<Map<string, FileStatEntry>> {
+        this.fileStats ??= await this.backend.readFileStats();
+        return this.fileStats;
+    }
+
+    /**
+     * 単位のファイルの hash。大きさ・更新時刻が前回と同じなら読まない (中身は undefined)。
+     * 読んだファイルは中身も返す。読めないファイルは undefined
+     */
+    private async hashFile(
+        tree: SourceTree,
+        filePath: string,
+        stats: Map<string, FileStatEntry> | undefined,
+    ): Promise<{ hash: string; source?: string } | undefined> {
+        const absolute = path.join(tree.root, filePath);
+        const stat = stats ? await tree.statFile?.(filePath) : undefined;
+        const cached = stat ? stats!.get(absolute) : undefined;
+        if (
+            stat &&
+            cached &&
+            cached.size === stat.size &&
+            cached.mtimeMs === stat.mtimeMs &&
+            cached.checkedAt - cached.mtimeMs > RACY_MS
+        ) {
+            this.stats.statHits++;
+            return { hash: cached.hash };
+        }
+        const checkedAt = Date.now();
+        const source = await tree.readFile(filePath);
+        if (source === undefined) return undefined;
+        const hash = sha256(source);
+        this.stats.hashed++;
+        if (stat) stats!.set(absolute, { ...stat, hash, checkedAt });
+        return { hash, source };
     }
 
     /** 今の置き場所の版の目録。なければ・版が違えば undefined */
-    async readManifest(): Promise<Manifest | undefined> {
-        const manifest = await readPacked<Partial<Manifest>>(this.manifestFile);
-        if (manifest?.layoutVersion !== SAVE_FORMAT_VERSION || !Array.isArray(manifest.units)) {
-            return undefined;
-        }
-        return manifest as Manifest;
+    readManifest(): Promise<Manifest | undefined> {
+        return this.backend.readManifest();
     }
 
     /** before (今の置き場所の版の目録) があるか */
@@ -154,64 +184,104 @@ export class UnitStore {
         return Repository.of(this.root, units);
     }
 
-    /** 木 (作業ツリーなど) のすべての単位。key が同じ単位は parse しない */
-    async loadTree(tree: SourceTree): Promise<Repository> {
+    /**
+     * 木 (作業ツリーなど) のすべての単位。key が同じ単位は parse しない。
+     * track が false なら、保存に使う「最後に読んだ木」とソースを書き換えない
+     * (git の範囲で比べるためだけに読む木。docs/implementation-roadmap.md の R5)
+     */
+    async loadTree(tree: SourceTree, options: { track?: boolean } = {}): Promise<Repository> {
         const files = await tree.listFiles();
         const locations = locateUnits(files, this.types);
         const units = new Map<string, UnitParseResult[]>();
         const sources = new Map<string, string>();
+        // 作業ツリー (大きさ・更新時刻が分かる木) だけ、前回の hash を使う
+        const stats = tree.statFile ? await this.loadFileStats() : undefined;
         for (const unitType of this.types) {
             const results = await Promise.all(
                 (locations.get(unitType.type) ?? []).map(async (location) => {
-                    const texts = await readUnitSources(tree, unitType, location, files);
-                    const unitFiles = texts.map((text) => {
-                        const hash = sha256(text.source);
-                        sources.set(hash, text.source);
-                        return { path: text.filePath, hash };
-                    });
+                    const hashed = await Promise.all(
+                        unitType.filesOf(location, files).map(async (filePath) => {
+                            const file = await this.hashFile(tree, filePath, stats);
+                            if (!file) return [];
+                            if (file.source !== undefined) sources.set(file.hash, file.source);
+                            return [{ path: filePath, hash: file.hash }];
+                        }),
+                    );
+                    const unitFiles = hashed.flat();
                     const unit: ManifestUnit = {
                         type: unitType.type,
                         location,
                         files: unitFiles,
                         key: unitKeyOf(unitType.type, location, unitFiles),
                     };
-                    return (await this.resolve(unitType, unit, async () => texts))!;
+                    // parse するときだけ中身を読む (読まずに済ませたファイルも含めて読み直す)
+                    return (await this.resolve(unitType, unit, () =>
+                        readUnitSources(tree, unitType, location, files),
+                    ))!;
                 }),
             );
             units.set(unitType.type, results);
         }
-        this.sources = sources;
+        if (options.track ?? true) {
+            this.sources = sources;
+            this.tree = tree;
+        }
         return Repository.of(tree.root, units);
     }
 
     /**
      * repository (loadTree で作ったもの) を before として保存する。
-     * 解析結果・ソースを書き足し、目録を最後に置き換え、目録にないものを消す
+     * 解析結果・定義・参照・ソースを書き足し、目録を置き換え、目録にないものを消す (1 つのトランザクション)
      */
     async save(repository: Repository): Promise<void> {
-        const units: ManifestUnit[] = [];
-        for (const unitType of this.types) {
-            for (const result of repository.get(unitType.type)) {
-                const unit = manifestUnitOf(result);
-                if (!unit) throw new Error(`Not loaded by the store: ${result.result.id}`);
-                units.push(unit);
-                const file = this.parsedFile(unit.type, unit.key);
-                if (!(await exists(file))) await this.writeParsed(unitType, unit.key, result);
-                for (const { hash } of unit.files) {
-                    const sourceFile = this.sourceFile(hash);
-                    const source = this.sources.get(hash);
-                    if (source === undefined || (await exists(sourceFile))) continue;
-                    await fs.mkdir(path.dirname(sourceFile), { recursive: true });
-                    await fs.writeFile(sourceFile, packr.pack(source));
+        await this.backend.begin();
+        try {
+            const units: ManifestUnit[] = [];
+            for (const unitType of this.types) {
+                const formatVersion = unitFormatVersionOf(unitType);
+                for (const result of repository.get(unitType.type)) {
+                    const unit = manifestUnitOf(result);
+                    if (!unit) throw new Error(`Not loaded by the store: ${result.result.id}`);
+                    units.push(unit);
+                    // ソース (読まずに済ませたファイル (S5) は、ここで木から読む。中身が変わっていれば書かない)
+                    const files: UnitSourceFile[] = [];
+                    for (const { path: filePath, hash } of unit.files) {
+                        let text = this.sources.get(hash) ?? (await this.backend.readSource(hash));
+                        if (text === undefined && this.tree) {
+                            const read = await this.tree.readFile(filePath);
+                            if (read !== undefined && sha256(read) === hash) text = read;
+                        }
+                        if (text === undefined) continue;
+                        files.push({ path: filePath, hash, text });
+                        await this.backend.writeSource(hash, text);
+                    }
+                    if (!(await this.backend.hasParsed(unit.type, unit.key, formatVersion))) {
+                        await this.writeParsed(unitType, unit.key, result, files);
+                    }
+                    // 定義・参照 (今の版のものを読んでいなければ、作って書く)
+                    if (!this.freshDerived.has(unit.key)) {
+                        await this.writeDerived(
+                            unitType,
+                            unit.key,
+                            unitDependenciesOf(unit.type, result),
+                        );
+                    }
                 }
             }
+            await this.saveFileStats();
+            await this.backend.commit({ layoutVersion: LAYOUT_VERSION, units });
+        } catch (error) {
+            await this.backend.rollback();
+            throw error;
         }
-        const manifest: Manifest = { layoutVersion: SAVE_FORMAT_VERSION, units };
-        const temporary = `${this.manifestFile}.${process.pid}.tmp`;
-        await fs.mkdir(this.dir, { recursive: true });
-        await fs.writeFile(temporary, packr.pack(manifest));
-        await fs.rename(temporary, this.manifestFile);
-        await this.collectGarbage(manifest);
+    }
+
+    /** ファイルの大きさ・更新時刻・hash を書く (S5。最後に読んだ木にあるファイルだけ) */
+    private async saveFileStats(): Promise<void> {
+        if (!this.fileStats || !this.tree?.statFile) return;
+        const root = this.tree.root;
+        const files = new Set((await this.tree.listFiles()).map((f) => path.join(root, f)));
+        await this.backend.writeFileStats([...this.fileStats].filter(([file]) => files.has(file)));
     }
 
     /** メモリの解析結果のうち、keep (今の before・after) にないものを捨てる */
@@ -239,13 +309,31 @@ export class UnitStore {
             result = await this.readParsed(unitType, unit.key);
             if (result) {
                 this.stats.loaded++;
+                // 保存した定義・参照 (版が合えば、作り直さずに使う)
+                const dependencies = await this.readDerived(unitType, unit.key);
+                if (dependencies) {
+                    primeUnitDependencies(result, dependencies);
+                    this.freshDerived.add(unit.key);
+                    this.stats.derivedLoaded++;
+                }
             } else {
                 const texts = await sources();
                 if (!texts) return undefined;
                 const parsed = await unitType.parseUnit(unit.location, texts);
                 this.stats.parsed++;
                 result = { ...parsed, filePath: path.join(this.root, parsed.filePath) };
-                await this.writeParsed(unitType, unit.key, result);
+                // 単位のファイルの中身も渡す (位置からソースの文字列を作れるものは、文字列を持たずに済ませる)
+                const hashes = new Map(unit.files.map((file) => [file.path, file.hash]));
+                await this.writeParsed(
+                    unitType,
+                    unit.key,
+                    result,
+                    texts.map((text) => ({
+                        path: text.filePath,
+                        hash: hashes.get(text.filePath) ?? sha256(text.source),
+                        text: text.source,
+                    })),
+                );
             }
             this.cache.set(unit.key, result);
         }
@@ -258,17 +346,12 @@ export class UnitStore {
         unitType: AnyUnitType,
         key: string,
     ): Promise<UnitParseResult | undefined> {
-        const saved = await readPacked<Partial<ParsedEnvelope>>(
-            this.parsedFile(unitType.type, key),
+        const saved = await this.backend.readParsed(
+            unitType.type,
+            key,
+            unitFormatVersionOf(unitType),
         );
-        if (
-            !saved?.data ||
-            saved.layoutVersion !== SAVE_FORMAT_VERSION ||
-            saved.formatVersion !== unitFormatVersionOf(unitType)
-        ) {
-            return undefined;
-        }
-        return { ...saved.data, filePath: path.join(this.root, saved.data.filePath) };
+        return saved ? { ...saved, filePath: path.join(this.root, saved.filePath) } : undefined;
     }
 
     /** 解析結果を書く (filePath はリポジトリからの相対パスにする) */
@@ -276,51 +359,55 @@ export class UnitStore {
         unitType: AnyUnitType,
         key: string,
         result: UnitParseResult,
+        files: readonly UnitSourceFile[],
     ): Promise<void> {
-        const file = this.parsedFile(unitType.type, key);
-        const data = {
-            ...result,
-            filePath: path.relative(this.root, result.filePath).split(path.sep).join('/'),
-        };
-        await fs.mkdir(path.dirname(file), { recursive: true });
-        await fs.writeFile(
-            file,
-            packr.pack({
-                layoutVersion: SAVE_FORMAT_VERSION,
-                formatVersion: unitFormatVersionOf(unitType),
-                data,
-            } satisfies ParsedEnvelope),
+        await this.backend.writeParsed(
+            unitType.type,
+            key,
+            unitFormatVersionOf(unitType),
+            {
+                ...result,
+                filePath: path.relative(this.root, result.filePath).split(path.sep).join('/'),
+            },
+            files,
         );
+    }
+
+    /** 保存した定義・参照 (今の解析結果の版・派生の版のもの)。なければ・版が違えば undefined */
+    private readDerived(unitType: AnyUnitType, key: string) {
+        return this.backend.readDerived(
+            unitType.type,
+            key,
+            unitFormatVersionOf(unitType),
+            DERIVED_VERSION,
+        );
+    }
+
+    /** 定義・参照を書く */
+    private async writeDerived(
+        unitType: AnyUnitType,
+        key: string,
+        dependencies: ReturnType<typeof unitDependenciesOf>,
+    ): Promise<void> {
+        await this.backend.writeDerived(
+            unitType.type,
+            key,
+            unitFormatVersionOf(unitType),
+            DERIVED_VERSION,
+            dependencies,
+        );
+        this.freshDerived.add(key);
+        this.stats.derivedWritten++;
     }
 
     /** 保存したソース。1 つでも欠けていれば undefined */
     private async storedSources(unit: ManifestUnit): Promise<SourceText[] | undefined> {
         const texts: SourceText[] = [];
         for (const file of unit.files) {
-            const source = await readPacked<string>(this.sourceFile(file.hash));
+            const source = await this.backend.readSource(file.hash);
             if (typeof source !== 'string') return undefined;
             texts.push({ fileName: path.posix.basename(file.path), filePath: file.path, source });
         }
         return texts;
-    }
-
-    /** 目録にない解析結果・ソースを消す */
-    private async collectGarbage(manifest: Manifest): Promise<void> {
-        const keys = new Set(manifest.units.map((unit) => `${unit.type}/${unit.key}.msgpack`));
-        const hashes = new Set(
-            manifest.units.flatMap((unit) => unit.files.map((file) => `${file.hash}.msgpack`)),
-        );
-        const parsedDir = path.join(this.dir, 'parsed');
-        for (const type of await fs.readdir(parsedDir).catch(() => [] as string[])) {
-            for (const name of await fs.readdir(path.join(parsedDir, type)).catch(() => [])) {
-                if (!keys.has(`${type}/${name}`)) {
-                    await fs.rm(path.join(parsedDir, type, name), { force: true });
-                }
-            }
-        }
-        const sourcesDir = path.join(this.dir, 'sources');
-        for (const name of await fs.readdir(sourcesDir).catch(() => [] as string[])) {
-            if (!hashes.has(name)) await fs.rm(path.join(sourcesDir, name), { force: true });
-        }
     }
 }

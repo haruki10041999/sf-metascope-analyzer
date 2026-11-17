@@ -1,17 +1,11 @@
 // Apex の parser の入口。LWC の LwcParser・オブジェクトの MetadataParser と同じく、
-// 探す (searchApexUnits)・読む (parseApexUnit / parseApexUnits)・保存 (saveApexUnit)・保存済みの読み込み (readApexMsgPack) を持つ。
+// 探す (searchApexUnits)・読む (parseApexUnit / parseApexUnits) を持つ。保存は UnitStore (unit/store.ts。SQLite) が行う。
 // 解析の単位はクラス (.cls + .cls-meta.xml)・トリガー (.trigger + .trigger-meta.xml)・匿名 Apex (.apex) で、
-// 1 単位 = 1 つの解析結果 = 1 つの保存ファイル (class_<名前> / trigger_<名前> / anonymous_<名前>)。
+// 1 単位 = 1 つの解析結果 = 置き場の 1 単位 (id は class_<名前> / trigger_<名前> / anonymous_<名前>)。
 // フォルダの読み込みは folder.ts、単位の解析は unit.ts (ファイルシステムに触らない)
 import fs from 'node:fs/promises';
 
-import {
-    makeJsonSaveData,
-    makeMsgPackSaveData,
-    readMsgPack,
-    readSavedMsgPacks,
-    type SaveDataInfo,
-} from '../commons';
+import { makeJsonSaveData, type SaveDataInfo } from '../commons';
 
 import { getApexUnitPath, locateApexUnit, readApexUnit, searchApexUnits } from './folder';
 import { APEX_UNIT_PREFIXES, parseApexUnitFiles, type ApexUnitParseResult } from './unit';
@@ -45,25 +39,8 @@ export class ApexParser {
         );
     }
 
-    // 本番用: 解析結果を msgpackr で <baseDir>/<id>.msgpack に保存する (id は class_<名前> など)
-    static saveApexUnit(baseDir: string, target: ApexUnitParseResult): SaveDataInfo[] {
-        return [makeMsgPackSaveData('Apex', baseDir, target.result.id, target)];
-    }
-
     // 開発者でのデータ確認用
     static saveApexUnitForDeveloper(baseDir: string, target: ApexUnitParseResult): SaveDataInfo[] {
         return [makeJsonSaveData('Apex', baseDir, target.result.id, target)];
-    }
-
-    // 本番用: saveApexUnit で保存した <baseDir>/<id>.msgpack を読み込む
-    static async readApexMsgPack(baseDir: string, id: string): Promise<ApexUnitParseResult> {
-        return readMsgPack<ApexUnitParseResult>(baseDir, id, 'Apex');
-    }
-
-    /** baseDir に保存したすべての単位を読む (class_ / trigger_ / anonymous_ で始まるもの)。baseDir がなければ空 */
-    static async readSavedApexUnits(baseDir: string): Promise<ApexUnitParseResult[]> {
-        return readSavedMsgPacks(baseDir, isApexSaveId, (id) =>
-            ApexParser.readApexMsgPack(baseDir, id),
-        );
     }
 }

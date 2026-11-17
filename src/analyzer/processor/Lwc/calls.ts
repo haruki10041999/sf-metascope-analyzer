@@ -99,6 +99,13 @@ export type LwcCallInfo = {
     listener?: 'add' | 'remove';
     navigation?: LwcNavigationInfo;
     query?: LwcQueryInfo;
+    /** refs: this.refs.<名前> に対して使ったメンバー (this.refs.table.focus() の focus。書いた順、同じものは 1 つ) */
+    refUses?: LwcRefUseInfo[];
+    /**
+     * 呼び出しの結果 (Promise) の扱い方 (await・then・catch・finally・return)。どれもなければ持たない。
+     * Apex の imperative な呼び出しのエラー処理の有無などに使う (docs/lwc-json-types.md 4.1 の 9)
+     */
+    promise?: LwcPromiseUseInfo;
     /** 引数の式 (JSON のノードそのもの。refs・innerHTML はなし) */
     args: LwcJsArgumentJson[];
     /** 引数の中で使っている import (引数ごとに同じ名前は 1 つ) */
@@ -107,12 +114,41 @@ export type LwcCallInfo = {
     context: Pick<LwcWalkContext, 'functionDepth' | 'loopDepth' | 'nestingDepth' | 'inTry'>;
 };
 
+/** this.refs.<名前> に対して使ったメンバー */
+export type LwcRefUseInfo = {
+    member: string;
+    /** call: メソッドの呼び出し (focus()) / property: プロパティの参照・代入 (value) */
+    access: 'call' | 'property';
+};
+
+/** 呼び出しの結果 (Promise) の扱い方。await x() / x().then(...) / .catch(...) / .finally(...) / return x() */
+export type LwcPromiseUseInfo = {
+    awaited: boolean;
+    then: boolean;
+    /** .catch(...) か、.then(成功, 失敗) の 2 つ目の引数 */
+    catch: boolean;
+    finally: boolean;
+    /** return x() (結果を呼び出し元に返す。エラー処理は呼び出し元) */
+    returned: boolean;
+};
+
+/** new ShowToastEvent({ title, message, variant, mode }) の値。文字列のリテラルは値、ほかは式 */
+export type LwcToastInfo = {
+    title?: string | LwcJsExpressionJson;
+    message?: string | LwcJsExpressionJson;
+    variant?: string | LwcJsExpressionJson;
+    mode?: string | LwcJsExpressionJson;
+    /** 値の中で使っている import (カスタム表示ラベルなど) */
+    references: LwcImportReferenceJson[];
+};
+
 export type LwcEventInfo = {
     /** new の式の位置 */
     sourceKeys: ConvertKeys;
-    /** イベント名 (文字列のリテラルの値。識別子ならその名前、ほかは '') */
+    /** イベント名 (文字列のリテラルの値。識別子ならその名前、ほかは ''。トーストは lightning__showtoast) */
     name: string;
-    eventClass: 'CustomEvent' | 'Event';
+    /** ShowToastEvent は lightning/platformShowToastEvent から import したもの (トースト。toast に値) */
+    eventClass: 'CustomEvent' | 'Event' | 'ShowToastEvent';
     /**
      * 同じ本体の this.dispatchEvent で発行するか (引数に直接書いたもの・変数に入れてからその変数を渡したもの)。
      * false はほかの場所で発行するか、発行しないもの
@@ -124,6 +160,8 @@ export type LwcEventInfo = {
     detail?: LwcJsExpressionJson;
     /** TS の CustomEvent<T> の T */
     detailType?: LwcTypeJson;
+    /** トースト (eventClass が ShowToastEvent) の値 */
+    toast?: LwcToastInfo;
 };
 
 /** 本体 1 つの呼び出しとイベント */
@@ -266,8 +304,62 @@ const navigationMethodOf = (access: LwcJsMemberAccessJson): string | null => {
     return name ? name[1]! : null;
 };
 
-const isEventClass = (name: string | null): name is LwcEventInfo['eventClass'] =>
+const isEventClass = (name: string | null): name is 'CustomEvent' | 'Event' =>
     name === 'CustomEvent' || name === 'Event';
+
+/** トーストのイベントの名前 (ShowToastEvent が発行するもの) */
+export const LWC_TOAST_EVENT_NAME = 'lightning__showtoast';
+
+const PROMISE_METHODS = new Set(['then', 'catch', 'finally']);
+
+/**
+ * 呼び出しの結果 (Promise) の扱い方を、呼び出しのノードごとに集める (await・then・catch・finally・return)。
+ * x().then(a).catch(b) は x() に then と catch、await x().then(a) は x() に awaited と then を付ける
+ */
+const promiseUsesIn = (roots: unknown[]): Map<unknown, LwcPromiseUseInfo> => {
+    const uses = new Map<unknown, LwcPromiseUseInfo>();
+    const useOf = (node: unknown) => {
+        let use = uses.get(node);
+        if (!use) {
+            use = { awaited: false, then: false, catch: false, finally: false, returned: false };
+            uses.set(node, use);
+        }
+        return use;
+    };
+    /** .then / .catch / .finally の並びをたどった先の呼び出し */
+    const baseOf = (expression: LwcJsExpressionJson): LwcJsExpressionJson => {
+        let current = unwrapLwcExpression(expression);
+        while (
+            current.kind === 'jsMemberAccess' &&
+            current.type === 'method' &&
+            current.member !== undefined &&
+            PROMISE_METHODS.has(current.member)
+        ) {
+            current = unwrapLwcExpression(current.object);
+        }
+        return current;
+    };
+    const visitor: LwcVisitor = {
+        jsAwait: (node) => {
+            useOf(baseOf(node.argument)).awaited = true;
+        },
+        jsReturn: (node) => {
+            if (node.field) useOf(baseOf(node.field)).returned = true;
+        },
+        jsMemberAccess: (node) => {
+            if (node.type !== 'method' || !node.member || !PROMISE_METHODS.has(node.member)) return;
+            const use = useOf(baseOf(node.object));
+            if (node.member === 'then') {
+                use.then = true;
+                // .then(成功, 失敗) の失敗のハンドラーは catch と同じ
+                if ((node.memberArg ?? []).length >= 2) use.catch = true;
+            } else if (node.member === 'catch') use.catch = true;
+            else use.finally = true;
+        },
+    };
+    for (const root of roots) if (root) walkLwcJson(root, visitor);
+    return uses;
+};
 
 /**
  * 本体 1 つ (メソッド・getter / setter・コンストラクタ・関数・static ブロック) の呼び出しとイベント。
@@ -289,6 +381,9 @@ export const analyzeLwcCallsIn = (roots: unknown[], tables: LwcImportTables): Lw
     const dispatchedNames = new Set<string>();
     /** const evt = new CustomEvent(...) の new → 変数の名前 */
     const declaredEvents = new Map<LwcJsExpressionJson, string>();
+    /** this.refs.<名前> → 使ったメンバー */
+    const refUses = new Map<string, LwcRefUseInfo[]>();
+    const promiseUses = promiseUsesIn(roots);
 
     const call = (
         node: { sourceKeys: ConvertKeys },
@@ -299,6 +394,7 @@ export const analyzeLwcCallsIn = (roots: unknown[], tables: LwcImportTables): Lw
         calls.push({
             sourceKeys: node.sourceKeys,
             ...properties,
+            ...(promiseUses.has(node) ? { promise: promiseUses.get(node)! } : {}),
             args,
             references: args.flatMap((arg) => referencesOf(arg, tables)),
             context: {
@@ -475,6 +571,21 @@ export const analyzeLwcCallsIn = (roots: unknown[], tables: LwcImportTables): Lw
         },
         jsMemberAccess: (node, context) => {
             if (node.type === 'method') memberCall(node, node, node.memberArg ?? [], context);
+            // this.refs.<名前>.<メンバー> (this.refs.x.focus() の focus、this.refs.x.value の value)
+            const target = unwrapLwcExpression(node.object);
+            if (target.kind === 'jsMemberAccess' && thisMemberOf(target.object) === 'refs') {
+                const name = memberNameOf(target);
+                const member = memberNameOf(node);
+                if (name !== null && member !== null) {
+                    const uses = refUses.get(name) ?? [];
+                    const access =
+                        node.type === 'method' ? ('call' as const) : ('property' as const);
+                    if (!uses.some((u) => u.member === member && u.access === access)) {
+                        uses.push({ member, access });
+                    }
+                    refUses.set(name, uses);
+                }
+            }
             // this.refs.<名前> (this.refs.x.focus() の this.refs.x、this.refs.x() も)
             if (thisMemberOf(node.object) === 'refs') {
                 const name = memberNameOf(node);
@@ -507,7 +618,39 @@ export const analyzeLwcCallsIn = (roots: unknown[], tables: LwcImportTables): Lw
         // new CustomEvent(名前, { detail, bubbles, composed }) / new Event(名前, { bubbles, composed })
         jsNew: (node) => {
             const callee = unwrapLwcExpression(node.callee);
-            const eventClass = callee.kind === 'jsIdentifier' ? callee.name : null;
+            const calleeName = callee.kind === 'jsIdentifier' ? callee.name : null;
+            // new ShowToastEvent({ title, message, variant, mode }) (lightning/platformShowToastEvent の import)
+            const binding = calleeName ? tables.bindings.get(calleeName) : undefined;
+            if (
+                binding?.source === 'lightning/platformShowToastEvent' &&
+                binding.imported === 'ShowToastEvent'
+            ) {
+                const [options] = node.arg;
+                const toast: LwcToastInfo = {
+                    references: options ? referencesOf(options, tables) : [],
+                };
+                for (const [key, value] of lwcObjectPropertiesOf(options)) {
+                    if (
+                        key === 'title' ||
+                        key === 'message' ||
+                        key === 'variant' ||
+                        key === 'mode'
+                    ) {
+                        toast[key] = lwcStringValueOf(value) ?? value;
+                    }
+                }
+                const event: LwcEventInfo = {
+                    sourceKeys: node.sourceKeys,
+                    name: LWC_TOAST_EVENT_NAME,
+                    eventClass: 'ShowToastEvent',
+                    dispatched: false,
+                    toast,
+                };
+                events.push(event);
+                eventNodes.set(event, node);
+                return;
+            }
+            const eventClass = calleeName;
             if (!isEventClass(eventClass)) return;
             const [nameArg, optionsArg] = node.arg;
             const nameNode =
@@ -539,6 +682,10 @@ export const analyzeLwcCallsIn = (roots: unknown[], tables: LwcImportTables): Lw
         const variable = declaredEvents.get(node);
         event.dispatched =
             dispatchedNodes.has(node) || (variable !== undefined && dispatchedNames.has(variable));
+    }
+    for (const call of calls) {
+        const uses = call.callType === 'refs' ? refUses.get(call.target) : undefined;
+        if (uses?.length) call.refUses = uses;
     }
     return { calls, events };
 };

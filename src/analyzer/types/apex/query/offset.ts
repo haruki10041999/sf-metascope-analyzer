@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import { JsonType } from '../../commons';
 import type { OffsetClauseTypeClass } from '../../apex_IR';
 
@@ -17,8 +15,6 @@ export type OffsetJson = JsonType<'offsetClause'> &
               value: BaseExpressionJson;
           }
     );
-
-export const isOffsetJson = typia.createIs<OffsetJson>();
 
 export const makeOffsetJson = (target: OffsetClauseTypeClass): OffsetJson => {
     const value = target.getFields().value;

@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 export type ConvertKeys = {
     objectKey: string;
     sourceKey: string;
@@ -10,7 +8,15 @@ export type JsonType<TKind extends string> = {
     sourceKeys: ConvertKeys;
 };
 
-export const isJsonType = typia.createIs<JsonType<string>>();
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+    typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const isConvertKeys = (value: unknown): value is ConvertKeys =>
+    isRecord(value) && typeof value.objectKey === 'string' && typeof value.sourceKey === 'string';
+
+/** JsonType か (kind が文字列で、sourceKeys が objectKey・sourceKey を持つ) */
+export const isJsonType = (target: unknown): target is JsonType<string> =>
+    isRecord(target) && typeof target.kind === 'string' && isConvertKeys(target.sourceKeys);
 
 export const isSpecificJsonType = <T extends string>(
     target: unknown,
@@ -27,8 +33,17 @@ export type StructureJsonType<
     sourceKeys: { base: ConvertKeys } & TRecord;
 };
 
-export const isStructureJsonType =
-    typia.createIs<StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>>();
+/** StructureJsonType か (sourceKeys が base と、名前ごとの ConvertKeys・その並びを持つ) */
+export const isStructureJsonType = (
+    target: unknown,
+): target is StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>> =>
+    isRecord(target) &&
+    typeof target.kind === 'string' &&
+    isRecord(target.sourceKeys) &&
+    isConvertKeys(target.sourceKeys.base) &&
+    Object.values(target.sourceKeys).every(
+        (keys) => isConvertKeys(keys) || (Array.isArray(keys) && keys.every(isConvertKeys)),
+    );
 
 // union の各要素ごとに Omit する（通常の Omit は union の共通キーしか残さない）
 type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;

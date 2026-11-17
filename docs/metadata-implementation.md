@@ -9,7 +9,7 @@ objects/<API 名>/*.xml
    │  MetadataParser.parseObject（parser/Metadata）
    │    parseXml（位置付きの XML の木）→ make*Json（kind / sourceKeys 付き JSON）
    ▼
-ObjectParseResult（Apex と同じ FileStructureType の形。msgpack で保存）
+ObjectParseResult（Apex と同じ FileStructureType の形。UnitStore（SQLite）に保存）
    │
    ├─ analysis（1 つの時点）: analyzeObject / getObjectDependencies / getRelatedObjectApiNames
    │
@@ -17,11 +17,12 @@ ObjectParseResult（Apex と同じ FileStructureType の形。msgpack で保存�
    ▼
 view（analysis + diff）: ObjectView / DependencyView
    ▼
-MetadataProcessor → MCP の analyze_objects → viewer（レポート HTML）
+RepositoryProcessor（unit/processor.ts。すべての単位の種類をまとめる）→ getObjectViews / getDependencyViews
 ```
 
-- **before** は前回保存した解析結果（`<保存先>/objects/<API 名>.msgpack`）、**after** はリポジトリの今のオブジェクト。
+- **before** は前回保存した解析結果（`<保存先>/store/metascope.db`）、**after** はリポジトリの今のオブジェクト。
 - 解析は Diff に依存せず、1 つの時点の JSON だけを入力にする。両方を組み合わせるのは `view.ts` だけ。
+- レポート・MCP のツールは、`RepositoryProcessor` の `Repository`（単位の種類 → 解析結果）を provider から読む（7 章）。
 
 ## 2. ファイル構成
 
@@ -30,11 +31,11 @@ MetadataProcessor → MCP の analyze_objects → viewer（レポート HTML）
 | XML の読み取り  | [types/commons/xml.ts](../src/analyzer/types/commons/xml.ts)                                                                                                                        | `parseXml`。要素ごとに開始・終了位置（offset / 行 / 列）を持つ木（`XmlElement`）を作る。構文エラーは `XmlSyntaxError`（位置付き）                                                                          |
 | JSON の共通部品 | [types/commons/xmlJson.ts](../src/analyzer/types/commons/xmlJson.ts)                                                                                                                | `makeXmlJson`（kind / sourceKeys の付与とソース位置の登録）、`readXmlRoot`（読めなければ null と理由）、`XmlSourceRegistry`、`findXmlSourceInfo`、子要素を読む `readProperties` / `readText` / `readTexts` |
 | JSON の型       | [types/metadata/](../src/analyzer/types/metadata/) の `object.ts`・`field.ts`・`validationRule.ts`・`recordType.ts`・`listView.ts`・`fieldSet.ts`・`compactLayout.ts`・`webLink.ts` | kind ごとの `*Json` 型、`make*Json`、値のスキーマ（`*_SCHEMA`）。`object.ts` には子の種類の対応表 `OBJECT_MEMBERS` と、フォルダ全体をまとめる `makeCustomObjectJson` がある                                |
-| parse           | [parser/Metadata/parser.ts](../src/analyzer/parser/Metadata/parser.ts)                                                                                                              | `MetadataParser`。フォルダを探し、ファイルを読み、`ObjectParseResult` にする。msgpack / JSON での保存と読み込み                                                                                            |
+| parse           | [parser/Metadata/parser.ts](../src/analyzer/parser/Metadata/parser.ts)                                                                                                              | `MetadataParser`。フォルダを探し、ファイルを読み、`ObjectParseResult` にする。開発者でのデータ確認用の JSON の保存                                                                                         |
 | analysis        | [processor/Metadata/analysis.ts](../src/analyzer/processor/Metadata/analysis.ts)                                                                                                    | 項目の値の型、暗黙の標準項目、参照関係、関連オブジェクト                                                                                                                                                   |
 | diff            | [processor/Metadata/diff/](../src/analyzer/processor/Metadata/diff/)                                                                                                                | kind ごとの `*JsonDiff` と `make*Diff`（types と同じファイル分け）、オブジェクト単位の `unit.ts`、共通部品 `commons.ts`                                                                                    |
 | 表示用データ    | [processor/Metadata/view.ts](../src/analyzer/processor/Metadata/view.ts)                                                                                                            | viewer に渡す `ObjectView` / `FieldView` / `DependencyView`                                                                                                                                                |
-| まとめ役        | [processor/Metadata/metadata.ts](../src/analyzer/processor/Metadata/metadata.ts)                                                                                                    | `MetadataProcessor`。before / after を読み、差分と表示用データを返す。MCP サーバーから使う                                                                                                                 |
+| まとめ役        | [unit/processor.ts](../src/analyzer/unit/processor.ts)                                                                                                                              | `RepositoryProcessor`。before / after を読み、差分と表示用データを返す。すべての単位の種類を扱う（以前の `MetadataProcessor`（オブジェクト・翻訳だけ）を広げたもの）。MCP サーバーから使う                 |
 
 すべて `src/analyzer/index.ts` から公開している（`types` / `parser` / `processor` の各 `index.ts` 経由）。
 
@@ -81,14 +82,13 @@ MetadataProcessor → MCP の analyze_objects → viewer（レポート HTML）
 
 ### 3.4 主な API（`MetadataParser`）
 
-| メソッド                                                    | 内容                                                                                                                                          |
-| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `parseObject(objectDir)`                                    | フォルダ 1 つを読む                                                                                                                           |
-| `parseObjectSource(apiName, files)`                         | 読み込み済みのファイル（`<API 名>/...` の相対パスと中身）から読む（ファイルを読まない入口。git の before 側など）。`parseObject` もこれを使う |
-| `parseObjects(rootDir)`                                     | `objects` フォルダ（またはその上）の下のすべてのオブジェクトを読む。`objects` そのものを渡すと直下だけを見る                                  |
-| `searchObjectDirectories(rootDir)`                          | オブジェクトのフォルダの一覧                                                                                                                  |
-| `saveObjectFile` / `readObjectMsgPack` / `readSavedObjects` | msgpack（Apex と同じ設定）での保存と読み込み                                                                                                  |
-| `saveObjectFileForDeveloper`                                | 確認用の JSON                                                                                                                                 |
+| メソッド                            | 内容                                                                                                                                          |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `parseObject(objectDir)`            | フォルダ 1 つを読む                                                                                                                           |
+| `parseObjectSource(apiName, files)` | 読み込み済みのファイル（`<API 名>/...` の相対パスと中身）から読む（ファイルを読まない入口。git の before 側など）。`parseObject` もこれを使う |
+| `parseObjects(rootDir)`             | `objects` フォルダ（またはその上）の下のすべてのオブジェクトを読む。`objects` そのものを渡すと直下だけを見る                                  |
+| `searchObjectDirectories(rootDir)`  | オブジェクトのフォルダの一覧                                                                                                                  |
+| `saveObjectFileForDeveloper`        | 確認用の JSON                                                                                                                                 |
 
 ```ts
 const result = await MetadataParser.parseObject('force-app/main/default/objects/Invoice__c');
@@ -152,7 +152,7 @@ if (result.dataType === 'object') {
 }
 ```
 
-## 6. 表示用データと MetadataProcessor
+## 6. 表示用データと RepositoryProcessor
 
 ### 6.1 表示用データ（`view.ts`）
 
@@ -165,11 +165,11 @@ if (result.dataType === 'object') {
 - `status` は Diff と同じ語彙（`added` / `removed` / `changed` / `unchanged`）。差分なしのレポートでは持たない。
 - オブジェクトの status は `ObjectUnitDiff` から、項目は API 名で対応付けて objectKey で判定する。参照関係は「参照元の項目 → 参照先」で対応付け、Lookup / MasterDetail が変われば `changed`。
 
-### 6.2 MetadataProcessor
+### 6.2 RepositoryProcessor
 
 ```ts
-const processor = await MetadataProcessor.create(saveRoot, repositoryRoot);
-if (!(await processor.hasSavedObjects())) await processor.save(); // 初回は今の状態を基準にする
+const processor = await RepositoryProcessor.create(savingRoot, repositoryRoot);
+if (!(await processor.hasSaved())) await processor.save(); // 初回は今の状態を基準にする
 
 processor.getObjectViews({ isDiff: true }); // 前回からの差分
 processor.getObjectViews({ isDiff: false, targets: ['Payment__c'], depth: 2 }); // 関連するものに絞る
@@ -178,23 +178,24 @@ processor.getObjectUnitDiffs(); // 差分の生データ
 await processor.save(); // 今の結果を次の基準にする
 ```
 
-| メソッド                                                                | 内容                                                                                                             |
-| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `create` / `reset`                                                      | before（保存データ）と after（`<リポジトリ>/force-app/main/default/objects`）を読み、差分を作る                  |
-| `hasSavedObjects`                                                       | 保存データがあるか                                                                                               |
-| `save`                                                                  | after を `<保存先>/objects/` に msgpack で保存し（リポジトリにないオブジェクトの保存データは消す）、`reset` する |
-| `getObjectViews` / `getDependencyViews`                                 | 表示用データ。`targets` を指定すると、そこから depth 段たどったオブジェクトと、そこから出る参照関係に絞る        |
-| `getObjectUnitDiffs` / `getBeforeParseResults` / `getAfterParseResults` | 差分と parse 結果                                                                                                |
+| メソッド                                                              | 内容                                                                                                                                              |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `create` / `reset`                                                    | before（保存データ）と after（作業ツリーのすべての単位）を読む。中身の変わっていない単位は parse し直さない。差分は求められたときに作る           |
+| `hasSaved`                                                            | 保存データ（今の置き場所の版の目録）があるか                                                                                                      |
+| `save`                                                                | after を置き場（`<savingRoot>/store/metascope.db`。SQLite）に保存し（リポジトリにない単位の保存データは消す）、after をそのまま次の before にする |
+| `getObjectViews` / `getDependencyViews`                               | 表示用データ。`targets` を指定すると、そこから depth 段たどったオブジェクトと、そこから出る参照関係に絞る                                         |
+| `getObjectUnitDiffs` / `getUnitDiffs(type)` / `before` / `after`      | 差分と解析結果（`before` / `after` は `Repository`）                                                                                              |
+| `getComparedInput` / `getDependencyGraph` / `getTranslationCoverages` | レポートの入力（既定は今の状態だけ。`diff` か git の範囲で 2 時点）、依存関係のグラフ、翻訳の網羅                                                 |
 
 ## 7. 利用側（MCP サーバー・viewer）
 
-| 対象                                                                                                             | 内容                                                                                                                                                                                         |
-| ---------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [mcp/server.ts](../src/mcp/server.ts)                                                                            | `save_objects` / `analyze_objects` のツール名と入力は変えていない。中で `MetadataProcessor` の `save` / `getObjectViews` / `getDependencyViews` を呼ぶ。初回保存の判定は `hasSavedObjects()` |
-| [viewer/types/](../src/viewer/types/)                                                                            | `ObjectView` / `DependencyView` を受け取る（`MetadataProp`）                                                                                                                                 |
-| [viewer/metadata/node.tsx](../src/viewer/metadata/node.tsx)、[metadata.css](../src/viewer/metadata/metadata.css) | 状態のバッジを `added` / `removed` / `changed` / `unchanged` にした（`changed` の色を追加）。項目の型の欄は、参照先 → Salesforce の型 → 値の型 の順で表示する                                |
+| 対象                                                                                                                        | 内容                                                                                                                                                                                                                                                                                                          |
+| --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [mcp/context.ts](../src/mcp/context.ts)、[mcp/reportTools.ts](../src/mcp/reportTools.ts)                                    | `RepositoryProcessor` を作り、初回は `hasSaved()` が false なら `save()` する。基準の保存は `save_baseline`。オブジェクトはレポートの provider（`get_report_data`・`build_report`）や `list_units`・`find_nodes`・依存関係のツールで見る（2026-11-17 時点では `save_objects` / `analyze_objects` はもうない） |
+| [viewer/types/](../src/viewer/types/)（2026-11-17 時点では、今のレポートの viewer `src/viewer/report/` からは使っていない） | `ObjectView` / `DependencyView` を受け取る（`MetadataProp`）                                                                                                                                                                                                                                                  |
+| [viewer/metadata/node.tsx](../src/viewer/metadata/node.tsx)、[metadata.css](../src/viewer/metadata/metadata.css)            | 状態のバッジを `added` / `removed` / `changed` / `unchanged` にした（`changed` の色を追加）。項目の型の欄は、参照先 → Salesforce の型 → 値の型 の順で表示する                                                                                                                                                 |
 
-以前の実装から削除したもの: `types/metadata.ts`（`MetadataObject` / `MetadataObjectDiff` などの旧型と、status `New` / `Exist` / `Delete`）、`types/commons.ts`、`parser/metadata.ts`、`processor/Metadata/dependency.ts`（`MetadataProcessor` に統合）。
+以前の実装から削除したもの: `types/metadata.ts`（`MetadataObject` / `MetadataObjectDiff` などの旧型と、status `New` / `Exist` / `Delete`）、`types/commons.ts`、`parser/metadata.ts`、`processor/Metadata/dependency.ts`（`MetadataProcessor` に統合。今は `RepositoryProcessor`）。
 
 ## 8. 動作検証とテスト
 
@@ -205,19 +206,18 @@ npx ttsx --noCheck docs/examples/metadata/scripts/run-parse.ts   # output/json/:
 npx ttsx --noCheck docs/examples/metadata/scripts/run-diff.ts    # output/diff/: 差分・summary・coverage・viewer 用データ
 ```
 
-| テスト                               | 内容                                                                                                                                                               |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| test/parser/metadata-parse.test.ts   | XML の位置・実体参照・構文エラー、object の読み込み、メタデータ API の形式、読めなかったファイル、キー（位置だけの変化・CRLF）、msgpack の保存と読み込み、analysis |
-| test/processor/metadata-diff.test.ts | サンプルの差分（すべての kind が差分に現れること、名前での対応付け、順序付きの列・集合、エラー）、表示用データ、`MetadataProcessor` の保存 → 再読込 → 差分         |
+| テスト                               | 内容                                                                                                                                                         |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| test/parser/metadata-parse.test.ts   | XML の位置・実体参照・構文エラー、object の読み込み、メタデータ API の形式、読めなかったファイル、キー（位置だけの変化・CRLF）、analysis                     |
+| test/processor/metadata-diff.test.ts | サンプルの差分（すべての kind が差分に現れること、名前での対応付け、順序付きの列・集合、エラー）、表示用データ、`RepositoryProcessor` の保存 → 再読込 → 差分 |
 
 ## 9. 未対応・既知の問題
 
 今後の対応は [analysis-plan.md](./analysis-plan.md) と [todo.md](./todo.md)。
 
-- **レポート HTML にデータが入らない（既存の不具合）**: `htmlBuilder` は Vite の `define` に `__METASCOPE_METADATA_DEFINE__` を渡すが、`main.tsx` は `window.__METASCOPE_METADATA_DEFINE__` を読み、`index.html` は `__METASCOPE_METADATA_PLACEHOLDER__` を使っていて、名前が食い違っている。ビルドは通るが表示されるデータが空になる。
-- 読むのは 3.1 の表の子と値だけで、表にない子要素は無視する（`skippedElements` は持たない。保存済みのオブジェクトの objectKey を変えないため）。
+- 読むのは 3.1 の表の子と値だけ。表にない要素は、オブジェクト自身・項目・入力規則・レコードタイプ・リストビュー・項目セット・コンパクトレイアウト・ボタンとリンク・ビジネスプロセスでは `skippedElements` に名前を残す（子のものは object の版 2（[json-redesign-plan.md](./json-redesign-plan.md) の M3）で足した）。共有の理由（`sharingReason`）は持たない。
 - 名前が変わったもの（項目のリネームなど）は `removed` + `added` になる（リネームの推定はしない。Apex と同じ）。
-- 選択リスト値の並び順の変化は報告しない（名前で対応付けるため）。
+- 選択リスト値の並び順の変化は、今は報告しない（名前で対応付けるため）。決めたこと（2026-11-17 に決めた）: ドキュメントでは値を定義の順に出し、差分（`diff`）のときは値ごとではなく項目の差分に「並び順が変わった」という印を 1 つ付ける（`makeOrderedValuesDiff` を使う。未実装）。
 - 暗黙の標準項目は固定の一覧で、オブジェクトごとの違い（`OwnerId` の有無など）は見ていない。
 
 ## 10. そのほかの種類（フォルダ単位のメタデータ）
@@ -234,9 +234,9 @@ npx ttsx --noCheck docs/examples/metadata/scripts/run-diff.ts    # output/diff/:
 
 ### 10.2 読み方（[parser/Metadata/folder.ts](../src/analyzer/parser/Metadata/folder.ts)）
 
-- **読み込みはフォルダ単位、結果・保存はファイル単位**（Aura はバンドル単位）。保存名は `<種類>_<名前>`（入れ子のフォルダは `/` を `.` にする）。
+- **読み込みはフォルダ単位、結果・保存はファイル単位**（Aura はバンドル単位）。id は `<種類>_<名前>`（入れ子のフォルダは `/` を `.` にする）。単位の種類は `METADATA_FOLDER_PARSERS` から `metadataFolderUnitType`（[unit/unitType.ts](../src/analyzer/unit/unitType.ts)）で作る。
 - 種類ごとの違いは設定（`MetadataFolderSpec`）だけ。`layout`（`file` / `nested` / `bundle`）、一緒に読むファイル（`companions`。Visualforce の `.page`、メールの `.email`）、JSON の作り方（`make`）。一覧は [parser/Metadata/folders.ts](../src/analyzer/parser/Metadata/folders.ts) の `METADATA_FOLDER_PARSERS`（型は「どの種類も入る型」。種類ごとの型の共用体にすると TS2590 になる）。
-- 文字列から読む入口は `parseSource(filePath, source, { extras, name })`。worker は `MetadataFolderWorker`（1 タスク = 種類のフォルダ）。
+- 文字列から読む入口は `parseSource(filePath, source, { extras, name })`。worker は `UnitWorker`（解析だけ。1 タスク = 単位の種類 + 単位の場所）。
 - キーの作り方は Apex・LWC と同じ（`makeMetadataJson`。objectKey は `sortKeys` してから hash）。表にない要素は `skippedElements` に名前を残す。
 
 ### 10.3 JSON

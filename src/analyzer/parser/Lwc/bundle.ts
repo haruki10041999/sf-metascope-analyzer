@@ -21,7 +21,7 @@ export type LwcParseOptions = {
     namespace?: string;
 };
 
-/** バンドルの解析結果 (2.4)。Apex の ApexFileStructureType と同じ形。1 バンドル = 1 つの保存ファイル */
+/** バンドルの解析結果 (2.4)。Apex の ApexFileStructureType と同じ形。1 バンドル = 置き場の 1 単位 */
 export type LwcBundleStructureType = {
     /** バンドルのフォルダ */
     filePath: string;

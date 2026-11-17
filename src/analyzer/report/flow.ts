@@ -285,7 +285,7 @@ export const getAutomationByObject = (input: SnapshotInput): AutomationRow[] => 
 /**
  * flow.interface: Flow の入力・出力の変数 (段階 M8 の #11。意味の差分)。
  * before を渡すと、2 つの時点の解析の結果 (flowInterfaceOf) を比べ、増えた・減った・変わった入出力に status を付ける。
- * onlyChanged なら unchanged を出さない
+ * onlyChanged なら unchanged を出さない (比べたときだけ。1 時点なら、すべてを出す)
  */
 export const getFlowInterface = (
     input: SnapshotInput,
@@ -301,7 +301,12 @@ export const getFlowInterface = (
             (b, a) => changedProps(b, a, ['sourceKeys']).length === 0,
         );
         return variables
-            .filter((v) => !args.onlyChanged || (v.status && v.status !== 'unchanged'))
+            .filter(
+                (v) =>
+                    !args.onlyChanged ||
+                    input.before === undefined ||
+                    (v.status && v.status !== 'unchanged'),
+            )
             .map((v): FlowInterfaceRow => {
                 const variable = (v.after ?? v.before)!;
                 const { name, sourceKeys: _sourceKeys, ...rest } = variable;

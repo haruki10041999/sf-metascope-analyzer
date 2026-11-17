@@ -1,5 +1,5 @@
 /**
- * 保存・parse・依存関係・差分の時間と大きさを測る (docs/save-format-plan.md 1.7 の表。段階 S0)
+ * 保存・parse・依存関係・差分の時間と大きさを測る (docs/save-format-plan.md 1.7 の表。段階 S0。置き場の行は S4・S5)
  *
  *   npx ttsx --noCheck docs/examples/analysis/scripts/measure.ts                 # サンプル (before → after)
  *   npx ttsx --noCheck docs/examples/analysis/scripts/measure.ts <before> <after> # ほかのリポジトリ (sfdx のプロジェクト)
@@ -14,6 +14,8 @@ import { buildDependencyGraph } from '../../../../src/analyzer/processor/depende
 import {
     ProjectTree,
     Repository,
+    UnitStore,
+    closeAllStoreBackends,
     WorkingTree,
     diffRepositories,
     getRepositoryDependencies,
@@ -54,11 +56,6 @@ try {
         const [repository, parse2] = await time(() => Repository.load(tree));
         repositories.push(repository);
         const units = repository.entries().reduce((n, [, results]) => n + results.length, 0);
-        const saveDir = path.join(tmp, String(index));
-        await fs.mkdir(saveDir, { recursive: true });
-        const [, save] = await time(() => repository.save(saveDir));
-        const saved = await dirSize(saveDir);
-        const [, load] = await time(() => Repository.loadSaved(root, saveDir));
         const [dependencies, deps] = await time(() => getRepositoryDependencies(first));
         const [graph, build] = await time(() => buildDependencyGraph(dependencies));
         const definitions = dependencies.reduce((n, u) => n + u.dependencies.definitions.length, 0);
@@ -72,19 +69,48 @@ try {
         column('単位の数', String(units));
         column('すべて parse #1', ms(parse1));
         column('すべて parse #2', ms(parse2));
-        column('保存 (Repository.save)', ms(save));
-        column('保存データ (ファイル数・合計)', `${saved.files}・${kb(saved.bytes)}`);
-        column('読み込み (Repository.loadSaved)', ms(load));
         column('定義・参照 (getRepositoryDependencies)', ms(deps));
         column('グラフ (buildDependencyGraph)', ms(build));
         column(
             '定義 / 参照 / ノード / 辺',
             `${definitions} / ${references} / ${graph.nodes.size} / ${graph.edges.length}`,
         );
+
+        // 置き場 (UnitStore。SQLite。docs/save-format-plan.md 4.1)。最初は parse、起動し直すと保存したものを読む
+        const storeDir = path.join(tmp, `store-${index}`);
+        const cold = new UnitStore(storeDir, root);
+        const [coldRepository, coldLoad] = await time(() =>
+            cold.loadTree(new ProjectTree(new WorkingTree(root))),
+        );
+        getRepositoryDependencies(coldRepository);
+        const [, storeSave] = await time(() => cold.save(coldRepository));
+        const warm = new UnitStore(storeDir, root);
+        const [warmRepository, warmLoad] = await time(() =>
+            warm.loadTree(new ProjectTree(new WorkingTree(root))),
+        );
+        const [, warmDeps] = await time(() => getRepositoryDependencies(warmRepository));
+        const stats = warm.stats;
+        column('置き場: 最初の読み込み (すべて parse)', ms(coldLoad));
+        column('置き場: 保存 (解析結果・定義・参照・ソース)', ms(storeSave));
+        const storeSize = await dirSize(storeDir);
+        column(
+            '置き場: 保存データ (ファイル数・合計)',
+            `${storeSize.files}・${kb(storeSize.bytes)}`,
+        );
+        column('置き場: 起動し直した読み込み', ms(warmLoad));
+        column(
+            '置き場: 起動し直した読み込みの内訳 (parse / 読んだ / hash / 読まずに済んだ)',
+            `${stats.parsed} / ${stats.loaded} / ${stats.hashed} / ${stats.statHits}`,
+        );
+        column(
+            '置き場: 起動し直したあとの定義・参照 (保存したものを読んだ単位)',
+            `${ms(warmDeps)} (${stats.derivedLoaded})`,
+        );
     }
     const [, diff] = await time(() => diffRepositories(repositories[0]!, repositories[1]!));
     rows.push(['差分 (diffRepositories、before → after)', '—', ms(diff)]);
 } finally {
+    closeAllStoreBackends();
     await fs.rm(tmp, { recursive: true, force: true });
 }
 

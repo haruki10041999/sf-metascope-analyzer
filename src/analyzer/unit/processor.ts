@@ -26,9 +26,10 @@ import {
 } from '../processor/Metadata/view';
 
 import { dependencyGraphOf } from './dependencies';
+import { type CompareRange, WORKING_TREE, resolveCompareRange } from './gitRange';
 import { ProjectTree } from './project';
 import { type RepositoryUnitDiff, Repository, diffRepositories } from './repository';
-import { WorkingTree } from './sourceTree';
+import { GitTree, WorkingTree } from './sourceTree';
 import { UnitStore } from './store';
 import { type AnyUnitType, UNIT_TYPES } from './unitType';
 
@@ -58,6 +59,12 @@ export type RepositoryProcessorOptions = {
 
 /** レポートの provider の入力 (report/types.ts の ReportInput と同じ形) */
 export type RepositoryInput = { before?: Repository; after: Repository };
+
+/** 比べる 2 つの時点と、その説明 (レポートに出す) */
+export type ComparedInput = { input: RepositoryInput; compared: string };
+
+/** git のコミットの解析結果をメモリに残す数 */
+const COMMIT_CACHE_SIZE = 4;
 
 const objectsOf = (results: readonly unknown[]) =>
     (results as ObjectParseResult[]).flatMap((result) =>
@@ -156,10 +163,66 @@ export class RepositoryProcessor {
         return this.getUnitDiffs('objectTranslation') as unknown as ObjectTranslationUnitDiff[];
     }
 
-    /** レポートの provider の入力。保存データがなければ before を持たない (1 時点のレポート) */
+    /** 保存した基準と今の状態 (差分のレポートの入力)。保存データがなければ before を持たない (1 時点) */
     getReportInput(): RepositoryInput {
         const hasBefore = this.before.entries().some(([, results]) => results.length > 0);
         return hasBefore ? { before: this.before, after: this.after } : { after: this.after };
+    }
+
+    /** コミットの解析結果 (コミットのハッシュ → リポジトリ。新しいものほど後ろ) */
+    private readonly commits = new Map<string, Repository>();
+
+    /** git のコミットの木を読む (中身の同じ単位は置き場の解析結果を使う。保存に使う木は書き換えない) */
+    private async loadCommit(gitRoot: string, subdirectory: string, commit: string) {
+        const cached = this.commits.get(commit);
+        if (cached) {
+            this.commits.delete(commit);
+            this.commits.set(commit, cached);
+            return cached;
+        }
+        const tree = new GitTree(gitRoot, commit, subdirectory);
+        try {
+            const repository = await this.store.loadTree(new ProjectTree(tree), { track: false });
+            this.commits.set(commit, repository);
+            if (this.commits.size > COMMIT_CACHE_SIZE) {
+                this.commits.delete(this.commits.keys().next().value!);
+            }
+            return repository;
+        } finally {
+            tree.close();
+        }
+    }
+
+    /**
+     * レポートの入力。既定は今の状態 (作業ツリー) だけ (1 時点。すべてを出し、status は付けない)。
+     * range を渡せば git の範囲 (docs/implementation-roadmap.md の R5)、diff なら保存した基準と作業ツリーを比べる。
+     * このリポジトリの第一の目的はドキュメントとコードの理解で、差分は補助 (docs/implementation-roadmap.md の冒頭)
+     */
+    async getComparedInput(
+        range?: CompareRange,
+        options: { diff?: boolean } = {},
+    ): Promise<ComparedInput> {
+        if (!range) {
+            if (!options.diff) return { input: { after: this.after }, compared: '作業ツリー' };
+            const input = this.getReportInput();
+            return {
+                input,
+                compared: input.before
+                    ? '保存した基準 → 作業ツリー'
+                    : '作業ツリー (保存した基準なし)',
+            };
+        }
+        const resolved = await resolveCompareRange(this.repositoryRoot, range);
+        const before = await this.loadCommit(
+            resolved.gitRoot,
+            resolved.subdirectory,
+            resolved.before,
+        );
+        const after =
+            resolved.after === WORKING_TREE
+                ? this.after
+                : await this.loadCommit(resolved.gitRoot, resolved.subdirectory, resolved.after);
+        return { input: { before, after }, compared: resolved.label };
     }
 
     /** 今のリポジトリの依存関係のグラフ */

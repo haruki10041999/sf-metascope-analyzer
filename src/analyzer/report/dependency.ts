@@ -13,7 +13,7 @@ import {
 import { dependencyGraphOf } from '../unit/dependencies';
 import { diffRepositories } from '../unit/repository';
 
-import type { ReportInput, RowBase, ViewStatus } from './types';
+import type { DependencyNodeRow, ReportInput, ViewStatus } from './types';
 
 // 依存関係のレポートの provider (dependency.*)。入力のリポジトリから依存関係のグラフを作る。
 // 方針: docs/analysis-plan.md 3.5
@@ -34,16 +34,6 @@ const unitStatuses = (input: ReportInput, graph: DependencyGraph): Map<string, V
         }
     }
     return statuses;
-};
-
-/** ノードの行 */
-export type DependencyNodeRow = RowBase & {
-    id: string;
-    type: string;
-    name: string;
-    origin: string;
-    /** 何段目で見つかったか */
-    depth?: number;
 };
 
 const nodeRow = (graph: DependencyGraph, id: string, depth?: number): DependencyNodeRow => {

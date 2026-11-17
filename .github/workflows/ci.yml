@@ -1,0 +1,41 @@
+# 型チェック・整形の確認・テスト・ビルド (docs/todo.md 1 章)
+name: CI
+
+on:
+    push:
+        branches: [main, 'v*']
+    pull_request:
+    workflow_dispatch:
+
+jobs:
+    check:
+        name: check (${{ matrix.os }})
+        runs-on: ${{ matrix.os }}
+        strategy:
+            fail-fast: false
+            matrix:
+                # 手元の開発は Windows。Linux でも動くことを確かめる
+                os: [windows-latest, ubuntu-latest]
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  # package.json の engines (>=24.15。保存に node:sqlite を使う)
+                  node-version: 24
+
+            # package-lock.json は .gitignore で持っていないので npm ci は使えない
+            - name: Install
+              run: npm install --no-audit --no-fund
+
+            - name: Typecheck (src・テスト・サンプルのスクリプト)
+              run: npm run typecheck
+
+            - name: Format check
+              run: npm run format:check
+
+            - name: Test
+              run: npm test
+
+            - name: Build (tsc・レポートの viewer・ビルド版)
+              run: npm run build

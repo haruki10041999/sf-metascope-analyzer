@@ -166,7 +166,7 @@ const analyze = (snapshot: MetadataSnapshot | undefined) =>
 
 const refKey = (ref: PermissionHolderRef) => `${ref.type}:${ref.name}`;
 
-/** Matrix の組み立て。onlyChanged なら、変わったセルのある行だけにする */
+/** Matrix の組み立て。onlyChanged なら、変わったセルのある行だけにする (比べたときだけ。1 時点なら、すべて) */
 const makeMatrix = <V>(
     input: SnapshotInput,
     cellsOf: (
@@ -210,6 +210,7 @@ const makeMatrix = <V>(
         .filter(
             (row) =>
                 !options.onlyChanged ||
+                !hasBefore ||
                 Object.values(cells[row]!).some((c) => c.status && c.status !== 'unchanged'),
         )
         .sort();
@@ -223,7 +224,7 @@ const makeMatrix = <V>(
 const flagsOf = ({ object: _object, ...flags }: ObjectAccess): AccessFlags => flags;
 
 export type MatrixOptions = {
-    /** 変わったセルのある行だけにする (before を渡したとき) */
+    /** 変わったセルのある行だけにする (比べたときだけ効く。1 時点なら、すべて) */
     onlyChanged?: boolean;
     /** この行 (オブジェクト・項目) だけにする */
     rows?: string[];

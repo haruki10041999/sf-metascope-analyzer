@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import { JsonType } from '../commons';
 import type { TypeNameTypeClass, TypeRefTypeClass } from '../apex_IR';
 
@@ -78,26 +76,19 @@ export type TypeContentJson =
     | MapTypeContentJson;
 
 type PrimitiveTypeJson = JsonType<'type'> & PrimitiveTypeContentJson;
-export const isPrimitiveTypeJson = typia.createIs<PrimitiveTypeJson>();
 
 type CustomTypeJson = JsonType<'type'> & CustomTypeContentJson;
-export const isCustomTypeJson = typia.createIs<CustomTypeJson>();
 
 type ArrayTypeJson = JsonType<'type'> & ArrayTypeContentJson;
-export const isArrayTypeJson = typia.createIs<ArrayTypeJson>();
 
 type ListTypeJson = JsonType<'type'> & ListTypeContentJson;
-export const isListTypeJson = typia.createIs<ListTypeJson>();
 
 type SetTypeJson = JsonType<'type'> & SetTypeContentJson;
-export const isSetTypeJson = typia.createIs<SetTypeJson>();
 
 type MapTypeJson = JsonType<'type'> & MapTypeContentJson;
-export const isMapTypeJson = typia.createIs<MapTypeJson>();
 
 export type TypeJson =
     PrimitiveTypeJson | CustomTypeJson | ArrayTypeJson | ListTypeJson | SetTypeJson | MapTypeJson;
-export const isTypeJson = typia.createIs<TypeJson>();
 
 // 型の名前 (`a.b.C` の各部分)。List・Set・Map は小文字の 'list'・'set'・'map'
 const nameOf = (item: TypeNameTypeClass): string => {

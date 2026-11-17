@@ -1,6 +1,5 @@
 import path from 'node:path';
 
-import type { SaveDataInfo } from '../parser/commons';
 import { ApexParser } from '../parser/Apex/parser';
 import {
     APEX_UNIT_PREFIXES,
@@ -110,7 +109,7 @@ export type UnitType<R extends UnitParseResult = UnitParseResult> = {
     readonly lineage: UnitLineage;
     /** この種類だけの JSON の形の版 (系統の版に足す。既定 0) */
     readonly formatVersion?: number;
-    /** 保存名の接頭辞 (<接頭辞><名前>) */
+    /** id の接頭辞 (<接頭辞><名前>) */
     readonly prefix: string;
     /** ファイル (リポジトリからの相対パス) が属する単位の場所。この種類のファイルでなければ undefined */
     locate(filePath: string): string | undefined;
@@ -122,12 +121,6 @@ export type UnitType<R extends UnitParseResult = UnitParseResult> = {
     parseUnit(location: string, files: SourceText[]): R | Promise<R>;
     /** 解析結果の id から、単位の名前 (クラス名・バンドル名・API 名・権限セット名など) */
     name(result: R): string;
-    /** 保存 (本番用。<baseDir>/<保存名>.msgpack) */
-    save(baseDir: string, result: R): SaveDataInfo[];
-    /** 保存したものを読む。id は保存名 */
-    load(baseDir: string, saveId: string): Promise<R>;
-    /** 解析結果の保存名 */
-    saveIdOf(result: R): string;
     /** before / after の単位を id で対応付けた差分 */
     diffs(before: R[], after: R[]): IdUnitDiff<R, unknown>[];
 };
@@ -160,8 +153,32 @@ const locateFolderUnit = (filePath: string, folder: string): string | undefined 
     return index < 0 ? undefined : parts.slice(0, index + 1).join('/');
 };
 
-const filesUnder = (location: string, files: readonly string[]) =>
-    files.filter((file) => file.startsWith(`${location}/`));
+/**
+ * ファイルの一覧ごとの「フォルダ → その下のファイル (一覧の順)」の索引。
+ * 単位ごとに一覧を頭から絞り込むと、単位の数 × ファイルの数の時間がかかる (NPSP の 2,337 単位・1.1 万ファイルで約 3 秒)
+ */
+const filesByFolder = new WeakMap<readonly string[], Map<string, string[]>>();
+
+const folderIndexOf = (files: readonly string[]): Map<string, string[]> => {
+    let index = filesByFolder.get(files);
+    if (index) return index;
+    index = new Map();
+    for (const file of files) {
+        // すべての親フォルダに足す (a/b/c.xml は a と a/b)
+        for (let slash = file.indexOf('/'); slash >= 0; slash = file.indexOf('/', slash + 1)) {
+            const folder = file.slice(0, slash);
+            const list = index.get(folder);
+            if (list) list.push(file);
+            else index.set(folder, [file]);
+        }
+    }
+    filesByFolder.set(files, index);
+    return index;
+};
+
+const filesUnder = (location: string, files: readonly string[]): string[] => [
+    ...(folderIndexOf(files).get(location) ?? []),
+];
 
 const stripPrefix = (prefix: string, id: string) =>
     id.startsWith(prefix) ? id.slice(prefix.length) : id;
@@ -211,9 +228,6 @@ const apexUnitType = (type: string, unitType: ApexUnitType): UnitType<ApexUnitPa
             });
         },
         name: (result) => stripPrefix(prefix, result.result.id),
-        save: (baseDir, result) => ApexParser.saveApexUnit(baseDir, result),
-        load: (baseDir, saveId) => ApexParser.readApexMsgPack(baseDir, saveId),
-        saveIdOf: (result) => result.result.id,
         diffs: (before, after) => makeApexUnitDiffs(before, after),
     };
 };
@@ -246,9 +260,6 @@ const lwcUnitType: UnitType<LwcBundleParseResult> = {
         return parseLwcBundleFolder(makeLwcBundleFolder(name, location, [...entries.values()]));
     },
     name: (result) => result.result.id,
-    save: (baseDir, result) => LwcParser.saveLwcBundle(baseDir, result),
-    load: (baseDir, saveId) => LwcParser.readLwcMsgPack(baseDir, saveId),
-    saveIdOf: (result) => `${LWC_SAVE_PREFIX}${result.result.id}`,
     diffs: (before, after) => makeLwcBundleDiffs(before, after),
 };
 
@@ -283,9 +294,6 @@ const objectUnitType: UnitType<ObjectParseResult> = {
         filePath: location,
     }),
     name: (result) => result.result.id,
-    save: (baseDir, result) => MetadataParser.saveObjectFile(baseDir, result),
-    load: (baseDir, saveId) => MetadataParser.readObjectMsgPack(baseDir, saveId),
-    saveIdOf: (result) => `${OBJECT_SAVE_PREFIX}${result.result.id}`,
     diffs: (before, after) => makeObjectUnitDiffs(before, after),
 };
 
@@ -304,10 +312,6 @@ const objectTranslationUnitType: UnitType<ObjectTranslationParseResult> = {
         filePath: location,
     }),
     name: (result) => result.result.id,
-    save: (baseDir, result) => ObjectTranslationParser.saveObjectTranslationFile(baseDir, result),
-    load: (baseDir, saveId) =>
-        ObjectTranslationParser.readObjectTranslationMsgPack(baseDir, saveId),
-    saveIdOf: (result) => `${OBJECT_TRANSLATION_SAVE_PREFIX}${result.result.id}`,
     diffs: (before, after) => makeObjectTranslationUnitDiffs(before, after),
 };
 
@@ -484,9 +488,6 @@ export const metadataFolderUnitType = (
             return { ...result, filePath: location };
         },
         name: (result) => stripPrefix(parser.prefix, result.result.id),
-        save: (baseDir, result) => parser.save(baseDir, result as never),
-        load: (baseDir, saveId) => parser.read(baseDir, saveId),
-        saveIdOf: (result) => result.result.id,
         diffs: (before, after) => {
             const make = METADATA_UNIT_DIFFS[type];
             if (!make) throw new Error(`No unit diff for ${type}`);
@@ -517,12 +518,6 @@ export const unitFormatVersionOf = (unitType: AnyUnitType): string =>
 /** 種類の名前から */
 export const findUnitType = (type: string): AnyUnitType | undefined =>
     UNIT_TYPES.find((unitType) => unitType.type === type);
-
-/** 保存名から (接頭辞が長いものを先に見る。object_ と objectTranslation_ など) */
-export const findUnitTypeBySaveId = (saveId: string): AnyUnitType | undefined =>
-    [...UNIT_TYPES]
-        .sort((a, b) => b.prefix.length - a.prefix.length)
-        .find((unitType) => saveId.startsWith(unitType.prefix));
 
 /** 単位の名前 (種類ごとの id の付け方の違いを吸収する)。type は単位の種類 */
 export const unitName = (type: string, result: UnitParseResult): string => {

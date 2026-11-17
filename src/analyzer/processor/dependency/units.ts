@@ -447,6 +447,36 @@ export const getLwcDependencies = (unit: LwcBundleParseResult): UnitDependencies
                         expression: call.navigation.sourceKeys,
                     }),
                 );
+            // standard__navItemPage の apiName はタブ、standard__component の componentName (c__x) は Aura のコンポーネント
+            // (文字列のリテラルだけ。docs/json-redesign-plan.md 4 章の 6)
+            const navigation = call.navigation;
+            const apiName = navigation?.attributes.apiName;
+            if (navigation?.pageType === 'standard__navItemPage' && typeof apiName === 'string')
+                references.push(
+                    reference('customTab', apiName, 'uses', 'navigation', {
+                        statement: navigation.sourceKeys,
+                        expression: navigation.sourceKeys,
+                    }),
+                );
+            const componentName = navigation?.attributes.componentName;
+            if (
+                navigation?.pageType === 'standard__component' &&
+                typeof componentName === 'string'
+            ) {
+                // c__myComponent → myComponent (名前空間の区切りは __)
+                const [namespace, name] = componentName.includes('__')
+                    ? componentName.split('__', 2)
+                    : ['c', componentName];
+                references.push(
+                    reference(
+                        'aura',
+                        namespace === 'c' ? name! : `${namespace}:${name}`,
+                        'uses',
+                        'navigation',
+                        { statement: navigation.sourceKeys, expression: navigation.sourceKeys },
+                    ),
+                );
+            }
             // this.template.querySelector('c-child') の子コンポーネント (c-account-row → accountRow)
             for (const tag of call.query?.tags ?? []) {
                 if (!tag.startsWith('c-')) continue;

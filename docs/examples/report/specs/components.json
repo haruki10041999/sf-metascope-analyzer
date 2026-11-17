@@ -1,0 +1,239 @@
+{
+    "title": "部品の見本 (権限・Flow・画面・依存関係)",
+    "diff": true,
+    "data": {
+        "objectAccess": {
+            "provider": "permission.objectAccess"
+        },
+        "flows": {
+            "provider": "flow.diagram"
+        },
+        "layouts": {
+            "provider": "layout.detail"
+        },
+        "pages": {
+            "provider": "flexiPage.detail"
+        },
+        "automation": {
+            "provider": "automation.byObject"
+        },
+        "impact": {
+            "provider": "dependency.impact"
+        },
+        "graph": {
+            "provider": "dependency.graph"
+        },
+        "apex": {
+            "provider": "apex.interface",
+            "args": {
+                "onlyChanged": true
+            },
+            "withSource": true
+        }
+    },
+    "spec": {
+        "root": "page",
+        "elements": {
+            "page": {
+                "type": "Stack",
+                "props": {
+                    "direction": "vertical",
+                    "gap": "lg",
+                    "align": null,
+                    "justify": null,
+                    "className": null
+                },
+                "children": [
+                    "matrixCard",
+                    "flowCard",
+                    "layoutCard",
+                    "pageCard",
+                    "automationCard",
+                    "impactCard",
+                    "apexCard",
+                    "graphCard"
+                ]
+            },
+            "matrixCard": {
+                "type": "Card",
+                "props": {
+                    "title": "オブジェクトの権限",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": ["matrix"]
+            },
+            "matrix": {
+                "type": "Matrix",
+                "props": {
+                    "data": {
+                        "$state": "/data/objectAccess"
+                    },
+                    "onlyChanged": null
+                },
+                "children": []
+            },
+            "flowCard": {
+                "type": "Card",
+                "props": {
+                    "title": "Flow の図",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": ["flow"]
+            },
+            "flow": {
+                "type": "FlowDiagram",
+                "props": {
+                    "data": {
+                        "$state": "/data/flows"
+                    },
+                    "flow": null
+                },
+                "children": []
+            },
+            "layoutCard": {
+                "type": "Card",
+                "props": {
+                    "title": "ページレイアウト",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": ["layout"]
+            },
+            "layout": {
+                "type": "LayoutView",
+                "props": {
+                    "data": {
+                        "$state": "/data/layouts"
+                    }
+                },
+                "children": []
+            },
+            "pageCard": {
+                "type": "Card",
+                "props": {
+                    "title": "Lightning ページ",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": ["flexiPage"]
+            },
+            "flexiPage": {
+                "type": "FlexiPageView",
+                "props": {
+                    "data": {
+                        "$state": "/data/pages"
+                    }
+                },
+                "children": []
+            },
+            "automationCard": {
+                "type": "Card",
+                "props": {
+                    "title": "オブジェクトごとの自動化",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": ["automationView"]
+            },
+            "automationView": {
+                "type": "AutomationView",
+                "props": {
+                    "data": {
+                        "$state": "/data/automation"
+                    }
+                },
+                "children": []
+            },
+            "impactCard": {
+                "type": "Card",
+                "props": {
+                    "title": "変更の影響",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": ["impactView"]
+            },
+            "impactView": {
+                "type": "ImpactView",
+                "props": {
+                    "data": {
+                        "$state": "/data/impact"
+                    }
+                },
+                "children": []
+            },
+            "apexCard": {
+                "type": "Card",
+                "props": {
+                    "title": "Apex の公開の形 (ソース付き)",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": ["apexTable"]
+            },
+            "apexTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/apex"
+                    },
+                    "columns": [
+                        {
+                            "key": "status",
+                            "label": "変化"
+                        },
+                        {
+                            "key": "owner",
+                            "label": "型"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": true,
+                    "showSource": true
+                },
+                "children": []
+            },
+            "graphCard": {
+                "type": "Card",
+                "props": {
+                    "title": "依存関係の図 (Mermaid)",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": ["graphText"]
+            },
+            "graphText": {
+                "type": "DiagramText",
+                "props": {
+                    "data": {
+                        "$state": "/data/graph"
+                    },
+                    "title": null
+                },
+                "children": []
+            }
+        }
+    }
+}

@@ -3,7 +3,10 @@ import path from 'node:path';
 import { before, describe, it } from 'node:test';
 
 import {
+    PROVIDER_DEFINITIONS,
+    type ProviderDefinition,
     REPORT_PROVIDERS,
+    type ReportProviderName,
     getFlexiPageDetails,
     getFlowDiagrams,
     getLayoutDetails,
@@ -27,10 +30,24 @@ describe('レポートの data provider', () => {
         input = { before: await repository('before'), after: await repository('after') };
     });
 
-    it('すべての provider が before → after で動き、各行は status を持つ', () => {
-        for (const [name, provider] of Object.entries(REPORT_PROVIDERS)) {
-            const data = (provider as (input: ReportInput) => unknown)(input);
-            assert.ok(data !== undefined, name);
+    it('すべての provider が before → after で動き、出力が登録表の出力のスキーマに合う', () => {
+        for (const [name, definition] of Object.entries(PROVIDER_DEFINITIONS)) {
+            const def = definition as ProviderDefinition;
+            const provider = REPORT_PROVIDERS[name as ReportProviderName] as (
+                input: ReportInput,
+                args?: unknown,
+            ) => unknown;
+            // 必須の引数がある provider は、登録表の例の引数で呼ぶ
+            for (const target of [input, { after: input.after }]) {
+                const data = provider(target, def.example);
+                const parsed = def.output.safeParse(data);
+                assert.ok(
+                    parsed.success,
+                    `${name}: ${parsed.success ? '' : JSON.stringify(parsed.error.issues.slice(0, 3))}`,
+                );
+                // スキーマにないキーがない (zod は知らないキーを捨てるので、捨てたものがないかを比べる)
+                assert.deepEqual(parsed.data, JSON.parse(JSON.stringify(data)), name);
+            }
         }
         assert.ok(
             getPermissionDiffs(snapshotInputOf(input)).every((row) => row.status !== undefined),
@@ -65,6 +82,50 @@ describe('レポートの data provider', () => {
         // 1 時点なら入出力の一覧 (status なし)
         const current = REPORT_PROVIDERS['flow.interface']({ after: input.after });
         assert.ok(current.some((row) => row.variable === 'errorMessage' && !row.status));
+    });
+
+    it('apex.interface: 外から使えるメンバーの追加・削除・型の変化 (意味の差分)', () => {
+        const rows = REPORT_PROVIDERS['apex.interface'](input, { onlyChanged: true });
+        const show = (row: (typeof rows)[number]) =>
+            `${row.status} ${row.owner}#${row.memberType}:${row.name}(${(row.params ?? []).join(',')})`;
+        const shown = rows.map(show);
+        assert.ok(shown.includes('removed AccountService#method:loop()'), shown.join('\n'));
+        assert.ok(shown.includes('added AccountService#method:calc(Decimal,Decimal)'));
+        assert.ok(shown.includes('added NewHelper#class:NewHelper()'));
+        assert.ok(shown.includes('removed OldHelper#method:run()'));
+        // 戻り値の型が変わったメソッドは changed (変わったものの名前を持つ)
+        const count = rows.find((r) => r.owner === 'AccountService.Handler' && r.name === 'count')!;
+        assert.equal(count.status, 'changed');
+        assert.deepEqual(count.changedProperties, ['type']);
+        assert.equal(count.type, 'Long');
+        // テストのクラス (@isTest) は外から使うものではないので出さない
+        assert.ok(
+            !REPORT_PROVIDERS['apex.interface']({ after: input.after }).some(
+                (r) => r.className === 'ParserTest',
+            ),
+        );
+    });
+
+    it('lwc.interface: @api・イベント・slot の追加・削除 (意味の差分)', () => {
+        const rows = REPORT_PROVIDERS['lwc.interface'](input, { onlyChanged: true });
+        assert.deepEqual(
+            rows
+                .filter((r) => r.component === 'c/accountList')
+                .map((r) => [r.status, r.memberType, r.name]),
+            [
+                ['added', 'property', 'industry'],
+                ['added', 'event', 'accountsaved'],
+            ],
+        );
+        // 1 時点なら一覧 (型は TS の型の表示、slot は名前)
+        const current = REPORT_PROVIDERS['lwc.interface']({ after: input.after });
+        const maxRows = current.find(
+            (r) => r.component === 'c/accountList' && r.name === 'maxRows',
+        )!;
+        assert.equal(maxRows.type, 'number');
+        assert.equal(maxRows.status, undefined);
+        assert.ok(current.some((r) => r.memberType === 'slot' && r.name === 'footer'));
+        assert.ok(current.some((r) => r.memberType === 'method' && r.name === 'refresh'));
     });
 
     it('before を渡さなければ status を持たない (1 時点のレポート)', () => {

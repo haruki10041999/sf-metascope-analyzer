@@ -234,7 +234,7 @@ export default class Demo extends LightningElement {
         );
     });
 
-    it('Diff: export は外から見える名前で、クラスはメンバーで、直下の文は GumTree で比べる', () => {
+    it('Diff: export は外から見える名前で、クラスはメンバーで、直下の文は本体と同じ型付きの並びで比べる', () => {
         const before = moduleOf(`export { a } from 'c/a';
 export class Store { size = 1; run() { return 1; } }
 register('x');
@@ -265,11 +265,11 @@ register('y');
             store.fields.block.map((m) => m.status),
             ['changed', 'unchanged'],
         );
-        // 直下の文の差分は GumTree の差分の並び (本体の block と同じ)
-        const statements = diff.fields.statements as unknown as { label: string; status: string }[];
+        // 直下の文の差分は、本体の block と同じ型付きの並び (GumTree で対応付け、文ごとに kind と fields)
+        const statements = diff.fields.statements as unknown as { kind: string; status: string }[];
         assert.ok(Array.isArray(statements));
         assert.deepEqual(
-            statements.map((s) => [s.label, s.status]),
+            statements.map((s) => [s.kind, s.status]),
             [['jsExpression', 'changed']],
         );
     });

@@ -14,10 +14,7 @@ import {
     SaveDataInfo,
     XmlResolvedError,
     makeJsonSaveData,
-    makeMsgPackSaveData,
     parseXmlSource,
-    readMsgPack,
-    readSavedMsgPacks,
     readSource,
     toXmlResolvedError,
 } from '../commons';
@@ -54,12 +51,12 @@ export type ObjectTranslationParseResult =
     ObjectTranslationFileStructureType | ErrorObjectTranslationFileStructureType;
 
 /**
- * 保存名の接頭辞。オブジェクト (<API 名>.msgpack) と同じフォルダに保存しても分けられるようにする
+ * id の接頭辞。オブジェクト (id は <API 名>) と区別する
  * (Apex の単位の class_ / trigger_ / anonymous_ と同じ)
  */
 export const OBJECT_TRANSLATION_SAVE_PREFIX = 'objectTranslation_';
 
-/** 翻訳の保存名 (objectTranslation_<オブジェクト>-<言語>) か */
+/** 翻訳の id (objectTranslation_<オブジェクト>-<言語>) か */
 export const isObjectTranslationSaveId = (id: string): boolean =>
     id.startsWith(OBJECT_TRANSLATION_SAVE_PREFIX);
 
@@ -203,46 +200,11 @@ export class ObjectTranslationParser {
         );
     }
 
-    // 本番用: msgpackr で <baseDir>/objectTranslation_<オブジェクト>-<言語>.msgpack に保存する
-    static saveObjectTranslationFile(
-        baseDir: string,
-        target: ObjectTranslationParseResult,
-    ): SaveDataInfo[] {
-        return [
-            makeMsgPackSaveData(
-                'ObjectTranslation',
-                baseDir,
-                `${OBJECT_TRANSLATION_SAVE_PREFIX}${target.result.id}`,
-                target,
-            ),
-        ];
-    }
-
     // 開発者でのデータ確認用
     static saveObjectTranslationFileForDeveloper(
         baseDir: string,
         target: ObjectTranslationParseResult,
     ): SaveDataInfo[] {
         return [makeJsonSaveData('ObjectTranslation', baseDir, target.result.id, target)];
-    }
-
-    /** saveObjectTranslationFile で保存したものを読み込む。id は保存名 (接頭辞付き) でも、フォルダ名でもよい */
-    static async readObjectTranslationMsgPack(
-        baseDir: string,
-        id: string,
-    ): Promise<ObjectTranslationParseResult> {
-        const saveId = id.startsWith(OBJECT_TRANSLATION_SAVE_PREFIX)
-            ? id
-            : `${OBJECT_TRANSLATION_SAVE_PREFIX}${id}`;
-        return readMsgPack<ObjectTranslationParseResult>(baseDir, saveId, 'object translation');
-    }
-
-    /** baseDir に保存したすべての翻訳を読む。baseDir がなければ空 */
-    static async readSavedObjectTranslations(
-        baseDir: string,
-    ): Promise<ObjectTranslationParseResult[]> {
-        return readSavedMsgPacks(baseDir, isObjectTranslationSaveId, (id) =>
-            ObjectTranslationParser.readObjectTranslationMsgPack(baseDir, id),
-        );
     }
 }

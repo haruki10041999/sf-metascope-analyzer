@@ -115,7 +115,7 @@ export const METADATA_FOLDER_PARSERS: readonly AnyMetadataFolderParser[] = [
     SettingsParser,
 ] as AnyMetadataFolderParser[];
 
-/** 保存名の接頭辞 (<種類>_) の一覧。オブジェクトの readSavedObjects が除く */
+/** id の接頭辞 (<種類>_) の一覧 */
 export const METADATA_FOLDER_SAVE_PREFIXES: string[] = METADATA_FOLDER_PARSERS.map(
     (parser) => parser.prefix,
 );

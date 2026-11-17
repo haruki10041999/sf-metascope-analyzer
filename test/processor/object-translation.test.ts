@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { closeAllStoreBackends } from '../../src/analyzer/unit';
 import { cp, mkdtemp, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -147,6 +148,7 @@ describe('MetadataProcessor with object translations', () => {
         root = await mkdtemp(path.join(os.tmpdir(), 'translation-processor-'));
     });
     after(async () => {
+        closeAllStoreBackends();
         await rm(root, { recursive: true, force: true });
     });
 

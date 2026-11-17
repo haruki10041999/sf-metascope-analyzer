@@ -1,0 +1,15 @@
+# 改行コードは LF にそろえる (リポジトリの中も、Windows の作業ツリーも)。
+# エディター・Prettier も LF (.editorconfig・.prettierrc.json・.vscode/settings.json)。
+* text=auto eol=lf
+
+# バイナリ (念のため明示する)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.db binary
+*.msgpack binary

@@ -16,10 +16,7 @@ import {
     SaveDataInfo,
     XmlResolvedError,
     makeJsonSaveData,
-    makeMsgPackSaveData,
     parseXmlSource,
-    readMsgPack,
-    readSavedMsgPacks,
     readSource,
     toXmlResolvedError,
 } from '../commons';
@@ -184,25 +181,8 @@ export class MetadataParser {
         return Promise.all(directories.map((directory) => MetadataParser.parseObject(directory)));
     }
 
-    // 本番用: msgpackr で <baseDir>/object_<API 名>.msgpack に保存する
-    static saveObjectFile(baseDir: string, target: ObjectParseResult): SaveDataInfo[] {
-        return [makeMsgPackSaveData('Object', baseDir, objectSaveIdOf(target.result.id), target)];
-    }
-
     // 開発者でのデータ確認用
     static saveObjectFileForDeveloper(baseDir: string, target: ObjectParseResult): SaveDataInfo[] {
         return [makeJsonSaveData('Object', baseDir, target.result.id, target)];
-    }
-
-    /** saveObjectFile で保存したものを読み込む。id は保存名 (object_<API 名>) でも、API 名でもよい */
-    static async readObjectMsgPack(baseDir: string, id: string): Promise<ObjectParseResult> {
-        return readMsgPack<ObjectParseResult>(baseDir, objectSaveIdOf(id), 'object');
-    }
-
-    /** baseDir に保存したすべてのオブジェクトを読む。baseDir がなければ空 */
-    static async readSavedObjects(baseDir: string): Promise<ObjectParseResult[]> {
-        return readSavedMsgPacks(baseDir, isObjectSaveId, (id) =>
-            MetadataParser.readObjectMsgPack(baseDir, id),
-        );
     }
 }

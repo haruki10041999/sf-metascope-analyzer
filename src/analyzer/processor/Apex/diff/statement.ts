@@ -66,7 +66,11 @@ import {
 } from './expression';
 import { ModifiersJsonDiff, makeModifierDiff, makeModifierItemsDiff } from './modifier';
 import { TypeJsonDiff, makeTypeDiff } from './type';
-import { TypedDiffContext, makeTypedArrayDiff, makeTypedDiffContext } from './typed';
+import {
+    TypedDiffContext,
+    makeTypedArrayDiff,
+    makeTypedDiffContext,
+} from '../../commons/diff/typed';
 import {
     TypedListDiff,
     TypedListItemDiff,

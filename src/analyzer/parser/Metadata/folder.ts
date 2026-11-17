@@ -13,10 +13,7 @@ import {
     SaveDataInfo,
     XmlResolvedError,
     makeJsonSaveData,
-    makeMsgPackSaveData,
     parseXmlSource,
-    readMsgPack,
-    readSavedMsgPacks,
     readSource,
     toXmlResolvedError,
 } from '../commons';
@@ -24,7 +21,7 @@ import type { DecomposedSpec } from './decomposed';
 
 // フォルダ単位のメタデータ (権限・ラベル・Flow・画面) の parser の共通部分。方針: docs/metadata-implementation.md 10 章
 // 読み込みはフォルダ単位 (permissionsets/ など。中のファイルをまとめて読む)、結果・保存はファイル単位
-// (1 ファイル = 1 単位 = 1 解析結果 = 1 保存ファイル)。種類ごとの違いは MetadataFolderSpec (JSON の作り方) だけ
+// (1 ファイル = 1 単位 = 1 解析結果)。種類ごとの違いは MetadataFolderSpec (JSON の作り方) だけ
 
 /** 種類ごとの設定 */
 export type MetadataFolderSpec<T extends string, J extends JsonType<string>> = {
@@ -298,28 +295,8 @@ export class MetadataFolderParser<T extends string, J extends JsonType<string>> 
         };
     }
 
-    // 本番用: msgpackr で <baseDir>/<種類>_<名前>.msgpack に保存する
-    save(baseDir: string, target: MetadataFileParseResult<T, J>): SaveDataInfo[] {
-        return [makeMsgPackSaveData('Metadata', baseDir, target.result.id, target)];
-    }
-
     // 開発者でのデータ確認用: <baseDir>/<種類>_<名前>.json
     saveForDeveloper(baseDir: string, target: MetadataFileParseResult<T, J>): SaveDataInfo[] {
         return [makeJsonSaveData('Metadata', baseDir, target.result.id, target)];
-    }
-
-    /** save で保存したものを読み込む。id は保存名 (接頭辞付き) でも、名前だけでもよい */
-    async read(baseDir: string, id: string): Promise<MetadataFileParseResult<T, J>> {
-        const saveId = id.startsWith(this.prefix) ? id : `${this.prefix}${id}`;
-        return readMsgPack<MetadataFileParseResult<T, J>>(baseDir, saveId, this.spec.type);
-    }
-
-    /** baseDir に保存したこの種類のものをすべて読む。baseDir がなければ空 */
-    async readSaved(baseDir: string): Promise<MetadataFileParseResult<T, J>[]> {
-        return readSavedMsgPacks(
-            baseDir,
-            (id) => id.startsWith(this.prefix),
-            (id) => this.read(baseDir, id),
-        );
     }
 }

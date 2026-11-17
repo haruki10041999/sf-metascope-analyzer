@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import { JsonType } from '../../commons';
 import type { LimitClauseTypeClass } from '../../apex_IR';
 
@@ -17,8 +15,6 @@ export type LimitJson = JsonType<'limitClause'> &
               value: BaseExpressionJson;
           }
     );
-
-export const isLimitJson = typia.createIs<LimitJson>();
 
 export const makeLimitJson = (target: LimitClauseTypeClass): LimitJson => {
     const value = target.getFields().value;

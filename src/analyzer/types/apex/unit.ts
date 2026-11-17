@@ -1,4 +1,3 @@
-import typia from 'typia';
 import { JsonType } from '../commons';
 
 import type {
@@ -54,8 +53,6 @@ export type AnonymousUnitJson = {
     block: BlockMemberJson[];
 };
 
-export const isAnonymousUnitJson = typia.createIs<AnonymousUnitJson>();
-
 export const makeAnonymousUnitJson = (target: AnonymousUnitTypeClass): AnonymousUnitJson => {
     return {
         fileType: 'anonymous',
@@ -87,8 +84,6 @@ export type TriggerUnitJson = {
     block: BlockMemberJson[];
 };
 
-export const isTriggerUnitJson = typia.createIs<TriggerUnitJson>();
-
 export const makeTriggerUnitJson = (target: TriggerUnitTypeClass): TriggerUnitJson => {
     const { name, object, triggerCase, block } = target.getFields();
     return {
@@ -105,8 +100,6 @@ export type CompilationUnitJson = {
 } & (InterfaceDeclarationJson | ClassDeclarationJson | EnumDeclarationJson) & {
         modifier: ModifiersJson;
     };
-
-export const isCompilationUnitJson = typia.createIs<CompilationUnitJson>();
 
 const makeTypeDeclarationContentJson = (
     target: CompilationUnitTypeClass,

@@ -4,6 +4,7 @@ import type { CustomLabelsParseResult } from '../parser/Metadata/customLabels';
 import type { FlowParseResult } from '../parser/Metadata/flow';
 import type { FlexiPageParseResult, LayoutParseResult } from '../parser/Metadata/page';
 import type { MetadataFileParseResult } from '../parser/Metadata/folder';
+import type { ObjectTranslationParseResult } from '../parser/Metadata/objectTranslation';
 import type { ObjectParseResult } from '../parser/Metadata/parser';
 import type {
     MutingPermissionSetParseResult,
@@ -12,12 +13,15 @@ import type {
     ProfileParseResult,
 } from '../parser/Metadata/permission';
 import type { ObjectAccess } from '../processor/Metadata/permissionAnalysis';
-import type { MetadataContext, MetadataFindingSeverity } from '../processor/Metadata/references';
+import type { MetadataContext } from '../processor/Metadata/references';
 import type { ViewStatus } from '../processor/Metadata/view';
-import type { ConvertKeys } from '../types';
 import type { Repository } from '../unit/repository';
+import type { z } from 'zod';
 
-// レポートの data provider の入力と出力の型。方針: docs/report-components-plan.md 3.2 章
+import type * as schemas from './schemas';
+
+// レポートの data provider の入力と出力の型。方針: docs/report-components-plan.md 3.2 章。
+// 出力の型は schemas.ts の zod のスキーマから作る (z.infer。docs/implementation-roadmap.md 3 章)
 // - 入力は解析結果 (before / after) だけ。ファイルは読まない
 // - 出力の各行は、元のノードの sourceKeys とファイルのパスを持つ (SourceSnippet と AI の注記の対象に使う)
 // - status は差分を表示するとき (before を渡したとき) だけ持つ (Diff と同じ語彙)
@@ -37,6 +41,7 @@ export type MetadataSnapshot = {
     /** 優先度 B・C のメタデータ (種類をまとめて。docs/metadata-implementation.md) 10 章 */
     others?: MetadataFileParseResult[];
     objects?: ObjectParseResult[];
+    objectTranslations?: ObjectTranslationParseResult[];
     apex?: ApexUnitParseResult[];
     lwc?: LwcBundleParseResult[];
     /** 参照先の確かめに使う名前の一覧など。渡さなければ、渡した解析結果から作る */
@@ -53,221 +58,70 @@ export type ReportInput = { before?: Repository; after: Repository };
 export type SnapshotInput = { before?: MetadataSnapshot; after: MetadataSnapshot };
 
 /** 行の共通部分 */
-export type RowBase = {
-    status?: ViewStatus;
-    filePath?: string;
-    sourceKeys?: ConvertKeys;
-};
+export type RowBase = Pick<
+    z.infer<typeof schemas.ApexAccessRowSchema>,
+    'status' | 'filePath' | 'sourceKeys'
+>;
 
 /** 値の変更 (行の中のプロパティ 1 つ) */
-export type ValueChange = { name: string; before?: unknown; after?: unknown };
+export type ValueChange = z.infer<typeof schemas.ValueChangeSchema>;
 
-// ---------------------------------------------------------------------------
-// 権限 (2.5 章)
-// ---------------------------------------------------------------------------
-
-export type PermissionHolderRef = {
-    type: 'permissionSet' | 'mutingPermissionSet' | 'profile' | 'permissionSetGroup';
-    name: string;
-};
-
-/** permission.diffs: 権限セット・Profile の変更 (1 行 = 権限の 1 行、または設定値) */
-export type PermissionDiffRow = RowBase & {
-    holder: PermissionHolderRef;
-    /** XML の要素名 (objectPermissions など)。ルートの設定値は settings、単位ごとの追加・削除は unit */
-    category: string;
-    /** 対象 (Invoice__c / Invoice__c.Amount__c など)。settings・unit は空 */
-    target: string;
-    changes: ValueChange[];
-};
-
+// 権限
+export type PermissionHolderRef = z.infer<typeof schemas.PermissionHolderRefSchema>;
+export type PermissionDiffRow = z.infer<typeof schemas.PermissionDiffRowSchema>;
 export type AccessFlags = Omit<ObjectAccess, 'object'>;
-
 /** Matrix の 1 セル */
 export type MatrixCell<V> = RowBase & { before?: V; after?: V };
-
-/** Matrix (行 × 列)。cells[行][列]。値のないセルは持たない */
+/** Matrix (行 × 列)。cells[行][列]。値のないセルは持たない (schemas.ts の matrixSchema と同じ形) */
 export type Matrix<V> = {
     columns: PermissionHolderRef[];
     rows: string[];
     cells: Record<string, Record<string, MatrixCell<V>>>;
 };
+export type ApexAccessRow = z.infer<typeof schemas.ApexAccessRowSchema>;
+export type EffectivePermissionRow = z.infer<typeof schemas.EffectivePermissionRowSchema>;
 
-/** permission.apexAccess の 1 行 */
-export type ApexAccessRow = RowBase & {
-    holder: PermissionHolderRef;
-    /** apexClass / apexPage */
-    accessType: 'apexClass' | 'apexPage';
-    name: string;
-    enabled: boolean;
-};
+// Flow・自動化・コードの公開の形
+export type FlowListRow = z.infer<typeof schemas.FlowListRowSchema>;
+export type FlowDiagram = z.infer<typeof schemas.FlowDiagramSchema>;
+export type FlowDiffRow = z.infer<typeof schemas.FlowDiffRowSchema>;
+export type ApexInterfaceRow = z.infer<typeof schemas.ApexInterfaceRowSchema>;
+export type LwcInterfaceRow = z.infer<typeof schemas.LwcInterfaceRowSchema>;
+export type FlowInterfaceRow = z.infer<typeof schemas.FlowInterfaceRowSchema>;
+export type FlowReferenceRow = z.infer<typeof schemas.FlowReferenceRowSchema>;
+export type AutomationRow = z.infer<typeof schemas.AutomationRowSchema>;
 
-/** permission.effective: 権限セットグループの実際の権限 */
-export type EffectivePermissionRow = RowBase & {
-    group: string;
-    category:
-        | 'object'
-        | 'field'
-        | 'apexClass'
-        | 'apexPage'
-        | 'flow'
-        | 'customPermission'
-        | 'userPermission';
-    target: string;
-    /** オブジェクトは CRED など、項目は R / E、そのほかは有効なら true */
-    before?: string | boolean;
-    after?: string | boolean;
-};
+// 画面
+export type LayoutDetail = z.infer<typeof schemas.LayoutDetailSchema>;
+export type FlexiPageDetail = z.infer<typeof schemas.FlexiPageDetailSchema>;
+export type LwcPlacementRow = z.infer<typeof schemas.LwcPlacementRowSchema>;
 
-// ---------------------------------------------------------------------------
-// Flow・自動化 (2.6 章)
-// ---------------------------------------------------------------------------
+// 横断
+export type LabelUsageRow = z.infer<typeof schemas.LabelUsageRowSchema>;
+export type ReferenceUsageRow = z.infer<typeof schemas.ReferenceUsageRowSchema>;
+export type FindingRow = z.infer<typeof schemas.FindingRowSchema>;
 
-export type FlowListRow = RowBase & {
-    name: string;
-    label?: string;
-    processType?: string;
-    triggerType?: string;
-    recordTriggerType?: string;
-    object?: string;
-    /** Flow の状態 (Active / Draft など) */
-    flowStatus?: string;
-    elementCount: number;
-};
+// オブジェクト
+export type ObjectListRow = z.infer<typeof schemas.ObjectListRowSchema>;
+export type ObjectFieldRow = z.infer<typeof schemas.ObjectFieldRowSchema>;
+export type ObjectPicklistRow = z.infer<typeof schemas.ObjectPicklistRowSchema>;
+export type ObjectValidationRuleRow = z.infer<typeof schemas.ObjectValidationRuleRowSchema>;
+export type ObjectRecordTypePicklistRow = z.infer<typeof schemas.ObjectRecordTypePicklistRowSchema>;
+export type ObjectDiagram = z.infer<typeof schemas.ObjectDiagramSchema>;
 
-export type FlowDiagram = {
-    flow: string;
-    nodes: (RowBase & { id: string; kind: string; label?: string })[];
-    edges: (RowBase & { from: string; to: string; edgeType: string })[];
-};
+// Apex
+export type ApexOutlineRow = z.infer<typeof schemas.ApexOutlineRowSchema>;
+export type ApexDataAccessRow = z.infer<typeof schemas.ApexDataAccessRowSchema>;
 
-/** flow.diffs: 要素・資源・起動の変更 */
-export type FlowDiffRow = RowBase & {
-    flow: string;
-    /** 要素・資源の名前 (起動は $start、Flow の設定値は空) */
-    element: string;
-    kind: string;
-    /** 変わったプロパティの名前 (changed のとき) */
-    changedProperties: string[];
-};
+// LWC
+export type LwcComponentRow = z.infer<typeof schemas.LwcComponentRowSchema>;
+export type LwcDetailRow = z.infer<typeof schemas.LwcDetailRowSchema>;
+export type LwcWireframe = z.infer<typeof schemas.LwcWireframeSchema>;
+export type { WireframeNode } from './schemas';
 
-/** flow.interface: Flow の入力・出力の変数 1 つ (before を渡せば、2 つの時点の入出力の変化) */
-export type FlowInterfaceRow = RowBase & {
-    flow: string;
-    variable: string;
-    direction: 'input' | 'output' | 'inputOutput';
-    dataType?: string;
-    objectType?: string;
-    apexClass?: string;
-    isCollection: boolean;
-    /** 変わったもの (changed のとき。direction・dataType・objectType・apexClass・isCollection) */
-    changedProperties?: string[];
-};
+// 翻訳
+export type TranslationCoverageRow = z.infer<typeof schemas.TranslationCoverageRowSchema>;
+export type TranslationItemRow = z.infer<typeof schemas.TranslationItemRowSchema>;
 
-export type FlowReferenceRow = RowBase & {
-    flow: string;
-    element: string;
-    refType: string;
-    value: string;
-    /** 参照先がないなどの指摘 (code) */
-    problem?: string;
-};
-
-export type AutomationRow = {
-    object: string;
-    flows: (RowBase & {
-        name: string;
-        triggerType?: string;
-        recordTriggerType?: string;
-        triggerOrder?: number;
-    })[];
-    triggers: (RowBase & { name: string; events: string[]; triggerStatus?: string })[];
-    validationRules: (RowBase & { name: string; active: boolean; errorMessage?: string })[];
-};
-
-// ---------------------------------------------------------------------------
-// 画面 (2.7 章)
-// ---------------------------------------------------------------------------
-
-export type LayoutDetail = RowBase & {
-    name: string;
-    objectApiName: string;
-    sections: (RowBase & {
-        label: string;
-        columns: number;
-        items: (RowBase & {
-            field?: string;
-            /** 項目以外 (customLink・page・空白など) の表示名 */
-            other?: string;
-            behavior?: string;
-            column: number;
-            row: number;
-            /** 位置が変わったとき、変更前の位置 */
-            movedFrom?: { section: string; column: number; row: number };
-        })[];
-    })[];
-    relatedLists: (RowBase & { relatedList: string; fields: string[] })[];
-    actions: (RowBase & { actionName: string; actionType?: string; sortOrder?: number })[];
-};
-
-export type FlexiPageDetail = RowBase & {
-    name: string;
-    label?: string;
-    pageType?: string;
-    sobjectType?: string;
-    template?: string;
-    regions: (RowBase & {
-        name: string;
-        items: (RowBase & {
-            identifier: string;
-            itemType: 'component' | 'field';
-            /** componentName または fieldItem */
-            name: string;
-            properties: Record<string, string>;
-            hasVisibilityRule: boolean;
-            /** リージョンをまたいで動いたとき、変更前のリージョン */
-            movedFrom?: string;
-        })[];
-    })[];
-};
-
-export type LwcPlacementRow = RowBase & {
-    lwc: string;
-    flexiPage: string;
-    pageType?: string;
-    sobjectType?: string;
-    region: string;
-    properties: string[];
-};
-
-// ---------------------------------------------------------------------------
-// 横断 (2.8 章)
-// ---------------------------------------------------------------------------
-
-export type LabelUsageRow = RowBase & {
-    name: string;
-    value?: string;
-    usages: { origin: string; unit: string }[];
-};
-
-/** crossRef.references: 参照先 (種類・名前) と、参照している単位 (before を渡すと、参照の増減が status に出る) */
-export type ReferenceUsageRow = {
-    status?: ViewStatus;
-    refType: string;
-    target: string;
-    /** 参照している単位の id と、どこで参照しているか */
-    usedBy: { from: string; via: string; filePath: string; sourceKeys?: ConvertKeys }[];
-    /** 参照先がリポジトリにないときの指摘の code */
-    problem?: string;
-};
-
-/** metadata.findings: 解析の指摘。before を渡すと、新しく出た指摘は added、なくなった指摘は removed */
-export type FindingRow = RowBase & {
-    source: 'permission' | 'label' | 'flow' | 'layout' | 'flexiPage' | 'reference';
-    code: string;
-    severity: MetadataFindingSeverity;
-    /** 指摘を出した単位 (権限セット・Flow・レイアウトなどの名前) */
-    unit: string;
-    target: string;
-    message: string;
-};
+// 依存関係
+export type DependencyNodeRow = z.infer<typeof schemas.DependencyNodeRowSchema>;

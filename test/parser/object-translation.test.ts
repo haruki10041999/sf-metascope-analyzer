@@ -165,41 +165,4 @@ describe('ObjectTranslationParser', () => {
         assert.equal(crlf.dataType, 'objectTranslation');
         assert.deepEqual(crlf.result.base?.sourceKeys, lf.result.base.sourceKeys);
     });
-
-    it('saves translations with a prefix, separately from objects in the same folder', async () => {
-        const outDir = path.join(tmp, 'saved');
-        const translation = await parse('Invoice__c-ja');
-        const object = await MetadataParser.parseObject(
-            path.resolve(
-                'docs/examples/repository/after/force-app/main/default/objects/Invoice__c',
-            ),
-        );
-        await writeSaveDataInfo([
-            ...ObjectTranslationParser.saveObjectTranslationFile(outDir, translation),
-            ...MetadataParser.saveObjectFile(outDir, object),
-        ]);
-
-        const saved = await ObjectTranslationParser.readSavedObjectTranslations(outDir);
-        assert.deepEqual(
-            saved.map((t) => t.result.id),
-            ['Invoice__c-ja'],
-        );
-        assert.deepEqual(saved[0], translation);
-        // オブジェクトの読み込みは翻訳の保存データを拾わない
-        const objects = await MetadataParser.readSavedObjects(outDir);
-        assert.deepEqual(
-            objects.map((o) => o.result.id),
-            ['Invoice__c'],
-        );
-        // 保存名でもフォルダ名でも読める
-        const byName = await ObjectTranslationParser.readObjectTranslationMsgPack(
-            outDir,
-            'Invoice__c-ja',
-        );
-        const bySaveId = await ObjectTranslationParser.readObjectTranslationMsgPack(
-            outDir,
-            `${OBJECT_TRANSLATION_SAVE_PREFIX}Invoice__c-ja`,
-        );
-        assert.deepEqual(byName, bySaveId);
-    });
 });

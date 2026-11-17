@@ -148,6 +148,17 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
     const nodes = new Map<string, DependencyNode>();
     /** 定義の名前 (小文字) → ノードの id */
     const defined = new Map<string, string>();
+    /**
+     * 名前 (小文字) → その名前を最初に定義したキー (defined のキー)。メンバーの親を名前で引くのに使う
+     * (定義を頭から探すと、メンバーの数 × 定義の数の時間がかかる。大きいリポジトリで数十秒になった)
+     */
+    const firstKeyByName = new Map<string, string>();
+    const define = (type: string, name: string, id: string) => {
+        const key = keyOf(type, name);
+        defined.set(key, id);
+        const lower = name.toLowerCase();
+        if (!firstKeyByName.has(lower)) firstKeyByName.set(lower, key);
+    };
     /** 定義のある種類 (その種類の参照は「ない」と言える) */
     const definedTypes = new Set<string>();
     const edges: DependencyEdge[] = [];
@@ -180,7 +191,7 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
             ...(primaryDef.sourceKeys ? { sourceKeys: primaryDef.sourceKeys } : {}),
         });
         unitNodeOf.set(`${unit.type}:${unit.id}`, unitNode);
-        defined.set(keyOf(primaryDef.defType, primaryDef.name), unitNode);
+        define(primaryDef.defType, primaryDef.name, unitNode);
         definedTypes.add(primaryDef.defType);
         for (const member of members) {
             // メンバーの親: 名前の . の前までが定義されていればそれ (Outer.Inner.method → Outer.Inner)、なければ単位
@@ -191,9 +202,10 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
             const parent =
                 (parentName?.toLowerCase() === primaryDef.name.toLowerCase() && unitNode) ||
                 (parentName &&
-                    [...defined.entries()].find(([key]) =>
-                        key.endsWith(`:${parentName.toLowerCase()}`),
-                    )?.[1]) ||
+                    (() => {
+                        const key = firstKeyByName.get(parentName.toLowerCase());
+                        return key === undefined ? undefined : defined.get(key);
+                    })()) ||
                 unitNode;
             const id = addNode({
                 id: nodeId(member.defType, member.name),
@@ -205,7 +217,7 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
                 unit: unitRef,
                 ...(member.sourceKeys ? { sourceKeys: member.sourceKeys } : {}),
             });
-            defined.set(keyOf(member.defType, member.name), id);
+            define(member.defType, member.name, id);
             definedTypes.add(member.defType);
         }
     }
@@ -382,6 +394,13 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
     };
 
     // 2. 参照 (文・式のノードと辺)
+    /** 名前 (小文字) と単位の id → 最初に定義したノード (メンバーの名前で引くのに使う。頭から探すと二乗の時間になる) */
+    const memberByNameAndUnit = new Map<string, string>();
+    for (const id of defined.values()) {
+        const node = nodes.get(id)!;
+        const key = `${node.name.toLowerCase()}|${node.unit?.id ?? ''}`;
+        if (!memberByNameAndUnit.has(key)) memberByNameAndUnit.set(key, id);
+    }
     for (const unit of units) {
         const unitNode = unitNodeOf.get(`${unit.type}:${unit.id}`)!;
         const unitRef = { type: unit.type, id: unit.id };
@@ -392,11 +411,7 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
                   lookup('apexProperty', member) ??
                   lookup('apexClass', member) ??
                   lookup('apexTrigger', member) ??
-                  [...defined.values()].find(
-                      (id) =>
-                          nodes.get(id)!.name.toLowerCase() === member.toLowerCase() &&
-                          nodes.get(id)!.unit?.id === unit.id,
-                  ))
+                  memberByNameAndUnit.get(`${member.toLowerCase()}|${unit.id}`))
                 : undefined;
             let from = memberNode ?? unitNode;
             if (statement) {

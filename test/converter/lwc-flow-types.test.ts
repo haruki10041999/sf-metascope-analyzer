@@ -316,6 +316,7 @@ export default class Sample extends LightningElement implements Named {
     @api record: ?Row = null;
     +name: string = 'x';
     static count: number = 0;
+    declare later: string;
     pick<T>(items: Array<T>, index?: number = 0): T {
         const first = (items[0]: any);
         return first;
@@ -330,6 +331,12 @@ export default class Sample extends LightningElement implements Named {
             parsed.resolvedError.map((e) => `${e.code}: ${e.errorMessage}`),
             [],
         );
+        // Flow の declare のフィールド (TS と混ざったものとして扱わない)
+        const later = componentOf(convertLwcModule(parsed).module!).block.find(
+            (m) => m.kind === 'lwcField' && (m as LwcFieldJson).name === 'later',
+        ) as LwcFieldJson | undefined;
+        assert.deepEqual(later?.modifier.declaration, ['declare']);
+        assert.ok(later?.variantType);
         // 型を消しても LWC の違反 (@api の名前の禁止など) は出る
         const invalid = parseLwcModule(
             'sample/sample.js',

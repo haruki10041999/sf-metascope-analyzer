@@ -1,12 +1,15 @@
-import { Node, Edge } from 'reactflow';
-import dagre from 'dagre';
+import type { Edge, Node } from '@xyflow/react';
+import dagre from '@dagrejs/dagre';
 
-export const getLayoutedElements = (
-    nodes: Node[],
-    edges: Edge[],
+/** 大きさ (width・height) を data に持つノード */
+type SizedNode = Node<{ width: number; height: number }>;
+
+export const getLayoutedElements = <N extends SizedNode, E extends Edge>(
+    nodes: N[],
+    edges: E[],
 ): {
-    nodes: Node[];
-    edges: Edge[];
+    nodes: N[];
+    edges: E[];
 } => {
     const dagreGraph = new dagre.graphlib.Graph();
 

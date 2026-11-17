@@ -1,95 +1,27 @@
-import { getLabelUsages, getMetadataFindings, getReferenceUsages } from './crossRef';
-import {
-    getAutomationByObject,
-    getFlowDiagrams,
-    getFlowDiffs,
-    getFlowInterface,
-    getFlowList,
-    getFlowReferences,
-} from './flow';
-import { getFlexiPageDetails, getLayoutDetails, getLwcPlacements } from './page';
-import {
-    getApexAccess,
-    getEffectivePermissions,
-    getFieldAccessMatrix,
-    getObjectAccessMatrix,
-} from './permission';
-import { getPermissionDiffs } from './permission';
-import {
-    type DependencyTraverseArgs,
-    getDependencyChanges,
-    getDependencyDiagram,
-    getDependencyRows,
-    getDependentRows,
-    getImpactRows,
-    getMissingRows,
-    getUnusedRows,
-} from './dependency';
 import { maskRepository } from './mask';
-import { snapshotInputOf } from './snapshot';
+import { REPORT_PROVIDERS, type ReportProviderName, isReportProviderName } from './registry';
 import type { ReportInput } from './types';
 
 // レポートの data provider。方針: docs/report-components-plan.md 3.2 章
-// provider の名前 (レポート仕様の data.provider で指定するもの) → 関数。引数は ReportInput (Repository) と provider ごとの引数。
+// provider の名前・説明・引数と出力のスキーマは登録表 (registry.ts) にある。
 // 種類ごとの provider は、Repository から作った MetadataSnapshot (snapshotInputOf) を使う
 
 export * from './types';
 export * from './commons';
 export * from './permission';
 export * from './flow';
+export * from './code';
 export * from './page';
+export * from './object';
+export * from './apex';
+export * from './lwc';
+export * from './translation';
 export * from './crossRef';
 export * from './mask';
 export * from './dependency';
 export * from './snapshot';
-
-export const REPORT_PROVIDERS = {
-    'permission.diffs': (input: ReportInput) => getPermissionDiffs(snapshotInputOf(input)),
-    'permission.objectAccess': (
-        input: ReportInput,
-        args: { onlyChanged?: boolean; rows?: string[] } = {},
-    ) => getObjectAccessMatrix(snapshotInputOf(input), args),
-    'permission.fieldAccess': (
-        input: ReportInput,
-        args: { onlyChanged?: boolean; rows?: string[] } = {},
-    ) => getFieldAccessMatrix(snapshotInputOf(input), args),
-    'permission.apexAccess': (input: ReportInput) => getApexAccess(snapshotInputOf(input)),
-    'permission.effective': (input: ReportInput) => getEffectivePermissions(snapshotInputOf(input)),
-    'flow.list': (input: ReportInput) => getFlowList(snapshotInputOf(input)),
-    'flow.diagram': (input: ReportInput, args: { flows?: string[] } = {}) =>
-        getFlowDiagrams(snapshotInputOf(input), args.flows),
-    'flow.diffs': (input: ReportInput) => getFlowDiffs(snapshotInputOf(input)),
-    'flow.references': (input: ReportInput) => getFlowReferences(snapshotInputOf(input)),
-    'flow.interface': (input: ReportInput, args: { onlyChanged?: boolean } = {}) =>
-        getFlowInterface(snapshotInputOf(input), args),
-    'automation.byObject': (input: ReportInput) => getAutomationByObject(snapshotInputOf(input)),
-    'layout.detail': (input: ReportInput, args: { layouts?: string[] } = {}) =>
-        getLayoutDetails(snapshotInputOf(input), args.layouts),
-    'flexiPage.detail': (input: ReportInput, args: { flexiPages?: string[] } = {}) =>
-        getFlexiPageDetails(snapshotInputOf(input), args.flexiPages),
-    'lwc.placements': (input: ReportInput, args: { lwc?: string[] } = {}) =>
-        getLwcPlacements(snapshotInputOf(input), args.lwc),
-    'crossRef.labels': (input: ReportInput) => getLabelUsages(input),
-    'crossRef.references': (input: ReportInput) => getReferenceUsages(input),
-    'metadata.findings': (input: ReportInput) => getMetadataFindings(input),
-    'dependency.dependents': (input: ReportInput, args: DependencyTraverseArgs = { target: '' }) =>
-        getDependentRows(input, args),
-    'dependency.dependencies': (
-        input: ReportInput,
-        args: DependencyTraverseArgs = { target: '' },
-    ) => getDependencyRows(input, args),
-    'dependency.impact': (input: ReportInput, args: { depth?: number } = {}) =>
-        getImpactRows(input, args),
-    'dependency.missing': (input: ReportInput) => getMissingRows(input),
-    'dependency.unused': (input: ReportInput) => getUnusedRows(input),
-    'dependency.changes': (input: ReportInput) => getDependencyChanges(input),
-    'dependency.graph': (
-        input: ReportInput,
-        args: { targets?: string[]; depth?: number; format?: 'mermaid' | 'dot' } = {},
-    ) => getDependencyDiagram(input, args),
-} as const;
-
-export type ReportProviderName = keyof typeof REPORT_PROVIDERS;
+export * from './schemas';
+export * from './registry';
 
 /** レポートのデータを外に出すとき (HTML・MCP・AI に渡すとき) の選び方 */
 export type ReportRunOptions = {
@@ -106,8 +38,8 @@ export const runReportProvider = (
     args?: unknown,
     options: ReportRunOptions = {},
 ): unknown => {
+    if (!isReportProviderName(name)) throw new Error(`Unknown report provider: ${String(name)}`);
     const provider = REPORT_PROVIDERS[name] as (input: ReportInput, args?: unknown) => unknown;
-    if (!provider) throw new Error(`Unknown report provider: ${String(name)}`);
     const target =
         options.mask === false
             ? input
@@ -115,5 +47,5 @@ export const runReportProvider = (
                   ...(input.before ? { before: maskRepository(input.before) } : {}),
                   after: maskRepository(input.after),
               };
-    return args === undefined ? provider(target) : provider(target, args);
+    return provider(target, args);
 };

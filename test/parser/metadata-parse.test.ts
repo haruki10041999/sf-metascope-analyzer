@@ -230,13 +230,6 @@ describe('MetadataParser.parseObject', () => {
             assert.equal(a.sourceKeys.objectKey, b.sourceKeys.objectKey);
             assert.notEqual(a.sourceKeys.sourceKey, b.sourceKeys.sourceKey);
         });
-
-        it('saves and reads the result as msgpack', async () => {
-            const result = await parseAfter('Invoice__c');
-            const [saved] = MetadataParser.saveObjectFile(tmp, result);
-            await writeFile(saved!.outputPath, saved!.data as Uint8Array);
-            assert.deepEqual(await MetadataParser.readObjectMsgPack(tmp, 'Invoice__c'), result);
-        });
     });
 });
 

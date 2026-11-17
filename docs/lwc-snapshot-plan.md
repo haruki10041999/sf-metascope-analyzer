@@ -161,7 +161,7 @@ JS を実行せず、parse したテンプレートの JSON から描く。方�
 
 ## 6. 進め方（案）
 
-1. LWC の parse（テンプレート）ができたら、方式 A の `LwcWireframe` を作る（追加の依存なし）。
+1. LWC の parse（テンプレート）ができたら、方式 A の `LwcWireframe` を作る（追加の依存なし）。（2026-11-17 に済んだ: provider `lwc.wireframe`（[report/lwc.ts](../src/analyzer/report/lwc.ts)）と部品 `LwcWireframe`（[lwcWireframe.tsx](../src/viewer/report/components/lwcWireframe.tsx)）。基本コンポーネントはボタン・入力欄・カード・表・レコードフォームなどを簡単な絵で描き、ほかは枠と名前。比べるときはコンポーネントごとの status だけ）
 2. 方式 B（`@lwc/engine-server` / `@lwc/rollup-plugin` / `rollup` は依存関係に入れた）: スタブ（よく使う `lightning-*`）・`@salesforce/*` のモック・実行の隔離を作り、`LwcSnapshot` を作る。
 3. `LwcSnapshotDiff`（before / after を同じ状態で描く）。
 
@@ -169,5 +169,8 @@ JS を実行せず、parse したテンプレートの JSON から描く。方�
 
 - SSR は `@lwc/engine-server` に決めた（LWC には新しい SSR の `@lwc/ssr-compiler` もあるが、試作で動いた `@lwc/engine-server` を使う）。
 
-- 方式 B のためにリポジトリのコンポーネントの JS を実行してよいか（実行の隔離の程度）。
-- `lightning-*` に `lightning-base-components` を使うか（使える。2 章）。使う場合は、**ライセンス（Salesforce の利用規約。補償・利用データの収集の条項）を確認する**こと、alpha の版しかないこと、出力のサイズへの対応（3 章）を受け入れるか。
+決めたこと（2026-11-17 に決めた）:
+
+- **方式 A（JS を実行しない静的なワイヤーフレーム）を先に作り、優先度を上げる**。画面の仕様書はドキュメントとして価値が高い（このリポジトリの第一の目的。[implementation-roadmap.md](./implementation-roadmap.md) の冒頭）。
+- **リポジトリのコンポーネントの JS は、既定では実行しない**。方式 B は明示して有効にしたときだけ使い、`node:vm` のワーカーで、時間の上限を設け、ファイル・ネットワークに触れない形で動かす。MCP の既定でも無効。
+- **`lightning-base-components` は今は使わず、スタブで描く**（利用規約の確認がまだ・alpha の版しかない・出力が大きい）。方式 B が実際に要るとなってから決め直す。

@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import { JsonType } from '../../commons';
 import type { UsingScopeTypeClass } from '../../apex_IR';
 
@@ -8,7 +6,6 @@ import { makeNodeJson } from '../commons/node';
 export type UsingScopeJson = JsonType<'usingScopeClause'> & {
     value: string;
 };
-export const isUsingScopeJson = typia.createIs<UsingScopeJson>();
 
 export const makeUsingScopeJson = (target: UsingScopeTypeClass): UsingScopeJson => {
     const fields = target.getFields();

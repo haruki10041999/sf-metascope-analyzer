@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import { JsonType } from '../commons';
 import type {
     AccessLevelTypeClass,
@@ -69,13 +67,11 @@ const accessLevelOf = (
 };
 
 export type BreakStatementJson = JsonType<'break'>;
-export const isBreakStatementJson = typia.createIs<BreakStatementJson>();
 
 export const makeBreakStatementJson = (target: BreakStatementTypeClass): BreakStatementJson =>
     makeNodeJson<BreakStatementJson>('break', target);
 
 export type ContinueStatementJson = JsonType<'continue'>;
-export const isContinueStatementJson = typia.createIs<ContinueStatementJson>();
 
 export const makeContinueStatementJson = (
     target: ContinueStatementTypeClass,
@@ -85,7 +81,6 @@ export type DeleteStatementJson = JsonType<'delete'> & {
     field: BaseExpressionJson;
     accessLevel?: 'SYSTEM' | 'USER';
 };
-export const isDeleteStatementJson = typia.createIs<DeleteStatementJson>();
 
 export const makeDeleteStatementJson = (target: DeleteStatementTypeClass): DeleteStatementJson => {
     const { value, accessLevel } = target.getFields();
@@ -100,7 +95,6 @@ export type DoWhileStatementJson = JsonType<'doWhile'> & {
     condition: BaseExpressionJson;
     block: StatementJson[];
 };
-export const isDoWhileStatementJson = typia.createIs<DoWhileStatementJson>();
 
 const makeDoWhileStatementJson = (target: DoWhileStatementTypeClass): DoWhileStatementJson => {
     const { value, block } = target.getFields();
@@ -113,8 +107,6 @@ const makeDoWhileStatementJson = (target: DoWhileStatementTypeClass): DoWhileSta
 export type ExpressionStatementJson = JsonType<'expression'> & {
     value: BaseExpressionJson;
 };
-
-export const isExpressionStatementJson = typia.createIs<ExpressionStatementJson>();
 
 const makeExpressionStatementJson = (
     target: ExpressionStatementTypeClass,
@@ -135,7 +127,6 @@ export type ForStatementJson = JsonType<'for'> & {
     condition: ForConditionJson;
     block: StatementJson[];
 };
-export const isForStatementJson = typia.createIs<ForStatementJson>();
 
 /** 拡張 for (for (Type variant : right)) */
 export type ForEachStatementJson = JsonType<'forEach'> & {
@@ -144,7 +135,6 @@ export type ForEachStatementJson = JsonType<'forEach'> & {
     right: BaseExpressionJson;
     block: StatementJson[];
 };
-export const isForEachStatementJson = typia.createIs<ForEachStatementJson>();
 
 const makeForConditionJson = (
     control: Extract<ReturnType<ForControlTypeClass['getFields']>, { kind: 'classic' }>,
@@ -192,7 +182,6 @@ export type IfConditionBlockJson = {
 export type IfStatementJson = JsonType<'if'> & {
     conditionBlock: IfConditionBlockJson[];
 };
-export const isIfStatementJson = typia.createIs<IfStatementJson>();
 
 const makeIfStatementJson = (target: IfStatementTypeClass): IfStatementJson => {
     const { branches, elseBlock } = target.getFields();
@@ -211,7 +200,6 @@ export type InsertStatementJson = JsonType<'insert'> & {
     field: BaseExpressionJson;
     accessLevel?: 'SYSTEM' | 'USER';
 };
-export const isInsertStatementJson = typia.createIs<InsertStatementJson>();
 
 export const makeInsertStatementJson = (target: InsertStatementTypeClass): InsertStatementJson => {
     const { value, accessLevel } = target.getFields();
@@ -223,7 +211,6 @@ export const makeInsertStatementJson = (target: InsertStatementTypeClass): Inser
 
 /** ローカル変数の宣言 (入れ子にしない。変数は variant) */
 export type LocalVariableStatementJson = JsonType<'localVariable'> & LocalVariableDeclarationJson;
-export const isLocalVariableStatementJson = typia.createIs<LocalVariableStatementJson>();
 
 export const makeLocalVariableStatementJson = (
     target: LocalVariableDeclarationStatementTypeClass,
@@ -240,7 +227,6 @@ export type MergeStatementJson = JsonType<'merge'> & {
     merged: BaseExpressionJson;
     accessLevel?: 'SYSTEM' | 'USER';
 };
-export const isMergeStatementJson = typia.createIs<MergeStatementJson>();
 
 export const makeMergeStatementJson = (target: MergeStatementTypeClass): MergeStatementJson => {
     const { master, merged, accessLevel } = target.getFields();
@@ -254,7 +240,6 @@ export const makeMergeStatementJson = (target: MergeStatementTypeClass): MergeSt
 export type ReturnStatementJson = JsonType<'return'> & {
     field?: BaseExpressionJson;
 };
-export const isReturnStatementJson = typia.createIs<ReturnStatementJson>();
 
 export const makeReturnStatementJson = (target: ReturnStatementTypeClass): ReturnStatementJson => {
     const { value } = target.getFields();
@@ -268,7 +253,6 @@ export type RunAsStatementJson = JsonType<'runAs'> & {
     arg: BaseExpressionJson[];
     block: StatementJson[];
 };
-export const isRunAsStatementJson = typia.createIs<RunAsStatementJson>();
 
 export const makeRunAsStatementJson = (target: RunAsStatementTypeClass): RunAsStatementJson => {
     const { value, block } = target.getFields();
@@ -348,7 +332,6 @@ export type SwitchStatementJson = JsonType<'switch'> & {
     value: BaseExpressionJson;
     when: SwitchWhenJson[];
 };
-export const isSwitchStatementJson = typia.createIs<SwitchStatementJson>();
 
 const makeSwitchStatementJson = (target: SwitchStatementTypeClass): SwitchStatementJson => {
     const { value, blocks } = target.getFields();
@@ -367,7 +350,6 @@ const makeSwitchStatementJson = (target: SwitchStatementTypeClass): SwitchStatem
 export type ThrowStatementJson = JsonType<'throw'> & {
     value: BaseExpressionJson;
 };
-export const isThrowStatementJson = typia.createIs<ThrowStatementJson>();
 
 export const makeThrowStatementJson = (target: ThrowStatementTypeClass): ThrowStatementJson => {
     return makeNodeJson<ThrowStatementJson>('throw', target, {
@@ -392,7 +374,6 @@ export type TryClauseJson =
 export type TryStatementJson = JsonType<'try'> & {
     block: TryClauseJson[];
 };
-export const isTryStatementJson = typia.createIs<TryStatementJson>();
 
 const makeCatchClauseJson = (target: CatchClauseTypeClass): TryClauseJson => {
     const { value, valueType, modifier, block } = target.getFields();
@@ -432,7 +413,6 @@ export type UndeleteStatementJson = JsonType<'undelete'> & {
     field: BaseExpressionJson;
     accessLevel?: 'SYSTEM' | 'USER';
 };
-export const isUndeleteStatementJson = typia.createIs<UndeleteStatementJson>();
 
 export const makeUndeleteStatementJson = (
     target: UndeleteStatementTypeClass,
@@ -448,7 +428,6 @@ export type UpdateStatementJson = JsonType<'update'> & {
     field: BaseExpressionJson;
     accessLevel?: 'SYSTEM' | 'USER';
 };
-export const isUpdateStatementJson = typia.createIs<UpdateStatementJson>();
 
 export const makeUpdateStatementJson = (target: UpdateStatementTypeClass): UpdateStatementJson => {
     const { value, accessLevel } = target.getFields();
@@ -463,7 +442,6 @@ export type UpsertStatementJson = JsonType<'upsert'> & {
     accessLevel?: 'SYSTEM' | 'USER';
     key?: string[];
 };
-export const isUpsertStatementJson = typia.createIs<UpsertStatementJson>();
 
 export const makeUpsertStatementJson = (target: UpsertStatementTypeClass): UpsertStatementJson => {
     const { value, accessLevel, key } = target.getFields();
@@ -478,7 +456,6 @@ export type WhileStatementJson = JsonType<'while'> & {
     condition: BaseExpressionJson;
     block: StatementJson[];
 };
-export const isWhileStatementJson = typia.createIs<WhileStatementJson>();
 
 const makeWhileStatementJson = (target: WhileStatementTypeClass): WhileStatementJson => {
     const { value, block } = target.getFields();
@@ -492,7 +469,6 @@ const makeWhileStatementJson = (target: WhileStatementTypeClass): WhileStatement
 export type BlockStatementJson = JsonType<'blockStatement'> & {
     block: StatementJson[];
 };
-export const isBlockStatementJson = typia.createIs<BlockStatementJson>();
 
 export type StatementJson =
     | BlockStatementJson

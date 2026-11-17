@@ -1,0 +1,207 @@
+{
+    "title": "公開の形と Flow の入出力の変化",
+    "diff": true,
+    "data": {
+        "apex": {
+            "provider": "apex.interface",
+            "args": {
+                "onlyChanged": true
+            }
+        },
+        "lwc": {
+            "provider": "lwc.interface",
+            "args": {
+                "onlyChanged": true
+            }
+        },
+        "flow": {
+            "provider": "flow.interface",
+            "args": {
+                "onlyChanged": true
+            }
+        }
+    },
+    "spec": {
+        "root": "page",
+        "elements": {
+            "page": {
+                "type": "Stack",
+                "props": {
+                    "direction": "vertical",
+                    "gap": "lg",
+                    "align": null,
+                    "justify": null,
+                    "className": null
+                },
+                "children": ["summary", "intro", "apexCard", "lwcCard", "flowCard"]
+            },
+            "intro": {
+                "type": "Alert",
+                "props": {
+                    "title": "このレポートについて",
+                    "message": "前回保存した時点から、外から使えるクラス・メンバー、LWC の @api・イベント、Flow の入出力がどう変わったかをまとめます。",
+                    "type": "info"
+                },
+                "children": []
+            },
+            "apexCard": {
+                "type": "Card",
+                "props": {
+                    "title": "Apex の公開メソッド・プロパティ",
+                    "description": "global・public・@AuraEnabled などの付いたもの",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": ["apexSummary", "apexTable"]
+            },
+            "apexSummary": {
+                "type": "StatusSummary",
+                "props": {
+                    "rows": {
+                        "$state": "/data/apex"
+                    },
+                    "title": null
+                },
+                "children": []
+            },
+            "apexTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/apex"
+                    },
+                    "columns": [
+                        {
+                            "key": "status",
+                            "label": "変化"
+                        },
+                        {
+                            "key": "owner",
+                            "label": "型"
+                        },
+                        {
+                            "key": "memberType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "params",
+                            "label": "引数"
+                        },
+                        {
+                            "key": "type",
+                            "label": "型・戻り値"
+                        },
+                        {
+                            "key": "changedProperties",
+                            "label": "変わったもの"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": true
+                },
+                "children": []
+            },
+            "lwcCard": {
+                "type": "Card",
+                "props": {
+                    "title": "LWC の @api・イベント・slot",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": ["lwcTable"]
+            },
+            "lwcTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/lwc"
+                    },
+                    "columns": [
+                        {
+                            "key": "status",
+                            "label": "変化"
+                        },
+                        {
+                            "key": "component",
+                            "label": "コンポーネント"
+                        },
+                        {
+                            "key": "memberType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "type",
+                            "label": "型"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": true
+                },
+                "children": []
+            },
+            "flowCard": {
+                "type": "Card",
+                "props": {
+                    "title": "Flow の入力・出力",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": ["flowTable"]
+            },
+            "flowTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/flow"
+                    },
+                    "columns": [
+                        {
+                            "key": "status",
+                            "label": "変化"
+                        },
+                        {
+                            "key": "flow",
+                            "label": "Flow"
+                        },
+                        {
+                            "key": "variable",
+                            "label": "変数"
+                        },
+                        {
+                            "key": "direction",
+                            "label": "入出力"
+                        },
+                        {
+                            "key": "dataType",
+                            "label": "型"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": true
+                },
+                "children": []
+            },
+            "summary": {
+                "type": "Narrative",
+                "props": {
+                    "title": "要約",
+                    "markdown": "（AI が書く要約の例）\n\n- `AccountService` の公開メソッド `loop` がなくなりました。呼び出している画面・Flow がないかを確かめてください。\n- `accountList` に `@api industry` と、イベント `accountsaved` が増えました。\n\n数値と一覧は、下の表（解析の結果）を見てください。"
+                },
+                "children": []
+            }
+        }
+    }
+}

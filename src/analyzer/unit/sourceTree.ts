@@ -9,7 +9,7 @@ import { readSource } from '../parser/commons';
 // パスはどれもリポジトリ (root) からの相対パスで、区切りは /。方針: docs/analysis-plan.md 2 章
 
 /** 探さないフォルダ */
-const IGNORED_DIRECTORIES = new Set(['node_modules', '.git', '.sfdx', '.sf']);
+const IGNORED_DIRECTORIES = new Set(['node_modules', '.git', '.sfdx', '.sf', '.sf-metascope']);
 
 export interface SourceTree {
     /** 木の根 (作業ツリーのルートの絶対パス。結果の filePath を作るのに使う) */
@@ -20,7 +20,15 @@ export interface SourceTree {
     listFiles(): Promise<string[]>;
     /** ファイルの中身 (改行は LF にそろえる)。なければ undefined */
     readFile(filePath: string): Promise<string | undefined>;
+    /**
+     * ファイルの大きさと更新時刻 (作業ツリーだけ)。UnitStore が、前回と同じなら読んで hash を取るのを省くのに使う
+     * (docs/save-format-plan.md の S5)。分からなければ undefined
+     */
+    statFile?(filePath: string): Promise<FileStat | undefined>;
 }
+
+/** ファイルの大きさ (バイト) と更新時刻 (ミリ秒) */
+export type FileStat = { size: number; mtimeMs: number };
 
 const toPosix = (p: string) => p.split(path.sep).join('/');
 
@@ -52,6 +60,13 @@ export class WorkingTree implements SourceTree {
 
     readFile(filePath: string): Promise<string | undefined> {
         return readSource(path.join(this.root, filePath)).catch(() => undefined);
+    }
+
+    statFile(filePath: string): Promise<FileStat | undefined> {
+        return fs.stat(path.join(this.root, filePath)).then(
+            (stat) => (stat.isFile() ? { size: stat.size, mtimeMs: stat.mtimeMs } : undefined),
+            () => undefined,
+        );
     }
 }
 

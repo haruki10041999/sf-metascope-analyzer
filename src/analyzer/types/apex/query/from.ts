@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import { JsonType } from '../../commons';
 import type { FromNameListTypeClass, FromNameTypeClass } from '../../apex_IR';
 
@@ -26,7 +24,6 @@ const makeFromFieldJson = (target: FromNameTypeClass): FromFieldJson => {
 export type FromJson = {
     field: FromFieldJson[];
 };
-export const isFromJson = typia.createIs<FromJson>();
 
 export const makeFromJson = (target: FromNameListTypeClass): FromJson => {
     return {

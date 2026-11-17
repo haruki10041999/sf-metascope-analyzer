@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { closeAllStoreBackends } from '../../src/analyzer/unit';
 import { after, before, describe, it } from 'node:test';
 
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -37,7 +38,10 @@ describe('MCP の依存関係のツール', () => {
         processor = await RepositoryProcessor.create(tmp, repositoryOf('after'));
         registerDependencyTools(server, processor);
     });
-    after(() => rm(tmp, { recursive: true, force: true }));
+    after(async () => {
+        closeAllStoreBackends();
+        await rm(tmp, { recursive: true, force: true });
+    });
 
     it('get_dependents: 項目を使っているもの', async () => {
         const result = await call(tools.get('get_dependents'), {
@@ -75,7 +79,13 @@ describe('MCP のレポートのデータのツール', () => {
             const { server, tools } = fakeServer();
             registerReportTools(server, processor);
             const providers = await call(tools.get('list_report_providers'));
-            assert.ok(providers.includes('crossRef.references'));
+            // 一覧は名前・分類・出力の形・説明 (登録表から作る)
+            assert.ok(
+                providers.some(
+                    (p: { name: string; shape: string }) =>
+                        p.name === 'crossRef.references' && p.shape === 'rows',
+                ),
+            );
             const rows = await call(tools.get('get_report_data'), {
                 provider: 'crossRef.references',
             });
@@ -86,6 +96,7 @@ describe('MCP のレポートのデータのツール', () => {
             const unknown = await call(tools.get('get_report_data'), { provider: 'nope' });
             assert.match(unknown.error, /Unknown provider/);
         } finally {
+            closeAllStoreBackends();
             await rm(tmp, { recursive: true, force: true });
         }
     });

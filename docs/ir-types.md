@@ -867,6 +867,8 @@ A: 4 件、B: 0 件、C: 1 件、D: 9 件、E: 4 件
 
 ### 後回しにしたもの（変更が多くのファイルに広がるため）
 
+決めたこと（2026-11-17 に決めた）: 単独ではやらない。その部分のコードを触るときに一緒に直す（どれもほかの作業を止めていないため）。
+
 - 関数の引数の rest を分ける（5.3 の「全体: 関数の params」）。
 - 識別子を、参照・束縛・引数の 3 つに分ける（5.3 の「全体: identifier・…」）。あわせて objectPattern の decorators・optional。
 - Flow と TS の型注釈をまとめる（classProperty・classAccessorProperty を除く）。class の TS・Flow のフィールドのまとまり、call・new の typeArguments、declare のクラスのデコレータもこれと一緒に扱う。

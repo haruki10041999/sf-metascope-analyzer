@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { closeAllStoreBackends } from '../../src/analyzer/unit';
 import { cp, mkdtemp, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -227,6 +228,7 @@ describe('MetadataProcessor', () => {
         tmp = await mkdtemp(path.join(os.tmpdir(), 'metadata-processor-'));
     });
     after(async () => {
+        closeAllStoreBackends();
         await rm(tmp, { recursive: true, force: true });
     });
 

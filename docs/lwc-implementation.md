@@ -2,9 +2,9 @@
 
 Lightning Web Components のバンドル（`force-app/main/default/lwc/<名前>/`）を読み、JSON にし、検証・解析し、前回との差分を取る実装の全体像。Apex・オブジェクトと同じ流れ（構文解析 → `kind` / `sourceKeys` 付き JSON → 解析 → Diff）で作っている。
 
-- JSON の型: [lwc-implementation.md](./lwc-implementation.md)
-- Diff の方針: [lwc-implementation.md](./lwc-implementation.md)
-- ライブラリが返す parse の結果（JSON にする前の形）: [lwc-implementation.md](./lwc-implementation.md)
+- JSON の型（JS / TS）: [lwc-json-types.md](./lwc-json-types.md)（今の形は 8 章）。IR のノードの一覧は [lwc-ir-types.md](./lwc-ir-types.md)
+- Diff: [processor/Lwc/diff/](../src/analyzer/processor/Lwc/diff/)。本体の文の Diff は [lwc-json-types.md](./lwc-json-types.md) 8.6、サンプルの結果は [examples/lwc/output/diff/summary.md](./examples/lwc/output/diff/summary.md)
+- ライブラリが返す parse の結果（JSON にする前の形）: [examples/lwc/output/library/attributes.md](./examples/lwc/output/library/attributes.md)
 - 画面モック（未実装の計画）: [lwc-snapshot-plan.md](./lwc-snapshot-plan.md)
 
 ## 1. 処理の流れ
@@ -20,7 +20,7 @@ parseLwcBundleFolder (bundle.ts。ファイルシステムに触らない)
    ├─ .css            postcss の木 → JSON (中間表現なし)         / @lwc/style-compiler で検証
    └─ 同じバンドルの中の突き合わせ (テンプレート × JS × js-meta.xml)
    ▼
-LwcBundleParseResult (1 バンドル = 1 解析結果 = 1 保存ファイル lwc_<名前>.msgpack)
+LwcBundleParseResult (1 バンドル = 1 解析結果 = 置き場の 1 単位)
    ├─ diff:     makeLwcBundleDiffs (processor/Lwc/diff)
    └─ analysis: analyzeLwcBundles  (processor/Lwc/analysis.ts。バンドルをまたぐ)
 ```
@@ -40,7 +40,7 @@ LwcBundleParseResult (1 バンドル = 1 解析結果 = 1 保存ファイル lwc
 
 ### 2.1 単位
 
-1 バンドル（`lwc/<名前>/`）= 1 つの解析結果 = 1 つの保存ファイル（`lwc_<名前>.msgpack`）。JS の `@api` と HTML の参照・CSS・js-meta.xml の公開設定がそろって 1 つのコンポーネントなので、解析・Diff・保存もバンドルを単位にする。バンドルのフォルダ自体が読めない・メインのモジュール（`<名前>.ts` / `.js`）がないときだけ、全体を `dataType: 'error'`（`result.base` は null）にする。理由は `resolvedError` の `BUNDLE_UNREADABLE` / `MAIN_MODULE_NOT_FOUND`（4 章）。
+1 バンドル（`lwc/<名前>/`）= 1 つの解析結果 = 置き場（SQLite）の 1 単位。JS の `@api` と HTML の参照・CSS・js-meta.xml の公開設定がそろって 1 つのコンポーネントなので、解析・Diff・保存もバンドルを単位にする。バンドルのフォルダ自体が読めない・メインのモジュール（`<名前>.ts` / `.js`）がないときだけ、全体を `dataType: 'error'`（`result.base` は null）にする。理由は `resolvedError` の `BUNDLE_UNREADABLE` / `MAIN_MODULE_NOT_FOUND`（4 章）。
 
 ### 2.2 読むファイル（[parser/Lwc/folder.ts](../src/analyzer/parser/Lwc/folder.ts)）
 
@@ -62,7 +62,7 @@ src/analyzer/
 ├── types/lwc/                  JSON の型と make*Json。IR のノードを直接読む。キーとソース位置は LwcJsonContext (commons.ts)
 ├── parser/Lwc/
 │   ├── parser.ts               LwcParser: searchBundleDirectories / parseLwcBundle / parseLwcBundles /
-│   │                           saveLwcBundle / readLwcMsgPack / readSavedBundles
+│   │                           (保存は UnitStore)
 │   ├── folder.ts               フォルダを 1 回読む
 │   ├── bundle.ts               バンドル 1 つの解析 (ファイルシステムに触らない)
 │   ├── module.ts  script.ts    JS / TS の parse・JSON への変換
@@ -74,7 +74,7 @@ src/analyzer/
 ├── processor/Lwc/
 │   ├── diff/                   バンドル・モジュール・コンポーネント・テンプレート・CSS・js-meta.xml の差分
 │   └── analysis.ts             バンドルをまたぐ解析
-└── worker/lwcWorker.ts         LwcWorker (1 バンドル = 1 タスク)
+└── worker/unitWorker.ts        UnitWorker (すべての単位の種類で共通。1 バンドル = 1 単位)
 ```
 
 JS / TS の流れは Apex と同じ（IR → JSON。JSON 層が IR のノードを直接読む）。違いは、キーとソース位置の作り方。LWC は JSON を作る段階で `LwcJsonContext.keysOf` が作る（sourceKey にファイルのパスを含める。バンドルの中の別のファイルの同じ位置と分けるため）。
@@ -136,13 +136,14 @@ JS / TS の流れは Apex と同じ（IR → JSON。JSON 層が IR のノード�
 
 ## 6. サンプルとテスト
 
-| 内容                           | 場所                                                                                                                                                                   |
-| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| サンプル・生成スクリプト・出力 | [examples/lwc/](./examples/lwc/)（[examples/README.md](./examples/README.md)）                                                                                         |
-| テスト                         | `test/parser/lwc-parser.test.ts`・`lwc-bundle-validate.test.ts`、`test/converter/lwc-*.test.ts`、`test/processor/lwc-diff.test.ts`・`lwc-analysis.test.ts`、`test/ir/` |
+| 内容                           | 場所                                                                                                                                                                                                 |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| サンプル・生成スクリプト・出力 | [examples/lwc/](./examples/lwc/)（[examples/README.md](./examples/README.md)）                                                                                                                       |
+| テスト                         | `test/parser/lwc-parser.test.ts`・`lwc-bundle-validate.test.ts`、`test/converter/lwc-*.test.ts`、`test/processor/lwc-diff.test.ts`・`lwc-analysis.test.ts`・`lwc-analysis-extra.test.ts`、`test/ir/` |
 
 ## 7. 未実装
 
 - **TS の型の名前の解決**（バンドルをまたぐ）。`lwcType` の `custom`（`Row` など）を、宣言したモジュール（`c/utils` の `Row`）に解決する。同じファイル → import → 組み込み・外部の順。ほかのバンドルの型は、保存する JSON に入れず解析の結果として持つ（`processor/Lwc/typeReferences.ts` の予定）。
-- JS の本体の文の構造化（今は呼び出し・イベント・文の数だけ）。制御構造まで見るなら、Apex の文のような JSON と GumTree が要る。
 - 型の推論（型注釈のない項目の型）。必要になったら TypeScript Compiler API（5 系）を足す。
+
+（2026-11-17 時点）ここにあった「JS の本体の文の構造化」は済んだ。文・式は型付きの JSON になり、本体は `block`（文の並び）を持つ。Diff は Apex の本体と同じ形（[lwc-json-types.md](./lwc-json-types.md) 8.6）。

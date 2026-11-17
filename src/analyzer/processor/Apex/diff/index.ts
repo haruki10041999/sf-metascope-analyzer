@@ -6,6 +6,6 @@ export * from './param';
 export * from './query';
 export * from './statement';
 export * from './type';
-export * from './typed';
+export * from '../../commons/diff/typed';
 export * from './unit';
 export * from './unitBody';

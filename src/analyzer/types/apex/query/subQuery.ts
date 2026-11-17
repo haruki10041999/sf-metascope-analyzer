@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import { JsonType } from '../../commons';
 import type { SubQueryTypeClass } from '../../apex_IR';
 
@@ -22,8 +20,6 @@ export type SubQueryJson = JsonType<'subQuery'> & {
     limit?: LimitJson;
     updateList?: UpdateListJson;
 };
-
-export const isSubQueryJson = typia.createIs<SubQueryJson>();
 
 export const makeSubQueryJson = (target: SubQueryTypeClass): SubQueryJson => {
     const query = target.getFields();

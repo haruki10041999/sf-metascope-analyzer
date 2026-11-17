@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import { JsonType } from '../../commons';
 import type {
     ComparisonOperatorTypeClass,
@@ -23,7 +21,6 @@ export type SignedNumberJson = {
     valueType: 'number' | 'integer';
     operator?: '+' | '-';
 };
-export const isSignedNumberJson = typia.createIs<SignedNumberJson>();
 
 // signedInteger (日付の関数の N) も同じ形 (value・valueType・operator) なので、どちらも受け取る
 export const makeSignedNumberJson = (
@@ -97,7 +94,6 @@ export type DateFormulaJson =
           argType: 'integer';
           argOperator?: '+' | '-';
       };
-export const isDateFormulaJson = typia.createIs<DateFormulaJson>();
 
 export const makeDateFormulaJson = (target: DateFormulaTypeClass): DateFormulaJson => {
     const fields = target.getFields();
@@ -144,8 +140,6 @@ export type ValueJson =
     | { type: 'subQuery'; value: SubQueryJson }
     | { type: 'list'; value: ValueJson[] }
     | { type: 'bind'; value: BaseExpressionJson };
-
-export const isValueJson = typia.createIs<ValueJson>();
 
 export const makeValueJson = (target: ValueTypeClass): ValueJson => {
     const fields = target.getFields();
@@ -221,8 +215,6 @@ export type SingleConditionJson = JsonType<'singleCondition'> & {
     value: ValueJson;
 };
 
-export const isSingleConditionJson = typia.createIs<SingleConditionJson>();
-
 export const makeSingleConditionJson = (target: FieldExpressionTypeClass): SingleConditionJson => {
     const { left, operator, right } = target.getFields();
     const operatorJson = makeComparisonOperatorJson(operator);
@@ -249,7 +241,12 @@ export type LogicalConditionJson = {
     operator?: 'AND' | 'OR' | 'NOT';
 };
 
-export const isLogicalConditionJson = typia.createIs<LogicalConditionJson>();
+/** LogicalConditionJson か (condition の並びと、AND・OR・NOT の operator) */
+export const isLogicalConditionJson = (value: unknown): value is LogicalConditionJson =>
+    typeof value === 'object' &&
+    value !== null &&
+    Array.isArray((value as { condition?: unknown }).condition) &&
+    [undefined, 'AND', 'OR', 'NOT'].includes((value as { operator?: unknown }).operator as string);
 
 export const makeLogicalConditionJson = (
     target: LogicalExpressionTypeClass,

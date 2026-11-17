@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import type {
     WhereClauseTypeClass,
     WhereFieldExpressionTypeClass,
@@ -65,8 +63,6 @@ export const makeWhereLogicalExpressionJson = (
 export type WhereJson = {
     condition: LogicalConditionJson;
 };
-
-export const isWhereJson = typia.createIs<WhereJson>();
 
 export const makeWhereJson = (target: WhereClauseTypeClass): WhereJson => {
     return {

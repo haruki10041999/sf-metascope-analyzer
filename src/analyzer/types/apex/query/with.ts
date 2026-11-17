@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import { JsonType } from '../../commons';
 import type {
     DataCategoryNameTypeClass,
@@ -30,8 +28,6 @@ export type DataCategorySelectionJson = JsonType<'categoryCondition'> & {
     category: string[];
 };
 
-export const isDataCategorySelectionJson = typia.createIs<DataCategorySelectionJson>();
-
 const makeDataCategorySelectionJson = (
     target: DataCategorySelectionTypeClass,
 ): DataCategorySelectionJson => {
@@ -49,8 +45,6 @@ export type WithJson =
       }
     | { mode: 'EXPRESSION'; condition: LogicalConditionJson }
     | { mode: 'DATA_CATEGORY'; selection: DataCategorySelectionJson[] };
-
-export const isWithJson = typia.createIs<WithJson>();
 
 const makeDataCategorySelectionListJson = (
     target: FilteringExpressionTypeClass,

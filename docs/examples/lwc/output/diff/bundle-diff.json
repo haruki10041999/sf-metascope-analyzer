@@ -1905,24 +1905,20 @@
                             },
                             "block": [
                               {
-                                "label": "jsIf",
-                                "role": "statement",
+                                "kind": "jsIf",
                                 "sourceKeys": {
-                                  "before": {
-                                    "objectKey": "ifStatement_f488357c0aeaff32",
-                                    "sourceKey": "ifStatement_1481d6fd5ba0d131"
-                                  },
-                                  "after": {
-                                    "objectKey": "ifStatement_f488357c0aeaff32",
-                                    "sourceKey": "ifStatement_7f59537bd47c9b02"
+                                  "objectKey": "ifStatement_f488357c0aeaff32",
+                                  "sourceKey": {
+                                    "before": "ifStatement_1481d6fd5ba0d131",
+                                    "after": "ifStatement_7f59537bd47c9b02"
                                   }
                                 },
+                                "status": "unchanged",
+                                "match": "identical",
                                 "index": {
                                   "before": 0,
                                   "after": 0
                                 },
-                                "status": "unchanged",
-                                "match": "identical",
                                 "value": {
                                   "conditionBlock": [
                                     {
@@ -2647,24 +2643,20 @@
                             },
                             "block": [
                               {
-                                "label": "jsLocalVariable",
-                                "role": "statement",
+                                "kind": "jsLocalVariable",
                                 "sourceKeys": {
-                                  "before": {
-                                    "objectKey": "variableDeclaration_4e6081574d55aa63",
-                                    "sourceKey": "variableDeclaration_6a2ea4688d057d45"
-                                  },
-                                  "after": {
-                                    "objectKey": "variableDeclaration_4e6081574d55aa63",
-                                    "sourceKey": "variableDeclaration_0749558d1be38c44"
+                                  "objectKey": "variableDeclaration_4e6081574d55aa63",
+                                  "sourceKey": {
+                                    "before": "variableDeclaration_6a2ea4688d057d45",
+                                    "after": "variableDeclaration_0749558d1be38c44"
                                   }
                                 },
+                                "status": "unchanged",
+                                "match": "identical",
                                 "index": {
                                   "before": 0,
                                   "after": 0
                                 },
-                                "status": "unchanged",
-                                "match": "identical",
                                 "value": {
                                   "variableKind": "const",
                                   "variants": [
@@ -2740,49 +2732,50 @@
                                 }
                               },
                               {
-                                "label": "jsExpression",
-                                "role": "statement",
+                                "kind": "jsExpression",
                                 "sourceKeys": {
-                                  "before": {
-                                    "objectKey": "expressionStatement_b4b78839b587d4de",
-                                    "sourceKey": "expressionStatement_674a68e609c79910"
+                                  "objectKey": {
+                                    "before": "expressionStatement_b4b78839b587d4de",
+                                    "after": "expressionStatement_75fa9cd3777e8d9d"
                                   },
-                                  "after": {
-                                    "objectKey": "expressionStatement_75fa9cd3777e8d9d",
-                                    "sourceKey": "expressionStatement_412308ee5c334ae9"
+                                  "sourceKey": {
+                                    "before": "expressionStatement_674a68e609c79910",
+                                    "after": "expressionStatement_412308ee5c334ae9"
                                   }
-                                },
-                                "index": {
-                                  "before": 1,
-                                  "after": 1
                                 },
                                 "status": "changed",
                                 "match": "similar",
-                                "fields": {},
-                                "children": [
-                                  {
-                                    "label": "jsMemberAccess:method",
-                                    "role": "value",
+                                "fields": {
+                                  "value": {
+                                    "kind": "jsMemberAccess",
                                     "sourceKeys": {
-                                      "before": {
-                                        "objectKey": "callExpression_b8413846710b4fda",
-                                        "sourceKey": "callExpression_f5e63aca8bde21b8"
+                                      "objectKey": {
+                                        "before": "callExpression_b8413846710b4fda",
+                                        "after": "callExpression_e055d765f312b507"
                                       },
-                                      "after": {
-                                        "objectKey": "callExpression_e055d765f312b507",
-                                        "sourceKey": "callExpression_23a259f8885dee47"
+                                      "sourceKey": {
+                                        "before": "callExpression_f5e63aca8bde21b8",
+                                        "after": "callExpression_23a259f8885dee47"
                                       }
                                     },
-                                    "index": {
-                                      "before": 0,
-                                      "after": 0
-                                    },
                                     "status": "changed",
-                                    "match": "similar",
+                                    "match": "slot",
                                     "fields": {
                                       "type": {
                                         "status": "unchanged",
                                         "value": "method"
+                                      },
+                                      "object": {
+                                        "kind": "jsThis",
+                                        "sourceKeys": {
+                                          "objectKey": "thisExpression_2087ea10f1caba18",
+                                          "sourceKey": {
+                                            "before": "thisExpression_73a6d1e9707e830f",
+                                            "after": "thisExpression_31c60a447b19717b"
+                                          }
+                                        },
+                                        "status": "unchanged",
+                                        "value": {}
                                       },
                                       "operator": {
                                         "status": "unchanged",
@@ -2791,370 +2784,277 @@
                                       "member": {
                                         "status": "unchanged",
                                         "value": "dispatchEvent"
-                                      }
-                                    },
-                                    "children": [
-                                      {
-                                        "label": "jsThis",
-                                        "role": "object",
-                                        "sourceKeys": {
-                                          "before": {
-                                            "objectKey": "thisExpression_2087ea10f1caba18",
-                                            "sourceKey": "thisExpression_73a6d1e9707e830f"
-                                          },
-                                          "after": {
-                                            "objectKey": "thisExpression_2087ea10f1caba18",
-                                            "sourceKey": "thisExpression_31c60a447b19717b"
-                                          }
-                                        },
-                                        "index": {
-                                          "before": 0,
-                                          "after": 0
-                                        },
-                                        "status": "unchanged",
-                                        "match": "identical",
-                                        "value": {}
                                       },
-                                      {
-                                        "label": "jsMemberAccess:method.memberArg",
-                                        "role": "memberArg",
-                                        "sourceKeys": {},
-                                        "index": {
-                                          "before": 1,
-                                          "after": 1
-                                        },
-                                        "status": "changed",
-                                        "match": "similar",
-                                        "fields": {},
-                                        "children": [
-                                          {
-                                            "label": "jsNew",
-                                            "role": "memberArg",
-                                            "sourceKeys": {
-                                              "before": {
-                                                "objectKey": "newExpression_d03a51e8572ecd0c",
-                                                "sourceKey": "newExpression_ff04e5a7f5bed1d0"
+                                      "memberArg": [
+                                        {
+                                          "kind": "jsNew",
+                                          "sourceKeys": {
+                                            "objectKey": {
+                                              "before": "newExpression_d03a51e8572ecd0c",
+                                              "after": "newExpression_633a51214e80d00f"
+                                            },
+                                            "sourceKey": {
+                                              "before": "newExpression_ff04e5a7f5bed1d0",
+                                              "after": "newExpression_8e941efa0210a06d"
+                                            }
+                                          },
+                                          "status": "changed",
+                                          "match": "slot",
+                                          "fields": {
+                                            "callee": {
+                                              "kind": "jsIdentifier",
+                                              "sourceKeys": {
+                                                "objectKey": "identifier_ebd1646a493fdb4f",
+                                                "sourceKey": {
+                                                  "before": "identifier_8375a52da5889642",
+                                                  "after": "identifier_f3399758f2d31e0a"
+                                                }
                                               },
-                                              "after": {
-                                                "objectKey": "newExpression_633a51214e80d00f",
-                                                "sourceKey": "newExpression_8e941efa0210a06d"
+                                              "status": "unchanged",
+                                              "value": {
+                                                "name": "CustomEvent"
                                               }
                                             },
-                                            "index": {
-                                              "before": 0,
-                                              "after": 0
-                                            },
-                                            "status": "changed",
-                                            "match": "similar",
-                                            "fields": {},
-                                            "children": [
+                                            "arg": [
                                               {
-                                                "label": "jsIdentifier",
-                                                "role": "callee",
+                                                "kind": "jsString",
                                                 "sourceKeys": {
-                                                  "before": {
-                                                    "objectKey": "identifier_ebd1646a493fdb4f",
-                                                    "sourceKey": "identifier_8375a52da5889642"
-                                                  },
-                                                  "after": {
-                                                    "objectKey": "identifier_ebd1646a493fdb4f",
-                                                    "sourceKey": "identifier_f3399758f2d31e0a"
+                                                  "objectKey": "stringLiteral_cae37141d4b25769",
+                                                  "sourceKey": {
+                                                    "before": "stringLiteral_9da9de270054fe80",
+                                                    "after": "stringLiteral_d2fed49a7ea9831b"
                                                   }
                                                 },
+                                                "status": "unchanged",
+                                                "match": "identical",
                                                 "index": {
                                                   "before": 0,
                                                   "after": 0
                                                 },
-                                                "status": "unchanged",
-                                                "match": "identical",
                                                 "value": {
-                                                  "name": "CustomEvent"
+                                                  "value": "accountselect"
                                                 }
                                               },
                                               {
-                                                "label": "jsNew.arg",
-                                                "role": "arg",
-                                                "sourceKeys": {},
+                                                "kind": "jsObject",
+                                                "sourceKeys": {
+                                                  "objectKey": {
+                                                    "before": "objectExpression_7c1c112e7832b861",
+                                                    "after": "objectExpression_26eee1f91378eec4"
+                                                  },
+                                                  "sourceKey": {
+                                                    "before": "objectExpression_03e1a027240c21cf",
+                                                    "after": "objectExpression_08df6cac4f1d17f4"
+                                                  }
+                                                },
+                                                "status": "changed",
+                                                "match": "slot",
+                                                "fields": {
+                                                  "properties": [
+                                                    {
+                                                      "kind": "jsProperty",
+                                                      "sourceKeys": {
+                                                        "objectKey": "objectProperty_3f5368116151e1fc",
+                                                        "sourceKey": {
+                                                          "before": "objectProperty_40cd4ca329965dae",
+                                                          "after": "objectProperty_9925bb6bfd3c7d8c"
+                                                        }
+                                                      },
+                                                      "status": "unchanged",
+                                                      "match": "identical",
+                                                      "index": {
+                                                        "before": 0,
+                                                        "after": 0
+                                                      },
+                                                      "value": {
+                                                        "key": "detail",
+                                                        "value": {
+                                                          "kind": "jsObject",
+                                                          "sourceKeys": {
+                                                            "objectKey": "objectExpression_6fbbeba162b14062",
+                                                            "sourceKey": "objectExpression_a2a95768d1621200"
+                                                          },
+                                                          "properties": [
+                                                            {
+                                                              "kind": "jsProperty",
+                                                              "sourceKeys": {
+                                                                "objectKey": "objectProperty_ef10f620a94bfea0",
+                                                                "sourceKey": "objectProperty_abe03c8701e2616e"
+                                                              },
+                                                              "key": "recordId",
+                                                              "value": {
+                                                                "kind": "jsIdentifier",
+                                                                "sourceKeys": {
+                                                                  "objectKey": "identifier_897ce2f14578ffd5",
+                                                                  "sourceKey": "identifier_abe03c8701e2616e"
+                                                                },
+                                                                "name": "recordId"
+                                                              },
+                                                              "shorthand": true
+                                                            },
+                                                            {
+                                                              "kind": "jsProperty",
+                                                              "sourceKeys": {
+                                                                "objectKey": "objectProperty_c4f3b6c33fd7281f",
+                                                                "sourceKey": "objectProperty_ae62f0e390cd7b31"
+                                                              },
+                                                              "key": "index",
+                                                              "value": {
+                                                                "kind": "jsIdentifier",
+                                                                "sourceKeys": {
+                                                                  "objectKey": "identifier_db1b31b8ffe274e8",
+                                                                  "sourceKey": "identifier_ae62f0e390cd7b31"
+                                                                },
+                                                                "name": "index"
+                                                              },
+                                                              "shorthand": true
+                                                            }
+                                                          ]
+                                                        },
+                                                        "shorthand": false
+                                                      }
+                                                    },
+                                                    {
+                                                      "kind": "jsProperty",
+                                                      "sourceKeys": {
+                                                        "objectKey": "objectProperty_f6ff17bc238613cf",
+                                                        "sourceKey": {
+                                                          "before": "objectProperty_690cf81be55267d4",
+                                                          "after": "objectProperty_d60829e199074516"
+                                                        }
+                                                      },
+                                                      "status": "unchanged",
+                                                      "match": "identical",
+                                                      "index": {
+                                                        "before": 1,
+                                                        "after": 1
+                                                      },
+                                                      "value": {
+                                                        "key": "bubbles",
+                                                        "value": {
+                                                          "kind": "jsBoolean",
+                                                          "sourceKeys": {
+                                                            "objectKey": "booleanLiteral_b9193c8a2cfa62c0",
+                                                            "sourceKey": "booleanLiteral_c970cf0d36861f13"
+                                                          },
+                                                          "value": true
+                                                        },
+                                                        "shorthand": false
+                                                      }
+                                                    },
+                                                    {
+                                                      "kind": "jsProperty",
+                                                      "sourceKeys": {
+                                                        "objectKey": {
+                                                          "before": "objectProperty_4c5a1dfabf8426bc",
+                                                          "after": "objectProperty_ba6199ff6b6f2d5e"
+                                                        },
+                                                        "sourceKey": {
+                                                          "before": "objectProperty_02ac6ea7f8b7404c",
+                                                          "after": "objectProperty_78ab1363ccdba468"
+                                                        }
+                                                      },
+                                                      "status": "changed",
+                                                      "match": "slot",
+                                                      "fields": {
+                                                        "key": {
+                                                          "status": "unchanged",
+                                                          "value": "composed"
+                                                        },
+                                                        "value": {
+                                                          "kind": "jsBoolean",
+                                                          "sourceKeys": {
+                                                            "objectKey": {
+                                                              "before": "booleanLiteral_3ea30650cfa0dcd9",
+                                                              "after": "booleanLiteral_b9193c8a2cfa62c0"
+                                                            },
+                                                            "sourceKey": {
+                                                              "before": "booleanLiteral_745889c019367517",
+                                                              "after": "booleanLiteral_9749e8cce81055cb"
+                                                            }
+                                                          },
+                                                          "status": "changed",
+                                                          "match": "slot",
+                                                          "fields": {
+                                                            "value": {
+                                                              "status": "changed",
+                                                              "before": false,
+                                                              "after": true
+                                                            }
+                                                          }
+                                                        },
+                                                        "shorthand": {
+                                                          "status": "unchanged",
+                                                          "value": false
+                                                        }
+                                                      },
+                                                      "index": {
+                                                        "before": 2,
+                                                        "after": 2
+                                                      }
+                                                    }
+                                                  ]
+                                                },
                                                 "index": {
                                                   "before": 1,
                                                   "after": 1
-                                                },
-                                                "status": "changed",
-                                                "match": "similar",
-                                                "fields": {},
-                                                "children": [
-                                                  {
-                                                    "label": "jsString",
-                                                    "role": "arg",
-                                                    "sourceKeys": {
-                                                      "before": {
-                                                        "objectKey": "stringLiteral_cae37141d4b25769",
-                                                        "sourceKey": "stringLiteral_9da9de270054fe80"
-                                                      },
-                                                      "after": {
-                                                        "objectKey": "stringLiteral_cae37141d4b25769",
-                                                        "sourceKey": "stringLiteral_d2fed49a7ea9831b"
-                                                      }
-                                                    },
-                                                    "index": {
-                                                      "before": 0,
-                                                      "after": 0
-                                                    },
-                                                    "status": "unchanged",
-                                                    "match": "identical",
-                                                    "value": {
-                                                      "value": "accountselect"
-                                                    }
-                                                  },
-                                                  {
-                                                    "label": "jsObject",
-                                                    "role": "arg",
-                                                    "sourceKeys": {
-                                                      "before": {
-                                                        "objectKey": "objectExpression_7c1c112e7832b861",
-                                                        "sourceKey": "objectExpression_03e1a027240c21cf"
-                                                      },
-                                                      "after": {
-                                                        "objectKey": "objectExpression_26eee1f91378eec4",
-                                                        "sourceKey": "objectExpression_08df6cac4f1d17f4"
-                                                      }
-                                                    },
-                                                    "index": {
-                                                      "before": 1,
-                                                      "after": 1
-                                                    },
-                                                    "status": "changed",
-                                                    "match": "similar",
-                                                    "fields": {},
-                                                    "children": [
-                                                      {
-                                                        "label": "jsObject.properties",
-                                                        "role": "properties",
-                                                        "sourceKeys": {},
-                                                        "index": {
-                                                          "before": 0,
-                                                          "after": 0
-                                                        },
-                                                        "status": "changed",
-                                                        "match": "similar",
-                                                        "fields": {},
-                                                        "children": [
-                                                          {
-                                                            "label": "jsProperty",
-                                                            "role": "properties",
-                                                            "sourceKeys": {
-                                                              "before": {
-                                                                "objectKey": "objectProperty_3f5368116151e1fc",
-                                                                "sourceKey": "objectProperty_40cd4ca329965dae"
-                                                              },
-                                                              "after": {
-                                                                "objectKey": "objectProperty_3f5368116151e1fc",
-                                                                "sourceKey": "objectProperty_9925bb6bfd3c7d8c"
-                                                              }
-                                                            },
-                                                            "index": {
-                                                              "before": 0,
-                                                              "after": 0
-                                                            },
-                                                            "status": "unchanged",
-                                                            "match": "identical",
-                                                            "value": {
-                                                              "key": "detail",
-                                                              "value": {
-                                                                "kind": "jsObject",
-                                                                "sourceKeys": {
-                                                                  "objectKey": "objectExpression_6fbbeba162b14062",
-                                                                  "sourceKey": "objectExpression_a2a95768d1621200"
-                                                                },
-                                                                "properties": [
-                                                                  {
-                                                                    "kind": "jsProperty",
-                                                                    "sourceKeys": {
-                                                                      "objectKey": "objectProperty_ef10f620a94bfea0",
-                                                                      "sourceKey": "objectProperty_abe03c8701e2616e"
-                                                                    },
-                                                                    "key": "recordId",
-                                                                    "value": {
-                                                                      "kind": "jsIdentifier",
-                                                                      "sourceKeys": {
-                                                                        "objectKey": "identifier_897ce2f14578ffd5",
-                                                                        "sourceKey": "identifier_abe03c8701e2616e"
-                                                                      },
-                                                                      "name": "recordId"
-                                                                    },
-                                                                    "shorthand": true
-                                                                  },
-                                                                  {
-                                                                    "kind": "jsProperty",
-                                                                    "sourceKeys": {
-                                                                      "objectKey": "objectProperty_c4f3b6c33fd7281f",
-                                                                      "sourceKey": "objectProperty_ae62f0e390cd7b31"
-                                                                    },
-                                                                    "key": "index",
-                                                                    "value": {
-                                                                      "kind": "jsIdentifier",
-                                                                      "sourceKeys": {
-                                                                        "objectKey": "identifier_db1b31b8ffe274e8",
-                                                                        "sourceKey": "identifier_ae62f0e390cd7b31"
-                                                                      },
-                                                                      "name": "index"
-                                                                    },
-                                                                    "shorthand": true
-                                                                  }
-                                                                ]
-                                                              },
-                                                              "shorthand": false
-                                                            }
-                                                          },
-                                                          {
-                                                            "label": "jsProperty",
-                                                            "role": "properties",
-                                                            "sourceKeys": {
-                                                              "before": {
-                                                                "objectKey": "objectProperty_f6ff17bc238613cf",
-                                                                "sourceKey": "objectProperty_690cf81be55267d4"
-                                                              },
-                                                              "after": {
-                                                                "objectKey": "objectProperty_f6ff17bc238613cf",
-                                                                "sourceKey": "objectProperty_d60829e199074516"
-                                                              }
-                                                            },
-                                                            "index": {
-                                                              "before": 1,
-                                                              "after": 1
-                                                            },
-                                                            "status": "unchanged",
-                                                            "match": "identical",
-                                                            "value": {
-                                                              "key": "bubbles",
-                                                              "value": {
-                                                                "kind": "jsBoolean",
-                                                                "sourceKeys": {
-                                                                  "objectKey": "booleanLiteral_b9193c8a2cfa62c0",
-                                                                  "sourceKey": "booleanLiteral_c970cf0d36861f13"
-                                                                },
-                                                                "value": true
-                                                              },
-                                                              "shorthand": false
-                                                            }
-                                                          },
-                                                          {
-                                                            "label": "jsProperty",
-                                                            "role": "properties",
-                                                            "sourceKeys": {
-                                                              "before": {
-                                                                "objectKey": "objectProperty_4c5a1dfabf8426bc",
-                                                                "sourceKey": "objectProperty_02ac6ea7f8b7404c"
-                                                              },
-                                                              "after": {
-                                                                "objectKey": "objectProperty_ba6199ff6b6f2d5e",
-                                                                "sourceKey": "objectProperty_78ab1363ccdba468"
-                                                              }
-                                                            },
-                                                            "index": {
-                                                              "before": 2,
-                                                              "after": 2
-                                                            },
-                                                            "status": "changed",
-                                                            "match": "recovery",
-                                                            "fields": {
-                                                              "key": {
-                                                                "status": "unchanged",
-                                                                "value": "composed"
-                                                              },
-                                                              "shorthand": {
-                                                                "status": "unchanged",
-                                                                "value": false
-                                                              }
-                                                            },
-                                                            "children": [
-                                                              {
-                                                                "label": "jsBoolean",
-                                                                "role": "value",
-                                                                "sourceKeys": {
-                                                                  "before": {
-                                                                    "objectKey": "booleanLiteral_3ea30650cfa0dcd9",
-                                                                    "sourceKey": "booleanLiteral_745889c019367517"
-                                                                  },
-                                                                  "after": {
-                                                                    "objectKey": "booleanLiteral_b9193c8a2cfa62c0",
-                                                                    "sourceKey": "booleanLiteral_9749e8cce81055cb"
-                                                                  }
-                                                                },
-                                                                "index": {
-                                                                  "before": 0,
-                                                                  "after": 0
-                                                                },
-                                                                "status": "changed",
-                                                                "match": "recovery",
-                                                                "fields": {
-                                                                  "value": {
-                                                                    "status": "changed",
-                                                                    "before": false,
-                                                                    "after": true
-                                                                  }
-                                                                },
-                                                                "children": []
-                                                              }
-                                                            ]
-                                                          }
-                                                        ]
-                                                      }
-                                                    ]
-                                                  }
-                                                ]
-                                              },
+                                                }
+                                              }
+                                            ],
+                                            "typeArguments": [
                                               {
-                                                "label": "jsNew.typeArguments",
-                                                "role": "typeArguments",
-                                                "sourceKeys": {},
-                                                "index": {
-                                                  "before": 2,
-                                                  "after": 2
+                                                "kind": "lwcType",
+                                                "sourceKeys": {
+                                                  "objectKey": "tSTypeReference_dc3f59726576c2d5",
+                                                  "sourceKey": {
+                                                    "before": "tSTypeReference_d7721a72a55c23d3",
+                                                    "after": "tSTypeReference_ac5316761699a629"
+                                                  }
                                                 },
                                                 "status": "unchanged",
                                                 "match": "identical",
-                                                "value": [
-                                                  {
-                                                    "kind": "lwcType",
-                                                    "sourceKeys": {
-                                                      "objectKey": "tSTypeReference_dc3f59726576c2d5",
-                                                      "sourceKey": "tSTypeReference_ac5316761699a629"
-                                                    },
-                                                    "type": "custom",
-                                                    "customType": [
-                                                      "SelectDetail"
-                                                    ]
-                                                  }
-                                                ]
+                                                "index": {
+                                                  "before": 0,
+                                                  "after": 0
+                                                },
+                                                "value": {
+                                                  "type": "custom",
+                                                  "customType": [
+                                                    "SelectDetail"
+                                                  ]
+                                                }
                                               }
                                             ]
+                                          },
+                                          "index": {
+                                            "before": 0,
+                                            "after": 0
                                           }
-                                        ]
-                                      }
-                                    ]
-                                  }
-                                ]
-                              },
-                              {
-                                "label": "jsExpression",
-                                "role": "statement",
-                                "sourceKeys": {
-                                  "before": {
-                                    "objectKey": "expressionStatement_f71c2703bc5df2d1",
-                                    "sourceKey": "expressionStatement_e968edb828ff7706"
-                                  },
-                                  "after": {
-                                    "objectKey": "expressionStatement_f71c2703bc5df2d1",
-                                    "sourceKey": "expressionStatement_bd45a7898bb2e282"
+                                        }
+                                      ]
+                                    }
                                   }
                                 },
+                                "index": {
+                                  "before": 1,
+                                  "after": 1
+                                }
+                              },
+                              {
+                                "kind": "jsExpression",
+                                "sourceKeys": {
+                                  "objectKey": "expressionStatement_f71c2703bc5df2d1",
+                                  "sourceKey": {
+                                    "before": "expressionStatement_e968edb828ff7706",
+                                    "after": "expressionStatement_bd45a7898bb2e282"
+                                  }
+                                },
+                                "status": "unchanged",
+                                "match": "identical",
                                 "index": {
                                   "before": 2,
                                   "after": 2
                                 },
-                                "status": "unchanged",
-                                "match": "identical",
                                 "value": {
                                   "value": {
                                     "kind": "jsMemberAccess",
@@ -8724,74 +8624,59 @@
                         },
                         "block": [
                           {
-                            "label": "jsReturn",
-                            "role": "statement",
+                            "kind": "jsReturn",
                             "sourceKeys": {
-                              "before": {
-                                "objectKey": "returnStatement_44ad590b8cd6fccc",
-                                "sourceKey": "returnStatement_c1bd467e6de3ec47"
+                              "objectKey": {
+                                "before": "returnStatement_44ad590b8cd6fccc",
+                                "after": "returnStatement_2eaebb9884ddd2f4"
                               },
-                              "after": {
-                                "objectKey": "returnStatement_2eaebb9884ddd2f4",
-                                "sourceKey": "returnStatement_5b315c4c48dd1ec6"
+                              "sourceKey": {
+                                "before": "returnStatement_c1bd467e6de3ec47",
+                                "after": "returnStatement_5b315c4c48dd1ec6"
                               }
-                            },
-                            "index": {
-                              "before": 0,
-                              "after": 0
                             },
                             "status": "changed",
                             "match": "similar",
-                            "fields": {},
-                            "children": [
-                              {
-                                "label": "jsMemberAccess:method",
-                                "role": "field",
+                            "fields": {
+                              "field": {
+                                "kind": "jsMemberAccess",
                                 "sourceKeys": {
-                                  "before": {
-                                    "objectKey": "callExpression_aedd2c039ca5ae07",
-                                    "sourceKey": "callExpression_0c9cdd446c77197a"
+                                  "objectKey": {
+                                    "before": "callExpression_aedd2c039ca5ae07",
+                                    "after": "callExpression_30abd581e29ef4a7"
                                   },
-                                  "after": {
-                                    "objectKey": "callExpression_30abd581e29ef4a7",
-                                    "sourceKey": "callExpression_b01a1712cc8c2191"
+                                  "sourceKey": {
+                                    "before": "callExpression_0c9cdd446c77197a",
+                                    "after": "callExpression_b01a1712cc8c2191"
                                   }
                                 },
-                                "index": {
-                                  "before": 0,
-                                  "after": 0
-                                },
                                 "status": "changed",
-                                "match": "similar",
+                                "match": "slot",
                                 "fields": {
                                   "type": {
                                     "status": "unchanged",
                                     "value": "method"
                                   },
-                                  "operator": {
-                                    "status": "unchanged",
-                                    "value": "."
-                                  },
-                                  "member": {
-                                    "status": "unchanged",
-                                    "value": "map"
-                                  }
-                                },
-                                "children": [
-                                  {
-                                    "label": "jsMemberAccess:method",
-                                    "role": "object",
+                                  "object": {
+                                    "kind": {
+                                      "before": "jsIdentifier",
+                                      "after": "jsMemberAccess"
+                                    },
                                     "sourceKeys": {
-                                      "after": {
-                                        "objectKey": "callExpression_b74b574b4c4c552a",
-                                        "sourceKey": "callExpression_9ce949ff9d0ebb6b"
+                                      "objectKey": {
+                                        "before": "identifier_59e0c4ed82a57ced",
+                                        "after": "callExpression_b74b574b4c4c552a"
+                                      },
+                                      "sourceKey": {
+                                        "before": "identifier_1df12912443e578f",
+                                        "after": "callExpression_9ce949ff9d0ebb6b"
                                       }
                                     },
-                                    "index": {
-                                      "after": 0
+                                    "status": "changed",
+                                    "before": {
+                                      "name": "records"
                                     },
-                                    "status": "added",
-                                    "value": {
+                                    "after": {
                                       "type": "method",
                                       "object": {
                                         "kind": "jsIdentifier",
@@ -8821,85 +8706,33 @@
                                           "name": "limit"
                                         }
                                       ]
-                                    },
-                                    "children": [
-                                      {
-                                        "label": "jsIdentifier",
-                                        "role": "object",
-                                        "sourceKeys": {
-                                          "before": {
-                                            "objectKey": "identifier_59e0c4ed82a57ced",
-                                            "sourceKey": "identifier_1df12912443e578f"
-                                          },
-                                          "after": {
-                                            "objectKey": "identifier_59e0c4ed82a57ced",
-                                            "sourceKey": "identifier_bd71531d82755454"
-                                          }
-                                        },
-                                        "index": {
-                                          "before": 0,
-                                          "after": 0
-                                        },
-                                        "status": "moved",
-                                        "match": "identical",
-                                        "value": {
-                                          "name": "records"
-                                        },
-                                        "from": {
-                                          "parent": "jsMemberAccess:method",
-                                          "index": 0,
-                                          "parentSourceKeys": {
-                                            "objectKey": "callExpression_aedd2c039ca5ae07",
-                                            "sourceKey": "callExpression_0c9cdd446c77197a"
-                                          }
+                                    }
+                                  },
+                                  "operator": {
+                                    "status": "unchanged",
+                                    "value": "."
+                                  },
+                                  "member": {
+                                    "status": "unchanged",
+                                    "value": "map"
+                                  },
+                                  "memberArg": [
+                                    {
+                                      "kind": "jsFunction",
+                                      "sourceKeys": {
+                                        "objectKey": "arrowFunctionExpression_ea3fe3537b5fffda",
+                                        "sourceKey": {
+                                          "before": "arrowFunctionExpression_774e3b414675bee4",
+                                          "after": "arrowFunctionExpression_11a5259c69d4b045"
                                         }
                                       },
-                                      {
-                                        "label": "jsMemberAccess:method.memberArg",
-                                        "role": "memberArg",
-                                        "sourceKeys": {},
-                                        "index": {
-                                          "after": 1
-                                        },
-                                        "status": "added",
-                                        "value": [
-                                          {
-                                            "kind": "jsNumber",
-                                            "sourceKeys": {
-                                              "objectKey": "numericLiteral_1805d5adfdf5af47",
-                                              "sourceKey": "numericLiteral_e2283d9bda626b92"
-                                            },
-                                            "value": 0
-                                          },
-                                          {
-                                            "kind": "jsIdentifier",
-                                            "sourceKeys": {
-                                              "objectKey": "identifier_72ca79155052f573",
-                                              "sourceKey": "identifier_52ed08b30ba8986f"
-                                            },
-                                            "name": "limit"
-                                          }
-                                        ]
-                                      }
-                                    ]
-                                  },
-                                  {
-                                    "label": "jsMemberAccess:method.memberArg",
-                                    "role": "memberArg",
-                                    "sourceKeys": {},
-                                    "index": {
-                                      "before": 1,
-                                      "after": 1
-                                    },
-                                    "status": "unchanged",
-                                    "match": "identical",
-                                    "value": [
-                                      {
-                                        "kind": "jsFunction",
-                                        "sourceKeys": {
-                                          "objectKey": "arrowFunctionExpression_ea3fe3537b5fffda",
-                                          "sourceKey": "arrowFunctionExpression_11a5259c69d4b045"
-                                        },
+                                      "status": "unchanged",
+                                      "match": "identical",
+                                      "index": {
+                                        "before": 0,
+                                        "after": 0
+                                      },
+                                      "value": {
                                         "arrow": true,
                                         "async": false,
                                         "generator": false,
@@ -8943,11 +8776,15 @@
                                           }
                                         }
                                       }
-                                    ]
-                                  }
-                                ]
+                                    }
+                                  ]
+                                }
                               }
-                            ]
+                            },
+                            "index": {
+                              "before": 0,
+                              "after": 0
+                            }
                           }
                         ]
                       },

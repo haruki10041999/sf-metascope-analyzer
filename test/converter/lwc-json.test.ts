@@ -528,16 +528,4 @@ export default class Hello extends LightningElement {
             );
         });
     });
-
-    it('msgpack に保存して読み戻せる', async () => {
-        const bundle = await parseBundle('accountRow');
-        const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'lwc-save-'));
-        try {
-            await writeSaveDataInfo(LwcParser.saveLwcBundle(dir, bundle));
-            const read = await LwcParser.readLwcMsgPack(dir, 'lwc_accountRow');
-            assert.deepEqual(read, JSON.parse(JSON.stringify(bundle)));
-        } finally {
-            await fs.rm(dir, { recursive: true, force: true });
-        }
-    });
 });

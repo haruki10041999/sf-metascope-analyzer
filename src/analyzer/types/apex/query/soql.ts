@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import { JsonType } from '../../commons';
 import type { QueryTypeClass } from '../../apex_IR';
 
@@ -32,8 +30,6 @@ export type SoqlJson = JsonType<'soql'> & {
     allRows?: AllRowsJson;
     updateList?: UpdateListJson;
 };
-
-export const isSoqlJson = typia.createIs<SoqlJson>();
 
 export const makeSoqlJson = (target: QueryTypeClass): SoqlJson => {
     const query = target.getFields();

@@ -155,7 +155,7 @@ Apex の JSON は構文の木をそのまま持つので、多くは「JSON に�
 
 ### 4.3 オブジェクト
 
-- `customSettingsType`、プラットフォームイベントの `eventType`・`publishBehavior` は読まない（2.1）。ほかに `OBJECT_SCHEMA` にない要素は `skippedElements` に残るので、サンプルのリポジトリで洗い出せる（[todo.md](./todo.md) 6 章にある）。
+- `customSettingsType`、プラットフォームイベントの `eventType`・`publishBehavior` は読まない（2.1）。ほかに `OBJECT_SCHEMA` にない要素は `skippedElements` に残るので、サンプルのリポジトリで洗い出せる（[todo.md](./todo.md) 5 章にある）。
 - 参照にしていないもの（[units.ts](../src/analyzer/processor/dependency/units.ts#L74-L217)）: `actionOverrides` の `content`（Visualforce・FlexiPage・LWC）、`searchLayouts` の項目・ボタン、`webLinks` の URL・数式の中の項目、レコードタイプの選択リストの値。
 - 項目の型（`type`）・`referenceTo`・`formula` などは JSON にある（[field.ts](../src/analyzer/types/metadata/field.ts#L37-L67)）。参照の確かめに足りないものは見つからなかった。
 - オブジェクトの翻訳は定義・参照を作らない（[units.ts](../src/analyzer/processor/dependency/units.ts#L611-L612)）。組織全体の翻訳（`translations`）は参照を作る。

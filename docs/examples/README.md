@@ -40,5 +40,5 @@ npx ttsx --noCheck docs/examples/metadata/scripts/run-folders.ts
 ```
 
 - テストはサンプルのリポジトリと Diff のスクリプト（各 `scripts/run-diff.ts` の `runDiff`）を使う。生成物には依存しない。
-- 変換のテスト（`test/converter`・`test/lwc_IR` など）は、1 つの時点だけを使う（LWC は `before`、Apex の構文のサンプルは `after`。構文のサンプルは before / after で同じ中身）。
-- 解析の途中の段階（IR・converter の出力）は生成物として持たない。
+- JSON への変換のテスト（`test/converter/`）と IR のエラーのテスト（`test/ir/errors.test.ts`）は、1 つの時点だけを使う（LWC は `before`、Apex の構文のサンプルは `after`。構文のサンプルは before / after で同じ中身）。ゴールデン（`test/ir/golden.test.ts`）は before / after の Apex と LWC の JS / TS をすべて使う。
+- 解析の途中の段階（IR）は生成物として持たない。

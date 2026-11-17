@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import { JsonType } from '../commons';
 import type { AnnotationTypeClass, ElementValueTypeClass, ModifierTypeClass } from '../apex_IR';
 
@@ -22,8 +20,6 @@ export type AnnotationJson = JsonType<'annotation'> & {
     arg?: AnnotationArgJson[];
 };
 
-export const isAnnotationJson = typia.createIs<AnnotationJson>();
-
 export type ModifierJson = JsonType<'modifier'> & {
     name:
         | 'GLOBAL'
@@ -43,8 +39,6 @@ export type ModifierJson = JsonType<'modifier'> & {
         | 'INHERITED_SHARING';
 };
 
-export const isModifierJson = typia.createIs<ModifierJson>();
-
 /**
  * 修飾子 (キーワード) とアノテーション (それぞれ書いた順)。どちらもなければ持たない。
  * 分類 (access・testAnnotation など) は名前で決まる派生の情報なので持たない
@@ -54,8 +48,6 @@ export type ModifiersJson = {
     keyword?: ModifierJson[];
     annotation?: AnnotationJson[];
 };
-
-export const isModifiersJson = typia.createIs<ModifiersJson>();
 
 const makeAnnotationArgJson = (target: ElementValueTypeClass, key?: string): AnnotationArgJson => ({
     ...(key !== undefined ? { key: key } : {}),

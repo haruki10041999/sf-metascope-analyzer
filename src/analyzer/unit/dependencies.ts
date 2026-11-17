@@ -16,6 +16,21 @@ import type { Repository } from './repository';
  */
 const unitDependencies = new WeakMap<object, UnitDependencies>();
 
+/**
+ * 派生の情報 (単位ごとの定義・参照の取り出し方。processor/dependency/units.ts・apex.ts) の版
+ * (docs/save-format-plan.md の S4)。解析結果の版 (UNIT_FORMAT_VERSIONS) と分ける。
+ * JSON は変えずに取り出す参照を変えたとき (走査・取り出しの追加・直し) はこれだけを上げる。
+ * 上げると、保存した定義・参照 (UnitStore の derived) を捨てて、保存した解析結果から作り直す (parse はやり直さない)。
+ * 版の履歴:
+ * - 1: 定義・参照を保存するようにした (2026-11-17)
+ */
+export const DERIVED_VERSION = 1;
+
+/** 保存した定義・参照を、解析結果に使う (UnitStore が、版の合う保存したものを読んだとき) */
+export const primeUnitDependencies = (result: object, dependencies: UnitDependencies): void => {
+    unitDependencies.set(result, dependencies);
+};
+
 /** 単位 1 つの定義・参照 (同じ解析結果には、作ったものを使い回す) */
 export const unitDependenciesOf = (type: string, result: object): UnitDependencies => {
     let dependencies = unitDependencies.get(result);

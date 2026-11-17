@@ -165,20 +165,6 @@ describe('Repository (単位の種類の一覧から読む)', () => {
             await rm(tmp, { recursive: true, force: true });
         });
 
-        it('saves every unit and reads them back', async () => {
-            const root = repositoryOf('before');
-            const repository = await Repository.load(new WorkingTree(root));
-            await repository.save(tmp);
-            const saved = await Repository.loadSaved(root, tmp);
-            for (const unitType of UNIT_TYPES) {
-                assert.deepEqual(
-                    saved.get(unitType.type).map((r) => r.result.id),
-                    repository.get(unitType.type).map((r) => r.result.id),
-                    unitType.type,
-                );
-            }
-        });
-
         it('reparses only the changed units', async () => {
             const beforeRepo = await Repository.load(new WorkingTree(repositoryOf('before')));
             const afterTree = new WorkingTree(repositoryOf('after'));
@@ -195,18 +181,23 @@ describe('Repository (単位の種類の一覧から読む)', () => {
             assert.ok(REPOSITORY);
         });
 
-        it('parses and saves every unit with one worker', async () => {
+        it('parses every unit with one worker', async () => {
             const root = repositoryOf('after');
-            const outDir = path.join(tmp, 'worker');
-            const worker = new UnitWorker({ outDir, concurrency: 4 });
-            const results = await worker.parseAndSaveAll(root);
+            const worker = new UnitWorker({ concurrency: 4 });
+            const results = await worker.parseAll(root);
             assert.ok(results.every((r) => r.ok));
-            const loaded = await worker.loadAll(root);
             const parsed = await Repository.load(new WorkingTree(root));
             for (const unitType of UNIT_TYPES) {
                 assert.deepEqual(
-                    loaded.get(unitType.type).map((r) => r.result.id),
-                    parsed.get(unitType.type).map((r) => r.result.id),
+                    results
+                        .flatMap((r) =>
+                            r.ok && r.input.unitType === unitType.type ? [r.result.result.id] : [],
+                        )
+                        .sort(),
+                    parsed
+                        .get(unitType.type)
+                        .map((r) => r.result.id)
+                        .sort(),
                     unitType.type,
                 );
             }

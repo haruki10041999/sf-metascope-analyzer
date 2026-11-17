@@ -1,5 +1,3 @@
-import typia from 'typia';
-
 import { JsonType } from '../../commons';
 import type { FieldGroupByTypeClass, GroupByClauseTypeClass } from '../../apex_IR';
 
@@ -23,8 +21,6 @@ export type GroupByJson = JsonType<'groupBy'> & {
     mode?: 'ROLLUP' | 'CUBE';
     having?: LogicalConditionJson;
 };
-
-export const isGroupByJson = typia.createIs<GroupByJson>();
 
 export const makeGroupByJson = (target: GroupByClauseTypeClass): GroupByJson => {
     const { value, mode, having } = target.getFields();

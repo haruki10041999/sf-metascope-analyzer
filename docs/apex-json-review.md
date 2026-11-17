@@ -30,7 +30,7 @@ LWC の JS / TS の JSON は作り直した（[lwc-json-types.md](./lwc-json-typ
 | 6   | **SOSL の検索語が曖昧（実行で確認）。** `FIND :term` と `FIND 'term'` がどちらも `find: "term"` になる                                                                                                                                                                                                                                                                            | 高     |
 | 7   | 文の形が LWC とずれる。条件を包む境界ノード（`ifCondition` など）、`body` と `block` の混在、`block` が 1 文か配列か、`localVariable` の入れ子、`forCondition` の 2 つの形を `initializeType` の有無で分ける                                                                                                                                                                      | 中     |
 | 8   | 修飾子の分類（`lwcAnnotation`・`flowAnnotation` など 11 の入れ物）は派生の情報。アノテーションの引数は引用符つきの文字列                                                                                                                                                                                                                                                          | 中     |
-| 9   | Diff は Apex のほうが細かい（文・式の kind ごとの型付きの差分）。LWC の本体は GumTree の結果のまま。ここは LWC が後で Apex に合わせる側                                                                                                                                                                                                                                           | 参考   |
+| 9   | Diff は Apex のほうが細かい（文・式の kind ごとの型付きの差分）。LWC の本体は GumTree の結果のまま。ここは LWC が後で Apex に合わせる側（2026-11-17 時点では、LWC の本体の Diff も Apex と同じ型付きの差分にした。[Lwc/diff/body.ts](../src/analyzer/processor/Lwc/diff/body.ts)）                                                                                                | 参考   |
 | 10  | [apex-json-analysis.md](./apex-json-analysis.md) 6.1 は古い。文の型付きの Diff はもうある（[statement.ts](../src/analyzer/processor/Apex/diff/statement.ts#L333-L367)）                                                                                                                                                                                                           | 低     |
 
 段階（6.2）: 0. JSON を変えない不具合の修正 → 1. 曖昧さをなくす小さな変更 → 2. 式の kind → 3. 解析の走査と派生の情報 → 4. 文の形 → 5. 宣言・修飾子・入れ物 → 6. 型・SOQL の残り。
@@ -145,13 +145,13 @@ LWC に当たるものはない。境界ノード（`soql`・`selectEntry`・`fr
 
 ### 3.2 Diff
 
-| 項目                 | Apex                                                                                                                                                                                                             | LWC                                                                                                                       |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| 本体の文の並び       | GumTree で対応付け、そのあと kind ごとの型付きの差分にする（[makeBlockDiffWithContext](../src/analyzer/processor/Apex/diff/statement.ts#L1030-L1052)、[typed.ts](../src/analyzer/processor/Apex/diff/typed.ts)） | GumTree の結果のまま（`LwcBlockDiff = GumTreeDiff[]`。[tree.ts](../src/analyzer/processor/Lwc/diff/gumtree/tree.ts#L67)） |
-| 本体の外の式         | 型付きの差分（field の初期値など。[declaration.ts](../src/analyzer/processor/Apex/diff/declaration.ts#L198-L247)）                                                                                               | 値として比べる（`ValueDiff`。objectKey）                                                                                  |
-| GumTree の言語の設定 | `getExpressionLabel`（形から推定）・`groupProperty`（修飾子の分類を戻す）・`isAtomicArray`（catch の型名）・`leafValues`（型は `getTypeKey`）                                                                    | ラベルは kind のまま。型は `text` を葉の値にする                                                                          |
+| 項目                 | Apex                                                                                                                                                                                                                | LWC                                                                                           |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| 本体の文の並び       | GumTree で対応付け、そのあと kind ごとの型付きの差分にする（[makeBlockDiffWithContext](../src/analyzer/processor/Apex/diff/statement.ts#L1030-L1052)、[typed.ts](../src/analyzer/processor/commons/diff/typed.ts)） | Apex と同じ形にした（[diff/body.ts](../src/analyzer/processor/Lwc/diff/body.ts)。2026-11-17） |
+| 本体の外の式         | 型付きの差分（field の初期値など。[declaration.ts](../src/analyzer/processor/Apex/diff/declaration.ts#L198-L247)）                                                                                                  | 値として比べる（`ValueDiff`。objectKey）                                                      |
+| GumTree の言語の設定 | `getExpressionLabel`（形から推定）・`groupProperty`（修飾子の分類を戻す）・`isAtomicArray`（catch の型名）・`leafValues`（型は `getTypeKey`）                                                                       | ラベルは kind のまま。型は `text` を葉の値にする                                              |
 
-- Diff は Apex のほうが進んでいる。Apex の式に `kind` を付けると、型付きの差分の分岐が `kind` だけで書ける。LWC の本体の差分を型付きにするのは、Apex を直したあとの別の作業にする（7 章）。
+- Diff は Apex のほうが進んでいる。Apex の式に `kind` を付けると、型付きの差分の分岐が `kind` だけで書ける。LWC の本体の差分を型付きにするのは、Apex を直したあとの別の作業にする（7 章）。（2026-11-17 に済んだ。表の「本体の文の並び」の行）
 - [apex-json-analysis.md](./apex-json-analysis.md) 6.1 の表は、文・式を「`GumTreeDiff` のまま」としているが、今は型付きの差分がある。直す。
 
 ### 3.3 解析（派生の情報）
@@ -271,7 +271,8 @@ LWC の段階（[lwc-json-types.md](./lwc-json-types.md) 6 章）と同じく、
 
 - ゴールデン: Apex は 38 ファイルのうち 28（[test/ir/golden/](../test/ir/golden/)）。段階 2・4・5 は全部が変わる。LWC の段階 4・6 と同じく、「消したもの・名前を変えたもの」を古いゴールデンに当てて新しいものと同じになるかを、スクリプトで全ファイル分確かめる。
 - サンプル（[docs/examples/apex/](./examples/apex/README.md)）の出力（`unit-diff.json`・`summary.md`）も段階ごとに作り直す。5 章の不具合を確かめる構文（プロパティの getter の SOQL、`this.f()`、`Database.Batchable`、`FIND :x`、サブクエリ、`Database.insert(list, false)`、`Trigger.isBefore`）をサンプルに足す。
-- 版: `SAVE_FORMAT_VERSION`（[parser/commons.ts](../src/analyzer/parser/commons.ts#L49)、今は 7）。段階 1・2・4・5・6 は JSON の形を変えるので上げる。同じリリースに入れる段階はまとめて 1 回でよい。版は LWC・メタデータと共通。
+- 版: `SAVE_FORMAT_VERSION`（[parser/commons.ts](../src/analyzer/parser/commons.ts)、今は 7）。段階 1・2・4・5・6 は JSON の形を変えるので上げる。同じリリースに入れる段階はまとめて 1 回でよい。版は LWC・メタデータと共通。
+    - （2026-11-17 時点では変わった）`SAVE_FORMAT_VERSION` は 9 で、入れ物・置き場所の版（レイアウトの版）だけを表す。JSON の形の版は系統（apex・lwc・object・objectTranslation・metadata）ごとに [unit/unitType.ts](../src/analyzer/unit/unitType.ts) の `UNIT_FORMAT_VERSIONS` で持ち、JSON の形を変えたらその系統の版を上げる（その系統の単位だけを parse し直す）。各段階では apex の版を上げた（2026-11-17 時点で apex 6）。
 - 大きさ: LWC の 8.5 と同じく、段階ごとに `sourceObject` の数を記録する。段階 2 で式がすべて kind を持つと、今は位置を持たない識別子・`this` の分だけ増える。小さなクラスの試し（5 章の確認に使ったもの）では `sourceObject` は 82 件（未確認: サンプル全体の数）。
 
 ## 7. 決めること

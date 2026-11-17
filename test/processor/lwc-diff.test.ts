@@ -3,6 +3,9 @@ import { before, describe, it } from 'node:test';
 
 import { runDiff } from '../../docs/examples/lwc/scripts/run-diff';
 import { makeLwcBundleDiffs } from '../../src/analyzer/processor/Lwc/diff/bundle';
+import { convertLwcModule, parseLwcModule } from '../../src/analyzer/parser/Lwc/module';
+import { makeLwcStatementBlockDiff } from '../../src/analyzer/processor/Lwc/diff/body';
+import type { LwcJsStatementJson } from '../../src/analyzer/types/lwc';
 
 /**
  * docs/examples/repository の lwc の before / after を本番と同じ流れ (LwcParser.parseLwcBundle) で読んで比べ、
@@ -135,24 +138,27 @@ describe('LWC diff samples (docs/examples/repository の lwc)', () => {
         assert.equal(byName(types, 'SortDirection')!.fields.variantType.status, 'changed');
     });
 
-    it('本体の文は GumTree で比べ、変わった式 (呼び出しの追加) を子の差分に持つ (段階 4)', () => {
+    it('本体の文は GumTree で対応付け、Apex と同じく文ごとのプロパティの差分 (fields) を持つ (4 章の 5)', () => {
         const fields = moduleFields('utils', 'utils.ts');
         // return records.map(...) → return records.slice(0, limit).map(...)
         const block = byName(fields.declarations, 'toRows')!.fields.block as Node[];
         assert.deepEqual(
-            block.map((d) => [d.label, d.status]),
-            [['jsReturn', 'changed']],
+            block.map((d) => [d.kind, d.status, d.match]),
+            [['jsReturn', 'changed', 'similar']],
         );
-        const labels: string[] = [];
-        const visit = (diffs: Node[]) =>
-            diffs.forEach((d) => {
-                if (d.status !== 'unchanged') labels.push(`${d.status}:${d.label}`);
-                visit(d.children ?? []);
-            });
-        visit(block);
-        assert.ok(labels.includes('added:jsMemberAccess:method'), labels.join('\n'));
+        // 呼び出しの対象 (records → records.slice(0, limit)) は kind が違うので置き換え
+        const call = block[0]!.fields.field;
+        assert.equal(call.kind, 'jsMemberAccess');
+        assert.equal(call.fields.member.status, 'unchanged');
+        assert.deepEqual(call.fields.object.kind, {
+            before: 'jsIdentifier',
+            after: 'jsMemberAccess',
+        });
+        assert.equal(call.fields.object.after.member, 'slice');
+        // 変わっていない引数 (アロー関数) は unchanged
+        assert.equal(call.fields.memberArg[0].status, 'unchanged');
         // 位置 (sourceKeys) は before / after の文の位置
-        assert.ok(block[0]!.sourceKeys.before && block[0]!.sourceKeys.after);
+        assert.ok(block[0]!.sourceKeys.sourceKey.before && block[0]!.sourceKeys.sourceKey.after);
 
         // 変わっていない本体 (formatAmount の式の本体・accountList の getter) は unchanged
         const component = moduleFields('accountList', 'accountList.ts').component.fields
@@ -161,7 +167,7 @@ describe('LWC diff samples (docs/examples/repository の lwc)', () => {
         // handleSelect は composed だけが変わったので、本体の文の差分もその 1 文だけが changed
         const handleSelect = byName(component, 'handleSelect')!.fields.block as Node[];
         assert.deepEqual(
-            handleSelect.map((d) => [d.label, d.status]),
+            handleSelect.map((d) => [d.kind, d.status]),
             [
                 ['jsLocalVariable', 'unchanged'],
                 ['jsExpression', 'changed'],
@@ -263,5 +269,67 @@ describe('LWC diff samples (docs/examples/repository の lwc)', () => {
         const diffs = makeLwcBundleDiffs(result.after, result.after);
         assert.ok(diffs.every((d) => d.status === 'unchanged'));
         assert.ok(diffs.every((d) => d.content === undefined || d.content.status === 'unchanged'));
+    });
+});
+
+describe('LWC の本体の型付きの差分 (body.ts。Apex の makeBlockDiff と同じ形)', () => {
+    const bodyOf = (source: string) => {
+        const { module } = convertLwcModule(parseLwcModule('demo/demo.js', source));
+        const declaration = module!.declarations![0]!;
+        return declaration.block as LwcJsStatementJson[];
+    };
+
+    it('別のブロックへ移った文は、移動先に 1 回だけ moved で出す', () => {
+        const before = bodyOf(
+            'export function f(a) {\n  if (a) {\n    log(a);\n    run(1);\n  }\n  done();\n}\n',
+        );
+        const after = bodyOf(
+            'export function f(a) {\n  log(a);\n  if (a) {\n    run(1);\n  }\n  done();\n}\n',
+        );
+        const diff = makeLwcStatementBlockDiff(before, after) as Node[];
+        assert.deepEqual(
+            diff.map((d) => [d.kind, d.status]),
+            [
+                ['jsExpression', 'moved'],
+                ['jsIf', 'changed'],
+                ['jsExpression', 'unchanged'],
+            ],
+        );
+        // 移動元の if の中には removed として出さない
+        const inner = diff[1]!.fields.conditionBlock[0].fields.block as Node[];
+        assert.deepEqual(
+            inner.map((d) => [d.kind, d.status]),
+            [['jsExpression', 'unchanged']],
+        );
+    });
+
+    it('同じ kind の文・式はプロパティごとの差分 (fields)、kind の違う文は削除と追加', () => {
+        const before = bodyOf('export function f(a) {\n  return a + 1;\n}\n');
+        const after = bodyOf('export function f(a) {\n  return a + 2;\n}\n');
+        const [statement] = makeLwcStatementBlockDiff(before, after) as Node[];
+        assert.equal(statement!.status, 'changed');
+        const binary = statement!.fields.field;
+        assert.equal(binary.kind, 'jsBinary');
+        assert.equal(binary.fields.left.status, 'unchanged');
+        // リテラルも Apex と同じくプロパティ (value) ごとの差分
+        assert.equal(binary.fields.right.kind, 'jsNumber');
+        assert.deepEqual(binary.fields.right.fields.value, {
+            status: 'changed',
+            before: 1,
+            after: 2,
+        });
+        // 文の kind が違えば組にしない
+        const replaced = makeLwcStatementBlockDiff(
+            bodyOf('export function f(a) {\n  return a;\n}\n'),
+            bodyOf('export function f(a) {\n  throw a;\n}\n'),
+        ) as Node[];
+        // GumTree は kind の違う文を対応付けないので、削除と追加 (Apex と同じ)
+        assert.deepEqual(
+            replaced.map((d) => [d.kind, d.status]),
+            [
+                ['jsReturn', 'removed'],
+                ['jsThrow', 'added'],
+            ],
+        );
     });
 });

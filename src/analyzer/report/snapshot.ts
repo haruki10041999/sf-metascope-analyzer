@@ -4,6 +4,7 @@ import type { CustomLabelsParseResult } from '../parser/Metadata/customLabels';
 import type { FlowParseResult } from '../parser/Metadata/flow';
 import type { MetadataFileParseResult } from '../parser/Metadata/folder';
 import type { FlexiPageParseResult, LayoutParseResult } from '../parser/Metadata/page';
+import type { ObjectTranslationParseResult } from '../parser/Metadata/objectTranslation';
 import type { ObjectParseResult } from '../parser/Metadata/parser';
 import type {
     MutingPermissionSetParseResult,
@@ -56,6 +57,7 @@ export const snapshotOf = (repository: Repository): MetadataSnapshot => {
             .filter(([type]) => !NAMED_TYPES.has(type))
             .flatMap(([, results]) => results as unknown as MetadataFileParseResult[]),
         objects: get<ObjectParseResult>('object'),
+        objectTranslations: get<ObjectTranslationParseResult>('objectTranslation'),
         apex: [
             ...get<ApexUnitParseResult>('apexClass'),
             ...get<ApexUnitParseResult>('apexTrigger'),

@@ -7,14 +7,15 @@
 
 ## 1. ファイル構成
 
-| 層        | ファイル                                                                                                                                                                      | 役割                                                                                                                               |
-| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| JSON の型 | [types/metadata/objectTranslation.ts](../src/analyzer/types/metadata/objectTranslation.ts)                                                                                    | kind ごとの型、`make*Json`、名前で識別する翻訳の表 `TRANSLATION_MEMBERS`、フォルダ全体をまとめる `makeCustomObjectTranslationJson` |
-| parse     | [parser/Metadata/objectTranslation.ts](../src/analyzer/parser/Metadata/objectTranslation.ts)                                                                                  | `ObjectTranslationParser`。フォルダを探して読み、保存・読み込みする                                                                |
-| Diff      | [processor/Metadata/diff/objectTranslation.ts](../src/analyzer/processor/Metadata/diff/objectTranslation.ts)、[diff/unit.ts](../src/analyzer/processor/Metadata/diff/unit.ts) | kind ごとの `*JsonDiff` と、翻訳単位の `makeObjectTranslationUnitDiffs`                                                            |
-| 解析      | [processor/Metadata/translation.ts](../src/analyzer/processor/Metadata/translation.ts)                                                                                        | オブジェクトとの突き合わせ（翻訳の網羅）                                                                                           |
-| まとめ役  | [processor/Metadata/metadata.ts](../src/analyzer/processor/Metadata/metadata.ts)                                                                                              | `MetadataProcessor` が、オブジェクトと一緒に翻訳も読み、保存し、差分と網羅を返す                                                   |
-| ワーカー  | [worker/objectTranslationWorker.ts](../src/analyzer/worker/objectTranslationWorker.ts)                                                                                        | `ObjectTranslationWorker`（`WorkerTaskType` の `'ObjectTranslation'`）                                                             |
+| 層         | ファイル                                                                                                                                                                      | 役割                                                                                                                               |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| JSON の型  | [types/metadata/objectTranslation.ts](../src/analyzer/types/metadata/objectTranslation.ts)                                                                                    | kind ごとの型、`make*Json`、名前で識別する翻訳の表 `TRANSLATION_MEMBERS`、フォルダ全体をまとめる `makeCustomObjectTranslationJson` |
+| parse      | [parser/Metadata/objectTranslation.ts](../src/analyzer/parser/Metadata/objectTranslation.ts)                                                                                  | `ObjectTranslationParser`。フォルダを探して読む（本番の保存は UnitStore。確認用の JSON の保存だけを持つ）                          |
+| Diff       | [processor/Metadata/diff/objectTranslation.ts](../src/analyzer/processor/Metadata/diff/objectTranslation.ts)、[diff/unit.ts](../src/analyzer/processor/Metadata/diff/unit.ts) | kind ごとの `*JsonDiff` と、翻訳単位の `makeObjectTranslationUnitDiffs`                                                            |
+| 解析       | [processor/Metadata/translation.ts](../src/analyzer/processor/Metadata/translation.ts)                                                                                        | オブジェクトとの突き合わせ（翻訳の網羅）                                                                                           |
+| 単位の種類 | [unit/unitType.ts](../src/analyzer/unit/unitType.ts)                                                                                                                          | `objectTranslationUnitType`（種類 `objectTranslation`。系統 `objectTranslation`）                                                  |
+| まとめ役   | [unit/processor.ts](../src/analyzer/unit/processor.ts)                                                                                                                        | `RepositoryProcessor` が、ほかの種類と一緒に翻訳も読み、保存し、差分と網羅を返す                                                   |
+| ワーカー   | [worker/unitWorker.ts](../src/analyzer/worker/unitWorker.ts)                                                                                                                  | `UnitWorker`（すべての種類で共通。解析だけ）。翻訳だけの worker はない                                                             |
 
 ## 2. parse
 
@@ -54,16 +55,15 @@
 | `ErrorObjectTranslationFileStructureType` | `error`（objectTranslation-meta.xml が読めないとき。`result.base` は null） | 同上                          |
 
 - 読めなかった子のファイルは JSON に入れず、理由を `resolvedError`（`XML_SYNTAX` / `UNEXPECTED_ROOT`）に出す（オブジェクトと同じ）。
-- 保存は msgpack で、保存名に接頭辞 `objectTranslation_` を付ける（`objectTranslation_Invoice__c-ja.msgpack`）。オブジェクト（`<API 名>.msgpack`）と同じフォルダに置いても分けられ、`MetadataParser.readSavedObjects` は翻訳の保存データを読まない。
-- `MetadataProcessor` は、オブジェクトを `<保存先>/objects/`、翻訳を `<保存先>/objectTranslations/` に分けて保存する。
+- 保存は UnitStore（SQLite）で、単位の種類 `objectTranslation` として、オブジェクトとは別の単位になる。
+- `RepositoryProcessor` の `save` は、オブジェクト（種類 `object`）と翻訳（種類 `objectTranslation`）を、同じ SQLite のファイル（`<savingRoot>/store/metascope.db`）に別の単位として保存する。
 
-| メソッド（`ObjectTranslationParser`）                                                        | 内容                                                                                                                           |
-| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `searchObjectTranslationDirectories(rootDir)`                                                | 翻訳のフォルダの一覧（`objectTranslations` そのものを渡すと直下だけを見る）                                                    |
-| `parseObjectTranslation(directory)` / `parseObjectTranslations(rootDir)`                     | 翻訳を読む                                                                                                                     |
-| `parseObjectTranslationSource(name, files)`                                                  | 読み込み済みのファイル（`<オブジェクト>-<言語>/...` の相対パスと中身）から読む（ファイルを読まない入口。git の before 側など） |
-| `saveObjectTranslationFile` / `readObjectTranslationMsgPack` / `readSavedObjectTranslations` | msgpack での保存と読み込み（読み込みの id は保存名でもフォルダ名でもよい）                                                     |
-| `saveObjectTranslationFileForDeveloper`                                                      | 確認用の JSON                                                                                                                  |
+| メソッド（`ObjectTranslationParser`）                                    | 内容                                                                                                                           |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| `searchObjectTranslationDirectories(rootDir)`                            | 翻訳のフォルダの一覧（`objectTranslations` そのものを渡すと直下だけを見る）                                                    |
+| `parseObjectTranslation(directory)` / `parseObjectTranslations(rootDir)` | 翻訳を読む                                                                                                                     |
+| `parseObjectTranslationSource(name, files)`                              | 読み込み済みのファイル（`<オブジェクト>-<言語>/...` の相対パスと中身）から読む（ファイルを読まない入口。git の before 側など） |
+| `saveObjectTranslationFileForDeveloper`                                  | 確認用の JSON                                                                                                                  |
 
 ## 3. Diff
 
@@ -80,7 +80,7 @@
 
 ## 4. 解析（オブジェクトとの突き合わせ）
 
-`analyzeTranslationCoverage(translation, object, { before })` / `analyzeTranslationCoverages(translations, objects, before)` が、言語ごとの `TranslationCoverage` を返す。`MetadataProcessor.getTranslationCoverages({ locales, objects })` からも使える。
+`analyzeTranslationCoverage(translation, object, { before })` / `analyzeTranslationCoverages(translations, objects, before)` が、言語ごとの `TranslationCoverage` を返す。`RepositoryProcessor.getTranslationCoverages({ locales, objects })` からも使える。
 
 ### 4.1 対象
 
@@ -121,8 +121,8 @@ npx ttsx --noCheck docs/examples/metadata/scripts/run-parse.ts   # output/json/<
 npx ttsx --noCheck docs/examples/metadata/scripts/run-diff.ts    # output/diff/translation-diff.json、translation-coverage.md
 ```
 
-| テスト                                    | 内容                                                                                                                                                            |
-| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| test/parser/object-translation.test.ts    | フォルダ名の分割、読み込み、ないものを持たないこと、読めなかったファイル、キー（位置だけの変化・CRLF）、保存の分離                                              |
-| test/processor/object-translation.test.ts | サンプルの差分（名前・masterLabel での対応付け、エラー）、網羅（未翻訳・翻訳元と同じ・宙に浮いた翻訳・古い翻訳・標準項目）、`MetadataProcessor` の保存 → 再読込 |
-| test/worker/worker.test.ts                | `ObjectTranslationWorker` の解析・保存・読み込み                                                                                                                |
+| テスト                                    | 内容                                                                                                                                                              |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| test/parser/object-translation.test.ts    | フォルダ名の分割、読み込み、ないものを持たないこと、読めなかったファイル、キー（位置だけの変化・CRLF）                                                            |
+| test/processor/object-translation.test.ts | サンプルの差分（名前・masterLabel での対応付け、エラー）、網羅（未翻訳・翻訳元と同じ・宙に浮いた翻訳・古い翻訳・標準項目）、`RepositoryProcessor` の保存 → 再読込 |
+| test/worker/worker.test.ts                | `UnitWorker` での翻訳の解析（`parseAll`・`runUnitTask`）                                                                                                          |

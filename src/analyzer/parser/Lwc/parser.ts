@@ -1,17 +1,11 @@
 // LWC の parser の入口 (docs/lwc-implementation.md)。Apex の ApexParser・オブジェクトの MetadataParser と同じく、
-// 探す (searchBundleDirectories)・読む (parseLwcBundle)・保存 (saveLwcBundle)・保存済みの読み込み (readLwcMsgPack) を持つ。
-// 1 バンドル (lwc/<名前>/ のフォルダ) = 1 つの解析結果 = 1 つの保存ファイル (lwc_<名前>.msgpack)。
+// 探す (searchBundleDirectories)・読む (parseLwcBundle) を持つ。保存は UnitStore (unit/store.ts。SQLite) が行う。
+// 1 バンドル (lwc/<名前>/ のフォルダ) = 1 つの解析結果 = 置き場の 1 単位。
 // フォルダの読み込みは folder.ts、解析は bundle.ts (ファイルシステムに触らない)
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import {
-    makeJsonSaveData,
-    makeMsgPackSaveData,
-    readMsgPack,
-    readSavedMsgPacks,
-    type SaveDataInfo,
-} from '../commons';
+import { makeJsonSaveData, type SaveDataInfo } from '../commons';
 
 import {
     makeErrorBundleResult,
@@ -100,30 +94,11 @@ export class LwcParser {
         return Promise.all(directories.map((dir) => LwcParser.parseLwcBundle(dir, options)));
     }
 
-    // 本番用: 解析結果を msgpackr で <baseDir>/lwc_<バンドル名>.msgpack に保存する (Apex の saveApexUnit と同じ)
-    static saveLwcBundle(baseDir: string, target: LwcBundleParseResult): SaveDataInfo[] {
-        return [
-            makeMsgPackSaveData('Lwc', baseDir, `${LWC_SAVE_PREFIX}${target.result.id}`, target),
-        ];
-    }
-
     // 開発者でのデータ確認用
     static saveLwcBundleForDeveloper(
         baseDir: string,
         target: LwcBundleParseResult,
     ): SaveDataInfo[] {
         return [makeJsonSaveData('Lwc', baseDir, `${LWC_SAVE_PREFIX}${target.result.id}`, target)];
-    }
-
-    // 本番用: saveLwcBundle で保存した <baseDir>/<id>.msgpack を読み込む (id は lwc_<バンドル名>)
-    static async readLwcMsgPack(baseDir: string, id: string): Promise<LwcBundleParseResult> {
-        return readMsgPack<LwcBundleParseResult>(baseDir, id, 'Lwc');
-    }
-
-    /** baseDir に保存したすべてのバンドルを読む (lwc_ で始まるものだけ)。baseDir がなければ空 */
-    static async readSavedBundles(baseDir: string): Promise<LwcBundleParseResult[]> {
-        return readSavedMsgPacks(baseDir, isLwcSaveId, (id) =>
-            LwcParser.readLwcMsgPack(baseDir, id),
-        );
     }
 }
