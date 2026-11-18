@@ -1,0 +1,394 @@
+{
+    "$schema": "../report-document.schema.json",
+    "title": "Apex の仕様書",
+    "data": {},
+    "spec": {
+        "root": "page",
+        "elements": {
+            "page": {
+                "type": "Stack",
+                "props": {
+                    "direction": "vertical",
+                    "gap": "lg",
+                    "align": null,
+                    "justify": null,
+                    "className": null
+                },
+                "children": [
+                    "summary",
+                    "unit"
+                ]
+            },
+            "summary": {
+                "type": "Narrative",
+                "props": {
+                    "title": "概要",
+                    "markdown": "(ここに概要を書く: クラス・トリガーどうしの関係、主な処理の流れ、読み書きするオブジェクト、気をつけること (ループの中の SOQL / DML など))"
+                },
+                "children": []
+            },
+            "unit": {
+                "type": "Card",
+                "props": {
+                    "title": "${u.name}",
+                    "description": "${u.unitType}",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "unitNote",
+                    "members",
+                    "trigger",
+                    "method"
+                ],
+                "for": {
+                    "as": "u",
+                    "in": {
+                        "provider": "metadata.units",
+                        "args": {
+                            "types": [
+                                "apexClass",
+                                "apexTrigger"
+                            ]
+                        }
+                    },
+                    "limit": 5000
+                },
+                "page": {
+                    "file": "${u.name}"
+                }
+            },
+            "unitNote": {
+                "type": "Narrative",
+                "props": {
+                    "title": null,
+                    "markdown": {
+                        "$note": "${u.name}"
+                    }
+                },
+                "children": []
+            },
+            "trigger": {
+                "type": "Stack",
+                "props": {
+                    "direction": "vertical",
+                    "gap": "md",
+                    "align": null,
+                    "justify": null,
+                    "className": null
+                },
+                "children": [
+                    "triggerRow",
+                    "triggerCalls"
+                ],
+                "if": {
+                    "value": "${u.unitType}",
+                    "eq": "apexTrigger"
+                }
+            },
+            "triggerRow": {
+                "type": "Columns",
+                "props": {
+                    "ratio": [
+                        6,
+                        4
+                    ],
+                    "gap": null,
+                    "stackBelow": null,
+                    "align": null
+                },
+                "children": [
+                    "triggerFlow",
+                    "triggerNote"
+                ]
+            },
+            "triggerFlow": {
+                "type": "CodeFlowchart",
+                "props": {
+                    "member": null,
+                    "height": null
+                },
+                "children": [],
+                "data": {
+                    "provider": "apex.methodFlow",
+                    "args": {
+                        "classes": [
+                            "${u.name}"
+                        ]
+                    }
+                }
+            },
+            "triggerNote": {
+                "type": "Narrative",
+                "props": {
+                    "title": "処理の順",
+                    "markdown": "(トリガーの本体の流れは左の図。説明は概要と ${u.name} の文章に書く)"
+                },
+                "children": []
+            },
+            "method": {
+                "type": "Card",
+                "props": {
+                    "title": "${m.name}(${m.params})",
+                    "description": "${m.owner} の ${m.memberType}・${m.access}",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "methodRow",
+                    "methodAccess",
+                    "methodCalls"
+                ],
+                "for": {
+                    "as": "m",
+                    "in": {
+                        "provider": "apex.outline",
+                        "args": {
+                            "classes": [
+                                "${u.name}"
+                            ]
+                        },
+                        "where": {
+                            "memberType": [
+                                "method",
+                                "constructor"
+                            ]
+                        }
+                    }
+                }
+            },
+            "methodRow": {
+                "type": "Columns",
+                "props": {
+                    "ratio": [
+                        6,
+                        4
+                    ],
+                    "gap": null,
+                    "stackBelow": null,
+                    "align": null
+                },
+                "children": [
+                    "methodFlow",
+                    "methodNote"
+                ]
+            },
+            "methodFlow": {
+                "type": "CodeFlowchart",
+                "props": {
+                    "member": null,
+                    "height": null
+                },
+                "children": [],
+                "data": {
+                    "provider": "apex.methodFlow",
+                    "args": {
+                        "classes": [
+                            "${u.name}"
+                        ]
+                    },
+                    "where": {
+                        "member": "${m.owner}.${m.name}",
+                        "signature": "${m.name}(${m.params})"
+                    }
+                },
+                "if": {
+                    "hasRows": true
+                }
+            },
+            "methodNote": {
+                "type": "Narrative",
+                "props": {
+                    "title": "説明",
+                    "markdown": {
+                        "$note": "${m.owner}.${m.name}(${m.params})"
+                    }
+                },
+                "children": []
+            },
+            "methodCalls": {
+                "type": "SequenceDiagram",
+                "props": {
+                    "start": null
+                },
+                "children": [],
+                "data": {
+                    "provider": "apex.callFlow",
+                    "args": {
+                        "members": [
+                            "${m.owner}.${m.name}"
+                        ],
+                        "depth": 2
+                    }
+                },
+                "if": {
+                    "hasRows": true
+                }
+            },
+            "triggerCalls": {
+                "type": "SequenceDiagram",
+                "props": {
+                    "start": null
+                },
+                "children": [],
+                "data": {
+                    "provider": "apex.callFlow",
+                    "args": {
+                        "members": [
+                            "${u.name}"
+                        ]
+                    }
+                },
+                "if": {
+                    "hasRows": true
+                }
+            },
+            "members": {
+                "type": "Card",
+                "props": {
+                    "title": "クラス・メンバー",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "membersTable"
+                ],
+                "if": {
+                    "hasRows": {
+                        "provider": "apex.outline",
+                        "args": {
+                            "classes": [
+                                "${u.name}"
+                            ]
+                        }
+                    }
+                }
+            },
+            "membersTable": {
+                "type": "DataTable",
+                "props": {
+                    "columns": [
+                        {
+                            "key": "owner",
+                            "label": "型"
+                        },
+                        {
+                            "key": "memberType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "access",
+                            "label": "アクセス"
+                        },
+                        {
+                            "key": "static",
+                            "label": "static"
+                        },
+                        {
+                            "key": "params",
+                            "label": "引数"
+                        },
+                        {
+                            "key": "type",
+                            "label": "型・戻り値・対象"
+                        },
+                        {
+                            "key": "annotations",
+                            "label": "アノテーション"
+                        },
+                        {
+                            "key": "events",
+                            "label": "イベント"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": [],
+                "data": {
+                    "provider": "apex.outline",
+                    "args": {
+                        "classes": [
+                            "${u.name}"
+                        ]
+                    }
+                }
+            },
+            "methodAccess": {
+                "type": "Card",
+                "props": {
+                    "title": "データアクセス",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "methodAccessTable"
+                ],
+                "if": {
+                    "hasRows": {
+                        "provider": "apex.dataAccess",
+                        "args": {
+                            "classes": [
+                                "${u.name}"
+                            ]
+                        },
+                        "where": {
+                            "member": "${m.owner}.${m.name}"
+                        }
+                    }
+                }
+            },
+            "methodAccessTable": {
+                "type": "DataTable",
+                "props": {
+                    "columns": [
+                        {
+                            "key": "operation",
+                            "label": "操作"
+                        },
+                        {
+                            "key": "object",
+                            "label": "オブジェクト"
+                        },
+                        {
+                            "key": "fields",
+                            "label": "項目"
+                        },
+                        {
+                            "key": "inLoop",
+                            "label": "ループの中"
+                        },
+                        {
+                            "key": "accessLevel",
+                            "label": "アクセスレベル"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": [],
+                "data": {
+                    "provider": "apex.dataAccess",
+                    "args": {
+                        "classes": [
+                            "${u.name}"
+                        ]
+                    },
+                    "where": {
+                        "member": "${m.owner}.${m.name}"
+                    }
+                }
+            }
+        }
+    }
+}

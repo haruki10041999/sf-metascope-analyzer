@@ -7,6 +7,8 @@ import { registry } from './registry';
 export type EmbeddedReport = {
     title: string;
     compared?: string;
+    /** ページに分けた文書の 1 ページのとき、目次 */
+    parent?: { title: string; href: string };
     spec: Spec & { state: Record<string, unknown> };
 };
 
@@ -15,6 +17,14 @@ export const ReportView = ({ report }: { report: EmbeddedReport }) => (
     <JSONUIProvider registry={registry} initialState={report.spec.state}>
         <main className="mx-auto flex max-w-6xl flex-col gap-6 p-6">
             <header className="flex flex-col gap-1">
+                {report.parent && (
+                    <a
+                        href={report.parent.href}
+                        className="text-muted-foreground w-fit text-sm underline-offset-2 hover:underline"
+                    >
+                        {`← ${report.parent.title}`}
+                    </a>
+                )}
                 <h1 className="text-2xl font-semibold">{report.title}</h1>
                 {report.compared && (
                     <p className="text-muted-foreground text-sm">比べた時点: {report.compared}</p>

@@ -1,0 +1,386 @@
+{
+    "$schema": "../report-document.schema.json",
+    "title": "リリース前のレビュー",
+    "diff": true,
+    "data": {
+        "findings": {
+            "provider": "metadata.findings"
+        },
+        "permissions": {
+            "provider": "permission.diffs"
+        },
+        "apex": {
+            "provider": "apex.interface",
+            "args": {
+                "onlyChanged": true
+            }
+        },
+        "lwc": {
+            "provider": "lwc.interface",
+            "args": {
+                "onlyChanged": true
+            }
+        },
+        "flow": {
+            "provider": "flow.interface",
+            "args": {
+                "onlyChanged": true
+            }
+        },
+        "flowDiffs": {
+            "provider": "flow.diffs"
+        },
+        "dependencies": {
+            "provider": "dependency.changes"
+        }
+    },
+    "spec": {
+        "root": "page",
+        "elements": {
+            "page": {
+                "type": "Stack",
+                "props": {
+                    "direction": "vertical",
+                    "gap": "lg",
+                    "align": null,
+                    "justify": null,
+                    "className": null
+                },
+                "children": [
+                    "summary",
+                    "findingsCard",
+                    "permissionsCard",
+                    "apexCard",
+                    "lwcCard",
+                    "flowCard",
+                    "dependenciesCard"
+                ]
+            },
+            "summary": {
+                "type": "Narrative",
+                "props": {
+                    "title": "要約",
+                    "markdown": "(ここに要約を書く: 変更の全体像、リスクの高い変更、確かめてほしいこと)"
+                },
+                "children": []
+            },
+            "findingsCard": {
+                "type": "Card",
+                "props": {
+                    "title": "解析の指摘",
+                    "description": "前回から新しく出た指摘・なくなった指摘",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "findingsSummary",
+                    "findingsTable"
+                ]
+            },
+            "findingsSummary": {
+                "type": "StatusSummary",
+                "props": {
+                    "rows": {
+                        "$state": "/data/findings"
+                    },
+                    "title": null
+                },
+                "children": []
+            },
+            "findingsTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/findings"
+                    },
+                    "columns": [
+                        {
+                            "key": "status",
+                            "label": "変化"
+                        },
+                        {
+                            "key": "severity",
+                            "label": "重さ"
+                        },
+                        {
+                            "key": "unit",
+                            "label": "単位"
+                        },
+                        {
+                            "key": "target",
+                            "label": "対象"
+                        },
+                        {
+                            "key": "message",
+                            "label": "内容"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": true
+                },
+                "children": []
+            },
+            "permissionsCard": {
+                "type": "Card",
+                "props": {
+                    "title": "権限の変更",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "permissionsTable"
+                ]
+            },
+            "permissionsTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/permissions"
+                    },
+                    "columns": [
+                        {
+                            "key": "status",
+                            "label": "変化"
+                        },
+                        {
+                            "key": "holder",
+                            "label": "権限セット・プロファイル"
+                        },
+                        {
+                            "key": "category",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "target",
+                            "label": "対象"
+                        },
+                        {
+                            "key": "changes",
+                            "label": "変わった値"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": true
+                },
+                "children": []
+            },
+            "apexCard": {
+                "type": "Card",
+                "props": {
+                    "title": "Apex の公開メソッド・プロパティ",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "apexTable"
+                ]
+            },
+            "apexTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/apex"
+                    },
+                    "columns": [
+                        {
+                            "key": "status",
+                            "label": "変化"
+                        },
+                        {
+                            "key": "owner",
+                            "label": "型"
+                        },
+                        {
+                            "key": "memberType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "params",
+                            "label": "引数"
+                        },
+                        {
+                            "key": "type",
+                            "label": "型・戻り値"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": true
+                },
+                "children": []
+            },
+            "lwcCard": {
+                "type": "Card",
+                "props": {
+                    "title": "LWC の @api・イベント・slot",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "lwcTable"
+                ]
+            },
+            "lwcTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/lwc"
+                    },
+                    "columns": [
+                        {
+                            "key": "status",
+                            "label": "変化"
+                        },
+                        {
+                            "key": "component",
+                            "label": "コンポーネント"
+                        },
+                        {
+                            "key": "memberType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": true
+                },
+                "children": []
+            },
+            "flowCard": {
+                "type": "Card",
+                "props": {
+                    "title": "Flow の変更",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "flowTable",
+                    "flowDiffsTable"
+                ]
+            },
+            "flowTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/flow"
+                    },
+                    "columns": [
+                        {
+                            "key": "status",
+                            "label": "変化"
+                        },
+                        {
+                            "key": "flow",
+                            "label": "Flow"
+                        },
+                        {
+                            "key": "variable",
+                            "label": "入出力の変数"
+                        },
+                        {
+                            "key": "direction",
+                            "label": "向き"
+                        },
+                        {
+                            "key": "dataType",
+                            "label": "型"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": true
+                },
+                "children": []
+            },
+            "flowDiffsTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/flowDiffs"
+                    },
+                    "columns": [
+                        {
+                            "key": "status",
+                            "label": "変化"
+                        },
+                        {
+                            "key": "flow",
+                            "label": "Flow"
+                        },
+                        {
+                            "key": "element",
+                            "label": "要素"
+                        },
+                        {
+                            "key": "kind",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "changedProperties",
+                            "label": "変わったもの"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": true
+                },
+                "children": []
+            },
+            "dependenciesCard": {
+                "type": "Card",
+                "props": {
+                    "title": "依存の増減",
+                    "description": "メンバーの細かさの参照の変化",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "dependenciesTable"
+                ]
+            },
+            "dependenciesTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/dependencies"
+                    },
+                    "columns": [
+                        {
+                            "key": "status",
+                            "label": "変化"
+                        },
+                        {
+                            "key": "from",
+                            "label": "参照元"
+                        },
+                        {
+                            "key": "to",
+                            "label": "参照先"
+                        },
+                        {
+                            "key": "kind",
+                            "label": "種類"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": true
+                },
+                "children": []
+            }
+        }
+    }
+}

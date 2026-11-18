@@ -2,6 +2,7 @@ import path from 'node:path';
 
 import { locateUnits, parseUnitFromTree } from '../unit/repository';
 import { WorkingTree } from '../unit/sourceTree';
+import type { SourceText } from '../types';
 import { type AnyUnitType, type UnitParseResult, UNIT_TYPES, findUnitType } from '../unit/unitType';
 
 import {
@@ -30,7 +31,10 @@ export type BatchResult<TInput, TResult> =
 // 保存は UnitStore (SQLite) が行う。方針: docs/analysis-plan.md 2 章、docs/implementation-roadmap.md 5 章
 
 /** スレッドとインラインの両方で実行するタスク (worker_threads で受け渡すため plain object) */
-export type UnitTask = { command: 'parse'; unitType: string; root: string; location: string };
+export type UnitTask =
+    | { command: 'parse'; unitType: string; root: string; location: string }
+    /** 読み込み済みのファイルを解析する (UnitStore が読んだものを渡す。スレッドの中でファイルを読まない) */
+    | { command: 'parseFiles'; unitType: string; location: string; files: SourceText[] };
 
 const unitTypeOf = (type: string): AnyUnitType => {
     const unitType = findUnitType(type);
@@ -39,8 +43,23 @@ const unitTypeOf = (type: string): AnyUnitType => {
 };
 
 /** 1 タスクを実行する (スレッドでもメインスレッドでも同じ) */
-export const runUnitTask = (task: UnitTask): Promise<UnitParseResult> =>
-    parseUnitFromTree(new WorkingTree(task.root), unitTypeOf(task.unitType), task.location);
+/**
+ * 根ごとの作業ツリー (スレッドの中で使い回す)。タスクごとに作ると、単位ごとにリポジトリのすべてのファイルを
+ * 一覧し直すことになる (NPSP の 1,044 クラスで、1 件ずつ 1.3 万ファイルを読み直していた)
+ */
+const trees = new Map<string, WorkingTree>();
+
+export const runUnitTask = async (task: UnitTask): Promise<UnitParseResult> => {
+    if (task.command === 'parseFiles') {
+        return unitTypeOf(task.unitType).parseUnit(task.location, task.files);
+    }
+    let tree = trees.get(task.root);
+    if (!tree) {
+        tree = new WorkingTree(task.root);
+        trees.set(task.root, tree);
+    }
+    return parseUnitFromTree(tree, unitTypeOf(task.unitType), task.location);
+};
 
 /** worker_threads のエントリ (unitWorkerThread.ts) が呼ぶ */
 export const registerUnitWorkerThread = () =>
@@ -75,6 +94,11 @@ export class UnitWorker {
             locations.map((location) => ({ unitType, location })),
         );
         return this.batch(inputs, ({ unitType, location }) => this.parse(unitType, root, location));
+    }
+
+    /** 読み込み済みのファイルで単位 1 つを解析する (結果の filePath は単位の場所のまま) */
+    parseFiles(unitType: string, location: string, files: SourceText[]): Promise<UnitParseResult> {
+        return this.run({ command: 'parseFiles', unitType, location, files });
     }
 
     /** 単位 1 つを解析する */

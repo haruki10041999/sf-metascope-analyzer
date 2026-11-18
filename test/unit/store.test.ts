@@ -10,6 +10,7 @@ import {
     ProjectTree,
     Repository,
     RepositoryProcessor,
+    UnitStore,
     WorkingTree,
     analyzeDependencies,
     closeAllStoreBackends,
@@ -80,6 +81,33 @@ describe('UnitStore (保存の置き場)', () => {
             reloaded.before.locationOf(account!),
             'force-app/main/default/objects/Account',
         );
+    });
+
+    it('writes parsed results on a writer thread and reads them back the same (M5)', async () => {
+        // 書き込みのスレッド (storeWriter.ts)。読み込みの終わりと保存の始めに書き終わるのを待つ
+        const writerRoot = path.join(tmp, 'saved-writer');
+        const store = new UnitStore(path.join(writerRoot, 'store'), root);
+        store.useWriterThread();
+        try {
+            const repository = await store.loadTree(new ProjectTree(new WorkingTree(root)));
+            // 読み込みが終わった時点で、別のスレッドの書き込みは確定している
+            const written = (store.backend as SqliteStoreBackend).db
+                .prepare('SELECT count(*) AS n FROM unit')
+                .get() as { n: number };
+            assert.equal(written.n, countUnits(repository));
+            await store.save(repository);
+        } finally {
+            store.close();
+        }
+        const reloaded = new UnitStore(path.join(writerRoot, 'store'), root);
+        try {
+            const before = await reloaded.loadBefore();
+            const parsed = await Repository.load(new ProjectTree(new WorkingTree(root)));
+            assert.deepEqual(contentsOf(before), contentsOf(parsed));
+            assert.equal(reloaded.stats.parsed, 0);
+        } finally {
+            reloaded.close();
+        }
     });
 
     it('stores units as node rows, sources by hash, positions without the source text, and drops the old msgpack files', async () => {

@@ -1,30 +1,55 @@
-import { createHash } from 'node:crypto';
+import { hash as cryptoHash } from 'node:crypto';
 
 const HASH_LENGTH = 16;
+
+/** 文字列の sha256 (16 進の先頭 16 文字)。一度に計算する crypto.hash を使う (createHash のストリームより速い) */
+const hashText = (text: string): string => cryptoHash('sha256', text, 'hex').slice(0, HASH_LENGTH);
+
 const hash = (value: unknown): string => {
     // BigInt (10n など) は JSON にできないので、文字列にする
     const json = JSON.stringify(value, (_key, v: unknown) =>
         typeof v === 'bigint' ? `${v.toString()}n` : v,
     );
-    return createHash('sha256').update(json).digest('hex').slice(0, HASH_LENGTH);
+    return hashText(json);
+};
+
+/**
+ * objectKey の元の文字列。以前の JSON.stringify(sortKeys(toKeyBody(value))) (キーを並べ替え、子ノードは objectKey、bigint は "10n") と 1 文字も違わない文字列を、
+ * 並べ替えた一時オブジェクトを作らずに直接書く (キーの値を変えないため)。
+ * 大きいリポジトリで、ノードごとの一時オブジェクトと JSON 化が parse の時間の 3 割ほどを占めていた
+ * (docs/implementation-roadmap.md 8 章の M4)
+ */
+const keyBodyJson = (value: unknown): string | undefined => {
+    if (value instanceof CommonTypeClass) return JSON.stringify(value.getSourceKeys().objectKey);
+    switch (typeof value) {
+        case 'string':
+        case 'number':
+        case 'boolean':
+            return JSON.stringify(value);
+        case 'bigint':
+            return JSON.stringify(`${value.toString()}n`);
+        case 'undefined':
+        case 'function':
+        case 'symbol':
+            return undefined;
+    }
+    if (value === null) return 'null';
+    if (Array.isArray(value)) {
+        // 配列の undefined は null (JSON.stringify と同じ)
+        return `[${value.map((item) => keyBodyJson(item) ?? 'null').join(',')}]`;
+    }
+    const record = value as Record<string, unknown>;
+    const parts: string[] = [];
+    for (const key of Object.keys(record).sort()) {
+        const child = keyBodyJson(record[key]);
+        // オブジェクトの undefined のプロパティは持たない (JSON.stringify と同じ)
+        if (child !== undefined) parts.push(`${JSON.stringify(key)}:${child}`);
+    }
+    return `{${parts.join(',')}}`;
 };
 
 export const isRecord = (value: unknown): value is Record<string, unknown> => {
     return value !== null && typeof value === 'object' && !Array.isArray(value);
-};
-
-const sortKeys = (value: unknown): unknown => {
-    if (Array.isArray(value)) {
-        return value.map((v) => sortKeys(v));
-    }
-    if (!isRecord(value)) {
-        return value;
-    }
-    return Object.fromEntries(
-        Object.keys(value)
-            .sort()
-            .map((key) => [key, sortKeys(value[key])]),
-    );
 };
 
 export type SourceKeys = {
@@ -110,7 +135,7 @@ export abstract class CommonTypeClass<TName extends string, TField extends TypeF
         if (!this.sourceKeys) {
             const { context: _context, ...position } = this.sourceSpan;
             this.sourceKeys = {
-                objectKey: `${this.kind}_${hash(sortKeys(toKeyBody(this.field)))}`,
+                objectKey: `${this.kind}_${hashText(keyBodyJson(this.field) ?? '')}`,
                 sourceKey: `${this.kind}_${hash(position)}`,
             };
         }
@@ -159,13 +184,6 @@ export abstract class CommonTypeClass<TName extends string, TField extends TypeF
 }
 
 /** objectKey の元になる中身。子ノードは子の objectKey に置きかえる (部分木を何度もたどらないため) */
-const toKeyBody = (value: unknown): unknown => {
-    if (value instanceof CommonTypeClass) return value.getSourceKeys().objectKey;
-    if (Array.isArray(value)) return value.map(toKeyBody);
-    if (value === null || typeof value !== 'object') return value;
-    return Object.fromEntries(Object.entries(value).map(([key, child]) => [key, toKeyBody(child)]));
-};
-
 /** 位置が分からない (-1) ノードは、ソース位置の一覧に入れない */
 const hasPosition = (span: SourceSpan): boolean =>
     ![span.start, span.end].some((position) =>

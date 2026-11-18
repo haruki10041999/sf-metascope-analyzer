@@ -1,0 +1,337 @@
+{
+    "$schema": "../report-document.schema.json",
+    "title": "システムの構成",
+    "data": {
+        "apex": {
+            "provider": "apex.interface"
+        },
+        "lwc": {
+            "provider": "lwc.interface"
+        },
+        "placements": {
+            "provider": "lwc.placements"
+        },
+        "flows": {
+            "provider": "flow.list"
+        },
+        "flowInterface": {
+            "provider": "flow.interface"
+        },
+        "automation": {
+            "provider": "automation.byObject"
+        },
+        "objectAccess": {
+            "provider": "permission.objectAccess"
+        },
+        "graph": {
+            "provider": "dependency.graph",
+            "args": {
+                "format": "mermaid"
+            }
+        },
+        "objects": {
+            "provider": "object.diagram"
+        }
+    },
+    "spec": {
+        "root": "page",
+        "elements": {
+            "page": {
+                "type": "Stack",
+                "props": {
+                    "direction": "vertical",
+                    "gap": "lg",
+                    "align": null,
+                    "justify": null,
+                    "className": null
+                },
+                "children": [
+                    "summary",
+                    "objectsCard",
+                    "apexCard",
+                    "lwcCard",
+                    "flowCard",
+                    "automationCard",
+                    "permissionCard",
+                    "graphCard"
+                ]
+            },
+            "summary": {
+                "type": "Narrative",
+                "props": {
+                    "title": "概要",
+                    "markdown": "(ここに概要を書く: このシステムが何をするか、主なオブジェクト・画面・処理の流れ)"
+                },
+                "children": []
+            },
+            "objectsCard": {
+                "type": "Card",
+                "props": {
+                    "title": "オブジェクトの関係",
+                    "description": "ER 図 (詳しくはオブジェクト定義書)",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "objectsDiagram"
+                ]
+            },
+            "objectsDiagram": {
+                "type": "ObjectDiagram",
+                "props": {
+                    "data": {
+                        "$state": "/data/objects"
+                    },
+                    "showAllFields": null
+                },
+                "children": []
+            },
+            "apexCard": {
+                "type": "Card",
+                "props": {
+                    "title": "Apex の公開メソッド・プロパティ",
+                    "description": "ほかから呼べるもの",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "apexTable"
+                ]
+            },
+            "apexTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/apex"
+                    },
+                    "columns": [
+                        {
+                            "key": "owner",
+                            "label": "型"
+                        },
+                        {
+                            "key": "memberType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "params",
+                            "label": "引数"
+                        },
+                        {
+                            "key": "type",
+                            "label": "型・戻り値"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "lwcCard": {
+                "type": "Card",
+                "props": {
+                    "title": "LWC",
+                    "description": "@api・イベント・slot と、置かれている Lightning ページ",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "lwcTable",
+                    "placementsTable"
+                ]
+            },
+            "lwcTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/lwc"
+                    },
+                    "columns": [
+                        {
+                            "key": "component",
+                            "label": "コンポーネント"
+                        },
+                        {
+                            "key": "memberType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "placementsTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/placements"
+                    },
+                    "columns": [
+                        {
+                            "key": "lwc",
+                            "label": "コンポーネント"
+                        },
+                        {
+                            "key": "flexiPage",
+                            "label": "Lightning ページ"
+                        },
+                        {
+                            "key": "pageType",
+                            "label": "ページの種類"
+                        },
+                        {
+                            "key": "sobjectType",
+                            "label": "オブジェクト"
+                        },
+                        {
+                            "key": "region",
+                            "label": "リージョン"
+                        },
+                        {
+                            "key": "properties",
+                            "label": "プロパティ"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "flowCard": {
+                "type": "Card",
+                "props": {
+                    "title": "Flow",
+                    "description": "一覧と入出力の変数",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "flowsTable",
+                    "flowInterfaceTable"
+                ]
+            },
+            "flowsTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/flows"
+                    },
+                    "columns": null,
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "flowInterfaceTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/flowInterface"
+                    },
+                    "columns": [
+                        {
+                            "key": "flow",
+                            "label": "Flow"
+                        },
+                        {
+                            "key": "variable",
+                            "label": "入出力の変数"
+                        },
+                        {
+                            "key": "direction",
+                            "label": "向き"
+                        },
+                        {
+                            "key": "dataType",
+                            "label": "型"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "automationCard": {
+                "type": "Card",
+                "props": {
+                    "title": "オブジェクトごとの自動化",
+                    "description": "レコードトリガーフロー・Apex トリガー・入力規則と順序",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "automationView"
+                ]
+            },
+            "automationView": {
+                "type": "AutomationView",
+                "props": {
+                    "data": {
+                        "$state": "/data/automation"
+                    }
+                },
+                "children": []
+            },
+            "permissionCard": {
+                "type": "Card",
+                "props": {
+                    "title": "オブジェクトの権限",
+                    "description": "権限セット・プロファイル × オブジェクトの CRUD",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "objectAccessMatrix"
+                ]
+            },
+            "objectAccessMatrix": {
+                "type": "Matrix",
+                "props": {
+                    "data": {
+                        "$state": "/data/objectAccess"
+                    },
+                    "onlyChanged": null
+                },
+                "children": []
+            },
+            "graphCard": {
+                "type": "Card",
+                "props": {
+                    "title": "依存関係の図",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "graphText"
+                ]
+            },
+            "graphText": {
+                "type": "DiagramText",
+                "props": {
+                    "data": {
+                        "$state": "/data/graph"
+                    },
+                    "title": null
+                },
+                "children": []
+            }
+        }
+    }
+}

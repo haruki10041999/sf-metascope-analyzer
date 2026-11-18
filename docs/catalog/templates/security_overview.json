@@ -1,0 +1,404 @@
+{
+    "$schema": "../report-document.schema.json",
+    "title": "セキュリティと共有",
+    "data": {
+        "objectAccess": {
+            "provider": "permission.objectAccess"
+        },
+        "fieldAccess": {
+            "provider": "permission.fieldAccess"
+        },
+        "effective": {
+            "provider": "permission.effective"
+        },
+        "apexAccess": {
+            "provider": "permission.apexAccess"
+        },
+        "sharingModels": {
+            "provider": "object.list"
+        },
+        "sharingUnits": {
+            "provider": "metadata.units",
+            "args": {
+                "types": [
+                    "sharingRules",
+                    "role",
+                    "group",
+                    "queue"
+                ]
+            }
+        },
+        "sharingProperties": {
+            "provider": "metadata.properties",
+            "args": {
+                "types": [
+                    "sharingRules",
+                    "role",
+                    "group",
+                    "queue"
+                ]
+            }
+        },
+        "permissionsUnits": {
+            "provider": "metadata.units",
+            "args": {
+                "types": [
+                    "customPermission"
+                ]
+            }
+        },
+        "permissionsProperties": {
+            "provider": "metadata.properties",
+            "args": {
+                "types": [
+                    "customPermission"
+                ]
+            }
+        }
+    },
+    "spec": {
+        "root": "page",
+        "elements": {
+            "summary": {
+                "type": "Narrative",
+                "props": {
+                    "title": "概要",
+                    "markdown": "(ここに概要を書く: 誰が何を見て・変えられるか (権限セット・プロファイル・権限セットグループ)、オブジェクトの共有設定と共有ルール、ロールの階層、強い権限・広い共有など気をつけること)"
+                },
+                "children": []
+            },
+            "objectAccessView": {
+                "type": "Matrix",
+                "props": {
+                    "data": {
+                        "$state": "/data/objectAccess"
+                    },
+                    "onlyChanged": null
+                },
+                "children": []
+            },
+            "objectAccessCard": {
+                "type": "Card",
+                "props": {
+                    "title": "オブジェクトの権限",
+                    "description": "権限セット・プロファイル × オブジェクトの CRUD",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "objectAccessView"
+                ]
+            },
+            "fieldAccessView": {
+                "type": "Matrix",
+                "props": {
+                    "data": {
+                        "$state": "/data/fieldAccess"
+                    },
+                    "onlyChanged": null
+                },
+                "children": []
+            },
+            "fieldAccessCard": {
+                "type": "Card",
+                "props": {
+                    "title": "項目の権限",
+                    "description": "参照・編集",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "fieldAccessView"
+                ]
+            },
+            "effectiveTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/effective"
+                    },
+                    "columns": null,
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "effectiveCard": {
+                "type": "Card",
+                "props": {
+                    "title": "権限セットグループが与える権限",
+                    "description": "ミュートを除いた実際の権限",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "effectiveTable"
+                ]
+            },
+            "apexAccessTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/apexAccess"
+                    },
+                    "columns": null,
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "apexAccessCard": {
+                "type": "Card",
+                "props": {
+                    "title": "Apex クラス・Visualforce ページの実行権限",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "apexAccessTable"
+                ]
+            },
+            "sharingModelsTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/sharingModels"
+                    },
+                    "columns": [
+                        {
+                            "key": "object",
+                            "label": "オブジェクト"
+                        },
+                        {
+                            "key": "label",
+                            "label": "ラベル"
+                        },
+                        {
+                            "key": "sharingModel",
+                            "label": "組織の共有設定"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "sharingModelsCard": {
+                "type": "Card",
+                "props": {
+                    "title": "オブジェクトの共有設定",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "sharingModelsTable"
+                ]
+            },
+            "sharingUnitsTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/sharingUnits"
+                    },
+                    "columns": [
+                        {
+                            "key": "unitType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "label",
+                            "label": "ラベル"
+                        },
+                        {
+                            "key": "description",
+                            "label": "説明"
+                        },
+                        {
+                            "key": "filePath",
+                            "label": "ファイル"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "sharingUnitsCard": {
+                "type": "Card",
+                "props": {
+                    "title": "共有ルール・ロール・グループ・キュー",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "sharingUnitsTable"
+                ]
+            },
+            "sharingPropertiesTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/sharingProperties"
+                    },
+                    "columns": [
+                        {
+                            "key": "unitType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "path",
+                            "label": "場所"
+                        },
+                        {
+                            "key": "value",
+                            "label": "値"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "sharingPropertiesCard": {
+                "type": "Card",
+                "props": {
+                    "title": "共有ルール・ロール・グループ・キューの設定",
+                    "description": "場所 → 値 (機密になりうる値は伏せた)",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "sharingPropertiesTable"
+                ]
+            },
+            "permissionsUnitsTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/permissionsUnits"
+                    },
+                    "columns": [
+                        {
+                            "key": "unitType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "label",
+                            "label": "ラベル"
+                        },
+                        {
+                            "key": "description",
+                            "label": "説明"
+                        },
+                        {
+                            "key": "filePath",
+                            "label": "ファイル"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "permissionsUnitsCard": {
+                "type": "Card",
+                "props": {
+                    "title": "カスタム権限",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "permissionsUnitsTable"
+                ]
+            },
+            "permissionsPropertiesTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/permissionsProperties"
+                    },
+                    "columns": [
+                        {
+                            "key": "unitType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "path",
+                            "label": "場所"
+                        },
+                        {
+                            "key": "value",
+                            "label": "値"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "permissionsPropertiesCard": {
+                "type": "Card",
+                "props": {
+                    "title": "カスタム権限の設定",
+                    "description": "場所 → 値 (機密になりうる値は伏せた)",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "permissionsPropertiesTable"
+                ]
+            },
+            "page": {
+                "type": "Stack",
+                "props": {
+                    "direction": "vertical",
+                    "gap": "lg",
+                    "align": null,
+                    "justify": null,
+                    "className": null
+                },
+                "children": [
+                    "summary",
+                    "objectAccessCard",
+                    "fieldAccessCard",
+                    "effectiveCard",
+                    "apexAccessCard",
+                    "sharingModelsCard",
+                    "sharingUnitsCard",
+                    "sharingPropertiesCard",
+                    "permissionsUnitsCard",
+                    "permissionsPropertiesCard"
+                ]
+            }
+        }
+    }
+}

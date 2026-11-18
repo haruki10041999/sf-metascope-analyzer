@@ -1,0 +1,223 @@
+{
+    "$schema": "../report-document.schema.json",
+    "title": "LWC のコンポーネント",
+    "data": {},
+    "spec": {
+        "root": "page",
+        "elements": {
+            "page": {
+                "type": "Stack",
+                "props": {
+                    "direction": "vertical",
+                    "gap": "lg",
+                    "align": null,
+                    "justify": null,
+                    "className": null
+                },
+                "children": [
+                    "summary",
+                    "placements",
+                    "component"
+                ]
+            },
+            "placements": {
+                "type": "Card",
+                "props": {
+                    "title": "置かれている Lightning ページ",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "placementsTable"
+                ],
+                "if": {
+                    "hasRows": {
+                        "provider": "lwc.placements"
+                    }
+                }
+            },
+            "placementsTable": {
+                "type": "DataTable",
+                "props": {
+                    "columns": [
+                        {
+                            "key": "lwc",
+                            "label": "コンポーネント"
+                        },
+                        {
+                            "key": "flexiPage",
+                            "label": "Lightning ページ"
+                        },
+                        {
+                            "key": "pageType",
+                            "label": "ページの種類"
+                        },
+                        {
+                            "key": "sobjectType",
+                            "label": "オブジェクト"
+                        },
+                        {
+                            "key": "region",
+                            "label": "リージョン"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": [],
+                "data": {
+                    "provider": "lwc.placements"
+                }
+            },
+            "summary": {
+                "type": "Narrative",
+                "props": {
+                    "title": "概要",
+                    "markdown": "(ここに概要を書く: コンポーネントの親子関係、利用者の操作からデータまでの流れ、使う Apex、気をつけること)"
+                },
+                "children": []
+            },
+            "component": {
+                "type": "Card",
+                "props": {
+                    "title": "${c.component}",
+                    "description": "${c.label}",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "componentNote",
+                    "wireframe",
+                    "events",
+                    "function"
+                ],
+                "for": {
+                    "as": "c",
+                    "in": {
+                        "provider": "lwc.components"
+                    },
+                    "limit": 5000
+                },
+                "page": {
+                    "file": "${c.component}"
+                }
+            },
+            "componentNote": {
+                "type": "Narrative",
+                "props": {
+                    "title": null,
+                    "markdown": {
+                        "$note": "${c.component}"
+                    }
+                },
+                "children": []
+            },
+            "wireframe": {
+                "type": "LwcWireframe",
+                "props": {
+                    "component": null
+                },
+                "children": [],
+                "data": {
+                    "provider": "lwc.wireframe",
+                    "args": {
+                        "components": [
+                            "${c.component}"
+                        ]
+                    }
+                }
+            },
+            "events": {
+                "type": "EventFlow",
+                "props": {
+                    "height": null
+                },
+                "children": [],
+                "data": {
+                    "provider": "lwc.eventFlow",
+                    "args": {
+                        "components": [
+                            "${c.component}"
+                        ]
+                    }
+                },
+                "if": {
+                    "hasRows": true
+                }
+            },
+            "function": {
+                "type": "Card",
+                "props": {
+                    "title": "${f.signature}",
+                    "description": "${f.owner} の ${f.memberType}",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "functionRow"
+                ],
+                "for": {
+                    "as": "f",
+                    "in": {
+                        "provider": "lwc.methodFlow",
+                        "args": {
+                            "components": [
+                                "${c.component}"
+                            ]
+                        }
+                    }
+                }
+            },
+            "functionRow": {
+                "type": "Columns",
+                "props": {
+                    "ratio": [
+                        6,
+                        4
+                    ],
+                    "gap": null,
+                    "stackBelow": null,
+                    "align": null
+                },
+                "children": [
+                    "functionFlow",
+                    "functionNote"
+                ]
+            },
+            "functionFlow": {
+                "type": "CodeFlowchart",
+                "props": {
+                    "member": null,
+                    "height": null
+                },
+                "children": [],
+                "data": {
+                    "provider": "lwc.methodFlow",
+                    "args": {
+                        "components": [
+                            "${c.component}"
+                        ]
+                    },
+                    "where": {
+                        "member": "${f.member}",
+                        "signature": "${f.signature}"
+                    }
+                }
+            },
+            "functionNote": {
+                "type": "Narrative",
+                "props": {
+                    "title": "説明",
+                    "markdown": {
+                        "$note": "${f.member}"
+                    }
+                },
+                "children": []
+            }
+        }
+    }
+}

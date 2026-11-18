@@ -123,7 +123,10 @@ const usagesOf = (repository: Repository): ReferenceUsageRow[] => {
 };
 
 /** crossRef.references: 参照先ごとの、参照している単位 (逆引き。依存関係のグラフから作る) */
-export const getReferenceUsages = (input: ReportInput): ReferenceUsageRow[] =>
+export const getReferenceUsages = (
+    input: ReportInput,
+    args: { refTypes?: string[] } = {},
+): ReferenceUsageRow[] =>
     compareKeyed(
         input.before ? usagesOf(input.before) : undefined,
         usagesOf(input.after),
@@ -132,7 +135,9 @@ export const getReferenceUsages = (input: ReportInput): ReferenceUsageRow[] =>
         (b, a) =>
             JSON.stringify(b.usedBy.map((u) => [u.from, u.via])) ===
             JSON.stringify(a.usedBy.map((u) => [u.from, u.via])),
-    ).map((c) => ({ ...(c.after ?? c.before)!, ...(c.status ? { status: c.status } : {}) }));
+    )
+        .map((c) => ({ ...(c.after ?? c.before)!, ...(c.status ? { status: c.status } : {}) }))
+        .filter((row) => !args.refTypes || args.refTypes.includes(row.refType));
 
 /**
  * 参照先がリポジトリにあるかの指摘 (種類ごとの解析も出すもの)。グラフの指摘 (source: reference) と重ならないよう、

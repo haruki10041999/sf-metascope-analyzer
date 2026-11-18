@@ -58,16 +58,25 @@ export type ReportCatalog = {
 
 /** 文書の書き方の決まり (検証: src/report/document.ts) */
 export const REPORT_RULES = [
+    '文書は構成の定義: どの部品をどう並べ、どの種類のデータ (Apex のメソッド・オブジェクトの項目・ファイルの一覧など) を見せるかを書く。個々のデータの名前 (どのクラス・メソッド・オブジェクトか) は文書に書かない。1 つずつ見せるときは for でデータの行を回し、provider の引数・where には行の値 (${m.name} など) を入れる。こうすると、どのリポジトリにもそのまま使える。',
     'レポートは 1 つの JSON の文書 (title・data・spec) で書く。spec は json-render の仕様 (root と、キー → 要素の平らな elements)。',
     'data は「名前 → { provider, args }」。ビルドが provider を実行して、結果を state の /data/<名前> に入れる。',
+    'データの部品には、データを要素に直接書いてもよい (要素の "data": { "provider", "args" }。props のデータ (rows・data) は書かない)。ビルドが data に移して props をつなぐ。同じデータを複数の部品で使うときは、上の段の data に書いて $state で指す。',
     'データの部品 (DataTable・StatusSummary) の rows には、行を書かずに { "$state": "/data/<名前>" } だけを書く。数値・一覧を自分で書かない。',
     'データの部品には、受け取れる形 (shape) か provider のデータだけを渡せる (rows → DataTable・StatusSummary、matrix → Matrix、flow.diagram → FlowDiagram など。provider の「描ける部品」を見る)。',
     'DataTable で showSource: true にするときは、そのデータの宣言に withSource: true を付ける (行にソースの抜き出しが付く)。',
-    'どの要素も type・props・children を持つ (子がなければ children は [])。props は部品のスキーマのとおりに、すべてのキーを書く (使わないものは null)。',
+    '要素は type と、使う props だけを書けばよい (null を受け取れる props の省いたキーは null、children を省けば [])。値の要る props (Narrative の markdown など) は書く。入れ子で書ける: spec.root と children に、キーの代わりに要素そのもの ({ "type": "Card", "props": {…}, "children": [ {…} ] }) を書ける (キーは key か、親のキーと位置から作る)。データの部品の rows・data は "@<名前>" と書ける ({ "$state": "/data/<名前>" } と同じ)。データをすべて要素に書けば、上の段の data は省ける。平らな elements にすべて書く形もそのまま通る。',
     'AI が書くのは、Narrative の markdown (要約・リスクの説明・レビューの指摘)・見出し・Alert の文言と、どのデータをどの部品で見せるかの選択だけ。',
     'レポートの既定は「今の状態のすべて」(1 時点。行に status はない)。ドキュメント・コードの理解のためのレポートはこれで書く。',
     '差分を見るときだけ、文書に diff: true (保存した基準 → 作業ツリー) か compare ({ "from": "main" } は main...作業ツリー、{ "from": "main", "to": "HEAD" } は main...HEAD) を書く。行に status (added・removed・changed・unchanged) が付き、DataTable の onlyChanged で変わった行だけにできる。',
-    'requiresComparison の provider (差分だけを返すもの) は、diff か compare がないと使えない。',
+    'データごとに比べ方を選べる: データの宣言 (上の段の data でも、要素の data でも) に diff・compare を書くと、文書の比べ方よりそちらを使う (diff: false は今の状態だけ)。今の状態の仕様と、main からの変化を 1 つの文書に並べられる。比べ方を持つ部品の上には、比べた時点が出る。',
+    'requiresComparison の provider (差分だけを返すもの) は、diff か compare がないと使えない (文書でもデータでもよい)。',
+    'データの宣言の where で、行の項目の値で絞れる (for の中で { "member": "${m.owner}.${m.name}" }。値が配列ならそのどれか。a.b で入れ子の項目)。',
+    'for で要素 (と子) をデータの行ごとに繰り返せる: "for": { "as": "m", "in": <データの宣言か、data の名前>, "limit": 200 }。props・要素の data・if の中の "${m.name}" を行の値に置き換える ("${m.x}" だけの文字列は配列・数値もそのまま。m.$index は 0 から、m.$number は 1 から)。入れ子の for も書ける。ビルドのときに展開し、繰り返した要素のキーは <キー>__<何行目> になる (問題の場所は <キー>[n])。上限 (既定 200) を超えた行は出さず警告する。root には書けない。',
+    'if で要素 (と子) を出し分けられる: { "value": "${m.static}", "eq": true } (eq・neq・gt・gte・lt・lte・in・exists。比べ方を書かなければ空でないか)、{ "hasRows": true } (この要素のデータに行がある。文字列なら data の名前)、{ "all": [...] }・{ "any": [...] }・{ "not": {...} }。',
+    '件数が多いとき (すべてのクラス・オブジェクトなど) は、for の要素に "page": { "file": "${m.name}" } を付けて 1 件 1 ページに分ける。ビルドは目次 (その場所にページへのリンク PageLink) と pages/<file>.html を書く。件数を絞って小さくはしない。',
+    '文書の引数 (構成の値だけ): 文書に "params": { "depth": { "default": 2 } } と書き、題・props・データの引数・if で "${params.depth}" と使う (種類・段数・表示の切り替えなど)。ビルドに渡した値 (build_report・validate_report_spec の params) が default より優先。値も default もない引数・宣言していない引数は問題になる。個々のデータの名前を渡す使い方はしない。',
+    '文章は文書の notes (キー → markdown) に書き、props で { "$note": "<キー>" } と引ける (for の中なら { "$note": "${m.owner}.${m.name}" } のように行ごとのキー)。notes にないキーは「(未記入)」になり、警告が出る。AI は for の行ごとの文章を notes に書く。',
 ];
 
 const jsonSchemaOf = (schema: z.ZodType, io: 'input' | 'output'): JsonSchema => {

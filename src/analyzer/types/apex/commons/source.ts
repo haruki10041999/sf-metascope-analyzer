@@ -62,17 +62,21 @@ export const regenerateSourceObjects = (
     const excludeSourceKeys: Record<string, string[]> = gatherSourceKeys(target);
 
     const regenerate: SourceJson[] = [];
+    // objectKey → 最初の位置の一覧 (キーごとに一覧を頭から探すと、ノードの数の二乗の時間になる)
+    const byObjectKey = new Map<string, SourceJson>();
+    for (const object of sourceObjects) {
+        if (!byObjectKey.has(object.objectKey)) byObjectKey.set(object.objectKey, object);
+    }
 
     Object.entries(excludeSourceKeys).forEach(([objectKey, sourceKeys]) => {
-        const sourceObject = sourceObjects.find((object) => object.objectKey === objectKey);
+        const sourceObject = byObjectKey.get(objectKey);
 
         if (sourceObject) {
+            const used = new Set(sourceKeys);
             const regenerateSource = {
                 objectKey: sourceObject.objectKey,
                 context: sourceObject.context,
-                source: sourceObject.source.filter((source) =>
-                    sourceKeys.includes(source.sourceKey),
-                ),
+                source: sourceObject.source.filter((source) => used.has(source.sourceKey)),
             };
             regenerate.push(regenerateSource);
         }

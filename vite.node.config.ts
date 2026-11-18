@@ -17,7 +17,9 @@ export default defineConfig({
             input: [
                 path.resolve(__dirname, 'src/index.ts'),
                 path.resolve(__dirname, 'src/mcp/server.ts'),
+                path.resolve(__dirname, 'src/cli/index.ts'),
                 path.resolve(__dirname, 'src/analyzer/worker/unitWorkerThread.ts'),
+                path.resolve(__dirname, 'src/analyzer/unit/storeWriterThread.ts'),
             ],
             output: {
                 format: 'es',

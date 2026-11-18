@@ -1,3 +1,4 @@
+import { readFile as readFileCallback } from 'node:fs';
 import fs from 'node:fs/promises';
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'path';
@@ -79,8 +80,14 @@ export const writeSaveDataInfo = async (saveDataInfo: SaveDataInfo[]): Promise<v
 };
 
 /** ソースを読む。改行コード (CRLF / LF) で offset が変わり sourceKey も変わってしまうので、LF にそろえる */
-export const readSource = async (filePath: string): Promise<string> =>
-    (await fs.readFile(filePath, 'utf-8')).replace(/\r\n?/g, '\n');
+export const readSource = (filePath: string): Promise<string> =>
+    // コールバックの fs.readFile を使う。fs.promises.readFile は小さいファイルをたくさん同時に読むと
+    // とても遅い (NPSP の 1.3 万ファイルで 71 秒、コールバックなら 0.35 秒。docs/implementation-roadmap.md 8 章の M4)
+    new Promise((resolve, reject) =>
+        readFileCallback(filePath, 'utf-8', (error, text) =>
+            error ? reject(error) : resolve(text.replace(/\r\n?/g, '\n')),
+        ),
+    );
 
 // ---------------------------------------------------------------------------
 // XML (*-meta.xml)

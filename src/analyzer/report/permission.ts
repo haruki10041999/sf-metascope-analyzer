@@ -147,7 +147,19 @@ const holdersOf = (analysis: PermissionAnalysis) =>
         info: h,
     }));
 
-const analyze = (snapshot: MetadataSnapshot | undefined) =>
+/** スナップショットごとの権限の解析 (権限の provider ごとに解析し直さない。NPSP で 1 回 0.3〜0.8 秒) */
+const analyses = new WeakMap<MetadataSnapshot, PermissionAnalysis>();
+
+const analyze = (snapshot: MetadataSnapshot | undefined): PermissionAnalysis | undefined => {
+    if (!snapshot) return undefined;
+    const cached = analyses.get(snapshot);
+    if (cached) return cached;
+    const analysis = analyzeSnapshot(snapshot)!;
+    analyses.set(snapshot, analysis);
+    return analysis;
+};
+
+const analyzeSnapshot = (snapshot: MetadataSnapshot | undefined) =>
     snapshot
         ? analyzePermissions(
               {

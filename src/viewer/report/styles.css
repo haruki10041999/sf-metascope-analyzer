@@ -32,6 +32,14 @@
     --status-removed: oklch(0.577 0.245 27.325);
     --status-changed: oklch(0.705 0.17 70);
     --status-unchanged: oklch(0.708 0 0);
+    /* 処理フロー (CodeFlowchart) の箱の種類 */
+    --flow-decision: oklch(0.705 0.17 70);
+    --flow-loop: oklch(0.6 0.13 165);
+    --flow-query: oklch(0.55 0.16 250);
+    --flow-dml: oklch(0.6 0.19 35);
+    --flow-callout: oklch(0.55 0.17 300);
+    --flow-event: oklch(0.6 0.12 200);
+    --flow-exception: oklch(0.577 0.245 27.325);
 }
 
 .dark {
@@ -53,6 +61,13 @@
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 15%);
     --ring: oklch(0.556 0 0);
+    --flow-decision: oklch(0.78 0.15 75);
+    --flow-loop: oklch(0.72 0.12 165);
+    --flow-query: oklch(0.7 0.13 250);
+    --flow-dml: oklch(0.72 0.16 40);
+    --flow-callout: oklch(0.7 0.14 300);
+    --flow-event: oklch(0.72 0.1 200);
+    --flow-exception: oklch(0.704 0.191 22.216);
 }
 
 @theme inline {

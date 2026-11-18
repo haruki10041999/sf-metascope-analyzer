@@ -16,6 +16,7 @@ import type {
     UnitSourceFile,
 } from './storeBackend';
 import { SqliteStoreBackend } from './storeSqlite';
+import { type ParsedWriter, StoreWriterThread } from './storeWriter';
 import {
     type AnyUnitType,
     type UnitParseResult,
@@ -50,6 +51,16 @@ const sha256 = (text: string) => createHash('sha256').update(text).digest('hex')
 /** 単位の key */
 export const unitKeyOf = (type: string, location: string, files: readonly ManifestFile[]): string =>
     sha256(JSON.stringify([type, location, files.map((file) => [file.path, file.hash])]));
+
+/**
+ * 単位を解析する関数。UnitStore に渡すと、parse をそれに任せる (worker_threads のプールで並列にするなど。
+ * docs/implementation-roadmap.md 8 章の M4)
+ */
+export type UnitParser = (
+    unitType: AnyUnitType,
+    location: string,
+    files: SourceText[],
+) => Promise<UnitParseResult>;
 
 /** 作った解析結果 → 目録の単位 (diff・保存で、どのファイルのどの中身から作ったかを引く) */
 const manifestUnits = new WeakMap<UnitParseResult, ManifestUnit>();
@@ -101,16 +112,36 @@ export class UnitStore {
     readonly backend: StoreBackend;
 
     /** dir は置き場 (<savingRoot>/store)、root はリポジトリのルート */
+    /** 単位を解析する関数 (既定はこのスレッドで。worker_threads のプールに任せることもできる) */
+    private readonly parse: UnitParser;
+
+    /** 解析結果を書く先 (別のスレッドで書くとき。なければ backend に書く) */
+    private writer: ParsedWriter | undefined;
+
     constructor(
         readonly dir: string,
         readonly root: string,
         readonly types: readonly AnyUnitType[] = UNIT_TYPES,
+        options: { parse?: UnitParser } = {},
     ) {
         this.backend = new SqliteStoreBackend(dir);
+        this.parse =
+            options.parse ??
+            (async (unitType, location, files) => unitType.parseUnit(location, files));
+    }
+
+    /**
+     * 解析結果の書き込みを別のスレッドで行う (storeWriter.ts。docs/implementation-roadmap.md 8 章の M5)。
+     * 置き場を開いたあとに作る。読み込みの終わりと保存の始めに、書き終わるのを待つ
+     */
+    useWriterThread(): void {
+        this.writer ??= new StoreWriterThread(this.dir);
     }
 
     /** データベースを閉じる (テスト・終わるとき) */
     close(): void {
+        void this.writer?.close();
+        this.writer = undefined;
         this.backend.close();
     }
 
@@ -190,6 +221,14 @@ export class UnitStore {
      * (git の範囲で比べるためだけに読む木。docs/implementation-roadmap.md の R5)
      */
     async loadTree(tree: SourceTree, options: { track?: boolean } = {}): Promise<Repository> {
+        // 途中で書く解析結果を 1 つのトランザクションにまとめる (単位ごとに確定しない)
+        return this.backend.batch(() => this.loadTreeInBatch(tree, options));
+    }
+
+    private async loadTreeInBatch(
+        tree: SourceTree,
+        options: { track?: boolean },
+    ): Promise<Repository> {
         const files = await tree.listFiles();
         const locations = locateUnits(files, this.types);
         const units = new Map<string, UnitParseResult[]>();
@@ -222,6 +261,8 @@ export class UnitStore {
             );
             units.set(unitType.type, results);
         }
+        // 別のスレッドで書いている解析結果を書き終える (このあと DB を読む処理が、書いたものを見られるように)
+        await this.writer?.flush();
         if (options.track ?? true) {
             this.sources = sources;
             this.tree = tree;
@@ -234,6 +275,8 @@ export class UnitStore {
      * 解析結果・定義・参照・ソースを書き足し、目録を置き換え、目録にないものを消す (1 つのトランザクション)
      */
     async save(repository: Repository): Promise<void> {
+        // 別のスレッドで書いている解析結果を、先に書き終える (hasParsed がそれを見る)
+        await this.writer?.flush();
         await this.backend.begin();
         try {
             const units: ManifestUnit[] = [];
@@ -319,7 +362,7 @@ export class UnitStore {
             } else {
                 const texts = await sources();
                 if (!texts) return undefined;
-                const parsed = await unitType.parseUnit(unit.location, texts);
+                const parsed = await this.parse(unitType, unit.location, texts);
                 this.stats.parsed++;
                 result = { ...parsed, filePath: path.join(this.root, parsed.filePath) };
                 // 単位のファイルの中身も渡す (位置からソースの文字列を作れるものは、文字列を持たずに済ませる)
@@ -361,14 +404,19 @@ export class UnitStore {
         result: UnitParseResult,
         files: readonly UnitSourceFile[],
     ): Promise<void> {
+        const data = {
+            ...result,
+            filePath: path.relative(this.root, result.filePath).split(path.sep).join('/'),
+        };
+        if (this.writer) {
+            this.writer.write(unitType.type, key, unitFormatVersionOf(unitType), data, files);
+            return;
+        }
         await this.backend.writeParsed(
             unitType.type,
             key,
             unitFormatVersionOf(unitType),
-            {
-                ...result,
-                filePath: path.relative(this.root, result.filePath).split(path.sep).join('/'),
-            },
+            data,
             files,
         );
     }

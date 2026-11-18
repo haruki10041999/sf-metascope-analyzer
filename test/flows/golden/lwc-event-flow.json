@@ -1,0 +1,294 @@
+{
+  "components": [
+    "accountList",
+    "accountRow",
+    "broken",
+    "newBanner",
+    "utils"
+  ],
+  "nodes": [
+    {
+      "id": "accountList:action:lightning-button:click:refresh",
+      "kind": "action",
+      "label": "<lightning-button> click",
+      "component": "accountList"
+    },
+    {
+      "id": "accountList:handler:refresh",
+      "kind": "handler",
+      "label": "refresh()",
+      "component": "accountList"
+    },
+    {
+      "id": "accountList:action:lightning-button:click:handleSave",
+      "kind": "action",
+      "label": "<lightning-button> click",
+      "component": "accountList"
+    },
+    {
+      "id": "accountList:handler:handleSave",
+      "kind": "handler",
+      "label": "handleSave()",
+      "component": "accountList"
+    },
+    {
+      "id": "apex:AccountController.updateAccount",
+      "kind": "apex",
+      "label": "AccountController.updateAccount"
+    },
+    {
+      "id": "accountList:event:accountsaved",
+      "kind": "event",
+      "label": "イベント accountsaved",
+      "component": "accountList"
+    },
+    {
+      "id": "accountList:action:c-account-row:select:handleSelect",
+      "kind": "action",
+      "label": "<c-account-row> select",
+      "component": "accountList"
+    },
+    {
+      "id": "accountList:handler:handleSelect",
+      "kind": "handler",
+      "label": "handleSelect()",
+      "component": "accountList"
+    },
+    {
+      "id": "accountList:navigate:standard__recordPage",
+      "kind": "navigate",
+      "label": "画面の遷移 (standard__recordPage)",
+      "component": "accountList"
+    },
+    {
+      "id": "accountList:event:accountselect",
+      "kind": "event",
+      "label": "イベント accountselect",
+      "component": "accountList"
+    },
+    {
+      "id": "accountRow:event:select",
+      "kind": "event",
+      "label": "イベント select",
+      "component": "accountRow"
+    },
+    {
+      "id": "accountList:action:button:click:handleDelete",
+      "kind": "action",
+      "label": "<button> click",
+      "component": "accountList"
+    },
+    {
+      "id": "accountList:handler:handleDelete",
+      "kind": "handler",
+      "label": "handleDelete()",
+      "component": "accountList"
+    },
+    {
+      "id": "apex:AccountController.deleteAccount",
+      "kind": "apex",
+      "label": "AccountController.deleteAccount"
+    },
+    {
+      "id": "accountList:toast:削除しました",
+      "kind": "toast",
+      "label": "トースト: 削除しました",
+      "component": "accountList"
+    },
+    {
+      "id": "accountList:wire:record",
+      "kind": "wire",
+      "label": "@wire getRecord → record",
+      "component": "accountList"
+    },
+    {
+      "id": "accountList:wire:recordByName",
+      "kind": "wire",
+      "label": "@wire getRecord → recordByName",
+      "component": "accountList"
+    },
+    {
+      "id": "accountList:wire:wiredAccounts",
+      "kind": "wire",
+      "label": "@wire getAccounts → wiredAccounts",
+      "component": "accountList"
+    },
+    {
+      "id": "apex:AccountController.getAccounts",
+      "kind": "apex",
+      "label": "AccountController.getAccounts"
+    },
+    {
+      "id": "accountList:handler:wiredAccounts",
+      "kind": "handler",
+      "label": "wiredAccounts()",
+      "component": "accountList"
+    },
+    {
+      "id": "accountList:lifecycle:connectedCallback",
+      "kind": "lifecycle",
+      "label": "表示したとき (connectedCallback)",
+      "component": "accountList"
+    },
+    {
+      "id": "accountList:handler:connectedCallback",
+      "kind": "handler",
+      "label": "connectedCallback()",
+      "component": "accountList"
+    },
+    {
+      "id": "accountList:handler:handleReload",
+      "kind": "handler",
+      "label": "handleReload()",
+      "component": "accountList"
+    },
+    {
+      "id": "accountList:refresh",
+      "kind": "refresh",
+      "label": "refreshApex",
+      "component": "accountList"
+    },
+    {
+      "id": "accountList:event:reloaded",
+      "kind": "event",
+      "label": "イベント reloaded",
+      "component": "accountList"
+    },
+    {
+      "id": "accountRow:action:a:click:handleClick",
+      "kind": "action",
+      "label": "<a> click",
+      "component": "accountRow"
+    },
+    {
+      "id": "accountRow:handler:handleClick",
+      "kind": "handler",
+      "label": "handleClick()",
+      "component": "accountRow"
+    },
+    {
+      "id": "broken:action:c-child:click:handleClick",
+      "kind": "action",
+      "label": "<c-child> click",
+      "component": "broken"
+    },
+    {
+      "id": "broken:handler:handleClick",
+      "kind": "handler",
+      "label": "handleClick()",
+      "component": "broken"
+    }
+  ],
+  "edges": [
+    {
+      "from": "accountList:action:lightning-button:click:refresh",
+      "to": "accountList:handler:refresh",
+      "kind": "flow"
+    },
+    {
+      "from": "accountList:action:lightning-button:click:handleSave",
+      "to": "accountList:handler:handleSave",
+      "kind": "flow"
+    },
+    {
+      "from": "accountList:handler:handleSave",
+      "to": "apex:AccountController.updateAccount",
+      "kind": "data",
+      "label": "呼び出し"
+    },
+    {
+      "from": "accountList:handler:handleSave",
+      "to": "accountList:event:accountsaved",
+      "kind": "event",
+      "label": "発行"
+    },
+    {
+      "from": "accountList:action:c-account-row:select:handleSelect",
+      "to": "accountList:handler:handleSelect",
+      "kind": "flow"
+    },
+    {
+      "from": "accountList:handler:handleSelect",
+      "to": "accountList:navigate:standard__recordPage",
+      "kind": "flow"
+    },
+    {
+      "from": "accountList:handler:handleSelect",
+      "to": "accountList:event:accountselect",
+      "kind": "event",
+      "label": "発行"
+    },
+    {
+      "from": "accountRow:event:select",
+      "to": "accountList:action:c-account-row:select:handleSelect",
+      "kind": "event",
+      "label": "親へ"
+    },
+    {
+      "from": "accountList:action:button:click:handleDelete",
+      "to": "accountList:handler:handleDelete",
+      "kind": "flow"
+    },
+    {
+      "from": "accountList:handler:handleDelete",
+      "to": "apex:AccountController.deleteAccount",
+      "kind": "data",
+      "label": "呼び出し"
+    },
+    {
+      "from": "accountList:handler:handleDelete",
+      "to": "accountList:toast:削除しました",
+      "kind": "flow"
+    },
+    {
+      "from": "apex:AccountController.getAccounts",
+      "to": "accountList:wire:wiredAccounts",
+      "kind": "data",
+      "label": "@wire"
+    },
+    {
+      "from": "accountList:wire:wiredAccounts",
+      "to": "accountList:handler:wiredAccounts",
+      "kind": "data",
+      "label": "データ"
+    },
+    {
+      "from": "accountList:lifecycle:connectedCallback",
+      "to": "accountList:handler:connectedCallback",
+      "kind": "flow"
+    },
+    {
+      "from": "accountList:handler:connectedCallback",
+      "to": "accountList:handler:handleReload",
+      "kind": "event",
+      "label": "resize (addEventListener)"
+    },
+    {
+      "from": "accountList:handler:handleReload",
+      "to": "accountList:refresh",
+      "kind": "data"
+    },
+    {
+      "from": "accountList:handler:handleReload",
+      "to": "accountList:event:reloaded",
+      "kind": "event",
+      "label": "発行"
+    },
+    {
+      "from": "accountRow:action:a:click:handleClick",
+      "to": "accountRow:handler:handleClick",
+      "kind": "flow"
+    },
+    {
+      "from": "accountRow:handler:handleClick",
+      "to": "accountRow:event:select",
+      "kind": "event",
+      "label": "発行"
+    },
+    {
+      "from": "broken:action:c-child:click:handleClick",
+      "to": "broken:handler:handleClick",
+      "kind": "flow"
+    }
+  ]
+}

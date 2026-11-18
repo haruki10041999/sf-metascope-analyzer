@@ -14,8 +14,8 @@ import {
     runReportProvider,
 } from '../analyzer/report';
 import { CompareRange } from '../analyzer/unit/gitRange';
-import type { RepositoryProcessor } from '../analyzer/unit/processor';
-import { resolveReport, writeReportHtml } from '../builder/reportBuilder';
+import { resolveReport, writeReportSite } from '../builder/reportBuilder';
+import { comparedInputOf, dataSummaryOf, inputForOf, reportOutputOf } from '../builder/inputs';
 import {
     buildReportCatalog,
     componentMarkdown,
@@ -47,6 +47,14 @@ const reloadSchema = z
     .optional()
     .describe('true なら、リポジトリ (作業ツリー) を読み直してから実行する');
 
+/** 文書の引数の値 (文書の params の default より優先) */
+const paramsSchema = z
+    .record(z.string(), z.unknown())
+    .optional()
+    .describe(
+        '文書の引数 (params) の値 ({ "class": "InvoiceService" } など)。文書の params の default より優先する',
+    );
+
 const compareSchema = CompareRange.optional().describe(
     'git の範囲で比べるとき ({ "from": "main" } は main...作業ツリー、{ "from": "main", "to": "HEAD" } は main...HEAD)。diff より優先する',
 );
@@ -57,26 +65,6 @@ const diffSchema = z
     .describe(
         'true なら、保存した基準 (save_baseline) と作業ツリーを比べる (各行に status)。省くと今の状態のすべて (文書の diff があればそれ)',
     );
-
-/**
- * 比べる時点。既定は今の状態だけ (1 時点。すべてを返し、status は付けない)。
- * git の範囲はツールの compare → 文書の compare、保存した基準との比較はツールの diff → 文書の diff の順に使う
- */
-const comparedInputOf = async (
-    processor: RepositoryProcessor,
-    compare: unknown,
-    diff: boolean | undefined,
-    document?: unknown,
-) => {
-    const fromDocument = document as { compare?: unknown; diff?: unknown } | undefined;
-    const documentRange = CompareRange.safeParse(fromDocument?.compare);
-    const range =
-        (compare as CompareRange | undefined) ??
-        (documentRange.success ? documentRange.data : undefined);
-    return processor.getComparedInput(range, {
-        diff: diff ?? fromDocument?.diff === true,
-    });
-};
 
 const toError = (error: unknown): Error =>
     error instanceof Error ? error : new Error(String(error));
@@ -98,21 +86,6 @@ const documentSchema = z
     );
 
 /** 文書のデータの件数 (データの名前 → 行の数。行の並びでなければ null) */
-const dataSummaryOf = (state: Record<string, unknown>) =>
-    Object.fromEntries(
-        Object.entries((state.data ?? {}) as Record<string, unknown>).map(([name, value]) => [
-            name,
-            Array.isArray(value) ? value.length : null,
-        ]),
-    );
-
-/** ファイル名に使えない文字を除く */
-const toFileName = (name: string) =>
-    name
-        .trim()
-        .replace(/[\\/:*?"<>|\s]+/g, '-')
-        .replace(/^-+|-+$/g, '') || 'report';
-
 export type ReportToolOptions = {
     /** HTML を書くフォルダ (既定は <保存先>/reports) */
     reportDirectory?: string;
@@ -253,23 +226,33 @@ export const registerReportTools = (
                 document: documentSchema,
                 diff: diffSchema,
                 compare: compareSchema,
+                params: paramsSchema,
                 reload: reloadSchema,
             },
         },
-        async ({ document, diff, compare, reload }) => {
+        async ({ document, diff, compare, params, reload }) => {
             const processor = await processorOf();
             if (reload) await processor.reset();
             const comparedInput = await comparedInputOf(processor, compare, diff, document).catch(
                 (error: unknown) => toError(error),
             );
             if (comparedInput instanceof Error) return compareIssue(comparedInput);
+            const inputFor = await inputForOf(processor, document).catch((error: unknown) =>
+                toError(error),
+            );
+            if (inputFor instanceof Error) return compareIssue(inputFor);
             const { input, compared } = comparedInput;
-            const resolved = resolveReport(document, input, { compared });
+            const resolved = resolveReport(document, input, {
+                compared,
+                inputFor,
+                ...(params ? { params } : {}),
+            });
             return text(
                 resolved.ok
                     ? {
                           ok: true,
                           data: dataSummaryOf(resolved.report.spec.state),
+                          ...(resolved.pages ? { pages: resolved.pages.length } : {}),
                           ...(resolved.warnings ? { warnings: resolved.warnings } : {}),
                       }
                     : { ok: false, issues: resolved.issues },
@@ -293,34 +276,42 @@ export const registerReportTools = (
                     .describe('HTML のファイル名 (拡張子なし)。既定は文書の title'),
                 diff: diffSchema,
                 compare: compareSchema,
+                params: paramsSchema,
                 reload: reloadSchema,
             },
         },
-        async ({ document, fileName, diff, compare, reload }) => {
+        async ({ document, fileName, diff, compare, params, reload }) => {
             const processor = await processorOf();
             if (reload) await processor.reset();
             const comparedInput = await comparedInputOf(processor, compare, diff, document).catch(
                 (error: unknown) => toError(error),
             );
             if (comparedInput instanceof Error) return compareIssue(comparedInput);
+            const inputFor = await inputForOf(processor, document).catch((error: unknown) =>
+                toError(error),
+            );
+            if (inputFor instanceof Error) return compareIssue(inputFor);
             const { input, compared } = comparedInput;
-            const resolved = resolveReport(document, input, { compared });
+            const resolved = resolveReport(document, input, {
+                compared,
+                inputFor,
+                ...(params ? { params } : {}),
+            });
             if (!resolved.ok) return text({ ok: false, issues: resolved.issues });
             const directory = options.reportDirectory ?? path.join(processor.savingRoot, 'reports');
-            const output = path.join(
+            // ページに分けた文書は、フォルダ <名前>/ に目次 (index.html) とページ (pages/) を書く
+            const output = reportOutputOf(
                 directory,
-                `${toFileName(fileName ?? resolved.report.title)}.html`,
+                fileName ?? resolved.report.title,
+                Boolean(resolved.pages?.length),
             );
             try {
-                const written = await writeReportHtml(
-                    resolved.report,
-                    output,
-                    options.templatePath,
-                );
+                const written = await writeReportSite(resolved, output, options.templatePath);
                 const summary = {
                     ok: true,
                     path: written,
                     data: dataSummaryOf(resolved.report.spec.state),
+                    ...(resolved.pages ? { pages: resolved.pages.length } : {}),
                     ...(resolved.warnings ? { warnings: resolved.warnings } : {}),
                 };
                 // レポート本体 (仕様とデータ) は画面だけに渡す (_meta。モデルの文脈を大きくしない)

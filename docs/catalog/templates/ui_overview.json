@@ -1,0 +1,350 @@
+{
+    "$schema": "../report-document.schema.json",
+    "title": "画面",
+    "data": {
+        "appsUnits": {
+            "provider": "metadata.units",
+            "args": {
+                "types": [
+                    "customApplication",
+                    "customTab"
+                ]
+            }
+        },
+        "appsProperties": {
+            "provider": "metadata.properties",
+            "args": {
+                "types": [
+                    "customApplication",
+                    "customTab"
+                ]
+            }
+        },
+        "pages": {
+            "provider": "flexiPage.detail"
+        },
+        "layouts": {
+            "provider": "layout.detail"
+        },
+        "placements": {
+            "provider": "lwc.placements"
+        },
+        "actionsUnits": {
+            "provider": "metadata.units",
+            "args": {
+                "types": [
+                    "quickAction",
+                    "pathAssistant"
+                ]
+            }
+        },
+        "actionsProperties": {
+            "provider": "metadata.properties",
+            "args": {
+                "types": [
+                    "quickAction",
+                    "pathAssistant"
+                ]
+            }
+        }
+    },
+    "spec": {
+        "root": "page",
+        "elements": {
+            "summary": {
+                "type": "Narrative",
+                "props": {
+                    "title": "概要",
+                    "markdown": "(ここに概要を書く: どのアプリにどのタブがあり、どの画面 (Lightning ページ・ページレイアウト) で何を表示・入力するか、画面に置いた LWC・クイックアクション・パス)"
+                },
+                "children": []
+            },
+            "appsUnitsTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/appsUnits"
+                    },
+                    "columns": [
+                        {
+                            "key": "unitType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "label",
+                            "label": "ラベル"
+                        },
+                        {
+                            "key": "description",
+                            "label": "説明"
+                        },
+                        {
+                            "key": "filePath",
+                            "label": "ファイル"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "appsUnitsCard": {
+                "type": "Card",
+                "props": {
+                    "title": "アプリとタブ",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "appsUnitsTable"
+                ]
+            },
+            "appsPropertiesTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/appsProperties"
+                    },
+                    "columns": [
+                        {
+                            "key": "unitType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "path",
+                            "label": "場所"
+                        },
+                        {
+                            "key": "value",
+                            "label": "値"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "appsPropertiesCard": {
+                "type": "Card",
+                "props": {
+                    "title": "アプリとタブの設定",
+                    "description": "場所 → 値 (機密になりうる値は伏せた)",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "appsPropertiesTable"
+                ]
+            },
+            "pagesView": {
+                "type": "FlexiPageView",
+                "props": {
+                    "data": {
+                        "$state": "/data/pages"
+                    }
+                },
+                "children": []
+            },
+            "pagesCard": {
+                "type": "Card",
+                "props": {
+                    "title": "Lightning ページ",
+                    "description": "リージョンと部品",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "pagesView"
+                ]
+            },
+            "layoutsView": {
+                "type": "LayoutView",
+                "props": {
+                    "data": {
+                        "$state": "/data/layouts"
+                    }
+                },
+                "children": []
+            },
+            "layoutsCard": {
+                "type": "Card",
+                "props": {
+                    "title": "ページレイアウト",
+                    "description": "セクションと項目・関連リスト・アクション",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "layoutsView"
+                ]
+            },
+            "placementsTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/placements"
+                    },
+                    "columns": [
+                        {
+                            "key": "lwc",
+                            "label": "コンポーネント"
+                        },
+                        {
+                            "key": "flexiPage",
+                            "label": "Lightning ページ"
+                        },
+                        {
+                            "key": "pageType",
+                            "label": "ページの種類"
+                        },
+                        {
+                            "key": "sobjectType",
+                            "label": "オブジェクト"
+                        },
+                        {
+                            "key": "region",
+                            "label": "リージョン"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "placementsCard": {
+                "type": "Card",
+                "props": {
+                    "title": "LWC の置き場所",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "placementsTable"
+                ]
+            },
+            "actionsUnitsTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/actionsUnits"
+                    },
+                    "columns": [
+                        {
+                            "key": "unitType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "label",
+                            "label": "ラベル"
+                        },
+                        {
+                            "key": "description",
+                            "label": "説明"
+                        },
+                        {
+                            "key": "filePath",
+                            "label": "ファイル"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "actionsUnitsCard": {
+                "type": "Card",
+                "props": {
+                    "title": "クイックアクションとパス",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "actionsUnitsTable"
+                ]
+            },
+            "actionsPropertiesTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/actionsProperties"
+                    },
+                    "columns": [
+                        {
+                            "key": "unitType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "path",
+                            "label": "場所"
+                        },
+                        {
+                            "key": "value",
+                            "label": "値"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "actionsPropertiesCard": {
+                "type": "Card",
+                "props": {
+                    "title": "クイックアクションとパスの設定",
+                    "description": "場所 → 値 (機密になりうる値は伏せた)",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "actionsPropertiesTable"
+                ]
+            },
+            "page": {
+                "type": "Stack",
+                "props": {
+                    "direction": "vertical",
+                    "gap": "lg",
+                    "align": null,
+                    "justify": null,
+                    "className": null
+                },
+                "children": [
+                    "summary",
+                    "appsUnitsCard",
+                    "appsPropertiesCard",
+                    "pagesCard",
+                    "layoutsCard",
+                    "placementsCard",
+                    "actionsUnitsCard",
+                    "actionsPropertiesCard"
+                ]
+            }
+        }
+    }
+}

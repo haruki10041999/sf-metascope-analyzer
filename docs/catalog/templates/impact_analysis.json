@@ -1,0 +1,91 @@
+{
+    "$schema": "../report-document.schema.json",
+    "title": "変更の影響の調査",
+    "diff": true,
+    "data": {
+        "impact": {
+            "provider": "dependency.impact",
+            "args": {
+                "depth": 2
+            }
+        },
+        "changes": {
+            "provider": "dependency.changes"
+        }
+    },
+    "spec": {
+        "root": "page",
+        "elements": {
+            "page": {
+                "type": "Stack",
+                "props": {
+                    "direction": "vertical",
+                    "gap": "lg",
+                    "align": null,
+                    "justify": null,
+                    "className": null
+                },
+                "children": [
+                    "summary",
+                    "impactCard",
+                    "changesCard"
+                ]
+            },
+            "summary": {
+                "type": "Narrative",
+                "props": {
+                    "title": "要約",
+                    "markdown": "(ここに要約を書く: 何が変わり、どこに影響するか、確かめる順番、リスク)"
+                },
+                "children": []
+            },
+            "impactCard": {
+                "type": "Card",
+                "props": {
+                    "title": "変わった単位と影響を受ける単位",
+                    "description": "2 段までたどった被依存",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "impactView"
+                ]
+            },
+            "impactView": {
+                "type": "ImpactView",
+                "props": {
+                    "data": {
+                        "$state": "/data/impact"
+                    }
+                },
+                "children": []
+            },
+            "changesCard": {
+                "type": "Card",
+                "props": {
+                    "title": "依存関係の変化",
+                    "description": "増えた・なくなった参照",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "changesTable"
+                ]
+            },
+            "changesTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/changes"
+                    },
+                    "columns": null,
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            }
+        }
+    }
+}

@@ -1,0 +1,196 @@
+{
+    "$schema": "../report-document.schema.json",
+    "title": "連携",
+    "data": {
+        "integrationsUnits": {
+            "provider": "metadata.units",
+            "args": {
+                "types": [
+                    "namedCredential",
+                    "externalCredential",
+                    "remoteSiteSetting",
+                    "cspTrustedSite",
+                    "externalDataSource",
+                    "platformEventChannel",
+                    "platformEventChannelMember",
+                    "platformEventSubscriberConfig",
+                    "messageChannel"
+                ]
+            }
+        },
+        "integrationsProperties": {
+            "provider": "metadata.properties",
+            "args": {
+                "types": [
+                    "namedCredential",
+                    "externalCredential",
+                    "remoteSiteSetting",
+                    "cspTrustedSite",
+                    "externalDataSource",
+                    "platformEventChannel",
+                    "platformEventChannelMember",
+                    "platformEventSubscriberConfig",
+                    "messageChannel"
+                ]
+            }
+        },
+        "users": {
+            "provider": "crossRef.references",
+            "args": {
+                "refTypes": [
+                    "namedCredential",
+                    "externalCredential",
+                    "remoteSiteSetting",
+                    "cspTrustedSite",
+                    "externalDataSource",
+                    "platformEventChannel",
+                    "platformEventChannelMember",
+                    "platformEventSubscriberConfig",
+                    "messageChannel"
+                ]
+            }
+        }
+    },
+    "spec": {
+        "root": "page",
+        "elements": {
+            "summary": {
+                "type": "Narrative",
+                "props": {
+                    "title": "概要",
+                    "markdown": "(ここに概要を書く: どの外部システムとどう接続するか (指定ログイン情報・外部ログイン情報・リモートサイト)、プラットフォームイベントとメッセージチャネルの発行・購読、使っている Apex・Flow。URL などの機密の値は伏せてある)"
+                },
+                "children": []
+            },
+            "integrationsUnitsTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/integrationsUnits"
+                    },
+                    "columns": [
+                        {
+                            "key": "unitType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "label",
+                            "label": "ラベル"
+                        },
+                        {
+                            "key": "description",
+                            "label": "説明"
+                        },
+                        {
+                            "key": "filePath",
+                            "label": "ファイル"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "integrationsUnitsCard": {
+                "type": "Card",
+                "props": {
+                    "title": "連携の設定",
+                    "description": "指定ログイン情報・外部ログイン情報・リモートサイト・CSP・外部データソース・イベント・メッセージチャネル",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "integrationsUnitsTable"
+                ]
+            },
+            "integrationsPropertiesTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/integrationsProperties"
+                    },
+                    "columns": [
+                        {
+                            "key": "unitType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "path",
+                            "label": "場所"
+                        },
+                        {
+                            "key": "value",
+                            "label": "値"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "integrationsPropertiesCard": {
+                "type": "Card",
+                "props": {
+                    "title": "連携の設定の設定",
+                    "description": "場所 → 値 (機密になりうる値は伏せた)",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "integrationsPropertiesTable"
+                ]
+            },
+            "usersTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/users"
+                    },
+                    "columns": null,
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "usersCard": {
+                "type": "Card",
+                "props": {
+                    "title": "連携を使っているもの",
+                    "description": "指定ログイン情報・メッセージチャネルなどを参照しているコード・メタデータ",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "usersTable"
+                ]
+            },
+            "page": {
+                "type": "Stack",
+                "props": {
+                    "direction": "vertical",
+                    "gap": "lg",
+                    "align": null,
+                    "justify": null,
+                    "className": null
+                },
+                "children": [
+                    "summary",
+                    "integrationsUnitsCard",
+                    "integrationsPropertiesCard",
+                    "usersCard"
+                ]
+            }
+        }
+    }
+}

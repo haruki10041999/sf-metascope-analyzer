@@ -1,0 +1,272 @@
+{
+    "$schema": "../report-document.schema.json",
+    "title": "翻訳の状況",
+    "data": {
+        "coverage": {
+            "provider": "translation.coverage"
+        },
+        "gaps": {
+            "provider": "translation.items",
+            "args": {
+                "statuses": [
+                    "missing",
+                    "sameAsSource",
+                    "orphan",
+                    "outdated"
+                ]
+            }
+        },
+        "items": {
+            "provider": "translation.items"
+        },
+        "labels": {
+            "provider": "label.definitions"
+        }
+    },
+    "spec": {
+        "root": "page",
+        "elements": {
+            "page": {
+                "type": "Stack",
+                "props": {
+                    "direction": "vertical",
+                    "gap": "lg",
+                    "align": null,
+                    "justify": null,
+                    "className": null
+                },
+                "children": [
+                    "summary",
+                    "coverageCard",
+                    "gapsCard",
+                    "labelsCard",
+                    "itemsCard"
+                ]
+            },
+            "summary": {
+                "type": "Narrative",
+                "props": {
+                    "title": "概要",
+                    "markdown": "(ここに概要を書く: どの言語に訳があるか、網羅の低いオブジェクト、優先して訳すもの)"
+                },
+                "children": []
+            },
+            "coverageCard": {
+                "type": "Card",
+                "props": {
+                    "title": "網羅",
+                    "description": "オブジェクト × 言語ごとの件数と割合 (%)",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "coverageTable"
+                ]
+            },
+            "coverageTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/coverage"
+                    },
+                    "columns": [
+                        {
+                            "key": "object",
+                            "label": "オブジェクト"
+                        },
+                        {
+                            "key": "language",
+                            "label": "言語"
+                        },
+                        {
+                            "key": "coverage",
+                            "label": "網羅 (%)"
+                        },
+                        {
+                            "key": "total",
+                            "label": "対象"
+                        },
+                        {
+                            "key": "translated",
+                            "label": "訳あり"
+                        },
+                        {
+                            "key": "missing",
+                            "label": "未訳"
+                        },
+                        {
+                            "key": "sameAsSource",
+                            "label": "翻訳元と同じ"
+                        },
+                        {
+                            "key": "orphan",
+                            "label": "対象がない"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "gapsCard": {
+                "type": "Card",
+                "props": {
+                    "title": "訳が足りない項目",
+                    "description": "未訳・翻訳元と同じ・対象がない (・古い)",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "gapsTable"
+                ]
+            },
+            "gapsTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/gaps"
+                    },
+                    "columns": [
+                        {
+                            "key": "object",
+                            "label": "オブジェクト"
+                        },
+                        {
+                            "key": "language",
+                            "label": "言語"
+                        },
+                        {
+                            "key": "kind",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "source",
+                            "label": "翻訳元"
+                        },
+                        {
+                            "key": "translation",
+                            "label": "訳"
+                        },
+                        {
+                            "key": "translationStatus",
+                            "label": "状態"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "labelsCard": {
+                "type": "Card",
+                "props": {
+                    "title": "カスタム表示ラベル",
+                    "description": "定義と、組織の翻訳 (translations) にある訳・訳のない言語",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "labelsTable"
+                ]
+            },
+            "labelsTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/labels"
+                    },
+                    "columns": [
+                        {
+                            "key": "label",
+                            "label": "ラベル"
+                        },
+                        {
+                            "key": "value",
+                            "label": "値"
+                        },
+                        {
+                            "key": "language",
+                            "label": "言語"
+                        },
+                        {
+                            "key": "translations",
+                            "label": "訳"
+                        },
+                        {
+                            "key": "missingLanguages",
+                            "label": "訳のない言語"
+                        },
+                        {
+                            "key": "categories",
+                            "label": "分類"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "itemsCard": {
+                "type": "Card",
+                "props": {
+                    "title": "すべての項目",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "itemsTable"
+                ]
+            },
+            "itemsTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/items"
+                    },
+                    "columns": [
+                        {
+                            "key": "object",
+                            "label": "オブジェクト"
+                        },
+                        {
+                            "key": "language",
+                            "label": "言語"
+                        },
+                        {
+                            "key": "kind",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "source",
+                            "label": "翻訳元"
+                        },
+                        {
+                            "key": "translation",
+                            "label": "訳"
+                        },
+                        {
+                            "key": "translationStatus",
+                            "label": "状態"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            }
+        }
+    }
+}

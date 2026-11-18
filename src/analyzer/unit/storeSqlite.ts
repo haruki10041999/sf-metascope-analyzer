@@ -140,6 +140,9 @@ export class SqliteStoreBackend implements StoreBackend {
     readonly db: DatabaseSync;
     private readonly statements = new Map<string, StatementSync>();
     private savepoint = 0;
+    /** batch の入れ子の深さと、batch が始めたトランザクションが開いているか */
+    private batchDepth = 0;
+    private batchTransaction = false;
 
     /** dir は置き場 (<savingRoot>/store) */
     constructor(readonly dir: string) {
@@ -149,7 +152,10 @@ export class SqliteStoreBackend implements StoreBackend {
         }
         this.db = new DatabaseSync(path.join(dir, DATABASE_FILE));
         openBackends.add(this);
-        this.db.exec('PRAGMA journal_mode = WAL; PRAGMA synchronous = NORMAL;');
+        // busy_timeout: 書き込みのスレッド (storeWriter.ts) と同時に書こうとしたら待つ
+        this.db.exec(
+            'PRAGMA journal_mode = WAL; PRAGMA synchronous = NORMAL; PRAGMA busy_timeout = 60000;',
+        );
         this.db.exec(SCHEMA);
         const version = (
             this.db.prepare("SELECT value FROM meta WHERE key = 'layoutVersion'").get() as
@@ -385,7 +391,27 @@ export class SqliteStoreBackend implements StoreBackend {
         this.statement('INSERT OR IGNORE INTO source (hash, text) VALUES (?, ?)').run(hash, text);
     }
 
+    async batch<T>(fn: () => Promise<T>): Promise<T> {
+        if (this.batchDepth === 0 && !this.db.isTransaction) {
+            this.db.exec('BEGIN');
+            this.batchTransaction = true;
+        }
+        this.batchDepth++;
+        try {
+            return await fn();
+        } finally {
+            this.batchDepth--;
+            if (this.batchDepth === 0 && this.batchTransaction) {
+                this.batchTransaction = false;
+                if (this.db.isTransaction) this.db.exec('COMMIT');
+            }
+        }
+    }
+
     async begin(): Promise<void> {
+        // batch のトランザクションが開いていれば、先に確定する (保存は自分のトランザクションで行う)
+        if (this.batchTransaction && this.db.isTransaction) this.db.exec('COMMIT');
+        this.batchTransaction = false;
         this.db.exec('BEGIN IMMEDIATE');
     }
 

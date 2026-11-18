@@ -3,12 +3,16 @@
     "version": "1.0.0",
     "description": "Analyzes Salesforce DX projects (Apex, LWC, metadata) to help write documentation and understand code: dependencies, customizable HTML reports and an MCP server. Diffs and impact analysis are supported as a secondary use.",
     "main": "dist/index.js",
+    "bin": {
+        "sf-metascope": "bin/sf-metascope.mjs"
+    },
     "type": "module",
     "scripts": {
         "build": "ttsc && npm run build:report && npm run build:node",
         "build:node": "vite build --config vite.node.config.ts",
         "mcp": "ttsx --noCheck src/mcp/server.ts",
         "mcp:node": "node dist/node/mcp/server.js",
+        "cli": "ttsx --noCheck src/cli/index.ts",
         "test": "ttsx --noCheck test/run.ts",
         "typecheck": "tsc --noEmit -p . && tsc -p tsconfig.test.json",
         "format": "prettier --write .",
@@ -32,7 +36,7 @@
         "node": ">=24.15"
     },
     "dependencies": {
-        "@apexdevtools/apex-parser": "^5.2.0",
+        "@apexdevtools/apex-parser": "^5.3.0",
         "@babel/parser": "^8.0.7",
         "@dagrejs/dagre": "^3.1.3",
         "@json-render/core": "0.23.1",
@@ -55,6 +59,7 @@
         "zod": "^4.6.5"
     },
     "devDependencies": {
+        "ajv": "^8.20.0",
         "@lwc/engine-server": "^9.5.3",
         "@lwc/rollup-plugin": "^9.5.3",
         "@tailwindcss/vite": "^4.3.5",

@@ -2,6 +2,13 @@ import { z } from 'zod';
 
 import { getApexDataAccess, getApexOutline } from './apex';
 import { getLwcComponents, getLwcDetail, getLwcWireframe } from './lwc';
+import { getApexCallFlows } from './apexCallFlow';
+import { getApexMethodFlows } from './apexFlow';
+import { getFeatureScope } from './feature';
+import { getLwcEventFlow } from './lwcEventFlow';
+import { getLwcMethodFlows } from './lwcFlow';
+import { getFlowElements, getLabelDefinitions, getObjectMembers } from './members';
+import { getMetadataProperties, getMetadataTypes, getMetadataUnits } from './metadata';
 import { getTranslationCoverage, getTranslationItems } from './translation';
 import { getApexInterface, getLwcInterface } from './code';
 import { getLabelUsages, getMetadataFindings, getReferenceUsages } from './crossRef';
@@ -50,7 +57,7 @@ import type { ReportInput } from './types';
 export type ProviderShape = 'rows' | 'matrix' | 'diagram' | 'object';
 
 export type ProviderCategory =
-    'object' | 'permission' | 'flow' | 'code' | 'page' | 'crossRef' | 'dependency';
+    'metadata' | 'object' | 'permission' | 'flow' | 'code' | 'page' | 'crossRef' | 'dependency';
 
 export type ProviderDefinition<A extends z.ZodType = z.ZodType, O extends z.ZodType = z.ZodType> = {
     description: string;
@@ -100,7 +107,43 @@ const rows = <T extends z.ZodType>(row: T) => z.array(row);
 
 const objectArgs = z.object({ objects: names('Object API names') });
 
+const metadataArgs = {
+    types: names('Unit types (customTab, namedCredential, role ...)'),
+    names: names('Unit names'),
+};
+
 export const PROVIDER_DEFINITIONS = {
+    'metadata.types': define({
+        description:
+            'リポジトリにある単位の種類ごとの数 (読めなかったもの・エラーのあるものの数)。メタデータの棚卸しの目次。',
+        category: 'metadata',
+        shape: 'rows',
+        args: z.object(metadataArgs),
+        output: rows(schemas.MetadataTypeRowSchema),
+        run: (input, args) => getMetadataTypes(input, args),
+    }),
+    'metadata.units': define({
+        description:
+            'すべての種類の単位の一覧 (種類・名前・ラベル・説明・ファイル・読めなかった要素)。専用の provider がない種類 (タブ・共有ルール・ロール・指定ログイン情報など) も一覧にできる。',
+        category: 'metadata',
+        shape: 'rows',
+        args: z.object(metadataArgs),
+        output: rows(schemas.MetadataUnitRowSchema),
+        run: (input, args) => getMetadataUnits(input, args),
+    }),
+    'metadata.properties': define({
+        description:
+            '単位の設定値を「場所 → 値」の行で (どの種類の XML のメタデータでも。例: sharingCriteriaRules[Large_Invoices].accessLevel → Edit)。数式は文字列、条件の行は「左 演算子 右」。Apex・LWC は -meta.xml の値だけ。機密の値は伏せる。行が多くなるので types・names・paths で絞る。',
+        category: 'metadata',
+        shape: 'rows',
+        args: z.object({
+            ...metadataArgs,
+            paths: names('Path prefixes (label, sharingCriteriaRules ...)'),
+        }),
+        example: { types: ['customTab', 'role'] },
+        output: rows(schemas.MetadataPropertyRowSchema),
+        run: (input, args) => getMetadataProperties(input, args),
+    }),
     'object.list': define({
         description:
             'オブジェクトの一覧 (ラベル・種類・共有設定・項目・入力規則・レコードタイプの数)。オブジェクト定義書の目次。',
@@ -185,6 +228,45 @@ export const PROVIDER_DEFINITIONS = {
         output: rows(schemas.TranslationItemRowSchema),
         run: (input, args) => getTranslationItems(snapshotInputOf(input), args),
     }),
+    'object.members': define({
+        description:
+            'オブジェクトの子 (レコードタイプ・リストビュー・項目セット・コンパクトレイアウト・ボタンとリンク・ビジネスプロセス・共有の理由・アクションの上書き・検索レイアウト)。1 行 1 つで、中身 (列・条件・項目・URL など) は「場所 = 値」の一覧。',
+        category: 'object',
+        shape: 'rows',
+        args: z.object({
+            objects: names('Object API names'),
+            memberTypes: z
+                .array(
+                    z.enum([
+                        'recordType',
+                        'listView',
+                        'fieldSet',
+                        'compactLayout',
+                        'webLink',
+                        'businessProcess',
+                        'sharingReason',
+                        'actionOverride',
+                        'searchLayout',
+                    ]),
+                )
+                .exactOptional()
+                .describe('Member types to include. Omit for all.'),
+        }),
+        output: rows(schemas.ObjectMemberRowSchema),
+        run: (input, args) => getObjectMembers(snapshotInputOf(input), args),
+    }),
+    'label.definitions': define({
+        description:
+            'カスタム表示ラベルの定義 (値・言語・保護・分類・説明) と、組織の翻訳にある各言語の訳・訳のない言語。使われている場所は crossRef.labels。',
+        category: 'crossRef',
+        shape: 'rows',
+        args: z.object({
+            labels: names('Label API names'),
+            categories: names('Label categories'),
+        }),
+        output: rows(schemas.LabelDefinitionRowSchema),
+        run: (input, args) => getLabelDefinitions(snapshotInputOf(input), args),
+    }),
     'object.diagram': define({
         description:
             'オブジェクトの ER 図 (参照・主従関係と項目)。objects で起点を選ぶと、そこから depth 段 (両方向) にたどったものに絞る。',
@@ -260,6 +342,18 @@ export const PROVIDER_DEFINITIONS = {
         output: z.array(schemas.FlowDiagramSchema),
         run: (input, args) => getFlowDiagrams(snapshotInputOf(input), args.flows),
     }),
+    'flow.elements': define({
+        description:
+            'Flow の要素の中身 (決定の条件・割り当て・レコードの操作の対象と条件・画面の項目・アクションの引数・サブフローなど)。1 行 1 要素で、中身は「場所 = 値」の一覧。flow.diagram (図) の詳しい版。',
+        category: 'flow',
+        shape: 'rows',
+        args: z.object({
+            flows: names('Flow API names'),
+            kinds: names('Element kinds (flowDecision, flowRecordLookup ...)'),
+        }),
+        output: rows(schemas.FlowElementRowSchema),
+        run: (input, args) => getFlowElements(snapshotInputOf(input), args),
+    }),
     'flow.diffs': define({
         description: 'Flow の要素・資源・起動の変更 (変わったプロパティの名前)。',
         category: 'flow',
@@ -302,6 +396,39 @@ export const PROVIDER_DEFINITIONS = {
         example: { classes: ['AccountService'] },
         output: rows(schemas.ApexOutlineRowSchema),
         run: (input, args) => getApexOutline(snapshotInputOf(input), args),
+    }),
+    'apex.methodFlow': define({
+        description:
+            'Apex のメソッド・コンストラクター・トリガー・匿名 Apex の処理フロー (分岐・繰り返し・try / catch・SOQL / SOSL・DML・外部の呼び出し・return)。箱の文字はソースの元の文。CodeFlowchart で描く。for でメソッドごとに描くときは where に member と signature ("${m.name}(${m.params})") を書く。',
+        category: 'code',
+        shape: 'diagram',
+        args: z.object({
+            classes: names('Class, trigger or anonymous Apex names'),
+            members: names('Method names (name or Owner.name)'),
+        }),
+        example: { classes: ['AccountService'], members: ['sync'] },
+        output: z.array(schemas.CodeFlowSchema),
+        run: (input, args) => getApexMethodFlows(snapshotInputOf(input), args),
+    }),
+    'apex.callFlow': define({
+        description:
+            'Apex のメソッド (・トリガー) から呼び出しをクラスをまたいでたどったシーケンス図 (起点ごとに 1 つ)。呼び出し・SOQL / SOSL・DML・非同期の開始・外部の呼び出し・イベントの発行をソースの順に並べ、リポジトリのクラスのメソッドは depth 段まで中をたどる。SequenceDiagram で描く。lwc.eventFlow の Apex の箱 (Class.method) を members に渡すと、画面から Apex の中までつながる。',
+        category: 'code',
+        shape: 'diagram',
+        args: z.object({
+            classes: names('Class or trigger names (start points)'),
+            members: names('Start methods (name or Owner.name; a trigger is its name)'),
+            depth: z
+                .number()
+                .int()
+                .min(1)
+                .max(10)
+                .exactOptional()
+                .describe('How many levels of calls to follow (default 3).'),
+        }),
+        example: { members: ['AccountService.execute'] },
+        output: z.array(schemas.CallSequenceSchema),
+        run: (input, args) => getApexCallFlows(snapshotInputOf(input), args),
     }),
     'apex.dataAccess': define({
         description:
@@ -370,6 +497,40 @@ export const PROVIDER_DEFINITIONS = {
         example: { components: ['accountList'] },
         output: rows(schemas.LwcDetailRowSchema),
         run: (input, args) => getLwcDetail(snapshotInputOf(input), args),
+    }),
+    'lwc.methodFlow': define({
+        description:
+            'LWC の JS / TS のメソッド・関数 (フィールドのアロー関数・getter / setter・モジュールの関数) の処理フロー (分岐・繰り返し・try / catch・Apex の呼び出し・イベントの発行 (dispatchEvent・トースト・メッセージチャネル)・画面の遷移・fetch・return)。箱の文字はソースの元の文。CodeFlowchart で描く。',
+        category: 'code',
+        shape: 'diagram',
+        args: z.object({
+            components: names('Component names (accountList or c/accountList)'),
+            members: names('Function names (name or Owner.name; getters are "get name")'),
+        }),
+        example: { components: ['accountList'], members: ['handleDelete'] },
+        output: z.array(schemas.CodeFlowSchema),
+        run: (input, args) => getLwcMethodFlows(snapshotInputOf(input), args),
+    }),
+    'lwc.eventFlow': define({
+        description:
+            'LWC の、利用者の操作から処理までの流れ (1 つの図)。テンプレートのイベント・@wire・表示のとき (connectedCallback など) から、ハンドラー → 自分のメソッド → Apex の呼び出し・refreshApex・イベントの発行・トースト・画面の遷移・メッセージチャネルへ。子コンポーネントが発行したイベントは、親のテンプレートの on<イベント> につなぐ。EventFlow で描く。',
+        category: 'code',
+        shape: 'diagram',
+        args: z.object({
+            components: names('Start components (accountList or c/accountList)'),
+            depth: z
+                .number()
+                .int()
+                .min(0)
+                .max(5)
+                .exactOptional()
+                .describe(
+                    'Levels of child components to include (default 1; 0 is the start components only).',
+                ),
+        }),
+        example: { components: ['accountList'] },
+        output: schemas.EventFlowSchema,
+        run: (input, args) => getLwcEventFlow(snapshotInputOf(input), args),
     }),
     'lwc.wireframe': define({
         description:
@@ -447,9 +608,11 @@ export const PROVIDER_DEFINITIONS = {
             '参照先 (項目・クラス・コンポーネントなど) ごとの、参照している単位 (逆引き)。',
         category: 'crossRef',
         shape: 'rows',
-        args: noArgs,
+        args: z.object({
+            refTypes: names('Referenced types (namedCredential, field, apexClass ...)'),
+        }),
         output: rows(schemas.ReferenceUsageRowSchema),
-        run: (input) => getReferenceUsages(input),
+        run: (input, args) => getReferenceUsages(input, args),
     }),
     'metadata.findings': define({
         description:
@@ -459,6 +622,36 @@ export const PROVIDER_DEFINITIONS = {
         args: noArgs,
         output: rows(schemas.FindingRowSchema),
         run: (input) => getMetadataFindings(input),
+    }),
+    'feature.scope': define({
+        description:
+            '機能のまとまり: 起点 (object:Invoice__c・apexClass:AccountService・lwc:accountList など) から依存関係を両方向にたどった、関わる単位 (種類・名前・起点との関係・段数・ファイル)。雛形 feature_overview は、この範囲の単位で種類ごとのドキュメントを組む。',
+        category: 'dependency',
+        shape: 'rows',
+        args: z.object({
+            targets: z
+                .array(z.string().min(1))
+                .min(1)
+                .describe(
+                    'Start node ids (object:Invoice__c, apexClass:AccountService, lwc:accountList ...).',
+                ),
+            depth: z
+                .number()
+                .int()
+                .min(1)
+                .exactOptional()
+                .describe('How many steps to follow (default 1).'),
+            direction: z
+                .enum(['both', 'dependencies', 'dependents'])
+                .exactOptional()
+                .describe(
+                    'both (default) / dependencies: what the targets use / dependents: what uses the targets.',
+                ),
+            excludeTypes: names('Unit types to leave out (profile, objectTranslation ...)'),
+        }),
+        example: { targets: ['object:Invoice__c'] },
+        output: rows(schemas.FeatureScopeRowSchema),
+        run: (input, args) => getFeatureScope(input, args),
     }),
     'dependency.dependents': define({
         description: 'ノードを使っているもの (逆引き。「この項目を使っているもの」)。',

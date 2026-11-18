@@ -173,4 +173,39 @@ describe('レポートの部品 (R4)', () => {
         assert.match(html, /× n/);
         assert.match(html, />if /);
     });
+
+    it('Columns: 列の比 (5:5・4:6 など) で並べ、狭い画面では縦に積む', () => {
+        const narrative = (markdown: string) => el('Narrative', { title: null, markdown });
+        const columns = (props: Record<string, unknown>, children: string[]) =>
+            el(
+                'Columns',
+                { ratio: null, gap: null, stackBelow: null, align: null, ...props },
+                children,
+            );
+        const html = render(
+            documentOf(
+                {},
+                {
+                    half: columns({}, ['left', 'right']),
+                    wide: columns({ ratio: [4, 6], gap: 'lg', stackBelow: 'never' }, ['a', 'b']),
+                    left: narrative('左'),
+                    right: narrative('右'),
+                    a: narrative('4'),
+                    b: narrative('6'),
+                },
+            ),
+        );
+        // 既定は 2 等分で、md (768px) より狭い画面では縦に積む
+        assert.match(html, /--columns:minmax\(0, 1fr\) minmax\(0, 1fr\)/);
+        assert.match(html, /md:\[grid-template-columns:var\(--columns\)\]/);
+        assert.match(html, /--columns:minmax\(0, 4fr\) minmax\(0, 6fr\)/);
+        assert.match(html, /gap-6 \[grid-template-columns:var\(--columns\)\]/);
+        // 列の数は 1〜6
+        const resolved = resolveReport(
+            documentOf({}, { bad: columns({ ratio: [1, 1, 1, 1, 1, 1, 1] }, []) }),
+            input,
+        );
+        assert.ok(!resolved.ok);
+        assert.ok(resolved.issues.some((issue) => issue.path.startsWith('spec.bad.props.ratio')));
+    });
 });

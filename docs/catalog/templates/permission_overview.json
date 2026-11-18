@@ -1,0 +1,144 @@
+{
+    "$schema": "../report-document.schema.json",
+    "title": "権限の一覧",
+    "data": {
+        "objectAccess": {
+            "provider": "permission.objectAccess"
+        },
+        "fieldAccess": {
+            "provider": "permission.fieldAccess"
+        },
+        "apexAccess": {
+            "provider": "permission.apexAccess"
+        },
+        "effective": {
+            "provider": "permission.effective"
+        }
+    },
+    "spec": {
+        "root": "page",
+        "elements": {
+            "page": {
+                "type": "Stack",
+                "props": {
+                    "direction": "vertical",
+                    "gap": "lg",
+                    "align": null,
+                    "justify": null,
+                    "className": null
+                },
+                "children": [
+                    "summary",
+                    "objectCard",
+                    "fieldCard",
+                    "apexCard",
+                    "effectiveCard"
+                ]
+            },
+            "summary": {
+                "type": "Narrative",
+                "props": {
+                    "title": "概要",
+                    "markdown": "(ここに概要を書く: 権限セット・プロファイルの役割、強い権限を持つもの、気をつけること)"
+                },
+                "children": []
+            },
+            "objectCard": {
+                "type": "Card",
+                "props": {
+                    "title": "オブジェクトの権限",
+                    "description": "CRUD・すべて参照・すべて変更",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "objectMatrix"
+                ]
+            },
+            "objectMatrix": {
+                "type": "Matrix",
+                "props": {
+                    "data": {
+                        "$state": "/data/objectAccess"
+                    },
+                    "onlyChanged": null
+                },
+                "children": []
+            },
+            "fieldCard": {
+                "type": "Card",
+                "props": {
+                    "title": "項目の権限",
+                    "description": "参照・編集",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "fieldMatrix"
+                ]
+            },
+            "fieldMatrix": {
+                "type": "Matrix",
+                "props": {
+                    "data": {
+                        "$state": "/data/fieldAccess"
+                    },
+                    "onlyChanged": null
+                },
+                "children": []
+            },
+            "apexCard": {
+                "type": "Card",
+                "props": {
+                    "title": "Apex クラス・Visualforce ページ",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "apexTable"
+                ]
+            },
+            "apexTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/apexAccess"
+                    },
+                    "columns": null,
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "effectiveCard": {
+                "type": "Card",
+                "props": {
+                    "title": "権限セットグループが与える権限",
+                    "description": "ミュートを除いた実際の権限",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "effectiveTable"
+                ]
+            },
+            "effectiveTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/effective"
+                    },
+                    "columns": null,
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            }
+        }
+    }
+}

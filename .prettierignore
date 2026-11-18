@@ -10,6 +10,7 @@ node_modules/
 docs/catalog/
 docs/examples/*/output/
 test/ir/golden/
+test/flows/golden/
 dist/
 
 # サンプルの Salesforce のソース (解析の入力。位置がずれるので整形しない)

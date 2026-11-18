@@ -30,6 +30,8 @@ import { type CompareRange, WORKING_TREE, resolveCompareRange } from './gitRange
 import { ProjectTree } from './project';
 import { type RepositoryUnitDiff, Repository, diffRepositories } from './repository';
 import { GitTree, WorkingTree } from './sourceTree';
+import { UnitWorker } from '../worker/unitWorker';
+
 import { UnitStore } from './store';
 import { type AnyUnitType, UNIT_TYPES } from './unitType';
 
@@ -55,6 +57,11 @@ export type TranslationCoverageFilter = {
 export type RepositoryProcessorOptions = {
     /** 読む単位の種類 (既定はすべて) */
     types?: readonly AnyUnitType[];
+    /**
+     * parse に使う worker_threads の数 (0 か省略でこのスレッドだけ)。ビルド版 (dist/node) でだけ使う
+     * (ttsx で動かすと、スレッドごとに準備に十数秒かかる)。NPSP の Apex 1,044 クラスで 8 スレッドなら約 5 倍速い
+     */
+    threads?: number;
 };
 
 /** レポートの provider の入力 (report/types.ts の ReportInput と同じ形) */
@@ -88,15 +95,40 @@ export class RepositoryProcessor {
     /** 保存の置き場 (目録・ソース・解析結果)。docs/save-format-plan.md 4.1 */
     readonly store: UnitStore;
 
+    /** parse を任せる worker_threads のプール (threads を渡したときだけ) */
+    private readonly worker: UnitWorker | undefined;
+
     private constructor(
         readonly repositoryRoot: string,
         /** 保存先の親フォルダ (置き場は <savingRoot>/store) */
         readonly savingRoot: string,
         private readonly types: readonly AnyUnitType[],
+        threads = 0,
     ) {
         this.before = Repository.empty(repositoryRoot);
         this.after = Repository.empty(repositoryRoot);
-        this.store = new UnitStore(path.join(savingRoot, 'store'), repositoryRoot, types);
+        const worker =
+            threads > 0 ? new UnitWorker({ useThreads: true, concurrency: threads }) : undefined;
+        this.worker = worker;
+        this.store = new UnitStore(
+            path.join(savingRoot, 'store'),
+            repositoryRoot,
+            types,
+            worker
+                ? {
+                      parse: (unitType, location, files) =>
+                          worker.parseFiles(unitType.type, location, files),
+                  }
+                : {},
+        );
+        // 並列にするときは、解析結果の DB への書き込みも別のスレッドで行う (parse と同時に進む)
+        if (worker) this.store.useWriterThread();
+    }
+
+    /** worker_threads を止め、置き場を閉じる (使い終わったとき) */
+    async close(): Promise<void> {
+        await this.worker?.close();
+        this.store.close();
     }
 
     /** 置き場 (<savingRoot>/store) */
@@ -114,6 +146,7 @@ export class RepositoryProcessor {
             repositoryRoot,
             savingRoot,
             options.types ?? UNIT_TYPES,
+            options.threads ?? 0,
         );
         await processor.reset();
         return processor;

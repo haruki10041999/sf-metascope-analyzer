@@ -123,5 +123,28 @@ export type { WireframeNode } from './schemas';
 export type TranslationCoverageRow = z.infer<typeof schemas.TranslationCoverageRowSchema>;
 export type TranslationItemRow = z.infer<typeof schemas.TranslationItemRowSchema>;
 
+// すべての種類の土台
+export type MetadataUnitRow = z.infer<typeof schemas.MetadataUnitRowSchema>;
+export type MetadataTypeRow = z.infer<typeof schemas.MetadataTypeRowSchema>;
+export type MetadataPropertyRow = z.infer<typeof schemas.MetadataPropertyRowSchema>;
+
+// 宣言単位
+export type ObjectMemberRow = z.infer<typeof schemas.ObjectMemberRowSchema>;
+export type FlowElementRow = z.infer<typeof schemas.FlowElementRowSchema>;
+export type LabelDefinitionRow = z.infer<typeof schemas.LabelDefinitionRowSchema>;
+
+// 処理フロー
+export type CodeFlowNode = z.infer<typeof schemas.CodeFlowNodeSchema>;
+export type CodeFlowEdge = z.infer<typeof schemas.CodeFlowEdgeSchema>;
+export type CodeFlow = z.infer<typeof schemas.CodeFlowSchema>;
+export type CallSequenceMessage = z.infer<typeof schemas.CallSequenceMessageSchema>;
+export type CallSequence = z.infer<typeof schemas.CallSequenceSchema>;
+export type EventFlowNode = z.infer<typeof schemas.EventFlowNodeSchema>;
+export type EventFlowEdge = z.infer<typeof schemas.EventFlowEdgeSchema>;
+export type EventFlow = z.infer<typeof schemas.EventFlowSchema>;
+
+// 機能のまとまり
+export type FeatureScopeRow = z.infer<typeof schemas.FeatureScopeRowSchema>;
+
 // 依存関係
 export type DependencyNodeRow = z.infer<typeof schemas.DependencyNodeRowSchema>;

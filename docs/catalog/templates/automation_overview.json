@@ -1,0 +1,416 @@
+{
+    "$schema": "../report-document.schema.json",
+    "title": "自動化",
+    "data": {
+        "automation": {
+            "provider": "automation.byObject"
+        },
+        "flows": {
+            "provider": "flow.list"
+        },
+        "diagrams": {
+            "provider": "flow.diagram"
+        },
+        "elements": {
+            "provider": "flow.elements"
+        },
+        "interfaces": {
+            "provider": "flow.interface"
+        },
+        "triggers": {
+            "provider": "metadata.units",
+            "args": {
+                "types": [
+                    "apexTrigger"
+                ]
+            }
+        },
+        "rulesUnits": {
+            "provider": "metadata.units",
+            "args": {
+                "types": [
+                    "workflow",
+                    "approvalProcess",
+                    "assignmentRules",
+                    "autoResponseRules",
+                    "escalationRules",
+                    "duplicateRule",
+                    "matchingRules"
+                ]
+            }
+        },
+        "rulesProperties": {
+            "provider": "metadata.properties",
+            "args": {
+                "types": [
+                    "workflow",
+                    "approvalProcess",
+                    "assignmentRules",
+                    "autoResponseRules",
+                    "escalationRules",
+                    "duplicateRule",
+                    "matchingRules"
+                ]
+            }
+        }
+    },
+    "spec": {
+        "root": "page",
+        "elements": {
+            "summary": {
+                "type": "Narrative",
+                "props": {
+                    "title": "概要",
+                    "markdown": "(ここに概要を書く: オブジェクトごとに、レコードの保存で何がどの順に動くか (入力規則・Flow・トリガー・ワークフロー)、主な Flow の役割、気をつけること (同じ項目を複数の自動化が更新しているなど))"
+                },
+                "children": []
+            },
+            "automationView": {
+                "type": "AutomationView",
+                "props": {
+                    "data": {
+                        "$state": "/data/automation"
+                    }
+                },
+                "children": []
+            },
+            "automationCard": {
+                "type": "Card",
+                "props": {
+                    "title": "オブジェクトごとの自動化",
+                    "description": "レコードトリガーフロー (順序)・Apex トリガー・入力規則",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "automationView"
+                ]
+            },
+            "flowsTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/flows"
+                    },
+                    "columns": [
+                        {
+                            "key": "name",
+                            "label": "Flow"
+                        },
+                        {
+                            "key": "label",
+                            "label": "ラベル"
+                        },
+                        {
+                            "key": "processType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "triggerType",
+                            "label": "起動"
+                        },
+                        {
+                            "key": "object",
+                            "label": "オブジェクト"
+                        },
+                        {
+                            "key": "flowStatus",
+                            "label": "状態"
+                        },
+                        {
+                            "key": "elementCount",
+                            "label": "要素"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "flowsCard": {
+                "type": "Card",
+                "props": {
+                    "title": "Flow の一覧",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "flowsTable"
+                ]
+            },
+            "diagramsView": {
+                "type": "FlowDiagram",
+                "props": {
+                    "data": {
+                        "$state": "/data/diagrams"
+                    },
+                    "flow": null
+                },
+                "children": []
+            },
+            "diagramsCard": {
+                "type": "Card",
+                "props": {
+                    "title": "Flow の図",
+                    "description": "要素と接続",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "diagramsView"
+                ]
+            },
+            "elementsTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/elements"
+                    },
+                    "columns": [
+                        {
+                            "key": "flow",
+                            "label": "Flow"
+                        },
+                        {
+                            "key": "element",
+                            "label": "要素"
+                        },
+                        {
+                            "key": "kind",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "label",
+                            "label": "ラベル"
+                        },
+                        {
+                            "key": "object",
+                            "label": "オブジェクト"
+                        },
+                        {
+                            "key": "details",
+                            "label": "中身"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "elementsCard": {
+                "type": "Card",
+                "props": {
+                    "title": "Flow の要素",
+                    "description": "条件・割り当て・レコードの操作・画面の項目・アクションの引数",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "elementsTable"
+                ]
+            },
+            "interfacesTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/interfaces"
+                    },
+                    "columns": [
+                        {
+                            "key": "flow",
+                            "label": "Flow"
+                        },
+                        {
+                            "key": "variable",
+                            "label": "変数"
+                        },
+                        {
+                            "key": "direction",
+                            "label": "向き"
+                        },
+                        {
+                            "key": "dataType",
+                            "label": "型"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "interfacesCard": {
+                "type": "Card",
+                "props": {
+                    "title": "Flow の入出力の変数",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "interfacesTable"
+                ]
+            },
+            "triggersTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/triggers"
+                    },
+                    "columns": [
+                        {
+                            "key": "unitType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "label",
+                            "label": "ラベル"
+                        },
+                        {
+                            "key": "description",
+                            "label": "説明"
+                        },
+                        {
+                            "key": "filePath",
+                            "label": "ファイル"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "triggersCard": {
+                "type": "Card",
+                "props": {
+                    "title": "Apex トリガー",
+                    "description": "対象のオブジェクトとイベント",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "triggersTable"
+                ]
+            },
+            "rulesUnitsTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/rulesUnits"
+                    },
+                    "columns": [
+                        {
+                            "key": "unitType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "label",
+                            "label": "ラベル"
+                        },
+                        {
+                            "key": "description",
+                            "label": "説明"
+                        },
+                        {
+                            "key": "filePath",
+                            "label": "ファイル"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "rulesUnitsCard": {
+                "type": "Card",
+                "props": {
+                    "title": "ワークフロー・承認・各種ルール",
+                    "description": "ワークフロー・承認プロセス・割り当て / 自動応答 / エスカレーション / 重複 / 一致ルール",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "rulesUnitsTable"
+                ]
+            },
+            "rulesPropertiesTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/rulesProperties"
+                    },
+                    "columns": [
+                        {
+                            "key": "unitType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "path",
+                            "label": "場所"
+                        },
+                        {
+                            "key": "value",
+                            "label": "値"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "rulesPropertiesCard": {
+                "type": "Card",
+                "props": {
+                    "title": "ワークフロー・承認・各種ルールの設定",
+                    "description": "場所 → 値 (機密になりうる値は伏せた)",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "rulesPropertiesTable"
+                ]
+            },
+            "page": {
+                "type": "Stack",
+                "props": {
+                    "direction": "vertical",
+                    "gap": "lg",
+                    "align": null,
+                    "justify": null,
+                    "className": null
+                },
+                "children": [
+                    "summary",
+                    "automationCard",
+                    "flowsCard",
+                    "diagramsCard",
+                    "elementsCard",
+                    "interfacesCard",
+                    "triggersCard",
+                    "rulesUnitsCard",
+                    "rulesPropertiesCard"
+                ]
+            }
+        }
+    }
+}

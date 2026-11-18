@@ -1,0 +1,507 @@
+{
+    "$schema": "../report-document.schema.json",
+    "title": "機能のまとまり",
+    "data": {},
+    "spec": {
+        "root": "page",
+        "elements": {
+            "page": {
+                "type": "Stack",
+                "props": {
+                    "direction": "vertical",
+                    "gap": "lg",
+                    "align": null,
+                    "justify": null,
+                    "className": null
+                },
+                "children": [
+                    "summary",
+                    "feature"
+                ]
+            },
+            "summary": {
+                "type": "Narrative",
+                "props": {
+                    "title": "概要",
+                    "markdown": "(ここに概要を書く: 業務の機能のまとまり (カスタムオブジェクトごと) の一覧と、まとまりどうしの関係)"
+                },
+                "children": []
+            },
+            "feature": {
+                "type": "Card",
+                "props": {
+                    "title": "${o.label}",
+                    "description": "${o.object} を起点に、依存関係をたどった範囲",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "featureNote",
+                    "scope",
+                    "graph",
+                    "objects",
+                    "classes",
+                    "components",
+                    "flows",
+                    "pages",
+                    "layouts"
+                ],
+                "for": {
+                    "as": "o",
+                    "in": {
+                        "provider": "object.list",
+                        "where": {
+                            "objectType": "custom"
+                        }
+                    },
+                    "limit": 5000
+                },
+                "page": {
+                    "file": "${o.object}"
+                }
+            },
+            "featureNote": {
+                "type": "Narrative",
+                "props": {
+                    "title": null,
+                    "markdown": {
+                        "$note": "${o.object}"
+                    }
+                },
+                "children": []
+            },
+            "graph": {
+                "type": "DiagramText",
+                "props": {
+                    "title": null
+                },
+                "children": [],
+                "data": {
+                    "provider": "dependency.graph",
+                    "args": {
+                        "targets": [
+                            "object:${o.object}"
+                        ],
+                        "format": "mermaid"
+                    }
+                }
+            },
+            "objects": {
+                "type": "Card",
+                "props": {
+                    "title": "${u.name}",
+                    "description": "オブジェクト",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "objectFields"
+                ],
+                "for": {
+                    "as": "u",
+                    "in": {
+                        "provider": "feature.scope",
+                        "args": {
+                            "targets": [
+                                "object:${o.object}"
+                            ]
+                        },
+                        "where": {
+                            "unitType": [
+                                "object"
+                            ]
+                        }
+                    }
+                }
+            },
+            "objectFields": {
+                "type": "DataTable",
+                "props": {
+                    "columns": [
+                        {
+                            "key": "field",
+                            "label": "API 名"
+                        },
+                        {
+                            "key": "label",
+                            "label": "ラベル"
+                        },
+                        {
+                            "key": "type",
+                            "label": "型"
+                        },
+                        {
+                            "key": "required",
+                            "label": "必須"
+                        },
+                        {
+                            "key": "referenceTo",
+                            "label": "参照先"
+                        },
+                        {
+                            "key": "formula",
+                            "label": "数式"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": [],
+                "data": {
+                    "provider": "object.fields",
+                    "args": {
+                        "objects": [
+                            "${u.name}"
+                        ],
+                        "includeImplicit": false
+                    }
+                }
+            },
+            "classes": {
+                "type": "Card",
+                "props": {
+                    "title": "${u.name}",
+                    "description": "${u.unitType}",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "classOutline",
+                    "classAccess"
+                ],
+                "for": {
+                    "as": "u",
+                    "in": {
+                        "provider": "feature.scope",
+                        "args": {
+                            "targets": [
+                                "object:${o.object}"
+                            ]
+                        },
+                        "where": {
+                            "unitType": [
+                                "apexClass",
+                                "apexTrigger"
+                            ]
+                        }
+                    }
+                }
+            },
+            "classOutline": {
+                "type": "DataTable",
+                "props": {
+                    "columns": [
+                        {
+                            "key": "owner",
+                            "label": "型"
+                        },
+                        {
+                            "key": "memberType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "params",
+                            "label": "引数"
+                        },
+                        {
+                            "key": "type",
+                            "label": "型・戻り値・対象"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": [],
+                "data": {
+                    "provider": "apex.outline",
+                    "args": {
+                        "classes": [
+                            "${u.name}"
+                        ]
+                    }
+                }
+            },
+            "classAccess": {
+                "type": "DataTable",
+                "props": {
+                    "columns": [
+                        {
+                            "key": "member",
+                            "label": "メソッド"
+                        },
+                        {
+                            "key": "operation",
+                            "label": "操作"
+                        },
+                        {
+                            "key": "object",
+                            "label": "オブジェクト"
+                        },
+                        {
+                            "key": "fields",
+                            "label": "項目"
+                        },
+                        {
+                            "key": "inLoop",
+                            "label": "ループの中"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": [],
+                "data": {
+                    "provider": "apex.dataAccess",
+                    "args": {
+                        "classes": [
+                            "${u.name}"
+                        ]
+                    }
+                },
+                "if": {
+                    "hasRows": true
+                }
+            },
+            "components": {
+                "type": "Card",
+                "props": {
+                    "title": "${u.name}",
+                    "description": "LWC",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "componentWireframe"
+                ],
+                "for": {
+                    "as": "u",
+                    "in": {
+                        "provider": "feature.scope",
+                        "args": {
+                            "targets": [
+                                "object:${o.object}"
+                            ]
+                        },
+                        "where": {
+                            "unitType": [
+                                "lwc"
+                            ]
+                        }
+                    }
+                }
+            },
+            "componentWireframe": {
+                "type": "LwcWireframe",
+                "props": {
+                    "component": null
+                },
+                "children": [],
+                "data": {
+                    "provider": "lwc.wireframe",
+                    "args": {
+                        "components": [
+                            "${u.name}"
+                        ]
+                    }
+                }
+            },
+            "flows": {
+                "type": "Card",
+                "props": {
+                    "title": "${u.name}",
+                    "description": "Flow",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "flowDiagram"
+                ],
+                "for": {
+                    "as": "u",
+                    "in": {
+                        "provider": "feature.scope",
+                        "args": {
+                            "targets": [
+                                "object:${o.object}"
+                            ]
+                        },
+                        "where": {
+                            "unitType": [
+                                "flow"
+                            ]
+                        }
+                    }
+                }
+            },
+            "flowDiagram": {
+                "type": "FlowDiagram",
+                "props": {
+                    "flow": null
+                },
+                "children": [],
+                "data": {
+                    "provider": "flow.diagram",
+                    "args": {
+                        "flows": [
+                            "${u.name}"
+                        ]
+                    }
+                }
+            },
+            "pages": {
+                "type": "Card",
+                "props": {
+                    "title": "${u.name}",
+                    "description": "Lightning ページ",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "flexiPage"
+                ],
+                "for": {
+                    "as": "u",
+                    "in": {
+                        "provider": "feature.scope",
+                        "args": {
+                            "targets": [
+                                "object:${o.object}"
+                            ]
+                        },
+                        "where": {
+                            "unitType": [
+                                "flexiPage"
+                            ]
+                        }
+                    }
+                }
+            },
+            "flexiPage": {
+                "type": "FlexiPageView",
+                "props": {},
+                "children": [],
+                "data": {
+                    "provider": "flexiPage.detail",
+                    "args": {
+                        "flexiPages": [
+                            "${u.name}"
+                        ]
+                    }
+                }
+            },
+            "layouts": {
+                "type": "Card",
+                "props": {
+                    "title": "${u.name}",
+                    "description": "ページレイアウト",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "layout"
+                ],
+                "for": {
+                    "as": "u",
+                    "in": {
+                        "provider": "feature.scope",
+                        "args": {
+                            "targets": [
+                                "object:${o.object}"
+                            ]
+                        },
+                        "where": {
+                            "unitType": [
+                                "layout"
+                            ]
+                        }
+                    }
+                }
+            },
+            "layout": {
+                "type": "LayoutView",
+                "props": {},
+                "children": [],
+                "data": {
+                    "provider": "layout.detail",
+                    "args": {
+                        "layouts": [
+                            "${u.name}"
+                        ]
+                    }
+                }
+            },
+            "scope": {
+                "type": "Card",
+                "props": {
+                    "title": "機能の範囲",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "scopeTable"
+                ],
+                "if": {
+                    "hasRows": {
+                        "provider": "feature.scope",
+                        "args": {
+                            "targets": [
+                                "object:${o.object}"
+                            ]
+                        }
+                    }
+                }
+            },
+            "scopeTable": {
+                "type": "DataTable",
+                "props": {
+                    "columns": [
+                        {
+                            "key": "unitType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "relation",
+                            "label": "起点との関係"
+                        },
+                        {
+                            "key": "depth",
+                            "label": "段数"
+                        },
+                        {
+                            "key": "filePath",
+                            "label": "ファイル"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": [],
+                "data": {
+                    "provider": "feature.scope",
+                    "args": {
+                        "targets": [
+                            "object:${o.object}"
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

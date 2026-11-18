@@ -1,20 +1,33 @@
 {
     "version": 1,
     "rules": [
+        "文書は構成の定義: どの部品をどう並べ、どの種類のデータ (Apex のメソッド・オブジェクトの項目・ファイルの一覧など) を見せるかを書く。個々のデータの名前 (どのクラス・メソッド・オブジェクトか) は文書に書かない。1 つずつ見せるときは for でデータの行を回し、provider の引数・where には行の値 (${m.name} など) を入れる。こうすると、どのリポジトリにもそのまま使える。",
         "レポートは 1 つの JSON の文書 (title・data・spec) で書く。spec は json-render の仕様 (root と、キー → 要素の平らな elements)。",
         "data は「名前 → { provider, args }」。ビルドが provider を実行して、結果を state の /data/<名前> に入れる。",
+        "データの部品には、データを要素に直接書いてもよい (要素の \"data\": { \"provider\", \"args\" }。props のデータ (rows・data) は書かない)。ビルドが data に移して props をつなぐ。同じデータを複数の部品で使うときは、上の段の data に書いて $state で指す。",
         "データの部品 (DataTable・StatusSummary) の rows には、行を書かずに { \"$state\": \"/data/<名前>\" } だけを書く。数値・一覧を自分で書かない。",
         "データの部品には、受け取れる形 (shape) か provider のデータだけを渡せる (rows → DataTable・StatusSummary、matrix → Matrix、flow.diagram → FlowDiagram など。provider の「描ける部品」を見る)。",
         "DataTable で showSource: true にするときは、そのデータの宣言に withSource: true を付ける (行にソースの抜き出しが付く)。",
-        "どの要素も type・props・children を持つ (子がなければ children は [])。props は部品のスキーマのとおりに、すべてのキーを書く (使わないものは null)。",
+        "要素は type と、使う props だけを書けばよい (null を受け取れる props の省いたキーは null、children を省けば [])。値の要る props (Narrative の markdown など) は書く。入れ子で書ける: spec.root と children に、キーの代わりに要素そのもの ({ \"type\": \"Card\", \"props\": {…}, \"children\": [ {…} ] }) を書ける (キーは key か、親のキーと位置から作る)。データの部品の rows・data は \"@<名前>\" と書ける ({ \"$state\": \"/data/<名前>\" } と同じ)。データをすべて要素に書けば、上の段の data は省ける。平らな elements にすべて書く形もそのまま通る。",
         "AI が書くのは、Narrative の markdown (要約・リスクの説明・レビューの指摘)・見出し・Alert の文言と、どのデータをどの部品で見せるかの選択だけ。",
         "レポートの既定は「今の状態のすべて」(1 時点。行に status はない)。ドキュメント・コードの理解のためのレポートはこれで書く。",
         "差分を見るときだけ、文書に diff: true (保存した基準 → 作業ツリー) か compare ({ \"from\": \"main\" } は main...作業ツリー、{ \"from\": \"main\", \"to\": \"HEAD\" } は main...HEAD) を書く。行に status (added・removed・changed・unchanged) が付き、DataTable の onlyChanged で変わった行だけにできる。",
-        "requiresComparison の provider (差分だけを返すもの) は、diff か compare がないと使えない。"
+        "データごとに比べ方を選べる: データの宣言 (上の段の data でも、要素の data でも) に diff・compare を書くと、文書の比べ方よりそちらを使う (diff: false は今の状態だけ)。今の状態の仕様と、main からの変化を 1 つの文書に並べられる。比べ方を持つ部品の上には、比べた時点が出る。",
+        "requiresComparison の provider (差分だけを返すもの) は、diff か compare がないと使えない (文書でもデータでもよい)。",
+        "データの宣言の where で、行の項目の値で絞れる (for の中で { \"member\": \"${m.owner}.${m.name}\" }。値が配列ならそのどれか。a.b で入れ子の項目)。",
+        "for で要素 (と子) をデータの行ごとに繰り返せる: \"for\": { \"as\": \"m\", \"in\": <データの宣言か、data の名前>, \"limit\": 200 }。props・要素の data・if の中の \"${m.name}\" を行の値に置き換える (\"${m.x}\" だけの文字列は配列・数値もそのまま。m.$index は 0 から、m.$number は 1 から)。入れ子の for も書ける。ビルドのときに展開し、繰り返した要素のキーは <キー>__<何行目> になる (問題の場所は <キー>[n])。上限 (既定 200) を超えた行は出さず警告する。root には書けない。",
+        "if で要素 (と子) を出し分けられる: { \"value\": \"${m.static}\", \"eq\": true } (eq・neq・gt・gte・lt・lte・in・exists。比べ方を書かなければ空でないか)、{ \"hasRows\": true } (この要素のデータに行がある。文字列なら data の名前)、{ \"all\": [...] }・{ \"any\": [...] }・{ \"not\": {...} }。",
+        "件数が多いとき (すべてのクラス・オブジェクトなど) は、for の要素に \"page\": { \"file\": \"${m.name}\" } を付けて 1 件 1 ページに分ける。ビルドは目次 (その場所にページへのリンク PageLink) と pages/<file>.html を書く。件数を絞って小さくはしない。",
+        "文書の引数 (構成の値だけ): 文書に \"params\": { \"depth\": { \"default\": 2 } } と書き、題・props・データの引数・if で \"${params.depth}\" と使う (種類・段数・表示の切り替えなど)。ビルドに渡した値 (build_report・validate_report_spec の params) が default より優先。値も default もない引数・宣言していない引数は問題になる。個々のデータの名前を渡す使い方はしない。",
+        "文章は文書の notes (キー → markdown) に書き、props で { \"$note\": \"<キー>\" } と引ける (for の中なら { \"$note\": \"${m.owner}.${m.name}\" } のように行ごとのキー)。notes にないキーは「(未記入)」になり、警告が出る。AI は for の行ごとの文章を notes に書く。"
     ],
     "documentSchema": {
         "type": "object",
         "properties": {
+            "$schema": {
+                "description": "Path or URL of the JSON Schema of documents (for editors). The build ignores it.",
+                "type": "string"
+            },
             "title": {
                 "type": "string",
                 "minLength": 1
@@ -71,6 +84,41 @@
                         "withSource": {
                             "description": "true adds a source excerpt (_source) to each row that has a position (for DataTable showSource).",
                             "type": "boolean"
+                        },
+                        "diff": {
+                            "description": "Comparison of this data only: true compares the saved baseline with the working tree, false is the current state only. Omit to use the document comparison.",
+                            "type": "boolean"
+                        },
+                        "compare": {
+                            "description": "Comparison of this data only: two points of git (e.g. { \"from\": \"main\" }). Takes precedence over diff.",
+                            "type": "object",
+                            "properties": {
+                                "from": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "description": "Base revision (branch, tag or commit), e.g. main or origin/main."
+                                },
+                                "to": {
+                                    "description": "Target revision. Omit (or WORKTREE) for the working tree.",
+                                    "type": "string",
+                                    "minLength": 1
+                                },
+                                "mergeBase": {
+                                    "description": "true (default) compares from the point where to branched off from (like main...HEAD). false compares from itself.",
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [
+                                "from"
+                            ]
+                        },
+                        "where": {
+                            "description": "Keep the rows whose field (a.b for nested) equals the value; an array value means one of the values. For rows data only. E.g. { \"member\": \"${m.owner}.${m.name}\" } in a for.",
+                            "type": "object",
+                            "propertyNames": {
+                                "type": "string"
+                            },
+                            "additionalProperties": {}
                         }
                     },
                     "required": [
@@ -78,6 +126,36 @@
                     ]
                 },
                 "description": "Data used by the spec. Each key is bound as { \"$state\": \"/data/<key>\" }."
+            },
+            "params": {
+                "description": "Parameters of the document (values of the structure only: data types, depth, switches; never names of individual classes or objects), used as \"${params.<name>}\" in title, props, data args and if. Values given to the build (build_report params) win over default. E.g. { \"depth\": { \"default\": 2 } } and \"depth\": \"${params.depth}\".",
+                "type": "object",
+                "propertyNames": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+                },
+                "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                        "default": {
+                            "description": "Value when the build gives none."
+                        },
+                        "description": {
+                            "type": "string"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "notes": {
+                "description": "Texts (markdown) by key, used as { \"$note\": \"<key>\" } in props (e.g. { \"$note\": \"${m.name}\" } in a for).",
+                "type": "object",
+                "propertyNames": {
+                    "type": "string"
+                },
+                "additionalProperties": {
+                    "type": "string"
+                }
             },
             "spec": {
                 "type": "object",
@@ -109,7 +187,179 @@
                                         "type": "string"
                                     }
                                 },
-                                "visible": {}
+                                "visible": {},
+                                "data": {
+                                    "description": "Data of this component (data components only). The build declares it in data and binds the data prop.",
+                                    "type": "object",
+                                    "properties": {
+                                        "provider": {
+                                            "type": "string",
+                                            "minLength": 1,
+                                            "description": "Report provider name (list_report_providers)."
+                                        },
+                                        "args": {
+                                            "description": "Arguments of the provider.",
+                                            "type": "object",
+                                            "propertyNames": {
+                                                "type": "string"
+                                            },
+                                            "additionalProperties": {}
+                                        },
+                                        "withSource": {
+                                            "description": "true adds a source excerpt (_source) to each row that has a position (for DataTable showSource).",
+                                            "type": "boolean"
+                                        },
+                                        "diff": {
+                                            "description": "Comparison of this data only: true compares the saved baseline with the working tree, false is the current state only. Omit to use the document comparison.",
+                                            "type": "boolean"
+                                        },
+                                        "compare": {
+                                            "description": "Comparison of this data only: two points of git (e.g. { \"from\": \"main\" }). Takes precedence over diff.",
+                                            "type": "object",
+                                            "properties": {
+                                                "from": {
+                                                    "type": "string",
+                                                    "minLength": 1,
+                                                    "description": "Base revision (branch, tag or commit), e.g. main or origin/main."
+                                                },
+                                                "to": {
+                                                    "description": "Target revision. Omit (or WORKTREE) for the working tree.",
+                                                    "type": "string",
+                                                    "minLength": 1
+                                                },
+                                                "mergeBase": {
+                                                    "description": "true (default) compares from the point where to branched off from (like main...HEAD). false compares from itself.",
+                                                    "type": "boolean"
+                                                }
+                                            },
+                                            "required": [
+                                                "from"
+                                            ]
+                                        },
+                                        "where": {
+                                            "description": "Keep the rows whose field (a.b for nested) equals the value; an array value means one of the values. For rows data only. E.g. { \"member\": \"${m.owner}.${m.name}\" } in a for.",
+                                            "type": "object",
+                                            "propertyNames": {
+                                                "type": "string"
+                                            },
+                                            "additionalProperties": {}
+                                        }
+                                    },
+                                    "required": [
+                                        "provider"
+                                    ]
+                                },
+                                "for": {
+                                    "description": "Repeat this element (and its children) for each row. Expanded by the build.",
+                                    "type": "object",
+                                    "properties": {
+                                        "as": {
+                                            "type": "string",
+                                            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+                                            "description": "Variable name of the row (e.g. \"m\"). Use it as \"${m.name}\" in props, data args and if."
+                                        },
+                                        "in": {
+                                            "anyOf": [
+                                                {
+                                                    "type": "string",
+                                                    "minLength": 1,
+                                                    "description": "Name of a data declaration."
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "provider": {
+                                                            "type": "string",
+                                                            "minLength": 1,
+                                                            "description": "Report provider name (list_report_providers)."
+                                                        },
+                                                        "args": {
+                                                            "description": "Arguments of the provider.",
+                                                            "type": "object",
+                                                            "propertyNames": {
+                                                                "type": "string"
+                                                            },
+                                                            "additionalProperties": {}
+                                                        },
+                                                        "withSource": {
+                                                            "description": "true adds a source excerpt (_source) to each row that has a position (for DataTable showSource).",
+                                                            "type": "boolean"
+                                                        },
+                                                        "diff": {
+                                                            "description": "Comparison of this data only: true compares the saved baseline with the working tree, false is the current state only. Omit to use the document comparison.",
+                                                            "type": "boolean"
+                                                        },
+                                                        "compare": {
+                                                            "description": "Comparison of this data only: two points of git (e.g. { \"from\": \"main\" }). Takes precedence over diff.",
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "from": {
+                                                                    "type": "string",
+                                                                    "minLength": 1,
+                                                                    "description": "Base revision (branch, tag or commit), e.g. main or origin/main."
+                                                                },
+                                                                "to": {
+                                                                    "description": "Target revision. Omit (or WORKTREE) for the working tree.",
+                                                                    "type": "string",
+                                                                    "minLength": 1
+                                                                },
+                                                                "mergeBase": {
+                                                                    "description": "true (default) compares from the point where to branched off from (like main...HEAD). false compares from itself.",
+                                                                    "type": "boolean"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "from"
+                                                            ]
+                                                        },
+                                                        "where": {
+                                                            "description": "Keep the rows whose field (a.b for nested) equals the value; an array value means one of the values. For rows data only. E.g. { \"member\": \"${m.owner}.${m.name}\" } in a for.",
+                                                            "type": "object",
+                                                            "propertyNames": {
+                                                                "type": "string"
+                                                            },
+                                                            "additionalProperties": {}
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "provider"
+                                                    ]
+                                                }
+                                            ],
+                                            "description": "Rows to repeat over: a data declaration (provider, args) or the name of one."
+                                        },
+                                        "limit": {
+                                            "description": "Maximum number of repeats (default 200; more rows are cut with a warning).",
+                                            "type": "integer",
+                                            "minimum": 1,
+                                            "maximum": 9007199254740991
+                                        }
+                                    },
+                                    "required": [
+                                        "as",
+                                        "in"
+                                    ],
+                                    "additionalProperties": false
+                                },
+                                "if": {
+                                    "description": "Show this element only when the condition holds. Decided by the build.",
+                                    "$ref": "#/$defs/__schema0"
+                                },
+                                "page": {
+                                    "description": "Put this element (each repeat of a for) and its children on a page of its own (pages/<file>.html). The document shows a link (PageLink) in its place, as a table of contents. Use it to split large documents (a page per class, object ...).",
+                                    "type": "object",
+                                    "properties": {
+                                        "title": {
+                                            "description": "Title of the page (default: the title prop of the element).",
+                                            "type": "string"
+                                        },
+                                        "file": {
+                                            "description": "File name of the page without .html (default: the element key). ${m.x} can be used.",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
                             },
                             "required": [
                                 "type",
@@ -129,7 +379,174 @@
             "title",
             "data",
             "spec"
-        ]
+        ],
+        "$defs": {
+            "__schema0": {
+                "anyOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "all": {
+                                "minItems": 1,
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/$defs/__schema0"
+                                }
+                            }
+                        },
+                        "required": [
+                            "all"
+                        ],
+                        "additionalProperties": false
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "any": {
+                                "minItems": 1,
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/$defs/__schema0"
+                                }
+                            }
+                        },
+                        "required": [
+                            "any"
+                        ],
+                        "additionalProperties": false
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "not": {
+                                "$ref": "#/$defs/__schema0"
+                            }
+                        },
+                        "required": [
+                            "not"
+                        ],
+                        "additionalProperties": false
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "hasRows": {
+                                "anyOf": [
+                                    {
+                                        "type": "boolean",
+                                        "const": true
+                                    },
+                                    {
+                                        "type": "string",
+                                        "minLength": 1
+                                    },
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "provider": {
+                                                "type": "string",
+                                                "minLength": 1,
+                                                "description": "Report provider name (list_report_providers)."
+                                            },
+                                            "args": {
+                                                "description": "Arguments of the provider.",
+                                                "type": "object",
+                                                "propertyNames": {
+                                                    "type": "string"
+                                                },
+                                                "additionalProperties": {}
+                                            },
+                                            "withSource": {
+                                                "description": "true adds a source excerpt (_source) to each row that has a position (for DataTable showSource).",
+                                                "type": "boolean"
+                                            },
+                                            "diff": {
+                                                "description": "Comparison of this data only: true compares the saved baseline with the working tree, false is the current state only. Omit to use the document comparison.",
+                                                "type": "boolean"
+                                            },
+                                            "compare": {
+                                                "description": "Comparison of this data only: two points of git (e.g. { \"from\": \"main\" }). Takes precedence over diff.",
+                                                "type": "object",
+                                                "properties": {
+                                                    "from": {
+                                                        "type": "string",
+                                                        "minLength": 1,
+                                                        "description": "Base revision (branch, tag or commit), e.g. main or origin/main."
+                                                    },
+                                                    "to": {
+                                                        "description": "Target revision. Omit (or WORKTREE) for the working tree.",
+                                                        "type": "string",
+                                                        "minLength": 1
+                                                    },
+                                                    "mergeBase": {
+                                                        "description": "true (default) compares from the point where to branched off from (like main...HEAD). false compares from itself.",
+                                                        "type": "boolean"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "from"
+                                                ]
+                                            },
+                                            "where": {
+                                                "description": "Keep the rows whose field (a.b for nested) equals the value; an array value means one of the values. For rows data only. E.g. { \"member\": \"${m.owner}.${m.name}\" } in a for.",
+                                                "type": "object",
+                                                "propertyNames": {
+                                                    "type": "string"
+                                                },
+                                                "additionalProperties": {}
+                                            }
+                                        },
+                                        "required": [
+                                            "provider"
+                                        ]
+                                    }
+                                ],
+                                "description": "true: the data of this element has rows / \"<name>\": the data <name> has rows / a data declaration ({ provider, args, where }): it has rows (e.g. on a Card around a table with the same data, to hide the card when empty)."
+                            }
+                        },
+                        "required": [
+                            "hasRows"
+                        ],
+                        "additionalProperties": false
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "value": {
+                                "description": "Value to test, e.g. \"${m.static}\"."
+                            },
+                            "eq": {},
+                            "neq": {},
+                            "gt": {
+                                "type": "number"
+                            },
+                            "gte": {
+                                "type": "number"
+                            },
+                            "lt": {
+                                "type": "number"
+                            },
+                            "lte": {
+                                "type": "number"
+                            },
+                            "in": {
+                                "description": "The value is one of these.",
+                                "type": "array",
+                                "items": {}
+                            },
+                            "exists": {
+                                "description": "true: the value is not empty (null, \"\", [] and false are empty).",
+                                "type": "boolean"
+                            }
+                        },
+                        "required": [
+                            "value"
+                        ],
+                        "additionalProperties": false
+                    }
+                ]
+            }
+        }
     },
     "components": [
         {
@@ -581,6 +998,116 @@
             }
         },
         {
+            "name": "Columns",
+            "description": "Columns with chosen widths (e.g. 5:5 flowchart and narrative, 4:6 table and notes). Stacks vertically on narrow screens. Grid makes equal columns only.",
+            "dataProps": [],
+            "props": {
+                "type": "object",
+                "properties": {
+                    "ratio": {
+                        "anyOf": [
+                            {
+                                "minItems": 1,
+                                "maxItems": 6,
+                                "type": "array",
+                                "items": {
+                                    "type": "number",
+                                    "exclusiveMinimum": 0
+                                }
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "description": "Relative widths of the columns, e.g. [5, 5], [4, 6], [7, 3]. Children fill the columns from the left (more children wrap to the next row). null is two equal columns."
+                    },
+                    "gap": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "enum": [
+                                    "sm",
+                                    "md",
+                                    "lg"
+                                ]
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "description": "Space between columns (default md)."
+                    },
+                    "stackBelow": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "enum": [
+                                    "sm",
+                                    "md",
+                                    "lg",
+                                    "never"
+                                ]
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "description": "Below this screen width the columns stack vertically (sm 640px / md 768px (default) / lg 1024px). never keeps the columns."
+                    },
+                    "align": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "enum": [
+                                    "start",
+                                    "center",
+                                    "stretch"
+                                ]
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "description": "Vertical alignment of the columns (default start)."
+                    }
+                },
+                "required": [
+                    "ratio",
+                    "gap",
+                    "stackBelow",
+                    "align"
+                ]
+            }
+        },
+        {
+            "name": "PageLink",
+            "description": "Link to another page of the document. The build puts it in place of an element with page; you rarely write it yourself.",
+            "dataProps": [],
+            "props": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "href": {
+                        "type": "string",
+                        "description": "Relative path of the page (pages/<file>.html)."
+                    },
+                    "description": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                },
+                "required": [
+                    "title",
+                    "href",
+                    "description"
+                ]
+            }
+        },
+        {
             "name": "Narrative",
             "description": "Markdown text written by the AI (summary, explanation, review comments).",
             "dataProps": [],
@@ -847,6 +1374,120 @@
             }
         },
         {
+            "name": "CodeFlowchart",
+            "description": "Flowchart of a method / function from its statements: branches, loops, try / catch, SOQL / DML (colored, marked inside loops), callouts and returns. Click a box to see its source.",
+            "dataProps": [
+                "data"
+            ],
+            "accepts": {
+                "providers": [
+                    "apex.methodFlow",
+                    "lwc.methodFlow"
+                ]
+            },
+            "props": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "description": "Flowcharts (apex.methodFlow / lwc.methodFlow) from a report provider. Never write the data yourself: bind it with { \"$state\": \"/data/<name>\" }, where <name> is a key of the document data."
+                    },
+                    "member": {
+                        "description": "Show only this member (owner.name) or signature (name(params)). null shows all (with a selector when there are many).",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "height": {
+                        "anyOf": [
+                            {
+                                "type": "integer",
+                                "minimum": 200,
+                                "maximum": 2000
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "description": "Height of the chart in pixels (default: fit to the chart, up to 720)."
+                    }
+                },
+                "required": [
+                    "data",
+                    "member",
+                    "height"
+                ]
+            }
+        },
+        {
+            "name": "EventFlow",
+            "description": "Flow of LWC from user actions (template events), @wire and lifecycle hooks to handlers, Apex, events, toasts and navigation, across parent and child components (left to right).",
+            "dataProps": [
+                "data"
+            ],
+            "accepts": {
+                "providers": [
+                    "lwc.eventFlow"
+                ]
+            },
+            "props": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "description": "Event flow (lwc.eventFlow) from a report provider. Never write the data yourself: bind it with { \"$state\": \"/data/<name>\" }, where <name> is a key of the document data."
+                    },
+                    "height": {
+                        "anyOf": [
+                            {
+                                "type": "integer",
+                                "minimum": 200,
+                                "maximum": 2000
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "description": "Height of the chart in pixels (default: fit to the chart, up to 720)."
+                    }
+                },
+                "required": [
+                    "data",
+                    "height"
+                ]
+            }
+        },
+        {
+            "name": "SequenceDiagram",
+            "description": "Sequence diagram of Apex calls from a method: classes as columns, calls, SOQL / DML (to Database), async jobs, callouts and events from top to bottom.",
+            "dataProps": [
+                "data"
+            ],
+            "accepts": {
+                "providers": [
+                    "apex.callFlow"
+                ]
+            },
+            "props": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "description": "Call sequences (apex.callFlow) from a report provider. Never write the data yourself: bind it with { \"$state\": \"/data/<name>\" }, where <name> is a key of the document data."
+                    },
+                    "start": {
+                        "description": "Show only this start member (Owner.method). null shows all (with a selector when there are many).",
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                },
+                "required": [
+                    "data",
+                    "start"
+                ]
+            }
+        },
+        {
             "name": "DiagramText",
             "description": "Source text of a dependency diagram (Mermaid or DOT), shown as a code block.",
             "dataProps": [
@@ -970,6 +1611,298 @@
         }
     ],
     "providers": [
+        {
+            "name": "metadata.types",
+            "description": "リポジトリにある単位の種類ごとの数 (読めなかったもの・エラーのあるものの数)。メタデータの棚卸しの目次。",
+            "category": "metadata",
+            "shape": "rows",
+            "components": [
+                "DataTable",
+                "StatusSummary"
+            ],
+            "args": {
+                "type": "object",
+                "properties": {
+                    "types": {
+                        "description": "Unit types (customTab, namedCredential, role ...) to include. Omit for all.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "names": {
+                        "description": "Unit names to include. Omit for all.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "output": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "unitType": {
+                            "type": "string"
+                        },
+                        "lineage": {
+                            "type": "string",
+                            "description": "apex / lwc / object / objectTranslation / metadata."
+                        },
+                        "count": {
+                            "type": "number"
+                        },
+                        "unreadable": {
+                            "type": "number"
+                        },
+                        "withErrors": {
+                            "type": "number"
+                        },
+                        "added": {
+                            "description": "Only when comparing.",
+                            "type": "number"
+                        },
+                        "removed": {
+                            "type": "number"
+                        },
+                        "changed": {
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "unitType",
+                        "lineage",
+                        "count",
+                        "unreadable",
+                        "withErrors"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Number of units of one type."
+                }
+            }
+        },
+        {
+            "name": "metadata.units",
+            "description": "すべての種類の単位の一覧 (種類・名前・ラベル・説明・ファイル・読めなかった要素)。専用の provider がない種類 (タブ・共有ルール・ロール・指定ログイン情報など) も一覧にできる。",
+            "category": "metadata",
+            "shape": "rows",
+            "components": [
+                "DataTable",
+                "StatusSummary"
+            ],
+            "args": {
+                "type": "object",
+                "properties": {
+                    "types": {
+                        "description": "Unit types (customTab, namedCredential, role ...) to include. Omit for all.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "names": {
+                        "description": "Unit names to include. Omit for all.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "output": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                            "type": "string",
+                            "enum": [
+                                "added",
+                                "removed",
+                                "changed",
+                                "unchanged"
+                            ],
+                            "description": "Change since the saved state (only when comparing two points)."
+                        },
+                        "filePath": {
+                            "description": "File of the row (relative to the repository).",
+                            "type": "string"
+                        },
+                        "sourceKeys": {
+                            "type": "object",
+                            "properties": {
+                                "objectKey": {
+                                    "type": "string"
+                                },
+                                "sourceKey": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "objectKey",
+                                "sourceKey"
+                            ],
+                            "additionalProperties": false,
+                            "description": "Position keys of the source node."
+                        },
+                        "unitType": {
+                            "type": "string",
+                            "description": "Unit type (customTab, namedCredential, apexClass ...)."
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "label": {
+                            "type": "string"
+                        },
+                        "description": {
+                            "type": "string"
+                        },
+                        "readable": {
+                            "type": "boolean",
+                            "description": "false when the file could not be read (see errorCount)."
+                        },
+                        "errorCount": {
+                            "type": "number",
+                            "description": "Problems found while reading (syntax errors etc.)."
+                        },
+                        "skippedElements": {
+                            "description": "XML elements this analyzer does not read yet.",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "required": [
+                        "unitType",
+                        "name",
+                        "readable",
+                        "errorCount"
+                    ],
+                    "additionalProperties": false,
+                    "description": "One unit (file or folder) of any type."
+                }
+            }
+        },
+        {
+            "name": "metadata.properties",
+            "description": "単位の設定値を「場所 → 値」の行で (どの種類の XML のメタデータでも。例: sharingCriteriaRules[Large_Invoices].accessLevel → Edit)。数式は文字列、条件の行は「左 演算子 右」。Apex・LWC は -meta.xml の値だけ。機密の値は伏せる。行が多くなるので types・names・paths で絞る。",
+            "category": "metadata",
+            "shape": "rows",
+            "components": [
+                "DataTable",
+                "StatusSummary"
+            ],
+            "args": {
+                "type": "object",
+                "properties": {
+                    "types": {
+                        "description": "Unit types (customTab, namedCredential, role ...) to include. Omit for all.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "names": {
+                        "description": "Unit names to include. Omit for all.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "paths": {
+                        "description": "Path prefixes (label, sharingCriteriaRules ...) to include. Omit for all.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "output": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                            "type": "string",
+                            "enum": [
+                                "added",
+                                "removed",
+                                "changed",
+                                "unchanged"
+                            ],
+                            "description": "Change since the saved state (only when comparing two points)."
+                        },
+                        "filePath": {
+                            "description": "File of the row (relative to the repository).",
+                            "type": "string"
+                        },
+                        "sourceKeys": {
+                            "type": "object",
+                            "properties": {
+                                "objectKey": {
+                                    "type": "string"
+                                },
+                                "sourceKey": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "objectKey",
+                                "sourceKey"
+                            ],
+                            "additionalProperties": false,
+                            "description": "Position keys of the source node."
+                        },
+                        "unitType": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": "Unit name."
+                        },
+                        "path": {
+                            "type": "string",
+                            "description": "Where the value is, e.g. label or sharingCriteriaRules[Large_Invoices].accessLevel (array items by their name)."
+                        },
+                        "value": {
+                            "description": "Formulas as text, criteria as \"left operator right\". Sensitive values are masked.",
+                            "type": [
+                                "string",
+                                "number",
+                                "boolean"
+                            ]
+                        },
+                        "before": {
+                            "description": "Value before (only for changed rows when comparing).",
+                            "type": [
+                                "string",
+                                "number",
+                                "boolean"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "unitType",
+                        "name",
+                        "path",
+                        "value"
+                    ],
+                    "additionalProperties": false,
+                    "description": "One setting of a unit (any XML metadata type; Apex and LWC only their -meta.xml)."
+                }
+            },
+            "example": {
+                "types": [
+                    "customTab",
+                    "role"
+                ]
+            }
+        },
         {
             "name": "object.list",
             "description": "オブジェクトの一覧 (ラベル・種類・共有設定・項目・入力規則・レコードタイプの数)。オブジェクト定義書の目次。",
@@ -1826,6 +2759,210 @@
                     "missing",
                     "sameAsSource"
                 ]
+            }
+        },
+        {
+            "name": "object.members",
+            "description": "オブジェクトの子 (レコードタイプ・リストビュー・項目セット・コンパクトレイアウト・ボタンとリンク・ビジネスプロセス・共有の理由・アクションの上書き・検索レイアウト)。1 行 1 つで、中身 (列・条件・項目・URL など) は「場所 = 値」の一覧。",
+            "category": "object",
+            "shape": "rows",
+            "components": [
+                "DataTable",
+                "StatusSummary"
+            ],
+            "args": {
+                "type": "object",
+                "properties": {
+                    "objects": {
+                        "description": "Object API names to include. Omit for all.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "memberTypes": {
+                        "description": "Member types to include. Omit for all.",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "recordType",
+                                "listView",
+                                "fieldSet",
+                                "compactLayout",
+                                "webLink",
+                                "businessProcess",
+                                "sharingReason",
+                                "actionOverride",
+                                "searchLayout"
+                            ]
+                        }
+                    }
+                }
+            },
+            "output": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                            "type": "string",
+                            "enum": [
+                                "added",
+                                "removed",
+                                "changed",
+                                "unchanged"
+                            ],
+                            "description": "Change since the saved state (only when comparing two points)."
+                        },
+                        "filePath": {
+                            "type": "string"
+                        },
+                        "object": {
+                            "type": "string"
+                        },
+                        "memberType": {
+                            "type": "string",
+                            "enum": [
+                                "recordType",
+                                "listView",
+                                "fieldSet",
+                                "compactLayout",
+                                "webLink",
+                                "businessProcess",
+                                "sharingReason",
+                                "actionOverride",
+                                "searchLayout"
+                            ]
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "label": {
+                            "type": "string"
+                        },
+                        "description": {
+                            "type": "string"
+                        },
+                        "details": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "Contents as \"path = value\" (formulas as text, criteria as \"left operator right\")."
+                        },
+                        "changedDetails": {
+                            "description": "Contents that are new or different (only when comparing and the row changed).",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "required": [
+                        "object",
+                        "memberType",
+                        "name",
+                        "details"
+                    ],
+                    "additionalProperties": false,
+                    "description": "One child of an object (record type, list view, field set, compact layout, button / link, business process, sharing reason, action override, search layout)."
+                }
+            }
+        },
+        {
+            "name": "label.definitions",
+            "description": "カスタム表示ラベルの定義 (値・言語・保護・分類・説明) と、組織の翻訳にある各言語の訳・訳のない言語。使われている場所は crossRef.labels。",
+            "category": "crossRef",
+            "shape": "rows",
+            "components": [
+                "DataTable",
+                "StatusSummary"
+            ],
+            "args": {
+                "type": "object",
+                "properties": {
+                    "labels": {
+                        "description": "Label API names to include. Omit for all.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "categories": {
+                        "description": "Label categories to include. Omit for all.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "output": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                            "type": "string",
+                            "enum": [
+                                "added",
+                                "removed",
+                                "changed",
+                                "unchanged"
+                            ],
+                            "description": "Change since the saved state (only when comparing two points)."
+                        },
+                        "filePath": {
+                            "type": "string"
+                        },
+                        "label": {
+                            "type": "string",
+                            "description": "API name of the custom label."
+                        },
+                        "value": {
+                            "type": "string"
+                        },
+                        "language": {
+                            "type": "string"
+                        },
+                        "protected": {
+                            "type": "boolean"
+                        },
+                        "shortDescription": {
+                            "type": "string"
+                        },
+                        "categories": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "translations": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "Translations in the translations metadata, as \"language: text\"."
+                        },
+                        "missingLanguages": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "Languages of the translations metadata that have no translation of this label."
+                        }
+                    },
+                    "required": [
+                        "label",
+                        "value",
+                        "categories",
+                        "translations",
+                        "missingLanguages"
+                    ],
+                    "additionalProperties": false,
+                    "description": "One custom label and its translations."
+                }
             }
         },
         {
@@ -2844,6 +3981,104 @@
             }
         },
         {
+            "name": "flow.elements",
+            "description": "Flow の要素の中身 (決定の条件・割り当て・レコードの操作の対象と条件・画面の項目・アクションの引数・サブフローなど)。1 行 1 要素で、中身は「場所 = 値」の一覧。flow.diagram (図) の詳しい版。",
+            "category": "flow",
+            "shape": "rows",
+            "components": [
+                "DataTable",
+                "StatusSummary"
+            ],
+            "args": {
+                "type": "object",
+                "properties": {
+                    "flows": {
+                        "description": "Flow API names to include. Omit for all.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "kinds": {
+                        "description": "Element kinds (flowDecision, flowRecordLookup ...) to include. Omit for all.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "output": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                            "type": "string",
+                            "enum": [
+                                "added",
+                                "removed",
+                                "changed",
+                                "unchanged"
+                            ],
+                            "description": "Change since the saved state (only when comparing two points)."
+                        },
+                        "filePath": {
+                            "type": "string"
+                        },
+                        "flow": {
+                            "type": "string"
+                        },
+                        "element": {
+                            "type": "string",
+                            "description": "API name of the element."
+                        },
+                        "kind": {
+                            "type": "string",
+                            "description": "flowDecision, flowAssignment, flowRecordLookup, flowScreen ..."
+                        },
+                        "order": {
+                            "type": "number",
+                            "description": "Position in the flow file (1 based)."
+                        },
+                        "label": {
+                            "type": "string"
+                        },
+                        "description": {
+                            "type": "string"
+                        },
+                        "object": {
+                            "description": "Object of a record operation.",
+                            "type": "string"
+                        },
+                        "details": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "Contents as \"path = value\" (formulas as text, criteria as \"left operator right\")."
+                        },
+                        "changedDetails": {
+                            "description": "Contents that are new or different (only when comparing and the row changed).",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "required": [
+                        "flow",
+                        "element",
+                        "kind",
+                        "order",
+                        "details"
+                    ],
+                    "additionalProperties": false,
+                    "description": "One element of a flow with its contents (conditions, assignments, record filters, screen fields, action inputs)."
+                }
+            }
+        },
+        {
             "name": "flow.diffs",
             "description": "Flow の要素・資源・起動の変更 (変わったプロパティの名前)。",
             "category": "flow",
@@ -3253,6 +4488,327 @@
             "example": {
                 "classes": [
                     "AccountService"
+                ]
+            }
+        },
+        {
+            "name": "apex.methodFlow",
+            "description": "Apex のメソッド・コンストラクター・トリガー・匿名 Apex の処理フロー (分岐・繰り返し・try / catch・SOQL / SOSL・DML・外部の呼び出し・return)。箱の文字はソースの元の文。CodeFlowchart で描く。for でメソッドごとに描くときは where に member と signature (\"${m.name}(${m.params})\") を書く。",
+            "category": "code",
+            "shape": "diagram",
+            "components": [
+                "CodeFlowchart"
+            ],
+            "args": {
+                "type": "object",
+                "properties": {
+                    "classes": {
+                        "description": "Class, trigger or anonymous Apex names to include. Omit for all.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "members": {
+                        "description": "Method names (name or Owner.name) to include. Omit for all.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "output": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "filePath": {
+                            "type": "string"
+                        },
+                        "language": {
+                            "type": "string",
+                            "enum": [
+                                "apex",
+                                "lwc"
+                            ]
+                        },
+                        "unit": {
+                            "type": "string",
+                            "description": "Class, trigger or component name."
+                        },
+                        "owner": {
+                            "type": "string",
+                            "description": "Type that has the member (Outer.Inner for inner classes)."
+                        },
+                        "memberType": {
+                            "type": "string",
+                            "enum": [
+                                "method",
+                                "constructor",
+                                "trigger",
+                                "anonymous",
+                                "function"
+                            ]
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "member": {
+                            "type": "string",
+                            "description": "owner.name (the same as member of apex.dataAccess)."
+                        },
+                        "signature": {
+                            "type": "string",
+                            "description": "name(param types) to tell overloads apart, e.g. calc(Integer, Integer). In a for over apex.outline: \"${m.name}(${m.params})\"."
+                        },
+                        "nodes": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                            "start",
+                                            "end",
+                                            "process",
+                                            "decision",
+                                            "loop",
+                                            "query",
+                                            "dml",
+                                            "callout",
+                                            "event",
+                                            "call",
+                                            "navigate",
+                                            "try",
+                                            "catch",
+                                            "finally",
+                                            "return",
+                                            "throw"
+                                        ],
+                                        "description": "process: statements merged into one box / decision: if or switch / loop: for or while / query: SOQL, SOSL / dml: insert, update ... / callout: HTTP / event: publishing events / call: calling server code (Apex from LWC) / navigate: page navigation."
+                                    },
+                                    "label": {
+                                        "type": "string",
+                                        "description": "Text of the box (the first line of the source)."
+                                    },
+                                    "detail": {
+                                        "description": "Source of the statements (up to 20 lines).",
+                                        "type": "string"
+                                    },
+                                    "line": {
+                                        "description": "Line in the file (1-based).",
+                                        "type": "number"
+                                    },
+                                    "count": {
+                                        "description": "Number of statements merged into the box.",
+                                        "type": "number"
+                                    },
+                                    "inLoop": {
+                                        "description": "Inside a loop (SOQL / DML here can hit governor limits).",
+                                        "type": "boolean"
+                                    }
+                                },
+                                "required": [
+                                    "id",
+                                    "kind",
+                                    "label"
+                                ],
+                                "additionalProperties": false,
+                                "description": "One box of a code flowchart."
+                            }
+                        },
+                        "edges": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "from": {
+                                        "type": "string"
+                                    },
+                                    "to": {
+                                        "type": "string"
+                                    },
+                                    "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                            "normal",
+                                            "yes",
+                                            "no",
+                                            "case",
+                                            "loop",
+                                            "back",
+                                            "exception"
+                                        ],
+                                        "description": "yes / no: branches of a decision / case: a when of switch / loop: into the loop body / back: back to the loop head / exception: to catch or out by throw."
+                                    },
+                                    "label": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "from",
+                                    "to",
+                                    "kind"
+                                ],
+                                "additionalProperties": false,
+                                "description": "One line of a code flowchart."
+                            }
+                        }
+                    },
+                    "required": [
+                        "language",
+                        "unit",
+                        "owner",
+                        "memberType",
+                        "name",
+                        "member",
+                        "signature",
+                        "nodes",
+                        "edges"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Flowchart of one method / function, built from its statements."
+                }
+            },
+            "example": {
+                "classes": [
+                    "AccountService"
+                ],
+                "members": [
+                    "sync"
+                ]
+            }
+        },
+        {
+            "name": "apex.callFlow",
+            "description": "Apex のメソッド (・トリガー) から呼び出しをクラスをまたいでたどったシーケンス図 (起点ごとに 1 つ)。呼び出し・SOQL / SOSL・DML・非同期の開始・外部の呼び出し・イベントの発行をソースの順に並べ、リポジトリのクラスのメソッドは depth 段まで中をたどる。SequenceDiagram で描く。lwc.eventFlow の Apex の箱 (Class.method) を members に渡すと、画面から Apex の中までつながる。",
+            "category": "code",
+            "shape": "diagram",
+            "components": [
+                "SequenceDiagram"
+            ],
+            "args": {
+                "type": "object",
+                "properties": {
+                    "classes": {
+                        "description": "Class or trigger names (start points) to include. Omit for all.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "members": {
+                        "description": "Start methods (name or Owner.name; a trigger is its name) to include. Omit for all.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "depth": {
+                        "description": "How many levels of calls to follow (default 3).",
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 10
+                    }
+                }
+            },
+            "output": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "start": {
+                            "type": "string",
+                            "description": "Start member (Owner.method, or the trigger name)."
+                        },
+                        "unit": {
+                            "type": "string",
+                            "description": "Class or trigger of the start member."
+                        },
+                        "participants": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "Participants from the left (the start class first)."
+                        },
+                        "messages": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "from": {
+                                        "type": "string",
+                                        "description": "Participant that sends (class, trigger)."
+                                    },
+                                    "to": {
+                                        "type": "string",
+                                        "description": "Participant that receives (class, Database, EventBus, Http, System ...)."
+                                    },
+                                    "label": {
+                                        "type": "string",
+                                        "description": "Method name, or the operation and object (SELECT Account, update Account)."
+                                    },
+                                    "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                            "call",
+                                            "query",
+                                            "dml",
+                                            "async",
+                                            "callout",
+                                            "publish"
+                                        ],
+                                        "description": "call: a method of a class in the repository / query: SOQL, SOSL / dml / async: Queueable, Batch, Schedule / callout: HTTP / publish: platform events."
+                                    },
+                                    "depth": {
+                                        "type": "number",
+                                        "description": "1 for the start method, 2 for the methods it calls ..."
+                                    },
+                                    "line": {
+                                        "description": "Line of the call in its file.",
+                                        "type": "number"
+                                    },
+                                    "inLoop": {
+                                        "description": "Inside a loop (SOQL / DML here can hit governor limits).",
+                                        "type": "boolean"
+                                    }
+                                },
+                                "required": [
+                                    "from",
+                                    "to",
+                                    "label",
+                                    "kind",
+                                    "depth"
+                                ],
+                                "additionalProperties": false,
+                                "description": "One message of a sequence diagram."
+                            },
+                            "description": "Messages in the order of the source (depth-first into called methods)."
+                        },
+                        "truncated": {
+                            "description": "Too many messages; the rest are not shown.",
+                            "type": "boolean"
+                        }
+                    },
+                    "required": [
+                        "start",
+                        "unit",
+                        "participants",
+                        "messages"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Sequence diagram of calls from one method, following the methods of the repository classes."
+                }
+            },
+            "example": {
+                "members": [
+                    "AccountService.execute"
                 ]
             }
         },
@@ -3826,6 +5382,324 @@
                     "additionalProperties": false,
                     "description": "One item of a component: its public interface, data, and dependencies."
                 }
+            },
+            "example": {
+                "components": [
+                    "accountList"
+                ]
+            }
+        },
+        {
+            "name": "lwc.methodFlow",
+            "description": "LWC の JS / TS のメソッド・関数 (フィールドのアロー関数・getter / setter・モジュールの関数) の処理フロー (分岐・繰り返し・try / catch・Apex の呼び出し・イベントの発行 (dispatchEvent・トースト・メッセージチャネル)・画面の遷移・fetch・return)。箱の文字はソースの元の文。CodeFlowchart で描く。",
+            "category": "code",
+            "shape": "diagram",
+            "components": [
+                "CodeFlowchart"
+            ],
+            "args": {
+                "type": "object",
+                "properties": {
+                    "components": {
+                        "description": "Component names (accountList or c/accountList) to include. Omit for all.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "members": {
+                        "description": "Function names (name or Owner.name; getters are \"get name\") to include. Omit for all.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "output": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "filePath": {
+                            "type": "string"
+                        },
+                        "language": {
+                            "type": "string",
+                            "enum": [
+                                "apex",
+                                "lwc"
+                            ]
+                        },
+                        "unit": {
+                            "type": "string",
+                            "description": "Class, trigger or component name."
+                        },
+                        "owner": {
+                            "type": "string",
+                            "description": "Type that has the member (Outer.Inner for inner classes)."
+                        },
+                        "memberType": {
+                            "type": "string",
+                            "enum": [
+                                "method",
+                                "constructor",
+                                "trigger",
+                                "anonymous",
+                                "function"
+                            ]
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "member": {
+                            "type": "string",
+                            "description": "owner.name (the same as member of apex.dataAccess)."
+                        },
+                        "signature": {
+                            "type": "string",
+                            "description": "name(param types) to tell overloads apart, e.g. calc(Integer, Integer). In a for over apex.outline: \"${m.name}(${m.params})\"."
+                        },
+                        "nodes": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                            "start",
+                                            "end",
+                                            "process",
+                                            "decision",
+                                            "loop",
+                                            "query",
+                                            "dml",
+                                            "callout",
+                                            "event",
+                                            "call",
+                                            "navigate",
+                                            "try",
+                                            "catch",
+                                            "finally",
+                                            "return",
+                                            "throw"
+                                        ],
+                                        "description": "process: statements merged into one box / decision: if or switch / loop: for or while / query: SOQL, SOSL / dml: insert, update ... / callout: HTTP / event: publishing events / call: calling server code (Apex from LWC) / navigate: page navigation."
+                                    },
+                                    "label": {
+                                        "type": "string",
+                                        "description": "Text of the box (the first line of the source)."
+                                    },
+                                    "detail": {
+                                        "description": "Source of the statements (up to 20 lines).",
+                                        "type": "string"
+                                    },
+                                    "line": {
+                                        "description": "Line in the file (1-based).",
+                                        "type": "number"
+                                    },
+                                    "count": {
+                                        "description": "Number of statements merged into the box.",
+                                        "type": "number"
+                                    },
+                                    "inLoop": {
+                                        "description": "Inside a loop (SOQL / DML here can hit governor limits).",
+                                        "type": "boolean"
+                                    }
+                                },
+                                "required": [
+                                    "id",
+                                    "kind",
+                                    "label"
+                                ],
+                                "additionalProperties": false,
+                                "description": "One box of a code flowchart."
+                            }
+                        },
+                        "edges": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "from": {
+                                        "type": "string"
+                                    },
+                                    "to": {
+                                        "type": "string"
+                                    },
+                                    "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                            "normal",
+                                            "yes",
+                                            "no",
+                                            "case",
+                                            "loop",
+                                            "back",
+                                            "exception"
+                                        ],
+                                        "description": "yes / no: branches of a decision / case: a when of switch / loop: into the loop body / back: back to the loop head / exception: to catch or out by throw."
+                                    },
+                                    "label": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "from",
+                                    "to",
+                                    "kind"
+                                ],
+                                "additionalProperties": false,
+                                "description": "One line of a code flowchart."
+                            }
+                        }
+                    },
+                    "required": [
+                        "language",
+                        "unit",
+                        "owner",
+                        "memberType",
+                        "name",
+                        "member",
+                        "signature",
+                        "nodes",
+                        "edges"
+                    ],
+                    "additionalProperties": false,
+                    "description": "Flowchart of one method / function, built from its statements."
+                }
+            },
+            "example": {
+                "components": [
+                    "accountList"
+                ],
+                "members": [
+                    "handleDelete"
+                ]
+            }
+        },
+        {
+            "name": "lwc.eventFlow",
+            "description": "LWC の、利用者の操作から処理までの流れ (1 つの図)。テンプレートのイベント・@wire・表示のとき (connectedCallback など) から、ハンドラー → 自分のメソッド → Apex の呼び出し・refreshApex・イベントの発行・トースト・画面の遷移・メッセージチャネルへ。子コンポーネントが発行したイベントは、親のテンプレートの on<イベント> につなぐ。EventFlow で描く。",
+            "category": "code",
+            "shape": "diagram",
+            "components": [
+                "EventFlow"
+            ],
+            "args": {
+                "type": "object",
+                "properties": {
+                    "components": {
+                        "description": "Start components (accountList or c/accountList) to include. Omit for all.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "depth": {
+                        "description": "Levels of child components to include (default 1; 0 is the start components only).",
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 5
+                    }
+                }
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "components": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Components in the chart (the start components and their children)."
+                    },
+                    "nodes": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "kind": {
+                                    "type": "string",
+                                    "enum": [
+                                        "action",
+                                        "lifecycle",
+                                        "wire",
+                                        "handler",
+                                        "apex",
+                                        "refresh",
+                                        "event",
+                                        "toast",
+                                        "navigate",
+                                        "message"
+                                    ],
+                                    "description": "action: an event in the template (<lightning-button> click) / lifecycle: connectedCallback ... / wire: @wire / handler: a method of the component / apex: an Apex method / refresh: refreshApex / event: an event the component dispatches / toast / navigate / message: Lightning Message Service publish."
+                                },
+                                "label": {
+                                    "type": "string"
+                                },
+                                "component": {
+                                    "description": "Component that has the box (Apex methods have none).",
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "id",
+                                "kind",
+                                "label"
+                            ],
+                            "additionalProperties": false,
+                            "description": "One box of an event flow."
+                        }
+                    },
+                    "edges": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "from": {
+                                    "type": "string"
+                                },
+                                "to": {
+                                    "type": "string"
+                                },
+                                "kind": {
+                                    "type": "string",
+                                    "enum": [
+                                        "flow",
+                                        "data",
+                                        "event"
+                                    ],
+                                    "description": "flow: calls and order / data: Apex and @wire / event: dispatching events and handling them in the parent."
+                                },
+                                "label": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "from",
+                                "to",
+                                "kind"
+                            ],
+                            "additionalProperties": false,
+                            "description": "One line of an event flow."
+                        }
+                    }
+                },
+                "required": [
+                    "components",
+                    "nodes",
+                    "edges"
+                ],
+                "additionalProperties": false,
+                "description": "Flow from user actions (template events), @wire and lifecycle hooks to handlers, Apex, events, toasts and navigation, across parent and child components."
             },
             "example": {
                 "components": [
@@ -5035,7 +6909,15 @@
             ],
             "args": {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                    "refTypes": {
+                        "description": "Referenced types (namedCredential, field, apexClass ...) to include. Omit for all.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
             },
             "output": {
                 "type": "array",
@@ -5204,6 +7086,104 @@
                     "additionalProperties": false,
                     "description": "A finding of the analysis. Comparing two points: new ones are added, gone ones removed."
                 }
+            }
+        },
+        {
+            "name": "feature.scope",
+            "description": "機能のまとまり: 起点 (object:Invoice__c・apexClass:AccountService・lwc:accountList など) から依存関係を両方向にたどった、関わる単位 (種類・名前・起点との関係・段数・ファイル)。雛形 feature_overview は、この範囲の単位で種類ごとのドキュメントを組む。",
+            "category": "dependency",
+            "shape": "rows",
+            "components": [
+                "DataTable",
+                "StatusSummary"
+            ],
+            "args": {
+                "type": "object",
+                "properties": {
+                    "targets": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "minLength": 1
+                        },
+                        "description": "Start node ids (object:Invoice__c, apexClass:AccountService, lwc:accountList ...)."
+                    },
+                    "depth": {
+                        "description": "How many steps to follow (default 1).",
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9007199254740991
+                    },
+                    "direction": {
+                        "description": "both (default) / dependencies: what the targets use / dependents: what uses the targets.",
+                        "type": "string",
+                        "enum": [
+                            "both",
+                            "dependencies",
+                            "dependents"
+                        ]
+                    },
+                    "excludeTypes": {
+                        "description": "Unit types to leave out (profile, objectTranslation ...) to include. Omit for all.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "targets"
+                ]
+            },
+            "output": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "filePath": {
+                            "type": "string"
+                        },
+                        "nodeId": {
+                            "type": "string",
+                            "description": "Node id (object:Invoice__c, apexClass:AccountService ...)."
+                        },
+                        "unitType": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "relation": {
+                            "type": "string",
+                            "enum": [
+                                "target",
+                                "uses",
+                                "usedBy",
+                                "both"
+                            ],
+                            "description": "target: a start point / uses: the targets use it / usedBy: it uses the targets / both."
+                        },
+                        "depth": {
+                            "type": "number",
+                            "description": "Steps from the nearest target (0 for targets)."
+                        }
+                    },
+                    "required": [
+                        "nodeId",
+                        "unitType",
+                        "name",
+                        "relation",
+                        "depth"
+                    ],
+                    "additionalProperties": false,
+                    "description": "One unit in the scope of a feature (found by following dependencies from the targets)."
+                }
+            },
+            "example": {
+                "targets": [
+                    "object:Invoice__c"
+                ]
             }
         },
         {

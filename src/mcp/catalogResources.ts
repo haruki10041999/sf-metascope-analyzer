@@ -1,5 +1,6 @@
 import { type McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 
+import { buildDocumentJsonSchema } from '../report/documentSchema';
 import {
     buildReportCatalog,
     componentMarkdown,
@@ -59,7 +60,7 @@ export const registerCatalogResources = (server: McpServer): void => {
                 {
                     uri: uri.href,
                     mimeType: 'application/schema+json',
-                    text: JSON.stringify(buildReportCatalog().documentSchema, null, 2),
+                    text: JSON.stringify(buildDocumentJsonSchema(), null, 2),
                 },
             ],
         }),

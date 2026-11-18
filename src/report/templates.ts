@@ -1,5 +1,6 @@
 import type { ReportProviderName } from '../analyzer/report/registry';
 
+import { apexSpecificationDetail, lwcOverviewDetail, objectSections } from './detailTemplates';
 import type { ReportDocument } from './document';
 
 // 用途ごとのレポートの文書の雛形 (docs/implementation-roadmap.md 4.5 のプロンプト)。
@@ -54,19 +55,36 @@ const documentOf = (
 ): ReportDocument => ({ title, ...options, data, spec: { root, elements } });
 
 /**
- * オブジェクト定義書 (ドキュメント): 一覧・ER 図・項目・選択リスト値・入力規則・レコードタイプ。
- * objects を渡すと、そのオブジェクトだけにする (ER 図は 1 段先まで)
+ * オブジェクト定義書 (ドキュメント): 一覧・ER 図と、すべてのオブジェクトを 1 件 1 ページに
+ * (項目・選択リスト値・入力規則・レコードタイプ・そのほかの定義。detailTemplates.ts)
  */
-export const objectDefinitionTemplate = (objects?: string[]): ReportDocument => {
-    const args = objects && objects.length ? { objects } : undefined;
+export const objectDefinitionTemplate = (): ReportDocument => {
+    const document = objectDefinitionList();
+    const keep = ['summary', 'objectsCard', 'objectsTable', 'diagramCard', 'diagramView'];
+    return {
+        ...document,
+        data: { objects: document.data.objects!, diagram: document.data.diagram! },
+        spec: {
+            root: 'page',
+            elements: {
+                ...Object.fromEntries(
+                    Object.entries(document.spec.elements).filter(([key]) => keep.includes(key)),
+                ),
+                page: stack(['summary', 'objectsCard', 'diagramCard', 'object']),
+                ...objectSections(),
+            },
+        },
+    };
+};
+
+/** オブジェクト定義書の一覧と ER 図 (objectDefinitionTemplate が、ほかの表をオブジェクトごとのページに置き換える) */
+const objectDefinitionList = (): ReportDocument => {
     const source = (
         provider: DataSource['provider'],
         extra?: Record<string, unknown>,
-    ): DataSource => (args || extra ? { provider, args: { ...args, ...extra } } : { provider });
+    ): DataSource => (extra ? { provider, args: extra } : { provider });
     return documentOf(
-        objects && objects.length
-            ? `オブジェクト定義書: ${objects.join('・')}`
-            : 'オブジェクト定義書',
+        'オブジェクト定義書',
         {
             objects: source('object.list'),
             diagram: source('object.diagram'),
@@ -75,6 +93,7 @@ export const objectDefinitionTemplate = (objects?: string[]): ReportDocument => 
             picklists: source('object.picklists'),
             validationRules: source('object.validationRules'),
             recordTypes: source('object.recordTypePicklists'),
+            members: source('object.members'),
         },
         {
             page: stack([
@@ -85,6 +104,7 @@ export const objectDefinitionTemplate = (objects?: string[]): ReportDocument => 
                 'picklistsCard',
                 'validationRulesCard',
                 'recordTypesCard',
+                'membersCard',
             ]),
             summary: narrative(
                 '概要',
@@ -158,6 +178,23 @@ export const objectDefinitionTemplate = (objects?: string[]): ReportDocument => 
                 ],
                 false,
             ),
+            membersCard: card(
+                'そのほかの定義',
+                'レコードタイプ・リストビュー・項目セット・ボタンとリンク・共有の理由・アクションの上書き・検索レイアウトなど',
+                ['membersTable'],
+            ),
+            membersTable: table(
+                'members',
+                [
+                    ['object', 'オブジェクト'],
+                    ['memberType', '種類'],
+                    ['name', '名前'],
+                    ['label', 'ラベル'],
+                    ['description', '説明'],
+                    ['details', '中身'],
+                ],
+                false,
+            ),
             recordTypesCard: card('レコードタイプと選択リスト値', null, ['recordTypesTable']),
             recordTypesTable: table(
                 'recordTypes',
@@ -176,205 +213,37 @@ export const objectDefinitionTemplate = (objects?: string[]): ReportDocument => 
 };
 
 /**
- * Apex クラスの仕様書 (ドキュメント): クラス・メンバーの一覧 (private・テストも)、データアクセス (SOQL・SOSL・DML)、
- * 外から使えるもの。classes を渡すと、そのクラス・トリガーだけにする
+ * Apex の仕様書 (ドキュメント): すべてのクラス・トリガーを 1 件 1 ページに (detailTemplates.ts)。
+ * クラスごとに説明・メンバー、メソッドごとに処理フローと説明・データアクセス・呼び出し
  */
-export const apexSpecificationTemplate = (classes?: string[]): ReportDocument => {
-    const args = classes && classes.length ? { classes } : undefined;
-    const source = (provider: DataSource['provider']): DataSource =>
-        args ? { provider, args } : { provider };
-    return documentOf(
-        classes && classes.length ? `Apex の仕様書: ${classes.join('・')}` : 'Apex の仕様書',
-        {
-            outline: source('apex.outline'),
-            dataAccess: source('apex.dataAccess'),
-            ...(args ? {} : { publicApi: { provider: 'apex.interface' } }),
-        },
-        {
-            page: stack([
-                'summary',
-                'outlineCard',
-                'dataAccessCard',
-                ...(args ? [] : ['publicApiCard']),
-            ]),
-            summary: narrative(
-                '概要',
-                '(ここに概要を書く: 各クラス・トリガーの役割、主な処理の流れ、読み書きするオブジェクト、気をつけること (ループの中の SOQL / DML など))',
-            ),
-            outlineCard: card('クラス・メンバー', 'private・テストのクラスも含む', [
-                'outlineTable',
-            ]),
-            outlineTable: table(
-                'outline',
-                [
-                    ['owner', '型'],
-                    ['memberType', '種類'],
-                    ['name', '名前'],
-                    ['access', 'アクセス'],
-                    ['static', 'static'],
-                    ['params', '引数'],
-                    ['type', '型・戻り値・対象'],
-                    ['annotations', 'アノテーション'],
-                    ['events', 'イベント'],
-                ],
-                false,
-            ),
-            dataAccessCard: card(
-                'データアクセス',
-                'どこで、どのオブジェクト・項目を読み書きするか (SOQL・SOSL・DML)',
-                ['dataAccessTable'],
-            ),
-            dataAccessTable: table(
-                'dataAccess',
-                [
-                    ['member', 'メソッド'],
-                    ['operation', '操作'],
-                    ['object', 'オブジェクト'],
-                    ['fields', '項目'],
-                    ['inLoop', 'ループの中'],
-                    ['inTest', 'テスト'],
-                    ['accessLevel', 'アクセスレベル'],
-                ],
-                false,
-            ),
-            ...(args
-                ? {}
-                : {
-                      publicApiCard: card('外から使えるもの', 'global・public・@AuraEnabled など', [
-                          'publicApiTable',
-                      ]),
-                      publicApiTable: table(
-                          'publicApi',
-                          [
-                              ['owner', '型'],
-                              ['memberType', '種類'],
-                              ['name', '名前'],
-                              ['params', '引数'],
-                              ['type', '型・戻り値'],
-                              ['access', 'アクセス'],
-                          ],
-                          false,
-                      ),
-                  }),
-        },
-        'page',
-    );
-};
-
+export const apexSpecificationTemplate = (): ReportDocument => apexSpecificationDetail();
 /**
- * LWC のコンポーネント一覧 (ドキュメント): 一覧・置かれている Lightning ページ・コンポーネントごとの中身
- * (親から使えるもの・@wire・Apex・使うコンポーネント・オブジェクトと項目)。components を渡すと、そのコンポーネントだけにする
+ * LWC のコンポーネント (ドキュメント): 置かれている Lightning ページと、すべてのコンポーネントを 1 件 1 ページに
+ * (detailTemplates.ts)。コンポーネントごとに説明・画面の骨組み・イベントの流れ、関数ごとに処理フローと説明
  */
-export const lwcOverviewTemplate = (components?: string[]): ReportDocument => {
-    const args = components && components.length ? { components } : undefined;
-    return documentOf(
-        components && components.length
-            ? `LWC のコンポーネント: ${components.join('・')}`
-            : 'LWC のコンポーネント一覧',
-        {
-            components: args
-                ? { provider: 'lwc.components', args }
-                : { provider: 'lwc.components' },
-            placements: args
-                ? { provider: 'lwc.placements', args: { lwc: components } }
-                : { provider: 'lwc.placements' },
-            detail: args ? { provider: 'lwc.detail', args } : { provider: 'lwc.detail' },
-            wireframe: args ? { provider: 'lwc.wireframe', args } : { provider: 'lwc.wireframe' },
-        },
-        {
-            page: stack([
-                'summary',
-                'componentsCard',
-                'wireframeCard',
-                'placementsCard',
-                'detailCard',
-            ]),
-            summary: narrative(
-                '概要',
-                '(ここに概要を書く: 各コンポーネントの役割、親子関係とイベントの流れ、使う Apex とデータ、気をつけること (突き合わせの指摘など))',
-            ),
-            componentsCard: card('コンポーネント', null, ['componentsTable']),
-            componentsTable: table(
-                'components',
-                [
-                    ['component', 'コンポーネント'],
-                    ['label', 'ラベル'],
-                    ['isExposed', '公開'],
-                    ['targets', '置ける場所'],
-                    ['apiProperties', '@api'],
-                    ['events', 'イベント'],
-                    ['childComponents', '子コンポーネント'],
-                    ['apexMethods', 'Apex'],
-                    ['objects', 'オブジェクト'],
-                ],
-                false,
-            ),
-            wireframeCard: card(
-                '画面の骨組み',
-                'テンプレートから描いたワイヤーフレーム (JS は実行しない。分岐はタブ、繰り返しは 1 件分)',
-                ['wireframeView'],
-            ),
-            wireframeView: el('LwcWireframe', {
-                data: { $state: '/data/wireframe' },
-                component: null,
-            }),
-            placementsCard: card('置かれている Lightning ページ', null, ['placementsTable']),
-            placementsTable: table(
-                'placements',
-                [
-                    ['lwc', 'コンポーネント'],
-                    ['flexiPage', 'Lightning ページ'],
-                    ['pageType', 'ページの種類'],
-                    ['sobjectType', 'オブジェクト'],
-                    ['region', 'リージョン'],
-                    ['properties', 'プロパティ'],
-                ],
-                false,
-            ),
-            detailCard: card(
-                'コンポーネントの中身',
-                '親から使えるもの・@wire・Apex・使うコンポーネント・オブジェクトと項目・指摘',
-                ['detailTable'],
-            ),
-            detailTable: table(
-                'detail',
-                [
-                    ['component', 'コンポーネント'],
-                    ['category', '種類'],
-                    ['name', '名前'],
-                    ['detail', '詳しく'],
-                ],
-                false,
-            ),
-        },
-        'page',
-    );
-};
-
+export const lwcOverviewTemplate = (): ReportDocument => lwcOverviewDetail();
 /**
  * 翻訳の状況 (ドキュメント): オブジェクト × 言語の網羅と、訳が足りない項目 (未訳・翻訳元と同じ・対象がない)。
- * languages を渡すと、その言語だけにする
+ * すべての言語 (個々の言語は指定しない)
  */
-export const translationOverviewTemplate = (languages?: string[]): ReportDocument => {
-    const filter = languages && languages.length ? { languages } : {};
+export const translationOverviewTemplate = (): ReportDocument => {
     return documentOf(
-        languages && languages.length ? `翻訳の状況: ${languages.join('・')}` : '翻訳の状況',
+        '翻訳の状況',
         {
             coverage: {
                 provider: 'translation.coverage',
-                ...(languages?.length ? { args: filter } : {}),
             },
             gaps: {
                 provider: 'translation.items',
-                args: { ...filter, statuses: ['missing', 'sameAsSource', 'orphan', 'outdated'] },
+                args: { statuses: ['missing', 'sameAsSource', 'orphan', 'outdated'] },
             },
             items: {
                 provider: 'translation.items',
-                ...(languages?.length ? { args: filter } : {}),
             },
+            labels: { provider: 'label.definitions' },
         },
         {
-            page: stack(['summary', 'coverageCard', 'gapsCard', 'itemsCard']),
+            page: stack(['summary', 'coverageCard', 'gapsCard', 'labelsCard', 'itemsCard']),
             summary: narrative(
                 '概要',
                 '(ここに概要を書く: どの言語に訳があるか、網羅の低いオブジェクト、優先して訳すもの)',
@@ -412,6 +281,23 @@ export const translationOverviewTemplate = (languages?: string[]): ReportDocumen
                 ],
                 false,
             ),
+            labelsCard: card(
+                'カスタム表示ラベル',
+                '定義と、組織の翻訳 (translations) にある訳・訳のない言語',
+                ['labelsTable'],
+            ),
+            labelsTable: table(
+                'labels',
+                [
+                    ['label', 'ラベル'],
+                    ['value', '値'],
+                    ['language', '言語'],
+                    ['translations', '訳'],
+                    ['missingLanguages', '訳のない言語'],
+                    ['categories', '分類'],
+                ],
+                false,
+            ),
             itemsCard: card('すべての項目', null, ['itemsTable']),
             itemsTable: table(
                 'items',
@@ -423,6 +309,70 @@ export const translationOverviewTemplate = (languages?: string[]): ReportDocumen
                     ['source', '翻訳元'],
                     ['translation', '訳'],
                     ['translationStatus', '状態'],
+                ],
+                false,
+            ),
+        },
+        'page',
+    );
+};
+
+/**
+ * メタデータの棚卸し (ドキュメント): 種類ごとの数・単位の一覧・設定値。専用の provider がない種類も含む。
+ * types を渡すと、その種類だけにする (設定値は行が多くなるので、大きいリポジトリでは種類で分ける)
+ */
+export const metadataInventoryTemplate = (types?: string[]): ReportDocument => {
+    const args = types && types.length ? { types } : undefined;
+    const source = (provider: DataSource['provider']): DataSource =>
+        args ? { provider, args } : { provider };
+    return documentOf(
+        types && types.length ? `メタデータの棚卸し: ${types.join('・')}` : 'メタデータの棚卸し',
+        {
+            types: source('metadata.types'),
+            units: source('metadata.units'),
+            properties: source('metadata.properties'),
+        },
+        {
+            page: stack(['summary', 'typesCard', 'unitsCard', 'propertiesCard']),
+            summary: narrative(
+                '概要',
+                '(ここに概要を書く: どんな種類のメタデータがどれだけあるか、読めなかったもの・エラーのあるもの、確かめてほしい設定)',
+            ),
+            typesCard: card('種類ごとの数', null, ['typesTable']),
+            typesTable: table(
+                'types',
+                [
+                    ['unitType', '種類'],
+                    ['count', '数'],
+                    ['unreadable', '読めなかった'],
+                    ['withErrors', 'エラーあり'],
+                ],
+                false,
+            ),
+            unitsCard: card('単位の一覧', 'ファイル・フォルダごと', ['unitsTable']),
+            unitsTable: table(
+                'units',
+                [
+                    ['unitType', '種類'],
+                    ['name', '名前'],
+                    ['label', 'ラベル'],
+                    ['description', '説明'],
+                    ['filePath', 'ファイル'],
+                    ['errorCount', 'エラー'],
+                    ['skippedElements', '読んでいない要素'],
+                ],
+                false,
+            ),
+            propertiesCard: card('設定値', '単位ごとの設定 (場所 → 値)。機密になりうる値は伏せた', [
+                'propertiesTable',
+            ]),
+            propertiesTable: table(
+                'properties',
+                [
+                    ['unitType', '種類'],
+                    ['name', '名前'],
+                    ['path', '場所'],
+                    ['value', '値'],
                 ],
                 false,
             ),
@@ -659,43 +609,30 @@ export const releaseReviewTemplate = (): ReportDocument =>
         { diff: true },
     );
 
-/** 変更の影響: 対象 (項目・クラスなど) を使っているもの・使っているもの側 */
-export const impactAnalysisTemplate = (target: string): ReportDocument =>
+/**
+ * 変更の影響の調査 (差分。diff: true): 保存した基準から変わった単位と、それを使っているため影響を受ける単位。
+ * 起点は利用者が指定せず、変わった単位から自動で決める (2026-11-18 に決めた)
+ */
+export const impactAnalysisTemplate = (): ReportDocument =>
     documentOf(
-        `影響の調査: ${target}`,
+        '変更の影響の調査',
         {
-            dependents: { provider: 'dependency.dependents', args: { target, depth: 2 } },
-            dependencies: { provider: 'dependency.dependencies', args: { target } },
+            impact: { provider: 'dependency.impact', args: { depth: 2 } },
+            changes: { provider: 'dependency.changes' },
         },
         {
-            page: stack(['summary', 'dependentsCard', 'dependenciesCard']),
+            page: stack(['summary', 'impactCard', 'changesCard']),
             summary: narrative(
                 '要約',
-                '(ここに要約を書く: 変えると影響を受けるもの、確かめる順番、リスク)',
+                '(ここに要約を書く: 何が変わり、どこに影響するか、確かめる順番、リスク)',
             ),
-            dependentsCard: card(`${target} を使っているもの`, '2 段までたどった被依存', [
-                'dependentsTable',
+            impactCard: card('変わった単位と影響を受ける単位', '2 段までたどった被依存', [
+                'impactView',
             ]),
-            dependentsTable: table(
-                'dependents',
-                [
-                    ['depth', '段'],
-                    ['type', '種類'],
-                    ['name', '名前'],
-                    ['id', 'id'],
-                ],
-                false,
-            ),
-            dependenciesCard: card(`${target} が使っているもの`, null, ['dependenciesTable']),
-            dependenciesTable: table(
-                'dependencies',
-                [
-                    ['type', '種類'],
-                    ['name', '名前'],
-                    ['id', 'id'],
-                ],
-                false,
-            ),
+            impactView: el('ImpactView', { data: { $state: '/data/impact' } }),
+            changesCard: card('依存関係の変化', '増えた・なくなった参照', ['changesTable']),
+            changesTable: table('changes', null, false),
         },
         'page',
+        { diff: true },
     );

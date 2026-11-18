@@ -821,6 +821,323 @@ export const TranslationItemRowSchema = z
     .describe('One translatable item of an object in one language.');
 
 // ---------------------------------------------------------------------------
+// すべての種類の土台 (ドキュメント・理解のため。docs/todo.md 2.1)
+// ---------------------------------------------------------------------------
+
+export const MetadataUnitRowSchema = z
+    .object({
+        ...rowBaseShape,
+        unitType: z.string().describe('Unit type (customTab, namedCredential, apexClass ...).'),
+        name: z.string(),
+        label: z.string().exactOptional(),
+        description: z.string().exactOptional(),
+        readable: z.boolean().describe('false when the file could not be read (see errorCount).'),
+        errorCount: z.number().describe('Problems found while reading (syntax errors etc.).'),
+        skippedElements: z
+            .array(z.string())
+            .exactOptional()
+            .describe('XML elements this analyzer does not read yet.'),
+    })
+    .describe('One unit (file or folder) of any type.');
+
+export const MetadataTypeRowSchema = z
+    .object({
+        unitType: z.string(),
+        lineage: z.string().describe('apex / lwc / object / objectTranslation / metadata.'),
+        count: z.number(),
+        unreadable: z.number(),
+        withErrors: z.number(),
+        added: z.number().exactOptional().describe('Only when comparing.'),
+        removed: z.number().exactOptional(),
+        changed: z.number().exactOptional(),
+    })
+    .describe('Number of units of one type.');
+
+export const MetadataPropertyRowSchema = z
+    .object({
+        ...rowBaseShape,
+        unitType: z.string(),
+        name: z.string().describe('Unit name.'),
+        path: z
+            .string()
+            .describe(
+                'Where the value is, e.g. label or sharingCriteriaRules[Large_Invoices].accessLevel (array items by their name).',
+            ),
+        value: z
+            .union([z.string(), z.number(), z.boolean()])
+            .describe(
+                'Formulas as text, criteria as "left operator right". Sensitive values are masked.',
+            ),
+        before: z
+            .union([z.string(), z.number(), z.boolean()])
+            .exactOptional()
+            .describe('Value before (only for changed rows when comparing).'),
+    })
+    .describe('One setting of a unit (any XML metadata type; Apex and LWC only their -meta.xml).');
+
+// ---------------------------------------------------------------------------
+// 宣言単位 (オブジェクトの子・Flow の要素・ラベル。docs/todo.md 2.2)
+// ---------------------------------------------------------------------------
+
+const detailsShape = {
+    details: z
+        .array(z.string())
+        .describe(
+            'Contents as "path = value" (formulas as text, criteria as "left operator right").',
+        ),
+    changedDetails: z
+        .array(z.string())
+        .exactOptional()
+        .describe('Contents that are new or different (only when comparing and the row changed).'),
+};
+
+export const ObjectMemberRowSchema = z
+    .object({
+        status: ViewStatusSchema.exactOptional(),
+        filePath: z.string().exactOptional(),
+        object: z.string(),
+        memberType: z.enum([
+            'recordType',
+            'listView',
+            'fieldSet',
+            'compactLayout',
+            'webLink',
+            'businessProcess',
+            'sharingReason',
+            'actionOverride',
+            'searchLayout',
+        ]),
+        name: z.string(),
+        label: z.string().exactOptional(),
+        description: z.string().exactOptional(),
+        ...detailsShape,
+    })
+    .describe(
+        'One child of an object (record type, list view, field set, compact layout, button / link, business process, sharing reason, action override, search layout).',
+    );
+
+export const FlowElementRowSchema = z
+    .object({
+        status: ViewStatusSchema.exactOptional(),
+        filePath: z.string().exactOptional(),
+        flow: z.string(),
+        element: z.string().describe('API name of the element.'),
+        kind: z.string().describe('flowDecision, flowAssignment, flowRecordLookup, flowScreen ...'),
+        order: z.number().describe('Position in the flow file (1 based).'),
+        label: z.string().exactOptional(),
+        description: z.string().exactOptional(),
+        object: z.string().exactOptional().describe('Object of a record operation.'),
+        ...detailsShape,
+    })
+    .describe(
+        'One element of a flow with its contents (conditions, assignments, record filters, screen fields, action inputs).',
+    );
+
+export const LabelDefinitionRowSchema = z
+    .object({
+        status: ViewStatusSchema.exactOptional(),
+        filePath: z.string().exactOptional(),
+        label: z.string().describe('API name of the custom label.'),
+        value: z.string(),
+        language: z.string().exactOptional(),
+        protected: z.boolean().exactOptional(),
+        shortDescription: z.string().exactOptional(),
+        categories: z.array(z.string()),
+        translations: z
+            .array(z.string())
+            .describe('Translations in the translations metadata, as "language: text".'),
+        missingLanguages: z
+            .array(z.string())
+            .describe(
+                'Languages of the translations metadata that have no translation of this label.',
+            ),
+    })
+    .describe('One custom label and its translations.');
+
+// ---------------------------------------------------------------------------
+// 処理フロー (docs/todo.md 3.2.1 の 4)
+// ---------------------------------------------------------------------------
+
+export const CodeFlowNodeSchema = z
+    .object({
+        id: z.string(),
+        kind: z
+            .enum([
+                'start',
+                'end',
+                'process',
+                'decision',
+                'loop',
+                'query',
+                'dml',
+                'callout',
+                'event',
+                'call',
+                'navigate',
+                'try',
+                'catch',
+                'finally',
+                'return',
+                'throw',
+            ])
+            .describe(
+                'process: statements merged into one box / decision: if or switch / loop: for or while / query: SOQL, SOSL / dml: insert, update ... / callout: HTTP / event: publishing events / call: calling server code (Apex from LWC) / navigate: page navigation.',
+            ),
+        label: z.string().describe('Text of the box (the first line of the source).'),
+        detail: z.string().exactOptional().describe('Source of the statements (up to 20 lines).'),
+        line: z.number().exactOptional().describe('Line in the file (1-based).'),
+        count: z.number().exactOptional().describe('Number of statements merged into the box.'),
+        inLoop: z
+            .boolean()
+            .exactOptional()
+            .describe('Inside a loop (SOQL / DML here can hit governor limits).'),
+    })
+    .describe('One box of a code flowchart.');
+
+export const CodeFlowEdgeSchema = z
+    .object({
+        from: z.string(),
+        to: z.string(),
+        kind: z
+            .enum(['normal', 'yes', 'no', 'case', 'loop', 'back', 'exception'])
+            .describe(
+                'yes / no: branches of a decision / case: a when of switch / loop: into the loop body / back: back to the loop head / exception: to catch or out by throw.',
+            ),
+        label: z.string().exactOptional(),
+    })
+    .describe('One line of a code flowchart.');
+
+export const CodeFlowSchema = z
+    .object({
+        filePath: z.string().exactOptional(),
+        language: z.enum(['apex', 'lwc']),
+        unit: z.string().describe('Class, trigger or component name.'),
+        owner: z.string().describe('Type that has the member (Outer.Inner for inner classes).'),
+        memberType: z.enum(['method', 'constructor', 'trigger', 'anonymous', 'function']),
+        name: z.string(),
+        member: z.string().describe('owner.name (the same as member of apex.dataAccess).'),
+        signature: z
+            .string()
+            .describe(
+                'name(param types) to tell overloads apart, e.g. calc(Integer, Integer). In a for over apex.outline: "${m.name}(${m.params})".',
+            ),
+        nodes: z.array(CodeFlowNodeSchema),
+        edges: z.array(CodeFlowEdgeSchema),
+    })
+    .describe('Flowchart of one method / function, built from its statements.');
+
+export const CallSequenceMessageSchema = z
+    .object({
+        from: z.string().describe('Participant that sends (class, trigger).'),
+        to: z
+            .string()
+            .describe('Participant that receives (class, Database, EventBus, Http, System ...).'),
+        label: z
+            .string()
+            .describe('Method name, or the operation and object (SELECT Account, update Account).'),
+        kind: z
+            .enum(['call', 'query', 'dml', 'async', 'callout', 'publish'])
+            .describe(
+                'call: a method of a class in the repository / query: SOQL, SOSL / dml / async: Queueable, Batch, Schedule / callout: HTTP / publish: platform events.',
+            ),
+        depth: z.number().describe('1 for the start method, 2 for the methods it calls ...'),
+        line: z.number().exactOptional().describe('Line of the call in its file.'),
+        inLoop: z
+            .boolean()
+            .exactOptional()
+            .describe('Inside a loop (SOQL / DML here can hit governor limits).'),
+    })
+    .describe('One message of a sequence diagram.');
+
+export const CallSequenceSchema = z
+    .object({
+        start: z.string().describe('Start member (Owner.method, or the trigger name).'),
+        unit: z.string().describe('Class or trigger of the start member.'),
+        participants: z
+            .array(z.string())
+            .describe('Participants from the left (the start class first).'),
+        messages: z
+            .array(CallSequenceMessageSchema)
+            .describe('Messages in the order of the source (depth-first into called methods).'),
+        truncated: z
+            .boolean()
+            .exactOptional()
+            .describe('Too many messages; the rest are not shown.'),
+    })
+    .describe(
+        'Sequence diagram of calls from one method, following the methods of the repository classes.',
+    );
+
+export const EventFlowNodeSchema = z
+    .object({
+        id: z.string(),
+        kind: z
+            .enum([
+                'action',
+                'lifecycle',
+                'wire',
+                'handler',
+                'apex',
+                'refresh',
+                'event',
+                'toast',
+                'navigate',
+                'message',
+            ])
+            .describe(
+                'action: an event in the template (<lightning-button> click) / lifecycle: connectedCallback ... / wire: @wire / handler: a method of the component / apex: an Apex method / refresh: refreshApex / event: an event the component dispatches / toast / navigate / message: Lightning Message Service publish.',
+            ),
+        label: z.string(),
+        component: z
+            .string()
+            .exactOptional()
+            .describe('Component that has the box (Apex methods have none).'),
+    })
+    .describe('One box of an event flow.');
+
+export const EventFlowEdgeSchema = z
+    .object({
+        from: z.string(),
+        to: z.string(),
+        kind: z
+            .enum(['flow', 'data', 'event'])
+            .describe(
+                'flow: calls and order / data: Apex and @wire / event: dispatching events and handling them in the parent.',
+            ),
+        label: z.string().exactOptional(),
+    })
+    .describe('One line of an event flow.');
+
+export const EventFlowSchema = z
+    .object({
+        components: z
+            .array(z.string())
+            .describe('Components in the chart (the start components and their children).'),
+        nodes: z.array(EventFlowNodeSchema),
+        edges: z.array(EventFlowEdgeSchema),
+    })
+    .describe(
+        'Flow from user actions (template events), @wire and lifecycle hooks to handlers, Apex, events, toasts and navigation, across parent and child components.',
+    );
+
+export const FeatureScopeRowSchema = z
+    .object({
+        filePath: z.string().exactOptional(),
+        nodeId: z.string().describe('Node id (object:Invoice__c, apexClass:AccountService ...).'),
+        unitType: z.string(),
+        name: z.string(),
+        relation: z
+            .enum(['target', 'uses', 'usedBy', 'both'])
+            .describe(
+                'target: a start point / uses: the targets use it / usedBy: it uses the targets / both.',
+            ),
+        depth: z.number().describe('Steps from the nearest target (0 for targets).'),
+    })
+    .describe(
+        'One unit in the scope of a feature (found by following dependencies from the targets).',
+    );
+
+// ---------------------------------------------------------------------------
 // 依存関係
 // ---------------------------------------------------------------------------
 

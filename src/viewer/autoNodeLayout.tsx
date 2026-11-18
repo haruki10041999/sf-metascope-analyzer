@@ -7,6 +7,8 @@ type SizedNode = Node<{ width: number; height: number }>;
 export const getLayoutedElements = <N extends SizedNode, E extends Edge>(
     nodes: N[],
     edges: E[],
+    /** 並べる向き (LR: 左から右 (既定) / TB: 上から下) */
+    rankdir: 'LR' | 'TB' = 'LR',
 ): {
     nodes: N[];
     edges: E[];
@@ -16,7 +18,7 @@ export const getLayoutedElements = <N extends SizedNode, E extends Edge>(
     dagreGraph.setDefaultEdgeLabel(() => ({}));
 
     dagreGraph.setGraph({
-        rankdir: 'LR',
+        rankdir,
         nodesep: 40,
         ranksep: 80,
     });

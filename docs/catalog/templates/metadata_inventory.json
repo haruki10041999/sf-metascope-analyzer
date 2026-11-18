@@ -1,0 +1,182 @@
+{
+    "$schema": "../report-document.schema.json",
+    "title": "メタデータの棚卸し",
+    "data": {
+        "types": {
+            "provider": "metadata.types"
+        },
+        "units": {
+            "provider": "metadata.units"
+        },
+        "properties": {
+            "provider": "metadata.properties"
+        }
+    },
+    "spec": {
+        "root": "page",
+        "elements": {
+            "page": {
+                "type": "Stack",
+                "props": {
+                    "direction": "vertical",
+                    "gap": "lg",
+                    "align": null,
+                    "justify": null,
+                    "className": null
+                },
+                "children": [
+                    "summary",
+                    "typesCard",
+                    "unitsCard",
+                    "propertiesCard"
+                ]
+            },
+            "summary": {
+                "type": "Narrative",
+                "props": {
+                    "title": "概要",
+                    "markdown": "(ここに概要を書く: どんな種類のメタデータがどれだけあるか、読めなかったもの・エラーのあるもの、確かめてほしい設定)"
+                },
+                "children": []
+            },
+            "typesCard": {
+                "type": "Card",
+                "props": {
+                    "title": "種類ごとの数",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "typesTable"
+                ]
+            },
+            "typesTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/types"
+                    },
+                    "columns": [
+                        {
+                            "key": "unitType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "count",
+                            "label": "数"
+                        },
+                        {
+                            "key": "unreadable",
+                            "label": "読めなかった"
+                        },
+                        {
+                            "key": "withErrors",
+                            "label": "エラーあり"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "unitsCard": {
+                "type": "Card",
+                "props": {
+                    "title": "単位の一覧",
+                    "description": "ファイル・フォルダごと",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "unitsTable"
+                ]
+            },
+            "unitsTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/units"
+                    },
+                    "columns": [
+                        {
+                            "key": "unitType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "label",
+                            "label": "ラベル"
+                        },
+                        {
+                            "key": "description",
+                            "label": "説明"
+                        },
+                        {
+                            "key": "filePath",
+                            "label": "ファイル"
+                        },
+                        {
+                            "key": "errorCount",
+                            "label": "エラー"
+                        },
+                        {
+                            "key": "skippedElements",
+                            "label": "読んでいない要素"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "propertiesCard": {
+                "type": "Card",
+                "props": {
+                    "title": "設定値",
+                    "description": "単位ごとの設定 (場所 → 値)。機密になりうる値は伏せた",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "propertiesTable"
+                ]
+            },
+            "propertiesTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/properties"
+                    },
+                    "columns": [
+                        {
+                            "key": "unitType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "path",
+                            "label": "場所"
+                        },
+                        {
+                            "key": "value",
+                            "label": "値"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            }
+        }
+    }
+}

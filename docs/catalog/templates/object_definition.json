@@ -1,0 +1,479 @@
+{
+    "$schema": "../report-document.schema.json",
+    "title": "オブジェクト定義書",
+    "data": {
+        "objects": {
+            "provider": "object.list"
+        },
+        "diagram": {
+            "provider": "object.diagram"
+        }
+    },
+    "spec": {
+        "root": "page",
+        "elements": {
+            "summary": {
+                "type": "Narrative",
+                "props": {
+                    "title": "概要",
+                    "markdown": "(ここに概要を書く: 各オブジェクトが何を表すか、主なオブジェクトのつながり、気をつける項目・入力規則)"
+                },
+                "children": []
+            },
+            "objectsCard": {
+                "type": "Card",
+                "props": {
+                    "title": "オブジェクトの一覧",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "objectsTable"
+                ]
+            },
+            "objectsTable": {
+                "type": "DataTable",
+                "props": {
+                    "rows": {
+                        "$state": "/data/objects"
+                    },
+                    "columns": [
+                        {
+                            "key": "object",
+                            "label": "API 名"
+                        },
+                        {
+                            "key": "label",
+                            "label": "ラベル"
+                        },
+                        {
+                            "key": "objectType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "sharingModel",
+                            "label": "共有設定"
+                        },
+                        {
+                            "key": "fieldCount",
+                            "label": "項目"
+                        },
+                        {
+                            "key": "validationRuleCount",
+                            "label": "入力規則"
+                        },
+                        {
+                            "key": "recordTypeCount",
+                            "label": "レコードタイプ"
+                        },
+                        {
+                            "key": "description",
+                            "label": "説明"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": []
+            },
+            "diagramCard": {
+                "type": "Card",
+                "props": {
+                    "title": "ER 図",
+                    "description": "参照関係・主従関係 (主従は太線)",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "diagramView"
+                ]
+            },
+            "diagramView": {
+                "type": "ObjectDiagram",
+                "props": {
+                    "data": {
+                        "$state": "/data/diagram"
+                    },
+                    "showAllFields": null
+                },
+                "children": []
+            },
+            "page": {
+                "type": "Stack",
+                "props": {
+                    "direction": "vertical",
+                    "gap": "lg",
+                    "align": null,
+                    "justify": null,
+                    "className": null
+                },
+                "children": [
+                    "summary",
+                    "objectsCard",
+                    "diagramCard",
+                    "object"
+                ]
+            },
+            "object": {
+                "type": "Card",
+                "props": {
+                    "title": "${o.object}",
+                    "description": "${o.label}",
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "objectNote",
+                    "fields",
+                    "picklists",
+                    "validationRules",
+                    "recordTypes",
+                    "members"
+                ],
+                "for": {
+                    "as": "o",
+                    "in": {
+                        "provider": "object.list"
+                    },
+                    "limit": 5000
+                },
+                "page": {
+                    "file": "${o.object}"
+                }
+            },
+            "objectNote": {
+                "type": "Narrative",
+                "props": {
+                    "title": null,
+                    "markdown": {
+                        "$note": "${o.object}"
+                    }
+                },
+                "children": []
+            },
+            "fields": {
+                "type": "Card",
+                "props": {
+                    "title": "項目",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "fieldsTable"
+                ],
+                "if": {
+                    "hasRows": {
+                        "provider": "object.fields",
+                        "args": {
+                            "objects": [
+                                "${o.object}"
+                            ],
+                            "includeImplicit": false
+                        }
+                    }
+                }
+            },
+            "fieldsTable": {
+                "type": "DataTable",
+                "props": {
+                    "columns": [
+                        {
+                            "key": "field",
+                            "label": "API 名"
+                        },
+                        {
+                            "key": "label",
+                            "label": "ラベル"
+                        },
+                        {
+                            "key": "type",
+                            "label": "型"
+                        },
+                        {
+                            "key": "required",
+                            "label": "必須"
+                        },
+                        {
+                            "key": "length",
+                            "label": "長さ"
+                        },
+                        {
+                            "key": "referenceTo",
+                            "label": "参照先"
+                        },
+                        {
+                            "key": "formula",
+                            "label": "数式"
+                        },
+                        {
+                            "key": "helpText",
+                            "label": "ヘルプ"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": [],
+                "data": {
+                    "provider": "object.fields",
+                    "args": {
+                        "objects": [
+                            "${o.object}"
+                        ],
+                        "includeImplicit": false
+                    }
+                }
+            },
+            "picklists": {
+                "type": "Card",
+                "props": {
+                    "title": "選択リスト値",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "picklistsTable"
+                ],
+                "if": {
+                    "hasRows": {
+                        "provider": "object.picklists",
+                        "args": {
+                            "objects": [
+                                "${o.object}"
+                            ]
+                        }
+                    }
+                }
+            },
+            "picklistsTable": {
+                "type": "DataTable",
+                "props": {
+                    "columns": [
+                        {
+                            "key": "field",
+                            "label": "項目"
+                        },
+                        {
+                            "key": "order",
+                            "label": "順"
+                        },
+                        {
+                            "key": "value",
+                            "label": "値"
+                        },
+                        {
+                            "key": "label",
+                            "label": "ラベル"
+                        },
+                        {
+                            "key": "isDefault",
+                            "label": "既定"
+                        },
+                        {
+                            "key": "isActive",
+                            "label": "有効"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": [],
+                "data": {
+                    "provider": "object.picklists",
+                    "args": {
+                        "objects": [
+                            "${o.object}"
+                        ]
+                    }
+                }
+            },
+            "validationRules": {
+                "type": "Card",
+                "props": {
+                    "title": "入力規則",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "validationRulesTable"
+                ],
+                "if": {
+                    "hasRows": {
+                        "provider": "object.validationRules",
+                        "args": {
+                            "objects": [
+                                "${o.object}"
+                            ]
+                        }
+                    }
+                }
+            },
+            "validationRulesTable": {
+                "type": "DataTable",
+                "props": {
+                    "columns": [
+                        {
+                            "key": "rule",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "active",
+                            "label": "有効"
+                        },
+                        {
+                            "key": "condition",
+                            "label": "エラー条件"
+                        },
+                        {
+                            "key": "errorMessage",
+                            "label": "エラーメッセージ"
+                        },
+                        {
+                            "key": "errorDisplayField",
+                            "label": "表示する項目"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": [],
+                "data": {
+                    "provider": "object.validationRules",
+                    "args": {
+                        "objects": [
+                            "${o.object}"
+                        ]
+                    }
+                }
+            },
+            "recordTypes": {
+                "type": "Card",
+                "props": {
+                    "title": "レコードタイプと選択リスト値",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "recordTypesTable"
+                ],
+                "if": {
+                    "hasRows": {
+                        "provider": "object.recordTypePicklists",
+                        "args": {
+                            "objects": [
+                                "${o.object}"
+                            ]
+                        }
+                    }
+                }
+            },
+            "recordTypesTable": {
+                "type": "DataTable",
+                "props": {
+                    "columns": [
+                        {
+                            "key": "recordType",
+                            "label": "レコードタイプ"
+                        },
+                        {
+                            "key": "picklist",
+                            "label": "選択リスト"
+                        },
+                        {
+                            "key": "values",
+                            "label": "選べる値"
+                        },
+                        {
+                            "key": "defaultValue",
+                            "label": "既定"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": [],
+                "data": {
+                    "provider": "object.recordTypePicklists",
+                    "args": {
+                        "objects": [
+                            "${o.object}"
+                        ]
+                    }
+                }
+            },
+            "members": {
+                "type": "Card",
+                "props": {
+                    "title": "そのほかの定義",
+                    "description": null,
+                    "maxWidth": "full",
+                    "centered": null,
+                    "className": null
+                },
+                "children": [
+                    "membersTable"
+                ],
+                "if": {
+                    "hasRows": {
+                        "provider": "object.members",
+                        "args": {
+                            "objects": [
+                                "${o.object}"
+                            ]
+                        }
+                    }
+                }
+            },
+            "membersTable": {
+                "type": "DataTable",
+                "props": {
+                    "columns": [
+                        {
+                            "key": "memberType",
+                            "label": "種類"
+                        },
+                        {
+                            "key": "name",
+                            "label": "名前"
+                        },
+                        {
+                            "key": "label",
+                            "label": "ラベル"
+                        },
+                        {
+                            "key": "description",
+                            "label": "説明"
+                        },
+                        {
+                            "key": "details",
+                            "label": "中身"
+                        }
+                    ],
+                    "caption": null,
+                    "onlyChanged": false
+                },
+                "children": [],
+                "data": {
+                    "provider": "object.members",
+                    "args": {
+                        "objects": [
+                            "${o.object}"
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

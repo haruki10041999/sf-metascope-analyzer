@@ -31,6 +31,10 @@ export const columnsOf = (rows: Row[]): Column[] => {
         .map((key) => ({ key, label: key }));
 };
 
+/** 1 行ずつ出す文字列の配列 (中身の一覧 details など。3 件以上なら , でつながず改行する) */
+const isLineList = (value: unknown): value is string[] =>
+    Array.isArray(value) && value.length >= 3 && value.every((item) => typeof item === 'string');
+
 export const cellText = (value: unknown): string => {
     if (value === undefined || value === null) return '';
     if (typeof value === 'boolean') return value ? 'はい' : 'いいえ';
@@ -185,6 +189,14 @@ export const RowsTable = ({
                                         >
                                             {column.key === 'status' && isStatus(value) ? (
                                                 <StatusBadge status={value} />
+                                            ) : isLineList(value) ? (
+                                                <ul className="space-y-0.5 text-xs">
+                                                    {value.map((line, i) => (
+                                                        <li key={i} className="break-all">
+                                                            {line}
+                                                        </li>
+                                                    ))}
+                                                </ul>
                                             ) : (
                                                 cellText(value)
                                             )}

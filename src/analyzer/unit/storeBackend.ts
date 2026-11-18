@@ -91,6 +91,12 @@ export interface StoreBackend {
     readSource(hash: string): Promise<string | undefined>;
     hasSource(hash: string): Promise<boolean>;
     writeSource(hash: string, text: string): Promise<void>;
+    /**
+     * fn の中の書き込み (読み込みの途中で書く、使い回すための解析結果) を 1 つのトランザクションにまとめる。
+     * 単位ごとに確定すると、大きいリポジトリで確定だけに時間がかかる (NPSP で 12 秒)。
+     * fn が失敗しても、それまでに書いた単位は確定する (どれも 1 単位として正しく書けている)
+     */
+    batch<T>(fn: () => Promise<T>): Promise<T>;
     /** 保存を始める (SQLite はトランザクション) */
     begin(): Promise<void>;
     /** 目録を書いて保存を終える。目録にない解析結果・定義・参照・ソースは消す */

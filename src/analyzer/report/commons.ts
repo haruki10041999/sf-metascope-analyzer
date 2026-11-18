@@ -27,8 +27,19 @@ export const readable = <J>(
     );
 
 /** 解析結果から、参照先の確かめに使う MetadataContext を作る (snapshot.context にあるものはそちらを使う) */
+/** スナップショットごとの MetadataContext (provider ごとに作り直さない。大きいリポジトリでオブジェクトの解析などが重い) */
+const contexts = new WeakMap<MetadataSnapshot, MetadataContext>();
+
 export const contextOf = (snapshot: MetadataSnapshot | undefined): MetadataContext => {
     if (!snapshot) return {};
+    const cached = contexts.get(snapshot);
+    if (cached) return cached;
+    const context = buildContext(snapshot);
+    contexts.set(snapshot, context);
+    return context;
+};
+
+const buildContext = (snapshot: MetadataSnapshot): MetadataContext => {
     const names = (results: { result: { id: string } }[] | undefined, type: string) =>
         results ? { [type]: results.map((r) => nameOf(r, type)) } : {};
     const labels = readable<CustomLabelsJson>(snapshot.customLabels, 'customLabels').flatMap(

@@ -36,6 +36,43 @@ export const REPORT_COMPONENTS = {
     Text: shadcn.Text,
     Badge: shadcn.Badge,
     Alert: shadcn.Alert,
+    Columns: {
+        props: z.object({
+            ratio: z
+                .array(z.number().positive())
+                .min(1)
+                .max(6)
+                .nullable()
+                .describe(
+                    'Relative widths of the columns, e.g. [5, 5], [4, 6], [7, 3]. Children fill the columns from the left (more children wrap to the next row). null is two equal columns.',
+                ),
+            gap: z
+                .enum(['sm', 'md', 'lg'])
+                .nullable()
+                .describe('Space between columns (default md).'),
+            stackBelow: z
+                .enum(['sm', 'md', 'lg', 'never'])
+                .nullable()
+                .describe(
+                    'Below this screen width the columns stack vertically (sm 640px / md 768px (default) / lg 1024px). never keeps the columns.',
+                ),
+            align: z
+                .enum(['start', 'center', 'stretch'])
+                .nullable()
+                .describe('Vertical alignment of the columns (default start).'),
+        }),
+        description:
+            'Columns with chosen widths (e.g. 5:5 flowchart and narrative, 4:6 table and notes). Stacks vertically on narrow screens. Grid makes equal columns only.',
+    },
+    PageLink: {
+        props: z.object({
+            title: z.string(),
+            href: z.string().describe('Relative path of the page (pages/<file>.html).'),
+            description: z.string().nullable(),
+        }),
+        description:
+            'Link to another page of the document. The build puts it in place of an element with page; you rarely write it yourself.',
+    },
     Narrative: {
         props: z.object({
             markdown: z
@@ -130,6 +167,53 @@ export const REPORT_COMPONENTS = {
         description:
             'Wireframe of Lightning web components from their templates: base components drawn as simple shapes, branches as tabs, loops once with a count mark, child components expandable.',
     },
+    CodeFlowchart: {
+        props: z.object({
+            data: bound('Flowcharts (apex.methodFlow / lwc.methodFlow)'),
+            member: z
+                .string()
+                .nullable()
+                .describe(
+                    'Show only this member (owner.name) or signature (name(params)). null shows all (with a selector when there are many).',
+                ),
+            height: z
+                .number()
+                .int()
+                .min(200)
+                .max(2000)
+                .nullable()
+                .describe('Height of the chart in pixels (default: fit to the chart, up to 720).'),
+        }),
+        description:
+            'Flowchart of a method / function from its statements: branches, loops, try / catch, SOQL / DML (colored, marked inside loops), callouts and returns. Click a box to see its source.',
+    },
+    EventFlow: {
+        props: z.object({
+            data: bound('Event flow (lwc.eventFlow)'),
+            height: z
+                .number()
+                .int()
+                .min(200)
+                .max(2000)
+                .nullable()
+                .describe('Height of the chart in pixels (default: fit to the chart, up to 720).'),
+        }),
+        description:
+            'Flow of LWC from user actions (template events), @wire and lifecycle hooks to handlers, Apex, events, toasts and navigation, across parent and child components (left to right).',
+    },
+    SequenceDiagram: {
+        props: z.object({
+            data: bound('Call sequences (apex.callFlow)'),
+            start: z
+                .string()
+                .nullable()
+                .describe(
+                    'Show only this start member (Owner.method). null shows all (with a selector when there are many).',
+                ),
+        }),
+        description:
+            'Sequence diagram of Apex calls from a method: classes as columns, calls, SOQL / DML (to Database), async jobs, callouts and events from top to bottom.',
+    },
     DiagramText: {
         props: z.object({
             data: bound('Diagram text (Mermaid or DOT)'),
@@ -173,6 +257,9 @@ export const REPORT_DATA_BINDINGS: Partial<Record<ReportComponentName, DataBindi
     FlowDiagram: { prop: 'data', providers: ['flow.diagram'] },
     ObjectDiagram: { prop: 'data', providers: ['object.diagram'] },
     LwcWireframe: { prop: 'data', providers: ['lwc.wireframe'] },
+    CodeFlowchart: { prop: 'data', providers: ['apex.methodFlow', 'lwc.methodFlow'] },
+    EventFlow: { prop: 'data', providers: ['lwc.eventFlow'] },
+    SequenceDiagram: { prop: 'data', providers: ['apex.callFlow'] },
     DiagramText: { prop: 'data', providers: ['dependency.graph'] },
     LayoutView: { prop: 'data', providers: ['layout.detail'] },
     FlexiPageView: { prop: 'data', providers: ['flexiPage.detail'] },

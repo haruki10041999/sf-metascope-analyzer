@@ -3,7 +3,7 @@ import path from 'node:path';
 import { describe, it } from 'node:test';
 
 import { METADATA_FOLDER_PARSERS } from '../../src/analyzer/parser/Metadata/folders';
-import { findUnitType } from '../../src/analyzer/unit';
+import { WorkingTree, findUnitType, readUnitSources } from '../../src/analyzer/unit';
 import { UnitWorker, runUnitTask } from '../../src/analyzer/worker';
 
 /** UnitWorker (メインスレッドで処理) で、サンプルの単位を種類ごとに解析する (保存は UnitStore が行う) */
@@ -99,6 +99,27 @@ describe('UnitWorker: オブジェクト・翻訳', () => {
             location: 'force-app/main/default/objects/Payment__c',
         });
         assert.equal(parsed.result.id, 'Payment__c');
+    });
+
+    it('読み込み済みのファイルで解析できる (parseFiles。UnitStore がスレッドに渡す形)、結果はファイルから読んだものと同じ', async () => {
+        const root = repository('after');
+        const location = 'force-app/main/default/objects/Payment__c';
+        const unitType = findUnitType('object')!;
+        const tree = new WorkingTree(root);
+        const files = await readUnitSources(tree, unitType, location);
+        const fromFiles = await runUnitTask({
+            command: 'parseFiles',
+            unitType: 'object',
+            location,
+            files,
+        });
+        const fromTree = await runUnitTask({
+            command: 'parse',
+            unitType: 'object',
+            root,
+            location,
+        });
+        assert.deepEqual({ ...fromFiles, filePath: path.join(root, fromFiles.filePath) }, fromTree);
     });
 });
 

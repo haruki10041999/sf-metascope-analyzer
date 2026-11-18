@@ -6,7 +6,7 @@ import {
     apexOutlineOf,
 } from '../processor/Apex/interface';
 import { isSameValue } from '../processor/commons/diff/commons';
-import { getApexDependencies } from '../processor/dependency/apex';
+import { unitDependenciesOf } from '../unit/dependencies';
 import type { TriggerUnitJson } from '../types';
 import { type Compared, changedProps, compareKeyed, rowBase } from './commons';
 import type { ApexDataAccessRow, ApexOutlineRow, MetadataSnapshot, SnapshotInput } from './types';
@@ -149,10 +149,29 @@ type AccessItem = Omit<
     key: string;
 };
 
+/** 解析結果ごとの呼び出し・DML・クエリ (provider を呼ぶたびに走査し直さない) */
+const unitInfos = new WeakMap<object, ReturnType<typeof analyzeApexUnit>>();
+export const unitInfoOf = (result: ApexUnitParseResult) => {
+    let info = unitInfos.get(result);
+    if (!info) {
+        info = analyzeApexUnit(result);
+        unitInfos.set(result, info);
+    }
+    return info;
+};
+
 /** 単位のクエリ・DML (依存関係の参照で、クエリが読む項目と、同じメソッドで代入する項目を足す) */
 const accessItemsOf = (unit: Unit): AccessItem[] => {
-    const info = analyzeApexUnit(unit.result);
-    const references = getApexDependencies(unit.result).references;
+    // 解析結果ごとに覚えたものを使う (定義・参照は置き場から読んだものもある)
+    const info = unitInfoOf(unit.result);
+    const references = unitDependenciesOf(
+        unit.json.unitType === 'class'
+            ? 'apexClass'
+            : unit.json.unitType === 'trigger'
+              ? 'apexTrigger'
+              : 'anonymousApex',
+        unit.result,
+    ).references;
     // クエリの位置 → 読む項目 (クエリの位置は参照の expression)
     const fieldsByQuery = new Map<string, Set<string>>();
     // メンバー → 代入する項目 (Account.Name)

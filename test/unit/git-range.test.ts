@@ -139,7 +139,7 @@ describe('git の範囲で比べる', () => {
             );
 
         const document = {
-            ...impactAnalysisTemplate('apexClass:AccountService'),
+            ...impactAnalysisTemplate(),
             compare: { from: 'main', to: 'HEAD' },
         };
         const built = await call('build_report', { document });
