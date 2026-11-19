@@ -1,0 +1,154 @@
+[
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Account",
+    "sourceKeys": {
+      "objectKey": "object_4531d0b418ec4f56",
+      "sourceKey": "object_5e4501090ced50f4"
+    },
+    "changedProperties": [
+      "filePath",
+      "json"
+    ],
+    "object": "Account",
+    "objectType": "standard",
+    "sharingModel": "ReadWrite",
+    "fieldCount": 1,
+    "validationRuleCount": 1,
+    "recordTypeCount": 0
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\App_Setting__mdt",
+    "sourceKeys": {
+      "objectKey": "object_cae201c76868a5ba",
+      "sourceKey": "object_2af00f581cb7c023"
+    },
+    "changedProperties": [
+      "filePath"
+    ],
+    "object": "App_Setting__mdt",
+    "label": "App Setting",
+    "pluralLabel": "App Settings",
+    "objectType": "customMetadata",
+    "fieldCount": 1,
+    "validationRuleCount": 0,
+    "recordTypeCount": 0
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Broken__c",
+    "sourceKeys": {
+      "objectKey": "object_feb4576f9832cea9",
+      "sourceKey": "object_2ba1815a360d4e42"
+    },
+    "changedProperties": [
+      "filePath",
+      "json"
+    ],
+    "object": "Broken__c",
+    "label": "Broken",
+    "pluralLabel": "Brokens",
+    "objectType": "custom",
+    "sharingModel": "ReadWrite",
+    "deploymentStatus": "Deployed",
+    "fieldCount": 0,
+    "validationRuleCount": 0,
+    "recordTypeCount": 0
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c",
+    "sourceKeys": {
+      "objectKey": "object_d918b341e7e90768",
+      "sourceKey": "object_f6c2bf7f8e39ece3"
+    },
+    "changedProperties": [
+      "filePath",
+      "json"
+    ],
+    "object": "Invoice__c",
+    "label": "Invoice",
+    "pluralLabel": "Invoices",
+    "objectType": "custom",
+    "description": "請求書",
+    "sharingModel": "ReadWrite",
+    "deploymentStatus": "Deployed",
+    "fieldCount": 6,
+    "validationRuleCount": 2,
+    "recordTypeCount": 1
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice_Line__c",
+    "sourceKeys": {
+      "objectKey": "object_260a222b30172abe",
+      "sourceKey": "object_97265b6e92059763"
+    },
+    "changedProperties": [
+      "filePath",
+      "json"
+    ],
+    "object": "Invoice_Line__c",
+    "label": "Invoice Line",
+    "pluralLabel": "Invoice Lines",
+    "objectType": "custom",
+    "sharingModel": "ControlledByParent",
+    "deploymentStatus": "Deployed",
+    "fieldCount": 3,
+    "validationRuleCount": 0,
+    "recordTypeCount": 0
+  },
+  {
+    "status": "removed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\objects\\Legacy_Item__c",
+    "sourceKeys": {
+      "objectKey": "object_5e898081803d4926",
+      "sourceKey": "object_2f75641dfb4d0bf7"
+    },
+    "object": "Legacy_Item__c",
+    "label": "Legacy Item",
+    "pluralLabel": "Legacy Items",
+    "objectType": "custom",
+    "sharingModel": "ReadWrite",
+    "deploymentStatus": "Deployed",
+    "fieldCount": 1,
+    "validationRuleCount": 0,
+    "recordTypeCount": 0
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Opportunity",
+    "sourceKeys": {
+      "objectKey": "object_7bfdbf102530415e",
+      "sourceKey": "object_64bf5e9bd583ac0d"
+    },
+    "changedProperties": [
+      "filePath",
+      "json"
+    ],
+    "object": "Opportunity",
+    "objectType": "standard",
+    "sharingModel": "Private",
+    "fieldCount": 0,
+    "validationRuleCount": 0,
+    "recordTypeCount": 0
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Payment__c",
+    "sourceKeys": {
+      "objectKey": "object_0cf457affdd24219",
+      "sourceKey": "object_fea90b9aeb1e99a1"
+    },
+    "object": "Payment__c",
+    "label": "Payment",
+    "pluralLabel": "Payments",
+    "objectType": "custom",
+    "sharingModel": "ReadWrite",
+    "deploymentStatus": "Deployed",
+    "fieldCount": 2,
+    "validationRuleCount": 0,
+    "recordTypeCount": 0
+  }
+]

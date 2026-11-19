@@ -1,0 +1,116 @@
+[
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Account",
+    "sourceKeys": {
+      "objectKey": "picklistValue_d08e38690dbc6326",
+      "sourceKey": "picklistValue_856f67301494b5eb"
+    },
+    "object": "Account",
+    "field": "Tier__c",
+    "value": "Platinum",
+    "label": "Platinum",
+    "order": 1,
+    "isDefault": false
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Account",
+    "sourceKeys": {
+      "objectKey": "picklistValue_2943fe4321d7377a",
+      "sourceKey": "picklistValue_c262693a12b138b2"
+    },
+    "object": "Account",
+    "field": "Tier__c",
+    "value": "Gold",
+    "label": "Gold",
+    "order": 2,
+    "isDefault": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Account",
+    "sourceKeys": {
+      "objectKey": "picklistValue_28d4215e0ab12923",
+      "sourceKey": "picklistValue_ec1567c3c6550bd2"
+    },
+    "object": "Account",
+    "field": "Tier__c",
+    "value": "Silver",
+    "label": "Silver",
+    "order": 3,
+    "isDefault": false
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Account",
+    "sourceKeys": {
+      "objectKey": "picklistValue_dea85d916674a2e1",
+      "sourceKey": "picklistValue_55f4b6aeae376075"
+    },
+    "object": "Account",
+    "field": "Tier__c",
+    "value": "Bronze",
+    "label": "Bronze",
+    "order": 4,
+    "isDefault": false
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c",
+    "sourceKeys": {
+      "objectKey": "picklistValue_7f3c3c8bb9f40692",
+      "sourceKey": "picklistValue_3d56a5eb216021c1"
+    },
+    "object": "Invoice__c",
+    "field": "Status__c",
+    "value": "Draft",
+    "label": "Draft",
+    "order": 1,
+    "isDefault": true
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c",
+    "sourceKeys": {
+      "objectKey": "picklistValue_3c621eab7b33f1f5",
+      "sourceKey": "picklistValue_4eebb15cd738969c"
+    },
+    "changedProperties": [
+      "label"
+    ],
+    "object": "Invoice__c",
+    "field": "Status__c",
+    "value": "Paid",
+    "label": "Paid (Closed)",
+    "order": 2,
+    "isDefault": false
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c",
+    "sourceKeys": {
+      "objectKey": "picklistValue_0ba41ca3ccd8dd4d",
+      "sourceKey": "picklistValue_feadc8b60ed04713"
+    },
+    "object": "Invoice__c",
+    "field": "Status__c",
+    "value": "Overdue",
+    "label": "Overdue",
+    "order": 3,
+    "isDefault": false
+  },
+  {
+    "status": "removed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c",
+    "sourceKeys": {
+      "objectKey": "picklistValue_dea9a53136321feb",
+      "sourceKey": "picklistValue_aee4067dbb3ee4f9"
+    },
+    "object": "Invoice__c",
+    "field": "Status__c",
+    "value": "Sent",
+    "label": "Sent",
+    "isDefault": false
+  }
+]

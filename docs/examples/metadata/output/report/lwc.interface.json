@@ -1,0 +1,217 @@
+[
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "classProperty_965403362b95bd25",
+      "sourceKey": "classProperty_3bbac64a485932d9"
+    },
+    "component": "c/accountList",
+    "memberType": "property",
+    "name": "recordId",
+    "type": "string",
+    "accessor": "field"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "classProperty_8c8bc687a5b7e8e8",
+      "sourceKey": "classProperty_6e01dca44878c478"
+    },
+    "component": "c/accountList",
+    "memberType": "property",
+    "name": "title",
+    "type": "string",
+    "accessor": "field"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "classProperty_6e887b3b13bba986",
+      "sourceKey": "classProperty_698531e3fd4573d5"
+    },
+    "component": "c/accountList",
+    "memberType": "property",
+    "name": "maxRows",
+    "type": "number",
+    "accessor": "field"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "classProperty_1ad25686b4bbd51c",
+      "sourceKey": "classProperty_5ae297ed12c26da6"
+    },
+    "component": "c/accountList",
+    "memberType": "property",
+    "name": "industry",
+    "type": "string",
+    "accessor": "field"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "classMethod_ac118d3ce11bfa32",
+      "sourceKey": "classMethod_636c5689755c0a36"
+    },
+    "component": "c/accountList",
+    "memberType": "method",
+    "name": "refresh",
+    "params": [],
+    "type": "void"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "newExpression_633a51214e80d00f",
+      "sourceKey": "newExpression_8e941efa0210a06d"
+    },
+    "component": "c/accountList",
+    "memberType": "event",
+    "name": "accountselect"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "newExpression_93d4c4e5808b8521",
+      "sourceKey": "newExpression_c245bf6006f75597"
+    },
+    "component": "c/accountList",
+    "memberType": "event",
+    "name": "accountsaved"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "newExpression_d321bbc05aa6ed64",
+      "sourceKey": "newExpression_655fd5ab6c184df3"
+    },
+    "component": "c/accountList",
+    "memberType": "event",
+    "name": "reloaded"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "component": "c/accountList",
+    "memberType": "slot",
+    "name": "footer"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountRow",
+    "sourceKeys": {
+      "objectKey": "classProperty_965403362b95bd25",
+      "sourceKey": "classProperty_8467314cc28e0ab2"
+    },
+    "component": "c/accountRow",
+    "memberType": "property",
+    "name": "recordId",
+    "type": "string",
+    "accessor": "field"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountRow",
+    "sourceKeys": {
+      "objectKey": "classProperty_5991bac21dbdd748",
+      "sourceKey": "classProperty_40d61b52593fa7d3"
+    },
+    "component": "c/accountRow",
+    "memberType": "property",
+    "name": "name",
+    "type": "string",
+    "accessor": "field"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountRow",
+    "sourceKeys": {
+      "objectKey": "classProperty_58a2fa7f525b0865",
+      "sourceKey": "classProperty_86b2df10ce902a26"
+    },
+    "component": "c/accountRow",
+    "memberType": "property",
+    "name": "amount",
+    "type": "number",
+    "accessor": "field"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountRow",
+    "sourceKeys": {
+      "objectKey": "newExpression_9d488f826545e628",
+      "sourceKey": "newExpression_eb4fdb97b55510fd"
+    },
+    "component": "c/accountRow",
+    "memberType": "event",
+    "name": "select"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\broken",
+    "sourceKeys": {
+      "objectKey": "classProperty_fff535b23d3f5885",
+      "sourceKey": "classProperty_ee0277806011b964"
+    },
+    "component": "c/broken",
+    "memberType": "property",
+    "name": "value",
+    "type": "string",
+    "accessor": "field"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\newBanner",
+    "sourceKeys": {
+      "objectKey": "classProperty_ac985f16b06f64f3",
+      "sourceKey": "classProperty_bd5faa20b98a0c6e"
+    },
+    "component": "c/newBanner",
+    "memberType": "property",
+    "name": "message",
+    "accessor": "field"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\newBanner",
+    "sourceKeys": {
+      "objectKey": "classProperty_6ba21748028b900b",
+      "sourceKey": "classProperty_db73c0bb072c6dba"
+    },
+    "component": "c/newBanner",
+    "memberType": "property",
+    "name": "variant",
+    "accessor": "field"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\newBanner",
+    "sourceKeys": {
+      "objectKey": "newExpression_eef1ac1afe4d383f",
+      "sourceKey": "newExpression_ee7d1c5c07c060f8"
+    },
+    "component": "c/newBanner",
+    "memberType": "event",
+    "name": "close"
+  },
+  {
+    "status": "removed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\lwc\\oldBanner",
+    "sourceKeys": {
+      "objectKey": "classProperty_6518cd4aca19dbc9",
+      "sourceKey": "classProperty_087ec57f8161a963"
+    },
+    "component": "c/oldBanner",
+    "memberType": "property",
+    "name": "message",
+    "accessor": "field"
+  }
+]

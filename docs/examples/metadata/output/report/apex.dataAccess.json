@@ -1,0 +1,1787 @@
+[
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\broken.apex",
+    "sourceKeys": {
+      "objectKey": "query_bc12d588e569ab12",
+      "sourceKey": "query_2ccf7969867f44dc"
+    },
+    "className": "broken",
+    "unitType": "anonymous",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+    "sourceKeys": {
+      "objectKey": "query_1f1492026e94e616",
+      "sourceKey": "query_7335267dded952ee"
+    },
+    "className": "parser",
+    "unitType": "anonymous",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.AnnualRevenue",
+      "Account.Id",
+      "Account.Industry",
+      "Account.Name"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+    "sourceKeys": {
+      "objectKey": "query_63f9f6d3521cfd02",
+      "sourceKey": "query_6455fb92699d53c1"
+    },
+    "className": "parser",
+    "unitType": "anonymous",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "select",
+    "object": "Contact",
+    "fields": [
+      "Contact.Account",
+      "Contact.AccountId",
+      "Contact.Id",
+      "Contact.Name"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+    "sourceKeys": {
+      "objectKey": "query_3bd3f35ead539c3c",
+      "sourceKey": "query_9918d8c8b9e8a7a5"
+    },
+    "className": "parser",
+    "unitType": "anonymous",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.AnnualRevenue",
+      "Account.Id",
+      "Account.Industry"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+    "sourceKeys": {
+      "objectKey": "query_41be447b981237d9",
+      "sourceKey": "query_9573ed9993d0ecbe"
+    },
+    "className": "parser",
+    "unitType": "anonymous",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.AnnualRevenue",
+      "Account.CreatedDate",
+      "Account.Id",
+      "Account.Type"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+    "sourceKeys": {
+      "objectKey": "query_7fd622080d8bfc6e",
+      "sourceKey": "query_c70a2b5c01eae796"
+    },
+    "className": "parser",
+    "unitType": "anonymous",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "select",
+    "object": "Account",
+    "fields": [],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+    "sourceKeys": {
+      "objectKey": "query_431f4ff5e6b3aa19",
+      "sourceKey": "query_8516bec803327693"
+    },
+    "className": "parser",
+    "unitType": "anonymous",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id",
+      "Account.Name"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+    "sourceKeys": {
+      "objectKey": "query_ffb13f17e834f8b7",
+      "sourceKey": "query_1aacadc8dc86abbc"
+    },
+    "className": "parser",
+    "unitType": "anonymous",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id",
+      "Account.Name"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+    "sourceKeys": {
+      "objectKey": "query_859afb98814b0a53",
+      "sourceKey": "query_f54324ea6d86007c"
+    },
+    "className": "parser",
+    "unitType": "anonymous",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.CreatedDate"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+    "sourceKeys": {
+      "objectKey": "soslLiteral_8b152ce6d9832956",
+      "sourceKey": "soslLiteral_f8ef36040ac09d8f"
+    },
+    "className": "parser",
+    "unitType": "anonymous",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "search",
+    "object": "Account",
+    "fields": [
+      "Account.Id",
+      "Account.Name"
+    ],
+    "via": "sosl"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+    "sourceKeys": {
+      "objectKey": "soslLiteral_8b152ce6d9832956",
+      "sourceKey": "soslLiteral_f8ef36040ac09d8f"
+    },
+    "className": "parser",
+    "unitType": "anonymous",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "search",
+    "object": "Contact",
+    "fields": [
+      "Contact.Id",
+      "Contact.Name"
+    ],
+    "via": "sosl"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+    "sourceKeys": {
+      "objectKey": "query_c733d813b5313482",
+      "sourceKey": "query_9e46c0cc49b81c45"
+    },
+    "className": "parser",
+    "unitType": "anonymous",
+    "inLoop": true,
+    "inTest": false,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+    "sourceKeys": {
+      "objectKey": "query_cc8d15f0a48b0f2b",
+      "sourceKey": "query_f459bbccfd540012"
+    },
+    "className": "parser",
+    "unitType": "anonymous",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id",
+      "Account.Name"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+    "sourceKeys": {
+      "objectKey": "insertStatement_58ea948595256f5f",
+      "sourceKey": "insertStatement_3c09aed28d59d3dc"
+    },
+    "className": "parser",
+    "unitType": "anonymous",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "insert",
+    "fields": [],
+    "via": "statement"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+    "sourceKeys": {
+      "objectKey": "updateStatement_367242420ea80a3f",
+      "sourceKey": "updateStatement_95ab542bc0a5fe23"
+    },
+    "className": "parser",
+    "unitType": "anonymous",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "update",
+    "fields": [],
+    "via": "statement",
+    "accessLevel": "USER"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+    "sourceKeys": {
+      "objectKey": "upsertStatement_2ab5b90df0ce4d3d",
+      "sourceKey": "upsertStatement_ed1bfedb2f24604f"
+    },
+    "className": "parser",
+    "unitType": "anonymous",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "upsert",
+    "fields": [],
+    "via": "statement"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+    "sourceKeys": {
+      "objectKey": "insertStatement_439bff1ad1a56ca3",
+      "sourceKey": "insertStatement_64350db6fece1b76"
+    },
+    "className": "parser",
+    "unitType": "anonymous",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "insert",
+    "fields": [],
+    "via": "statement"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+    "sourceKeys": {
+      "objectKey": "mergeStatement_ea5f6ffd3f0a1d08",
+      "sourceKey": "mergeStatement_ed7635f2e5a8f63d"
+    },
+    "className": "parser",
+    "unitType": "anonymous",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "merge",
+    "fields": [],
+    "via": "statement",
+    "accessLevel": "SYSTEM"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+    "sourceKeys": {
+      "objectKey": "deleteStatement_443a282a7068512a",
+      "sourceKey": "deleteStatement_0a3ca978c63e3c90"
+    },
+    "className": "parser",
+    "unitType": "anonymous",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "delete",
+    "fields": [],
+    "via": "statement"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+    "sourceKeys": {
+      "objectKey": "undeleteStatement_9bb87ac835db399e",
+      "sourceKey": "undeleteStatement_71a1841dd1bc03c5"
+    },
+    "className": "parser",
+    "unitType": "anonymous",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "undelete",
+    "fields": [],
+    "via": "statement"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+    "sourceKeys": {
+      "objectKey": "dotExpression_35927589bfa3a993",
+      "sourceKey": "dotExpression_d39834dbf2d052f8"
+    },
+    "className": "parser",
+    "unitType": "anonymous",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "insert",
+    "fields": [],
+    "via": "database",
+    "allOrNone": false
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "query_66be4d0bf203071b",
+      "sourceKey": "query_ab78e16624019aa5"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "member": "AccountService.sync",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id",
+      "Account.Name"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "soslLiteral_03f43ba8d53b3cf1",
+      "sourceKey": "soslLiteral_d0c18bf354b83b04"
+    },
+    "changedProperties": [
+      "fields"
+    ],
+    "className": "AccountService",
+    "unitType": "class",
+    "member": "AccountService.search",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "search",
+    "object": "Account",
+    "fields": [
+      "Account.Id",
+      "Account.Name",
+      "Account.Phone"
+    ],
+    "via": "sosl"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "soslLiteral_03f43ba8d53b3cf1",
+      "sourceKey": "soslLiteral_d0c18bf354b83b04"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "member": "AccountService.search",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "search",
+    "object": "Contact",
+    "fields": [],
+    "via": "sosl"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "soslLiteral_03f43ba8d53b3cf1",
+      "sourceKey": "soslLiteral_d0c18bf354b83b04"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "member": "AccountService.search",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "search",
+    "object": "Lead",
+    "fields": [],
+    "via": "sosl"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "query_840e474a282b990d",
+      "sourceKey": "query_ef6b2f1dfee350f9"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "member": "AccountService.search",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "select",
+    "object": "Contact",
+    "fields": [
+      "Contact.Id",
+      "Contact.LastName"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "query_7e58a48cc630ef1f",
+      "sourceKey": "query_68337bd65782b959"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "member": "AccountService.stats",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id",
+      "Account.Industry",
+      "Account.Name",
+      "Account.Rating"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "query_d986012f54f1fbfa",
+      "sourceKey": "query_40068ba5f9bfc0ce"
+    },
+    "changedProperties": [
+      "fields"
+    ],
+    "className": "AccountService",
+    "unitType": "class",
+    "member": "AccountService.expressions",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Name"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "query_abedb4ef1b87ee71",
+      "sourceKey": "query_abd37e361e2a2687"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "member": "AccountService.expressions",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "query_cc190dcd128d9311",
+      "sourceKey": "query_2050db46a48ee1c6"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "member": "AccountService.expressions",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "updateStatement_930a72c5127674aa",
+      "sourceKey": "updateStatement_b1088e53e784d3c4"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "member": "AccountService.sync",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "update",
+    "object": "Account",
+    "fields": [
+      "Account.Name"
+    ],
+    "via": "statement"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "insertStatement_b8999ca5e2a8ba7b",
+      "sourceKey": "insertStatement_aec96bd32d435794"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "member": "AccountService.process",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "insert",
+    "object": "Account",
+    "fields": [],
+    "via": "statement",
+    "accessLevel": "USER"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "deleteStatement_9f1142c26632ed13",
+      "sourceKey": "deleteStatement_9eba21e5de31f7f9"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "member": "AccountService.search",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "delete",
+    "object": "Contact",
+    "fields": [],
+    "via": "statement"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "upsertStatement_62338b253f4e7761",
+      "sourceKey": "upsertStatement_f0f2800ec396a0f4"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "member": "AccountService.search",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "upsert",
+    "object": "Account",
+    "fields": [],
+    "via": "statement"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "mergeStatement_68a4ca66b29daeba",
+      "sourceKey": "mergeStatement_d1978a634a2c23ee"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "member": "AccountService.search",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "merge",
+    "fields": [],
+    "via": "statement"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "undeleteStatement_307e42f77a9a8b63",
+      "sourceKey": "undeleteStatement_321072021aec4810"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "member": "AccountService.search",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "undelete",
+    "object": "Account",
+    "fields": [],
+    "via": "statement"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_3df81c974be5e619",
+      "sourceKey": "query_919be74bb7e06eef"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.methodCalls",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.OwnerId"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_bc12d588e569ab12",
+      "sourceKey": "query_27ad1cbcd3951126"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.controlFlow",
+    "inLoop": true,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_bd83ccce01fc6176",
+      "sourceKey": "query_5f13977427dd0f31"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.exceptionHandling",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id",
+      "Account.Name"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "dotExpression_e6f740a2aecd672e",
+      "sourceKey": "dotExpression_0d82348e22db9061"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.dynamicSoqlExample",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "dynamicQuery",
+    "fields": [],
+    "via": "dynamic"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "dotExpression_8573d61af1e4e456",
+      "sourceKey": "dotExpression_f226eba1da320fa8"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.dynamicSoqlExample",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "dynamicQuery",
+    "fields": [],
+    "via": "dynamic"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "dotExpression_cd6571d3a8e25c80",
+      "sourceKey": "dotExpression_cc5d5248ddc4dae9"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.dynamicSoqlExample",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "dynamicQuery",
+    "fields": [],
+    "via": "dynamic"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "dotExpression_d1e197eb10b36641",
+      "sourceKey": "dotExpression_acf3bff7cfadbad0"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.dynamicSoqlExample",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "dynamicQuery",
+    "fields": [],
+    "via": "dynamic"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_29246c89a5adadb2",
+      "sourceKey": "query_34670c95990e20a6"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.basicSoql",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.AnnualRevenue",
+      "Account.CreatedDate",
+      "Account.Id",
+      "Account.Industry",
+      "Account.Name"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_38b5b40ba6064840",
+      "sourceKey": "query_30030780b4747472"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.basicSoql",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_3fbfa2bbf0f88989",
+      "sourceKey": "query_76a232ffccfcf005"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.whereSoql",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.AnnualRevenue",
+      "Account.Birthdate__c",
+      "Account.CreatedDate",
+      "Account.Fax",
+      "Account.Id",
+      "Account.Industry",
+      "Account.Interests__c",
+      "Account.IsDeleted",
+      "Account.LastModifiedDate",
+      "Account.Name",
+      "Account.NumberOfEmployees",
+      "Account.OwnerId",
+      "Account.Phone",
+      "Account.Type"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_7c57b4051f3ef62c",
+      "sourceKey": "query_29556bc14ec0e4a2"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.relationshipSoql",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id",
+      "Account.Name",
+      "Account.Owner",
+      "Account.Parent",
+      "Account.a"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_3febc2af71f37f6a",
+      "sourceKey": "query_e7a435f0ebf8cf66"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.typeOfSoql",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Event",
+    "fields": [
+      "Event.Id"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_23e27621878549ce",
+      "sourceKey": "query_8eff385fa1990719"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.aggregateSoql",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.AnnualRevenue",
+      "Account.Id",
+      "Account.Industry",
+      "Account.OwnerId"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_1ca1365fba54af23",
+      "sourceKey": "query_be72e4b886c8bcc8"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.aggregateSoql",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_9e7fefd313b27daf",
+      "sourceKey": "query_a3c7452f42b9258f"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.aggregateSoql",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id",
+      "Account.Industry",
+      "Account.Type"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_9b916d8cbd83d9ca",
+      "sourceKey": "query_13363d719735f408"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.aggregateSoql",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id",
+      "Account.Industry",
+      "Account.Type"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_9a53194a2a379629",
+      "sourceKey": "query_717bc0ac44b8e45b"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.functionSoql",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_5f4dcfb069261fbd",
+      "sourceKey": "query_93712c71712178f0"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.functionSoql",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.CreatedDate",
+      "Account.Id",
+      "Account.Type"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_7fd622080d8bfc6e",
+      "sourceKey": "query_f2c4f3a5d2cc34b6"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.functionSoql",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_d9ab64fcd74ebce1",
+      "sourceKey": "query_b1d23411c8c68d88"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.functionSoql",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_40a190726320af4d",
+      "sourceKey": "query_763dbb4731b28ff5"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.functionSoql",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_3fb20aa34a677074",
+      "sourceKey": "query_f696401d3085f68f"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.locationSoql",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_61a6b87b4ced23e1",
+      "sourceKey": "query_a2509be01f6c9e00"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.soqlClauses",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_a269627b676c50df",
+      "sourceKey": "query_a77552b00c81ffb5"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.soqlClauses",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_cd267d4d6d0684fa",
+      "sourceKey": "query_22525dbcb2a1c209"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.soqlClauses",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_8131724c7bc7178d",
+      "sourceKey": "query_e73ba3aa86e74798"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.soqlClauses",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_c5a7170e1378aadb",
+      "sourceKey": "query_e7654b23b4832ea2"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.soqlClauses",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Knowledge__kav",
+    "fields": [
+      "Knowledge__kav.Title"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_40e5f5433705a1ae",
+      "sourceKey": "query_a3adf42e97126d02"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.soqlClauses",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id",
+      "Account.IsDeleted"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_1b0641d4d3e0fb90",
+      "sourceKey": "query_feda0e8d65b079e8"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.soqlClauses",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_f0b2acf0c7c966c5",
+      "sourceKey": "query_0988b703b56af2cf"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.soqlClauses",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_3be02f1ba1564a3f",
+      "sourceKey": "query_707c5e9dc139ed20"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.soqlClauses",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "query_c531367544583041",
+      "sourceKey": "query_84202329f2f15430"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.soqlClauses",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "select",
+    "object": "FAQ__kav",
+    "fields": [
+      "FAQ__kav.Id"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "soslLiteral_4d940557b3d76004",
+      "sourceKey": "soslLiteral_91c9374ba6d7a565"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.soslExamples",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "search",
+    "object": "Account",
+    "fields": [],
+    "via": "sosl"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "soslLiteral_4d940557b3d76004",
+      "sourceKey": "soslLiteral_91c9374ba6d7a565"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.soslExamples",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "search",
+    "object": "Contact",
+    "fields": [],
+    "via": "sosl"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "soslLiteral_913d56765f8f4c35",
+      "sourceKey": "soslLiteral_f53b6cc2151ab584"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.soslExamples",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "search",
+    "object": "Account",
+    "fields": [
+      "Account.Id",
+      "Account.Name"
+    ],
+    "via": "sosl"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "soslLiteral_913d56765f8f4c35",
+      "sourceKey": "soslLiteral_f53b6cc2151ab584"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.soslExamples",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "search",
+    "object": "Contact",
+    "fields": [
+      "Contact.FirstName",
+      "Contact.Id",
+      "Contact.LastName"
+    ],
+    "via": "sosl"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "soslLiteral_913d56765f8f4c35",
+      "sourceKey": "soslLiteral_f53b6cc2151ab584"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.soslExamples",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "search",
+    "object": "Lead",
+    "fields": [
+      "Lead.FirstName",
+      "Lead.Id",
+      "Lead.LastName"
+    ],
+    "via": "sosl"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "soslLiteral_c6ac62af6d576020",
+      "sourceKey": "soslLiteral_9723d8e3d6dd9c26"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.soslExamples",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "search",
+    "object": "Contact",
+    "fields": [
+      "Contact.Email"
+    ],
+    "via": "sosl"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "soslLiteral_4d1371d3654760be",
+      "sourceKey": "soslLiteral_0269b9a7c3ac666a"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.soslExamples",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "search",
+    "object": "Contact",
+    "fields": [],
+    "via": "sosl"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "soslLiteral_511c4adcf5d60d73",
+      "sourceKey": "soslLiteral_b246402938dd3777"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.soslExamples",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "search",
+    "object": "Account",
+    "fields": [],
+    "via": "sosl"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "soslLiteral_22121b2f68f928dc",
+      "sourceKey": "soslLiteral_2bbe33493ad70434"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.soslExamples",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "search",
+    "object": "KnowledgeArticleVersion",
+    "fields": [
+      "KnowledgeArticleVersion.Id",
+      "KnowledgeArticleVersion.Title"
+    ],
+    "via": "sosl"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "insertStatement_58ea948595256f5f",
+      "sourceKey": "insertStatement_5804449691d73423"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.dmlExample",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "insert",
+    "object": "Account",
+    "fields": [],
+    "via": "statement"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "insertStatement_a3ff5d23c609f009",
+      "sourceKey": "insertStatement_1391c2250f5db4fa"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.dmlExample",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "insert",
+    "object": "Account",
+    "fields": [],
+    "via": "statement",
+    "accessLevel": "USER"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "updateStatement_5aa35d93207b908f",
+      "sourceKey": "updateStatement_c598a17c98542fc3"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.dmlExample",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "update",
+    "object": "Account",
+    "fields": [],
+    "via": "statement",
+    "accessLevel": "SYSTEM"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "upsertStatement_f68096a3ea11373e",
+      "sourceKey": "upsertStatement_ac858d28b353aa8d"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.dmlExample",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "upsert",
+    "object": "Account",
+    "fields": [],
+    "via": "statement"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "upsertStatement_00de62781cb2249c",
+      "sourceKey": "upsertStatement_c5f83d5e3824a9cc"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.dmlExample",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "upsert",
+    "object": "Account",
+    "fields": [],
+    "via": "statement"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "upsertStatement_122b49b96d27d93d",
+      "sourceKey": "upsertStatement_84d5760de7f5e1d5"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.dmlExample",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "upsert",
+    "object": "Account",
+    "fields": [],
+    "via": "statement",
+    "accessLevel": "USER"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "deleteStatement_443a282a7068512a",
+      "sourceKey": "deleteStatement_9ba8a05ca7168bfc"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.dmlExample",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "delete",
+    "object": "Account",
+    "fields": [],
+    "via": "statement"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "undeleteStatement_9bb87ac835db399e",
+      "sourceKey": "undeleteStatement_369c4e089b1725ae"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.dmlExample",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "undelete",
+    "object": "Account",
+    "fields": [],
+    "via": "statement"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "mergeStatement_a4b16d49f7164e5c",
+      "sourceKey": "mergeStatement_6adea220b14723e0"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.dmlExample",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "merge",
+    "object": "Account",
+    "fields": [],
+    "via": "statement"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "mergeStatement_ea5f6ffd3f0a1d08",
+      "sourceKey": "mergeStatement_30d0068f896f4d7f"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.dmlExample",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "merge",
+    "object": "Account",
+    "fields": [],
+    "via": "statement",
+    "accessLevel": "SYSTEM"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "dotExpression_0c4e137a51967765",
+      "sourceKey": "dotExpression_a59e71214204485f"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.databaseExample",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "insert",
+    "object": "Account",
+    "fields": [],
+    "via": "database",
+    "allOrNone": false
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "dotExpression_34e07573ba4a3131",
+      "sourceKey": "dotExpression_991de1478ea32556"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.databaseExample",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "update",
+    "object": "Account",
+    "fields": [],
+    "via": "database",
+    "allOrNone": false
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "dotExpression_b0e33737cf984fd8",
+      "sourceKey": "dotExpression_96e01092f56bce6d"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.databaseExample",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "delete",
+    "object": "Account",
+    "fields": [],
+    "via": "database",
+    "allOrNone": false
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "dotExpression_111adf9d9469c6eb",
+      "sourceKey": "dotExpression_a9a3dd960339c909"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "member": "ParserTest.databaseExample",
+    "inLoop": false,
+    "inTest": true,
+    "operation": "upsert",
+    "object": "Account",
+    "fields": [],
+    "via": "database",
+    "allOrNone": false
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\triggers\\ParserTrigger.trigger",
+    "sourceKeys": {
+      "objectKey": "query_b4d7f7daf47713ae",
+      "sourceKey": "query_68097a3cead57fb4"
+    },
+    "className": "ParserTrigger",
+    "unitType": "trigger",
+    "member": "ParserTrigger",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "select",
+    "object": "Account",
+    "fields": [
+      "Account.Id",
+      "Account.Industry",
+      "Account.Name"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\triggers\\ParserTrigger.trigger",
+    "sourceKeys": {
+      "objectKey": "query_50505fa4e632ed04",
+      "sourceKey": "query_f4d485c64f2a0204"
+    },
+    "className": "ParserTrigger",
+    "unitType": "trigger",
+    "member": "ParserTrigger",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "select",
+    "object": "Task",
+    "fields": [
+      "Task.Id",
+      "Task.WhatId"
+    ],
+    "via": "soql"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\triggers\\ParserTrigger.trigger",
+    "sourceKeys": {
+      "objectKey": "insertStatement_b7f2164b1d9eca73",
+      "sourceKey": "insertStatement_ee749a2f9373e399"
+    },
+    "className": "ParserTrigger",
+    "unitType": "trigger",
+    "member": "ParserTrigger",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "insert",
+    "object": "Contact",
+    "fields": [
+      "Contact.Description"
+    ],
+    "via": "statement",
+    "accessLevel": "USER"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\triggers\\ParserTrigger.trigger",
+    "sourceKeys": {
+      "objectKey": "updateStatement_a1be6f96b1d53279",
+      "sourceKey": "updateStatement_220fa5b74c6a6974"
+    },
+    "className": "ParserTrigger",
+    "unitType": "trigger",
+    "member": "ParserTrigger",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "update",
+    "object": "Contact",
+    "fields": [
+      "Contact.Description"
+    ],
+    "via": "statement"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\triggers\\ParserTrigger.trigger",
+    "sourceKeys": {
+      "objectKey": "deleteStatement_0e7c154b044c3485",
+      "sourceKey": "deleteStatement_637a73a16e57871f"
+    },
+    "className": "ParserTrigger",
+    "unitType": "trigger",
+    "member": "ParserTrigger",
+    "inLoop": false,
+    "inTest": false,
+    "operation": "delete",
+    "object": "Task",
+    "fields": [],
+    "via": "statement"
+  }
+]

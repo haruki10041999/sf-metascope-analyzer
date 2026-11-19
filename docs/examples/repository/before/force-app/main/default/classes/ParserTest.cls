@@ -475,6 +475,30 @@ global inherited sharing virtual class ParserTest extends BaseParser implements 
         Database.upsert(accounts, false);
     }
 
+    private void dynamicSoqlExample() {
+        List<Account> accountsA = Database.query(
+            'SELECT Id, Name FROM Account WHERE IsActive__c = true'
+        );
+
+        String fields = 'Id, Name';
+        String soqlB = 'SELECT ' + fields + ' FROM Account';
+
+        List<Account> accountsB = Database.query(soqlB);
+
+        String soqlC = 'SELECT Id FROM Account WHERE Name = :accountName';
+        List<Account> accountsC = Database.query(soqlC);
+
+        Map<String, Object> binds = new Map<String, Object>{
+            'accountName' => 'Acme'
+        };
+
+        List<SObject> accountsD = Database.queryWithBinds(
+            'SELECT Id FROM Account WHERE Name = :accountName',
+            binds,
+            AccessLevel.USER_MODE
+        );
+    }
+
 
     // ============================================================
     // System.runAs

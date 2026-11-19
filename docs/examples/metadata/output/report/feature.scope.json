@@ -1,0 +1,218 @@
+[
+  {
+    "nodeId": "object:Invoice__c",
+    "unitType": "object",
+    "name": "Invoice__c",
+    "relation": "target",
+    "depth": 0,
+    "filePath": "force-app/main/default/objects/Invoice__c"
+  },
+  {
+    "nodeId": "apexPage:InvoicePrint",
+    "unitType": "apexPage",
+    "name": "InvoicePrint",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/pages/InvoicePrint.page-meta.xml"
+  },
+  {
+    "nodeId": "approvalProcess:Invoice__c.Large_Invoice_Approval",
+    "unitType": "approvalProcess",
+    "name": "Invoice__c.Large_Invoice_Approval",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/approvalProcesses/Invoice__c.Large_Invoice_Approval.approvalProcess-meta.xml"
+  },
+  {
+    "nodeId": "customApplication:Invoice_App",
+    "unitType": "customApplication",
+    "name": "Invoice_App",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/applications/Invoice_App.app-meta.xml"
+  },
+  {
+    "nodeId": "customTab:Invoice__c",
+    "unitType": "customTab",
+    "name": "Invoice__c",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/tabs/Invoice__c.tab-meta.xml"
+  },
+  {
+    "nodeId": "emailTemplate:Invoice_Templates/Invoice_Sent",
+    "unitType": "emailTemplate",
+    "name": "Invoice_Templates.Invoice_Sent",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/email/Invoice_Templates/Invoice_Sent.email-meta.xml"
+  },
+  {
+    "nodeId": "flexiPage:Invoice_Record_Page",
+    "unitType": "flexiPage",
+    "name": "Invoice_Record_Page",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/flexipages/Invoice_Record_Page.flexipage-meta.xml"
+  },
+  {
+    "nodeId": "flow:Invoice_Status_Update",
+    "unitType": "flow",
+    "name": "Invoice_Status_Update",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/flows/Invoice_Status_Update.flow-meta.xml"
+  },
+  {
+    "nodeId": "layout:Invoice__c-Invoice Detail",
+    "unitType": "layout",
+    "name": "Invoice__c-Invoice Detail",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/layouts/Invoice__c-Invoice Detail.layout-meta.xml"
+  },
+  {
+    "nodeId": "layout:Invoice__c-Invoice Layout",
+    "unitType": "layout",
+    "name": "Invoice__c-Invoice Layout",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/layouts/Invoice__c-Invoice Layout.layout-meta.xml"
+  },
+  {
+    "nodeId": "mutingPermissionSet:Invoice_Team_Muted",
+    "unitType": "mutingPermissionSet",
+    "name": "Invoice_Team_Muted",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/mutingpermissionsets/Invoice_Team_Muted.mutingpermissionset-meta.xml"
+  },
+  {
+    "nodeId": "object:Account",
+    "unitType": "object",
+    "name": "Account",
+    "relation": "uses",
+    "depth": 1,
+    "filePath": "force-app/main/default/objects/Account"
+  },
+  {
+    "nodeId": "object:Invoice_Line__c",
+    "unitType": "object",
+    "name": "Invoice_Line__c",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/objects/Invoice_Line__c"
+  },
+  {
+    "nodeId": "object:Payment__c",
+    "unitType": "object",
+    "name": "Payment__c",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/objects/Payment__c"
+  },
+  {
+    "nodeId": "objectTranslation:Invoice__c-en_US",
+    "unitType": "objectTranslation",
+    "name": "Invoice__c-en_US",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/objectTranslations/Invoice__c-en_US"
+  },
+  {
+    "nodeId": "objectTranslation:Invoice__c-ja",
+    "unitType": "objectTranslation",
+    "name": "Invoice__c-ja",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/objectTranslations/Invoice__c-ja"
+  },
+  {
+    "nodeId": "pathAssistant:Invoice_Path",
+    "unitType": "pathAssistant",
+    "name": "Invoice_Path",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/pathAssistants/Invoice_Path.pathAssistant-meta.xml"
+  },
+  {
+    "nodeId": "permissionSet:Invoice_Manager",
+    "unitType": "permissionSet",
+    "name": "Invoice_Manager",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/permissionsets/Invoice_Manager.permissionset-meta.xml"
+  },
+  {
+    "nodeId": "permissionSet:Payment_Clerk",
+    "unitType": "permissionSet",
+    "name": "Payment_Clerk",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/permissionsets/Payment_Clerk.permissionset-meta.xml"
+  },
+  {
+    "nodeId": "platformEventChannelMember:Invoice_Changes_chn_Invoice_ChangeEvent",
+    "unitType": "platformEventChannelMember",
+    "name": "Invoice_Changes_chn_Invoice_ChangeEvent",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/platformEventChannelMembers/Invoice_Changes_chn_Invoice_ChangeEvent.platformEventChannelMember-meta.xml"
+  },
+  {
+    "nodeId": "profile:Sales",
+    "unitType": "profile",
+    "name": "Sales",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/profiles/Sales.profile-meta.xml"
+  },
+  {
+    "nodeId": "queue:Invoice_Queue",
+    "unitType": "queue",
+    "name": "Invoice_Queue",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/queues/Invoice_Queue.queue-meta.xml"
+  },
+  {
+    "nodeId": "quickAction:Invoice__c.Approve",
+    "unitType": "quickAction",
+    "name": "Invoice__c.Approve",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/quickActions/Invoice__c.Approve.quickAction-meta.xml"
+  },
+  {
+    "nodeId": "report:Invoice_Reports/Open_Invoices",
+    "unitType": "report",
+    "name": "Invoice_Reports.Open_Invoices",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/reports/Invoice_Reports/Open_Invoices.report-meta.xml"
+  },
+  {
+    "nodeId": "reportType:Invoices_with_Lines",
+    "unitType": "reportType",
+    "name": "Invoices_with_Lines",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/reportTypes/Invoices_with_Lines.reportType-meta.xml"
+  },
+  {
+    "nodeId": "sharingRules:Invoice__c",
+    "unitType": "sharingRules",
+    "name": "Invoice__c",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/sharingRules/Invoice__c.sharingRules-meta.xml"
+  },
+  {
+    "nodeId": "workflow:Invoice__c",
+    "unitType": "workflow",
+    "name": "Invoice__c",
+    "relation": "usedBy",
+    "depth": 1,
+    "filePath": "force-app/main/default/workflows/Invoice__c.workflow-meta.xml"
+  }
+]

@@ -1,0 +1,385 @@
+[
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "classProperty_965403362b95bd25",
+      "sourceKey": "classProperty_3bbac64a485932d9"
+    },
+    "component": "c/accountList",
+    "category": "property",
+    "name": "recordId",
+    "detail": "string"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "classProperty_8c8bc687a5b7e8e8",
+      "sourceKey": "classProperty_6e01dca44878c478"
+    },
+    "component": "c/accountList",
+    "category": "property",
+    "name": "title",
+    "detail": "string"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "classProperty_6e887b3b13bba986",
+      "sourceKey": "classProperty_698531e3fd4573d5"
+    },
+    "component": "c/accountList",
+    "category": "property",
+    "name": "maxRows",
+    "detail": "number"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "classProperty_1ad25686b4bbd51c",
+      "sourceKey": "classProperty_5ae297ed12c26da6"
+    },
+    "component": "c/accountList",
+    "category": "property",
+    "name": "industry",
+    "detail": "string"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "classMethod_ac118d3ce11bfa32",
+      "sourceKey": "classMethod_636c5689755c0a36"
+    },
+    "component": "c/accountList",
+    "category": "method",
+    "name": "refresh",
+    "detail": "void ()"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "newExpression_633a51214e80d00f",
+      "sourceKey": "newExpression_8e941efa0210a06d"
+    },
+    "component": "c/accountList",
+    "category": "event",
+    "name": "accountselect"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "newExpression_93d4c4e5808b8521",
+      "sourceKey": "newExpression_c245bf6006f75597"
+    },
+    "component": "c/accountList",
+    "category": "event",
+    "name": "accountsaved"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "newExpression_d321bbc05aa6ed64",
+      "sourceKey": "newExpression_655fd5ab6c184df3"
+    },
+    "component": "c/accountList",
+    "category": "event",
+    "name": "reloaded"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "component": "c/accountList",
+    "category": "slot",
+    "name": "footer"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "classProperty_487b9f2c322e86ae",
+      "sourceKey": "classProperty_99f7bdb27906f274"
+    },
+    "component": "c/accountList",
+    "category": "wire",
+    "name": "record",
+    "detail": "getRecord (lightning/uiRecordApi)・recordId: $recordId / fields"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "classProperty_9150b7c53b57deeb",
+      "sourceKey": "classProperty_3cb5080a009de8ca"
+    },
+    "component": "c/accountList",
+    "category": "wire",
+    "name": "recordByName",
+    "detail": "getRecord (lightning/uiRecordApi)・recordId: $recordId / fields: Account.Name / optionalFields: Account.Industry"
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "classMethod_e5c2923b9f32384c",
+      "sourceKey": "classMethod_70a0e43ca429b879"
+    },
+    "changedProperties": [
+      "detail"
+    ],
+    "component": "c/accountList",
+    "category": "wire",
+    "name": "wiredAccounts",
+    "detail": "Apex AccountController.getAccounts・parentId: $recordId / limitSize: $maxRows / industry: $industry"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "importDeclaration_7c380b50cdbabc1b",
+      "sourceKey": "importDeclaration_0fad06b58fec795c"
+    },
+    "component": "c/accountList",
+    "category": "apex",
+    "name": "AccountController.getAccounts",
+    "detail": "@wire"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "importDeclaration_4b1e3bb6c6c6bdd5",
+      "sourceKey": "importDeclaration_22a36409a38f0fd0"
+    },
+    "component": "c/accountList",
+    "category": "apex",
+    "name": "AccountController.deleteAccount",
+    "detail": "呼び出し (imperative)"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "importDeclaration_c568a472e2602350",
+      "sourceKey": "importDeclaration_9deb2ad9431e0ea8"
+    },
+    "component": "c/accountList",
+    "category": "apex",
+    "name": "AccountController.updateAccount",
+    "detail": "呼び出し (imperative)"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "component": "c/accountList",
+    "category": "child",
+    "name": "c/accountRow"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "component": "c/accountList",
+    "category": "child",
+    "name": "c/errorPanel"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "component": "c/accountList",
+    "category": "baseComponent",
+    "name": "lightning/button"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "component": "c/accountList",
+    "category": "baseComponent",
+    "name": "lightning/card"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "importDeclaration_c093d284f5b07067",
+      "sourceKey": "importDeclaration_4de5178766f28fcd"
+    },
+    "component": "c/accountList",
+    "category": "field",
+    "name": "Account.Industry",
+    "detail": "@salesforce/schema"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "importDeclaration_c66128aec671c0bb",
+      "sourceKey": "importDeclaration_767cad1601107cc6"
+    },
+    "component": "c/accountList",
+    "category": "field",
+    "name": "Account.Name",
+    "detail": "@salesforce/schema"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "lwcElement_ba6a69ced1e1eb24",
+      "sourceKey": "lwcElement_fa191c2761e26688"
+    },
+    "component": "c/accountList",
+    "category": "finding",
+    "name": "UNKNOWN_COMPONENT: c/errorPanel",
+    "detail": "<c-error-panel> のバンドル c/errorPanel がない"
+  },
+  {
+    "status": "removed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "importDeclaration_2ce0d47af1e8be55",
+      "sourceKey": "importDeclaration_342e6c14feeb569f"
+    },
+    "component": "c/accountList",
+    "category": "label",
+    "name": "c.AccountListTitle"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountRow",
+    "sourceKeys": {
+      "objectKey": "classProperty_965403362b95bd25",
+      "sourceKey": "classProperty_8467314cc28e0ab2"
+    },
+    "component": "c/accountRow",
+    "category": "property",
+    "name": "recordId",
+    "detail": "string"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountRow",
+    "sourceKeys": {
+      "objectKey": "classProperty_5991bac21dbdd748",
+      "sourceKey": "classProperty_40d61b52593fa7d3"
+    },
+    "component": "c/accountRow",
+    "category": "property",
+    "name": "name",
+    "detail": "string"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountRow",
+    "sourceKeys": {
+      "objectKey": "classProperty_58a2fa7f525b0865",
+      "sourceKey": "classProperty_86b2df10ce902a26"
+    },
+    "component": "c/accountRow",
+    "category": "property",
+    "name": "amount",
+    "detail": "number"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountRow",
+    "sourceKeys": {
+      "objectKey": "newExpression_9d488f826545e628",
+      "sourceKey": "newExpression_eb4fdb97b55510fd"
+    },
+    "component": "c/accountRow",
+    "category": "event",
+    "name": "select"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\broken",
+    "sourceKeys": {
+      "objectKey": "classProperty_fff535b23d3f5885",
+      "sourceKey": "classProperty_ee0277806011b964"
+    },
+    "component": "c/broken",
+    "category": "property",
+    "name": "value",
+    "detail": "string"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\broken",
+    "component": "c/broken",
+    "category": "child",
+    "name": "c/child"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\broken",
+    "sourceKeys": {
+      "objectKey": "lwcElement_b5ab7359048d42ad",
+      "sourceKey": "lwcElement_dcd2df94fbc96369"
+    },
+    "component": "c/broken",
+    "category": "finding",
+    "name": "UNKNOWN_COMPONENT: c/child",
+    "detail": "<c-child> のバンドル c/child がない"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\newBanner",
+    "sourceKeys": {
+      "objectKey": "classProperty_ac985f16b06f64f3",
+      "sourceKey": "classProperty_bd5faa20b98a0c6e"
+    },
+    "component": "c/newBanner",
+    "category": "property",
+    "name": "message"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\newBanner",
+    "sourceKeys": {
+      "objectKey": "classProperty_6ba21748028b900b",
+      "sourceKey": "classProperty_db73c0bb072c6dba"
+    },
+    "component": "c/newBanner",
+    "category": "property",
+    "name": "variant"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\newBanner",
+    "sourceKeys": {
+      "objectKey": "newExpression_eef1ac1afe4d383f",
+      "sourceKey": "newExpression_ee7d1c5c07c060f8"
+    },
+    "component": "c/newBanner",
+    "category": "event",
+    "name": "close"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\newBanner",
+    "sourceKeys": {
+      "objectKey": "importDeclaration_b1d1e50d1ee13f4a",
+      "sourceKey": "importDeclaration_e988dfac11d6694e"
+    },
+    "component": "c/newBanner",
+    "category": "label",
+    "name": "c.BannerMessage"
+  },
+  {
+    "status": "removed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\lwc\\oldBanner",
+    "sourceKeys": {
+      "objectKey": "classProperty_6518cd4aca19dbc9",
+      "sourceKey": "classProperty_087ec57f8161a963"
+    },
+    "component": "c/oldBanner",
+    "category": "property",
+    "name": "message"
+  }
+]

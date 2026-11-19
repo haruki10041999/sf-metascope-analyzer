@@ -1,0 +1,532 @@
+[
+  {
+    "unitType": "anonymousApex",
+    "lineage": "apex",
+    "count": 3,
+    "unreadable": 0,
+    "withErrors": 1,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "apexClass",
+    "lineage": "apex",
+    "count": 9,
+    "unreadable": 0,
+    "withErrors": 1,
+    "added": 1,
+    "removed": 1,
+    "changed": 6
+  },
+  {
+    "unitType": "apexComponent",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "apexPage",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "apexTrigger",
+    "lineage": "apex",
+    "count": 2,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "approvalProcess",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "assignmentRules",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "aura",
+    "lineage": "metadata",
+    "count": 2,
+    "unreadable": 1,
+    "withErrors": 1,
+    "added": 1,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "autoResponseRules",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "cspTrustedSite",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "customApplication",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "customLabels",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "customMetadata",
+    "lineage": "metadata",
+    "count": 2,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 1,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "customNotificationType",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "customPermission",
+    "lineage": "metadata",
+    "count": 2,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "customTab",
+    "lineage": "metadata",
+    "count": 2,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 1,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "dashboard",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "duplicateRule",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "emailTemplate",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "escalationRules",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "externalCredential",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "externalDataSource",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "flexiPage",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "flow",
+    "lineage": "metadata",
+    "count": 2,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 2
+  },
+  {
+    "unitType": "globalValueSet",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "group",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "layout",
+    "lineage": "metadata",
+    "count": 3,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 1,
+    "removed": 0,
+    "changed": 2
+  },
+  {
+    "unitType": "lwc",
+    "lineage": "lwc",
+    "count": 5,
+    "unreadable": 0,
+    "withErrors": 3,
+    "added": 1,
+    "removed": 1,
+    "changed": 2
+  },
+  {
+    "unitType": "matchingRules",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "messageChannel",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "mutingPermissionSet",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "namedCredential",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "object",
+    "lineage": "object",
+    "count": 7,
+    "unreadable": 0,
+    "withErrors": 1,
+    "added": 1,
+    "removed": 1,
+    "changed": 6
+  },
+  {
+    "unitType": "objectTranslation",
+    "lineage": "objectTranslation",
+    "count": 4,
+    "unreadable": 0,
+    "withErrors": 1,
+    "added": 1,
+    "removed": 1,
+    "changed": 3
+  },
+  {
+    "unitType": "pathAssistant",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "permissionSet",
+    "lineage": "metadata",
+    "count": 3,
+    "unreadable": 1,
+    "withErrors": 1,
+    "added": 1,
+    "removed": 1,
+    "changed": 1
+  },
+  {
+    "unitType": "permissionSetGroup",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "platformEventChannel",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "platformEventChannelMember",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "platformEventSubscriberConfig",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "profile",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "queue",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "quickAction",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "remoteSiteSetting",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "report",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "reportType",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "role",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "settings",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "sharingRules",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "standardValueSet",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "staticResource",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "translations",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  },
+  {
+    "unitType": "workflow",
+    "lineage": "metadata",
+    "count": 1,
+    "unreadable": 0,
+    "withErrors": 0,
+    "added": 0,
+    "removed": 0,
+    "changed": 1
+  }
+]

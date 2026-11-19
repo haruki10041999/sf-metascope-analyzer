@@ -1,0 +1,209 @@
+{
+  "objects": [
+    {
+      "status": "changed",
+      "name": "Account",
+      "objectType": "standard",
+      "fields": [
+        {
+          "status": "changed",
+          "name": "Tier__c",
+          "label": "Customer Tier",
+          "type": "Picklist"
+        }
+      ]
+    },
+    {
+      "status": "changed",
+      "name": "App_Setting__mdt",
+      "label": "App Setting",
+      "objectType": "customMetadata",
+      "fields": [
+        {
+          "status": "unchanged",
+          "name": "Value__c",
+          "label": "Value",
+          "type": "Text"
+        }
+      ]
+    },
+    {
+      "status": "changed",
+      "name": "Broken__c",
+      "label": "Broken",
+      "objectType": "custom",
+      "fields": [
+        {
+          "status": "removed",
+          "name": "Code__c",
+          "label": "Code",
+          "type": "Text"
+        }
+      ]
+    },
+    {
+      "status": "changed",
+      "name": "Invoice__c",
+      "label": "Invoice",
+      "objectType": "custom",
+      "fields": [
+        {
+          "status": "changed",
+          "name": "Account__c",
+          "label": "Account",
+          "type": "Lookup",
+          "referenceTo": "Account"
+        },
+        {
+          "status": "changed",
+          "name": "Amount__c",
+          "label": "Amount",
+          "type": "Currency"
+        },
+        {
+          "status": "added",
+          "name": "Approved__c",
+          "label": "Approved",
+          "type": "Checkbox"
+        },
+        {
+          "status": "unchanged",
+          "name": "Due_Date__c",
+          "label": "Due Date",
+          "type": "Date"
+        },
+        {
+          "status": "unchanged",
+          "name": "Is_Overdue__c",
+          "label": "Is Overdue",
+          "type": "Checkbox"
+        },
+        {
+          "status": "changed",
+          "name": "Status__c",
+          "label": "Status",
+          "type": "Picklist"
+        },
+        {
+          "status": "removed",
+          "name": "Note__c",
+          "label": "Note",
+          "type": "Text"
+        }
+      ]
+    },
+    {
+      "status": "changed",
+      "name": "Invoice_Line__c",
+      "label": "Invoice Line",
+      "objectType": "custom",
+      "fields": [
+        {
+          "status": "unchanged",
+          "name": "Invoice__c",
+          "label": "Invoice",
+          "type": "MasterDetail",
+          "referenceTo": "Invoice__c"
+        },
+        {
+          "status": "unchanged",
+          "name": "Product__c",
+          "label": "Product",
+          "type": "Lookup",
+          "referenceTo": "Product2"
+        },
+        {
+          "status": "changed",
+          "name": "Quantity__c",
+          "label": "Quantity",
+          "type": "Number"
+        }
+      ]
+    },
+    {
+      "status": "removed",
+      "name": "Legacy_Item__c",
+      "label": "Legacy Item",
+      "objectType": "custom",
+      "fields": [
+        {
+          "status": "removed",
+          "name": "Invoice__c",
+          "label": "Invoice",
+          "type": "Lookup",
+          "referenceTo": "Invoice__c"
+        }
+      ]
+    },
+    {
+      "status": "changed",
+      "name": "Opportunity",
+      "objectType": "standard",
+      "fields": []
+    },
+    {
+      "status": "added",
+      "name": "Payment__c",
+      "label": "Payment",
+      "objectType": "custom",
+      "fields": [
+        {
+          "status": "added",
+          "name": "Invoice__c",
+          "label": "Invoice",
+          "type": "Lookup",
+          "referenceTo": "Invoice__c"
+        },
+        {
+          "status": "added",
+          "name": "Paid_At__c",
+          "label": "Paid At",
+          "type": "DateTime"
+        }
+      ]
+    },
+    {
+      "name": "Product2",
+      "objectType": "standard",
+      "external": true,
+      "fields": []
+    }
+  ],
+  "relations": [
+    {
+      "status": "unchanged",
+      "from": "Invoice__c",
+      "field": "Account__c",
+      "to": "Account",
+      "type": "Lookup"
+    },
+    {
+      "status": "unchanged",
+      "from": "Invoice_Line__c",
+      "field": "Invoice__c",
+      "to": "Invoice__c",
+      "type": "MasterDetail"
+    },
+    {
+      "status": "unchanged",
+      "from": "Invoice_Line__c",
+      "field": "Product__c",
+      "to": "Product2",
+      "type": "Lookup"
+    },
+    {
+      "status": "removed",
+      "from": "Legacy_Item__c",
+      "field": "Invoice__c",
+      "to": "Invoice__c",
+      "type": "Lookup"
+    },
+    {
+      "status": "added",
+      "from": "Payment__c",
+      "field": "Invoice__c",
+      "to": "Invoice__c",
+      "type": "Lookup"
+    }
+  ]
+}

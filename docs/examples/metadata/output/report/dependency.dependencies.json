@@ -1,1 +1,132 @@
-[]
+[
+  {
+    "id": "apexType:BaseService",
+    "type": "apexType",
+    "name": "BaseService",
+    "origin": "standard",
+    "depth": 1
+  },
+  {
+    "id": "apexType:Schedulable",
+    "type": "apexType",
+    "name": "Schedulable",
+    "origin": "standard",
+    "depth": 1
+  },
+  {
+    "id": "apexType:Queueable",
+    "type": "apexType",
+    "name": "Queueable",
+    "origin": "standard",
+    "depth": 1
+  },
+  {
+    "id": "object:Account",
+    "type": "object",
+    "name": "Account",
+    "origin": "repository",
+    "depth": 1,
+    "sourceKeys": {
+      "objectKey": "object_4531d0b418ec4f56",
+      "sourceKey": "object_5e4501090ced50f4"
+    }
+  },
+  {
+    "id": "apexType:DmlException",
+    "type": "apexType",
+    "name": "DmlException",
+    "origin": "standard",
+    "depth": 1
+  },
+  {
+    "id": "object:SObject",
+    "type": "object",
+    "name": "SObject",
+    "origin": "standard",
+    "depth": 1
+  },
+  {
+    "id": "object:Contact",
+    "type": "object",
+    "name": "Contact",
+    "origin": "standard",
+    "depth": 1
+  },
+  {
+    "id": "object:Lead",
+    "type": "object",
+    "name": "Lead",
+    "origin": "standard",
+    "depth": 1
+  },
+  {
+    "id": "object:User",
+    "type": "object",
+    "name": "User",
+    "origin": "standard",
+    "depth": 1
+  },
+  {
+    "id": "apexType:UserInfo",
+    "type": "apexType",
+    "name": "UserInfo",
+    "origin": "standard",
+    "depth": 1
+  },
+  {
+    "id": "apexType:ServiceException",
+    "type": "apexType",
+    "name": "ServiceException",
+    "origin": "standard",
+    "depth": 1
+  },
+  {
+    "id": "apexType:AggregateResult",
+    "type": "apexType",
+    "name": "AggregateResult",
+    "origin": "standard",
+    "depth": 1
+  },
+  {
+    "id": "childRelationship:Account.Contacts",
+    "type": "childRelationship",
+    "name": "Account.Contacts",
+    "origin": "standard",
+    "depth": 1
+  },
+  {
+    "id": "childRelationshipField:Account.Contacts.Id",
+    "type": "childRelationshipField",
+    "name": "Account.Contacts.Id",
+    "origin": "standard",
+    "depth": 1
+  },
+  {
+    "id": "childRelationshipField:Account.Contacts.LastName",
+    "type": "childRelationshipField",
+    "name": "Account.Contacts.LastName",
+    "origin": "standard",
+    "depth": 1
+  },
+  {
+    "id": "apexType:Integer",
+    "type": "apexType",
+    "name": "Integer",
+    "origin": "standard",
+    "depth": 1
+  },
+  {
+    "id": "apexType:System",
+    "type": "apexType",
+    "name": "System",
+    "origin": "standard",
+    "depth": 1
+  },
+  {
+    "id": "apexType:SchedulableContext",
+    "type": "apexType",
+    "name": "SchedulableContext",
+    "origin": "standard",
+    "depth": 1
+  }
+]

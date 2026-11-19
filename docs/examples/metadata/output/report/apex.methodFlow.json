@@ -1,0 +1,5303 @@
+[
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "language": "apex",
+    "unit": "AccountService",
+    "owner": "AccountService",
+    "memberType": "constructor",
+    "name": "AccountService",
+    "member": "AccountService.AccountService",
+    "signature": "AccountService()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "AccountService.AccountService()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "this('anonymous');",
+        "detail": "this('anonymous');",
+        "line": 49
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "language": "apex",
+    "unit": "AccountService",
+    "owner": "AccountService",
+    "memberType": "constructor",
+    "name": "AccountService",
+    "member": "AccountService.AccountService",
+    "signature": "AccountService(String)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "AccountService.AccountService(String)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "this.name = name;",
+        "detail": "this.name = name;",
+        "line": 53
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "language": "apex",
+    "unit": "AccountService",
+    "owner": "AccountService",
+    "memberType": "method",
+    "name": "calc",
+    "member": "AccountService.calc",
+    "signature": "calc(Decimal, Decimal)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "AccountService.calc(Decimal, Decimal)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "return",
+        "label": "return a + b;",
+        "detail": "return a + b;",
+        "line": 76
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "language": "apex",
+    "unit": "AccountService",
+    "owner": "AccountService",
+    "memberType": "method",
+    "name": "calc",
+    "member": "AccountService.calc",
+    "signature": "calc(Integer, Integer)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "AccountService.calc(Integer, Integer)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "Integer result = a + b;",
+        "detail": "Integer result = a + b;",
+        "line": 66
+      },
+      {
+        "id": "n4",
+        "kind": "decision",
+        "label": "result >= MAX_SIZE",
+        "detail": "result >= MAX_SIZE",
+        "line": 67
+      },
+      {
+        "id": "n5",
+        "kind": "process",
+        "label": "result = MAX_SIZE;",
+        "detail": "result = MAX_SIZE;",
+        "line": 68
+      },
+      {
+        "id": "n6",
+        "kind": "decision",
+        "label": "result < 0",
+        "detail": "result < 0",
+        "line": 69
+      },
+      {
+        "id": "n7",
+        "kind": "process",
+        "label": "result = 0;",
+        "detail": "result = 0;",
+        "line": 70
+      },
+      {
+        "id": "n8",
+        "kind": "return",
+        "label": "return result;",
+        "detail": "return result;",
+        "line": 72
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n5",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n4",
+        "to": "n6",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n6",
+        "to": "n7",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n5",
+        "to": "n8",
+        "kind": "normal"
+      },
+      {
+        "from": "n7",
+        "to": "n8",
+        "kind": "normal"
+      },
+      {
+        "from": "n6",
+        "to": "n8",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n8",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "language": "apex",
+    "unit": "AccountService",
+    "owner": "AccountService",
+    "memberType": "method",
+    "name": "describe",
+    "member": "AccountService.describe",
+    "signature": "describe(Status)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "AccountService.describe(Status)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "decision",
+        "label": "switch on s",
+        "detail": "switch on s",
+        "line": 105
+      },
+      {
+        "id": "n4",
+        "kind": "return",
+        "label": "return 'active';",
+        "detail": "return 'active';",
+        "line": 107
+      },
+      {
+        "id": "n5",
+        "kind": "return",
+        "label": "return 'inactive';",
+        "detail": "return 'inactive';",
+        "line": 110
+      },
+      {
+        "id": "n6",
+        "kind": "return",
+        "label": "return 'other';",
+        "detail": "return 'other';",
+        "line": 113
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "case",
+        "label": "ACTIVE, PENDING"
+      },
+      {
+        "from": "n4",
+        "to": "n2",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n5",
+        "kind": "case",
+        "label": "INACTIVE, DELETED"
+      },
+      {
+        "from": "n5",
+        "to": "n2",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n6",
+        "kind": "case",
+        "label": "else"
+      },
+      {
+        "from": "n6",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "language": "apex",
+    "unit": "AccountService",
+    "owner": "AccountService",
+    "memberType": "method",
+    "name": "execute",
+    "member": "AccountService.execute",
+    "signature": "execute(SchedulableContext)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "AccountService.execute(SchedulableContext)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "sync(new Set<Id>());",
+        "detail": "sync(new Set<Id>());",
+        "line": 164
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "language": "apex",
+    "unit": "AccountService",
+    "owner": "AccountService",
+    "memberType": "method",
+    "name": "expressions",
+    "member": "AccountService.expressions",
+    "signature": "expressions(Object, List<Integer>)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "AccountService.expressions(Object, List<Integer>)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "Integer x = (Long) value;\nBoolean isText = value instanceof Id;\nInteger y = +numbers[1] - (x * 3);\n… (ほか 4 文)",
+        "detail": "Integer x = (Long) value;\nBoolean isText = value instanceof Id;\nInteger y = +numbers[1] - (x * 3);\nInteger z = isText ? y : x;\nMap<String, Integer> counts = new Map<String, Integer>{ 'a' => 2 };\nSet<String> keys = new Set<String>{ 'b', 'a' };\nInteger[] matrix = new Integer[4];",
+        "line": 146,
+        "count": 7
+      },
+      {
+        "id": "n4",
+        "kind": "query",
+        "label": "List<Account> rows = [SELECT Name FROM Account ALL ROWS];",
+        "detail": "List<Account> rows = [SELECT Name FROM Account ALL ROWS];",
+        "line": 153
+      },
+      {
+        "id": "n5",
+        "kind": "query",
+        "label": "List<Account> locked = [SELECT Id FROM Account LIMIT :y FOR…",
+        "detail": "List<Account> locked = [SELECT Id FROM Account LIMIT :y FOR UPDATE];",
+        "line": 154
+      },
+      {
+        "id": "n6",
+        "kind": "query",
+        "label": "List<Account> tracked = [SELECT Id FROM Account UPDATE VIEW…",
+        "detail": "List<Account> tracked = [SELECT Id FROM Account UPDATE VIEWSTAT];",
+        "line": 155
+      },
+      {
+        "id": "n7",
+        "kind": "return",
+        "label": "return x;",
+        "detail": "return x;",
+        "line": 156
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n5",
+        "kind": "normal"
+      },
+      {
+        "from": "n5",
+        "to": "n6",
+        "kind": "normal"
+      },
+      {
+        "from": "n6",
+        "to": "n7",
+        "kind": "normal"
+      },
+      {
+        "from": "n7",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "language": "apex",
+    "unit": "AccountService",
+    "owner": "AccountService",
+    "memberType": "method",
+    "name": "process",
+    "member": "AccountService.process",
+    "signature": "process(List<Account>)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "AccountService.process(List<Account>)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "Integer i = 0;",
+        "detail": "Integer i = 0;",
+        "line": 80
+      },
+      {
+        "id": "n4",
+        "kind": "loop",
+        "label": "while (i <= accounts.size())",
+        "detail": "while (i <= accounts.size())",
+        "line": 81
+      },
+      {
+        "id": "n5",
+        "kind": "process",
+        "label": "i++;",
+        "detail": "i++;",
+        "line": 82
+      },
+      {
+        "id": "n6",
+        "kind": "loop",
+        "label": "do … while (i >= 0)",
+        "detail": "do … while (i >= 0)",
+        "line": 84
+      },
+      {
+        "id": "n7",
+        "kind": "process",
+        "label": "i--;",
+        "detail": "i--;",
+        "line": 85
+      },
+      {
+        "id": "n8",
+        "kind": "loop",
+        "label": "for (Integer j = 0; j < 10; j += 2)",
+        "detail": "for (Integer j = 0; j < 10; j += 2)",
+        "line": 87
+      },
+      {
+        "id": "n9",
+        "kind": "decision",
+        "label": "j == 0",
+        "detail": "j == 0",
+        "line": 88
+      },
+      {
+        "id": "n10",
+        "kind": "decision",
+        "label": "j == 3",
+        "detail": "j == 3",
+        "line": 91
+      },
+      {
+        "id": "n11",
+        "kind": "process",
+        "label": "log(j);",
+        "detail": "log(j);",
+        "line": 94
+      },
+      {
+        "id": "n12",
+        "kind": "try",
+        "label": "try",
+        "line": 96
+      },
+      {
+        "id": "n13",
+        "kind": "dml",
+        "label": "insert as user accounts;",
+        "detail": "insert as user accounts;",
+        "line": 97
+      },
+      {
+        "id": "n14",
+        "kind": "catch",
+        "label": "catch (DmlException e)"
+      },
+      {
+        "id": "n15",
+        "kind": "process",
+        "label": "log('done');\nlog(e.getMessage());",
+        "detail": "log('done');\nlog(e.getMessage());",
+        "line": 99,
+        "count": 2
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n5",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n5",
+        "to": "n4",
+        "kind": "back"
+      },
+      {
+        "from": "n4",
+        "to": "n6",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n6",
+        "to": "n7",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n7",
+        "to": "n6",
+        "kind": "back"
+      },
+      {
+        "from": "n6",
+        "to": "n8",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n8",
+        "to": "n9",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n9",
+        "to": "n8",
+        "kind": "back"
+      },
+      {
+        "from": "n9",
+        "to": "n10",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n10",
+        "to": "n11",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n11",
+        "to": "n8",
+        "kind": "back"
+      },
+      {
+        "from": "n8",
+        "to": "n12",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n10",
+        "to": "n12",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n12",
+        "to": "n13",
+        "kind": "normal"
+      },
+      {
+        "from": "n12",
+        "to": "n14",
+        "kind": "exception",
+        "label": "例外"
+      },
+      {
+        "from": "n14",
+        "to": "n15",
+        "kind": "normal"
+      },
+      {
+        "from": "n13",
+        "to": "n2",
+        "kind": "normal"
+      },
+      {
+        "from": "n15",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "language": "apex",
+    "unit": "AccountService",
+    "owner": "AccountService",
+    "memberType": "method",
+    "name": "report",
+    "member": "AccountService.report",
+    "signature": "report()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "AccountService.report()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "System.debug(LoggingLevel.INFO, 'report');",
+        "detail": "System.debug(LoggingLevel.INFO, 'report');",
+        "line": 160
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "language": "apex",
+    "unit": "AccountService",
+    "owner": "AccountService",
+    "memberType": "method",
+    "name": "search",
+    "member": "AccountService.search",
+    "signature": "search(String)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "AccountService.search(String)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "query",
+        "label": "List<List<SObject>> found = [FIND :key IN ALL FIELDS RETURN…",
+        "detail": "List<List<SObject>> found = [FIND :key IN ALL FIELDS RETURNING Account(Id, Name, Phone), Contact, Lead];",
+        "line": 119
+      },
+      {
+        "id": "n4",
+        "kind": "dml",
+        "label": "delete [SELECT Id FROM Contact WHERE LastName = 'y'];",
+        "detail": "delete [SELECT Id FROM Contact WHERE LastName = 'y'];",
+        "line": 121
+      },
+      {
+        "id": "n5",
+        "kind": "dml",
+        "label": "upsert new Account(Name = key) Account.External__c;",
+        "detail": "upsert new Account(Name = key) Account.External__c;",
+        "line": 123
+      },
+      {
+        "id": "n6",
+        "kind": "dml",
+        "label": "merge masterAccount duplicateAccount;",
+        "detail": "merge masterAccount duplicateAccount;",
+        "line": 124
+      },
+      {
+        "id": "n7",
+        "kind": "dml",
+        "label": "undelete new Account();",
+        "detail": "undelete new Account();",
+        "line": 125
+      },
+      {
+        "id": "n8",
+        "kind": "throw",
+        "label": "throw new ServiceException('unsupported operation');",
+        "detail": "throw new ServiceException('unsupported operation');",
+        "line": 126
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n5",
+        "kind": "normal"
+      },
+      {
+        "from": "n5",
+        "to": "n6",
+        "kind": "normal"
+      },
+      {
+        "from": "n6",
+        "to": "n7",
+        "kind": "normal"
+      },
+      {
+        "from": "n7",
+        "to": "n8",
+        "kind": "normal"
+      },
+      {
+        "from": "n8",
+        "to": "n2",
+        "kind": "exception",
+        "label": "例外"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "language": "apex",
+    "unit": "AccountService",
+    "owner": "AccountService",
+    "memberType": "method",
+    "name": "stats",
+    "member": "AccountService.stats",
+    "signature": "stats()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "AccountService.stats()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "return",
+        "label": "return [",
+        "detail": "return [\n            SELECT COUNT(Id) cnt, Name, (SELECT Id FROM Contacts WHERE LastName != null)\n            FROM Account acc\n            USING SCOPE team\n            WHERE (Industry = 'IT' AND Name LIKE 'a%') OR (NOT Rating = 'Warm')\n            WITH DATA CATEGORY Geography__c BELOW (usa__c)\n            GROUP BY CUBE(Name)\n            HAVING COUNT(Id) > 2\n            ORDER BY Name ASC NULLS FIRST\n            LIMIT 20\n            OFFSET 10\n            FOR REFERENCE\n        ];",
+        "line": 130
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "language": "apex",
+    "unit": "AccountService",
+    "owner": "AccountService",
+    "memberType": "method",
+    "name": "sync",
+    "member": "AccountService.sync",
+    "signature": "sync(Set<Id>)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "AccountService.sync(Set<Id>)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "query",
+        "label": "List<Account> accounts = [SELECT Name, Id FROM Account WHER…",
+        "detail": "List<Account> accounts = [SELECT Name, Id FROM Account WHERE Id IN :ids ORDER BY Name ASC LIMIT 200];",
+        "line": 58
+      },
+      {
+        "id": "n4",
+        "kind": "loop",
+        "label": "for (Account acc : accounts)",
+        "detail": "for (Account acc : accounts)",
+        "line": 59
+      },
+      {
+        "id": "n5",
+        "kind": "process",
+        "label": "acc.Name = acc.Name.trim();",
+        "detail": "acc.Name = acc.Name.trim();",
+        "line": 60
+      },
+      {
+        "id": "n6",
+        "kind": "dml",
+        "label": "update accounts;",
+        "detail": "update accounts;",
+        "line": 62
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n5",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n5",
+        "to": "n4",
+        "kind": "back"
+      },
+      {
+        "from": "n4",
+        "to": "n6",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n6",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "language": "apex",
+    "unit": "AccountService",
+    "owner": "AccountService.Wrapper",
+    "memberType": "constructor",
+    "name": "Wrapper",
+    "member": "AccountService.Wrapper.Wrapper",
+    "signature": "Wrapper(Account)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "AccountService.Wrapper.Wrapper(Account)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "this.record = record;",
+        "detail": "this.record = record;",
+        "line": 44
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\triggers\\AccountTrigger.trigger",
+    "language": "apex",
+    "unit": "AccountTrigger",
+    "owner": "AccountTrigger",
+    "memberType": "trigger",
+    "name": "AccountTrigger",
+    "member": "AccountTrigger.AccountTrigger",
+    "signature": "AccountTrigger()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "trigger AccountTrigger"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "System.debug('start');",
+        "detail": "System.debug('start');",
+        "line": 2
+      },
+      {
+        "id": "n4",
+        "kind": "decision",
+        "label": "Trigger.isBefore && Trigger.isInsert",
+        "detail": "Trigger.isBefore && Trigger.isInsert",
+        "line": 3
+      },
+      {
+        "id": "n5",
+        "kind": "process",
+        "label": "AccountService.validate(Trigger.new);",
+        "detail": "AccountService.validate(Trigger.new);",
+        "line": 4
+      },
+      {
+        "id": "n6",
+        "kind": "process",
+        "label": "System.debug('done');",
+        "detail": "System.debug('done');",
+        "line": 6
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n5",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n5",
+        "to": "n6",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n6",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n6",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\broken.apex",
+    "language": "apex",
+    "unit": "broken",
+    "owner": "broken",
+    "memberType": "anonymous",
+    "name": "broken",
+    "member": "broken.broken",
+    "signature": "broken()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "broken"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "x = ;",
+        "detail": "x = ;\nList<Account>",
+        "line": 1
+      },
+      {
+        "id": "n4",
+        "kind": "query",
+        "label": "accs = [SELECT Id FROM Account WHERE",
+        "detail": "accs = [SELECT Id FROM Account WHERE",
+        "line": 2
+      },
+      {
+        "id": "n5",
+        "kind": "process",
+        "label": "Name = LIMIT\n1];",
+        "detail": "Name = LIMIT\n1];",
+        "line": 2,
+        "count": 2
+      },
+      {
+        "id": "n6",
+        "kind": "loop",
+        "label": "for (;;)",
+        "detail": "for (;;)",
+        "line": 3
+      },
+      {
+        "id": "n7",
+        "kind": "process",
+        "label": "foo(1, );",
+        "detail": "foo(1, );",
+        "line": 4
+      },
+      {
+        "id": "n8",
+        "kind": "return",
+        "label": "return x +;",
+        "detail": "return x +;",
+        "line": 6
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n5",
+        "kind": "normal"
+      },
+      {
+        "from": "n5",
+        "to": "n6",
+        "kind": "normal"
+      },
+      {
+        "from": "n6",
+        "to": "n7",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n7",
+        "to": "n6",
+        "kind": "back"
+      },
+      {
+        "from": "n6",
+        "to": "n8",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n8",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\Broken.cls",
+    "language": "apex",
+    "unit": "Broken",
+    "owner": "Broken",
+    "memberType": "method",
+    "name": "run",
+    "member": "Broken.run",
+    "signature": "run()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "Broken.run()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "Integer x = ;\nb();",
+        "detail": "Integer x = ;\n        foo(1, );\nb();",
+        "line": 3,
+        "count": 2
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\NewHelper.cls",
+    "language": "apex",
+    "unit": "NewHelper",
+    "owner": "NewHelper",
+    "memberType": "method",
+    "name": "run",
+    "member": "NewHelper.run",
+    "signature": "run()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "NewHelper.run()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\parser.apex",
+    "language": "apex",
+    "unit": "parser",
+    "owner": "parser",
+    "memberType": "anonymous",
+    "name": "parser",
+    "member": "parser.parser",
+    "signature": "parser()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "parser"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "names.add('Alice');\nnames.addAll(new List<String>{ 'Charlie', 'David' });\nnames[0] = 'Bob';\n… (ほか 4 文)",
+        "detail": "names.add('Alice');\nnames.addAll(new List<String>{ 'Charlie', 'David' });\nnames[0] = 'Bob';\nSystem.debug(names.size());\nSystem.debug(names.isEmpty());\nSystem.debug(names.contains('Alice'));\nSystem.debug(scores.get('a') ?? 0);",
+        "line": 83,
+        "count": 7
+      },
+      {
+        "id": "n4",
+        "kind": "dml",
+        "label": "insert account;",
+        "detail": "insert account;",
+        "line": 104
+      },
+      {
+        "id": "n5",
+        "kind": "process",
+        "label": "accountId = account.Id;\naccounts.put(account.Id, account);\nSystem.debug(retrieved?.Name);\n… (ほか 1 文)",
+        "detail": "accountId = account.Id;\naccounts.put(account.Id, account);\nSystem.debug(retrieved?.Name);\naccount.Name = 'Updated';",
+        "line": 106,
+        "count": 4
+      },
+      {
+        "id": "n6",
+        "kind": "dml",
+        "label": "update as user account;",
+        "detail": "update as user account;",
+        "line": 116
+      },
+      {
+        "id": "n7",
+        "kind": "dml",
+        "label": "upsert account Account.Id;",
+        "detail": "upsert account Account.Id;",
+        "line": 118
+      },
+      {
+        "id": "n8",
+        "kind": "dml",
+        "label": "insert duplicate;",
+        "detail": "insert duplicate;",
+        "line": 122
+      },
+      {
+        "id": "n9",
+        "kind": "dml",
+        "label": "merge as system account duplicate;",
+        "detail": "merge as system account duplicate;",
+        "line": 124
+      },
+      {
+        "id": "n10",
+        "kind": "dml",
+        "label": "delete account;",
+        "detail": "delete account;",
+        "line": 126
+      },
+      {
+        "id": "n11",
+        "kind": "dml",
+        "label": "undelete account;",
+        "detail": "undelete account;",
+        "line": 128
+      },
+      {
+        "id": "n12",
+        "kind": "decision",
+        "label": "count == 0",
+        "detail": "count == 0",
+        "line": 198
+      },
+      {
+        "id": "n13",
+        "kind": "process",
+        "label": "System.debug('zero');",
+        "detail": "System.debug('zero');",
+        "line": 199
+      },
+      {
+        "id": "n14",
+        "kind": "decision",
+        "label": "count > 0",
+        "detail": "count > 0",
+        "line": 200
+      },
+      {
+        "id": "n15",
+        "kind": "process",
+        "label": "System.debug('positive');",
+        "detail": "System.debug('positive');",
+        "line": 201
+      },
+      {
+        "id": "n16",
+        "kind": "process",
+        "label": "System.debug('negative');",
+        "detail": "System.debug('negative');",
+        "line": 203
+      },
+      {
+        "id": "n17",
+        "kind": "loop",
+        "label": "for (Integer i = 0; i < 10; i++)",
+        "detail": "for (Integer i = 0; i < 10; i++)",
+        "line": 206
+      },
+      {
+        "id": "n18",
+        "kind": "decision",
+        "label": "Math.mod(i, 2) == 0",
+        "detail": "Math.mod(i, 2) == 0",
+        "line": 207
+      },
+      {
+        "id": "n19",
+        "kind": "decision",
+        "label": "i == 7",
+        "detail": "i == 7",
+        "line": 210
+      },
+      {
+        "id": "n20",
+        "kind": "process",
+        "label": "System.debug(i);",
+        "detail": "System.debug(i);",
+        "line": 213
+      },
+      {
+        "id": "n21",
+        "kind": "loop",
+        "label": "for (Account item : accountList)",
+        "detail": "for (Account item : accountList)",
+        "line": 216
+      },
+      {
+        "id": "n22",
+        "kind": "process",
+        "label": "System.debug(item.Name);",
+        "detail": "System.debug(item.Name);",
+        "line": 217
+      },
+      {
+        "id": "n23",
+        "kind": "loop",
+        "label": "for (Account item : [SELECT Id FROM Account LIMIT 5])",
+        "detail": "for (Account item : [SELECT Id FROM Account LIMIT 5])",
+        "line": 220
+      },
+      {
+        "id": "n24",
+        "kind": "process",
+        "label": "System.debug(item.Id);",
+        "detail": "System.debug(item.Id);",
+        "line": 221
+      },
+      {
+        "id": "n25",
+        "kind": "loop",
+        "label": "while (index < 5)",
+        "detail": "while (index < 5)",
+        "line": 226
+      },
+      {
+        "id": "n26",
+        "kind": "process",
+        "label": "index++;",
+        "detail": "index++;",
+        "line": 227
+      },
+      {
+        "id": "n27",
+        "kind": "loop",
+        "label": "do … while (retry < 3)",
+        "detail": "do … while (retry < 3)",
+        "line": 232
+      },
+      {
+        "id": "n28",
+        "kind": "process",
+        "label": "retry += 1;",
+        "detail": "retry += 1;",
+        "line": 233
+      },
+      {
+        "id": "n29",
+        "kind": "decision",
+        "label": "switch on status",
+        "detail": "switch on status",
+        "line": 238
+      },
+      {
+        "id": "n30",
+        "kind": "process",
+        "label": "System.debug('new');",
+        "detail": "System.debug('new');",
+        "line": 240
+      },
+      {
+        "id": "n31",
+        "kind": "process",
+        "label": "System.debug('processing');",
+        "detail": "System.debug('processing');",
+        "line": 243
+      },
+      {
+        "id": "n32",
+        "kind": "process",
+        "label": "System.debug('unknown');",
+        "detail": "System.debug('unknown');",
+        "line": 246
+      },
+      {
+        "id": "n33",
+        "kind": "try",
+        "label": "try",
+        "line": 257
+      },
+      {
+        "id": "n34",
+        "kind": "query",
+        "label": "Account a = [SELECT Id, Name FROM Account WHERE Id = :accou…",
+        "detail": "Account a = [SELECT Id, Name FROM Account WHERE Id = :accountId LIMIT 1];",
+        "line": 258
+      },
+      {
+        "id": "n35",
+        "kind": "process",
+        "label": "System.debug(a);",
+        "detail": "System.debug(a);",
+        "line": 259
+      },
+      {
+        "id": "n36",
+        "kind": "decision",
+        "label": "a == null",
+        "detail": "a == null",
+        "line": 260
+      },
+      {
+        "id": "n37",
+        "kind": "throw",
+        "label": "throw new QueryException('not found');",
+        "detail": "throw new QueryException('not found');",
+        "line": 261
+      },
+      {
+        "id": "n38",
+        "kind": "catch",
+        "label": "catch (QueryException e)"
+      },
+      {
+        "id": "n39",
+        "kind": "process",
+        "label": "System.debug(e.getMessage());",
+        "detail": "System.debug(e.getMessage());",
+        "line": 264
+      },
+      {
+        "id": "n40",
+        "kind": "catch",
+        "label": "catch (Exception e)"
+      },
+      {
+        "id": "n41",
+        "kind": "process",
+        "label": "System.debug(e.getMessage());",
+        "detail": "System.debug(e.getMessage());",
+        "line": 266
+      },
+      {
+        "id": "n42",
+        "kind": "finally",
+        "label": "finally"
+      },
+      {
+        "id": "n43",
+        "kind": "process",
+        "label": "System.debug('finished');",
+        "detail": "System.debug('finished');",
+        "line": 268
+      },
+      {
+        "id": "n44",
+        "kind": "decision",
+        "label": "objectValue instanceof Account",
+        "detail": "objectValue instanceof Account",
+        "line": 296
+      },
+      {
+        "id": "n45",
+        "kind": "process",
+        "label": "Account accountValue = (Account) objectValue;\nSystem.debug(accountValue.Name);",
+        "detail": "Account accountValue = (Account) objectValue;\nSystem.debug(accountValue.Name);",
+        "line": 297,
+        "count": 2
+      },
+      {
+        "id": "n46",
+        "kind": "process",
+        "label": "System.debug('run as');",
+        "detail": "System.debug('run as');",
+        "line": 309
+      },
+      {
+        "id": "n47",
+        "kind": "process",
+        "label": "System.assertEquals(3, dmlAccounts.size());\nSystem.assert(enabled);\nAssert.isTrue(enabled, 'should be enabled');",
+        "detail": "System.assertEquals(3, dmlAccounts.size());\nSystem.assert(enabled);\nAssert.isTrue(enabled, 'should be enabled');",
+        "line": 312,
+        "count": 3
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n5",
+        "kind": "normal"
+      },
+      {
+        "from": "n5",
+        "to": "n6",
+        "kind": "normal"
+      },
+      {
+        "from": "n6",
+        "to": "n7",
+        "kind": "normal"
+      },
+      {
+        "from": "n7",
+        "to": "n8",
+        "kind": "normal"
+      },
+      {
+        "from": "n8",
+        "to": "n9",
+        "kind": "normal"
+      },
+      {
+        "from": "n9",
+        "to": "n10",
+        "kind": "normal"
+      },
+      {
+        "from": "n10",
+        "to": "n11",
+        "kind": "normal"
+      },
+      {
+        "from": "n11",
+        "to": "n12",
+        "kind": "normal"
+      },
+      {
+        "from": "n12",
+        "to": "n13",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n12",
+        "to": "n14",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n14",
+        "to": "n15",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n14",
+        "to": "n16",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n13",
+        "to": "n17",
+        "kind": "normal"
+      },
+      {
+        "from": "n15",
+        "to": "n17",
+        "kind": "normal"
+      },
+      {
+        "from": "n16",
+        "to": "n17",
+        "kind": "normal"
+      },
+      {
+        "from": "n17",
+        "to": "n18",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n18",
+        "to": "n17",
+        "kind": "back"
+      },
+      {
+        "from": "n18",
+        "to": "n19",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n19",
+        "to": "n20",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n20",
+        "to": "n17",
+        "kind": "back"
+      },
+      {
+        "from": "n17",
+        "to": "n21",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n19",
+        "to": "n21",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n21",
+        "to": "n22",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n22",
+        "to": "n21",
+        "kind": "back"
+      },
+      {
+        "from": "n21",
+        "to": "n23",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n23",
+        "to": "n24",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n24",
+        "to": "n23",
+        "kind": "back"
+      },
+      {
+        "from": "n23",
+        "to": "n25",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n25",
+        "to": "n26",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n26",
+        "to": "n25",
+        "kind": "back"
+      },
+      {
+        "from": "n25",
+        "to": "n27",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n27",
+        "to": "n28",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n28",
+        "to": "n27",
+        "kind": "back"
+      },
+      {
+        "from": "n27",
+        "to": "n29",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n29",
+        "to": "n30",
+        "kind": "case",
+        "label": "'NEW'"
+      },
+      {
+        "from": "n29",
+        "to": "n31",
+        "kind": "case",
+        "label": "'PROCESSING', 'PENDING'"
+      },
+      {
+        "from": "n29",
+        "to": "n32",
+        "kind": "case",
+        "label": "else"
+      },
+      {
+        "from": "n30",
+        "to": "n33",
+        "kind": "normal"
+      },
+      {
+        "from": "n31",
+        "to": "n33",
+        "kind": "normal"
+      },
+      {
+        "from": "n32",
+        "to": "n33",
+        "kind": "normal"
+      },
+      {
+        "from": "n33",
+        "to": "n34",
+        "kind": "normal"
+      },
+      {
+        "from": "n34",
+        "to": "n35",
+        "kind": "normal"
+      },
+      {
+        "from": "n35",
+        "to": "n36",
+        "kind": "normal"
+      },
+      {
+        "from": "n36",
+        "to": "n37",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n37",
+        "to": "n2",
+        "kind": "exception",
+        "label": "例外"
+      },
+      {
+        "from": "n33",
+        "to": "n38",
+        "kind": "exception",
+        "label": "例外"
+      },
+      {
+        "from": "n38",
+        "to": "n39",
+        "kind": "normal"
+      },
+      {
+        "from": "n33",
+        "to": "n40",
+        "kind": "exception",
+        "label": "例外"
+      },
+      {
+        "from": "n40",
+        "to": "n41",
+        "kind": "normal"
+      },
+      {
+        "from": "n36",
+        "to": "n42",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n39",
+        "to": "n42",
+        "kind": "normal"
+      },
+      {
+        "from": "n41",
+        "to": "n42",
+        "kind": "normal"
+      },
+      {
+        "from": "n42",
+        "to": "n43",
+        "kind": "normal"
+      },
+      {
+        "from": "n43",
+        "to": "n44",
+        "kind": "normal"
+      },
+      {
+        "from": "n44",
+        "to": "n45",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n45",
+        "to": "n46",
+        "kind": "normal"
+      },
+      {
+        "from": "n44",
+        "to": "n46",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n46",
+        "to": "n47",
+        "kind": "normal"
+      },
+      {
+        "from": "n47",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "aggregateSoql",
+    "member": "ParserTest.aggregateSoql",
+    "signature": "aggregateSoql()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.aggregateSoql()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "query",
+        "label": "List<AggregateResult> aggregates = [",
+        "detail": "List<AggregateResult> aggregates = [\n            SELECT\n                Industry,\n                COUNT(Id) total,\n                COUNT_DISTINCT(OwnerId),\n                MIN(AnnualRevenue),\n                MAX(AnnualRevenue),\n                SUM(AnnualRevenue),\n                AVG(AnnualRevenue)\n            FROM Account\n            GROUP BY Industry\n            HAVING COUNT(Id) > 10\n            ORDER BY COUNT(Id) DESC\n        ];",
+        "line": 629
+      },
+      {
+        "id": "n4",
+        "kind": "query",
+        "label": "Integer total = [SELECT COUNT() FROM Account];",
+        "detail": "Integer total = [SELECT COUNT() FROM Account];",
+        "line": 644
+      },
+      {
+        "id": "n5",
+        "kind": "query",
+        "label": "List<AggregateResult> rollup = [",
+        "detail": "List<AggregateResult> rollup = [\n            SELECT Industry, Type, GROUPING(Industry), COUNT(Id)\n            FROM Account\n            GROUP BY ROLLUP(Industry, Type)\n        ];",
+        "line": 646
+      },
+      {
+        "id": "n6",
+        "kind": "query",
+        "label": "List<AggregateResult> cube = [",
+        "detail": "List<AggregateResult> cube = [\n            SELECT Industry, Type, COUNT(Id)\n            FROM Account\n            GROUP BY CUBE(Industry, Type)\n        ];",
+        "line": 652
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n5",
+        "kind": "normal"
+      },
+      {
+        "from": "n5",
+        "to": "n6",
+        "kind": "normal"
+      },
+      {
+        "from": "n6",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "basicSoql",
+    "member": "ParserTest.basicSoql",
+    "signature": "basicSoql(Integer, Integer)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.basicSoql(Integer, Integer)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "query",
+        "label": "List<Account> accounts = [",
+        "detail": "List<Account> accounts = [\n            SELECT Id, Name, Industry, AnnualRevenue, CreatedDate\n            FROM Account\n            WHERE Industry = 'Technology'\n            ORDER BY Name ASC NULLS FIRST, CreatedDate DESC NULLS LAST, Industry\n            LIMIT 100\n            OFFSET 10\n        ];",
+        "line": 525
+      },
+      {
+        "id": "n4",
+        "kind": "return",
+        "label": "return [",
+        "detail": "return [\n            SELECT Id\n            FROM Account\n            LIMIT :pageSize\n            OFFSET :pageOffset\n        ];",
+        "line": 534
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "castAndInstanceof",
+    "member": "ParserTest.castAndInstanceof",
+    "signature": "castAndInstanceof(SObject)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.castAndInstanceof(SObject)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "Account account = (Account) objectValue;\nBoolean isAccount = objectValue instanceof Account;\nString accountName = ((Account) objectValue).Name;\n… (ほか 1 文)",
+        "detail": "Account account = (Account) objectValue;\nBoolean isAccount = objectValue instanceof Account;\nString accountName = ((Account) objectValue).Name;\nSystem.debug(account.Name + accountName + isAccount);",
+        "line": 279,
+        "count": 4
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "compareTo",
+    "member": "ParserTest.compareTo",
+    "signature": "compareTo(Object)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.compareTo(Object)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "return",
+        "label": "return 0;",
+        "detail": "return 0;",
+        "line": 114
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "controlFlow",
+    "member": "ParserTest.controlFlow",
+    "signature": "controlFlow(Integer, List<Account>)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.controlFlow(Integer, List<Account>)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "decision",
+        "label": "value > 100",
+        "detail": "value > 100",
+        "line": 317
+      },
+      {
+        "id": "n4",
+        "kind": "process",
+        "label": "System.debug('large');",
+        "detail": "System.debug('large');",
+        "line": 318
+      },
+      {
+        "id": "n5",
+        "kind": "decision",
+        "label": "value > 50",
+        "detail": "value > 50",
+        "line": 319
+      },
+      {
+        "id": "n6",
+        "kind": "process",
+        "label": "System.debug('medium');",
+        "detail": "System.debug('medium');",
+        "line": 320
+      },
+      {
+        "id": "n7",
+        "kind": "process",
+        "label": "System.debug('small');",
+        "detail": "System.debug('small');",
+        "line": 322
+      },
+      {
+        "id": "n8",
+        "kind": "decision",
+        "label": "value == 0",
+        "detail": "value == 0",
+        "line": 325
+      },
+      {
+        "id": "n9",
+        "kind": "return",
+        "label": "return;",
+        "detail": "return;",
+        "line": 325
+      },
+      {
+        "id": "n10",
+        "kind": "loop",
+        "label": "for (Integer i = 0, j = 10; i < j; i++, j--)",
+        "detail": "for (Integer i = 0, j = 10; i < j; i++, j--)",
+        "line": 327
+      },
+      {
+        "id": "n11",
+        "kind": "decision",
+        "label": "i == 5",
+        "detail": "i == 5",
+        "line": 328
+      },
+      {
+        "id": "n12",
+        "kind": "decision",
+        "label": "i == 8",
+        "detail": "i == 8",
+        "line": 331
+      },
+      {
+        "id": "n13",
+        "kind": "process",
+        "label": "Integer k;",
+        "detail": "Integer k;",
+        "line": 336
+      },
+      {
+        "id": "n14",
+        "kind": "loop",
+        "label": "for (k = 0; k < 3; k++)",
+        "detail": "for (k = 0; k < 3; k++)",
+        "line": 337
+      },
+      {
+        "id": "n15",
+        "kind": "process",
+        "label": "System.debug(k);",
+        "detail": "System.debug(k);",
+        "line": 338
+      },
+      {
+        "id": "n16",
+        "kind": "loop",
+        "label": "for (;;)",
+        "detail": "for (;;)",
+        "line": 341
+      },
+      {
+        "id": "n17",
+        "kind": "loop",
+        "label": "for (Account account : accounts)",
+        "detail": "for (Account account : accounts)",
+        "line": 345
+      },
+      {
+        "id": "n18",
+        "kind": "process",
+        "label": "System.debug(account.Name);",
+        "detail": "System.debug(account.Name);",
+        "line": 346
+      },
+      {
+        "id": "n19",
+        "kind": "loop",
+        "label": "for (List<Account> chunk : [SELECT Id FROM Account])",
+        "detail": "for (List<Account> chunk : [SELECT Id FROM Account])",
+        "line": 349
+      },
+      {
+        "id": "n20",
+        "kind": "process",
+        "label": "System.debug(chunk.size());",
+        "detail": "System.debug(chunk.size());",
+        "line": 350
+      },
+      {
+        "id": "n21",
+        "kind": "loop",
+        "label": "while (value > 0)",
+        "detail": "while (value > 0)",
+        "line": 353
+      },
+      {
+        "id": "n22",
+        "kind": "process",
+        "label": "value--;",
+        "detail": "value--;",
+        "line": 354
+      },
+      {
+        "id": "n23",
+        "kind": "loop",
+        "label": "do … while (value < 10)",
+        "detail": "do … while (value < 10)",
+        "line": 357
+      },
+      {
+        "id": "n24",
+        "kind": "process",
+        "label": "value++;",
+        "detail": "value++;",
+        "line": 358
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n3",
+        "to": "n5",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n5",
+        "to": "n6",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n5",
+        "to": "n7",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n4",
+        "to": "n8",
+        "kind": "normal"
+      },
+      {
+        "from": "n6",
+        "to": "n8",
+        "kind": "normal"
+      },
+      {
+        "from": "n7",
+        "to": "n8",
+        "kind": "normal"
+      },
+      {
+        "from": "n8",
+        "to": "n9",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n9",
+        "to": "n2",
+        "kind": "normal"
+      },
+      {
+        "from": "n8",
+        "to": "n10",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n10",
+        "to": "n11",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n11",
+        "to": "n10",
+        "kind": "back"
+      },
+      {
+        "from": "n11",
+        "to": "n12",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n12",
+        "to": "n10",
+        "kind": "back"
+      },
+      {
+        "from": "n10",
+        "to": "n13",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n12",
+        "to": "n13",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n13",
+        "to": "n14",
+        "kind": "normal"
+      },
+      {
+        "from": "n14",
+        "to": "n15",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n15",
+        "to": "n14",
+        "kind": "back"
+      },
+      {
+        "from": "n14",
+        "to": "n16",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n16",
+        "to": "n17",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n16",
+        "to": "n17",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n17",
+        "to": "n18",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n18",
+        "to": "n17",
+        "kind": "back"
+      },
+      {
+        "from": "n17",
+        "to": "n19",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n19",
+        "to": "n20",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n20",
+        "to": "n19",
+        "kind": "back"
+      },
+      {
+        "from": "n19",
+        "to": "n21",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n21",
+        "to": "n22",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n22",
+        "to": "n21",
+        "kind": "back"
+      },
+      {
+        "from": "n21",
+        "to": "n23",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n23",
+        "to": "n24",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n24",
+        "to": "n23",
+        "kind": "back"
+      },
+      {
+        "from": "n23",
+        "to": "n2",
+        "kind": "no",
+        "label": "終わり"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "creators",
+    "member": "ParserTest.creators",
+    "signature": "creators()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.creators()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "Set<String> emptySet = new Set<String>{};\nList<String> initializedList = new List<String>{ 'a', 'b' };\nSet<Integer> initializedSet = new Set<Integer>{ 1, 2, 3 };\n… (ほか 9 文)",
+        "detail": "Set<String> emptySet = new Set<String>{};\nList<String> initializedList = new List<String>{ 'a', 'b' };\nSet<Integer> initializedSet = new Set<Integer>{ 1, 2, 3 };\nMap<String, Integer> initializedMap = new Map<String, Integer>{ 'a' => 1, 'b' => 2 };\nAccount account = new Account(Name = 'Test', Industry = 'Technology');\nString[] sized = new String[10];\nInteger[] numbers = new Integer[] { 1, 2, 3 };\nInteger[] emptyNumbers = new Integer[] {};\nDocutizeForm.AccountService hoge = new DocutizeForm.AccountService<String>();\nSchema.DescribeSObjectResult describe = new Schema.DescribeSObjectResult();\nsized[0] = 'test';\nInteger value = numbers[0];",
+        "line": 191,
+        "count": 12
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "databaseExample",
+    "member": "ParserTest.databaseExample",
+    "signature": "databaseExample(List<Account>)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.databaseExample(List<Account>)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "dml",
+        "label": "Database.SaveResult[] results = Database.insert(accounts, f…",
+        "detail": "Database.SaveResult[] results = Database.insert(accounts, false);",
+        "line": 469
+      },
+      {
+        "id": "n4",
+        "kind": "dml",
+        "label": "Database.update(accounts, false);",
+        "detail": "Database.update(accounts, false);",
+        "line": 471
+      },
+      {
+        "id": "n5",
+        "kind": "dml",
+        "label": "Database.delete(accounts, false);",
+        "detail": "Database.delete(accounts, false);",
+        "line": 473
+      },
+      {
+        "id": "n6",
+        "kind": "dml",
+        "label": "Database.upsert(accounts, false);",
+        "detail": "Database.upsert(accounts, false);",
+        "line": 475
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n5",
+        "kind": "normal"
+      },
+      {
+        "from": "n5",
+        "to": "n6",
+        "kind": "normal"
+      },
+      {
+        "from": "n6",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "dmlExample",
+    "member": "ParserTest.dmlExample",
+    "signature": "dmlExample(Account, Account, List<Account>)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.dmlExample(Account, Account, List<Account>)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "dml",
+        "label": "insert account;",
+        "detail": "insert account;",
+        "line": 446
+      },
+      {
+        "id": "n4",
+        "kind": "dml",
+        "label": "insert as user account;",
+        "detail": "insert as user account;",
+        "line": 448
+      },
+      {
+        "id": "n5",
+        "kind": "dml",
+        "label": "update as system accounts;",
+        "detail": "update as system accounts;",
+        "line": 450
+      },
+      {
+        "id": "n6",
+        "kind": "dml",
+        "label": "upsert account;",
+        "detail": "upsert account;",
+        "line": 452
+      },
+      {
+        "id": "n7",
+        "kind": "dml",
+        "label": "upsert accounts Account.ExternalId__c;",
+        "detail": "upsert accounts Account.ExternalId__c;",
+        "line": 454
+      },
+      {
+        "id": "n8",
+        "kind": "dml",
+        "label": "upsert as user accounts Account.ExternalId__c;",
+        "detail": "upsert as user accounts Account.ExternalId__c;",
+        "line": 456
+      },
+      {
+        "id": "n9",
+        "kind": "dml",
+        "label": "delete account;",
+        "detail": "delete account;",
+        "line": 458
+      },
+      {
+        "id": "n10",
+        "kind": "dml",
+        "label": "undelete account;",
+        "detail": "undelete account;",
+        "line": 460
+      },
+      {
+        "id": "n11",
+        "kind": "dml",
+        "label": "merge account duplicate;",
+        "detail": "merge account duplicate;",
+        "line": 462
+      },
+      {
+        "id": "n12",
+        "kind": "dml",
+        "label": "merge as system account duplicate;",
+        "detail": "merge as system account duplicate;",
+        "line": 464
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n5",
+        "kind": "normal"
+      },
+      {
+        "from": "n5",
+        "to": "n6",
+        "kind": "normal"
+      },
+      {
+        "from": "n6",
+        "to": "n7",
+        "kind": "normal"
+      },
+      {
+        "from": "n7",
+        "to": "n8",
+        "kind": "normal"
+      },
+      {
+        "from": "n8",
+        "to": "n9",
+        "kind": "normal"
+      },
+      {
+        "from": "n9",
+        "to": "n10",
+        "kind": "normal"
+      },
+      {
+        "from": "n10",
+        "to": "n11",
+        "kind": "normal"
+      },
+      {
+        "from": "n11",
+        "to": "n12",
+        "kind": "normal"
+      },
+      {
+        "from": "n12",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "dynamicSoqlExample",
+    "member": "ParserTest.dynamicSoqlExample",
+    "signature": "dynamicSoqlExample()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.dynamicSoqlExample()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "query",
+        "label": "List<Account> accountsA = Database.query(",
+        "detail": "List<Account> accountsA = Database.query(\n            'SELECT Id, Name FROM Account WHERE IsActive__c = true'\n        );",
+        "line": 479
+      },
+      {
+        "id": "n4",
+        "kind": "process",
+        "label": "String fields = 'Id, Name';\nString soqlB = 'SELECT ' + fields + ' FROM Account';",
+        "detail": "String fields = 'Id, Name';\nString soqlB = 'SELECT ' + fields + ' FROM Account';",
+        "line": 483,
+        "count": 2
+      },
+      {
+        "id": "n5",
+        "kind": "query",
+        "label": "List<Account> accountsB = Database.query(soqlB);",
+        "detail": "List<Account> accountsB = Database.query(soqlB);",
+        "line": 486
+      },
+      {
+        "id": "n6",
+        "kind": "process",
+        "label": "String soqlC = 'SELECT Id FROM Account WHERE Name = :accoun…",
+        "detail": "String soqlC = 'SELECT Id FROM Account WHERE Name = :accountName';",
+        "line": 488
+      },
+      {
+        "id": "n7",
+        "kind": "query",
+        "label": "List<Account> accountsC = Database.query(soqlC);",
+        "detail": "List<Account> accountsC = Database.query(soqlC);",
+        "line": 489
+      },
+      {
+        "id": "n8",
+        "kind": "process",
+        "label": "Map<String, Object> binds = new Map<String, Object>{\nList<SObject> accountsD = Database.queryWithBinds(",
+        "detail": "Map<String, Object> binds = new Map<String, Object>{\n            'accountName' => 'Acme'\n        };\nList<SObject> accountsD = Database.queryWithBinds(\n            'SELECT Id FROM Account WHERE Name = :accountName',\n            binds,\n            AccessLevel.USER_MODE\n        );",
+        "line": 491,
+        "count": 2
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n5",
+        "kind": "normal"
+      },
+      {
+        "from": "n5",
+        "to": "n6",
+        "kind": "normal"
+      },
+      {
+        "from": "n6",
+        "to": "n7",
+        "kind": "normal"
+      },
+      {
+        "from": "n7",
+        "to": "n8",
+        "kind": "normal"
+      },
+      {
+        "from": "n8",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "exceptionHandling",
+    "member": "ParserTest.exceptionHandling",
+    "signature": "exceptionHandling()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.exceptionHandling()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "try",
+        "label": "try",
+        "line": 417
+      },
+      {
+        "id": "n4",
+        "kind": "query",
+        "label": "Account account = [SELECT Id, Name FROM Account LIMIT 1];",
+        "detail": "Account account = [SELECT Id, Name FROM Account LIMIT 1];",
+        "line": 418
+      },
+      {
+        "id": "n5",
+        "kind": "process",
+        "label": "System.debug(account);",
+        "detail": "System.debug(account);",
+        "line": 419
+      },
+      {
+        "id": "n6",
+        "kind": "catch",
+        "label": "catch (QueryException e)"
+      },
+      {
+        "id": "n7",
+        "kind": "process",
+        "label": "System.debug(e.getMessage());",
+        "detail": "System.debug(e.getMessage());",
+        "line": 421
+      },
+      {
+        "id": "n8",
+        "kind": "catch",
+        "label": "catch (Exception e)"
+      },
+      {
+        "id": "n9",
+        "kind": "process",
+        "label": "System.debug(e.getMessage());",
+        "detail": "System.debug(e.getMessage());",
+        "line": 423
+      },
+      {
+        "id": "n10",
+        "kind": "finally",
+        "label": "finally"
+      },
+      {
+        "id": "n11",
+        "kind": "process",
+        "label": "System.debug('finally');",
+        "detail": "System.debug('finally');",
+        "line": 425
+      },
+      {
+        "id": "n12",
+        "kind": "try",
+        "label": "try",
+        "line": 428
+      },
+      {
+        "id": "n13",
+        "kind": "process",
+        "label": "throwExample();",
+        "detail": "throwExample();",
+        "line": 429
+      },
+      {
+        "id": "n14",
+        "kind": "finally",
+        "label": "finally"
+      },
+      {
+        "id": "n15",
+        "kind": "process",
+        "label": "System.debug('only finally');",
+        "detail": "System.debug('only finally');",
+        "line": 431
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n5",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n6",
+        "kind": "exception",
+        "label": "例外"
+      },
+      {
+        "from": "n6",
+        "to": "n7",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n8",
+        "kind": "exception",
+        "label": "例外"
+      },
+      {
+        "from": "n8",
+        "to": "n9",
+        "kind": "normal"
+      },
+      {
+        "from": "n5",
+        "to": "n10",
+        "kind": "normal"
+      },
+      {
+        "from": "n7",
+        "to": "n10",
+        "kind": "normal"
+      },
+      {
+        "from": "n9",
+        "to": "n10",
+        "kind": "normal"
+      },
+      {
+        "from": "n10",
+        "to": "n11",
+        "kind": "normal"
+      },
+      {
+        "from": "n11",
+        "to": "n12",
+        "kind": "normal"
+      },
+      {
+        "from": "n12",
+        "to": "n13",
+        "kind": "normal"
+      },
+      {
+        "from": "n13",
+        "to": "n14",
+        "kind": "normal"
+      },
+      {
+        "from": "n14",
+        "to": "n15",
+        "kind": "normal"
+      },
+      {
+        "from": "n15",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "functionSoql",
+    "member": "ParserTest.functionSoql",
+    "signature": "functionSoql()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.functionSoql()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "query",
+        "label": "List<AggregateResult> dates = [",
+        "detail": "List<AggregateResult> dates = [\n            SELECT\n                CALENDAR_MONTH(CreatedDate),\n                CALENDAR_QUARTER(CreatedDate),\n                CALENDAR_YEAR(CreatedDate),\n                DAY_IN_MONTH(CreatedDate),\n                DAY_IN_WEEK(CreatedDate),\n                DAY_IN_YEAR(CreatedDate),\n                DAY_ONLY(CreatedDate),\n                FISCAL_MONTH(CreatedDate),\n                FISCAL_QUARTER(CreatedDate),\n                FISCAL_YEAR(CreatedDate),\n                HOUR_IN_DAY(CreatedDate),\n                WEEK_IN_MONTH(CreatedDate),\n                WEEK_IN_YEAR(CreatedDate)\n            FROM Account\n            GROUP BY CALENDAR_MONTH(CreatedDate), CALENDAR_YEAR(CreatedDate)\n        ];",
+        "line": 666
+      },
+      {
+        "id": "n4",
+        "kind": "query",
+        "label": "List<Account> formatted = [",
+        "detail": "List<Account> formatted = [\n            SELECT Id, FORMAT(CreatedDate), FORMAT(convertCurrency(AnnualRevenue)), TOLABEL(Type)\n            FROM Account\n        ];",
+        "line": 685
+      },
+      {
+        "id": "n5",
+        "kind": "query",
+        "label": "List<Account> allFields = [SELECT FIELDS(ALL) FROM Account …",
+        "detail": "List<Account> allFields = [SELECT FIELDS(ALL) FROM Account LIMIT 200];",
+        "line": 690
+      },
+      {
+        "id": "n6",
+        "kind": "query",
+        "label": "List<Account> standardFields = [SELECT FIELDS(STANDARD) FRO…",
+        "detail": "List<Account> standardFields = [SELECT FIELDS(STANDARD) FROM Account];",
+        "line": 692
+      },
+      {
+        "id": "n7",
+        "kind": "query",
+        "label": "List<Account> customFields = [SELECT FIELDS(CUSTOM) FROM Ac…",
+        "detail": "List<Account> customFields = [SELECT FIELDS(CUSTOM) FROM Account LIMIT 200];",
+        "line": 694
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n5",
+        "kind": "normal"
+      },
+      {
+        "from": "n5",
+        "to": "n6",
+        "kind": "normal"
+      },
+      {
+        "from": "n6",
+        "to": "n7",
+        "kind": "normal"
+      },
+      {
+        "from": "n7",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "genericTypes",
+    "member": "ParserTest.genericTypes",
+    "signature": "genericTypes()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.genericTypes()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "List<String> stringList = new List<String>();\nSet<Id> idSet = new Set<Id>();\nMap<Id, Account> accountMapLocal = new Map<Id, Account>();\n… (ほか 7 文)",
+        "detail": "List<String> stringList = new List<String>();\nSet<Id> idSet = new Set<Id>();\nMap<Id, Account> accountMapLocal = new Map<Id, Account>();\nList<Map<Id, Account>> nestedGeneric = new List<Map<Id, Account>>();\nMap<String, List<Account>> complexMap = new Map<String, List<Account>>();\nList<String>[] arrayOfLists = new List<String>[2];\nSystem.Type stringType = String.class;\nSystem.Type listType = List<String>.class;\nSystem.Type voidType = void.class;\nSchema.SObjectType accountType = Account.SObjectType;",
+        "line": 163,
+        "count": 10
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "getName",
+    "member": "ParserTest.getName",
+    "signature": "getName(Id)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.getName(Id)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "return",
+        "label": "return String.valueOf(recordId);",
+        "detail": "return String.valueOf(recordId);",
+        "line": 91
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "hook",
+    "member": "ParserTest.hook",
+    "signature": "hook()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.hook()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest.InnerClass",
+    "memberType": "method",
+    "name": "execute",
+    "member": "ParserTest.InnerClass.execute",
+    "signature": "execute()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.InnerClass.execute()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "System.debug(value);",
+        "detail": "System.debug(value);",
+        "line": 799
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest.InnerClass",
+    "memberType": "method",
+    "name": "getValue",
+    "member": "ParserTest.InnerClass.getValue",
+    "signature": "getValue()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.InnerClass.getValue()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "return",
+        "label": "return value;",
+        "detail": "return value;",
+        "line": 803
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest.InnerClass",
+    "memberType": "constructor",
+    "name": "InnerClass",
+    "member": "ParserTest.InnerClass.InnerClass",
+    "signature": "InnerClass(String)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.InnerClass.InnerClass(String)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "this.value = value;",
+        "detail": "this.value = value;",
+        "line": 795
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "invocable",
+    "member": "ParserTest.invocable",
+    "signature": "invocable(List<String>)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.invocable(List<String>)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "System.debug(values);",
+        "detail": "System.debug(values);",
+        "line": 96
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "legacy",
+    "member": "ParserTest.legacy",
+    "signature": "legacy()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.legacy()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "return",
+        "label": "return 'legacy';",
+        "detail": "return 'legacy';",
+        "line": 101
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "legacyTest",
+    "member": "ParserTest.legacyTest",
+    "signature": "legacyTest()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.legacyTest()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "System.assert(true);",
+        "detail": "System.assert(true);",
+        "line": 106
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "literals",
+    "member": "ParserTest.literals",
+    "signature": "literals()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.literals()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "String stringValue = 'Hello World';\nString escapedValue = 'Hello\\nWorld';\nInteger integerValue = 123;\n… (ほか 11 文)",
+        "detail": "String stringValue = 'Hello World';\nString escapedValue = 'Hello\\nWorld';\nInteger integerValue = 123;\nLong longValue = 123456789L;\nDecimal decimalValue = 123.45;\nDouble doubleValue = 12.34;\nBoolean trueValue = true;\nBoolean falseValue = false;\nString nullValue = null;\nBlob blobValue;\nObject objectValue;\nDate dateValue = Date.newInstance(2026, 9, 28);\nDatetime datetimeValue = Datetime.newInstance(2026, 9, 28, 12, 30, 0);\nTime timeValue = Time.newInstance(12, 30, 0, 0);",
+        "line": 127,
+        "count": 14
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "locationSoql",
+    "member": "ParserTest.locationSoql",
+    "signature": "locationSoql(Location)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.locationSoql(Location)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "return",
+        "label": "return [",
+        "detail": "return [\n            SELECT Id\n            FROM Account\n            WHERE DISTANCE(BillingAddress, GEOLOCATION(37.775, -122.418), 'km') < 20\n            ORDER BY DISTANCE(BillingAddress, :here, 'mi')\n        ];",
+        "line": 704
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "methodCalls",
+    "member": "ParserTest.methodCalls",
+    "signature": "methodCalls()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.methodCalls()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "this.hook();\nsuper.someMethod();\nhook();\n… (ほか 3 文)",
+        "detail": "this.hook();\nsuper.someMethod();\nhook();\nSystem.debug('hello');\nString value = String.valueOf(123).trim().toUpperCase();\nInteger size = this.names.size();",
+        "line": 295,
+        "count": 6
+      },
+      {
+        "id": "n4",
+        "kind": "query",
+        "label": "Id ownerId = [SELECT OwnerId FROM Account LIMIT 1].OwnerId;",
+        "detail": "Id ownerId = [SELECT OwnerId FROM Account LIMIT 1].OwnerId;",
+        "line": 307
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "operators",
+    "member": "ParserTest.operators",
+    "signature": "operators(Integer, Integer)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.operators(Integer, Integer)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "Integer result = a + b;\nresult = a - b;\nresult = a * b;\n… (ほか 40 文)",
+        "detail": "Integer result = a + b;\nresult = a - b;\nresult = a * b;\nresult = a / b;\nresult = -a;\nresult = +a;\nresult = ~a;\nresult = a << 2;\nresult = a >> 2;\nresult = a >>> 2;\nresult = a & b;\nresult = a | b;\nresult = a ^ b;\nresult++;\nresult--;\n++result;\n--result;\nresult += 10;\nresult -= 10;\nresult *= 2;\n…",
+        "line": 223,
+        "count": 43
+      },
+      {
+        "id": "n4",
+        "kind": "return",
+        "label": "return result;",
+        "detail": "return result;",
+        "line": 274
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "constructor",
+    "name": "ParserTest",
+    "member": "ParserTest.ParserTest",
+    "signature": "ParserTest()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.ParserTest()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "this('default');",
+        "detail": "this('default');",
+        "line": 76
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "constructor",
+    "name": "ParserTest",
+    "member": "ParserTest.ParserTest",
+    "signature": "ParserTest(String)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.ParserTest(String)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "super();\nthis.name = name;",
+        "detail": "super();\nthis.name = name;",
+        "line": 80,
+        "count": 2
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "relationshipSoql",
+    "member": "ParserTest.relationshipSoql",
+    "signature": "relationshipSoql()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.relationshipSoql()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "return",
+        "label": "return [",
+        "detail": "return [\n            SELECT\n                Id,\n                Name,\n                Owner.Name,\n                Parent.Owner.Name,\n                (\n                    SELECT Id, FirstName, Account.Name\n                    FROM Contacts\n                    WHERE Email != NULL\n                    ORDER BY LastName\n                    LIMIT 10\n                )\n            FROM Account a\n            WHERE a.Industry = 'Technology'\n        ];",
+        "line": 585
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "runAsExample",
+    "member": "ParserTest.runAsExample",
+    "signature": "runAsExample(User)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.runAsExample(User)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "System.debug(UserInfo.getUserId());",
+        "detail": "System.debug(UserInfo.getUserId());",
+        "line": 510
+      },
+      {
+        "id": "n4",
+        "kind": "process",
+        "label": "System.debug('versioned');",
+        "detail": "System.debug('versioned');",
+        "line": 514
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "soqlClauses",
+    "member": "ParserTest.soqlClauses",
+    "signature": "soqlClauses()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.soqlClauses()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "query",
+        "label": "List<Account> mine = [SELECT Id FROM Account USING SCOPE Mi…",
+        "detail": "List<Account> mine = [SELECT Id FROM Account USING SCOPE Mine];",
+        "line": 719
+      },
+      {
+        "id": "n4",
+        "kind": "query",
+        "label": "List<Account> userMode = [SELECT Id FROM Account WITH USER_…",
+        "detail": "List<Account> userMode = [SELECT Id FROM Account WITH USER_MODE];",
+        "line": 721
+      },
+      {
+        "id": "n5",
+        "kind": "query",
+        "label": "List<Account> systemMode = [SELECT Id FROM Account WITH SYS…",
+        "detail": "List<Account> systemMode = [SELECT Id FROM Account WITH SYSTEM_MODE];",
+        "line": 723
+      },
+      {
+        "id": "n6",
+        "kind": "query",
+        "label": "List<Account> secured = [SELECT Id FROM Account WITH SECURI…",
+        "detail": "List<Account> secured = [SELECT Id FROM Account WITH SECURITY_ENFORCED];",
+        "line": 725
+      },
+      {
+        "id": "n7",
+        "kind": "query",
+        "label": "List<Knowledge__kav> articles = [",
+        "detail": "List<Knowledge__kav> articles = [\n            SELECT Title\n            FROM Knowledge__kav\n            WITH DATA CATEGORY Geography__c AT (Usa__c, Uk__c)\n                AND Product__c ABOVE_OR_BELOW Mobile__c\n                AND Topic__c ABOVE Root__c\n                AND Region__c BELOW Asia__c\n        ];",
+        "line": 727
+      },
+      {
+        "id": "n8",
+        "kind": "query",
+        "label": "List<Account> deleted = [SELECT Id FROM Account WHERE IsDel…",
+        "detail": "List<Account> deleted = [SELECT Id FROM Account WHERE IsDeleted = true ALL ROWS];",
+        "line": 736
+      },
+      {
+        "id": "n9",
+        "kind": "query",
+        "label": "List<Account> locked = [SELECT Id FROM Account FOR UPDATE];",
+        "detail": "List<Account> locked = [SELECT Id FROM Account FOR UPDATE];",
+        "line": 738
+      },
+      {
+        "id": "n10",
+        "kind": "query",
+        "label": "List<Account> viewed = [SELECT Id FROM Account FOR VIEW];",
+        "detail": "List<Account> viewed = [SELECT Id FROM Account FOR VIEW];",
+        "line": 740
+      },
+      {
+        "id": "n11",
+        "kind": "query",
+        "label": "List<Account> referenced = [SELECT Id FROM Account FOR REFE…",
+        "detail": "List<Account> referenced = [SELECT Id FROM Account FOR REFERENCE];",
+        "line": 742
+      },
+      {
+        "id": "n12",
+        "kind": "query",
+        "label": "List<FAQ__kav> tracked = [SELECT Id FROM FAQ__kav UPDATE TR…",
+        "detail": "List<FAQ__kav> tracked = [SELECT Id FROM FAQ__kav UPDATE TRACKING, VIEWSTAT];",
+        "line": 744
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n5",
+        "kind": "normal"
+      },
+      {
+        "from": "n5",
+        "to": "n6",
+        "kind": "normal"
+      },
+      {
+        "from": "n6",
+        "to": "n7",
+        "kind": "normal"
+      },
+      {
+        "from": "n7",
+        "to": "n8",
+        "kind": "normal"
+      },
+      {
+        "from": "n8",
+        "to": "n9",
+        "kind": "normal"
+      },
+      {
+        "from": "n9",
+        "to": "n10",
+        "kind": "normal"
+      },
+      {
+        "from": "n10",
+        "to": "n11",
+        "kind": "normal"
+      },
+      {
+        "from": "n11",
+        "to": "n12",
+        "kind": "normal"
+      },
+      {
+        "from": "n12",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "soslExamples",
+    "member": "ParserTest.soslExamples",
+    "signature": "soslExamples(String)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.soslExamples(String)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "query",
+        "label": "List<List<SObject>> simple = [FIND 'test' IN ALL FIELDS RET…",
+        "detail": "List<List<SObject>> simple = [FIND 'test' IN ALL FIELDS RETURNING Account, Contact];",
+        "line": 754
+      },
+      {
+        "id": "n4",
+        "kind": "query",
+        "label": "List<List<SObject>> bound = [",
+        "detail": "List<List<SObject>> bound = [\n            FIND :keyword\n            IN NAME FIELDS\n            RETURNING\n                Account(Id, Name WHERE Industry = 'Technology' ORDER BY Name LIMIT 10),\n                Contact(Id, FirstName, LastName),\n                Lead(Id, FirstName, LastName USING LISTVIEW = MyLeads OFFSET 5)\n            WITH DIVISION = 'Global'\n            WITH SNIPPET (target_length = 120)\n            WITH NETWORK IN ('0DBxx0000000001', '0DBxx0000000002')\n            WITH PRICEBOOKID = '01sxx0000000001'\n            WITH METADATA = 'LABELS'\n            LIMIT 100\n            UPDATE TRACKING, VIEWSTAT\n        ];",
+        "line": 756
+      },
+      {
+        "id": "n5",
+        "kind": "query",
+        "label": "List<List<SObject>> emails = [FIND 'a@example.com' IN EMAIL…",
+        "detail": "List<List<SObject>> emails = [FIND 'a@example.com' IN EMAIL FIELDS RETURNING Contact(Email)];",
+        "line": 772
+      },
+      {
+        "id": "n6",
+        "kind": "query",
+        "label": "List<List<SObject>> phones = [FIND '555' IN PHONE FIELDS RE…",
+        "detail": "List<List<SObject>> phones = [FIND '555' IN PHONE FIELDS RETURNING Contact];",
+        "line": 774
+      },
+      {
+        "id": "n7",
+        "kind": "query",
+        "label": "List<List<SObject>> sidebar = [FIND 'x' IN SIDEBAR FIELDS R…",
+        "detail": "List<List<SObject>> sidebar = [FIND 'x' IN SIDEBAR FIELDS RETURNING Account WITH NETWORK = '0DBxx0000000001'];",
+        "line": 776
+      },
+      {
+        "id": "n8",
+        "kind": "query",
+        "label": "List<List<SObject>> categorized = [",
+        "detail": "List<List<SObject>> categorized = [\n            FIND 'help'\n            RETURNING KnowledgeArticleVersion(Id, Title)\n            WITH DATA CATEGORY Geography__c AT Usa__c\n        ];",
+        "line": 778
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n5",
+        "kind": "normal"
+      },
+      {
+        "from": "n5",
+        "to": "n6",
+        "kind": "normal"
+      },
+      {
+        "from": "n6",
+        "to": "n7",
+        "kind": "normal"
+      },
+      {
+        "from": "n7",
+        "to": "n8",
+        "kind": "normal"
+      },
+      {
+        "from": "n8",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "switchExamples",
+    "member": "ParserTest.switchExamples",
+    "signature": "switchExamples(Object, String, Integer, Status)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.switchExamples(Object, String, Integer, Status)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "decision",
+        "label": "switch on text",
+        "detail": "switch on text",
+        "line": 364
+      },
+      {
+        "id": "n4",
+        "kind": "return",
+        "label": "return 'Alpha';",
+        "detail": "return 'Alpha';",
+        "line": 366
+      },
+      {
+        "id": "n5",
+        "kind": "return",
+        "label": "return 'Beta or Gamma';",
+        "detail": "return 'Beta or Gamma';",
+        "line": 369
+      },
+      {
+        "id": "n6",
+        "kind": "return",
+        "label": "return 'null';",
+        "detail": "return 'null';",
+        "line": 372
+      },
+      {
+        "id": "n7",
+        "kind": "return",
+        "label": "return 'Unknown';",
+        "detail": "return 'Unknown';",
+        "line": 375
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "case",
+        "label": "'A'"
+      },
+      {
+        "from": "n4",
+        "to": "n2",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n5",
+        "kind": "case",
+        "label": "'B', 'C'"
+      },
+      {
+        "from": "n5",
+        "to": "n2",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n6",
+        "kind": "case",
+        "label": "null"
+      },
+      {
+        "from": "n6",
+        "to": "n2",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n7",
+        "kind": "case",
+        "label": "else"
+      },
+      {
+        "from": "n7",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "throwExample",
+    "member": "ParserTest.throwExample",
+    "signature": "throwExample()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.throwExample()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "throw",
+        "label": "throw new CustomException('Something went wrong');",
+        "detail": "throw new CustomException('Something went wrong');",
+        "line": 436
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "exception",
+        "label": "例外"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "toString",
+    "member": "ParserTest.toString",
+    "signature": "toString()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.toString()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "return",
+        "label": "return name;",
+        "detail": "return name;",
+        "line": 110
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "typeOfSoql",
+    "member": "ParserTest.typeOfSoql",
+    "signature": "typeOfSoql()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.typeOfSoql()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "return",
+        "label": "return [",
+        "detail": "return [\n            SELECT\n                Id,\n                TYPEOF What\n                    WHEN Account THEN Name, Phone\n                    WHEN Opportunity THEN Amount, CloseDate\n                    ELSE Name\n                END\n            FROM Event\n        ];",
+        "line": 610
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
+    "name": "whereSoql",
+    "member": "ParserTest.whereSoql",
+    "signature": "whereSoql(String, Decimal, Set<Id>)",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.whereSoql(String, Decimal, Set<Id>)"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "return",
+        "label": "return [",
+        "detail": "return [\n            SELECT Id, Name\n            FROM Account\n            WHERE\n                Industry = :industry\n                AND AnnualRevenue > :revenue\n                AND AnnualRevenue >= 1000\n                AND AnnualRevenue < 1000000\n                AND AnnualRevenue <= -1.5\n                AND NumberOfEmployees != 0\n                AND Name LIKE 'Test%'\n                AND (Phone = NULL OR Fax != NULL)\n                AND (NOT Name = 'Excluded')\n                AND Id IN :ids\n                AND Id NOT IN :new Set<Id>()\n                AND Industry IN ('Technology', 'Finance')\n                AND Type NOT IN ('Other')\n                AND Interests__c INCLUDES ('Golf', 'Tennis')\n                AND Interests__c EXCLUDES ('Chess')\n                AND IsDeleted = false\n…",
+        "line": 549
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest.WithoutSharingHandler",
+    "memberType": "method",
+    "name": "execute",
+    "member": "ParserTest.WithoutSharingHandler.execute",
+    "signature": "execute()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.WithoutSharingHandler.execute()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "System.debug('without sharing');",
+        "detail": "System.debug('without sharing');",
+        "line": 813
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\triggers\\ParserTrigger.trigger",
+    "language": "apex",
+    "unit": "ParserTrigger",
+    "owner": "ParserTrigger",
+    "memberType": "trigger",
+    "name": "ParserTrigger",
+    "member": "ParserTrigger.ParserTrigger",
+    "signature": "ParserTrigger()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "trigger ParserTrigger"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "System.debug(Trigger.isExecuting);\nSystem.debug(Trigger.isBefore);\nSystem.debug(Trigger.isAfter);\n… (ほか 10 文)",
+        "detail": "System.debug(Trigger.isExecuting);\nSystem.debug(Trigger.isBefore);\nSystem.debug(Trigger.isAfter);\nSystem.debug(Trigger.isInsert);\nSystem.debug(Trigger.isUpdate);\nSystem.debug(Trigger.isDelete);\nSystem.debug(Trigger.isUndelete);\nSystem.debug(Trigger.new);\nSystem.debug(Trigger.old);\nSystem.debug(Trigger.newMap);\nSystem.debug(Trigger.oldMap);\nSystem.debug(Trigger.operationType);\nSystem.debug(Trigger.size);",
+        "line": 16,
+        "count": 13
+      },
+      {
+        "id": "n4",
+        "kind": "decision",
+        "label": "switch on Trigger.operationType",
+        "detail": "switch on Trigger.operationType",
+        "line": 65
+      },
+      {
+        "id": "n5",
+        "kind": "process",
+        "label": "invocationCount++;",
+        "detail": "invocationCount++;",
+        "line": 67
+      },
+      {
+        "id": "n6",
+        "kind": "process",
+        "label": "invocationCount--;",
+        "detail": "invocationCount--;",
+        "line": 70
+      },
+      {
+        "id": "n7",
+        "kind": "process",
+        "label": "invocationCount += 0;",
+        "detail": "invocationCount += 0;",
+        "line": 73
+      },
+      {
+        "id": "n8",
+        "kind": "decision",
+        "label": "Trigger.isBefore && Trigger.isInsert",
+        "detail": "Trigger.isBefore && Trigger.isInsert",
+        "line": 82
+      },
+      {
+        "id": "n9",
+        "kind": "loop",
+        "label": "for (Account account : Trigger.new)",
+        "detail": "for (Account account : Trigger.new)",
+        "line": 84
+      },
+      {
+        "id": "n10",
+        "kind": "decision",
+        "label": "String.isBlank(account.Name)",
+        "detail": "String.isBlank(account.Name)",
+        "line": 86
+      },
+      {
+        "id": "n11",
+        "kind": "process",
+        "label": "account.Name = 'Default Account';",
+        "detail": "account.Name = 'Default Account';",
+        "line": 87
+      },
+      {
+        "id": "n12",
+        "kind": "process",
+        "label": "account.Description = 'Created by trigger';",
+        "detail": "account.Description = 'Created by trigger';",
+        "line": 90
+      },
+      {
+        "id": "n13",
+        "kind": "decision",
+        "label": "Trigger.isBefore && Trigger.isUpdate",
+        "detail": "Trigger.isBefore && Trigger.isUpdate",
+        "line": 99
+      },
+      {
+        "id": "n14",
+        "kind": "loop",
+        "label": "for (Account account : Trigger.new)",
+        "detail": "for (Account account : Trigger.new)",
+        "line": 101
+      },
+      {
+        "id": "n15",
+        "kind": "process",
+        "label": "Account oldAccount = Trigger.oldMap.get(account.Id);",
+        "detail": "Account oldAccount = Trigger.oldMap.get(account.Id);",
+        "line": 103
+      },
+      {
+        "id": "n16",
+        "kind": "decision",
+        "label": "account.Name != oldAccount.Name",
+        "detail": "account.Name != oldAccount.Name",
+        "line": 105
+      },
+      {
+        "id": "n17",
+        "kind": "process",
+        "label": "account.Description = 'Name changed';",
+        "detail": "account.Description = 'Name changed';",
+        "line": 106
+      },
+      {
+        "id": "n18",
+        "kind": "decision",
+        "label": "account.AnnualRevenue < 0",
+        "detail": "account.AnnualRevenue < 0",
+        "line": 109
+      },
+      {
+        "id": "n19",
+        "kind": "process",
+        "label": "account.addError('AnnualRevenue must be positive');",
+        "detail": "account.addError('AnnualRevenue must be positive');",
+        "line": 110
+      },
+      {
+        "id": "n20",
+        "kind": "decision",
+        "label": "Trigger.isBefore && Trigger.isDelete",
+        "detail": "Trigger.isBefore && Trigger.isDelete",
+        "line": 120
+      },
+      {
+        "id": "n21",
+        "kind": "loop",
+        "label": "for (Account account : Trigger.old)",
+        "detail": "for (Account account : Trigger.old)",
+        "line": 122
+      },
+      {
+        "id": "n22",
+        "kind": "process",
+        "label": "System.debug('Deleting: ' + account.Name);",
+        "detail": "System.debug('Deleting: ' + account.Name);",
+        "line": 123
+      },
+      {
+        "id": "n23",
+        "kind": "decision",
+        "label": "Trigger.isAfter && Trigger.isInsert",
+        "detail": "Trigger.isAfter && Trigger.isInsert",
+        "line": 132
+      },
+      {
+        "id": "n24",
+        "kind": "process",
+        "label": "List<Contact> contacts = new List<Contact>();",
+        "detail": "List<Contact> contacts = new List<Contact>();",
+        "line": 134
+      },
+      {
+        "id": "n25",
+        "kind": "loop",
+        "label": "for (Account account : Trigger.new)",
+        "detail": "for (Account account : Trigger.new)",
+        "line": 136
+      },
+      {
+        "id": "n26",
+        "kind": "process",
+        "label": "contacts.add(",
+        "detail": "contacts.add(\n                new Contact(\n                    LastName = account.Name,\n                    AccountId = account.Id\n                )\n            );",
+        "line": 137
+      },
+      {
+        "id": "n27",
+        "kind": "decision",
+        "label": "!contacts.isEmpty()",
+        "detail": "!contacts.isEmpty()",
+        "line": 145
+      },
+      {
+        "id": "n28",
+        "kind": "dml",
+        "label": "insert as user contacts;",
+        "detail": "insert as user contacts;",
+        "line": 146
+      },
+      {
+        "id": "n29",
+        "kind": "decision",
+        "label": "Trigger.isAfter && Trigger.isUpdate",
+        "detail": "Trigger.isAfter && Trigger.isUpdate",
+        "line": 155
+      },
+      {
+        "id": "n30",
+        "kind": "process",
+        "label": "Set<Id> accountIds = new Set<Id>();\naccountIds.addAll(Trigger.newMap.keySet());",
+        "detail": "Set<Id> accountIds = new Set<Id>();\naccountIds.addAll(Trigger.newMap.keySet());",
+        "line": 157,
+        "count": 2
+      },
+      {
+        "id": "n31",
+        "kind": "query",
+        "label": "List<Account> accounts = [",
+        "detail": "List<Account> accounts = [\n            SELECT\n                Id,\n                Name,\n                Industry,\n                (\n                    SELECT Id, FirstName, LastName\n                    FROM Contacts\n                )\n            FROM Account\n            WHERE Id IN :accountIds\n        ];",
+        "line": 161
+      },
+      {
+        "id": "n32",
+        "kind": "process",
+        "label": "List<Contact> toUpdate = new List<Contact>();",
+        "detail": "List<Contact> toUpdate = new List<Contact>();",
+        "line": 174
+      },
+      {
+        "id": "n33",
+        "kind": "loop",
+        "label": "for (Account account : accounts)",
+        "detail": "for (Account account : accounts)",
+        "line": 176
+      },
+      {
+        "id": "n34",
+        "kind": "loop",
+        "label": "for (Contact contact : account.Contacts)",
+        "detail": "for (Contact contact : account.Contacts)",
+        "line": 177,
+        "inLoop": true
+      },
+      {
+        "id": "n35",
+        "kind": "process",
+        "label": "contact.Description = account.Name;\ntoUpdate.add(contact);",
+        "detail": "contact.Description = account.Name;\ntoUpdate.add(contact);",
+        "line": 178,
+        "count": 2
+      },
+      {
+        "id": "n36",
+        "kind": "dml",
+        "label": "update toUpdate;",
+        "detail": "update toUpdate;",
+        "line": 183
+      },
+      {
+        "id": "n37",
+        "kind": "decision",
+        "label": "Trigger.isAfter && Trigger.isDelete",
+        "detail": "Trigger.isAfter && Trigger.isDelete",
+        "line": 191
+      },
+      {
+        "id": "n38",
+        "kind": "query",
+        "label": "List<Task> tasks = [SELECT Id FROM Task WHERE WhatId IN :Tr…",
+        "detail": "List<Task> tasks = [SELECT Id FROM Task WHERE WhatId IN :Trigger.oldMap.keySet() ALL ROWS];",
+        "line": 193
+      },
+      {
+        "id": "n39",
+        "kind": "dml",
+        "label": "delete tasks;",
+        "detail": "delete tasks;",
+        "line": 195
+      },
+      {
+        "id": "n40",
+        "kind": "loop",
+        "label": "for (Account account : Trigger.old)",
+        "detail": "for (Account account : Trigger.old)",
+        "line": 197
+      },
+      {
+        "id": "n41",
+        "kind": "process",
+        "label": "System.debug('Deleted: ' + account.Id);",
+        "detail": "System.debug('Deleted: ' + account.Id);",
+        "line": 198
+      },
+      {
+        "id": "n42",
+        "kind": "decision",
+        "label": "Trigger.isAfter && Trigger.isUndelete",
+        "detail": "Trigger.isAfter && Trigger.isUndelete",
+        "line": 207
+      },
+      {
+        "id": "n43",
+        "kind": "try",
+        "label": "try",
+        "line": 209
+      },
+      {
+        "id": "n44",
+        "kind": "loop",
+        "label": "for (Account account : Trigger.new)",
+        "detail": "for (Account account : Trigger.new)",
+        "line": 210
+      },
+      {
+        "id": "n45",
+        "kind": "process",
+        "label": "log('Restored: ' + account.Id);",
+        "detail": "log('Restored: ' + account.Id);",
+        "line": 211
+      },
+      {
+        "id": "n46",
+        "kind": "catch",
+        "label": "catch (Exception e)"
+      },
+      {
+        "id": "n47",
+        "kind": "process",
+        "label": "System.debug(e.getMessage());",
+        "detail": "System.debug(e.getMessage());",
+        "line": 214
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n5",
+        "kind": "case",
+        "label": "BEFORE_INSERT, BEFORE_UPDATE"
+      },
+      {
+        "from": "n4",
+        "to": "n6",
+        "kind": "case",
+        "label": "AFTER_DELETE"
+      },
+      {
+        "from": "n4",
+        "to": "n7",
+        "kind": "case",
+        "label": "else"
+      },
+      {
+        "from": "n5",
+        "to": "n8",
+        "kind": "normal"
+      },
+      {
+        "from": "n6",
+        "to": "n8",
+        "kind": "normal"
+      },
+      {
+        "from": "n7",
+        "to": "n8",
+        "kind": "normal"
+      },
+      {
+        "from": "n8",
+        "to": "n9",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n9",
+        "to": "n10",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n10",
+        "to": "n11",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n11",
+        "to": "n12",
+        "kind": "normal"
+      },
+      {
+        "from": "n10",
+        "to": "n12",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n12",
+        "to": "n9",
+        "kind": "back"
+      },
+      {
+        "from": "n9",
+        "to": "n13",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n8",
+        "to": "n13",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n13",
+        "to": "n14",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n14",
+        "to": "n15",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n15",
+        "to": "n16",
+        "kind": "normal"
+      },
+      {
+        "from": "n16",
+        "to": "n17",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n17",
+        "to": "n18",
+        "kind": "normal"
+      },
+      {
+        "from": "n16",
+        "to": "n18",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n18",
+        "to": "n19",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n19",
+        "to": "n14",
+        "kind": "back"
+      },
+      {
+        "from": "n18",
+        "to": "n14",
+        "kind": "back"
+      },
+      {
+        "from": "n14",
+        "to": "n20",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n13",
+        "to": "n20",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n20",
+        "to": "n21",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n21",
+        "to": "n22",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n22",
+        "to": "n21",
+        "kind": "back"
+      },
+      {
+        "from": "n21",
+        "to": "n23",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n20",
+        "to": "n23",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n23",
+        "to": "n24",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n24",
+        "to": "n25",
+        "kind": "normal"
+      },
+      {
+        "from": "n25",
+        "to": "n26",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n26",
+        "to": "n25",
+        "kind": "back"
+      },
+      {
+        "from": "n25",
+        "to": "n27",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n27",
+        "to": "n28",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n28",
+        "to": "n29",
+        "kind": "normal"
+      },
+      {
+        "from": "n27",
+        "to": "n29",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n23",
+        "to": "n29",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n29",
+        "to": "n30",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n30",
+        "to": "n31",
+        "kind": "normal"
+      },
+      {
+        "from": "n31",
+        "to": "n32",
+        "kind": "normal"
+      },
+      {
+        "from": "n32",
+        "to": "n33",
+        "kind": "normal"
+      },
+      {
+        "from": "n33",
+        "to": "n34",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n34",
+        "to": "n35",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n35",
+        "to": "n34",
+        "kind": "back"
+      },
+      {
+        "from": "n34",
+        "to": "n33",
+        "kind": "back"
+      },
+      {
+        "from": "n33",
+        "to": "n36",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n36",
+        "to": "n37",
+        "kind": "normal"
+      },
+      {
+        "from": "n29",
+        "to": "n37",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n37",
+        "to": "n38",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n38",
+        "to": "n39",
+        "kind": "normal"
+      },
+      {
+        "from": "n39",
+        "to": "n40",
+        "kind": "normal"
+      },
+      {
+        "from": "n40",
+        "to": "n41",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n41",
+        "to": "n40",
+        "kind": "back"
+      },
+      {
+        "from": "n40",
+        "to": "n42",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n37",
+        "to": "n42",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n42",
+        "to": "n43",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n43",
+        "to": "n44",
+        "kind": "normal"
+      },
+      {
+        "from": "n44",
+        "to": "n45",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n45",
+        "to": "n44",
+        "kind": "back"
+      },
+      {
+        "from": "n43",
+        "to": "n46",
+        "kind": "exception",
+        "label": "例外"
+      },
+      {
+        "from": "n46",
+        "to": "n47",
+        "kind": "normal"
+      },
+      {
+        "from": "n44",
+        "to": "n2",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n47",
+        "to": "n2",
+        "kind": "normal"
+      },
+      {
+        "from": "n42",
+        "to": "n2",
+        "kind": "no",
+        "label": "いいえ"
+      }
+    ]
+  },
+  {
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\scripts\\apex\\script.apex",
+    "language": "apex",
+    "unit": "script",
+    "owner": "script",
+    "memberType": "anonymous",
+    "name": "script",
+    "member": "script.script",
+    "signature": "script()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "script"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "process",
+        "label": "System.debug('end');",
+        "detail": "System.debug('end');",
+        "line": 7
+      },
+      {
+        "id": "n4",
+        "kind": "loop",
+        "label": "for (Integer k = 0; k < 5; k++)",
+        "detail": "for (Integer k = 0; k < 5; k++)",
+        "line": 8
+      },
+      {
+        "id": "n5",
+        "kind": "decision",
+        "label": "k == 1",
+        "detail": "k == 1",
+        "line": 9
+      },
+      {
+        "id": "n6",
+        "kind": "process",
+        "label": "System.debug('skip');",
+        "detail": "System.debug('skip');",
+        "line": 10
+      },
+      {
+        "id": "n7",
+        "kind": "decision",
+        "label": "k >= 2",
+        "detail": "k >= 2",
+        "line": 13
+      },
+      {
+        "id": "n8",
+        "kind": "process",
+        "label": "System.debug('stop');",
+        "detail": "System.debug('stop');",
+        "line": 14
+      },
+      {
+        "id": "n9",
+        "kind": "process",
+        "label": "helper(limitSize);",
+        "detail": "helper(limitSize);",
+        "line": 18
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n5",
+        "kind": "loop",
+        "label": "繰り返す"
+      },
+      {
+        "from": "n5",
+        "to": "n6",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n6",
+        "to": "n4",
+        "kind": "back"
+      },
+      {
+        "from": "n5",
+        "to": "n7",
+        "kind": "no",
+        "label": "いいえ"
+      },
+      {
+        "from": "n7",
+        "to": "n8",
+        "kind": "yes",
+        "label": "はい"
+      },
+      {
+        "from": "n7",
+        "to": "n4",
+        "kind": "back"
+      },
+      {
+        "from": "n4",
+        "to": "n9",
+        "kind": "no",
+        "label": "終わり"
+      },
+      {
+        "from": "n8",
+        "to": "n9",
+        "kind": "normal"
+      },
+      {
+        "from": "n9",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  }
+]

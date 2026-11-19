@@ -1,0 +1,155 @@
+[
+  {
+    "status": "unchanged",
+    "object": "Account",
+    "memberType": "compactLayout",
+    "name": "AccountCompact",
+    "label": "Account Compact",
+    "details": [
+      "fields = Name, Tier__c"
+    ],
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Account"
+  },
+  {
+    "status": "changed",
+    "object": "Account",
+    "memberType": "listView",
+    "name": "AllAccounts",
+    "label": "All Accounts",
+    "details": [
+      "filterScope = Everything",
+      "columns = ACCOUNT.NAME, Tier__c, ACCOUNT.TYPE"
+    ],
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Account",
+    "changedDetails": [
+      "columns = ACCOUNT.NAME, Tier__c, ACCOUNT.TYPE"
+    ]
+  },
+  {
+    "status": "unchanged",
+    "object": "Invoice__c",
+    "memberType": "actionOverride",
+    "name": "View (Large)",
+    "description": "Invoice record page",
+    "details": [
+      "content = Invoice_Record_Page",
+      "skipRecordTypeSelect = false",
+      "type = Flexipage"
+    ],
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c"
+  },
+  {
+    "status": "changed",
+    "object": "Invoice__c",
+    "memberType": "fieldSet",
+    "name": "Summary",
+    "label": "Summary",
+    "description": "請求書の概要",
+    "details": [
+      "displayedFields[Status__c].field = Status__c",
+      "displayedFields[Status__c].isFieldManaged = false",
+      "displayedFields[Status__c].isRequired = false",
+      "displayedFields[Amount__c].field = Amount__c",
+      "displayedFields[Amount__c].isFieldManaged = false",
+      "displayedFields[Amount__c].isRequired = false"
+    ],
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c"
+  },
+  {
+    "status": "changed",
+    "object": "Invoice__c",
+    "memberType": "recordType",
+    "name": "Standard",
+    "label": "Standard",
+    "details": [
+      "active = true",
+      "picklistValues[Status__c].picklist = Status__c",
+      "picklistValues[Status__c].values[Draft].fullName = Draft",
+      "picklistValues[Status__c].values[Draft].default = true",
+      "picklistValues[Status__c].values[Overdue].fullName = Overdue",
+      "picklistValues[Status__c].values[Overdue].default = false"
+    ],
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c",
+    "changedDetails": [
+      "picklistValues[Status__c].values[Overdue].fullName = Overdue",
+      "picklistValues[Status__c].values[Overdue].default = false"
+    ]
+  },
+  {
+    "status": "changed",
+    "object": "Invoice__c",
+    "memberType": "searchLayout",
+    "name": "customTabListAdditionalFields",
+    "details": [
+      "fields = Amount__c, Status__c"
+    ],
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c",
+    "changedDetails": [
+      "fields = Amount__c, Status__c"
+    ]
+  },
+  {
+    "status": "changed",
+    "object": "Invoice__c",
+    "memberType": "searchLayout",
+    "name": "searchResultsAdditionalFields",
+    "details": [
+      "fields = Account__c, Amount__c"
+    ],
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c",
+    "changedDetails": [
+      "fields = Account__c, Amount__c"
+    ]
+  },
+  {
+    "status": "unchanged",
+    "object": "Invoice__c",
+    "memberType": "sharingReason",
+    "name": "Approver__c",
+    "label": "Invoice Approver",
+    "details": [],
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c"
+  },
+  {
+    "status": "changed",
+    "object": "Invoice__c",
+    "memberType": "webLink",
+    "name": "Send_Invoice",
+    "label": "Send Invoice",
+    "details": [
+      "availability = online",
+      "displayType = button",
+      "linkType = url",
+      "openType = replace",
+      "protected = false",
+      "url = /lightning/cmp/c__sendInvoice?c__id={!Invoice__c.Id}"
+    ],
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c",
+    "changedDetails": [
+      "url = /lightning/cmp/c__sendInvoice?c__id={!Invoice__c.Id}"
+    ]
+  },
+  {
+    "status": "changed",
+    "object": "Opportunity",
+    "memberType": "businessProcess",
+    "name": "Standard_Sales",
+    "description": "標準の営業プロセス (交渉を含む)",
+    "details": [
+      "isActive = true",
+      "values[Prospecting].fullName = Prospecting",
+      "values[Prospecting].default = true",
+      "values[Qualification].fullName = Qualification",
+      "values[Qualification].default = false",
+      "values[Negotiation/Review].fullName = Negotiation/Review",
+      "values[Negotiation/Review].default = false",
+      "values[Closed Won].fullName = Closed Won",
+      "values[Closed Won].default = false"
+    ],
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Opportunity",
+    "changedDetails": [
+      "values[Negotiation/Review].fullName = Negotiation/Review",
+      "values[Negotiation/Review].default = false"
+    ]
+  }
+]

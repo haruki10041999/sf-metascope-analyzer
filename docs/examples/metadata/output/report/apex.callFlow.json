@@ -1,0 +1,1081 @@
+[
+  {
+    "start": "AccountService.execute",
+    "unit": "AccountService",
+    "participants": [
+      "AccountService",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "AccountService",
+        "to": "AccountService",
+        "label": "sync()",
+        "kind": "call",
+        "depth": 1,
+        "line": 164
+      },
+      {
+        "from": "AccountService",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 2,
+        "line": 58
+      },
+      {
+        "from": "AccountService",
+        "to": "Database",
+        "label": "update Account",
+        "kind": "dml",
+        "depth": 2,
+        "line": 62
+      }
+    ]
+  },
+  {
+    "start": "AccountService.expressions",
+    "unit": "AccountService",
+    "participants": [
+      "AccountService",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "AccountService",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 153
+      },
+      {
+        "from": "AccountService",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 154
+      },
+      {
+        "from": "AccountService",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 155
+      }
+    ]
+  },
+  {
+    "start": "AccountService.process",
+    "unit": "AccountService",
+    "participants": [
+      "AccountService",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "AccountService",
+        "to": "AccountService",
+        "label": "log()",
+        "kind": "call",
+        "depth": 1,
+        "line": 94,
+        "inLoop": true
+      },
+      {
+        "from": "AccountService",
+        "to": "Database",
+        "label": "insert Account",
+        "kind": "dml",
+        "depth": 1,
+        "line": 97
+      },
+      {
+        "from": "AccountService",
+        "to": "AccountService",
+        "label": "log()",
+        "kind": "call",
+        "depth": 1,
+        "line": 99
+      },
+      {
+        "from": "AccountService",
+        "to": "AccountService",
+        "label": "log()",
+        "kind": "call",
+        "depth": 1,
+        "line": 100
+      }
+    ]
+  },
+  {
+    "start": "AccountService.search",
+    "unit": "AccountService",
+    "participants": [
+      "AccountService",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "AccountService",
+        "to": "Database",
+        "label": "FIND Account, Contact, Lead",
+        "kind": "query",
+        "depth": 1,
+        "line": 119
+      },
+      {
+        "from": "AccountService",
+        "to": "Database",
+        "label": "delete Contact",
+        "kind": "dml",
+        "depth": 1,
+        "line": 121
+      },
+      {
+        "from": "AccountService",
+        "to": "Database",
+        "label": "SELECT Contact",
+        "kind": "query",
+        "depth": 1,
+        "line": 121
+      },
+      {
+        "from": "AccountService",
+        "to": "Database",
+        "label": "upsert Account",
+        "kind": "dml",
+        "depth": 1,
+        "line": 123
+      },
+      {
+        "from": "AccountService",
+        "to": "Database",
+        "label": "merge",
+        "kind": "dml",
+        "depth": 1,
+        "line": 124
+      },
+      {
+        "from": "AccountService",
+        "to": "Database",
+        "label": "undelete Account",
+        "kind": "dml",
+        "depth": 1,
+        "line": 125
+      }
+    ]
+  },
+  {
+    "start": "AccountService.stats",
+    "unit": "AccountService",
+    "participants": [
+      "AccountService",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "AccountService",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 131
+      }
+    ]
+  },
+  {
+    "start": "AccountService.sync",
+    "unit": "AccountService",
+    "participants": [
+      "AccountService",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "AccountService",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 58
+      },
+      {
+        "from": "AccountService",
+        "to": "Database",
+        "label": "update Account",
+        "kind": "dml",
+        "depth": 1,
+        "line": 62
+      }
+    ]
+  },
+  {
+    "start": "AccountTrigger",
+    "unit": "AccountTrigger",
+    "participants": [
+      "AccountTrigger",
+      "AccountService"
+    ],
+    "messages": [
+      {
+        "from": "AccountTrigger",
+        "to": "AccountService",
+        "label": "validate()",
+        "kind": "call",
+        "depth": 1,
+        "line": 4
+      }
+    ]
+  },
+  {
+    "start": "broken",
+    "unit": "broken",
+    "participants": [
+      "broken",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "broken",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 2
+      }
+    ]
+  },
+  {
+    "start": "Broken.run",
+    "unit": "Broken",
+    "participants": [
+      "Broken",
+      "broken"
+    ],
+    "messages": [
+      {
+        "from": "Broken",
+        "to": "broken",
+        "label": "foo()",
+        "kind": "call",
+        "depth": 1,
+        "line": 3
+      },
+      {
+        "from": "Broken",
+        "to": "broken",
+        "label": "b()",
+        "kind": "call",
+        "depth": 1,
+        "line": 5
+      }
+    ]
+  },
+  {
+    "start": "parser",
+    "unit": "parser",
+    "participants": [
+      "parser",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "parser",
+        "to": "Database",
+        "label": "insert",
+        "kind": "dml",
+        "depth": 1,
+        "line": 104
+      },
+      {
+        "from": "parser",
+        "to": "Database",
+        "label": "update",
+        "kind": "dml",
+        "depth": 1,
+        "line": 116
+      },
+      {
+        "from": "parser",
+        "to": "Database",
+        "label": "upsert",
+        "kind": "dml",
+        "depth": 1,
+        "line": 118
+      },
+      {
+        "from": "parser",
+        "to": "Database",
+        "label": "insert",
+        "kind": "dml",
+        "depth": 1,
+        "line": 122
+      },
+      {
+        "from": "parser",
+        "to": "Database",
+        "label": "merge",
+        "kind": "dml",
+        "depth": 1,
+        "line": 124
+      },
+      {
+        "from": "parser",
+        "to": "Database",
+        "label": "delete",
+        "kind": "dml",
+        "depth": 1,
+        "line": 126
+      },
+      {
+        "from": "parser",
+        "to": "Database",
+        "label": "undelete",
+        "kind": "dml",
+        "depth": 1,
+        "line": 128
+      },
+      {
+        "from": "parser",
+        "to": "Database",
+        "label": "insert",
+        "kind": "dml",
+        "depth": 1,
+        "line": 141
+      },
+      {
+        "from": "parser",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 149
+      },
+      {
+        "from": "parser",
+        "to": "Database",
+        "label": "SELECT Contact",
+        "kind": "query",
+        "depth": 1,
+        "line": 155
+      },
+      {
+        "from": "parser",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 161
+      },
+      {
+        "from": "parser",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 168
+      },
+      {
+        "from": "parser",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 172
+      },
+      {
+        "from": "parser",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 174
+      },
+      {
+        "from": "parser",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 176
+      },
+      {
+        "from": "parser",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 178
+      },
+      {
+        "from": "parser",
+        "to": "Database",
+        "label": "FIND Account, Contact",
+        "kind": "query",
+        "depth": 1,
+        "line": 185
+      },
+      {
+        "from": "parser",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 220,
+        "inLoop": true
+      },
+      {
+        "from": "parser",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 258
+      }
+    ]
+  },
+  {
+    "start": "ParserTest.aggregateSoql",
+    "unit": "ParserTest",
+    "participants": [
+      "ParserTest",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 630
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 644
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 647
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 653
+      }
+    ]
+  },
+  {
+    "start": "ParserTest.basicSoql",
+    "unit": "ParserTest",
+    "participants": [
+      "ParserTest",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 526
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 535
+      }
+    ]
+  },
+  {
+    "start": "ParserTest.controlFlow",
+    "unit": "ParserTest",
+    "participants": [
+      "ParserTest",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 349,
+        "inLoop": true
+      }
+    ]
+  },
+  {
+    "start": "ParserTest.databaseExample",
+    "unit": "ParserTest",
+    "participants": [
+      "ParserTest",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "insert Account",
+        "kind": "dml",
+        "depth": 1,
+        "line": 469
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "update Account",
+        "kind": "dml",
+        "depth": 1,
+        "line": 471
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "delete Account",
+        "kind": "dml",
+        "depth": 1,
+        "line": 473
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "upsert Account",
+        "kind": "dml",
+        "depth": 1,
+        "line": 475
+      }
+    ]
+  },
+  {
+    "start": "ParserTest.dmlExample",
+    "unit": "ParserTest",
+    "participants": [
+      "ParserTest",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "insert Account",
+        "kind": "dml",
+        "depth": 1,
+        "line": 446
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "insert Account",
+        "kind": "dml",
+        "depth": 1,
+        "line": 448
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "update Account",
+        "kind": "dml",
+        "depth": 1,
+        "line": 450
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "upsert Account",
+        "kind": "dml",
+        "depth": 1,
+        "line": 452
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "upsert Account",
+        "kind": "dml",
+        "depth": 1,
+        "line": 454
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "upsert Account",
+        "kind": "dml",
+        "depth": 1,
+        "line": 456
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "delete Account",
+        "kind": "dml",
+        "depth": 1,
+        "line": 458
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "undelete Account",
+        "kind": "dml",
+        "depth": 1,
+        "line": 460
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "merge Account",
+        "kind": "dml",
+        "depth": 1,
+        "line": 462
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "merge Account",
+        "kind": "dml",
+        "depth": 1,
+        "line": 464
+      }
+    ]
+  },
+  {
+    "start": "ParserTest.dynamicSoqlExample",
+    "unit": "ParserTest",
+    "participants": [
+      "ParserTest",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "query",
+        "kind": "query",
+        "depth": 1,
+        "line": 479
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "query",
+        "kind": "query",
+        "depth": 1,
+        "line": 486
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "query",
+        "kind": "query",
+        "depth": 1,
+        "line": 489
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "query",
+        "kind": "query",
+        "depth": 1,
+        "line": 495
+      }
+    ]
+  },
+  {
+    "start": "ParserTest.exceptionHandling",
+    "unit": "ParserTest",
+    "participants": [
+      "ParserTest",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 418
+      },
+      {
+        "from": "ParserTest",
+        "to": "ParserTest",
+        "label": "throwExample()",
+        "kind": "call",
+        "depth": 1,
+        "line": 429
+      }
+    ]
+  },
+  {
+    "start": "ParserTest.functionSoql",
+    "unit": "ParserTest",
+    "participants": [
+      "ParserTest",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 667
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 686
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 690
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 692
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 694
+      }
+    ]
+  },
+  {
+    "start": "ParserTest.locationSoql",
+    "unit": "ParserTest",
+    "participants": [
+      "ParserTest",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 705
+      }
+    ]
+  },
+  {
+    "start": "ParserTest.methodCalls",
+    "unit": "ParserTest",
+    "participants": [
+      "ParserTest",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "ParserTest",
+        "to": "ParserTest",
+        "label": "hook()",
+        "kind": "call",
+        "depth": 1,
+        "line": 295
+      },
+      {
+        "from": "ParserTest",
+        "to": "ParserTest",
+        "label": "hook()",
+        "kind": "call",
+        "depth": 1,
+        "line": 299
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 307
+      }
+    ]
+  },
+  {
+    "start": "ParserTest.relationshipSoql",
+    "unit": "ParserTest",
+    "participants": [
+      "ParserTest",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 586
+      }
+    ]
+  },
+  {
+    "start": "ParserTest.soqlClauses",
+    "unit": "ParserTest",
+    "participants": [
+      "ParserTest",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 719
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 721
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 723
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 725
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Knowledge__kav",
+        "kind": "query",
+        "depth": 1,
+        "line": 728
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 736
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 738
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 740
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 742
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT FAQ__kav",
+        "kind": "query",
+        "depth": 1,
+        "line": 744
+      }
+    ]
+  },
+  {
+    "start": "ParserTest.soslExamples",
+    "unit": "ParserTest",
+    "participants": [
+      "ParserTest",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "FIND Account, Contact",
+        "kind": "query",
+        "depth": 1,
+        "line": 754
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "FIND Account, Contact, Lead",
+        "kind": "query",
+        "depth": 1,
+        "line": 756
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "FIND Contact",
+        "kind": "query",
+        "depth": 1,
+        "line": 772
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "FIND Contact",
+        "kind": "query",
+        "depth": 1,
+        "line": 774
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "FIND Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 776
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "FIND KnowledgeArticleVersion",
+        "kind": "query",
+        "depth": 1,
+        "line": 778
+      }
+    ]
+  },
+  {
+    "start": "ParserTest.typeOfSoql",
+    "unit": "ParserTest",
+    "participants": [
+      "ParserTest",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Event",
+        "kind": "query",
+        "depth": 1,
+        "line": 611
+      }
+    ]
+  },
+  {
+    "start": "ParserTest.whereSoql",
+    "unit": "ParserTest",
+    "participants": [
+      "ParserTest",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 550
+      }
+    ]
+  },
+  {
+    "start": "ParserTrigger",
+    "unit": "ParserTrigger",
+    "participants": [
+      "ParserTrigger",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "ParserTrigger",
+        "to": "Database",
+        "label": "insert Contact",
+        "kind": "dml",
+        "depth": 1,
+        "line": 146
+      },
+      {
+        "from": "ParserTrigger",
+        "to": "Database",
+        "label": "SELECT Account",
+        "kind": "query",
+        "depth": 1,
+        "line": 162
+      },
+      {
+        "from": "ParserTrigger",
+        "to": "Database",
+        "label": "update Contact",
+        "kind": "dml",
+        "depth": 1,
+        "line": 183
+      },
+      {
+        "from": "ParserTrigger",
+        "to": "Database",
+        "label": "SELECT Task",
+        "kind": "query",
+        "depth": 1,
+        "line": 193
+      },
+      {
+        "from": "ParserTrigger",
+        "to": "Database",
+        "label": "delete Task",
+        "kind": "dml",
+        "depth": 1,
+        "line": 195
+      }
+    ]
+  }
+]

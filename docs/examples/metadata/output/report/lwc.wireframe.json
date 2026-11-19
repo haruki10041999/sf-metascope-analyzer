@@ -1,0 +1,459 @@
+{
+  "roots": [
+    "c/accountList",
+    "c/accountRow",
+    "c/broken",
+    "c/newBanner",
+    "c/oldBanner",
+    "c/utils"
+  ],
+  "components": [
+    {
+      "status": "changed",
+      "component": "c/accountList",
+      "label": "取引先一覧",
+      "templates": [
+        {
+          "fileName": "accountList.html",
+          "main": true,
+          "nodes": [
+            {
+              "type": "component",
+              "tag": "lightning-card",
+              "module": "lightning/card",
+              "source": "lightning",
+              "attributes": [
+                {
+                  "name": "title",
+                  "value": "{title}"
+                },
+                {
+                  "name": "icon-name",
+                  "value": "standard:account"
+                }
+              ],
+              "children": [
+                {
+                  "type": "component",
+                  "tag": "lightning-button",
+                  "module": "lightning/button",
+                  "source": "lightning",
+                  "attributes": [
+                    {
+                      "name": "slot",
+                      "value": "actions"
+                    },
+                    {
+                      "name": "label",
+                      "value": "再読み込み"
+                    },
+                    {
+                      "name": "variant",
+                      "value": "brand"
+                    }
+                  ],
+                  "events": [
+                    "click"
+                  ]
+                },
+                {
+                  "type": "component",
+                  "tag": "lightning-button",
+                  "module": "lightning/button",
+                  "source": "lightning",
+                  "attributes": [
+                    {
+                      "name": "slot",
+                      "value": "actions"
+                    },
+                    {
+                      "name": "label",
+                      "value": "保存"
+                    }
+                  ],
+                  "events": [
+                    "click"
+                  ]
+                },
+                {
+                  "type": "if",
+                  "branches": [
+                    {
+                      "label": "if {parentName}",
+                      "children": [
+                        {
+                          "type": "element",
+                          "tag": "p",
+                          "attributes": [
+                            {
+                              "name": "class",
+                              "value": "parent"
+                            }
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "text": "{parentName}"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "if",
+                  "branches": [
+                    {
+                      "label": "if {hasRows}",
+                      "children": [
+                        {
+                          "type": "if",
+                          "branches": [
+                            {
+                              "label": "if {isTable}",
+                              "children": [
+                                {
+                                  "type": "element",
+                                  "tag": "table",
+                                  "attributes": [
+                                    {
+                                      "name": "class",
+                                      "value": "slds-table"
+                                    }
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "element",
+                                      "tag": "tbody",
+                                      "children": [
+                                        {
+                                          "type": "for",
+                                          "items": "{rows}",
+                                          "text": "row",
+                                          "children": [
+                                            {
+                                              "type": "element",
+                                              "tag": "tr",
+                                              "children": [
+                                                {
+                                                  "type": "element",
+                                                  "tag": "td",
+                                                  "children": [
+                                                    {
+                                                      "type": "component",
+                                                      "tag": "c-account-row",
+                                                      "module": "c/accountRow",
+                                                      "source": "local",
+                                                      "attributes": [
+                                                        {
+                                                          "name": "record-id",
+                                                          "value": "{row.id}"
+                                                        },
+                                                        {
+                                                          "name": "name",
+                                                          "value": "{row.name}"
+                                                        },
+                                                        {
+                                                          "name": "amount",
+                                                          "value": "{row.amount}"
+                                                        }
+                                                      ],
+                                                      "events": [
+                                                        "select"
+                                                      ]
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "type": "element",
+                                                  "tag": "td",
+                                                  "children": [
+                                                    {
+                                                      "type": "element",
+                                                      "tag": "button",
+                                                      "attributes": [
+                                                        {
+                                                          "name": "data-id",
+                                                          "value": "{row.id}"
+                                                        }
+                                                      ],
+                                                      "events": [
+                                                        "click"
+                                                      ],
+                                                      "children": [
+                                                        {
+                                                          "type": "text",
+                                                          "text": "削除"
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "label": "else",
+                              "children": [
+                                {
+                                  "type": "for",
+                                  "items": "{rows}",
+                                  "text": "it",
+                                  "children": [
+                                    {
+                                      "type": "element",
+                                      "tag": "div",
+                                      "attributes": [
+                                        {
+                                          "name": "class",
+                                          "value": "tile"
+                                        }
+                                      ],
+                                      "children": [
+                                        {
+                                          "type": "if",
+                                          "branches": [
+                                            {
+                                              "label": "if {it.first}",
+                                              "children": [
+                                                {
+                                                  "type": "element",
+                                                  "tag": "span",
+                                                  "children": [
+                                                    {
+                                                      "type": "text",
+                                                      "text": "先頭:"
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "text",
+                                          "text": "{it.value.name}"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "element",
+                          "tag": "p",
+                          "attributes": [
+                            {
+                              "name": "class",
+                              "value": "total"
+                            }
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "text": "合計: {totalAmount}"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "label": "elseif {error}",
+                      "children": [
+                        {
+                          "type": "component",
+                          "tag": "c-error-panel",
+                          "module": "c/errorPanel",
+                          "source": "local",
+                          "attributes": [
+                            {
+                              "name": "errors",
+                              "value": "{error}"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "label": "else",
+                      "children": [
+                        {
+                          "type": "element",
+                          "tag": "p",
+                          "attributes": [
+                            {
+                              "name": "class",
+                              "value": "empty"
+                            }
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "text": "該当する取引先がありません"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "slot",
+                  "text": "footer"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "status": "unchanged",
+      "component": "c/accountRow",
+      "templates": [
+        {
+          "fileName": "accountRow.html",
+          "main": true,
+          "nodes": [
+            {
+              "type": "element",
+              "tag": "a",
+              "attributes": [
+                {
+                  "name": "href",
+                  "value": "#"
+                }
+              ],
+              "events": [
+                "click"
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "text": "{name}"
+                }
+              ]
+            },
+            {
+              "type": "element",
+              "tag": "span",
+              "attributes": [
+                {
+                  "name": "class",
+                  "value": "amount"
+                }
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "text": "{formattedAmount}"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "status": "unchanged",
+      "component": "c/broken",
+      "templates": [
+        {
+          "fileName": "broken.html",
+          "main": true,
+          "nodes": [
+            {
+              "type": "if",
+              "branches": [
+                {
+                  "label": "if {value}",
+                  "children": [
+                    {
+                      "type": "element",
+                      "tag": "div",
+                      "children": [
+                        {
+                          "type": "text",
+                          "text": "if:true と lwc:if は同時に使えない"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "component",
+              "tag": "c-child",
+              "module": "c/child",
+              "source": "local",
+              "events": [
+                "click"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "status": "added",
+      "component": "c/newBanner",
+      "templates": [
+        {
+          "fileName": "newBanner.html",
+          "main": true,
+          "nodes": [
+            {
+              "type": "element",
+              "tag": "p",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "{message}"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "status": "removed",
+      "component": "c/oldBanner",
+      "templates": [
+        {
+          "fileName": "oldBanner.html",
+          "main": true,
+          "nodes": [
+            {
+              "type": "element",
+              "tag": "p",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "{message}"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "status": "unchanged",
+      "component": "c/utils",
+      "templates": []
+    }
+  ]
+}

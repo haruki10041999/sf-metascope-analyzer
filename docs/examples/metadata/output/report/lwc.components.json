@@ -1,0 +1,173 @@
+[
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
+    "sourceKeys": {
+      "objectKey": "lwcBundleMeta_71d13672962d4cc2",
+      "sourceKey": "lwcBundleMeta_bacefca7e032e599"
+    },
+    "changedProperties": [
+      "targets",
+      "apiVersion",
+      "apiProperties",
+      "events",
+      "apexMethods"
+    ],
+    "component": "c/accountList",
+    "label": "取引先一覧",
+    "description": "親レコードに紐づく取引先の一覧",
+    "isExposed": true,
+    "targets": [
+      "lightning__RecordPage",
+      "lightning__AppPage",
+      "lightning__HomePage"
+    ],
+    "apiVersion": "62.0",
+    "language": "ts",
+    "apiProperties": [
+      "recordId",
+      "title",
+      "maxRows",
+      "industry"
+    ],
+    "events": [
+      "accountselect",
+      "accountsaved",
+      "reloaded"
+    ],
+    "childComponents": [
+      "c/accountRow",
+      "c/errorPanel"
+    ],
+    "baseComponents": [
+      "lightning/button",
+      "lightning/card"
+    ],
+    "apexMethods": [
+      "AccountController.deleteAccount",
+      "AccountController.getAccounts",
+      "AccountController.updateAccount"
+    ],
+    "objects": [
+      "Account"
+    ],
+    "findingCount": 1
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountRow",
+    "sourceKeys": {
+      "objectKey": "lwcBundleMeta_750374b0d2d703f7",
+      "sourceKey": "lwcBundleMeta_b1c5083212f5eed6"
+    },
+    "component": "c/accountRow",
+    "isExposed": false,
+    "targets": [],
+    "apiVersion": "61.0",
+    "language": "ts",
+    "apiProperties": [
+      "recordId",
+      "name",
+      "amount"
+    ],
+    "events": [
+      "select"
+    ],
+    "childComponents": [],
+    "baseComponents": [],
+    "apexMethods": [],
+    "objects": [],
+    "findingCount": 0
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\broken",
+    "sourceKeys": {
+      "objectKey": "lwcBundleMeta_750374b0d2d703f7",
+      "sourceKey": "lwcBundleMeta_f43f30872dd86c03"
+    },
+    "component": "c/broken",
+    "isExposed": false,
+    "targets": [],
+    "apiVersion": "61.0",
+    "language": "ts",
+    "apiProperties": [
+      "value"
+    ],
+    "events": [],
+    "childComponents": [
+      "c/child"
+    ],
+    "baseComponents": [],
+    "apexMethods": [],
+    "objects": [],
+    "findingCount": 1
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\newBanner",
+    "sourceKeys": {
+      "objectKey": "lwcBundleMeta_750374b0d2d703f7",
+      "sourceKey": "lwcBundleMeta_047173d67d1dd159"
+    },
+    "component": "c/newBanner",
+    "isExposed": false,
+    "targets": [],
+    "apiVersion": "61.0",
+    "language": "js",
+    "apiProperties": [
+      "message",
+      "variant"
+    ],
+    "events": [
+      "close"
+    ],
+    "childComponents": [],
+    "baseComponents": [],
+    "apexMethods": [],
+    "objects": [],
+    "findingCount": 0
+  },
+  {
+    "status": "removed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\lwc\\oldBanner",
+    "sourceKeys": {
+      "objectKey": "lwcBundleMeta_750374b0d2d703f7",
+      "sourceKey": "lwcBundleMeta_5373ecf9d9b59ae2"
+    },
+    "component": "c/oldBanner",
+    "isExposed": false,
+    "targets": [],
+    "apiVersion": "61.0",
+    "language": "js",
+    "apiProperties": [
+      "message"
+    ],
+    "events": [],
+    "childComponents": [],
+    "baseComponents": [],
+    "apexMethods": [],
+    "objects": [],
+    "findingCount": 0
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\utils",
+    "sourceKeys": {
+      "objectKey": "lwcBundleMeta_750374b0d2d703f7",
+      "sourceKey": "lwcBundleMeta_6eae05829f126570"
+    },
+    "component": "c/utils",
+    "isExposed": false,
+    "targets": [],
+    "apiVersion": "61.0",
+    "language": "ts",
+    "apiProperties": [],
+    "events": [],
+    "childComponents": [],
+    "baseComponents": [],
+    "apexMethods": [],
+    "objects": [],
+    "findingCount": 0
+  }
+]

@@ -1,0 +1,60 @@
+[
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\labels\\CustomLabels.labels-meta.xml",
+    "label": "AccountListTitle",
+    "value": "取引先の一覧",
+    "language": "ja",
+    "protected": false,
+    "shortDescription": "AccountListTitle",
+    "categories": [
+      "account",
+      "lwc",
+      "list"
+    ],
+    "translations": [
+      "ja: 取引先の一覧"
+    ],
+    "missingLanguages": []
+  },
+  {
+    "status": "removed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\labels\\CustomLabels.labels-meta.xml",
+    "label": "BannerMessage",
+    "value": "お知らせ",
+    "language": "ja",
+    "protected": false,
+    "shortDescription": "BannerMessage",
+    "categories": [],
+    "translations": [
+      "ja: お知らせ"
+    ],
+    "missingLanguages": []
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\labels\\CustomLabels.labels-meta.xml",
+    "label": "Invoice_Approved",
+    "value": "承認しました",
+    "language": "en_US",
+    "protected": false,
+    "shortDescription": "Approved message",
+    "categories": [],
+    "translations": [
+      "ja: 承認しました"
+    ],
+    "missingLanguages": []
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\labels\\CustomLabels.labels-meta.xml",
+    "label": "Invoice_Overdue",
+    "value": "支払期限を過ぎています",
+    "language": "ja",
+    "protected": false,
+    "shortDescription": "Invoice_Overdue",
+    "categories": [],
+    "translations": [],
+    "missingLanguages": []
+  }
+]

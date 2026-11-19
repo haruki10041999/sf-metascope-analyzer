@@ -8,7 +8,7 @@
     "message": "field Account.Interests__c is not in the repository (apexClass class_ParserTest, soql.where)",
     "sourceKeys": {
       "objectKey": "query_3fbfa2bbf0f88989",
-      "sourceKey": "query_6cee6cc97f3fddeb"
+      "sourceKey": "query_76a232ffccfcf005"
     }
   },
   {
@@ -20,7 +20,7 @@
     "message": "field Account.Birthdate__c is not in the repository (apexClass class_ParserTest, soql.where)",
     "sourceKeys": {
       "objectKey": "query_3fbfa2bbf0f88989",
-      "sourceKey": "query_6cee6cc97f3fddeb"
+      "sourceKey": "query_76a232ffccfcf005"
     }
   },
   {

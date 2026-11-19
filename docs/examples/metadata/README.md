@@ -15,6 +15,8 @@ npx ttsx --noCheck docs/examples/metadata/scripts/run-diff.ts
 npx ttsx --noCheck docs/examples/metadata/scripts/run-folders.ts
 ```
 
+`run-folders.ts` のレポート出力は通常は既定の引数を使い、必須引数のある provider には登録表の例を渡す。
+
 権限・カスタム表示ラベル・Flow・ページレイアウト・Lightning ページ（[metadata-implementation.md](../../metadata-implementation.md) 10 章）のサンプルは、末尾の「フォルダ単位のメタデータのサンプル」。テストは [test/processor/metadata-folders.test.ts](../../../test/processor/metadata-folders.test.ts)。
 
 期待どおりかどうかは、テスト [test/parser/metadata-parse.test.ts](../../../test/parser/metadata-parse.test.ts)、[test/processor/metadata-diff.test.ts](../../../test/processor/metadata-diff.test.ts)、翻訳は [test/parser/object-translation.test.ts](../../../test/parser/object-translation.test.ts) と [test/processor/object-translation.test.ts](../../../test/processor/object-translation.test.ts) で確かめる。サンプルは、すべての kind が差分のノードとして 1 回以上現れるように書いている。

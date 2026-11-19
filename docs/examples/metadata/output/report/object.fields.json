@@ -1,0 +1,645 @@
+[
+  {
+    "status": "unchanged",
+    "object": "Account",
+    "field": "Id",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Account",
+    "field": "Name",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Account",
+    "field": "CreatedDate",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Account",
+    "field": "CreatedById",
+    "origin": "implicit",
+    "referenceTo": "User"
+  },
+  {
+    "status": "unchanged",
+    "object": "Account",
+    "field": "LastModifiedDate",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Account",
+    "field": "LastModifiedById",
+    "origin": "implicit",
+    "referenceTo": "User"
+  },
+  {
+    "status": "unchanged",
+    "object": "Account",
+    "field": "SystemModstamp",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Account",
+    "field": "IsDeleted",
+    "origin": "implicit"
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Account",
+    "sourceKeys": {
+      "objectKey": "field_35dcb201899d1c7e",
+      "sourceKey": "field_e9b180230c37aa13"
+    },
+    "changedProperties": [
+      "label",
+      "required",
+      "valueSet"
+    ],
+    "object": "Account",
+    "field": "Tier__c",
+    "origin": "metadata",
+    "label": "Customer Tier",
+    "type": "Picklist",
+    "picklistValueCount": 4
+  },
+  {
+    "status": "unchanged",
+    "object": "App_Setting__mdt",
+    "field": "Id",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "App_Setting__mdt",
+    "field": "Name",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "App_Setting__mdt",
+    "field": "CreatedDate",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "App_Setting__mdt",
+    "field": "CreatedById",
+    "origin": "implicit",
+    "referenceTo": "User"
+  },
+  {
+    "status": "unchanged",
+    "object": "App_Setting__mdt",
+    "field": "LastModifiedDate",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "App_Setting__mdt",
+    "field": "LastModifiedById",
+    "origin": "implicit",
+    "referenceTo": "User"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\App_Setting__mdt",
+    "sourceKeys": {
+      "objectKey": "field_22e70efc4b06b061",
+      "sourceKey": "field_ff2305cde7be4892"
+    },
+    "object": "App_Setting__mdt",
+    "field": "Value__c",
+    "origin": "metadata",
+    "label": "Value",
+    "type": "Text",
+    "length": 255
+  },
+  {
+    "status": "unchanged",
+    "object": "Broken__c",
+    "field": "Id",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Broken__c",
+    "field": "Name",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Broken__c",
+    "field": "CreatedDate",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Broken__c",
+    "field": "CreatedById",
+    "origin": "implicit",
+    "referenceTo": "User"
+  },
+  {
+    "status": "unchanged",
+    "object": "Broken__c",
+    "field": "LastModifiedDate",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Broken__c",
+    "field": "LastModifiedById",
+    "origin": "implicit",
+    "referenceTo": "User"
+  },
+  {
+    "status": "unchanged",
+    "object": "Broken__c",
+    "field": "SystemModstamp",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Broken__c",
+    "field": "IsDeleted",
+    "origin": "implicit"
+  },
+  {
+    "status": "removed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Broken__c",
+    "sourceKeys": {
+      "objectKey": "field_8becff91dc6a38ac",
+      "sourceKey": "field_e340ec43b36f218c"
+    },
+    "object": "Broken__c",
+    "field": "Code__c",
+    "origin": "metadata",
+    "label": "Code",
+    "type": "Text",
+    "length": 10
+  },
+  {
+    "status": "unchanged",
+    "object": "Invoice__c",
+    "field": "Id",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Invoice__c",
+    "field": "Name",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Invoice__c",
+    "field": "CreatedDate",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Invoice__c",
+    "field": "CreatedById",
+    "origin": "implicit",
+    "referenceTo": "User"
+  },
+  {
+    "status": "unchanged",
+    "object": "Invoice__c",
+    "field": "LastModifiedDate",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Invoice__c",
+    "field": "LastModifiedById",
+    "origin": "implicit",
+    "referenceTo": "User"
+  },
+  {
+    "status": "unchanged",
+    "object": "Invoice__c",
+    "field": "SystemModstamp",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Invoice__c",
+    "field": "IsDeleted",
+    "origin": "implicit"
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c",
+    "sourceKeys": {
+      "objectKey": "field_5a20d9c578f74572",
+      "sourceKey": "field_6c3612f03a822541"
+    },
+    "changedProperties": [
+      "deleteConstraint",
+      "lookupFilter"
+    ],
+    "object": "Invoice__c",
+    "field": "Account__c",
+    "origin": "metadata",
+    "label": "Account",
+    "type": "Lookup",
+    "required": false,
+    "referenceTo": "Account",
+    "relationshipName": "Invoices",
+    "deleteConstraint": "Restrict"
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c",
+    "sourceKeys": {
+      "objectKey": "field_54a878cdf35c6422",
+      "sourceKey": "field_9b0d812563887bcc"
+    },
+    "changedProperties": [
+      "precision",
+      "inlineHelpText"
+    ],
+    "object": "Invoice__c",
+    "field": "Amount__c",
+    "origin": "metadata",
+    "label": "Amount",
+    "type": "Currency",
+    "required": true,
+    "precision": 16,
+    "scale": 2,
+    "helpText": "税込みの金額"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c",
+    "sourceKeys": {
+      "objectKey": "field_11f23348ba7b37a9",
+      "sourceKey": "field_7f2c95c0c48caf39"
+    },
+    "object": "Invoice__c",
+    "field": "Approved__c",
+    "origin": "metadata",
+    "label": "Approved",
+    "type": "Checkbox",
+    "defaultValue": "FALSE"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c",
+    "sourceKeys": {
+      "objectKey": "field_c2ec27f0f3f5c9bb",
+      "sourceKey": "field_a616a764ec1980a4"
+    },
+    "object": "Invoice__c",
+    "field": "Due_Date__c",
+    "origin": "metadata",
+    "label": "Due Date",
+    "type": "Date"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c",
+    "sourceKeys": {
+      "objectKey": "field_ee488be950e6b610",
+      "sourceKey": "field_be03fe263f3af0d1"
+    },
+    "object": "Invoice__c",
+    "field": "Is_Overdue__c",
+    "origin": "metadata",
+    "label": "Is Overdue",
+    "type": "Checkbox",
+    "formula": "AND(NOT(ISPICKVAL(Status__c, 'Paid')), Due_Date__c < TODAY())"
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c",
+    "sourceKeys": {
+      "objectKey": "field_c12167358fc68765",
+      "sourceKey": "field_0bea8b450a3c1f7f"
+    },
+    "changedProperties": [
+      "valueSet"
+    ],
+    "object": "Invoice__c",
+    "field": "Status__c",
+    "origin": "metadata",
+    "label": "Status",
+    "type": "Picklist",
+    "picklistValueCount": 3
+  },
+  {
+    "status": "removed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c",
+    "sourceKeys": {
+      "objectKey": "field_7d4cc4ffc27f2bfe",
+      "sourceKey": "field_8b5692e4a6be33e7"
+    },
+    "object": "Invoice__c",
+    "field": "Note__c",
+    "origin": "metadata",
+    "label": "Note",
+    "type": "Text",
+    "length": 255
+  },
+  {
+    "status": "unchanged",
+    "object": "Invoice_Line__c",
+    "field": "Id",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Invoice_Line__c",
+    "field": "Name",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Invoice_Line__c",
+    "field": "CreatedDate",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Invoice_Line__c",
+    "field": "CreatedById",
+    "origin": "implicit",
+    "referenceTo": "User"
+  },
+  {
+    "status": "unchanged",
+    "object": "Invoice_Line__c",
+    "field": "LastModifiedDate",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Invoice_Line__c",
+    "field": "LastModifiedById",
+    "origin": "implicit",
+    "referenceTo": "User"
+  },
+  {
+    "status": "unchanged",
+    "object": "Invoice_Line__c",
+    "field": "SystemModstamp",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Invoice_Line__c",
+    "field": "IsDeleted",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice_Line__c",
+    "sourceKeys": {
+      "objectKey": "field_dbf01ecbdab951de",
+      "sourceKey": "field_0a6d60509fda0d7c"
+    },
+    "object": "Invoice_Line__c",
+    "field": "Invoice__c",
+    "origin": "metadata",
+    "label": "Invoice",
+    "type": "MasterDetail",
+    "referenceTo": "Invoice__c",
+    "relationshipName": "Lines"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice_Line__c",
+    "sourceKeys": {
+      "objectKey": "field_70acdb4e7a2d1b60",
+      "sourceKey": "field_ac821ce419745792"
+    },
+    "object": "Invoice_Line__c",
+    "field": "Product__c",
+    "origin": "metadata",
+    "label": "Product",
+    "type": "Lookup",
+    "referenceTo": "Product2",
+    "relationshipName": "Invoice_Lines",
+    "deleteConstraint": "SetNull"
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice_Line__c",
+    "sourceKeys": {
+      "objectKey": "field_728c8b425d80cb21",
+      "sourceKey": "field_cec9f4879c00dbe3"
+    },
+    "changedProperties": [
+      "scale"
+    ],
+    "object": "Invoice_Line__c",
+    "field": "Quantity__c",
+    "origin": "metadata",
+    "label": "Quantity",
+    "type": "Number",
+    "precision": 18,
+    "scale": 2
+  },
+  {
+    "status": "removed",
+    "object": "Legacy_Item__c",
+    "field": "Id",
+    "origin": "implicit"
+  },
+  {
+    "status": "removed",
+    "object": "Legacy_Item__c",
+    "field": "Name",
+    "origin": "implicit"
+  },
+  {
+    "status": "removed",
+    "object": "Legacy_Item__c",
+    "field": "CreatedDate",
+    "origin": "implicit"
+  },
+  {
+    "status": "removed",
+    "object": "Legacy_Item__c",
+    "field": "CreatedById",
+    "origin": "implicit",
+    "referenceTo": "User"
+  },
+  {
+    "status": "removed",
+    "object": "Legacy_Item__c",
+    "field": "LastModifiedDate",
+    "origin": "implicit"
+  },
+  {
+    "status": "removed",
+    "object": "Legacy_Item__c",
+    "field": "LastModifiedById",
+    "origin": "implicit",
+    "referenceTo": "User"
+  },
+  {
+    "status": "removed",
+    "object": "Legacy_Item__c",
+    "field": "SystemModstamp",
+    "origin": "implicit"
+  },
+  {
+    "status": "removed",
+    "object": "Legacy_Item__c",
+    "field": "IsDeleted",
+    "origin": "implicit"
+  },
+  {
+    "status": "removed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\objects\\Legacy_Item__c",
+    "sourceKeys": {
+      "objectKey": "field_44cda2721758c7f7",
+      "sourceKey": "field_ad0a1b317ae2f9d0"
+    },
+    "object": "Legacy_Item__c",
+    "field": "Invoice__c",
+    "origin": "metadata",
+    "label": "Invoice",
+    "type": "Lookup",
+    "referenceTo": "Invoice__c",
+    "relationshipName": "Legacy_Items",
+    "deleteConstraint": "SetNull"
+  },
+  {
+    "status": "unchanged",
+    "object": "Opportunity",
+    "field": "Id",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Opportunity",
+    "field": "Name",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Opportunity",
+    "field": "CreatedDate",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Opportunity",
+    "field": "CreatedById",
+    "origin": "implicit",
+    "referenceTo": "User"
+  },
+  {
+    "status": "unchanged",
+    "object": "Opportunity",
+    "field": "LastModifiedDate",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Opportunity",
+    "field": "LastModifiedById",
+    "origin": "implicit",
+    "referenceTo": "User"
+  },
+  {
+    "status": "unchanged",
+    "object": "Opportunity",
+    "field": "SystemModstamp",
+    "origin": "implicit"
+  },
+  {
+    "status": "unchanged",
+    "object": "Opportunity",
+    "field": "IsDeleted",
+    "origin": "implicit"
+  },
+  {
+    "status": "added",
+    "object": "Payment__c",
+    "field": "Id",
+    "origin": "implicit"
+  },
+  {
+    "status": "added",
+    "object": "Payment__c",
+    "field": "Name",
+    "origin": "implicit"
+  },
+  {
+    "status": "added",
+    "object": "Payment__c",
+    "field": "CreatedDate",
+    "origin": "implicit"
+  },
+  {
+    "status": "added",
+    "object": "Payment__c",
+    "field": "CreatedById",
+    "origin": "implicit",
+    "referenceTo": "User"
+  },
+  {
+    "status": "added",
+    "object": "Payment__c",
+    "field": "LastModifiedDate",
+    "origin": "implicit"
+  },
+  {
+    "status": "added",
+    "object": "Payment__c",
+    "field": "LastModifiedById",
+    "origin": "implicit",
+    "referenceTo": "User"
+  },
+  {
+    "status": "added",
+    "object": "Payment__c",
+    "field": "SystemModstamp",
+    "origin": "implicit"
+  },
+  {
+    "status": "added",
+    "object": "Payment__c",
+    "field": "IsDeleted",
+    "origin": "implicit"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Payment__c",
+    "sourceKeys": {
+      "objectKey": "field_1edc183c1b5e5395",
+      "sourceKey": "field_04beaf30fa5fb9b0"
+    },
+    "object": "Payment__c",
+    "field": "Invoice__c",
+    "origin": "metadata",
+    "label": "Invoice",
+    "type": "Lookup",
+    "referenceTo": "Invoice__c",
+    "relationshipName": "Payments",
+    "deleteConstraint": "Restrict"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Payment__c",
+    "sourceKeys": {
+      "objectKey": "field_809a86e5355c178f",
+      "sourceKey": "field_9688c3386967cd79"
+    },
+    "object": "Payment__c",
+    "field": "Paid_At__c",
+    "origin": "metadata",
+    "label": "Paid At",
+    "type": "DateTime"
+  }
+]

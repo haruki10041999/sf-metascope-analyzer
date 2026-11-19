@@ -399,7 +399,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_3fbfa2bbf0f88989",
-          "sourceKey": "query_6cee6cc97f3fddeb"
+          "sourceKey": "query_76a232ffccfcf005"
         }
       }
     ],
@@ -416,7 +416,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_3fbfa2bbf0f88989",
-          "sourceKey": "query_6cee6cc97f3fddeb"
+          "sourceKey": "query_76a232ffccfcf005"
         }
       }
     ],
@@ -544,7 +544,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_c531367544583041",
-          "sourceKey": "query_2504de7eccff1b0a"
+          "sourceKey": "query_84202329f2f15430"
         }
       }
     ],
@@ -978,7 +978,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_c5a7170e1378aadb",
-          "sourceKey": "query_dd417b364fc92e0f"
+          "sourceKey": "query_e7654b23b4832ea2"
         }
       }
     ],
@@ -1918,11 +1918,11 @@
       },
       {
         "from": "class_ParserTest",
-        "via": "returnType",
+        "via": "type",
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "typeRef_3618fb8568f22cae",
-          "sourceKey": "typeRef_d88f14eccb711f11"
+          "sourceKey": "typeRef_d4a3c898a8d1c308"
         }
       },
       {
@@ -1931,7 +1931,34 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "typeRef_3618fb8568f22cae",
-          "sourceKey": "typeRef_cb559a7b55205a77"
+          "sourceKey": "typeRef_c02bc9bf94353417"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_afcf47b6179c1dff"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "returnType",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_888cd0f3b1d3c055"
+        }
+      },
+      {
+        "from": "class_ParserTest",
+        "via": "type",
+        "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+        "sourceKeys": {
+          "objectKey": "typeRef_3618fb8568f22cae",
+          "sourceKey": "typeRef_5e7814bdc8e88a6f"
         }
       },
       {
@@ -1940,7 +1967,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_29246c89a5adadb2",
-          "sourceKey": "query_f3ed8831bf2f1d9b"
+          "sourceKey": "query_34670c95990e20a6"
         }
       },
       {
@@ -1949,7 +1976,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_38b5b40ba6064840",
-          "sourceKey": "query_8c6e60bfe1cf3468"
+          "sourceKey": "query_30030780b4747472"
         }
       },
       {
@@ -1958,7 +1985,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "typeRef_3618fb8568f22cae",
-          "sourceKey": "typeRef_e28c1a52727ca3cd"
+          "sourceKey": "typeRef_fcbd3a1fe6ba39ce"
         }
       },
       {
@@ -1967,7 +1994,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_3fbfa2bbf0f88989",
-          "sourceKey": "query_6cee6cc97f3fddeb"
+          "sourceKey": "query_76a232ffccfcf005"
         }
       },
       {
@@ -1976,7 +2003,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "typeRef_3618fb8568f22cae",
-          "sourceKey": "typeRef_ad7f2d2a1f40cc5f"
+          "sourceKey": "typeRef_c9c0bffa7ebd4da3"
         }
       },
       {
@@ -1985,7 +2012,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_7c57b4051f3ef62c",
-          "sourceKey": "query_ac74383ef47f5963"
+          "sourceKey": "query_29556bc14ec0e4a2"
         }
       },
       {
@@ -1994,7 +2021,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_23e27621878549ce",
-          "sourceKey": "query_fceaec7d2e107b23"
+          "sourceKey": "query_8eff385fa1990719"
         }
       },
       {
@@ -2003,7 +2030,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_1ca1365fba54af23",
-          "sourceKey": "query_4f26e20f4b36ec02"
+          "sourceKey": "query_be72e4b886c8bcc8"
         }
       },
       {
@@ -2012,7 +2039,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_9e7fefd313b27daf",
-          "sourceKey": "query_ac5dc1d19cdbc570"
+          "sourceKey": "query_a3c7452f42b9258f"
         }
       },
       {
@@ -2021,7 +2048,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_9b916d8cbd83d9ca",
-          "sourceKey": "query_5d9d36bf42f09817"
+          "sourceKey": "query_13363d719735f408"
         }
       },
       {
@@ -2030,7 +2057,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_9a53194a2a379629",
-          "sourceKey": "query_1f55cf4ebe44d095"
+          "sourceKey": "query_717bc0ac44b8e45b"
         }
       },
       {
@@ -2039,7 +2066,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "typeRef_3618fb8568f22cae",
-          "sourceKey": "typeRef_81a1d48e99a2f780"
+          "sourceKey": "typeRef_b3194803618e5ee8"
         }
       },
       {
@@ -2048,7 +2075,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_5f4dcfb069261fbd",
-          "sourceKey": "query_94569a6d2a4dc88c"
+          "sourceKey": "query_93712c71712178f0"
         }
       },
       {
@@ -2057,7 +2084,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "typeRef_3618fb8568f22cae",
-          "sourceKey": "typeRef_358a484ba1d96da6"
+          "sourceKey": "typeRef_5c302e00621ecdd4"
         }
       },
       {
@@ -2066,7 +2093,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_7fd622080d8bfc6e",
-          "sourceKey": "query_2412f63da6ed43ab"
+          "sourceKey": "query_f2c4f3a5d2cc34b6"
         }
       },
       {
@@ -2075,7 +2102,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "typeRef_3618fb8568f22cae",
-          "sourceKey": "typeRef_da8aab141789d0d6"
+          "sourceKey": "typeRef_1fd5b786f1be08af"
         }
       },
       {
@@ -2084,7 +2111,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_d9ab64fcd74ebce1",
-          "sourceKey": "query_4b059f0c88f19885"
+          "sourceKey": "query_b1d23411c8c68d88"
         }
       },
       {
@@ -2093,7 +2120,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "typeRef_3618fb8568f22cae",
-          "sourceKey": "typeRef_a8ac8b61ac203509"
+          "sourceKey": "typeRef_91f41e0759f9217c"
         }
       },
       {
@@ -2102,7 +2129,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_40a190726320af4d",
-          "sourceKey": "query_5682ac24fef4b9a7"
+          "sourceKey": "query_763dbb4731b28ff5"
         }
       },
       {
@@ -2111,7 +2138,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "typeRef_3618fb8568f22cae",
-          "sourceKey": "typeRef_96f5aa83adf8fb46"
+          "sourceKey": "typeRef_82f848813e6a136a"
         }
       },
       {
@@ -2120,7 +2147,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_3fb20aa34a677074",
-          "sourceKey": "query_b9d68a81bbe001f1"
+          "sourceKey": "query_f696401d3085f68f"
         }
       },
       {
@@ -2129,7 +2156,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "typeRef_3618fb8568f22cae",
-          "sourceKey": "typeRef_c4baca2eb15fb175"
+          "sourceKey": "typeRef_6b815ea714ba3cd6"
         }
       },
       {
@@ -2138,7 +2165,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_61a6b87b4ced23e1",
-          "sourceKey": "query_0b880ac0c5d1c6b9"
+          "sourceKey": "query_a2509be01f6c9e00"
         }
       },
       {
@@ -2147,7 +2174,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "typeRef_3618fb8568f22cae",
-          "sourceKey": "typeRef_baf5bdd758c5e7c4"
+          "sourceKey": "typeRef_e199fbaf9caf7a66"
         }
       },
       {
@@ -2156,7 +2183,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_a269627b676c50df",
-          "sourceKey": "query_7742a55d94364cc5"
+          "sourceKey": "query_a77552b00c81ffb5"
         }
       },
       {
@@ -2165,7 +2192,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "typeRef_3618fb8568f22cae",
-          "sourceKey": "typeRef_1a7e82783369787c"
+          "sourceKey": "typeRef_03f631b75a7cbb30"
         }
       },
       {
@@ -2174,7 +2201,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_cd267d4d6d0684fa",
-          "sourceKey": "query_74751459d292a778"
+          "sourceKey": "query_22525dbcb2a1c209"
         }
       },
       {
@@ -2183,7 +2210,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "typeRef_3618fb8568f22cae",
-          "sourceKey": "typeRef_f94bcdf4f36587b1"
+          "sourceKey": "typeRef_d06af4d7c01c5283"
         }
       },
       {
@@ -2192,7 +2219,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_8131724c7bc7178d",
-          "sourceKey": "query_d5ef7180f6d95492"
+          "sourceKey": "query_e73ba3aa86e74798"
         }
       },
       {
@@ -2201,7 +2228,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "typeRef_3618fb8568f22cae",
-          "sourceKey": "typeRef_1d979b29dc8d9d25"
+          "sourceKey": "typeRef_612495c0f26a47f7"
         }
       },
       {
@@ -2210,7 +2237,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_40e5f5433705a1ae",
-          "sourceKey": "query_ef910cfeeec78057"
+          "sourceKey": "query_a3adf42e97126d02"
         }
       },
       {
@@ -2219,7 +2246,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "typeRef_3618fb8568f22cae",
-          "sourceKey": "typeRef_7cb93da7ed2f8024"
+          "sourceKey": "typeRef_3df8f33d5a19414c"
         }
       },
       {
@@ -2228,7 +2255,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_1b0641d4d3e0fb90",
-          "sourceKey": "query_1a25c8066882d28a"
+          "sourceKey": "query_feda0e8d65b079e8"
         }
       },
       {
@@ -2237,7 +2264,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "typeRef_3618fb8568f22cae",
-          "sourceKey": "typeRef_24e5e7753f5d8522"
+          "sourceKey": "typeRef_ce0445b1763a86e4"
         }
       },
       {
@@ -2246,7 +2273,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_f0b2acf0c7c966c5",
-          "sourceKey": "query_cd3a779b2bfb8e9d"
+          "sourceKey": "query_0988b703b56af2cf"
         }
       },
       {
@@ -2255,7 +2282,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "typeRef_3618fb8568f22cae",
-          "sourceKey": "typeRef_2c95d10b8e598b4e"
+          "sourceKey": "typeRef_46a951cad5873bfb"
         }
       },
       {
@@ -2264,7 +2291,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_3be02f1ba1564a3f",
-          "sourceKey": "query_17f0e104045b09c6"
+          "sourceKey": "query_707c5e9dc139ed20"
         }
       },
       {
@@ -2273,7 +2300,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "soslLiteral_4d940557b3d76004",
-          "sourceKey": "soslLiteral_3c8616dbfccb5b27"
+          "sourceKey": "soslLiteral_91c9374ba6d7a565"
         }
       },
       {
@@ -2282,7 +2309,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "soslLiteral_913d56765f8f4c35",
-          "sourceKey": "soslLiteral_54065221391e99dd"
+          "sourceKey": "soslLiteral_f53b6cc2151ab584"
         }
       },
       {
@@ -2291,7 +2318,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "soslLiteral_511c4adcf5d60d73",
-          "sourceKey": "soslLiteral_cf32a646646e5b5e"
+          "sourceKey": "soslLiteral_b246402938dd3777"
         }
       },
       {
@@ -2862,7 +2889,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_c531367544583041",
-          "sourceKey": "query_2504de7eccff1b0a"
+          "sourceKey": "query_84202329f2f15430"
         }
       }
     ],
@@ -3083,7 +3110,7 @@
         "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
         "sourceKeys": {
           "objectKey": "query_c5a7170e1378aadb",
-          "sourceKey": "query_dd417b364fc92e0f"
+          "sourceKey": "query_e7654b23b4832ea2"
         }
       }
     ],

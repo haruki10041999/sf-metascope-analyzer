@@ -1,0 +1,159 @@
+[
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Account_Wizard.flow-meta.xml",
+    "flow": "Account_Wizard",
+    "element": "Get_Account",
+    "kind": "flowRecordLookup",
+    "order": 1,
+    "label": "Get Account",
+    "object": "Account",
+    "details": [
+      "properties.assignNullValuesIfNoRecordsFound = false",
+      "properties.filterLogic = and",
+      "properties.filters = Tier__c EqualTo Gold",
+      "properties.getFirstRecordOnly = true",
+      "properties.object = Account",
+      "properties.queriedFields = Name, Unknown__c",
+      "properties.storeOutputAutomatically = true"
+    ]
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Account_Wizard.flow-meta.xml",
+    "flow": "Account_Wizard",
+    "element": "Welcome",
+    "kind": "flowScreen",
+    "order": 2,
+    "label": "Welcome",
+    "details": [
+      "properties.allowBack = true",
+      "properties.allowFinish = true",
+      "properties.allowPause = false",
+      "properties.showFooter = true",
+      "properties.showHeader = true",
+      "fields[Intro].name = Intro",
+      "fields[Intro].fieldType = DisplayText",
+      "fields[Intro].properties.fieldText = <p>{!$Label.AccountListTitle}</p>",
+      "fields[Accounts].name = Accounts",
+      "fields[Accounts].fieldType = ComponentInstance",
+      "fields[Accounts].extensionName = c:accountList",
+      "fields[Accounts].properties.inputParameters[title].name = title",
+      "fields[Accounts].properties.inputParameters[title].value = Gold accounts",
+      "fields[Accounts].properties.inputsOnNextNavToAssocScrn = UseStoredValues",
+      "fields[Accounts].properties.isRequired = true",
+      "fields[Accounts].properties.storeOutputAutomatically = true",
+      "fields[Chart].name = Chart",
+      "fields[Chart].fieldType = ComponentInstance",
+      "fields[Chart].extensionName = c:missingChart",
+      "fields[Chart].properties.isRequired = false"
+    ],
+    "changedDetails": [
+      "fields[Accounts].properties.inputParameters[title].value = Gold accounts",
+      "fields[Chart].name = Chart",
+      "fields[Chart].fieldType = ComponentInstance",
+      "fields[Chart].extensionName = c:missingChart",
+      "fields[Chart].properties.isRequired = false"
+    ]
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Account_Wizard.flow-meta.xml",
+    "flow": "Account_Wizard",
+    "element": "Call_Status",
+    "kind": "flowSubflow",
+    "order": 3,
+    "label": "Call Status",
+    "details": [
+      "properties.flowName = Invoice_Status_Update"
+    ]
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Invoice_Status_Update.flow-meta.xml",
+    "flow": "Invoice_Status_Update",
+    "element": "Notify",
+    "kind": "flowActionCall",
+    "order": 1,
+    "label": "Notify",
+    "details": [
+      "properties.actionName = AccountService",
+      "properties.actionType = apex",
+      "properties.inputParameters[invoiceId].name = invoiceId",
+      "properties.inputParameters[invoiceId].value = {!$Record.Id}"
+    ]
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Invoice_Status_Update.flow-meta.xml",
+    "flow": "Invoice_Status_Update",
+    "element": "Log_Error",
+    "kind": "flowAssignment",
+    "order": 2,
+    "label": "Log Error",
+    "details": [
+      "properties.assignmentItems[1].assignToReference = errorMessage",
+      "properties.assignmentItems[1].operator = Assign",
+      "properties.assignmentItems[1].value = {!$Label.Invoice_Overdue}: {!$Flow.FaultMessage}"
+    ]
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Invoice_Status_Update.flow-meta.xml",
+    "flow": "Invoice_Status_Update",
+    "element": "Orphan",
+    "kind": "flowAssignment",
+    "order": 3,
+    "label": "Orphan",
+    "details": [
+      "properties.assignmentItems[1].assignToReference = Unknown_Var",
+      "properties.assignmentItems[1].operator = Assign",
+      "properties.assignmentItems[1].value = true"
+    ]
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Invoice_Status_Update.flow-meta.xml",
+    "flow": "Invoice_Status_Update",
+    "element": "Check_Amount",
+    "kind": "flowDecision",
+    "order": 4,
+    "label": "Check Amount",
+    "details": [
+      "properties.defaultConnectorLabel = Small",
+      "rules[Medium].name = Medium",
+      "rules[Medium].label = Medium",
+      "rules[Medium].properties.conditionLogic = and",
+      "rules[Medium].properties.conditions = $Record.Amount__c GreaterThan 1000.0",
+      "rules[Large].name = Large",
+      "rules[Large].label = Large",
+      "rules[Large].properties.conditionLogic = and",
+      "rules[Large].properties.conditions = $Record.Amount__c GreaterThan 50000.0"
+    ],
+    "changedDetails": [
+      "rules[Medium].name = Medium",
+      "rules[Medium].label = Medium",
+      "rules[Medium].properties.conditionLogic = and",
+      "rules[Medium].properties.conditions = $Record.Amount__c GreaterThan 1000.0",
+      "rules[Large].properties.conditions = $Record.Amount__c GreaterThan 50000.0"
+    ]
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\flows\\Invoice_Status_Update.flow-meta.xml",
+    "flow": "Invoice_Status_Update",
+    "element": "Set_Status",
+    "kind": "flowRecordUpdate",
+    "order": 5,
+    "label": "Set Status",
+    "object": "$Record",
+    "details": [
+      "properties.inputAssignments[Status__c].field = Status__c",
+      "properties.inputAssignments[Status__c].value = Approval",
+      "properties.inputReference = $Record"
+    ],
+    "changedDetails": [
+      "properties.inputAssignments[Status__c].value = Approval"
+    ]
+  }
+]

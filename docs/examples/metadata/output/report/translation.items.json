@@ -1,0 +1,672 @@
+[
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Account-ja",
+    "sourceKeys": {
+      "objectKey": "fieldTranslation_e2ce8892f6d5e840",
+      "sourceKey": "fieldTranslation_85e8bf4d34a17c7c"
+    },
+    "object": "Account",
+    "language": "ja",
+    "kind": "fieldLabel",
+    "name": "Name",
+    "translation": "取引先名",
+    "translationStatus": "translated"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Account-ja",
+    "sourceKeys": {
+      "objectKey": "fieldTranslation_2b8d45e19b742268",
+      "sourceKey": "fieldTranslation_79fc08e9f5016360"
+    },
+    "object": "Account",
+    "language": "ja",
+    "kind": "fieldLabel",
+    "name": "Tier__c",
+    "source": "Customer Tier",
+    "translation": "顧客ランク",
+    "translationStatus": "translated"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Account-ja",
+    "sourceKeys": {
+      "objectKey": "picklistValue_dea85d916674a2e1",
+      "sourceKey": "picklistValue_55f4b6aeae376075"
+    },
+    "object": "Account",
+    "language": "ja",
+    "kind": "picklistValue",
+    "name": "Tier__c.Bronze",
+    "source": "Bronze",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Account-ja",
+    "sourceKeys": {
+      "objectKey": "picklistValueTranslation_b1601dd584dd8f04",
+      "sourceKey": "picklistValueTranslation_15af8fe2511b23fb"
+    },
+    "object": "Account",
+    "language": "ja",
+    "kind": "picklistValue",
+    "name": "Tier__c.Gold",
+    "source": "Gold",
+    "translation": "ゴールド",
+    "translationStatus": "translated"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Account-ja",
+    "sourceKeys": {
+      "objectKey": "picklistValueTranslation_3468ed03635cd998",
+      "sourceKey": "picklistValueTranslation_4cb956972b989b48"
+    },
+    "object": "Account",
+    "language": "ja",
+    "kind": "picklistValue",
+    "name": "Tier__c.Platinum",
+    "source": "Platinum",
+    "translation": "プラチナ",
+    "translationStatus": "translated"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Account-ja",
+    "sourceKeys": {
+      "objectKey": "picklistValueTranslation_3c2827d111fb3f7e",
+      "sourceKey": "picklistValueTranslation_7d7ffcf4e2deca0b"
+    },
+    "object": "Account",
+    "language": "ja",
+    "kind": "picklistValue",
+    "name": "Tier__c.Silver",
+    "source": "Silver",
+    "translation": "シルバー",
+    "translationStatus": "translated"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Account-ja",
+    "sourceKeys": {
+      "objectKey": "validationRuleTranslation_94b4c2c38b99b070",
+      "sourceKey": "validationRuleTranslation_743470e4ad806af4"
+    },
+    "object": "Account",
+    "language": "ja",
+    "kind": "validationRule",
+    "name": "Name_Required",
+    "source": "Name is required.",
+    "translation": "取引先名は必須です。",
+    "translationStatus": "translated"
+  },
+  {
+    "status": "removed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Broken__c-ja",
+    "sourceKeys": {
+      "objectKey": "fieldTranslation_2d04985c0ea2e025",
+      "sourceKey": "fieldTranslation_ac7b864be35b8a2c"
+    },
+    "object": "Broken__c",
+    "language": "ja",
+    "kind": "fieldLabel",
+    "name": "Code__c",
+    "source": "Code",
+    "translation": "コード",
+    "translationStatus": "translated"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-en_US",
+    "sourceKeys": {
+      "objectKey": "field_5a20d9c578f74572",
+      "sourceKey": "field_6c3612f03a822541"
+    },
+    "object": "Invoice__c",
+    "language": "en_US",
+    "kind": "fieldLabel",
+    "name": "Account__c",
+    "source": "Account",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-en_US",
+    "sourceKeys": {
+      "objectKey": "field_54a878cdf35c6422",
+      "sourceKey": "field_9b0d812563887bcc"
+    },
+    "object": "Invoice__c",
+    "language": "en_US",
+    "kind": "fieldLabel",
+    "name": "Amount__c",
+    "source": "Amount",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-en_US",
+    "sourceKeys": {
+      "objectKey": "field_11f23348ba7b37a9",
+      "sourceKey": "field_7f2c95c0c48caf39"
+    },
+    "object": "Invoice__c",
+    "language": "en_US",
+    "kind": "fieldLabel",
+    "name": "Approved__c",
+    "source": "Approved",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-en_US",
+    "sourceKeys": {
+      "objectKey": "field_c2ec27f0f3f5c9bb",
+      "sourceKey": "field_a616a764ec1980a4"
+    },
+    "object": "Invoice__c",
+    "language": "en_US",
+    "kind": "fieldLabel",
+    "name": "Due_Date__c",
+    "source": "Due Date",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-en_US",
+    "sourceKeys": {
+      "objectKey": "field_ee488be950e6b610",
+      "sourceKey": "field_be03fe263f3af0d1"
+    },
+    "object": "Invoice__c",
+    "language": "en_US",
+    "kind": "fieldLabel",
+    "name": "Is_Overdue__c",
+    "source": "Is Overdue",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-en_US",
+    "sourceKeys": {
+      "objectKey": "field_c12167358fc68765",
+      "sourceKey": "field_0bea8b450a3c1f7f"
+    },
+    "object": "Invoice__c",
+    "language": "en_US",
+    "kind": "fieldLabel",
+    "name": "Status__c",
+    "source": "Status",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-en_US",
+    "sourceKeys": {
+      "objectKey": "field_54a878cdf35c6422",
+      "sourceKey": "field_9b0d812563887bcc"
+    },
+    "object": "Invoice__c",
+    "language": "en_US",
+    "kind": "fieldHelp",
+    "name": "Amount__c",
+    "source": "税込みの金額",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-en_US",
+    "sourceKeys": {
+      "objectKey": "field_5a20d9c578f74572",
+      "sourceKey": "field_6c3612f03a822541"
+    },
+    "object": "Invoice__c",
+    "language": "en_US",
+    "kind": "relationshipLabel",
+    "name": "Account__c",
+    "source": "Invoices",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-en_US",
+    "sourceKeys": {
+      "objectKey": "picklistValue_7f3c3c8bb9f40692",
+      "sourceKey": "picklistValue_3d56a5eb216021c1"
+    },
+    "object": "Invoice__c",
+    "language": "en_US",
+    "kind": "picklistValue",
+    "name": "Status__c.Draft",
+    "source": "Draft",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-en_US",
+    "sourceKeys": {
+      "objectKey": "picklistValue_0ba41ca3ccd8dd4d",
+      "sourceKey": "picklistValue_feadc8b60ed04713"
+    },
+    "object": "Invoice__c",
+    "language": "en_US",
+    "kind": "picklistValue",
+    "name": "Status__c.Overdue",
+    "source": "Overdue",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-en_US",
+    "sourceKeys": {
+      "objectKey": "picklistValue_3c621eab7b33f1f5",
+      "sourceKey": "picklistValue_4eebb15cd738969c"
+    },
+    "changedProperties": [
+      "source"
+    ],
+    "object": "Invoice__c",
+    "language": "en_US",
+    "kind": "picklistValue",
+    "name": "Status__c.Paid",
+    "source": "Paid (Closed)",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-en_US",
+    "sourceKeys": {
+      "objectKey": "validationRule_fa1384bb4bdfe9de",
+      "sourceKey": "validationRule_0a64b99c273a2cb0"
+    },
+    "changedProperties": [
+      "source"
+    ],
+    "object": "Invoice__c",
+    "language": "en_US",
+    "kind": "validationRule",
+    "name": "Amount_Positive",
+    "source": "Amount must be greater than zero.",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-en_US",
+    "sourceKeys": {
+      "objectKey": "validationRule_005a18a500b1a831",
+      "sourceKey": "validationRule_94b3926734de10df"
+    },
+    "object": "Invoice__c",
+    "language": "en_US",
+    "kind": "validationRule",
+    "name": "Due_Date_Required",
+    "source": "Due date is required.",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-en_US",
+    "sourceKeys": {
+      "objectKey": "recordType_5102d01da64931ec",
+      "sourceKey": "recordType_8d6c5e734f64b4e6"
+    },
+    "object": "Invoice__c",
+    "language": "en_US",
+    "kind": "recordType",
+    "name": "Standard",
+    "source": "Standard",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-en_US",
+    "sourceKeys": {
+      "objectKey": "webLink_a7c96e8c387e59d9",
+      "sourceKey": "webLink_00953da115915f65"
+    },
+    "object": "Invoice__c",
+    "language": "en_US",
+    "kind": "webLink",
+    "name": "Send_Invoice",
+    "source": "Send Invoice",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-en_US",
+    "sourceKeys": {
+      "objectKey": "fieldSet_19514dab5d22dcba",
+      "sourceKey": "fieldSet_90f14bed7fe437cf"
+    },
+    "object": "Invoice__c",
+    "language": "en_US",
+    "kind": "fieldSet",
+    "name": "Summary",
+    "source": "Summary",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "removed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-en_US",
+    "sourceKeys": {
+      "objectKey": "field_7d4cc4ffc27f2bfe",
+      "sourceKey": "field_8b5692e4a6be33e7"
+    },
+    "object": "Invoice__c",
+    "language": "en_US",
+    "kind": "fieldLabel",
+    "name": "Note__c",
+    "source": "Note",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "removed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-en_US",
+    "sourceKeys": {
+      "objectKey": "picklistValue_dea9a53136321feb",
+      "sourceKey": "picklistValue_aee4067dbb3ee4f9"
+    },
+    "object": "Invoice__c",
+    "language": "en_US",
+    "kind": "picklistValue",
+    "name": "Status__c.Sent",
+    "source": "Sent",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+    "sourceKeys": {
+      "objectKey": "fieldTranslation_3bf44e51a72967ef",
+      "sourceKey": "fieldTranslation_b8086fcc1248d9d4"
+    },
+    "object": "Invoice__c",
+    "language": "ja",
+    "kind": "fieldLabel",
+    "name": "Account__c",
+    "source": "Account",
+    "translation": "取引先",
+    "translationStatus": "translated"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+    "sourceKeys": {
+      "objectKey": "fieldTranslation_bc56e2c0fc555a62",
+      "sourceKey": "fieldTranslation_005de5cefe19657e"
+    },
+    "object": "Invoice__c",
+    "language": "ja",
+    "kind": "fieldLabel",
+    "name": "Amount__c",
+    "source": "Amount",
+    "translation": "金額",
+    "translationStatus": "translated"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+    "sourceKeys": {
+      "objectKey": "field_11f23348ba7b37a9",
+      "sourceKey": "field_7f2c95c0c48caf39"
+    },
+    "object": "Invoice__c",
+    "language": "ja",
+    "kind": "fieldLabel",
+    "name": "Approved__c",
+    "source": "Approved",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+    "sourceKeys": {
+      "objectKey": "fieldTranslation_259bf4ea6b37e47e",
+      "sourceKey": "fieldTranslation_511f7a0f359a3a36"
+    },
+    "object": "Invoice__c",
+    "language": "ja",
+    "kind": "fieldLabel",
+    "name": "Due_Date__c",
+    "source": "Due Date",
+    "translation": "Due Date",
+    "translationStatus": "sameAsSource"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+    "sourceKeys": {
+      "objectKey": "field_ee488be950e6b610",
+      "sourceKey": "field_be03fe263f3af0d1"
+    },
+    "object": "Invoice__c",
+    "language": "ja",
+    "kind": "fieldLabel",
+    "name": "Is_Overdue__c",
+    "source": "Is Overdue",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+    "sourceKeys": {
+      "objectKey": "fieldTranslation_127d7ee147661ce3",
+      "sourceKey": "fieldTranslation_4fb21aac7bf9d56d"
+    },
+    "changedProperties": [
+      "source"
+    ],
+    "object": "Invoice__c",
+    "language": "ja",
+    "kind": "fieldLabel",
+    "name": "Note__c",
+    "translation": "メモ",
+    "translationStatus": "orphan"
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+    "sourceKeys": {
+      "objectKey": "fieldTranslation_f0b1ae4fe770cd0c",
+      "sourceKey": "fieldTranslation_2c6f7608452e8ff9"
+    },
+    "changedProperties": [
+      "translation"
+    ],
+    "object": "Invoice__c",
+    "language": "ja",
+    "kind": "fieldLabel",
+    "name": "Status__c",
+    "source": "Status",
+    "translation": "状態",
+    "translationStatus": "translated"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+    "sourceKeys": {
+      "objectKey": "field_54a878cdf35c6422",
+      "sourceKey": "field_9b0d812563887bcc"
+    },
+    "object": "Invoice__c",
+    "language": "ja",
+    "kind": "fieldHelp",
+    "name": "Amount__c",
+    "source": "税込みの金額",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+    "sourceKeys": {
+      "objectKey": "fieldTranslation_3bf44e51a72967ef",
+      "sourceKey": "fieldTranslation_b8086fcc1248d9d4"
+    },
+    "changedProperties": [
+      "translation"
+    ],
+    "object": "Invoice__c",
+    "language": "ja",
+    "kind": "relationshipLabel",
+    "name": "Account__c",
+    "source": "Invoices",
+    "translation": "請求書一覧",
+    "translationStatus": "translated"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+    "sourceKeys": {
+      "objectKey": "picklistValueTranslation_909cf31343b9ccc4",
+      "sourceKey": "picklistValueTranslation_ae2494d8d57c3654"
+    },
+    "object": "Invoice__c",
+    "language": "ja",
+    "kind": "picklistValue",
+    "name": "Status__c.Draft",
+    "source": "Draft",
+    "translation": "下書き",
+    "translationStatus": "translated"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+    "sourceKeys": {
+      "objectKey": "picklistValue_0ba41ca3ccd8dd4d",
+      "sourceKey": "picklistValue_feadc8b60ed04713"
+    },
+    "object": "Invoice__c",
+    "language": "ja",
+    "kind": "picklistValue",
+    "name": "Status__c.Overdue",
+    "source": "Overdue",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+    "sourceKeys": {
+      "objectKey": "picklistValueTranslation_378062dee77c36cf",
+      "sourceKey": "picklistValueTranslation_b8a8663718fac3f9"
+    },
+    "changedProperties": [
+      "source"
+    ],
+    "object": "Invoice__c",
+    "language": "ja",
+    "kind": "picklistValue",
+    "name": "Status__c.Paid",
+    "source": "Paid (Closed)",
+    "translation": "支払済み",
+    "translationStatus": "outdated"
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+    "sourceKeys": {
+      "objectKey": "validationRuleTranslation_bb966b9406089386",
+      "sourceKey": "validationRuleTranslation_961e1937b6216236"
+    },
+    "changedProperties": [
+      "source"
+    ],
+    "object": "Invoice__c",
+    "language": "ja",
+    "kind": "validationRule",
+    "name": "Amount_Positive",
+    "source": "Amount must be greater than zero.",
+    "translation": "金額は正の値にしてください。",
+    "translationStatus": "outdated"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+    "sourceKeys": {
+      "objectKey": "validationRule_005a18a500b1a831",
+      "sourceKey": "validationRule_94b3926734de10df"
+    },
+    "object": "Invoice__c",
+    "language": "ja",
+    "kind": "validationRule",
+    "name": "Due_Date_Required",
+    "source": "Due date is required.",
+    "translationStatus": "missing"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+    "sourceKeys": {
+      "objectKey": "recordTypeTranslation_26c9a05cdc92e3d7",
+      "sourceKey": "recordTypeTranslation_c302b44ca1a22640"
+    },
+    "object": "Invoice__c",
+    "language": "ja",
+    "kind": "recordType",
+    "name": "Standard",
+    "source": "Standard",
+    "translation": "標準",
+    "translationStatus": "translated"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+    "sourceKeys": {
+      "objectKey": "webLinkTranslation_2c420ec1b4e554f0",
+      "sourceKey": "webLinkTranslation_5871df9a7a22bb22"
+    },
+    "object": "Invoice__c",
+    "language": "ja",
+    "kind": "webLink",
+    "name": "Send_Invoice",
+    "source": "Send Invoice",
+    "translation": "請求書を送付",
+    "translationStatus": "translated"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+    "sourceKeys": {
+      "objectKey": "fieldSetTranslation_924054dc75d5aa4f",
+      "sourceKey": "fieldSetTranslation_edd5182d9b37e436"
+    },
+    "object": "Invoice__c",
+    "language": "ja",
+    "kind": "fieldSet",
+    "name": "Summary",
+    "source": "Summary",
+    "translation": "概要",
+    "translationStatus": "translated"
+  },
+  {
+    "status": "removed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+    "sourceKeys": {
+      "objectKey": "picklistValueTranslation_a3f78eea90b98f82",
+      "sourceKey": "picklistValueTranslation_270869eefddfc9ca"
+    },
+    "object": "Invoice__c",
+    "language": "ja",
+    "kind": "picklistValue",
+    "name": "Status__c.Sent",
+    "source": "Sent",
+    "translation": "送付済み",
+    "translationStatus": "translated"
+  },
+  {
+    "status": "removed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\objectTranslations\\Legacy_Item__c-ja",
+    "sourceKeys": {
+      "objectKey": "fieldTranslation_4844ed45c5971a6e",
+      "sourceKey": "fieldTranslation_442eb4ee3001b55d"
+    },
+    "object": "Legacy_Item__c",
+    "language": "ja",
+    "kind": "fieldLabel",
+    "name": "Invoice__c",
+    "source": "Invoice",
+    "translation": "請求書",
+    "translationStatus": "translated"
+  }
+]

@@ -1,0 +1,45 @@
+[
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Account",
+    "sourceKeys": {
+      "objectKey": "validationRule_fa2a4aaeb9222db9",
+      "sourceKey": "validationRule_71df2abd615a8158"
+    },
+    "object": "Account",
+    "rule": "Name_Required",
+    "active": true,
+    "condition": "ISBLANK(Name)",
+    "errorMessage": "Name is required."
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c",
+    "sourceKeys": {
+      "objectKey": "validationRule_fa1384bb4bdfe9de",
+      "sourceKey": "validationRule_0a64b99c273a2cb0"
+    },
+    "changedProperties": [
+      "errorMessage"
+    ],
+    "object": "Invoice__c",
+    "rule": "Amount_Positive",
+    "active": true,
+    "condition": "Amount__c <= 0",
+    "errorMessage": "Amount must be greater than zero.",
+    "errorDisplayField": "Amount__c"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c",
+    "sourceKeys": {
+      "objectKey": "validationRule_005a18a500b1a831",
+      "sourceKey": "validationRule_94b3926734de10df"
+    },
+    "object": "Invoice__c",
+    "rule": "Due_Date_Required",
+    "active": false,
+    "condition": "ISBLANK(Due_Date__c)",
+    "errorMessage": "Due date is required."
+  }
+]

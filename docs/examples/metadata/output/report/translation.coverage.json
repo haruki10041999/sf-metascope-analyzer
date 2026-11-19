@@ -1,0 +1,88 @@
+[
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Account-ja",
+    "object": "Account",
+    "language": "ja",
+    "objectFound": true,
+    "total": 7,
+    "translated": 6,
+    "missing": 1,
+    "sameAsSource": 0,
+    "orphan": 0,
+    "outdated": 0,
+    "coverage": 86
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Broken__c-ja",
+    "changedProperties": [
+      "total",
+      "translated"
+    ],
+    "object": "Broken__c",
+    "language": "ja",
+    "objectFound": true,
+    "total": 0,
+    "translated": 0,
+    "missing": 0,
+    "sameAsSource": 0,
+    "orphan": 0,
+    "outdated": 0,
+    "coverage": 100
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-en_US",
+    "changedProperties": [
+      "total",
+      "missing"
+    ],
+    "object": "Invoice__c",
+    "language": "en_US",
+    "objectFound": true,
+    "total": 16,
+    "translated": 0,
+    "missing": 16,
+    "sameAsSource": 0,
+    "orphan": 0,
+    "outdated": 0,
+    "coverage": 0
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objectTranslations\\Invoice__c-ja",
+    "changedProperties": [
+      "total",
+      "translated",
+      "missing",
+      "orphan",
+      "outdated",
+      "coverage"
+    ],
+    "object": "Invoice__c",
+    "language": "ja",
+    "objectFound": true,
+    "total": 16,
+    "translated": 8,
+    "missing": 5,
+    "sameAsSource": 1,
+    "orphan": 1,
+    "outdated": 2,
+    "coverage": 50
+  },
+  {
+    "status": "removed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\objectTranslations\\Legacy_Item__c-ja",
+    "object": "Legacy_Item__c",
+    "language": "ja",
+    "objectFound": true,
+    "total": 1,
+    "translated": 1,
+    "missing": 0,
+    "sameAsSource": 0,
+    "orphan": 0,
+    "outdated": 0,
+    "coverage": 100
+  }
+]

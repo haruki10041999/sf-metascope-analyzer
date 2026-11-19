@@ -1,0 +1,2214 @@
+[
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "classDeclaration_960c93cca18ee296",
+      "sourceKey": "classDeclaration_201e47368e24c9c5"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService",
+    "access": "public",
+    "static": false,
+    "annotations": [
+      "RestResource"
+    ],
+    "memberType": "class",
+    "name": "AccountService",
+    "type": "BaseService"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_83615ff38b8bc965",
+      "sourceKey": "variableDeclarator_513efb927761ca6f"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService",
+    "access": "public",
+    "static": true,
+    "annotations": [],
+    "memberType": "field",
+    "name": "MAX_SIZE",
+    "type": "Integer"
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_e9fdfc6ea1beddc1",
+      "sourceKey": "variableDeclarator_533cdcb2797be2f1"
+    },
+    "changedProperties": [
+      "access"
+    ],
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService",
+    "access": "protected",
+    "static": false,
+    "annotations": [],
+    "memberType": "field",
+    "name": "name",
+    "type": "String"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_4210b0fc3fda5a2c",
+      "sourceKey": "variableDeclarator_3eed3688d2e74bd1"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "field",
+    "name": "first",
+    "type": "Integer"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_cf4c301f2f8402ec",
+      "sourceKey": "variableDeclarator_9d5e0360023c9218"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "field",
+    "name": "second",
+    "type": "Integer"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_4193d4c460ad38a2",
+      "sourceKey": "variableDeclarator_f41814256d0fa8e1"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "field",
+    "name": "third",
+    "type": "Integer"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "propertyDeclaration_e7293269c195d753",
+      "sourceKey": "propertyDeclaration_d11473a60ad88325"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "property",
+    "name": "label",
+    "type": "String"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "propertyDeclaration_09c556fc0cf2dbd9",
+      "sourceKey": "propertyDeclaration_2e8723b29edc7325"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "property",
+    "name": "total",
+    "type": "Integer"
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "enumDeclaration_e7610c6366a717cc",
+      "sourceKey": "enumDeclaration_e8589cf5736bae3b"
+    },
+    "changedProperties": [
+      "type"
+    ],
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService.Status",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "enum",
+    "name": "Status",
+    "type": "ACTIVE, PENDING, INACTIVE, DELETED"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "interfaceDeclaration_66d2e4c2ed1d439d",
+      "sourceKey": "interfaceDeclaration_c1e66309005f0b6d"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService.Handler",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "interface",
+    "name": "Handler"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "interfaceMethodDeclaration_81a4e219d5ba5a1e",
+      "sourceKey": "interfaceMethodDeclaration_b925d6793e04aa93"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService.Handler",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "handle",
+    "params": [
+      "Account"
+    ],
+    "type": "void"
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "interfaceMethodDeclaration_1ffa2716cd7c866d",
+      "sourceKey": "interfaceMethodDeclaration_1f64a2f3b7524f15"
+    },
+    "changedProperties": [
+      "type"
+    ],
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService.Handler",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "count",
+    "params": [],
+    "type": "Long"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "interfaceMethodDeclaration_f38ceabc8d14f96d",
+      "sourceKey": "interfaceMethodDeclaration_f72936b123dc8ebf"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService.Handler",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "reset",
+    "params": [],
+    "type": "void"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "classDeclaration_dfcce8559e1112b3",
+      "sourceKey": "classDeclaration_b2395053292e6673"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService.Wrapper",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "class",
+    "name": "Wrapper"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_2ccc0b39da25f506",
+      "sourceKey": "variableDeclarator_4fd830ebcf9a9f42"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService.Wrapper",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "field",
+    "name": "record",
+    "type": "Account"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_790477fca9c508e6",
+      "sourceKey": "variableDeclarator_f6d12a82a502dabb"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService.Wrapper",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "field",
+    "name": "selected",
+    "type": "Boolean"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "constructorDeclaration_d2d90b985e428422",
+      "sourceKey": "constructorDeclaration_2087592c3db08203"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService.Wrapper",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "constructor",
+    "name": "Wrapper",
+    "params": [
+      "Account"
+    ]
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "constructorDeclaration_124c6251bc716759",
+      "sourceKey": "constructorDeclaration_f9b59d9e56896866"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "constructor",
+    "name": "AccountService",
+    "params": []
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "constructorDeclaration_c7962b55cb1e5a53",
+      "sourceKey": "constructorDeclaration_d819478c97117979"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "constructor",
+    "name": "AccountService",
+    "params": [
+      "String"
+    ]
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_7f41cc5acf77fc69",
+      "sourceKey": "methodDeclaration_f6b6d8b07277c38a"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService",
+    "access": "public",
+    "static": true,
+    "annotations": [
+      "Future"
+    ],
+    "memberType": "method",
+    "name": "sync",
+    "params": [
+      "Set<Id>"
+    ],
+    "type": "void"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_96db7cbf451bbad0",
+      "sourceKey": "methodDeclaration_bcc611274007852d"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "calc",
+    "params": [
+      "Integer",
+      "Integer"
+    ],
+    "type": "Integer"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_c102e2f12e0f4a95",
+      "sourceKey": "methodDeclaration_15bfa1ad009ad0a0"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "calc",
+    "params": [
+      "Decimal",
+      "Decimal"
+    ],
+    "type": "Decimal"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_b2a70bbd35914d03",
+      "sourceKey": "methodDeclaration_139ed273b659840d"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "process",
+    "params": [
+      "List<Account>"
+    ],
+    "type": "void"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_67e114444ea11d5e",
+      "sourceKey": "methodDeclaration_b2b4e687bb540611"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "describe",
+    "params": [
+      "Status"
+    ],
+    "type": "String"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_ce9aa1a381b55acf",
+      "sourceKey": "methodDeclaration_d9aac1a6c8ca1559"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "search",
+    "params": [
+      "String"
+    ],
+    "type": "void"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_138369883f37a5d4",
+      "sourceKey": "methodDeclaration_00e2fd0957316b78"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "stats",
+    "params": [],
+    "type": "List<AggregateResult>"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_5903aebd60dd30cc",
+      "sourceKey": "methodDeclaration_9be08c9639ad47fd"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "expressions",
+    "params": [
+      "Object",
+      "List<Integer>"
+    ],
+    "type": "Object"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_0f123445e860e848",
+      "sourceKey": "methodDeclaration_3b955507326f21ae"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "report",
+    "params": [],
+    "type": "void"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_757b53ad481e3117",
+      "sourceKey": "methodDeclaration_89dc1d1a33bbdc69"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "execute",
+    "params": [
+      "SchedulableContext"
+    ],
+    "type": "void"
+  },
+  {
+    "status": "removed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\AccountService.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_7799ec8d504cd866",
+      "sourceKey": "methodDeclaration_97d67b74d6a0c554"
+    },
+    "className": "AccountService",
+    "unitType": "class",
+    "owner": "AccountService",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "loop",
+    "params": [],
+    "type": "void"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\Broken.cls",
+    "sourceKeys": {
+      "objectKey": "classDeclaration_097b407b64e401be",
+      "sourceKey": "classDeclaration_316ccc84364cdbc4"
+    },
+    "className": "Broken",
+    "unitType": "class",
+    "owner": "Broken",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "class",
+    "name": "Broken"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\Broken.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_212a200eab1e77ba",
+      "sourceKey": "methodDeclaration_c53faf02d9d77339"
+    },
+    "className": "Broken",
+    "unitType": "class",
+    "owner": "Broken",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "run",
+    "params": [],
+    "type": "void"
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\Level.cls",
+    "sourceKeys": {
+      "objectKey": "enumDeclaration_bb8616d1e7c0c120",
+      "sourceKey": "enumDeclaration_c435a86df91b037e"
+    },
+    "changedProperties": [
+      "type"
+    ],
+    "className": "Level",
+    "unitType": "class",
+    "owner": "Level",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "enum",
+    "name": "Level",
+    "type": "LOW, MEDIUM, HIGH"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\NewHelper.cls",
+    "sourceKeys": {
+      "objectKey": "classDeclaration_962e7837a01a6972",
+      "sourceKey": "classDeclaration_7f477543a4289086"
+    },
+    "className": "NewHelper",
+    "unitType": "class",
+    "owner": "NewHelper",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "class",
+    "name": "NewHelper"
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\NewHelper.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_7f6e09e48b81e775",
+      "sourceKey": "methodDeclaration_27764ef519ccd4c7"
+    },
+    "className": "NewHelper",
+    "unitType": "class",
+    "owner": "NewHelper",
+    "access": "public",
+    "static": true,
+    "annotations": [],
+    "memberType": "method",
+    "name": "run",
+    "params": [],
+    "type": "void"
+  },
+  {
+    "status": "removed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\classes\\OldHelper.cls",
+    "sourceKeys": {
+      "objectKey": "classDeclaration_70e26f31cfc1cdb2",
+      "sourceKey": "classDeclaration_7f477543a4289086"
+    },
+    "className": "OldHelper",
+    "unitType": "class",
+    "owner": "OldHelper",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "class",
+    "name": "OldHelper"
+  },
+  {
+    "status": "removed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\before\\force-app\\main\\default\\classes\\OldHelper.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_7f6e09e48b81e775",
+      "sourceKey": "methodDeclaration_27764ef519ccd4c7"
+    },
+    "className": "OldHelper",
+    "unitType": "class",
+    "owner": "OldHelper",
+    "access": "public",
+    "static": true,
+    "annotations": [],
+    "memberType": "method",
+    "name": "run",
+    "params": [],
+    "type": "void"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserEnum.cls",
+    "sourceKeys": {
+      "objectKey": "enumDeclaration_42428ec88d8048fc",
+      "sourceKey": "enumDeclaration_4c54cd95b55d5eeb"
+    },
+    "className": "ParserEnum",
+    "unitType": "class",
+    "owner": "ParserEnum",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "enum",
+    "name": "ParserEnum",
+    "type": "DRAFT, SUBMITTED, APPROVED, REJECTED"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserInterface.cls",
+    "sourceKeys": {
+      "objectKey": "interfaceDeclaration_c7aae7cb61959f11",
+      "sourceKey": "interfaceDeclaration_af524b608d508c20"
+    },
+    "className": "ParserInterface",
+    "unitType": "class",
+    "owner": "ParserInterface",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "interface",
+    "name": "ParserInterface"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserInterface.cls",
+    "sourceKeys": {
+      "objectKey": "interfaceMethodDeclaration_07f7b5171043f6db",
+      "sourceKey": "interfaceMethodDeclaration_bfbee0df6be30f35"
+    },
+    "className": "ParserInterface",
+    "unitType": "class",
+    "owner": "ParserInterface",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "execute",
+    "params": [
+      "SchedulableContext"
+    ],
+    "type": "void"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserInterface.cls",
+    "sourceKeys": {
+      "objectKey": "interfaceMethodDeclaration_16cbb1f9beaad9e6",
+      "sourceKey": "interfaceMethodDeclaration_4faf851f8cacb57b"
+    },
+    "className": "ParserInterface",
+    "unitType": "class",
+    "owner": "ParserInterface",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "count",
+    "params": [],
+    "type": "Integer"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserInterface.cls",
+    "sourceKeys": {
+      "objectKey": "interfaceMethodDeclaration_8d0748c48d56783d",
+      "sourceKey": "interfaceMethodDeclaration_5c11661a77ee8940"
+    },
+    "className": "ParserInterface",
+    "unitType": "class",
+    "owner": "ParserInterface",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "findAccounts",
+    "params": [
+      "String",
+      "Set<Id>"
+    ],
+    "type": "List<Account>"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserInterface.cls",
+    "sourceKeys": {
+      "objectKey": "interfaceMethodDeclaration_f4ca82346fc0ce3c",
+      "sourceKey": "interfaceMethodDeclaration_728f3c89d8cd64d2"
+    },
+    "className": "ParserInterface",
+    "unitType": "class",
+    "owner": "ParserInterface",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "groupContacts",
+    "params": [
+      "List<Account>"
+    ],
+    "type": "Map<Id, List<Contact>>"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserInterface.cls",
+    "sourceKeys": {
+      "objectKey": "interfaceMethodDeclaration_c558b1a6f792db1b",
+      "sourceKey": "interfaceMethodDeclaration_77d3e14026df552e"
+    },
+    "className": "ParserInterface",
+    "unitType": "class",
+    "owner": "ParserInterface",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "save",
+    "params": [
+      "SObject"
+    ],
+    "type": "Database.SaveResult"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "classDeclaration_91e1dad870200378",
+      "sourceKey": "classDeclaration_802d1f698607d99e"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "global",
+    "static": false,
+    "annotations": [
+      "IsTest"
+    ],
+    "memberType": "class",
+    "name": "ParserTest",
+    "type": "BaseParser",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_991e18a2ef726125",
+      "sourceKey": "variableDeclarator_3696d6534b2f3e68"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "public",
+    "static": true,
+    "annotations": [],
+    "memberType": "field",
+    "name": "MAX_SIZE",
+    "type": "Integer",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_00a61eb7b957ef0b",
+      "sourceKey": "variableDeclarator_7e1584fdc79e0efb"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": true,
+    "annotations": [],
+    "memberType": "field",
+    "name": "counter",
+    "type": "Integer",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_0d4f94304dfe2a1a",
+      "sourceKey": "variableDeclarator_4ec5ec1edb87ceab"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "field",
+    "name": "name",
+    "type": "String",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_1ae7cf2555bcc1ee",
+      "sourceKey": "variableDeclarator_885f408e54a1b351"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "protected",
+    "static": false,
+    "annotations": [],
+    "memberType": "field",
+    "name": "accountId",
+    "type": "Id",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_2b6a64638eb8b775",
+      "sourceKey": "variableDeclarator_431565df282af4aa"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "global",
+    "static": false,
+    "annotations": [],
+    "memberType": "field",
+    "name": "cache",
+    "type": "Blob",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_76b32524f0977fea",
+      "sourceKey": "variableDeclarator_d3bdb68902f60bda"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "field",
+    "name": "names",
+    "type": "List<String>",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_60a55d000b1c4668",
+      "sourceKey": "variableDeclarator_b7c49a8fdb798f2f"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "field",
+    "name": "accountIds",
+    "type": "Set<Id>",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_58d3313d509ef631",
+      "sourceKey": "variableDeclarator_abb6f8d8f92cab66"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "field",
+    "name": "accountMap",
+    "type": "Map<Id, Account>",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_74edebcd94d3325a",
+      "sourceKey": "variableDeclarator_8b0bafd8137e56ac"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "field",
+    "name": "nestedList",
+    "type": "List<List<String>>",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_5fb7a1a272f361da",
+      "sourceKey": "variableDeclarator_631e61739aaaa759"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "field",
+    "name": "stringArray",
+    "type": "String[]",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_dd8b42b24e3282f6",
+      "sourceKey": "variableDeclarator_9c10d7aa757522f1"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "field",
+    "name": "integerMatrix",
+    "type": "Integer[][]",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_4210b0fc3fda5a2c",
+      "sourceKey": "variableDeclarator_4bf85fb2cf239c8e"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "field",
+    "name": "first",
+    "type": "Integer",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_2e93d34319f58499",
+      "sourceKey": "variableDeclarator_21cfa96a72827937"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "field",
+    "name": "second",
+    "type": "Integer",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_b2d93be4c427b27f",
+      "sourceKey": "variableDeclarator_f4a13e67a8534a4a"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "field",
+    "name": "third",
+    "type": "Integer",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "propertyDeclaration_243b3ea86b1d65db",
+      "sourceKey": "propertyDeclaration_ca7fc7af266a6cf2"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "property",
+    "name": "autoProperty",
+    "type": "String",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "propertyDeclaration_6a0cf7878fd1c088",
+      "sourceKey": "propertyDeclaration_4398eb48cf449ac9"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "property",
+    "name": "readOnlyProperty",
+    "type": "Integer",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "propertyDeclaration_f69b6331f7a233a2",
+      "sourceKey": "propertyDeclaration_9f1c2804cdebbdec"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "property",
+    "name": "computedProperty",
+    "type": "Integer",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "constructorDeclaration_b89c191270c74b6c",
+      "sourceKey": "constructorDeclaration_f16ccc3bbd3a2af2"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "constructor",
+    "name": "ParserTest",
+    "params": [],
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "constructorDeclaration_1e6528d5f2daa801",
+      "sourceKey": "constructorDeclaration_bf7315a7190fe14b"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "constructor",
+    "name": "ParserTest",
+    "params": [
+      "String"
+    ],
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_e630dbf6b853e498",
+      "sourceKey": "methodDeclaration_80db43bfa3b0411c"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "public",
+    "static": true,
+    "annotations": [
+      "AuraEnabled"
+    ],
+    "memberType": "method",
+    "name": "getName",
+    "params": [
+      "Id"
+    ],
+    "type": "String",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_d33588f89bdad980",
+      "sourceKey": "methodDeclaration_bba362213168b6db"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "global",
+    "static": true,
+    "annotations": [
+      "InvocableMethod"
+    ],
+    "memberType": "method",
+    "name": "invocable",
+    "params": [
+      "List<String>"
+    ],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_ea46da369a6e3163",
+      "sourceKey": "methodDeclaration_f1260564169d0448"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": true,
+    "annotations": [
+      "Deprecated"
+    ],
+    "memberType": "method",
+    "name": "legacy",
+    "params": [],
+    "type": "String",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_eb609f5dcf23fe8a",
+      "sourceKey": "methodDeclaration_f125afcd8498f751"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": true,
+    "annotations": [
+      "TestVisible"
+    ],
+    "memberType": "method",
+    "name": "legacyTest",
+    "params": [],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_5258003d953d20a8",
+      "sourceKey": "methodDeclaration_87560e4f978a2694"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "toString",
+    "params": [],
+    "type": "String",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_48c8745db73d28d3",
+      "sourceKey": "methodDeclaration_7331ad76d6b88cce"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "compareTo",
+    "params": [
+      "Object"
+    ],
+    "type": "Integer",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_81fb37786b3c993a",
+      "sourceKey": "methodDeclaration_a71a5039b9892bd0"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "protected",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "hook",
+    "params": [],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_2d0815b0cf0a214f",
+      "sourceKey": "methodDeclaration_d6272f89cd143cae"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "literals",
+    "params": [],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_81560d78889797e4",
+      "sourceKey": "methodDeclaration_760ec75d473f8d18"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "genericTypes",
+    "params": [],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_5324bebee5bd1adf",
+      "sourceKey": "methodDeclaration_bca06b4f908c68f4"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "creators",
+    "params": [],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_469f74cf1885d6cc",
+      "sourceKey": "methodDeclaration_71cc326886c9b72d"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "operators",
+    "params": [
+      "Integer",
+      "Integer"
+    ],
+    "type": "Integer",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_13d0f553e8997182",
+      "sourceKey": "methodDeclaration_169592f78b364817"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "castAndInstanceof",
+    "params": [
+      "SObject"
+    ],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_f5f50efc72e51b08",
+      "sourceKey": "methodDeclaration_e4528ba81e181ddf"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "methodCalls",
+    "params": [],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_9ec5255f3b1b8b2f",
+      "sourceKey": "methodDeclaration_1caca1ae27226e03"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "controlFlow",
+    "params": [
+      "Integer",
+      "List<Account>"
+    ],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_095f50f90b16f4ff",
+      "sourceKey": "methodDeclaration_d6bfbccae4ec388e"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "switchExamples",
+    "params": [
+      "Object",
+      "String",
+      "Integer",
+      "Status"
+    ],
+    "type": "String",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_531be9be3dcea70d",
+      "sourceKey": "methodDeclaration_2a767147f03ae6f6"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "exceptionHandling",
+    "params": [],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_c819e553ccd5bb5a",
+      "sourceKey": "methodDeclaration_68b377369f00a03e"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "throwExample",
+    "params": [],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_2823f6849aaf16f3",
+      "sourceKey": "methodDeclaration_60b4f4a9c004a543"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "dmlExample",
+    "params": [
+      "Account",
+      "Account",
+      "List<Account>"
+    ],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_b38c8339d88a00df",
+      "sourceKey": "methodDeclaration_4c4e226a54253d2e"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "databaseExample",
+    "params": [
+      "List<Account>"
+    ],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_41d22bb41b476086",
+      "sourceKey": "methodDeclaration_6a310a0bc245ef9d"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "dynamicSoqlExample",
+    "params": [],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_0f9dd743f9fda8b9",
+      "sourceKey": "methodDeclaration_a91ce3a58fa1bafa"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "runAsExample",
+    "params": [
+      "User"
+    ],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_23e46663a66947e4",
+      "sourceKey": "methodDeclaration_9dad114a5b687ebb"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "basicSoql",
+    "params": [
+      "Integer",
+      "Integer"
+    ],
+    "type": "List<Account>",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_ce703d8b1e1a3f2d",
+      "sourceKey": "methodDeclaration_83d8e2548a2b84aa"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "whereSoql",
+    "params": [
+      "String",
+      "Decimal",
+      "Set<Id>"
+    ],
+    "type": "List<Account>",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_2f9502402731775d",
+      "sourceKey": "methodDeclaration_8c50b5bb12f8776b"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "relationshipSoql",
+    "params": [],
+    "type": "List<Account>",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_cdf2216928a80ec3",
+      "sourceKey": "methodDeclaration_3952b9aa33e41e96"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "typeOfSoql",
+    "params": [],
+    "type": "List<Event>",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_73d3a2d6b3a48b89",
+      "sourceKey": "methodDeclaration_cf164d03a5187efa"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "aggregateSoql",
+    "params": [],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_4e64d0bf2198b28c",
+      "sourceKey": "methodDeclaration_469d0d8e2719adf2"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "functionSoql",
+    "params": [],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_0fb634d1b010a8b9",
+      "sourceKey": "methodDeclaration_30bcc1bda1bca4b3"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "locationSoql",
+    "params": [
+      "Location"
+    ],
+    "type": "List<Account>",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_af2685891d76b7de",
+      "sourceKey": "methodDeclaration_a38af552255fefe0"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "soqlClauses",
+    "params": [],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_ae7b03fdc1ca0acf",
+      "sourceKey": "methodDeclaration_82841ca7391749dd"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "soslExamples",
+    "params": [
+      "String"
+    ],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "classDeclaration_7d08ab3f08866f90",
+      "sourceKey": "classDeclaration_f2b787f0e5754850"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest.InnerClass",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "class",
+    "name": "InnerClass",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_c3df56c1825077f4",
+      "sourceKey": "variableDeclarator_206a9f92ef3b0246"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest.InnerClass",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "field",
+    "name": "value",
+    "type": "String",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "constructorDeclaration_9bcdcd11a7aadede",
+      "sourceKey": "constructorDeclaration_4ebfd5c39b8a93ec"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest.InnerClass",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "constructor",
+    "name": "InnerClass",
+    "params": [
+      "String"
+    ],
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_162ededd72508e89",
+      "sourceKey": "methodDeclaration_dba6e4a2316860cf"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest.InnerClass",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "execute",
+    "params": [],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_5f9c265300f2404c",
+      "sourceKey": "methodDeclaration_551b446513087359"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest.InnerClass",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "getValue",
+    "params": [],
+    "type": "String",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "classDeclaration_47dbcdd4bc0eb6b4",
+      "sourceKey": "classDeclaration_549665333762a807"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest.AbstractHandler",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "class",
+    "name": "AbstractHandler",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_8fa32b0ae82a36af",
+      "sourceKey": "methodDeclaration_a36ee912225bae81"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest.AbstractHandler",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "execute",
+    "params": [],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "classDeclaration_5b47aa7107488c6c",
+      "sourceKey": "classDeclaration_988c121b2c8ffc31"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest.WithoutSharingHandler",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "class",
+    "name": "WithoutSharingHandler",
+    "type": "AbstractHandler",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_f1f82df8d746d2e8",
+      "sourceKey": "methodDeclaration_e0d379b819a10f2e"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest.WithoutSharingHandler",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "execute",
+    "params": [],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "enumDeclaration_28eba76aeb23297a",
+      "sourceKey": "enumDeclaration_b18b9325e7c098ff"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest.Status",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "enum",
+    "name": "Status",
+    "type": "AAA, BBB, CCC, DDD",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "enumDeclaration_df87b042cfe68e06",
+      "sourceKey": "enumDeclaration_41ca5e056e624e99"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest.EmptyEnum",
+    "access": "private",
+    "static": false,
+    "annotations": [],
+    "memberType": "enum",
+    "name": "EmptyEnum",
+    "type": "",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "interfaceDeclaration_cb44929c9f141b3c",
+      "sourceKey": "interfaceDeclaration_9f3cce4cf57f9481"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest.Handler",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "interface",
+    "name": "Handler",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "interfaceMethodDeclaration_a7ddf1ae8c48434a",
+      "sourceKey": "interfaceMethodDeclaration_05216c7a5f50638c"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest.Handler",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "execute",
+    "params": [],
+    "type": "void",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "interfaceDeclaration_0d33e729014c0d6f",
+      "sourceKey": "interfaceDeclaration_9f5cac8719b5bd72"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest.ExtendedHandler",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "interface",
+    "name": "ExtendedHandler",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "interfaceMethodDeclaration_132ad6bbd6d471ff",
+      "sourceKey": "interfaceMethodDeclaration_f03fd4df64bcb3dc"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest.ExtendedHandler",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "describe",
+    "params": [
+      "Integer",
+      "List<String>"
+    ],
+    "type": "String",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "classDeclaration_fa64ce622f2b3c0e",
+      "sourceKey": "classDeclaration_5e5dda48d99e908c"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest.CustomException",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "class",
+    "name": "CustomException",
+    "type": "Exception",
+    "isTest": true
+  },
+  {
+    "status": "added",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\Shape.cls",
+    "sourceKeys": {
+      "objectKey": "classDeclaration_1706a1abe9a3e1bb",
+      "sourceKey": "classDeclaration_1a606c18644285c2"
+    },
+    "className": "Shape",
+    "unitType": "class",
+    "owner": "Shape",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "class",
+    "name": "Shape"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\Shape.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_badab78845d0b1cb",
+      "sourceKey": "methodDeclaration_6ccb55517578df5e"
+    },
+    "className": "Shape",
+    "unitType": "class",
+    "owner": "Shape",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "area",
+    "params": [],
+    "type": "Decimal"
+  },
+  {
+    "status": "removed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\Shape.cls",
+    "sourceKeys": {
+      "objectKey": "interfaceDeclaration_d36aa654521b4985",
+      "sourceKey": "interfaceDeclaration_2406a62d45facf6d"
+    },
+    "className": "Shape",
+    "unitType": "class",
+    "owner": "Shape",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "interface",
+    "name": "Shape"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\Unchanged.cls",
+    "sourceKeys": {
+      "objectKey": "classDeclaration_73f0dcfaf88787f0",
+      "sourceKey": "classDeclaration_fd596ab2d2aa4bcb"
+    },
+    "className": "Unchanged",
+    "unitType": "class",
+    "owner": "Unchanged",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "class",
+    "name": "Unchanged"
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\Unchanged.cls",
+    "sourceKeys": {
+      "objectKey": "variableDeclarator_29116b7b5b22fde3",
+      "sourceKey": "variableDeclarator_531e11a4d8ea531f"
+    },
+    "className": "Unchanged",
+    "unitType": "class",
+    "owner": "Unchanged",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "field",
+    "name": "value",
+    "type": "Integer"
+  },
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\triggers\\AccountTrigger.trigger",
+    "changedProperties": [
+      "events"
+    ],
+    "className": "AccountTrigger",
+    "unitType": "trigger",
+    "owner": "AccountTrigger",
+    "memberType": "trigger",
+    "name": "AccountTrigger",
+    "type": "Account",
+    "static": false,
+    "annotations": [],
+    "events": [
+      "after update",
+      "before delete"
+    ]
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\triggers\\ParserTrigger.trigger",
+    "className": "ParserTrigger",
+    "unitType": "trigger",
+    "owner": "ParserTrigger",
+    "memberType": "trigger",
+    "name": "ParserTrigger",
+    "type": "Account",
+    "static": false,
+    "annotations": [],
+    "events": [
+      "before insert",
+      "before update",
+      "before delete",
+      "after insert",
+      "after update",
+      "after delete",
+      "after undelete"
+    ]
+  }
+]

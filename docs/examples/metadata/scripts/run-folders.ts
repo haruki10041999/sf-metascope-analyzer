@@ -34,7 +34,13 @@ import {
     METADATA_UNIT_DIFFS,
     type MetadataContext,
 } from '../../../../src/analyzer/processor/Metadata';
-import { REPORT_PROVIDERS, getReferenceUsages } from '../../../../src/analyzer/report';
+import {
+    REPORT_PROVIDERS,
+    getReferenceUsages,
+    isReportProviderName,
+    providerDefinitionOf,
+    runReportProvider,
+} from '../../../../src/analyzer/report';
 import { getDependents, toLevel } from '../../../../src/analyzer/processor/dependency/graph';
 import { Repository, WorkingTree, dependencyGraphOf } from '../../../../src/analyzer/unit';
 import { SIDES, repositoryOf, sourceOf } from '../../paths';
@@ -470,15 +476,18 @@ const main = async () => {
 
     // レポートの data provider (before → after)
     const input = { before: await repositoryFor('before'), after: await repositoryFor('after') };
+    const reports = Object.keys(REPORT_PROVIDERS).map((name) => {
+        if (!isReportProviderName(name)) throw new Error(`Unknown report provider: ${name}`);
+        const definition = providerDefinitionOf(name);
+        const args = definition.args.safeParse({}).success ? {} : definition.example;
+        if (args === undefined) throw new Error(`Missing example arguments for provider: ${name}`);
+        const data = runReportProvider(name, input, args, { mask: false });
+        return { name, json: `${JSON.stringify(data, null, 2)}\n` };
+    });
     await rm(reportDirectory, { recursive: true, force: true });
     await mkdir(reportDirectory, { recursive: true });
-    for (const [name, provider] of Object.entries(REPORT_PROVIDERS)) {
-        const data = (provider as (input: unknown) => unknown)(input);
-        await writeFile(
-            path.join(reportDirectory, `${name}.json`),
-            `${JSON.stringify(data, null, 2)}\n`,
-            'utf8',
-        );
+    for (const { name, json } of reports) {
+        await writeFile(path.join(reportDirectory, `${name}.json`), json, 'utf8');
     }
     console.log(`出力: ${jsonDirectory}, ${diffDirectory}, ${reportDirectory}`);
 };

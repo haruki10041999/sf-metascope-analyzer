@@ -1,1 +1,156 @@
-[]
+[
+  {
+    "id": "objectTranslation:Invoice__c-ja",
+    "type": "objectTranslation",
+    "name": "Invoice__c-ja",
+    "origin": "repository",
+    "depth": 1,
+    "sourceKeys": {
+      "objectKey": "objectTranslation_7dfc2a8bbad4d897",
+      "sourceKey": "objectTranslation_53a3b33d94e742a5"
+    }
+  },
+  {
+    "id": "permissionSet:Invoice_Manager",
+    "type": "permissionSet",
+    "name": "Invoice_Manager",
+    "origin": "repository",
+    "depth": 1,
+    "sourceKeys": {
+      "objectKey": "permissionSet_c63b3dd9be5e8b8b",
+      "sourceKey": "permissionSet_66c65958a93475fc"
+    }
+  },
+  {
+    "id": "permissionSet:Payment_Clerk",
+    "type": "permissionSet",
+    "name": "Payment_Clerk",
+    "origin": "repository",
+    "depth": 1,
+    "sourceKeys": {
+      "objectKey": "permissionSet_dd3a595e9c73a854",
+      "sourceKey": "permissionSet_02f916d6d4992d22"
+    }
+  },
+  {
+    "id": "flow:Invoice_Status_Update",
+    "type": "flow",
+    "name": "Invoice_Status_Update",
+    "origin": "repository",
+    "depth": 1,
+    "sourceKeys": {
+      "objectKey": "flow_8bd11fabbc495f15",
+      "sourceKey": "flow_67ff9e0fb530fcd2"
+    }
+  },
+  {
+    "id": "layout:Invoice__c-Invoice Detail",
+    "type": "layout",
+    "name": "Invoice__c-Invoice Detail",
+    "origin": "repository",
+    "depth": 1,
+    "sourceKeys": {
+      "objectKey": "layout_72d9ac01e8ccc2a5",
+      "sourceKey": "layout_f4546ffd1e758237"
+    }
+  },
+  {
+    "id": "layout:Invoice__c-Invoice Layout",
+    "type": "layout",
+    "name": "Invoice__c-Invoice Layout",
+    "origin": "repository",
+    "depth": 1,
+    "sourceKeys": {
+      "objectKey": "layout_73abc97f9fb96cf5",
+      "sourceKey": "layout_763f18f990a9e8cd"
+    }
+  },
+  {
+    "id": "flexiPage:Invoice_Record_Page",
+    "type": "flexiPage",
+    "name": "Invoice_Record_Page",
+    "origin": "repository",
+    "depth": 1,
+    "sourceKeys": {
+      "objectKey": "flexiPage_49ba9fd2be13ca35",
+      "sourceKey": "flexiPage_04e4d43b0076e809"
+    }
+  },
+  {
+    "id": "quickAction:Invoice__c.Approve",
+    "type": "quickAction",
+    "name": "Invoice__c.Approve",
+    "origin": "repository",
+    "depth": 1,
+    "sourceKeys": {
+      "objectKey": "quickAction_488c91ba34e89c31",
+      "sourceKey": "quickAction_9d6c625c85502f1d"
+    }
+  },
+  {
+    "id": "sharingRules:Invoice__c",
+    "type": "sharingRules",
+    "name": "Invoice__c",
+    "origin": "repository",
+    "depth": 1,
+    "sourceKeys": {
+      "objectKey": "sharingRules_f5a90bf36d77674c",
+      "sourceKey": "sharingRules_8bbc491c64d0528d"
+    }
+  },
+  {
+    "id": "apexPage:InvoicePrint",
+    "type": "apexPage",
+    "name": "InvoicePrint",
+    "origin": "repository",
+    "depth": 1,
+    "sourceKeys": {
+      "objectKey": "apexPage_17248dbeb7fed887",
+      "sourceKey": "apexPage_69568e92420dff25"
+    }
+  },
+  {
+    "id": "emailTemplate:Invoice_Templates/Invoice_Sent",
+    "type": "emailTemplate",
+    "name": "Invoice_Templates/Invoice_Sent",
+    "origin": "repository",
+    "depth": 1,
+    "sourceKeys": {
+      "objectKey": "emailTemplate_d8a41e3dca1f7036",
+      "sourceKey": "emailTemplate_9ffc47d0e0c6fca5"
+    }
+  },
+  {
+    "id": "report:Invoice_Reports/Open_Invoices",
+    "type": "report",
+    "name": "Invoice_Reports/Open_Invoices",
+    "origin": "repository",
+    "depth": 1,
+    "sourceKeys": {
+      "objectKey": "report_2c717e065bfe58eb",
+      "sourceKey": "report_b979aed23009d2e9"
+    }
+  },
+  {
+    "id": "approvalProcess:Invoice__c.Large_Invoice_Approval",
+    "type": "approvalProcess",
+    "name": "Invoice__c.Large_Invoice_Approval",
+    "origin": "repository",
+    "depth": 1,
+    "sourceKeys": {
+      "objectKey": "approvalProcess_ccd7eb037e96941e",
+      "sourceKey": "approvalProcess_797f4ded05aef36f"
+    }
+  },
+  {
+    "id": "reportType:Invoices_with_Lines",
+    "type": "reportType",
+    "name": "Invoices_with_Lines",
+    "origin": "repository",
+    "depth": 1,
+    "sourceKeys": {
+      "objectKey": "reportType_2cce44e466e89428",
+      "sourceKey": "reportType_78dc2e1256f0f763"
+    }
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "status": "changed",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c",
+    "sourceKeys": {
+      "objectKey": "recordType_5102d01da64931ec",
+      "sourceKey": "recordType_8d6c5e734f64b4e6"
+    },
+    "object": "Invoice__c",
+    "recordType": "Standard",
+    "recordTypeLabel": "Standard",
+    "active": true,
+    "picklist": "Status__c",
+    "values": [
+      "Draft",
+      "Overdue"
+    ],
+    "defaultValue": "Draft"
+  }
+]
