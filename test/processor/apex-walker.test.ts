@@ -9,7 +9,9 @@ import {
     composeApexVisitors,
     walkApexParseResult,
 } from '../../src/analyzer/processor/Apex/walker';
+import { makeApexTypeNameOf } from '../../src/analyzer/processor/Apex/walker/type';
 import { getApexDependencies } from '../../src/analyzer/processor/dependency/apex';
+import type { TypeJson } from '../../src/analyzer/types/apex/type';
 
 // Apex の共通の走査と派生の情報 (docs/json-redesign-plan.md の段階 A3)
 
@@ -28,6 +30,59 @@ const parse = async (
     assert.deepEqual(unit.resolvedError, []);
     return unit;
 };
+
+describe('makeApexTypeNameOf', () => {
+    const sourceKeys = { objectKey: 'object', sourceKey: 'source' };
+
+    it('keeps only enclosing types in paths for collection elements', () => {
+        assert.deepEqual(
+            makeApexTypeNameOf({
+                kind: 'type',
+                sourceKeys,
+                type: 'list',
+                elementType: { type: 'custom', customType: ['Account'] },
+            }),
+            [{ kind: 'custom', path: ['list'], name: 'Account' }],
+        );
+        const type: TypeJson = {
+            kind: 'type',
+            sourceKeys,
+            type: 'map',
+            keyType: { type: 'primitive', primitiveType: 'Id' },
+            valueType: { type: 'list', elementType: { type: 'custom', customType: ['Account'] } },
+        };
+        assert.deepEqual(makeApexTypeNameOf(type), [
+            { kind: 'primitive', path: ['mapKey'], name: 'Id' },
+            { kind: 'custom', path: ['mapValue', 'list'], name: 'Account' },
+        ]);
+    });
+
+    it('preserves the custom parent in generic argument paths without changing its path', () => {
+        const type: TypeJson = {
+            kind: 'type',
+            sourceKeys,
+            type: 'custom',
+            customType: ['Outer', 'Box'],
+            generic: [
+                { type: 'custom', customType: ['Account'] },
+                { type: 'primitive', primitiveType: 'String' },
+            ],
+        };
+        assert.deepEqual(makeApexTypeNameOf(type), [
+            { kind: 'custom', path: [], name: 'Outer.Box' },
+            {
+                kind: 'custom',
+                path: [['Outer', 'Box'], { type: 'customGeneric', index: 1 }],
+                name: 'Account',
+            },
+            {
+                kind: 'primitive',
+                path: [['Outer', 'Box'], { type: 'customGeneric', index: 2 }],
+                name: 'String',
+            },
+        ]);
+    });
+});
 
 describe('walkApexJson (Apex の共通の走査)', () => {
     it('keeps the class, member, loop, try and test context', async () => {

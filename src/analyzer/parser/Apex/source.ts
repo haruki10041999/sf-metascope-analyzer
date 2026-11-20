@@ -27,6 +27,7 @@ import { ApexCommonErrorListener, type ApexResolvedErrorEntry } from './errorLis
 export type ApexSourceFileType = 'cls' | 'trigger' | 'anonymous';
 
 type UnitJson = CompilationUnitJson | TriggerUnitJson | AnonymousUnitJson;
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
 
 /** ソースの JSON。読めなかったとき (IR・JSON を作れなかった) は fileType: 'error' で中身を持たない (理由は resolvedError) */
 export type ApexSourceJson =
@@ -35,7 +36,7 @@ export type ApexSourceJson =
           fileName: string;
           fileType: ApexSourceFileType;
           /** fileType を除いた CompilationUnitJson / TriggerUnitJson / AnonymousUnitJson */
-          content: Omit<UnitJson, 'fileType'>;
+          content: DistributiveOmit<UnitJson, 'fileType'>;
       }
     | { fileName: string; fileType: 'error' };
 

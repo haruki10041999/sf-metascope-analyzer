@@ -9,8 +9,13 @@
 |            | [report-document-format.md](./report-document-format.md)   | レポートの文書の書き方（今の形・決まり・部品と provider・HTML を作る道・利用者が書くときに困るところ）   |
 |            | [save-format-plan.md](./save-format-plan.md)               | 保存の仕組みの見直し（今の保存・問題・部分更新の案・推奨案と段階・決めること）                           |
 | 共通       | [commons.md](./commons.md)                                 | Apex・LWC・メタデータで共通の部品と、新しい種類を足すときの手順                                          |
+| 型         | [unknown-parameters.md](./unknown-parameters.md)           | 引数に `unknown` を明示した関数・型宣言の一覧と集計条件                                                  |
+| 型         | [unknown-properties.md](./unknown-properties.md)           | `unknown` を含む型属性・辞書型の別名の一覧と集計条件                                                     |
 | Apex       | [apex-implementation.md](./apex-implementation.md)         | 実装の全体像（単位・構成・Diff）                                                                         |
 |            | [apex-json-analysis.md](./apex-json-analysis.md)           | JSON の解析（宣言・SOQL / DML・呼び出し）の計画                                                          |
+|            | [apex-json-types.md](./apex-json-types.md)                 | Apex の JSON ノード型と構文の対応                                                                        |
+|            | [apex-dependency-walker-scope.md](./apex-dependency-walker-scope.md) | 依存関係解析向け walker の機能範囲と検討事項                                                   |
+|            | [apex-standard-reference.md](./apex-standard-reference.md) | 標準 API・オブジェクトの公式資料と標準型一覧への目次（未完成）                                           |
 | LWC        | [lwc-implementation.md](./lwc-implementation.md)           | 実装の全体像（バンドル・JS / TS・HTML・CSS・js-meta.xml・検証・解析）                                    |
 |            | [lwc-json-types.md](./lwc-json-types.md)                   | JS / TS の JSON の型の見直し（今の型・使われ方・足りないもの・型にする案と優先度・進め方）               |
 | IR         | [ir.md](./ir.md)                                           | Apex・LWC の IR の作り方（基底クラス・子の作り方・エラーを木に残さない方針と検証）                       |

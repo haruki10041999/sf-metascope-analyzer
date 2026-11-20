@@ -307,6 +307,18 @@ global inherited sharing virtual class ParserTest extends BaseParser implements 
         Id ownerId = [SELECT OwnerId FROM Account LIMIT 1].OwnerId;
     }
 
+    public class AccountReader {
+        public Account getAccount() {
+            return new Account();
+        }
+
+        public String nameOfAccount() {
+            return getAccount().Name;
+        }
+    }   
+// 期待する参照先は field:Account.Name。
+
+
 
     // ============================================================
     // If / loops / switch

@@ -13,7 +13,7 @@
 | before | [class_OldHelper](before/class_OldHelper.json) | 6 | 0 |
 | before | [class_ParserEnum](before/class_ParserEnum.json) | 6 | 0 |
 | before | [class_ParserInterface](before/class_ParserInterface.json) | 23 | 0 |
-| before | [class_ParserTest](before/class_ParserTest.json) | 1448 | 0 |
+| before | [class_ParserTest](before/class_ParserTest.json) | 1463 | 0 |
 | before | [class_Shape](before/class_Shape.json) | 4 | 0 |
 | before | [class_Unchanged](before/class_Unchanged.json) | 8 | 0 |
 | before | [trigger_AccountTrigger](before/trigger_AccountTrigger.json) | 15 | 0 |
@@ -27,7 +27,7 @@
 | after | [class_NewHelper](after/class_NewHelper.json) | 6 | 0 |
 | after | [class_ParserEnum](after/class_ParserEnum.json) | 6 | 0 |
 | after | [class_ParserInterface](after/class_ParserInterface.json) | 23 | 0 |
-| after | [class_ParserTest](after/class_ParserTest.json) | 1448 | 0 |
+| after | [class_ParserTest](after/class_ParserTest.json) | 1463 | 0 |
 | after | [class_Shape](after/class_Shape.json) | 7 | 0 |
 | after | [class_Unchanged](after/class_Unchanged.json) | 8 | 0 |
 | after | [trigger_AccountTrigger](after/trigger_AccountTrigger.json) | 22 | 0 |

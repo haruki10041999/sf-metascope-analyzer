@@ -1,5 +1,9 @@
 {
     "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.formatOnType": true,
+    "editor.autoIndent": "full",
+    "editor.wordWrap": "on",
     "files.eol": "\n",
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "[javascript]": {

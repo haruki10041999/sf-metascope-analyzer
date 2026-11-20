@@ -4,10 +4,10 @@
 
 | 分類 | kind | JSON | 差分 |
 | --- | --- | --- | --- |
-| 宣言 | `class` | 25 | 4 |
+| 宣言 | `class` | 27 | 4 |
 | 宣言 | `interface` | 13 | 2 |
 | 宣言 | `interfaceMethod` | 24 | 3 |
-| 宣言 | `method` | 104 | 13 |
+| 宣言 | `method` | 108 | 13 |
 | 宣言 | `constructor` | 12 | 3 |
 | 宣言 | `property` | 12 | 2 |
 | 宣言 | `field` | 135 | 7 |
@@ -16,11 +16,11 @@
 | 宣言 | `notSet` | 4 | 1 |
 | 宣言 | `variant` | 369 | 14 |
 | ユニット | `triggerCase` | 18 | 3 |
-| 修飾子・パラメータ・型 | `modifier` | 280 | 31 |
+| 修飾子・パラメータ・型 | `modifier` | 286 | 31 |
 | 修飾子・パラメータ・型 | `annotation` | 14 | 2 |
 | 修飾子・パラメータ・型 | `parameter` | 104 | 9 |
-| 修飾子・パラメータ・型 | `type` | 724 | 38 |
-| 式 | `memberAccess` | 409 | 4 |
+| 修飾子・パラメータ・型 | `type` | 730 | 38 |
+| 式 | `memberAccess` | 411 | 4 |
 | 文 | `break` | 11 | 2 |
 | 文 | `continue` | 9 | 2 |
 | 文 | `delete` | 8 | 1 |
@@ -32,7 +32,7 @@
 | 文 | `insert` | 12 | 1 |
 | 文 | `localVariable` | 212 | 15 |
 | 文 | `merge` | 8 | 1 |
-| 文 | `return` | 70 | 5 |
+| 文 | `return` | 74 | 5 |
 | 文 | `runAs` | 8 | 1 |
 | 文 | `switch` | 14 | 1 |
 | 文 | `throw` | 6 | 1 |
