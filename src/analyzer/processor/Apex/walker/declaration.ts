@@ -1,10 +1,14 @@
 import type {
+    ConvertKeys,
     ClassDeclarationJson,
     InterfaceDeclarationJson,
     EnumDeclarationJson,
     MethodDeclarationJson,
     PropertyDeclarationJson,
     FieldDeclarationJson,
+    LocalVariableStatementJson,
+    InterfaceMethodJson,
+    EnumConstantJson,
 } from '../../../types';
 
 import type { ApexSourceJson } from '../../../parser';
@@ -18,29 +22,35 @@ export type DeclarationName = {
         | 'property'
         | 'field'
         | 'interfaceMethod'
-        | 'enumConstant';
+        | 'enumConstant'
+        | 'localVariable';
+    sourceKeys: ConvertKeys;
     path: string[];
     name: string;
 };
 
-const _makeDeclarationName = (
+const _makeDeclarationNameOf = (
     declaration:
         | ClassDeclarationJson
         | InterfaceDeclarationJson
         | EnumDeclarationJson
         | MethodDeclarationJson
         | PropertyDeclarationJson
-        | FieldDeclarationJson,
+        | FieldDeclarationJson
+        | InterfaceMethodJson
+        | EnumConstantJson
+        | LocalVariableStatementJson,
     path: string[],
     declarationNames: DeclarationName[],
 ): void => {
-    if (declaration.kind === 'field') {
+    if (declaration.kind === 'field' || declaration.kind === 'localVariable') {
         const variants = declaration.variants;
 
         variants.forEach((variant) => {
             declarationNames.push({
                 kind: declaration.kind,
                 path,
+                sourceKeys: variant.sourceKeys,
                 name: variant.name,
             });
         });
@@ -48,6 +58,10 @@ const _makeDeclarationName = (
         declarationNames.push({
             kind: declaration.kind,
             path,
+            sourceKeys:
+                'base' in declaration.sourceKeys
+                    ? declaration.sourceKeys.base
+                    : declaration.sourceKeys,
             name: declaration.name,
         });
     }
@@ -59,32 +73,32 @@ const _makeDeclarationName = (
             }
 
             const { modifier, ...innerDeclaration } = d;
-            _makeDeclarationName(innerDeclaration, [...path, declaration.name], declarationNames);
+            _makeDeclarationNameOf(innerDeclaration, [...path, declaration.name], declarationNames);
         });
     }
 
     if (declaration.kind === 'interface') {
-        declaration.block?.forEach((d) => {
-            declarationNames.push({
-                kind: 'interfaceMethod',
-                path: [...path, declaration.name],
-                name: d.name,
-            });
+        declaration.block?.forEach((interfaceMethod) => {
+            _makeDeclarationNameOf(interfaceMethod, [...path, declaration.name], declarationNames);
         });
     }
 
     if (declaration.kind === 'enum') {
-        declaration.members?.forEach((d) => {
-            declarationNames.push({
-                kind: 'enumConstant',
-                path: [...path, declaration.name],
-                name: d.name,
-            });
+        declaration.members?.forEach((enumConstant) => {
+            _makeDeclarationNameOf(enumConstant, [...path, declaration.name], declarationNames);
+        });
+    }
+
+    if (declaration.kind === 'method') {
+        declaration.block?.forEach((statement) => {
+            if (statement.kind === 'localVariable') {
+                _makeDeclarationNameOf(statement, [...path, declaration.name], declarationNames);
+            }
         });
     }
 };
 
-export const makeDeclarationName = (
+export const makeDeclarationNameOf = (
     unit: Exclude<ApexSourceJson, { fileType: 'error' }>,
 ): DeclarationName[] => {
     const fileName = unit.fileName;
@@ -93,7 +107,7 @@ export const makeDeclarationName = (
 
     if ('kind' in content) {
         const { modifier, ...declaration } = content;
-        _makeDeclarationName(declaration, [fileName], declarationNames);
+        _makeDeclarationNameOf(declaration, [fileName], declarationNames);
     } else {
         content.block.forEach((d) => {
             if (
@@ -102,9 +116,10 @@ export const makeDeclarationName = (
                 d.kind === 'enum' ||
                 d.kind === 'field' ||
                 d.kind === 'method' ||
-                d.kind === 'property'
+                d.kind === 'property' ||
+                d.kind === 'localVariable'
             ) {
-                _makeDeclarationName(d, [fileName], declarationNames);
+                _makeDeclarationNameOf(d, [fileName], declarationNames);
             }
         });
     }
