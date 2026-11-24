@@ -74,7 +74,7 @@ describe('diff samples (docs/examples/repository)', () => {
         );
     });
 
-    it('reports every JsonType / StructureJsonType kind as a diff node', () => {
+    it('reports every JsonType kind as a diff node', () => {
         const counts = new Map<string, number>();
         countDiffKinds(diffs, counts);
         const missing = Object.values(ALL_KINDS)

@@ -16,19 +16,20 @@ import { SubQueryJson, makeSubQueryJson } from './subQuery';
 import { SoqlFunctionJson, makeSoqlFunctionJson } from './soqlFunction';
 import { FieldJson, makeFieldJson } from './select';
 
-export type SignedNumberJson = {
+/** 符号つきの数の中身 (条件の値 ValueJson の number に展開する。単独のノードにはしない) */
+export type SignedNumberBody = {
     value: string;
     valueType: 'number' | 'integer';
     operator?: '+' | '-';
 };
 
 // signedInteger (日付の関数の N) も同じ形 (value・valueType・operator) なので、どちらも受け取る
-export const makeSignedNumberJson = (
+export const makeSignedNumberBody = (
     target: SignedNumberTypeClass | SignedIntegerTypeClass,
-): SignedNumberJson => {
+): SignedNumberBody => {
     const { value, valueType, operator } = target.getFields();
 
-    const signedNumberJson: SignedNumberJson = {
+    const signedNumberJson: SignedNumberBody = {
         value: value,
         valueType: valueType,
     };
@@ -40,7 +41,8 @@ export const makeSignedNumberJson = (
     return signedNumberJson;
 };
 
-export type DateFormulaJson =
+/** 日付リテラルの関数の中身 (条件の値 ValueJson の dateFormula に展開する。単独のノードにはしない) */
+export type DateFormulaBody =
     | {
           func:
               | 'YESTERDAY'
@@ -95,12 +97,12 @@ export type DateFormulaJson =
           argOperator?: '+' | '-';
       };
 
-export const makeDateFormulaJson = (target: DateFormulaTypeClass): DateFormulaJson => {
+export const makeDateFormulaBody = (target: DateFormulaTypeClass): DateFormulaBody => {
     const fields = target.getFields();
     // N の付く関数 (LAST_N_DAYS_N など) だけが引数 (signedInteger) を持つ
     if ('param' in fields) {
         const { value, valueType, operator } = fields.param.getFields();
-        const dateFormulaJson: DateFormulaJson = {
+        const dateFormulaJson: DateFormulaBody = {
             func: fields.kind,
             arg: value,
             argType: valueType,
@@ -117,7 +119,10 @@ export const makeDateFormulaJson = (target: DateFormulaTypeClass): DateFormulaJs
     }
 };
 
-export type ValueJson =
+/** 条件の右辺の値。リストの要素も同じ形 */
+export type ValueJson = JsonType<'soqlValue'> & ValueBody;
+
+type ValueBody =
     | {
           type:
               | 'null'
@@ -133,26 +138,29 @@ export type ValueJson =
       }
     | ({
           type: 'number';
-      } & SignedNumberJson)
+      } & SignedNumberBody)
     | ({
           type: 'dateFormula';
-      } & DateFormulaJson)
+      } & DateFormulaBody)
     | { type: 'subQuery'; value: SubQueryJson }
     | { type: 'list'; value: ValueJson[] }
     | { type: 'bind'; value: BaseExpressionJson };
 
-export const makeValueJson = (target: ValueTypeClass): ValueJson => {
+export const makeValueJson = (target: ValueTypeClass): ValueJson =>
+    makeNodeJson<ValueJson>('soqlValue', target, makeValueBody(target));
+
+const makeValueBody = (target: ValueTypeClass): ValueBody => {
     const fields = target.getFields();
     switch (fields.kind) {
         case 'number':
             return {
                 type: fields.kind,
-                ...makeSignedNumberJson(fields.value),
+                ...makeSignedNumberBody(fields.value),
             };
         case 'dateFormula':
             return {
                 type: fields.kind,
-                ...makeDateFormulaJson(fields.value),
+                ...makeDateFormulaBody(fields.value),
             };
         case 'subQuery':
             return {
@@ -236,7 +244,8 @@ export const makeSingleConditionJson = (target: FieldExpressionTypeClass): Singl
     }
 };
 
-export type LogicalConditionJson = {
+/** AND・OR・NOT の論理条件 (WHERE・HAVING・WITH の条件)。kind の logical は式 (&& など) で使っているので soqlLogical */
+export type LogicalConditionJson = JsonType<'soqlLogical'> & {
     condition: (SingleConditionJson | LogicalConditionJson)[];
     operator?: 'AND' | 'OR' | 'NOT';
 };
@@ -245,6 +254,7 @@ export type LogicalConditionJson = {
 export const isLogicalConditionJson = (value: unknown): value is LogicalConditionJson =>
     typeof value === 'object' &&
     value !== null &&
+    (value as { kind?: unknown }).kind === 'soqlLogical' &&
     Array.isArray((value as { condition?: unknown }).condition) &&
     [undefined, 'AND', 'OR', 'NOT'].includes((value as { operator?: unknown }).operator as string);
 
@@ -264,8 +274,8 @@ export const makeLogicalConditionJson = (
         }
     });
 
-    return {
+    return makeNodeJson<LogicalConditionJson>('soqlLogical', target, {
         condition: condition,
         ...(fields.operator !== null ? { operator: fields.operator } : {}),
-    };
+    });
 };

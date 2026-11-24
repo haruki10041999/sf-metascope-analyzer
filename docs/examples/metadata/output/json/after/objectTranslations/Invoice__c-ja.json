@@ -7,7 +7,7 @@
     "base": {
       "kind": "objectTranslation",
       "sourceKeys": {
-        "objectKey": "objectTranslation_7dfc2a8bbad4d897",
+        "objectKey": "objectTranslation_4254f3969dad7e22",
         "sourceKey": "objectTranslation_53a3b33d94e742a5"
       },
       "objectApiName": "Invoice__c",
@@ -129,12 +129,17 @@
         {
           "kind": "layoutTranslation",
           "sourceKeys": {
-            "objectKey": "layoutTranslation_a6db85e749b4f21c",
+            "objectKey": "layoutTranslation_0e9014dae2e475e1",
             "sourceKey": "layoutTranslation_f9bd716cd023e9f5"
           },
           "layout": "Invoice Layout",
           "sections": [
             {
+              "kind": "layoutSectionTranslation",
+              "sourceKeys": {
+                "objectKey": "layoutSectionTranslation_e955fdabd4cde021",
+                "sourceKey": "layoutSectionTranslation_f9308887c5f60ad7"
+              },
               "section": "Information",
               "label": "請求情報"
             }
@@ -364,7 +369,27 @@
         ]
       },
       {
-        "objectKey": "layoutTranslation_a6db85e749b4f21c",
+        "objectKey": "layoutSectionTranslation_e955fdabd4cde021",
+        "context": "<sections>\n            <label>請求情報</label>\n            <section>Information</section>\n        </sections>",
+        "source": [
+          {
+            "sourceKey": "layoutSectionTranslation_f9308887c5f60ad7",
+            "filePath": "Invoice__c-ja/Invoice__c-ja.objectTranslation-meta.xml",
+            "start": {
+              "offset": 263,
+              "line": 9,
+              "column": 8
+            },
+            "end": {
+              "offset": 368,
+              "line": 12,
+              "column": 19
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "layoutTranslation_0e9014dae2e475e1",
         "context": "<layouts>\n        <layout>Invoice Layout</layout>\n        <sections>\n            <label>請求情報</label>\n            <section>Information</section>\n        </sections>\n    </layouts>",
         "source": [
           {
@@ -384,7 +409,7 @@
         ]
       },
       {
-        "objectKey": "objectTranslation_7dfc2a8bbad4d897",
+        "objectKey": "objectTranslation_4254f3969dad7e22",
         "context": "<CustomObjectTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fieldSets>\n        <label>概要</label>\n        <name>Summary</name>\n    </fieldSets>\n    <layouts>\n        <layout>Invoice Layout</layout>\n        <sections>\n            <label>請求情報</label>\n            <section>Information</section>\n        </sections>\n    </layouts>\n    <nameFieldLabel>請求書番号</nameFieldLabel>\n    <recordTypes>\n        <label>標準</label>\n        <name>Standard</name>\n    </recordTypes>\n    <validationRules>\n        <errorMessage>金額は正の値にしてください。</errorMessage>\n        <name>Amount_Positive</name>\n    </validationRules>\n    <webLinks>\n        <label>請求書を送付</label>\n        <name>Send_Invoice</name>\n    </webLinks>\n</CustomObjectTranslation>",
         "source": [
           {

@@ -11,3 +11,4 @@ export * from './lightning';
 export * from './template';
 export * from './meta';
 export * from './bundle';
+export * from './node';

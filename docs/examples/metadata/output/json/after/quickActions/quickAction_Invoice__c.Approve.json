@@ -1,0 +1,92 @@
+{
+  "filePath": "quickActions/Invoice__c.Approve.quickAction-meta.xml",
+  "resolvedError": [],
+  "dataType": "quickAction",
+  "result": {
+    "id": "quickAction_Invoice__c.Approve",
+    "base": {
+      "kind": "quickAction",
+      "sourceKeys": {
+        "objectKey": "quickAction_488c91ba34e89c31",
+        "sourceKey": "quickAction_9d6c625c85502f1d"
+      },
+      "fullName": "Invoice__c.Approve",
+      "label": "Approve",
+      "type": "Update",
+      "optionsCreateFeedItem": true,
+      "quickActionLayout": {
+        "layoutSectionStyle": "TwoColumnsLeftToRight",
+        "quickActionLayoutColumns": [
+          {
+            "quickActionLayoutItems": [
+              {
+                "emptySpace": false,
+                "field": "Amount__c",
+                "uiBehavior": "Readonly"
+              },
+              {
+                "emptySpace": false,
+                "field": "Approved__c",
+                "uiBehavior": "Edit"
+              }
+            ]
+          },
+          ""
+        ]
+      },
+      "fieldOverrides": [
+        {
+          "kind": "quickActionFieldOverride",
+          "sourceKeys": {
+            "objectKey": "quickActionFieldOverride_259ab9c4f9b0e2f4",
+            "sourceKey": "quickActionFieldOverride_68f221af854cd2de"
+          },
+          "field": "Status__c",
+          "literalValue": "Approved"
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "quickActionFieldOverride_259ab9c4f9b0e2f4",
+        "context": "<fieldOverrides>\n        <field>Status__c</field>\n        <literalValue>Approved</literalValue>\n    </fieldOverrides>",
+        "source": [
+          {
+            "sourceKey": "quickActionFieldOverride_68f221af854cd2de",
+            "filePath": "quickActions/Invoice__c.Approve.quickAction-meta.xml",
+            "start": {
+              "offset": 105,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 222,
+              "line": 6,
+              "column": 21
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "quickAction_488c91ba34e89c31",
+        "context": "<QuickAction xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fieldOverrides>\n        <field>Status__c</field>\n        <literalValue>Approved</literalValue>\n    </fieldOverrides>\n    <label>Approve</label>\n    <optionsCreateFeedItem>true</optionsCreateFeedItem>\n    <quickActionLayout>\n        <layoutSectionStyle>TwoColumnsLeftToRight</layoutSectionStyle>\n        <quickActionLayoutColumns>\n            <quickActionLayoutItems>\n                <emptySpace>false</emptySpace>\n                <field>Amount__c</field>\n                <uiBehavior>Readonly</uiBehavior>\n            </quickActionLayoutItems>\n            <quickActionLayoutItems>\n                <emptySpace>false</emptySpace>\n                <field>Approved__c</field>\n                <uiBehavior>Edit</uiBehavior>\n            </quickActionLayoutItems>\n        </quickActionLayoutColumns>\n        <quickActionLayoutColumns/>\n    </quickActionLayout>\n    <type>Update</type>\n</QuickAction>",
+        "source": [
+          {
+            "sourceKey": "quickAction_9d6c625c85502f1d",
+            "filePath": "quickActions/Invoice__c.Approve.quickAction-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 995,
+              "line": 26,
+              "column": 14
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -10,7 +10,7 @@ export type ApexStandardObject = {
     readonly fieldExamples?: readonly ApexStandardObjectField[];
 };
 
-// 依存関係グラフの既存一覧と docs/apex-standard-examples.md の項目例。
+// 依存関係グラフの既存一覧と docs/reference/apex-standard-examples.md の項目例。
 const STANDARD_OBJECTS: readonly ApexStandardObject[] = [
     {
         name: 'Account',

@@ -1,0 +1,44 @@
+{
+  "filePath": "roles/Sales_Manager.role-meta.xml",
+  "resolvedError": [],
+  "dataType": "role",
+  "result": {
+    "id": "role_Sales_Manager",
+    "base": {
+      "kind": "role",
+      "sourceKeys": {
+        "objectKey": "role_fa0a4cb073b9f764",
+        "sourceKey": "role_81175e88a0dc70a1"
+      },
+      "fullName": "Sales_Manager",
+      "name": "Sales Manager",
+      "parentRole": "CEO",
+      "caseAccessLevel": "Edit",
+      "contactAccessLevel": "Edit",
+      "opportunityAccessLevel": "Read",
+      "mayForecastManagerShare": false
+    },
+    "sourceObject": [
+      {
+        "objectKey": "role_fa0a4cb073b9f764",
+        "context": "<Role xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <caseAccessLevel>Edit</caseAccessLevel>\n    <contactAccessLevel>Edit</contactAccessLevel>\n    <mayForecastManagerShare>false</mayForecastManagerShare>\n    <name>Sales Manager</name>\n    <opportunityAccessLevel>Read</opportunityAccessLevel>\n    <parentRole>CEO</parentRole>\n</Role>",
+        "source": [
+          {
+            "sourceKey": "role_81175e88a0dc70a1",
+            "filePath": "roles/Sales_Manager.role-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 378,
+              "line": 9,
+              "column": 7
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

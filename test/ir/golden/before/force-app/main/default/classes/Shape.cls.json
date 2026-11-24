@@ -1,20 +1,26 @@
 {
   "source": {
+    "kind": "apexSource",
+    "sourceKeys": {},
     "fileName": "Shape.cls",
     "fileType": "cls",
     "content": {
       "kind": "interface",
-      "sourceKeys": {
-        "base": {},
-        "name": {}
+      "sourceKeys": {},
+      "nameRef": {
+        "kind": "declarationName",
+        "sourceKeys": {},
+        "name": "Shape"
       },
       "name": "Shape",
       "block": [
         {
           "kind": "interfaceMethod",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
+          "sourceKeys": {},
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "area"
           },
           "name": "area",
           "returnType": {
@@ -24,10 +30,15 @@
             "primitiveType": "Decimal"
           },
           "param": [],
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         }
       ],
       "modifier": {
+        "kind": "modifiers",
+        "sourceKeys": {},
         "keyword": [
           {
             "kind": "modifier",
@@ -39,6 +50,19 @@
     }
   },
   "sourceObject": [
+    {
+      "context": "Decimal area();",
+      "start": {
+        "offset": 29,
+        "line": 2,
+        "column": 4
+      },
+      "end": {
+        "offset": 44,
+        "line": 2,
+        "column": 19
+      }
+    },
     {
       "context": "Decimal area();",
       "start": {
@@ -97,6 +121,32 @@
         "offset": 7,
         "line": 1,
         "column": 7
+      },
+      "end": {
+        "offset": 46,
+        "line": 3,
+        "column": 1
+      }
+    },
+    {
+      "context": "public interface Shape {\n    Decimal area();\n}",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 46,
+        "line": 3,
+        "column": 1
+      }
+    },
+    {
+      "context": "public interface Shape {\n    Decimal area();\n}",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
       },
       "end": {
         "offset": 46,

@@ -5,36 +5,50 @@
   "result": {
     "id": "class_Shape",
     "base": {
+      "kind": "apexUnit",
+      "sourceKeys": {
+        "objectKey": "apexUnit_8fe616ad9d756eea",
+        "sourceKey": "compilationUnit_1a43483812072e86"
+      },
       "name": "Shape",
       "unitType": "class",
       "source": {
+        "kind": "apexSource",
+        "sourceKeys": {
+          "objectKey": "apexSource_08d7f75c15d96547",
+          "sourceKey": "compilationUnit_1a43483812072e86"
+        },
         "fileName": "Shape.cls",
         "fileType": "cls",
         "content": {
           "kind": "class",
           "sourceKeys": {
-            "base": {
-              "objectKey": "classDeclaration_1706a1abe9a3e1bb",
-              "sourceKey": "classDeclaration_1a606c18644285c2"
-            },
-            "name": {
-              "objectKey": "id_68e21f1e96e0e9a5",
+            "objectKey": "classDeclaration_1706a1abe9a3e1bb",
+            "sourceKey": "classDeclaration_1a606c18644285c2"
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {
+              "objectKey": "declarationName_e0fb969b38c4bf82",
               "sourceKey": "id_dcbf42f937c81c20"
-            }
+            },
+            "name": "Shape"
           },
           "name": "Shape",
           "block": [
             {
               "kind": "method",
               "sourceKeys": {
-                "base": {
-                  "objectKey": "methodDeclaration_badab78845d0b1cb",
-                  "sourceKey": "methodDeclaration_6ccb55517578df5e"
-                },
-                "name": {
-                  "objectKey": "id_ac16552af7f5d4ca",
+                "objectKey": "methodDeclaration_badab78845d0b1cb",
+                "sourceKey": "methodDeclaration_6ccb55517578df5e"
+              },
+              "nameRef": {
+                "kind": "declarationName",
+                "sourceKeys": {
+                  "objectKey": "declarationName_e91c6c1aaa9a72bd",
                   "sourceKey": "id_d74dc35d0ca70315"
-                }
+                },
+                "name": "area"
               },
               "name": "area",
               "returnType": {
@@ -48,6 +62,11 @@
               },
               "param": [],
               "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {
+                  "objectKey": "modifiers_b859f2b841cd64aa",
+                  "sourceKey": "classBodyDeclaration_62324e92a0d8592c"
+                },
                 "keyword": [
                   {
                     "kind": "modifier",
@@ -70,6 +89,11 @@
             }
           ],
           "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {
+              "objectKey": "modifiers_b859f2b841cd64aa",
+              "sourceKey": "typeDeclaration_1a43483812072e86"
+            },
             "keyword": [
               {
                 "kind": "modifier",
@@ -94,6 +118,25 @@
     },
     "sourceObject": [
       {
+        "objectKey": "apexSource_08d7f75c15d96547",
+        "context": "public abstract class Shape {\n    public abstract Decimal area();\n}",
+        "source": [
+          {
+            "sourceKey": "compilationUnit_1a43483812072e86",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 67,
+              "line": 3,
+              "column": 1
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "classDeclaration_1706a1abe9a3e1bb",
         "context": "class Shape {\n    public abstract Decimal area();\n}",
         "source": [
@@ -113,7 +156,7 @@
         ]
       },
       {
-        "objectKey": "id_68e21f1e96e0e9a5",
+        "objectKey": "declarationName_e0fb969b38c4bf82",
         "context": "Shape",
         "source": [
           {
@@ -151,7 +194,7 @@
         ]
       },
       {
-        "objectKey": "id_ac16552af7f5d4ca",
+        "objectKey": "declarationName_e91c6c1aaa9a72bd",
         "context": "area",
         "source": [
           {
@@ -184,6 +227,44 @@
               "offset": 57,
               "line": 2,
               "column": 27
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_b859f2b841cd64aa",
+        "context": "public abstract Decimal area();",
+        "source": [
+          {
+            "sourceKey": "classBodyDeclaration_62324e92a0d8592c",
+            "start": {
+              "offset": 34,
+              "line": 2,
+              "column": 4
+            },
+            "end": {
+              "offset": 65,
+              "line": 2,
+              "column": 35
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_b859f2b841cd64aa",
+        "context": "public abstract class Shape {\n    public abstract Decimal area();\n}",
+        "source": [
+          {
+            "sourceKey": "typeDeclaration_1a43483812072e86",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 67,
+              "line": 3,
+              "column": 1
             }
           }
         ]
@@ -248,6 +329,25 @@
               "offset": 15,
               "line": 1,
               "column": 15
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "apexUnit_8fe616ad9d756eea",
+        "context": "public abstract class Shape {\n    public abstract Decimal area();\n}",
+        "source": [
+          {
+            "sourceKey": "compilationUnit_1a43483812072e86",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 67,
+              "line": 3,
+              "column": 1
             }
           }
         ]

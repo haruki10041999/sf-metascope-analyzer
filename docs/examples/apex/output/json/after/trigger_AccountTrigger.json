@@ -5,12 +5,27 @@
   "result": {
     "id": "trigger_AccountTrigger",
     "base": {
+      "kind": "apexUnit",
+      "sourceKeys": {
+        "objectKey": "apexUnit_79c6f76914458ddd",
+        "sourceKey": "triggerUnit_c660844645ed5ca4"
+      },
       "name": "AccountTrigger",
       "unitType": "trigger",
       "source": {
+        "kind": "apexSource",
+        "sourceKeys": {
+          "objectKey": "apexSource_20c1159ae684ce60",
+          "sourceKey": "triggerUnit_c660844645ed5ca4"
+        },
         "fileName": "AccountTrigger.trigger",
         "fileType": "trigger",
         "content": {
+          "kind": "triggerUnit",
+          "sourceKeys": {
+            "objectKey": "triggerUnit_003f7dd8bd5eeb87",
+            "sourceKey": "triggerUnit_c660844645ed5ca4"
+          },
           "name": "AccountTrigger",
           "object": "Account",
           "case": [
@@ -77,6 +92,11 @@
               },
               "conditionBlock": [
                 {
+                  "kind": "ifBranch",
+                  "sourceKeys": {
+                    "objectKey": "ifBranch_b481976e7c2f17c0",
+                    "sourceKey": "parExpression_e11322543000636b"
+                  },
                   "condition": {
                     "kind": "logical",
                     "sourceKeys": {
@@ -210,17 +230,27 @@
         }
       },
       "meta": {
+        "kind": "apexMetaFile",
+        "sourceKeys": {
+          "objectKey": "apexMetaFile_1f294704789e3f04",
+          "sourceKey": "apexMetaFile_5edc1a87ebc705f3"
+        },
         "fileName": "AccountTrigger.trigger-meta.xml",
         "meta": {
           "kind": "apexTriggerMeta",
           "sourceKeys": {
-            "objectKey": "apexTriggerMeta_dd3f03812861f95c",
+            "objectKey": "apexTriggerMeta_e278637b20e754e5",
             "sourceKey": "apexTriggerMeta_9805a176e7b37cde"
           },
           "apiVersion": "59.0",
           "status": "Inactive",
           "packageVersions": [
             {
+              "kind": "packageVersion",
+              "sourceKeys": {
+                "objectKey": "packageVersion_f6c2d7ddc7412cc7",
+                "sourceKey": "packageVersion_443d02cb417379c6"
+              },
               "namespace": "acme",
               "majorNumber": 1,
               "minorNumber": 4
@@ -230,6 +260,44 @@
       }
     },
     "sourceObject": [
+      {
+        "objectKey": "apexSource_20c1159ae684ce60",
+        "context": "trigger AccountTrigger on Account (after update, before delete) {\n    System.debug('start');\n    if (Trigger.isBefore && Trigger.isInsert) {\n        AccountService.validate(Trigger.new);\n    }\n    System.debug('done');\n}",
+        "source": [
+          {
+            "sourceKey": "triggerUnit_c660844645ed5ca4",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 220,
+              "line": 7,
+              "column": 1
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "triggerUnit_003f7dd8bd5eeb87",
+        "context": "trigger AccountTrigger on Account (after update, before delete) {\n    System.debug('start');\n    if (Trigger.isBefore && Trigger.isInsert) {\n        AccountService.validate(Trigger.new);\n    }\n    System.debug('done');\n}",
+        "source": [
+          {
+            "sourceKey": "triggerUnit_c660844645ed5ca4",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 220,
+              "line": 7,
+              "column": 1
+            }
+          }
+        ]
+      },
       {
         "objectKey": "triggerCase_66f9f99759087efc",
         "context": "after update",
@@ -372,6 +440,25 @@
               "offset": 192,
               "line": 5,
               "column": 5
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "ifBranch_b481976e7c2f17c0",
+        "context": "(Trigger.isBefore && Trigger.isInsert)",
+        "source": [
+          {
+            "sourceKey": "parExpression_e11322543000636b",
+            "start": {
+              "offset": 100,
+              "line": 3,
+              "column": 7
+            },
+            "end": {
+              "offset": 138,
+              "line": 3,
+              "column": 45
             }
           }
         ]
@@ -612,7 +699,27 @@
         ]
       },
       {
-        "objectKey": "apexTriggerMeta_dd3f03812861f95c",
+        "objectKey": "packageVersion_f6c2d7ddc7412cc7",
+        "context": "<packageVersions>\n        <majorNumber>1</majorNumber>\n        <minorNumber>4</minorNumber>\n        <namespace>acme</namespace>\n    </packageVersions>",
+        "source": [
+          {
+            "sourceKey": "packageVersion_443d02cb417379c6",
+            "filePath": "AccountTrigger.trigger-meta.xml",
+            "start": {
+              "offset": 139,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 289,
+              "line": 8,
+              "column": 22
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "apexTriggerMeta_e278637b20e754e5",
         "context": "<ApexTrigger xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <apiVersion>59.0</apiVersion>\n    <packageVersions>\n        <majorNumber>1</majorNumber>\n        <minorNumber>4</minorNumber>\n        <namespace>acme</namespace>\n    </packageVersions>\n    <status>Inactive</status>\n</ApexTrigger>",
         "source": [
           {
@@ -627,6 +734,45 @@
               "offset": 334,
               "line": 10,
               "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "apexMetaFile_1f294704789e3f04",
+        "context": "",
+        "source": [
+          {
+            "sourceKey": "apexMetaFile_5edc1a87ebc705f3",
+            "filePath": "AccountTrigger.trigger-meta.xml",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "apexUnit_79c6f76914458ddd",
+        "context": "trigger AccountTrigger on Account (after update, before delete) {\n    System.debug('start');\n    if (Trigger.isBefore && Trigger.isInsert) {\n        AccountService.validate(Trigger.new);\n    }\n    System.debug('done');\n}",
+        "source": [
+          {
+            "sourceKey": "triggerUnit_c660844645ed5ca4",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 220,
+              "line": 7,
+              "column": 1
             }
           }
         ]

@@ -1,0 +1,40 @@
+{
+  "filePath": "groups/Finance.group-meta.xml",
+  "resolvedError": [],
+  "dataType": "group",
+  "result": {
+    "id": "group_Finance",
+    "base": {
+      "kind": "group",
+      "sourceKeys": {
+        "objectKey": "group_c45cf6d7ac724008",
+        "sourceKey": "group_147ab7ac2816ed7c"
+      },
+      "fullName": "Finance",
+      "name": "Finance",
+      "doesIncludeBosses": false
+    },
+    "sourceObject": [
+      {
+        "objectKey": "group_c45cf6d7ac724008",
+        "context": "<Group xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <doesIncludeBosses>false</doesIncludeBosses>\n    <name>Finance</name>\n</Group>",
+        "source": [
+          {
+            "sourceKey": "group_147ab7ac2816ed7c",
+            "filePath": "groups/Finance.group-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 177,
+              "line": 5,
+              "column": 8
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -46,8 +46,9 @@ export type SaveDataInfo = {
  *    (docs/implementation-roadmap.md 5 章の Q1)
  * 10: 置き場を小さくした。span のファイルのパスを、単位のファイルの番号 (unit_file.file_no) にした。
  *    定義・参照 (derived) を圧縮した BLOB にした (NPSP で 450 MB → docs/implementation-roadmap.md 8 章の M3)
+ * 11: node 表の structure_keys の列をなくした (JSON はすべて JsonType になり、StructureJsonType がなくなった。docs/plan.md 4.3 の 6)
  */
-export const SAVE_FORMAT_VERSION = 10;
+export const SAVE_FORMAT_VERSION = 11;
 
 /** 末尾が '/' でないと相対 URL が親ディレクトリ基準で解決されるため、必ず付ける */
 const toDirectoryUrl = (baseDir: string) => pathToFileURL(path.join(baseDir, path.sep));

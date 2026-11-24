@@ -438,6 +438,23 @@
     ]
   },
   {
+    "start": "ParserTest.AccountReader.nameOfAccount",
+    "unit": "ParserTest",
+    "participants": [
+      "ParserTest.AccountReader"
+    ],
+    "messages": [
+      {
+        "from": "ParserTest.AccountReader",
+        "to": "ParserTest.AccountReader",
+        "label": "getAccount()",
+        "kind": "call",
+        "depth": 1,
+        "line": 316
+      }
+    ]
+  },
+  {
     "start": "ParserTest.aggregateSoql",
     "unit": "ParserTest",
     "participants": [
@@ -451,7 +468,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 606
+        "line": 642
       },
       {
         "from": "ParserTest",
@@ -459,7 +476,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 620
+        "line": 656
       },
       {
         "from": "ParserTest",
@@ -467,7 +484,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 623
+        "line": 659
       },
       {
         "from": "ParserTest",
@@ -475,7 +492,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 629
+        "line": 665
       }
     ]
   },
@@ -493,7 +510,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 502
+        "line": 538
       },
       {
         "from": "ParserTest",
@@ -501,7 +518,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 511
+        "line": 547
       }
     ]
   },
@@ -519,7 +536,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 349,
+        "line": 361,
         "inLoop": true
       }
     ]
@@ -538,7 +555,7 @@
         "label": "insert Account",
         "kind": "dml",
         "depth": 1,
-        "line": 469
+        "line": 481
       },
       {
         "from": "ParserTest",
@@ -546,7 +563,7 @@
         "label": "update Account",
         "kind": "dml",
         "depth": 1,
-        "line": 471
+        "line": 483
       },
       {
         "from": "ParserTest",
@@ -554,7 +571,7 @@
         "label": "delete Account",
         "kind": "dml",
         "depth": 1,
-        "line": 473
+        "line": 485
       },
       {
         "from": "ParserTest",
@@ -562,7 +579,7 @@
         "label": "upsert Account",
         "kind": "dml",
         "depth": 1,
-        "line": 475
+        "line": 487
       }
     ]
   },
@@ -580,7 +597,7 @@
         "label": "insert Account",
         "kind": "dml",
         "depth": 1,
-        "line": 446
+        "line": 458
       },
       {
         "from": "ParserTest",
@@ -588,7 +605,7 @@
         "label": "insert Account",
         "kind": "dml",
         "depth": 1,
-        "line": 448
+        "line": 460
       },
       {
         "from": "ParserTest",
@@ -596,7 +613,7 @@
         "label": "update Account",
         "kind": "dml",
         "depth": 1,
-        "line": 450
+        "line": 462
       },
       {
         "from": "ParserTest",
@@ -604,7 +621,7 @@
         "label": "upsert Account",
         "kind": "dml",
         "depth": 1,
-        "line": 452
+        "line": 464
       },
       {
         "from": "ParserTest",
@@ -612,7 +629,7 @@
         "label": "upsert Account",
         "kind": "dml",
         "depth": 1,
-        "line": 454
+        "line": 466
       },
       {
         "from": "ParserTest",
@@ -620,7 +637,7 @@
         "label": "upsert Account",
         "kind": "dml",
         "depth": 1,
-        "line": 456
+        "line": 468
       },
       {
         "from": "ParserTest",
@@ -628,7 +645,7 @@
         "label": "delete Account",
         "kind": "dml",
         "depth": 1,
-        "line": 458
+        "line": 470
       },
       {
         "from": "ParserTest",
@@ -636,7 +653,7 @@
         "label": "undelete Account",
         "kind": "dml",
         "depth": 1,
-        "line": 460
+        "line": 472
       },
       {
         "from": "ParserTest",
@@ -644,7 +661,7 @@
         "label": "merge Account",
         "kind": "dml",
         "depth": 1,
-        "line": 462
+        "line": 474
       },
       {
         "from": "ParserTest",
@@ -652,7 +669,49 @@
         "label": "merge Account",
         "kind": "dml",
         "depth": 1,
-        "line": 464
+        "line": 476
+      }
+    ]
+  },
+  {
+    "start": "ParserTest.dynamicSoqlExample",
+    "unit": "ParserTest",
+    "participants": [
+      "ParserTest",
+      "Database"
+    ],
+    "messages": [
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "query",
+        "kind": "query",
+        "depth": 1,
+        "line": 491
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "query",
+        "kind": "query",
+        "depth": 1,
+        "line": 498
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "query",
+        "kind": "query",
+        "depth": 1,
+        "line": 501
+      },
+      {
+        "from": "ParserTest",
+        "to": "Database",
+        "label": "query",
+        "kind": "query",
+        "depth": 1,
+        "line": 507
       }
     ]
   },
@@ -670,7 +729,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 418
+        "line": 430
       },
       {
         "from": "ParserTest",
@@ -678,7 +737,7 @@
         "label": "throwExample()",
         "kind": "call",
         "depth": 1,
-        "line": 429
+        "line": 441
       }
     ]
   },
@@ -696,7 +755,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 643
+        "line": 679
       },
       {
         "from": "ParserTest",
@@ -704,7 +763,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 662
+        "line": 698
       },
       {
         "from": "ParserTest",
@@ -712,7 +771,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 666
+        "line": 702
       },
       {
         "from": "ParserTest",
@@ -720,7 +779,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 668
+        "line": 704
       },
       {
         "from": "ParserTest",
@@ -728,7 +787,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 670
+        "line": 706
       }
     ]
   },
@@ -746,7 +805,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 681
+        "line": 717
       }
     ]
   },
@@ -798,7 +857,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 562
+        "line": 598
       }
     ]
   },
@@ -816,7 +875,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 695
+        "line": 731
       },
       {
         "from": "ParserTest",
@@ -824,7 +883,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 697
+        "line": 733
       },
       {
         "from": "ParserTest",
@@ -832,7 +891,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 699
+        "line": 735
       },
       {
         "from": "ParserTest",
@@ -840,7 +899,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 701
+        "line": 737
       },
       {
         "from": "ParserTest",
@@ -848,7 +907,7 @@
         "label": "SELECT Knowledge__kav",
         "kind": "query",
         "depth": 1,
-        "line": 704
+        "line": 740
       },
       {
         "from": "ParserTest",
@@ -856,7 +915,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 712
+        "line": 748
       },
       {
         "from": "ParserTest",
@@ -864,7 +923,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 714
+        "line": 750
       },
       {
         "from": "ParserTest",
@@ -872,7 +931,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 716
+        "line": 752
       },
       {
         "from": "ParserTest",
@@ -880,7 +939,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 718
+        "line": 754
       },
       {
         "from": "ParserTest",
@@ -888,7 +947,7 @@
         "label": "SELECT FAQ__kav",
         "kind": "query",
         "depth": 1,
-        "line": 720
+        "line": 756
       }
     ]
   },
@@ -906,7 +965,7 @@
         "label": "FIND Account, Contact",
         "kind": "query",
         "depth": 1,
-        "line": 730
+        "line": 766
       },
       {
         "from": "ParserTest",
@@ -914,7 +973,7 @@
         "label": "FIND Account, Contact, Lead",
         "kind": "query",
         "depth": 1,
-        "line": 732
+        "line": 768
       },
       {
         "from": "ParserTest",
@@ -922,7 +981,7 @@
         "label": "FIND Contact",
         "kind": "query",
         "depth": 1,
-        "line": 748
+        "line": 784
       },
       {
         "from": "ParserTest",
@@ -930,7 +989,7 @@
         "label": "FIND Contact",
         "kind": "query",
         "depth": 1,
-        "line": 750
+        "line": 786
       },
       {
         "from": "ParserTest",
@@ -938,7 +997,7 @@
         "label": "FIND Account",
         "kind": "query",
         "depth": 1,
-        "line": 752
+        "line": 788
       },
       {
         "from": "ParserTest",
@@ -946,7 +1005,7 @@
         "label": "FIND KnowledgeArticleVersion",
         "kind": "query",
         "depth": 1,
-        "line": 754
+        "line": 790
       }
     ]
   },
@@ -964,7 +1023,7 @@
         "label": "SELECT Event",
         "kind": "query",
         "depth": 1,
-        "line": 587
+        "line": 623
       }
     ]
   },
@@ -982,7 +1041,7 @@
         "label": "SELECT Account",
         "kind": "query",
         "depth": 1,
-        "line": 526
+        "line": 562
       }
     ]
   },

@@ -1,0 +1,40 @@
+{
+  "filePath": "customPermissions/Approve_Invoice.customPermission-meta.xml",
+  "resolvedError": [],
+  "dataType": "customPermission",
+  "result": {
+    "id": "customPermission_Approve_Invoice",
+    "base": {
+      "kind": "customPermission",
+      "sourceKeys": {
+        "objectKey": "customPermission_c782182ec9f760e3",
+        "sourceKey": "customPermission_308d9c02dc67d746"
+      },
+      "fullName": "Approve_Invoice",
+      "label": "Approve Invoice",
+      "isLicensed": false
+    },
+    "sourceObject": [
+      {
+        "objectKey": "customPermission_c782182ec9f760e3",
+        "context": "<CustomPermission xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <isLicensed>false</isLicensed>\n    <label>Approve Invoice</label>\n</CustomPermission>",
+        "source": [
+          {
+            "sourceKey": "customPermission_308d9c02dc67d746",
+            "filePath": "customPermissions/Approve_Invoice.customPermission-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 195,
+              "line": 5,
+              "column": 19
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

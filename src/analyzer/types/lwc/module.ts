@@ -7,16 +7,18 @@
 // - 宣言でも import / export でもない直下の文 (registerX(...) などの式の文・if など) は statements (文の JSON)
 // 入力は IR v2 (lwc_IR) のノード。v2 の木にはエラーのノードがない (構文エラーで壊れた部分は木から落ち、
 // resolvedError にだけ出る) ので、JSON にもエラーのノードはない
-import {
-    makeJsonType,
-    makeStructureJson,
-    type ConvertKeys,
-    type JsonType,
-    type StructureJsonType,
-} from '../commons/json';
+import { makeJsonType, type JsonType } from '../commons/json';
 import type { commons, standardizedVisitor } from '../lwc_IR';
 
-import { nameOf, unwrapExpression, type LwcJsonContext, type LwcNode } from './commons';
+import {
+    makeLwcDeclarationJson,
+    nameOf,
+    unwrapExpression,
+    type LwcDeclaration,
+    type LwcDeclarationJsonType,
+    type LwcJsonContext,
+    type LwcNode,
+} from './commons';
 import {
     makeLwcBodyContentJson,
     makeLwcClassMembersJson,
@@ -42,9 +44,9 @@ import {
 
 /**
  * モジュールの直下の変数・関数の宣言 (export しないものも含む)。
- * 名前を持つ宣言なので StructureJsonType。関数 (と、関数を初期値にした変数) は本体を持つ
+ * 名前を持つ宣言なので、名前の位置を nameRef に持つ。関数 (と、関数を初期値にした変数) は本体を持つ
  */
-export type LwcDeclarationJson = StructureJsonType<'lwcDeclaration', { name: ConvertKeys }> &
+export type LwcDeclarationJson = LwcDeclarationJsonType<'lwcDeclaration'> &
     LwcBodyContentJson & {
         /** 名前 (export default function () {} のように名前がなければ 'default') */
         name: string;
@@ -68,7 +70,7 @@ export type LwcDeclarationJson = StructureJsonType<'lwcDeclaration', { name: Con
     };
 
 /** コンポーネント以外のクラス (ユーティリティ・基底クラス)。メンバーはコンポーネントと同じ形 (5.2) */
-export type LwcClassJson = StructureJsonType<'lwcClass', { name: ConvertKeys }> & {
+export type LwcClassJson = LwcDeclarationJsonType<'lwcClass'> & {
     name: string;
     exported: boolean;
     /** extends の式 (ソースの文字列ではなく式の JSON) */
@@ -102,7 +104,8 @@ export type LwcExportJson = JsonType<'lwcExport'> & {
     typeOnly: boolean;
 };
 
-export type LwcModuleJson = {
+/** JS / TS のモジュール (lwc 4 からノード。位置はファイルの先頭 (長さ 0)) */
+export type LwcModuleJson = JsonType<'lwcModule'> & {
     fileType: 'js' | 'ts';
     imports: LwcImportJson[];
     /** default export のクラス */
@@ -162,7 +165,7 @@ const declaredNames = (
  * 初期値がそのまま関数なら関数の中身 (本体の文・引数など) で表し、初期値の式・文字列は持たない
  */
 const makeVariableJson = (
-    sourceKeys: { base: ConvertKeys; name: ConvertKeys },
+    declaration: LwcDeclaration,
     name: string,
     init: LwcNode | null,
     variable: { variableKind?: string; variantType?: LwcTypeJson },
@@ -173,7 +176,7 @@ const makeVariableJson = (
     const fn = init ? makeLwcFunctionContentJson(unwrapExpression(init), tables, context) : null;
     const onlyFunction = fn !== null && init !== null && unwrapExpression(init) === init;
     const content = fn ?? makeLwcBodyContentJson(init, tables, context);
-    return makeStructureJson('lwcDeclaration', sourceKeys, {
+    return makeLwcDeclarationJson(context, 'lwcDeclaration', declaration, {
         name,
         declarationType: fn ? ('function' as const) : ('variable' as const),
         exported,
@@ -191,9 +194,9 @@ const makeFunctionJson = (
     context: LwcJsonContext,
 ): LwcDeclarationJson => {
     const id = declaration.getFields().id;
-    const sourceKeys = context.structureKeysOf(declaration, { name: id });
+    const named = context.declarationOf(declaration, { name: id });
     const content = makeLwcFunctionContentJson(declaration, tables, context)!;
-    return makeStructureJson('lwcDeclaration', sourceKeys, {
+    return makeLwcDeclarationJson(context, 'lwcDeclaration', named, {
         name: id ? id.getFields().name : 'default',
         declarationType: 'function' as const,
         exported,
@@ -210,9 +213,10 @@ const makeClassJson = (
 ): LwcClassJson => {
     const fields = declaration.getFields();
     const implement = (fields.implements ?? []).map((i) => makeLwcTypeJson(i, context));
-    return makeStructureJson(
+    return makeLwcDeclarationJson(
+        context,
         'lwcClass',
-        context.structureKeysOf(declaration, { name: fields.id }),
+        context.declarationOf(declaration, { name: fields.id }),
         {
             name: fields.id.getFields().name,
             exported,
@@ -245,7 +249,7 @@ const makeDeclarationsJson = (
                     const annotation = (id.getFields() as { typeAnnotation?: LwcNode | null })
                         .typeAnnotation;
                     return makeVariableJson(
-                        context.structureKeysOf(declarator, { name: id }),
+                        context.declarationOf(declarator, { name: id }),
                         name,
                         init,
                         {
@@ -497,7 +501,7 @@ export const makeLwcModuleJson = (
         const { node, statement } = defaultExpression;
         declarations.push(
             makeVariableJson(
-                context.structureKeysOf(statement, { name: node }),
+                context.declarationOf(statement, { name: node }),
                 'default',
                 node,
                 {},
@@ -508,7 +512,8 @@ export const makeLwcModuleJson = (
         );
     }
     const statements = statementNodes.map((node) => makeLwcStatementJson(node, tables, context));
-    return {
+    // 位置はファイルの先頭 (長さ 0)。ファイル全体のソースを位置の一覧に入れないため。キーは中身から作る
+    return context.fileRootJson<LwcModuleJson>('lwcModule', {
         fileType,
         imports,
         ...(component ? { component: makeLwcComponentJson(component, imports, context) } : {}),
@@ -517,5 +522,5 @@ export const makeLwcModuleJson = (
         // Flow (// @flow の .js) の型の宣言があれば、.js でも持つ
         ...(fileType === 'ts' || typeDeclarations.length > 0 ? { typeDeclarations } : {}),
         ...(statements.length > 0 ? { statements } : {}),
-    };
+    });
 };

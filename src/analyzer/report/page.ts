@@ -25,10 +25,21 @@ const layoutsOf = (snapshot: MetadataSnapshot | undefined) =>
 const sameIgnoring =
     <T extends object>(...keys: string[]) =>
     (before: T, after: T) => {
+        // 位置 (sourceKeys) は入れ子のノードのものも除く (表示条件・条件・項目の位置もノード。metadata 8)
+        const withoutPositions = (value: unknown): unknown =>
+            Array.isArray(value)
+                ? value.map(withoutPositions)
+                : value && typeof value === 'object'
+                  ? Object.fromEntries(
+                        Object.entries(value)
+                            .filter(([k]) => k !== 'sourceKeys')
+                            .map(([k, v]) => [k, withoutPositions(v)]),
+                    )
+                  : value;
         const strip = (value: T) =>
             JSON.stringify(
-                Object.fromEntries(
-                    Object.entries(value).filter(([k]) => !['sourceKeys', ...keys].includes(k)),
+                withoutPositions(
+                    Object.fromEntries(Object.entries(value).filter(([k]) => !keys.includes(k))),
                 ),
             );
         return strip(before) === strip(after);
@@ -84,8 +95,9 @@ export const getLayoutDetails = (input: SnapshotInput, names?: string[]): Layout
                                 const moved =
                                     c.before &&
                                     c.after &&
-                                    JSON.stringify(c.before.position) !==
-                                        JSON.stringify(c.after.position);
+                                    // 位置はノード (metadata 8 から)。中身 (セクション・列・行) の objectKey で比べる
+                                    c.before.position.sourceKeys.objectKey !==
+                                        c.after.position.sourceKeys.objectKey;
                                 const other = item.field
                                     ? undefined
                                     : (item.customLink ??
@@ -109,7 +121,15 @@ export const getLayoutDetails = (input: SnapshotInput, names?: string[]): Layout
                                         : {}),
                                     column: item.position.column,
                                     row: item.position.row,
-                                    ...(moved ? { movedFrom: c.before!.position } : {}),
+                                    ...(moved
+                                        ? {
+                                              movedFrom: {
+                                                  section: c.before!.position.section,
+                                                  column: c.before!.position.column,
+                                                  row: c.before!.position.row,
+                                              },
+                                          }
+                                        : {}),
                                 };
                             })
                             .sort((a, b) => a.column - b.column || a.row - b.row),

@@ -15,6 +15,9 @@ const getNodeLabel = (node: JsonNode): string => {
         case 'offsetClause':
         case 'memberAccess':
             return `${node.kind}:${String(raw.type)}`;
+        // try・catch・finally の節は、種類の違うもの同士を対応付けない (apex 8 からノード)
+        case 'tryClause':
+            return `${node.kind}:${String(raw.condition)}`;
         default:
             return node.kind;
     }
@@ -37,22 +40,21 @@ export const getExpressionLabel = (value: Record<string, unknown>): string | und
     return undefined;
 };
 
-/** 配列の要素になっている入れ物のラベル (docs 4 章) */
-const getElementLabel = (owner: string, role: string, value: Record<string, unknown>) => {
-    if (owner === 'if' && role === 'conditionBlock') return 'if.branch';
-    if (owner === 'try' && role === 'block') return `try.${String(value.condition)}`;
-    if (owner === 'switch' && role === 'when') return 'switch.when';
-    if (owner === 'new' && role === 'entries') return 'new.entry';
-    return undefined;
-};
+/**
+ * 配列の要素になっている、kind を持たない入れ物のラベル。if の節・try の節・switch の when・new の組は
+ * apex 8 からノード (ifBranch・tryClause・switchWhen・newEntry) なので、ここに残るものはない
+ */
+const getElementLabel = (_owner: string, _role: string, _value: Record<string, unknown>) =>
+    undefined;
 
-/** 子の順序が意味を持たない並び (apex-implementation.md の B) */
+/** 子の順序が意味を持たない並び (SELECT の項目・AND / OR の条件・修飾子など) */
 const UNORDERED_LABELS = [
     /\.modifier$/,
     /^modifiers$/,
     /^switchCondition\.condition$/,
-    /\.select\.field$/,
-    /\.(where|having)(\.condition)+$/,
+    // SELECT の項目の並びと、WHERE・HAVING・WITH の論理条件 (apex 7 からノード。docs/plan.md 4.3 の 1)
+    /^soqlSelect\.field$/,
+    /^soqlLogical\.condition$/,
     /^sosl\.with$/,
 ];
 
@@ -65,7 +67,7 @@ export const APEX_GUMTREE_LANGUAGE: GumTreeLanguage = {
     isBlockRole: (owner, role) =>
         (role === 'block' || role === 'body') && owner !== 'try' && owner !== 'switch',
     isAtomicArray: () => false,
-    /** 型は葉にする (中身の TypeContentJson は kind を持たない) */
+    /** 型は葉にする (入れ子の型もノードだが、型の差分は型の名前のキーで比べる) */
     leafValues: (node) =>
         node.kind === 'type' ? { type: getTypeKey(node as unknown as TypeJson) } : undefined,
     /** ModifiersJson ({ access: [...], ... }) は分類キーをまたいで 1 つの順序なしの並びにする */

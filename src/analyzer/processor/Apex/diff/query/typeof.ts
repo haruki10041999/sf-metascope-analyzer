@@ -1,4 +1,4 @@
-import { TypeOfBlockJson, TypeOfJson } from '../../../../types';
+import { TypeOfBlockJson, TypeOfBody } from '../../../../types';
 
 import {
     ValueDiff,
@@ -68,7 +68,7 @@ const makeTypeOfBlocksDiff = (
     });
 };
 
-export const makeTypeOfDiff = (before: TypeOfJson, after: TypeOfJson): TypeOfJsonDiff => ({
+export const makeTypeOfDiff = (before: TypeOfBody, after: TypeOfBody): TypeOfJsonDiff => ({
     type: 'typeOf',
     field: makeFieldPathDiff(before.field, after.field),
     block: makeTypeOfBlocksDiff(before.block, after.block),

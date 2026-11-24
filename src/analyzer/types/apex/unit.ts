@@ -23,7 +23,7 @@ import {
 
 import { ModifiersJson, makeModifiersJson } from './modifier';
 
-// unit は境界ノードにしない（unit ごとに JSON ファイルを保存する）。
+// トリガー・匿名 Apex の中身は triggerUnit・anonymousUnit のノード (apex 9 から)。クラスの中身は宣言 (class など) のノード。
 // IR の木にはエラーのノードがないので、unit の中にエラーのノードは出てこない (エラーは resolvedError に出る)。
 // ファイル全体を読めなかったとき (buildApexIr が木を返さなかったとき) は、呼び出す側 (parser/Apex/source.ts) が扱う
 
@@ -43,25 +43,24 @@ const makeBlockMemberJson = (
         case 'declaration':
             return {
                 ...makeMemberDeclarationJson(member.declaration),
-                modifier: makeModifiersJson(member.modifiers),
+                modifier: makeModifiersJson(target, member.modifiers),
             };
     }
 };
 
-export type AnonymousUnitJson = {
+export type AnonymousUnitJson = JsonType<'anonymousUnit'> & {
     fileType: 'anonymous';
     block: BlockMemberJson[];
 };
 
-export const makeAnonymousUnitJson = (target: AnonymousUnitTypeClass): AnonymousUnitJson => {
-    return {
+export const makeAnonymousUnitJson = (target: AnonymousUnitTypeClass): AnonymousUnitJson =>
+    makeNodeJson<AnonymousUnitJson>('anonymousUnit', target, {
         fileType: 'anonymous',
         block: target
             .getFields()
             .block.getFields()
             .members.map((b) => makeBlockMemberJson(b)),
-    };
-};
+    });
 
 export type TriggerCaseJson = JsonType<'triggerCase'> & {
     actionType: 'INSERT' | 'UPDATE' | 'DELETE' | 'UNDELETE';
@@ -76,7 +75,7 @@ const makeTriggerCaseJson = (target: TriggerCaseTypeClass): TriggerCaseJson => {
     });
 };
 
-export type TriggerUnitJson = {
+export type TriggerUnitJson = JsonType<'triggerUnit'> & {
     fileType: 'trigger';
     name: string;
     object: string;
@@ -86,13 +85,13 @@ export type TriggerUnitJson = {
 
 export const makeTriggerUnitJson = (target: TriggerUnitTypeClass): TriggerUnitJson => {
     const { name, object, triggerCase, block } = target.getFields();
-    return {
+    return makeNodeJson<TriggerUnitJson>('triggerUnit', target, {
         fileType: 'trigger',
         name: name.getFields().value,
         object: object.getFields().value,
         case: triggerCase.map((t) => makeTriggerCaseJson(t)),
         block: block.getFields().member.map((b) => makeBlockMemberJson(b)),
-    };
+    });
 };
 
 export type CompilationUnitJson = {
@@ -119,6 +118,9 @@ export const makeCompilationUnitJson = (target: CompilationUnitTypeClass): Compi
     return {
         fileType: 'cls',
         ...makeTypeDeclarationContentJson(target),
-        modifier: makeModifiersJson(target.getFields().declaration.getFields().modifiers),
+        modifier: makeModifiersJson(
+            target.getFields().declaration,
+            target.getFields().declaration.getFields().modifiers,
+        ),
     };
 };

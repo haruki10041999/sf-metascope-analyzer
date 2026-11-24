@@ -6,16 +6,16 @@ Salesforce の公式 [Apex Reference Guide PDF](https://resources.docs.salesforc
 
 **未完成:** 81 名前空間を対象に 2504 個の異なる完全修飾名、2506 行（クラス 2019、インターフェース 70、enum 347、例外 69、種別未確認 1）を収録した。公式 PDF のしおり・本文の一部を機械抽出したもので、全標準型の完全な一覧ではない。掲載がないことを非標準の根拠にしない。
 
-| 一覧 | 行数 |
-| --- | ---: |
-| [A–D（ConnectApi を除く）](./apex-standard-types-a-d.md) | 294 |
-| [E–M](./apex-standard-types-e-m.md) | 165 |
-| [N–R](./apex-standard-types-n-r.md) | 160 |
-| [S–Z（System を除く）](./apex-standard-types-s-z.md) | 88 |
-| [System](./apex-standard-types-system.md) | 156 |
-| [ConnectApi：通常の型・enum・例外](./apex-standard-types-connectapi.md) | 339 |
-| [ConnectApi：Input クラス](./apex-standard-types-connectapi-input.md) | 358 |
-| [ConnectApi：Output クラス](./apex-standard-types-connectapi-output.md) | 946 |
+| 一覧                                                                    | 行数 |
+| ----------------------------------------------------------------------- | ---: |
+| [A–D（ConnectApi を除く）](./apex-standard-types-a-d.md)                |  294 |
+| [E–M](./apex-standard-types-e-m.md)                                     |  165 |
+| [N–R](./apex-standard-types-n-r.md)                                     |  160 |
+| [S–Z（System を除く）](./apex-standard-types-s-z.md)                    |   88 |
+| [System](./apex-standard-types-system.md)                               |  156 |
+| [ConnectApi：通常の型・enum・例外](./apex-standard-types-connectapi.md) |  339 |
+| [ConnectApi：Input クラス](./apex-standard-types-connectapi-input.md)   |  358 |
+| [ConnectApi：Output クラス](./apex-standard-types-connectapi-output.md) |  946 |
 
 ## 抽出方法と制約
 

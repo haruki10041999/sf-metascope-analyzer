@@ -84,8 +84,8 @@ describe('gumtree tree', () => {
             branches.map((b) => [b.label, b.children.map((c) => c.label)]),
             [
                 // 条件は式そのもの (段階 A4 で ifCondition をなくした)
-                ['if.branch', ['identifier', 'block']],
-                ['if.branch', ['block']],
+                ['ifBranch', ['identifier', 'block']],
+                ['ifBranch', ['block']],
             ],
         );
     });

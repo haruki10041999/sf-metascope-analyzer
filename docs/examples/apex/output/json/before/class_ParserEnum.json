@@ -5,22 +5,34 @@
   "result": {
     "id": "class_ParserEnum",
     "base": {
+      "kind": "apexUnit",
+      "sourceKeys": {
+        "objectKey": "apexUnit_d7569e6fbe9d5670",
+        "sourceKey": "compilationUnit_d4a03dc110fd01cb"
+      },
       "name": "ParserEnum",
       "unitType": "class",
       "source": {
+        "kind": "apexSource",
+        "sourceKeys": {
+          "objectKey": "apexSource_8ac848238a27a270",
+          "sourceKey": "compilationUnit_d4a03dc110fd01cb"
+        },
         "fileName": "ParserEnum.cls",
         "fileType": "cls",
         "content": {
           "kind": "enum",
           "sourceKeys": {
-            "base": {
-              "objectKey": "enumDeclaration_42428ec88d8048fc",
-              "sourceKey": "enumDeclaration_4c54cd95b55d5eeb"
-            },
-            "name": {
-              "objectKey": "id_dd32a7fc22fbb1e9",
+            "objectKey": "enumDeclaration_42428ec88d8048fc",
+            "sourceKey": "enumDeclaration_4c54cd95b55d5eeb"
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {
+              "objectKey": "declarationName_927f808d97bf3d70",
               "sourceKey": "id_6dbfbcd5fe3ee422"
-            }
+            },
+            "name": "ParserEnum"
           },
           "name": "ParserEnum",
           "members": [
@@ -58,6 +70,11 @@
             }
           ],
           "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {
+              "objectKey": "modifiers_b09596894868e30e",
+              "sourceKey": "typeDeclaration_d4a03dc110fd01cb"
+            },
             "keyword": [
               {
                 "kind": "modifier",
@@ -73,6 +90,25 @@
       }
     },
     "sourceObject": [
+      {
+        "objectKey": "apexSource_8ac848238a27a270",
+        "context": "public enum ParserEnum {\n    DRAFT,\n    SUBMITTED,\n    APPROVED,\n    REJECTED\n}",
+        "source": [
+          {
+            "sourceKey": "compilationUnit_d4a03dc110fd01cb",
+            "start": {
+              "offset": 43,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 122,
+              "line": 7,
+              "column": 1
+            }
+          }
+        ]
+      },
       {
         "objectKey": "enumDeclaration_42428ec88d8048fc",
         "context": "enum ParserEnum {\n    DRAFT,\n    SUBMITTED,\n    APPROVED,\n    REJECTED\n}",
@@ -93,7 +129,7 @@
         ]
       },
       {
-        "objectKey": "id_dd32a7fc22fbb1e9",
+        "objectKey": "declarationName_927f808d97bf3d70",
         "context": "ParserEnum",
         "source": [
           {
@@ -188,6 +224,25 @@
         ]
       },
       {
+        "objectKey": "modifiers_b09596894868e30e",
+        "context": "public enum ParserEnum {\n    DRAFT,\n    SUBMITTED,\n    APPROVED,\n    REJECTED\n}",
+        "source": [
+          {
+            "sourceKey": "typeDeclaration_d4a03dc110fd01cb",
+            "start": {
+              "offset": 43,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 122,
+              "line": 7,
+              "column": 1
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "modifier_ff9740e1ee9f633a",
         "context": "public",
         "source": [
@@ -202,6 +257,25 @@
               "offset": 49,
               "line": 2,
               "column": 6
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "apexUnit_d7569e6fbe9d5670",
+        "context": "public enum ParserEnum {\n    DRAFT,\n    SUBMITTED,\n    APPROVED,\n    REJECTED\n}",
+        "source": [
+          {
+            "sourceKey": "compilationUnit_d4a03dc110fd01cb",
+            "start": {
+              "offset": 43,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 122,
+              "line": 7,
+              "column": 1
             }
           }
         ]

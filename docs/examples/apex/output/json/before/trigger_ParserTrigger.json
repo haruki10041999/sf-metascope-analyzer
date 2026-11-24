@@ -5,12 +5,27 @@
   "result": {
     "id": "trigger_ParserTrigger",
     "base": {
+      "kind": "apexUnit",
+      "sourceKeys": {
+        "objectKey": "apexUnit_903d59f870554f40",
+        "sourceKey": "triggerUnit_10616a21c686dbb8"
+      },
       "name": "ParserTrigger",
       "unitType": "trigger",
       "source": {
+        "kind": "apexSource",
+        "sourceKeys": {
+          "objectKey": "apexSource_a13ccdbef7678865",
+          "sourceKey": "triggerUnit_10616a21c686dbb8"
+        },
         "fileName": "ParserTrigger.trigger",
         "fileType": "trigger",
         "content": {
+          "kind": "triggerUnit",
+          "sourceKeys": {
+            "objectKey": "triggerUnit_fb1512b2f62ab197",
+            "sourceKey": "triggerUnit_10616a21c686dbb8"
+          },
           "name": "ParserTrigger",
           "object": "Account",
           "case": [
@@ -698,6 +713,11 @@
                 "primitiveType": "String"
               },
               "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {
+                  "objectKey": "modifiers_cfd2af792ff36525",
+                  "sourceKey": "triggerBlockMember_4ff26a5f3d403ca3"
+                },
                 "keyword": [
                   {
                     "kind": "modifier",
@@ -760,6 +780,11 @@
                 "primitiveType": "Integer"
               },
               "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {
+                  "objectKey": "modifiers_029abd9867163330",
+                  "sourceKey": "triggerBlockMember_b86f66b768dd95d8"
+                },
                 "keyword": [
                   {
                     "kind": "modifier",
@@ -775,14 +800,16 @@
             {
               "kind": "property",
               "sourceKeys": {
-                "base": {
-                  "objectKey": "propertyDeclaration_65f30057b7942a64",
-                  "sourceKey": "propertyDeclaration_95aae064e2685726"
-                },
-                "name": {
-                  "objectKey": "id_4d0fec55c1319e13",
+                "objectKey": "propertyDeclaration_65f30057b7942a64",
+                "sourceKey": "propertyDeclaration_95aae064e2685726"
+              },
+              "nameRef": {
+                "kind": "declarationName",
+                "sourceKeys": {
+                  "objectKey": "declarationName_6c0f5bf0bdce0e72",
                   "sourceKey": "id_1aabb30eb20b09c0"
-                }
+                },
+                "name": "label"
               },
               "name": "label",
               "variantType": {
@@ -796,13 +823,40 @@
               },
               "isGetter": true,
               "getterContent": {
-                "modifier": {}
+                "kind": "accessor",
+                "sourceKeys": {
+                  "objectKey": "propertyBlock_b507c3b9f14604bd",
+                  "sourceKey": "propertyBlock_fd9543a940c6852e"
+                },
+                "modifier": {
+                  "kind": "modifiers",
+                  "sourceKeys": {
+                    "objectKey": "modifiers_44136fa355b3678a",
+                    "sourceKey": "propertyBlock_fd9543a940c6852e"
+                  }
+                }
               },
               "isSetter": true,
               "setterContent": {
-                "modifier": {}
+                "kind": "accessor",
+                "sourceKeys": {
+                  "objectKey": "propertyBlock_9326f0d59c604c75",
+                  "sourceKey": "propertyBlock_765e750ea865dcbd"
+                },
+                "modifier": {
+                  "kind": "modifiers",
+                  "sourceKeys": {
+                    "objectKey": "modifiers_44136fa355b3678a",
+                    "sourceKey": "propertyBlock_765e750ea865dcbd"
+                  }
+                }
               },
               "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {
+                  "objectKey": "modifiers_b09596894868e30e",
+                  "sourceKey": "triggerBlockMember_2134d7bbc125943a"
+                },
                 "keyword": [
                   {
                     "kind": "modifier",
@@ -818,14 +872,16 @@
             {
               "kind": "method",
               "sourceKeys": {
-                "base": {
-                  "objectKey": "methodDeclaration_820770aa20306be0",
-                  "sourceKey": "methodDeclaration_007ac215cce95e2c"
-                },
-                "name": {
-                  "objectKey": "id_e6dfdb0965307f78",
+                "objectKey": "methodDeclaration_820770aa20306be0",
+                "sourceKey": "methodDeclaration_007ac215cce95e2c"
+              },
+              "nameRef": {
+                "kind": "declarationName",
+                "sourceKeys": {
+                  "objectKey": "declarationName_b6f06862443c00c6",
                   "sourceKey": "id_54fd427854d621af"
-                }
+                },
+                "name": "log"
               },
               "name": "log",
               "returnType": "void",
@@ -846,7 +902,13 @@
                     "type": "primitive",
                     "primitiveType": "String"
                   },
-                  "modifier": {}
+                  "modifier": {
+                    "kind": "modifiers",
+                    "sourceKeys": {
+                      "objectKey": "modifiers_44136fa355b3678a",
+                      "sourceKey": "formalParameter_32c5a6107f1e4f76"
+                    }
+                  }
                 }
               ],
               "block": [
@@ -903,6 +965,11 @@
                 }
               ],
               "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {
+                  "objectKey": "modifiers_d2b616375b879a6f",
+                  "sourceKey": "triggerBlockMember_65c813cea78ab67e"
+                },
                 "keyword": [
                   {
                     "kind": "modifier",
@@ -918,28 +985,32 @@
             {
               "kind": "class",
               "sourceKeys": {
-                "base": {
-                  "objectKey": "classDeclaration_0bab88eba6424741",
-                  "sourceKey": "classDeclaration_952efbb8d6b68a14"
-                },
-                "name": {
-                  "objectKey": "id_4b06a4b8cf98ea97",
+                "objectKey": "classDeclaration_0bab88eba6424741",
+                "sourceKey": "classDeclaration_952efbb8d6b68a14"
+              },
+              "nameRef": {
+                "kind": "declarationName",
+                "sourceKeys": {
+                  "objectKey": "declarationName_f874ca39c6a105e8",
                   "sourceKey": "id_46a0bfa6b0e16652"
-                }
+                },
+                "name": "TriggerHelper"
               },
               "name": "TriggerHelper",
               "block": [
                 {
                   "kind": "method",
                   "sourceKeys": {
-                    "base": {
-                      "objectKey": "methodDeclaration_3375752bddc11af3",
-                      "sourceKey": "methodDeclaration_baddc4fa4bf8f9df"
-                    },
-                    "name": {
-                      "objectKey": "id_173f4a982cfa79db",
+                    "objectKey": "methodDeclaration_3375752bddc11af3",
+                    "sourceKey": "methodDeclaration_baddc4fa4bf8f9df"
+                  },
+                  "nameRef": {
+                    "kind": "declarationName",
+                    "sourceKeys": {
+                      "objectKey": "declarationName_46bdaaa16a483c7c",
                       "sourceKey": "id_1176757b00614167"
-                    }
+                    },
+                    "name": "run"
                   },
                   "name": "run",
                   "returnType": "void",
@@ -982,6 +1053,11 @@
                     }
                   ],
                   "modifier": {
+                    "kind": "modifiers",
+                    "sourceKeys": {
+                      "objectKey": "modifiers_b09596894868e30e",
+                      "sourceKey": "classBodyDeclaration_26ef08b7ad96c8f2"
+                    },
                     "keyword": [
                       {
                         "kind": "modifier",
@@ -996,6 +1072,11 @@
                 }
               ],
               "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {
+                  "objectKey": "modifiers_b09596894868e30e",
+                  "sourceKey": "triggerBlockMember_310f33a6c6d60b56"
+                },
                 "keyword": [
                   {
                     "kind": "modifier",
@@ -1011,36 +1092,51 @@
             {
               "kind": "interface",
               "sourceKeys": {
-                "base": {
-                  "objectKey": "interfaceDeclaration_7a35e61ded71cf10",
-                  "sourceKey": "interfaceDeclaration_9c3b120025435028"
-                },
-                "name": {
-                  "objectKey": "id_2f9f32222eeebf8e",
+                "objectKey": "interfaceDeclaration_7a35e61ded71cf10",
+                "sourceKey": "interfaceDeclaration_9c3b120025435028"
+              },
+              "nameRef": {
+                "kind": "declarationName",
+                "sourceKeys": {
+                  "objectKey": "declarationName_53f29d7a95db8521",
                   "sourceKey": "id_b9cb7624e44b799e"
-                }
+                },
+                "name": "TriggerHandler"
               },
               "name": "TriggerHandler",
               "block": [
                 {
                   "kind": "interfaceMethod",
                   "sourceKeys": {
-                    "base": {
-                      "objectKey": "interfaceMethodDeclaration_aaef09a0856a0781",
-                      "sourceKey": "interfaceMethodDeclaration_58811807e2fe344f"
-                    },
-                    "name": {
-                      "objectKey": "id_7b9ae991e1ae993a",
+                    "objectKey": "interfaceMethodDeclaration_aaef09a0856a0781",
+                    "sourceKey": "interfaceMethodDeclaration_58811807e2fe344f"
+                  },
+                  "nameRef": {
+                    "kind": "declarationName",
+                    "sourceKeys": {
+                      "objectKey": "declarationName_12474e0f43099ef0",
                       "sourceKey": "id_de204c83da7cbca6"
-                    }
+                    },
+                    "name": "handle"
                   },
                   "name": "handle",
                   "returnType": "void",
                   "param": [],
-                  "modifier": {}
+                  "modifier": {
+                    "kind": "modifiers",
+                    "sourceKeys": {
+                      "objectKey": "modifiers_44136fa355b3678a",
+                      "sourceKey": "interfaceMethodDeclaration_58811807e2fe344f"
+                    }
+                  }
                 }
               ],
               "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {
+                  "objectKey": "modifiers_b09596894868e30e",
+                  "sourceKey": "triggerBlockMember_914ade3e93ef7690"
+                },
                 "keyword": [
                   {
                     "kind": "modifier",
@@ -1056,14 +1152,16 @@
             {
               "kind": "enum",
               "sourceKeys": {
-                "base": {
-                  "objectKey": "enumDeclaration_15df2b381102f049",
-                  "sourceKey": "enumDeclaration_698236fcc43f45e9"
-                },
-                "name": {
-                  "objectKey": "id_2543e15c80c0211a",
+                "objectKey": "enumDeclaration_15df2b381102f049",
+                "sourceKey": "enumDeclaration_698236fcc43f45e9"
+              },
+              "nameRef": {
+                "kind": "declarationName",
+                "sourceKeys": {
+                  "objectKey": "declarationName_23a7c896ebc18f34",
                   "sourceKey": "id_0c90f96b9220918c"
-                }
+                },
+                "name": "Phase"
               },
               "name": "Phase",
               "members": [
@@ -1085,6 +1183,11 @@
                 }
               ],
               "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {
+                  "objectKey": "modifiers_b09596894868e30e",
+                  "sourceKey": "triggerBlockMember_eccbdff8b0d02f1e"
+                },
                 "keyword": [
                   {
                     "kind": "modifier",
@@ -1123,6 +1226,11 @@
               },
               "when": [
                 {
+                  "kind": "switchWhen",
+                  "sourceKeys": {
+                    "objectKey": "whenControl_a2caf55dc8389161",
+                    "sourceKey": "whenControl_c8504d58ae0ec059"
+                  },
                   "condition": {
                     "kind": "switchCondition",
                     "sourceKeys": {
@@ -1176,6 +1284,11 @@
                   ]
                 },
                 {
+                  "kind": "switchWhen",
+                  "sourceKeys": {
+                    "objectKey": "whenControl_0e2839295a434a5c",
+                    "sourceKey": "whenControl_454fcdc4858acc96"
+                  },
                   "condition": {
                     "kind": "switchCondition",
                     "sourceKeys": {
@@ -1221,6 +1334,11 @@
                   ]
                 },
                 {
+                  "kind": "switchWhen",
+                  "sourceKeys": {
+                    "objectKey": "whenControl_0ff694a6c06390fa",
+                    "sourceKey": "whenControl_d9b705e8c8e234f5"
+                  },
                   "condition": {
                     "kind": "switchCondition",
                     "sourceKeys": {
@@ -1273,6 +1391,11 @@
               },
               "conditionBlock": [
                 {
+                  "kind": "ifBranch",
+                  "sourceKeys": {
+                    "objectKey": "ifBranch_4ac21d860fc2d3c4",
+                    "sourceKey": "parExpression_75533e936db62f49"
+                  },
                   "condition": {
                     "kind": "logical",
                     "sourceKeys": {
@@ -1363,6 +1486,11 @@
                           },
                           "conditionBlock": [
                             {
+                              "kind": "ifBranch",
+                              "sourceKeys": {
+                                "objectKey": "ifBranch_6a6af56c3e3369bb",
+                                "sourceKey": "parExpression_8dbf3f8e921dd899"
+                              },
                               "condition": {
                                 "kind": "memberAccess",
                                 "sourceKeys": {
@@ -1502,6 +1630,11 @@
               },
               "conditionBlock": [
                 {
+                  "kind": "ifBranch",
+                  "sourceKeys": {
+                    "objectKey": "ifBranch_1801159214dd7887",
+                    "sourceKey": "parExpression_4efbcd68b09dbd9b"
+                  },
                   "condition": {
                     "kind": "logical",
                     "sourceKeys": {
@@ -1601,7 +1734,13 @@
                               "Account"
                             ]
                           },
-                          "modifier": {},
+                          "modifier": {
+                            "kind": "modifiers",
+                            "sourceKeys": {
+                              "objectKey": "modifiers_44136fa355b3678a",
+                              "sourceKey": "localVariableDeclaration_cd1b7917dd577df9"
+                            }
+                          },
                           "variants": [
                             {
                               "kind": "variant",
@@ -1669,6 +1808,11 @@
                           },
                           "conditionBlock": [
                             {
+                              "kind": "ifBranch",
+                              "sourceKeys": {
+                                "objectKey": "ifBranch_5e4706975f1f8f5b",
+                                "sourceKey": "parExpression_002ae34ca92be182"
+                              },
                               "condition": {
                                 "kind": "binary",
                                 "sourceKeys": {
@@ -1767,6 +1911,11 @@
                           },
                           "conditionBlock": [
                             {
+                              "kind": "ifBranch",
+                              "sourceKeys": {
+                                "objectKey": "ifBranch_e2f1ad614dd9a1ae",
+                                "sourceKey": "parExpression_d61267ffd7e157b3"
+                              },
                               "condition": {
                                 "kind": "binary",
                                 "sourceKeys": {
@@ -1855,6 +2004,11 @@
               },
               "conditionBlock": [
                 {
+                  "kind": "ifBranch",
+                  "sourceKeys": {
+                    "objectKey": "ifBranch_e67cdf786ebb4b3e",
+                    "sourceKey": "parExpression_802e388a6bb78d43"
+                  },
                   "condition": {
                     "kind": "logical",
                     "sourceKeys": {
@@ -2012,6 +2166,11 @@
               },
               "conditionBlock": [
                 {
+                  "kind": "ifBranch",
+                  "sourceKeys": {
+                    "objectKey": "ifBranch_d4354f81cf9429e2",
+                    "sourceKey": "parExpression_340c9ea5013cb93a"
+                  },
                   "condition": {
                     "kind": "logical",
                     "sourceKeys": {
@@ -2071,13 +2230,24 @@
                         },
                         "type": "list",
                         "elementType": {
+                          "kind": "type",
+                          "sourceKeys": {
+                            "objectKey": "typeRef_8e7739db2a5afa72",
+                            "sourceKey": "typeRef_031f367075ac7532"
+                          },
                           "type": "custom",
                           "customType": [
                             "Contact"
                           ]
                         }
                       },
-                      "modifier": {},
+                      "modifier": {
+                        "kind": "modifiers",
+                        "sourceKeys": {
+                          "objectKey": "modifiers_44136fa355b3678a",
+                          "sourceKey": "localVariableDeclaration_95c754b637042ffc"
+                        }
+                      },
                       "variants": [
                         {
                           "kind": "variant",
@@ -2100,6 +2270,11 @@
                               },
                               "type": "list",
                               "elementType": {
+                                "kind": "type",
+                                "sourceKeys": {
+                                  "objectKey": "typeRef_8e7739db2a5afa72",
+                                  "sourceKey": "typeRef_411557d05b97431a"
+                                },
                                 "type": "custom",
                                 "customType": [
                                   "Contact"
@@ -2273,6 +2448,11 @@
                       },
                       "conditionBlock": [
                         {
+                          "kind": "ifBranch",
+                          "sourceKeys": {
+                            "objectKey": "ifBranch_fa5a4033bcef0408",
+                            "sourceKey": "parExpression_2a782a3b1492eab9"
+                          },
                           "condition": {
                             "kind": "unary",
                             "sourceKeys": {
@@ -2333,6 +2513,11 @@
               },
               "conditionBlock": [
                 {
+                  "kind": "ifBranch",
+                  "sourceKeys": {
+                    "objectKey": "ifBranch_6157b7c2fb6381f6",
+                    "sourceKey": "parExpression_4a6b088b7b96df95"
+                  },
                   "condition": {
                     "kind": "logical",
                     "sourceKeys": {
@@ -2392,11 +2577,22 @@
                         },
                         "type": "set",
                         "elementType": {
+                          "kind": "type",
+                          "sourceKeys": {
+                            "objectKey": "typeRef_4649c8c600ccbd43",
+                            "sourceKey": "typeRef_1a2f4ab88b0b7c77"
+                          },
                           "type": "primitive",
                           "primitiveType": "Id"
                         }
                       },
-                      "modifier": {},
+                      "modifier": {
+                        "kind": "modifiers",
+                        "sourceKeys": {
+                          "objectKey": "modifiers_44136fa355b3678a",
+                          "sourceKey": "localVariableDeclaration_770110192116d360"
+                        }
+                      },
                       "variants": [
                         {
                           "kind": "variant",
@@ -2419,6 +2615,11 @@
                               },
                               "type": "set",
                               "elementType": {
+                                "kind": "type",
+                                "sourceKeys": {
+                                  "objectKey": "typeRef_4649c8c600ccbd43",
+                                  "sourceKey": "typeRef_6e596eb66a2bcaab"
+                                },
                                 "type": "primitive",
                                 "primitiveType": "Id"
                               }
@@ -2497,13 +2698,24 @@
                         },
                         "type": "list",
                         "elementType": {
+                          "kind": "type",
+                          "sourceKeys": {
+                            "objectKey": "typeRef_4ae4432abe2a6f7e",
+                            "sourceKey": "typeRef_64f6628e089e9574"
+                          },
                           "type": "custom",
                           "customType": [
                             "Account"
                           ]
                         }
                       },
-                      "modifier": {},
+                      "modifier": {
+                        "kind": "modifiers",
+                        "sourceKeys": {
+                          "objectKey": "modifiers_44136fa355b3678a",
+                          "sourceKey": "localVariableDeclaration_e2f42835a4bcbf58"
+                        }
+                      },
                       "variants": [
                         {
                           "kind": "variant",
@@ -2519,6 +2731,11 @@
                               "sourceKey": "query_68097a3cead57fb4"
                             },
                             "select": {
+                              "kind": "soqlSelect",
+                              "sourceKeys": {
+                                "objectKey": "selectList_1d90a0d1c4eb9f39",
+                                "sourceKey": "selectList_9d0cd1fd7b7aee4b"
+                              },
                               "field": [
                                 {
                                   "kind": "selectEntry",
@@ -2560,6 +2777,11 @@
                                     "sourceKey": "subQuery_e0d8392a5d0b646d"
                                   },
                                   "select": {
+                                    "kind": "soqlSelect",
+                                    "sourceKeys": {
+                                      "objectKey": "subFieldList_1185a7e14e6638f0",
+                                      "sourceKey": "subFieldList_c8bde78bd51beae4"
+                                    },
                                     "field": [
                                       {
                                         "kind": "selectEntry",
@@ -2597,6 +2819,11 @@
                                     ]
                                   },
                                   "from": {
+                                    "kind": "soqlFrom",
+                                    "sourceKeys": {
+                                      "objectKey": "fromNameList_b5e7bab0337aab70",
+                                      "sourceKey": "fromNameList_9e7347e34c5fdaa1"
+                                    },
                                     "field": [
                                       {
                                         "kind": "fromField",
@@ -2614,6 +2841,11 @@
                               ]
                             },
                             "from": {
+                              "kind": "soqlFrom",
+                              "sourceKeys": {
+                                "objectKey": "fromNameList_169521d39e7466ff",
+                                "sourceKey": "fromNameList_a16ccb9d3df2a3c8"
+                              },
                               "field": [
                                 {
                                   "kind": "fromField",
@@ -2628,7 +2860,17 @@
                               ]
                             },
                             "where": {
+                              "kind": "soqlWhere",
+                              "sourceKeys": {
+                                "objectKey": "whereClause_30143353937d7efe",
+                                "sourceKey": "whereClause_d49e8d138f4a63b9"
+                              },
                               "condition": {
+                                "kind": "soqlLogical",
+                                "sourceKeys": {
+                                  "objectKey": "whereLogicalExpression_a2fcc690b0c8e191",
+                                  "sourceKey": "whereLogicalExpression_038bf50ba888a43d"
+                                },
                                 "condition": [
                                   {
                                     "kind": "singleCondition",
@@ -2637,6 +2879,11 @@
                                       "sourceKey": "fieldExpression_038bf50ba888a43d"
                                     },
                                     "field": {
+                                      "kind": "soqlField",
+                                      "sourceKeys": {
+                                        "objectKey": "fieldName_c48654a8f3e4b1a4",
+                                        "sourceKey": "fieldName_7512ac55d228604e"
+                                      },
                                       "type": "field",
                                       "field": [
                                         "Id"
@@ -2644,6 +2891,11 @@
                                     },
                                     "operator": "IN",
                                     "value": {
+                                      "kind": "soqlValue",
+                                      "sourceKeys": {
+                                        "objectKey": "value_f11b58610bfc5820",
+                                        "sourceKey": "value_ef5a773007ae500a"
+                                      },
                                       "type": "bind",
                                       "value": {
                                         "kind": "identifier",
@@ -2676,13 +2928,24 @@
                         },
                         "type": "list",
                         "elementType": {
+                          "kind": "type",
+                          "sourceKeys": {
+                            "objectKey": "typeRef_8e7739db2a5afa72",
+                            "sourceKey": "typeRef_06c605773edfb392"
+                          },
                           "type": "custom",
                           "customType": [
                             "Contact"
                           ]
                         }
                       },
-                      "modifier": {},
+                      "modifier": {
+                        "kind": "modifiers",
+                        "sourceKeys": {
+                          "objectKey": "modifiers_44136fa355b3678a",
+                          "sourceKey": "localVariableDeclaration_637f4f45647a9005"
+                        }
+                      },
                       "variants": [
                         {
                           "kind": "variant",
@@ -2705,6 +2968,11 @@
                               },
                               "type": "list",
                               "elementType": {
+                                "kind": "type",
+                                "sourceKeys": {
+                                  "objectKey": "typeRef_8e7739db2a5afa72",
+                                  "sourceKey": "typeRef_10ccc6718b36b6ef"
+                                },
                                 "type": "custom",
                                 "customType": [
                                   "Contact"
@@ -2897,6 +3165,11 @@
               },
               "conditionBlock": [
                 {
+                  "kind": "ifBranch",
+                  "sourceKeys": {
+                    "objectKey": "ifBranch_dee3d2f1ffccbd8b",
+                    "sourceKey": "parExpression_32cd88d0c90db2da"
+                  },
                   "condition": {
                     "kind": "logical",
                     "sourceKeys": {
@@ -2956,13 +3229,24 @@
                         },
                         "type": "list",
                         "elementType": {
+                          "kind": "type",
+                          "sourceKeys": {
+                            "objectKey": "typeRef_1e2df11066e4cb7f",
+                            "sourceKey": "typeRef_33693d7a34b9d0fd"
+                          },
                           "type": "custom",
                           "customType": [
                             "Task"
                           ]
                         }
                       },
-                      "modifier": {},
+                      "modifier": {
+                        "kind": "modifiers",
+                        "sourceKeys": {
+                          "objectKey": "modifiers_44136fa355b3678a",
+                          "sourceKey": "localVariableDeclaration_37d899038e8198fd"
+                        }
+                      },
                       "variants": [
                         {
                           "kind": "variant",
@@ -2978,6 +3262,11 @@
                               "sourceKey": "query_f4d485c64f2a0204"
                             },
                             "select": {
+                              "kind": "soqlSelect",
+                              "sourceKeys": {
+                                "objectKey": "selectList_2dbaabd9127bafad",
+                                "sourceKey": "selectList_4f953e8ca165a594"
+                              },
                               "field": [
                                 {
                                   "kind": "selectEntry",
@@ -2993,6 +3282,11 @@
                               ]
                             },
                             "from": {
+                              "kind": "soqlFrom",
+                              "sourceKeys": {
+                                "objectKey": "fromNameList_c02f7e6859ee121c",
+                                "sourceKey": "fromNameList_bf886cf72e953363"
+                              },
                               "field": [
                                 {
                                   "kind": "fromField",
@@ -3007,7 +3301,17 @@
                               ]
                             },
                             "where": {
+                              "kind": "soqlWhere",
+                              "sourceKeys": {
+                                "objectKey": "whereClause_1df8286cfd836606",
+                                "sourceKey": "whereClause_1799db86c574347e"
+                              },
                               "condition": {
+                                "kind": "soqlLogical",
+                                "sourceKeys": {
+                                  "objectKey": "whereLogicalExpression_5a41afb24d50e8c3",
+                                  "sourceKey": "whereLogicalExpression_58f798806f23db01"
+                                },
                                 "condition": [
                                   {
                                     "kind": "singleCondition",
@@ -3016,6 +3320,11 @@
                                       "sourceKey": "fieldExpression_58f798806f23db01"
                                     },
                                     "field": {
+                                      "kind": "soqlField",
+                                      "sourceKeys": {
+                                        "objectKey": "fieldName_95f686e9a03631da",
+                                        "sourceKey": "fieldName_855d01e762b76c10"
+                                      },
                                       "type": "field",
                                       "field": [
                                         "WhatId"
@@ -3023,6 +3332,11 @@
                                     },
                                     "operator": "IN",
                                     "value": {
+                                      "kind": "soqlValue",
+                                      "sourceKeys": {
+                                        "objectKey": "value_bc821132d5c74db9",
+                                        "sourceKey": "value_b709c8bb9dcb5468"
+                                      },
                                       "type": "bind",
                                       "value": {
                                         "kind": "memberAccess",
@@ -3195,6 +3509,11 @@
               },
               "conditionBlock": [
                 {
+                  "kind": "ifBranch",
+                  "sourceKeys": {
+                    "objectKey": "ifBranch_b5d506cc4870de1e",
+                    "sourceKey": "parExpression_5145b6c1b1560597"
+                  },
                   "condition": {
                     "kind": "logical",
                     "sourceKeys": {
@@ -3248,6 +3567,11 @@
                       },
                       "block": [
                         {
+                          "kind": "tryClause",
+                          "sourceKeys": {
+                            "objectKey": "block_a39cc4911d45fb94",
+                            "sourceKey": "block_b4114e2509c39939"
+                          },
                           "condition": "try",
                           "block": [
                             {
@@ -3350,6 +3674,11 @@
                           ]
                         },
                         {
+                          "kind": "tryClause",
+                          "sourceKeys": {
+                            "objectKey": "catchClause_99226baaad1fa3e3",
+                            "sourceKey": "catchClause_e94bd891c56669dc"
+                          },
                           "condition": "catch",
                           "variant": "e",
                           "variantType": {
@@ -3423,6 +3752,44 @@
       }
     },
     "sourceObject": [
+      {
+        "objectKey": "apexSource_a13ccdbef7678865",
+        "context": "trigger ParserTrigger on Account (\n    before insert,\n    before update,\n    before delete,\n    after insert,\n    after update,\n    after delete,\n    after undelete\n) {\n\n    // ============================================================\n    // Trigger context variables\n    // ============================================================\n\n    System.debug(Trigger.isExecuting);\n    System.debug(Trigger.isBefore);\n    System.debug(Trigger.isAfter);\n    System.debug(Trigger.isInsert);\n    System.debug(Trigger.isUpdate);\n    System.debug(Trigger.isDelete);\n    System.debug(Trigger.isUndelete);\n    System.debug(Trigger.new);\n    System.debug(Trigger.old);\n    System.debug(Trigger.newMap);\n    System.debug(Trigger.oldMap);\n    System.debug(Trigger.operationType);\n    System.debug(Trigger.size);\n\n\n    // ============================================================\n    // Trigger 内のメンバー宣言（クラス / インターフェース / enum / メソッド / フィールド / プロパティ）\n    // ============================================================\n\n    private static final String PREFIX = 'Trigger: ';\n\n    static Integer invocationCount = 0;\n\n    public String label { get; set; }\n\n    private void log(String message) {\n        System.debug(PREFIX + message);\n    }\n\n    public class TriggerHelper {\n        public void run() {\n            System.debug('helper');\n        }\n    }\n\n    public interface TriggerHandler {\n        void handle();\n    }\n\n    public enum Phase {\n        BEFORE_PHASE,\n        AFTER_PHASE\n    }\n\n\n    // ============================================================\n    // operationType による分岐（switch on enum）\n    // ============================================================\n\n    switch on Trigger.operationType {\n        when BEFORE_INSERT, BEFORE_UPDATE {\n            invocationCount++;\n        }\n        when AFTER_DELETE {\n            invocationCount--;\n        }\n        when else {\n            invocationCount += 0;\n        }\n    }\n\n\n    // ============================================================\n    // Before Insert\n    // ============================================================\n\n    if (Trigger.isBefore && Trigger.isInsert) {\n\n        for (Account account : Trigger.new) {\n\n            if (String.isBlank(account.Name)) {\n                account.Name = 'Default Account';\n            }\n\n            account.Description = 'Created by trigger';\n        }\n    }\n\n\n    // ============================================================\n    // Before Update\n    // ============================================================\n\n    if (Trigger.isBefore && Trigger.isUpdate) {\n\n        for (Account account : Trigger.new) {\n\n            Account oldAccount = Trigger.oldMap.get(account.Id);\n\n            if (account.Name != oldAccount.Name) {\n                account.Description = 'Name changed';\n            }\n\n            if (account.AnnualRevenue < 0) {\n                account.addError('AnnualRevenue must be positive');\n            }\n        }\n    }\n\n\n    // ============================================================\n    // Before Delete\n    // ============================================================\n\n    if (Trigger.isBefore && Trigger.isDelete) {\n\n        for (Account account : Trigger.old) {\n            System.debug('Deleting: ' + account.Name);\n        }\n    }\n\n\n    // ============================================================\n    // After Insert\n    // ============================================================\n\n    if (Trigger.isAfter && Trigger.isInsert) {\n\n        List<Contact> contacts = new List<Contact>();\n\n        for (Account account : Trigger.new) {\n            contacts.add(\n                new Contact(\n                    LastName = account.Name,\n                    AccountId = account.Id\n                )\n            );\n        }\n\n        if (!contacts.isEmpty()) {\n            insert as user contacts;\n        }\n    }\n\n\n    // ============================================================\n    // After Update\n    // ============================================================\n\n    if (Trigger.isAfter && Trigger.isUpdate) {\n\n        Set<Id> accountIds = new Set<Id>();\n\n        accountIds.addAll(Trigger.newMap.keySet());\n\n        List<Account> accounts = [\n            SELECT\n                Id,\n                Name,\n                Industry,\n                (\n                    SELECT Id, FirstName, LastName\n                    FROM Contacts\n                )\n            FROM Account\n            WHERE Id IN :accountIds\n        ];\n\n        List<Contact> toUpdate = new List<Contact>();\n\n        for (Account account : accounts) {\n            for (Contact contact : account.Contacts) {\n                contact.Description = account.Name;\n                toUpdate.add(contact);\n            }\n        }\n\n        update toUpdate;\n    }\n\n\n    // ============================================================\n    // After Delete\n    // ============================================================\n\n    if (Trigger.isAfter && Trigger.isDelete) {\n\n        List<Task> tasks = [SELECT Id FROM Task WHERE WhatId IN :Trigger.oldMap.keySet() ALL ROWS];\n\n        delete tasks;\n\n        for (Account account : Trigger.old) {\n            System.debug('Deleted: ' + account.Id);\n        }\n    }\n\n\n    // ============================================================\n    // After Undelete\n    // ============================================================\n\n    if (Trigger.isAfter && Trigger.isUndelete) {\n\n        try {\n            for (Account account : Trigger.new) {\n                log('Restored: ' + account.Id);\n            }\n        } catch (Exception e) {\n            System.debug(e.getMessage());\n        }\n    }\n}",
+        "source": [
+          {
+            "sourceKey": "triggerUnit_10616a21c686dbb8",
+            "start": {
+              "offset": 63,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 5719,
+              "line": 217,
+              "column": 1
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "triggerUnit_fb1512b2f62ab197",
+        "context": "trigger ParserTrigger on Account (\n    before insert,\n    before update,\n    before delete,\n    after insert,\n    after update,\n    after delete,\n    after undelete\n) {\n\n    // ============================================================\n    // Trigger context variables\n    // ============================================================\n\n    System.debug(Trigger.isExecuting);\n    System.debug(Trigger.isBefore);\n    System.debug(Trigger.isAfter);\n    System.debug(Trigger.isInsert);\n    System.debug(Trigger.isUpdate);\n    System.debug(Trigger.isDelete);\n    System.debug(Trigger.isUndelete);\n    System.debug(Trigger.new);\n    System.debug(Trigger.old);\n    System.debug(Trigger.newMap);\n    System.debug(Trigger.oldMap);\n    System.debug(Trigger.operationType);\n    System.debug(Trigger.size);\n\n\n    // ============================================================\n    // Trigger 内のメンバー宣言（クラス / インターフェース / enum / メソッド / フィールド / プロパティ）\n    // ============================================================\n\n    private static final String PREFIX = 'Trigger: ';\n\n    static Integer invocationCount = 0;\n\n    public String label { get; set; }\n\n    private void log(String message) {\n        System.debug(PREFIX + message);\n    }\n\n    public class TriggerHelper {\n        public void run() {\n            System.debug('helper');\n        }\n    }\n\n    public interface TriggerHandler {\n        void handle();\n    }\n\n    public enum Phase {\n        BEFORE_PHASE,\n        AFTER_PHASE\n    }\n\n\n    // ============================================================\n    // operationType による分岐（switch on enum）\n    // ============================================================\n\n    switch on Trigger.operationType {\n        when BEFORE_INSERT, BEFORE_UPDATE {\n            invocationCount++;\n        }\n        when AFTER_DELETE {\n            invocationCount--;\n        }\n        when else {\n            invocationCount += 0;\n        }\n    }\n\n\n    // ============================================================\n    // Before Insert\n    // ============================================================\n\n    if (Trigger.isBefore && Trigger.isInsert) {\n\n        for (Account account : Trigger.new) {\n\n            if (String.isBlank(account.Name)) {\n                account.Name = 'Default Account';\n            }\n\n            account.Description = 'Created by trigger';\n        }\n    }\n\n\n    // ============================================================\n    // Before Update\n    // ============================================================\n\n    if (Trigger.isBefore && Trigger.isUpdate) {\n\n        for (Account account : Trigger.new) {\n\n            Account oldAccount = Trigger.oldMap.get(account.Id);\n\n            if (account.Name != oldAccount.Name) {\n                account.Description = 'Name changed';\n            }\n\n            if (account.AnnualRevenue < 0) {\n                account.addError('AnnualRevenue must be positive');\n            }\n        }\n    }\n\n\n    // ============================================================\n    // Before Delete\n    // ============================================================\n\n    if (Trigger.isBefore && Trigger.isDelete) {\n\n        for (Account account : Trigger.old) {\n            System.debug('Deleting: ' + account.Name);\n        }\n    }\n\n\n    // ============================================================\n    // After Insert\n    // ============================================================\n\n    if (Trigger.isAfter && Trigger.isInsert) {\n\n        List<Contact> contacts = new List<Contact>();\n\n        for (Account account : Trigger.new) {\n            contacts.add(\n                new Contact(\n                    LastName = account.Name,\n                    AccountId = account.Id\n                )\n            );\n        }\n\n        if (!contacts.isEmpty()) {\n            insert as user contacts;\n        }\n    }\n\n\n    // ============================================================\n    // After Update\n    // ============================================================\n\n    if (Trigger.isAfter && Trigger.isUpdate) {\n\n        Set<Id> accountIds = new Set<Id>();\n\n        accountIds.addAll(Trigger.newMap.keySet());\n\n        List<Account> accounts = [\n            SELECT\n                Id,\n                Name,\n                Industry,\n                (\n                    SELECT Id, FirstName, LastName\n                    FROM Contacts\n                )\n            FROM Account\n            WHERE Id IN :accountIds\n        ];\n\n        List<Contact> toUpdate = new List<Contact>();\n\n        for (Account account : accounts) {\n            for (Contact contact : account.Contacts) {\n                contact.Description = account.Name;\n                toUpdate.add(contact);\n            }\n        }\n\n        update toUpdate;\n    }\n\n\n    // ============================================================\n    // After Delete\n    // ============================================================\n\n    if (Trigger.isAfter && Trigger.isDelete) {\n\n        List<Task> tasks = [SELECT Id FROM Task WHERE WhatId IN :Trigger.oldMap.keySet() ALL ROWS];\n\n        delete tasks;\n\n        for (Account account : Trigger.old) {\n            System.debug('Deleted: ' + account.Id);\n        }\n    }\n\n\n    // ============================================================\n    // After Undelete\n    // ============================================================\n\n    if (Trigger.isAfter && Trigger.isUndelete) {\n\n        try {\n            for (Account account : Trigger.new) {\n                log('Restored: ' + account.Id);\n            }\n        } catch (Exception e) {\n            System.debug(e.getMessage());\n        }\n    }\n}",
+        "source": [
+          {
+            "sourceKey": "triggerUnit_10616a21c686dbb8",
+            "start": {
+              "offset": 63,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 5719,
+              "line": 217,
+              "column": 1
+            }
+          }
+        ]
+      },
       {
         "objectKey": "triggerCase_4b76dda46a54d1aa",
         "context": "before insert",
@@ -5439,6 +5806,25 @@
         ]
       },
       {
+        "objectKey": "modifiers_cfd2af792ff36525",
+        "context": "private static final String PREFIX = 'Trigger: ';",
+        "source": [
+          {
+            "sourceKey": "triggerBlockMember_4ff26a5f3d403ca3",
+            "start": {
+              "offset": 1075,
+              "line": 35,
+              "column": 4
+            },
+            "end": {
+              "offset": 1124,
+              "line": 35,
+              "column": 53
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "modifier_72095a09e93008a1",
         "context": "private",
         "source": [
@@ -5624,6 +6010,25 @@
         ]
       },
       {
+        "objectKey": "modifiers_029abd9867163330",
+        "context": "static Integer invocationCount = 0;",
+        "source": [
+          {
+            "sourceKey": "triggerBlockMember_b86f66b768dd95d8",
+            "start": {
+              "offset": 1130,
+              "line": 37,
+              "column": 4
+            },
+            "end": {
+              "offset": 1165,
+              "line": 37,
+              "column": 39
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "propertyDeclaration_65f30057b7942a64",
         "context": "String label { get; set; }",
         "source": [
@@ -5643,7 +6048,7 @@
         ]
       },
       {
-        "objectKey": "id_4d0fec55c1319e13",
+        "objectKey": "declarationName_6c0f5bf0bdce0e72",
         "context": "label",
         "source": [
           {
@@ -5657,6 +6062,329 @@
               "offset": 1190,
               "line": 39,
               "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "propertyBlock_b507c3b9f14604bd",
+        "context": "get;",
+        "source": [
+          {
+            "sourceKey": "propertyBlock_fd9543a940c6852e",
+            "start": {
+              "offset": 1193,
+              "line": 39,
+              "column": 26
+            },
+            "end": {
+              "offset": 1197,
+              "line": 39,
+              "column": 30
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_44136fa355b3678a",
+        "context": "get;",
+        "source": [
+          {
+            "sourceKey": "propertyBlock_fd9543a940c6852e",
+            "start": {
+              "offset": 1193,
+              "line": 39,
+              "column": 26
+            },
+            "end": {
+              "offset": 1197,
+              "line": 39,
+              "column": 30
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_44136fa355b3678a",
+        "context": "set;",
+        "source": [
+          {
+            "sourceKey": "propertyBlock_765e750ea865dcbd",
+            "start": {
+              "offset": 1198,
+              "line": 39,
+              "column": 31
+            },
+            "end": {
+              "offset": 1202,
+              "line": 39,
+              "column": 35
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_44136fa355b3678a",
+        "context": "String message",
+        "source": [
+          {
+            "sourceKey": "formalParameter_32c5a6107f1e4f76",
+            "start": {
+              "offset": 1227,
+              "line": 41,
+              "column": 21
+            },
+            "end": {
+              "offset": 1241,
+              "line": 41,
+              "column": 35
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_44136fa355b3678a",
+        "context": "void handle();",
+        "source": [
+          {
+            "sourceKey": "interfaceMethodDeclaration_58811807e2fe344f",
+            "start": {
+              "offset": 1452,
+              "line": 52,
+              "column": 8
+            },
+            "end": {
+              "offset": 1466,
+              "line": 52,
+              "column": 22
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_44136fa355b3678a",
+        "context": "Account oldAccount = Trigger.oldMap.get(account.Id)",
+        "source": [
+          {
+            "sourceKey": "localVariableDeclaration_cd1b7917dd577df9",
+            "start": {
+              "offset": 2699,
+              "line": 103,
+              "column": 12
+            },
+            "end": {
+              "offset": 2750,
+              "line": 103,
+              "column": 63
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_44136fa355b3678a",
+        "context": "List<Contact> contacts = new List<Contact>()",
+        "source": [
+          {
+            "sourceKey": "localVariableDeclaration_95c754b637042ffc",
+            "start": {
+              "offset": 3557,
+              "line": 134,
+              "column": 8
+            },
+            "end": {
+              "offset": 3601,
+              "line": 134,
+              "column": 52
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_44136fa355b3678a",
+        "context": "Set<Id> accountIds = new Set<Id>()",
+        "source": [
+          {
+            "sourceKey": "localVariableDeclaration_770110192116d360",
+            "start": {
+              "offset": 4140,
+              "line": 157,
+              "column": 8
+            },
+            "end": {
+              "offset": 4174,
+              "line": 157,
+              "column": 42
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_44136fa355b3678a",
+        "context": "List<Account> accounts = [\n            SELECT\n                Id,\n                Name,\n                Industry,\n                (\n                    SELECT Id, FirstName, LastName\n                    FROM Contacts\n                )\n            FROM Account\n            WHERE Id IN :accountIds\n        ]",
+        "source": [
+          {
+            "sourceKey": "localVariableDeclaration_e2f42835a4bcbf58",
+            "start": {
+              "offset": 4238,
+              "line": 161,
+              "column": 8
+            },
+            "end": {
+              "offset": 4543,
+              "line": 172,
+              "column": 9
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_44136fa355b3678a",
+        "context": "List<Contact> toUpdate = new List<Contact>()",
+        "source": [
+          {
+            "sourceKey": "localVariableDeclaration_637f4f45647a9005",
+            "start": {
+              "offset": 4554,
+              "line": 174,
+              "column": 8
+            },
+            "end": {
+              "offset": 4598,
+              "line": 174,
+              "column": 52
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_44136fa355b3678a",
+        "context": "List<Task> tasks = [SELECT Id FROM Task WHERE WhatId IN :Trigger.oldMap.keySet() ALL ROWS]",
+        "source": [
+          {
+            "sourceKey": "localVariableDeclaration_37d899038e8198fd",
+            "start": {
+              "offset": 5061,
+              "line": 193,
+              "column": 8
+            },
+            "end": {
+              "offset": 5151,
+              "line": 193,
+              "column": 98
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "propertyBlock_9326f0d59c604c75",
+        "context": "set;",
+        "source": [
+          {
+            "sourceKey": "propertyBlock_765e750ea865dcbd",
+            "start": {
+              "offset": 1198,
+              "line": 39,
+              "column": 31
+            },
+            "end": {
+              "offset": 1202,
+              "line": 39,
+              "column": 35
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_b09596894868e30e",
+        "context": "public String label { get; set; }",
+        "source": [
+          {
+            "sourceKey": "triggerBlockMember_2134d7bbc125943a",
+            "start": {
+              "offset": 1171,
+              "line": 39,
+              "column": 4
+            },
+            "end": {
+              "offset": 1204,
+              "line": 39,
+              "column": 37
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_b09596894868e30e",
+        "context": "public void run() {\n            System.debug('helper');\n        }",
+        "source": [
+          {
+            "sourceKey": "classBodyDeclaration_26ef08b7ad96c8f2",
+            "start": {
+              "offset": 1333,
+              "line": 46,
+              "column": 8
+            },
+            "end": {
+              "offset": 1398,
+              "line": 48,
+              "column": 9
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_b09596894868e30e",
+        "context": "public class TriggerHelper {\n        public void run() {\n            System.debug('helper');\n        }\n    }",
+        "source": [
+          {
+            "sourceKey": "triggerBlockMember_310f33a6c6d60b56",
+            "start": {
+              "offset": 1296,
+              "line": 45,
+              "column": 4
+            },
+            "end": {
+              "offset": 1404,
+              "line": 49,
+              "column": 5
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_b09596894868e30e",
+        "context": "public interface TriggerHandler {\n        void handle();\n    }",
+        "source": [
+          {
+            "sourceKey": "triggerBlockMember_914ade3e93ef7690",
+            "start": {
+              "offset": 1410,
+              "line": 51,
+              "column": 4
+            },
+            "end": {
+              "offset": 1472,
+              "line": 53,
+              "column": 5
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_b09596894868e30e",
+        "context": "public enum Phase {\n        BEFORE_PHASE,\n        AFTER_PHASE\n    }",
+        "source": [
+          {
+            "sourceKey": "triggerBlockMember_eccbdff8b0d02f1e",
+            "start": {
+              "offset": 1478,
+              "line": 55,
+              "column": 4
+            },
+            "end": {
+              "offset": 1545,
+              "line": 58,
+              "column": 5
             }
           }
         ]
@@ -5752,7 +6480,7 @@
         ]
       },
       {
-        "objectKey": "id_e6dfdb0965307f78",
+        "objectKey": "declarationName_b6f06862443c00c6",
         "context": "log",
         "source": [
           {
@@ -5766,19 +6494,6 @@
               "offset": 1226,
               "line": 41,
               "column": 20
-            }
-          },
-          {
-            "sourceKey": "id_9725ddfe51331c90",
-            "start": {
-              "offset": 5582,
-              "line": 211,
-              "column": 16
-            },
-            "end": {
-              "offset": 5585,
-              "line": 211,
-              "column": 19
             }
           }
         ]
@@ -5898,6 +6613,25 @@
         ]
       },
       {
+        "objectKey": "modifiers_d2b616375b879a6f",
+        "context": "private void log(String message) {\n        System.debug(PREFIX + message);\n    }",
+        "source": [
+          {
+            "sourceKey": "triggerBlockMember_65c813cea78ab67e",
+            "start": {
+              "offset": 1210,
+              "line": 41,
+              "column": 4
+            },
+            "end": {
+              "offset": 1290,
+              "line": 43,
+              "column": 5
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "classDeclaration_0bab88eba6424741",
         "context": "class TriggerHelper {\n        public void run() {\n            System.debug('helper');\n        }\n    }",
         "source": [
@@ -5917,7 +6651,7 @@
         ]
       },
       {
-        "objectKey": "id_4b06a4b8cf98ea97",
+        "objectKey": "declarationName_f874ca39c6a105e8",
         "context": "TriggerHelper",
         "source": [
           {
@@ -5955,7 +6689,7 @@
         ]
       },
       {
-        "objectKey": "id_173f4a982cfa79db",
+        "objectKey": "declarationName_46bdaaa16a483c7c",
         "context": "run",
         "source": [
           {
@@ -6050,7 +6784,7 @@
         ]
       },
       {
-        "objectKey": "id_2f9f32222eeebf8e",
+        "objectKey": "declarationName_53f29d7a95db8521",
         "context": "TriggerHandler",
         "source": [
           {
@@ -6088,7 +6822,7 @@
         ]
       },
       {
-        "objectKey": "id_7b9ae991e1ae993a",
+        "objectKey": "declarationName_12474e0f43099ef0",
         "context": "handle",
         "source": [
           {
@@ -6126,7 +6860,7 @@
         ]
       },
       {
-        "objectKey": "id_2543e15c80c0211a",
+        "objectKey": "declarationName_23a7c896ebc18f34",
         "context": "Phase",
         "source": [
           {
@@ -6197,6 +6931,25 @@
               "offset": 1989,
               "line": 75,
               "column": 5
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "whenControl_a2caf55dc8389161",
+        "context": "when BEFORE_INSERT, BEFORE_UPDATE {\n            invocationCount++;\n        }",
+        "source": [
+          {
+            "sourceKey": "whenControl_c8504d58ae0ec059",
+            "start": {
+              "offset": 1774,
+              "line": 66,
+              "column": 8
+            },
+            "end": {
+              "offset": 1850,
+              "line": 68,
+              "column": 9
             }
           }
         ]
@@ -6342,6 +7095,25 @@
         ]
       },
       {
+        "objectKey": "whenControl_0e2839295a434a5c",
+        "context": "when AFTER_DELETE {\n            invocationCount--;\n        }",
+        "source": [
+          {
+            "sourceKey": "whenControl_454fcdc4858acc96",
+            "start": {
+              "offset": 1859,
+              "line": 69,
+              "column": 8
+            },
+            "end": {
+              "offset": 1919,
+              "line": 71,
+              "column": 9
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "whenValue_d4a96f1f1bad5f60",
         "context": "AFTER_DELETE",
         "source": [
@@ -6418,6 +7190,25 @@
         ]
       },
       {
+        "objectKey": "whenControl_0ff694a6c06390fa",
+        "context": "when else {\n            invocationCount += 0;\n        }",
+        "source": [
+          {
+            "sourceKey": "whenControl_d9b705e8c8e234f5",
+            "start": {
+              "offset": 1928,
+              "line": 72,
+              "column": 8
+            },
+            "end": {
+              "offset": 1983,
+              "line": 74,
+              "column": 9
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "whenValue_59ae7ec5bc9271bd",
         "context": "else",
         "source": [
@@ -6489,6 +7280,25 @@
               "offset": 2430,
               "line": 92,
               "column": 5
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "ifBranch_4ac21d860fc2d3c4",
+        "context": "(Trigger.isBefore && Trigger.isInsert)",
+        "source": [
+          {
+            "sourceKey": "parExpression_75533e936db62f49",
+            "start": {
+              "offset": 2157,
+              "line": 82,
+              "column": 7
+            },
+            "end": {
+              "offset": 2195,
+              "line": 82,
+              "column": 45
             }
           }
         ]
@@ -6601,6 +7411,19 @@
             }
           },
           {
+            "sourceKey": "typeRef_64f6628e089e9574",
+            "start": {
+              "offset": 4243,
+              "line": 161,
+              "column": 13
+            },
+            "end": {
+              "offset": 4250,
+              "line": 161,
+              "column": 20
+            }
+          },
+          {
             "sourceKey": "typeRef_222aef36e6b46fc7",
             "start": {
               "offset": 4614,
@@ -6656,6 +7479,25 @@
               "offset": 2357,
               "line": 88,
               "column": 13
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "ifBranch_6a6af56c3e3369bb",
+        "context": "(String.isBlank(account.Name))",
+        "source": [
+          {
+            "sourceKey": "parExpression_8dbf3f8e921dd899",
+            "start": {
+              "offset": 2261,
+              "line": 86,
+              "column": 15
+            },
+            "end": {
+              "offset": 2291,
+              "line": 86,
+              "column": 45
             }
           }
         ]
@@ -7149,6 +7991,25 @@
         ]
       },
       {
+        "objectKey": "ifBranch_1801159214dd7887",
+        "context": "(Trigger.isBefore && Trigger.isUpdate)",
+        "source": [
+          {
+            "sourceKey": "parExpression_4efbcd68b09dbd9b",
+            "start": {
+              "offset": 2598,
+              "line": 99,
+              "column": 7
+            },
+            "end": {
+              "offset": 2636,
+              "line": 99,
+              "column": 45
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "logAndExpression_c6e9c010dfb5ca23",
         "context": "Trigger.isBefore && Trigger.isUpdate",
         "source": [
@@ -7321,6 +8182,25 @@
         ]
       },
       {
+        "objectKey": "ifBranch_5e4706975f1f8f5b",
+        "context": "(account.Name != oldAccount.Name)",
+        "source": [
+          {
+            "sourceKey": "parExpression_002ae34ca92be182",
+            "start": {
+              "offset": 2768,
+              "line": 105,
+              "column": 15
+            },
+            "end": {
+              "offset": 2801,
+              "line": 105,
+              "column": 48
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "equalityExpression_6068a2c59e2e933b",
         "context": "account.Name != oldAccount.Name",
         "source": [
@@ -7454,6 +8334,25 @@
         ]
       },
       {
+        "objectKey": "ifBranch_e2f1ad614dd9a1ae",
+        "context": "(account.AnnualRevenue < 0)",
+        "source": [
+          {
+            "sourceKey": "parExpression_d61267ffd7e157b3",
+            "start": {
+              "offset": 2888,
+              "line": 109,
+              "column": 15
+            },
+            "end": {
+              "offset": 2915,
+              "line": 109,
+              "column": 42
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "cmpExpression_2c2da693ed9a791b",
         "context": "account.AnnualRevenue < 0",
         "source": [
@@ -7563,6 +8462,25 @@
               "offset": 3341,
               "line": 125,
               "column": 5
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "ifBranch_e67cdf786ebb4b3e",
+        "context": "(Trigger.isBefore && Trigger.isDelete)",
+        "source": [
+          {
+            "sourceKey": "parExpression_802e388a6bb78d43",
+            "start": {
+              "offset": 3183,
+              "line": 120,
+              "column": 7
+            },
+            "end": {
+              "offset": 3221,
+              "line": 120,
+              "column": 45
             }
           }
         ]
@@ -7701,6 +8619,25 @@
         ]
       },
       {
+        "objectKey": "ifBranch_d4354f81cf9429e2",
+        "context": "(Trigger.isAfter && Trigger.isInsert)",
+        "source": [
+          {
+            "sourceKey": "parExpression_340c9ea5013cb93a",
+            "start": {
+              "offset": 3508,
+              "line": 132,
+              "column": 7
+            },
+            "end": {
+              "offset": 3545,
+              "line": 132,
+              "column": 44
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "logAndExpression_ec3e5f332e3a81b9",
         "context": "Trigger.isAfter && Trigger.isInsert",
         "source": [
@@ -7766,6 +8703,77 @@
               "offset": 4567,
               "line": 174,
               "column": 21
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "typeRef_8e7739db2a5afa72",
+        "context": "Contact",
+        "source": [
+          {
+            "sourceKey": "typeRef_031f367075ac7532",
+            "start": {
+              "offset": 3562,
+              "line": 134,
+              "column": 13
+            },
+            "end": {
+              "offset": 3569,
+              "line": 134,
+              "column": 20
+            }
+          },
+          {
+            "sourceKey": "typeRef_411557d05b97431a",
+            "start": {
+              "offset": 3591,
+              "line": 134,
+              "column": 42
+            },
+            "end": {
+              "offset": 3598,
+              "line": 134,
+              "column": 49
+            }
+          },
+          {
+            "sourceKey": "typeRef_06c605773edfb392",
+            "start": {
+              "offset": 4559,
+              "line": 174,
+              "column": 13
+            },
+            "end": {
+              "offset": 4566,
+              "line": 174,
+              "column": 20
+            }
+          },
+          {
+            "sourceKey": "typeRef_10ccc6718b36b6ef",
+            "start": {
+              "offset": 4588,
+              "line": 174,
+              "column": 42
+            },
+            "end": {
+              "offset": 4595,
+              "line": 174,
+              "column": 49
+            }
+          },
+          {
+            "sourceKey": "typeRef_b4375b0aba9b1ba1",
+            "start": {
+              "offset": 4661,
+              "line": 177,
+              "column": 17
+            },
+            "end": {
+              "offset": 4668,
+              "line": 177,
+              "column": 24
             }
           }
         ]
@@ -8089,6 +9097,25 @@
         ]
       },
       {
+        "objectKey": "ifBranch_fa5a4033bcef0408",
+        "context": "(!contacts.isEmpty())",
+        "source": [
+          {
+            "sourceKey": "parExpression_2a782a3b1492eab9",
+            "start": {
+              "offset": 3848,
+              "line": 145,
+              "column": 11
+            },
+            "end": {
+              "offset": 3869,
+              "line": 145,
+              "column": 32
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "negExpression_49bcd31dd168502d",
         "context": "!contacts.isEmpty()",
         "source": [
@@ -8165,6 +9192,25 @@
         ]
       },
       {
+        "objectKey": "ifBranch_6157b7c2fb6381f6",
+        "context": "(Trigger.isAfter && Trigger.isUpdate)",
+        "source": [
+          {
+            "sourceKey": "parExpression_4a6b088b7b96df95",
+            "start": {
+              "offset": 4091,
+              "line": 155,
+              "column": 7
+            },
+            "end": {
+              "offset": 4128,
+              "line": 155,
+              "column": 44
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "logAndExpression_5f55bd23296c9f37",
         "context": "Trigger.isAfter && Trigger.isUpdate",
         "source": [
@@ -8217,6 +9263,38 @@
               "offset": 4147,
               "line": 157,
               "column": 15
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "typeRef_4649c8c600ccbd43",
+        "context": "Id",
+        "source": [
+          {
+            "sourceKey": "typeRef_1a2f4ab88b0b7c77",
+            "start": {
+              "offset": 4144,
+              "line": 157,
+              "column": 12
+            },
+            "end": {
+              "offset": 4146,
+              "line": 157,
+              "column": 14
+            }
+          },
+          {
+            "sourceKey": "typeRef_6e596eb66a2bcaab",
+            "start": {
+              "offset": 4169,
+              "line": 157,
+              "column": 37
+            },
+            "end": {
+              "offset": 4171,
+              "line": 157,
+              "column": 39
             }
           }
         ]
@@ -8444,6 +9522,25 @@
         ]
       },
       {
+        "objectKey": "selectList_1d90a0d1c4eb9f39",
+        "context": "Id,\n                Name,\n                Industry,\n                (\n                    SELECT Id, FirstName, LastName\n                    FROM Contacts\n                )",
+        "source": [
+          {
+            "sourceKey": "selectList_9d0cd1fd7b7aee4b",
+            "start": {
+              "offset": 4300,
+              "line": 163,
+              "column": 16
+            },
+            "end": {
+              "offset": 4472,
+              "line": 169,
+              "column": 17
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "selectEntry_60f7e9358613f5bb",
         "context": "Id",
         "source": [
@@ -8533,6 +9630,25 @@
         ]
       },
       {
+        "objectKey": "subFieldList_1185a7e14e6638f0",
+        "context": "Id, FirstName, LastName",
+        "source": [
+          {
+            "sourceKey": "subFieldList_c8bde78bd51beae4",
+            "start": {
+              "offset": 4397,
+              "line": 167,
+              "column": 27
+            },
+            "end": {
+              "offset": 4420,
+              "line": 167,
+              "column": 50
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "subFieldEntry_6fea6f4ac202e684",
         "context": "Id",
         "source": [
@@ -8590,6 +9706,25 @@
         ]
       },
       {
+        "objectKey": "fromNameList_b5e7bab0337aab70",
+        "context": "Contacts",
+        "source": [
+          {
+            "sourceKey": "fromNameList_9e7347e34c5fdaa1",
+            "start": {
+              "offset": 4446,
+              "line": 168,
+              "column": 25
+            },
+            "end": {
+              "offset": 4454,
+              "line": 168,
+              "column": 33
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "fromName_9a5a3a1be125f50e",
         "context": "Contacts",
         "source": [
@@ -8604,6 +9739,25 @@
               "offset": 4454,
               "line": 168,
               "column": 33
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fromNameList_169521d39e7466ff",
+        "context": "Account",
+        "source": [
+          {
+            "sourceKey": "fromNameList_a16ccb9d3df2a3c8",
+            "start": {
+              "offset": 4490,
+              "line": 170,
+              "column": 17
+            },
+            "end": {
+              "offset": 4497,
+              "line": 170,
+              "column": 24
             }
           }
         ]
@@ -8628,6 +9782,44 @@
         ]
       },
       {
+        "objectKey": "whereClause_30143353937d7efe",
+        "context": "WHERE Id IN :accountIds",
+        "source": [
+          {
+            "sourceKey": "whereClause_d49e8d138f4a63b9",
+            "start": {
+              "offset": 4510,
+              "line": 171,
+              "column": 12
+            },
+            "end": {
+              "offset": 4533,
+              "line": 171,
+              "column": 35
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "whereLogicalExpression_a2fcc690b0c8e191",
+        "context": "Id IN :accountIds",
+        "source": [
+          {
+            "sourceKey": "whereLogicalExpression_038bf50ba888a43d",
+            "start": {
+              "offset": 4516,
+              "line": 171,
+              "column": 18
+            },
+            "end": {
+              "offset": 4533,
+              "line": 171,
+              "column": 35
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "fieldExpression_89d827240dde99f4",
         "context": "Id IN :accountIds",
         "source": [
@@ -8637,6 +9829,44 @@
               "offset": 4516,
               "line": 171,
               "column": 18
+            },
+            "end": {
+              "offset": 4533,
+              "line": 171,
+              "column": 35
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fieldName_c48654a8f3e4b1a4",
+        "context": "Id",
+        "source": [
+          {
+            "sourceKey": "fieldName_7512ac55d228604e",
+            "start": {
+              "offset": 4516,
+              "line": 171,
+              "column": 18
+            },
+            "end": {
+              "offset": 4518,
+              "line": 171,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "value_f11b58610bfc5820",
+        "context": ":accountIds",
+        "source": [
+          {
+            "sourceKey": "value_ef5a773007ae500a",
+            "start": {
+              "offset": 4522,
+              "line": 171,
+              "column": 24
             },
             "end": {
               "offset": 4533,
@@ -8737,25 +9967,6 @@
               "offset": 4803,
               "line": 180,
               "column": 13
-            }
-          }
-        ]
-      },
-      {
-        "objectKey": "typeRef_8e7739db2a5afa72",
-        "context": "Contact",
-        "source": [
-          {
-            "sourceKey": "typeRef_b4375b0aba9b1ba1",
-            "start": {
-              "offset": 4661,
-              "line": 177,
-              "column": 17
-            },
-            "end": {
-              "offset": 4668,
-              "line": 177,
-              "column": 24
             }
           }
         ]
@@ -8977,6 +10188,25 @@
         ]
       },
       {
+        "objectKey": "ifBranch_dee3d2f1ffccbd8b",
+        "context": "(Trigger.isAfter && Trigger.isDelete)",
+        "source": [
+          {
+            "sourceKey": "parExpression_32cd88d0c90db2da",
+            "start": {
+              "offset": 5012,
+              "line": 191,
+              "column": 7
+            },
+            "end": {
+              "offset": 5049,
+              "line": 191,
+              "column": 44
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "logAndExpression_00687aeb7a6abfa3",
         "context": "Trigger.isAfter && Trigger.isDelete",
         "source": [
@@ -9034,6 +10264,25 @@
         ]
       },
       {
+        "objectKey": "typeRef_1e2df11066e4cb7f",
+        "context": "Task",
+        "source": [
+          {
+            "sourceKey": "typeRef_33693d7a34b9d0fd",
+            "start": {
+              "offset": 5066,
+              "line": 193,
+              "column": 13
+            },
+            "end": {
+              "offset": 5070,
+              "line": 193,
+              "column": 17
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "variableDeclarator_d0662019f790e7d2",
         "context": "tasks = [SELECT Id FROM Task WHERE WhatId IN :Trigger.oldMap.keySet() ALL ROWS]",
         "source": [
@@ -9072,6 +10321,44 @@
         ]
       },
       {
+        "objectKey": "selectList_2dbaabd9127bafad",
+        "context": "Id",
+        "source": [
+          {
+            "sourceKey": "selectList_4f953e8ca165a594",
+            "start": {
+              "offset": 5088,
+              "line": 193,
+              "column": 35
+            },
+            "end": {
+              "offset": 5090,
+              "line": 193,
+              "column": 37
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fromNameList_c02f7e6859ee121c",
+        "context": "Task",
+        "source": [
+          {
+            "sourceKey": "fromNameList_bf886cf72e953363",
+            "start": {
+              "offset": 5096,
+              "line": 193,
+              "column": 43
+            },
+            "end": {
+              "offset": 5100,
+              "line": 193,
+              "column": 47
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "fromName_424b2d5483bc80e1",
         "context": "Task",
         "source": [
@@ -9091,6 +10378,44 @@
         ]
       },
       {
+        "objectKey": "whereClause_1df8286cfd836606",
+        "context": "WHERE WhatId IN :Trigger.oldMap.keySet()",
+        "source": [
+          {
+            "sourceKey": "whereClause_1799db86c574347e",
+            "start": {
+              "offset": 5101,
+              "line": 193,
+              "column": 48
+            },
+            "end": {
+              "offset": 5141,
+              "line": 193,
+              "column": 88
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "whereLogicalExpression_5a41afb24d50e8c3",
+        "context": "WhatId IN :Trigger.oldMap.keySet()",
+        "source": [
+          {
+            "sourceKey": "whereLogicalExpression_58f798806f23db01",
+            "start": {
+              "offset": 5107,
+              "line": 193,
+              "column": 54
+            },
+            "end": {
+              "offset": 5141,
+              "line": 193,
+              "column": 88
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "fieldExpression_bb659ddf5c0d2aec",
         "context": "WhatId IN :Trigger.oldMap.keySet()",
         "source": [
@@ -9100,6 +10425,44 @@
               "offset": 5107,
               "line": 193,
               "column": 54
+            },
+            "end": {
+              "offset": 5141,
+              "line": 193,
+              "column": 88
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fieldName_95f686e9a03631da",
+        "context": "WhatId",
+        "source": [
+          {
+            "sourceKey": "fieldName_855d01e762b76c10",
+            "start": {
+              "offset": 5107,
+              "line": 193,
+              "column": 54
+            },
+            "end": {
+              "offset": 5113,
+              "line": 193,
+              "column": 60
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "value_bc821132d5c74db9",
+        "context": ":Trigger.oldMap.keySet()",
+        "source": [
+          {
+            "sourceKey": "value_b709c8bb9dcb5468",
+            "start": {
+              "offset": 5117,
+              "line": 193,
+              "column": 64
             },
             "end": {
               "offset": 5141,
@@ -9300,6 +10663,25 @@
         ]
       },
       {
+        "objectKey": "ifBranch_b5d506cc4870de1e",
+        "context": "(Trigger.isAfter && Trigger.isUndelete)",
+        "source": [
+          {
+            "sourceKey": "parExpression_5145b6c1b1560597",
+            "start": {
+              "offset": 5459,
+              "line": 207,
+              "column": 7
+            },
+            "end": {
+              "offset": 5498,
+              "line": 207,
+              "column": 46
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "logAndExpression_a1f92cf3fc528556",
         "context": "Trigger.isAfter && Trigger.isUndelete",
         "source": [
@@ -9332,6 +10714,25 @@
             "end": {
               "offset": 5711,
               "line": 215,
+              "column": 9
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "block_a39cc4911d45fb94",
+        "context": "{\n            for (Account account : Trigger.new) {\n                log('Restored: ' + account.Id);\n            }\n        }",
+        "source": [
+          {
+            "sourceKey": "block_b4114e2509c39939",
+            "start": {
+              "offset": 5514,
+              "line": 209,
+              "column": 12
+            },
+            "end": {
+              "offset": 5637,
+              "line": 213,
               "column": 9
             }
           }
@@ -9395,6 +10796,25 @@
         ]
       },
       {
+        "objectKey": "id_e6dfdb0965307f78",
+        "context": "log",
+        "source": [
+          {
+            "sourceKey": "id_9725ddfe51331c90",
+            "start": {
+              "offset": 5582,
+              "line": 211,
+              "column": 16
+            },
+            "end": {
+              "offset": 5585,
+              "line": 211,
+              "column": 19
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "arth2Expression_98690ba627d193bc",
         "context": "'Restored: ' + account.Id",
         "source": [
@@ -9428,6 +10848,25 @@
               "offset": 5598,
               "line": 211,
               "column": 32
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "catchClause_99226baaad1fa3e3",
+        "context": "catch (Exception e) {\n            System.debug(e.getMessage());\n        }",
+        "source": [
+          {
+            "sourceKey": "catchClause_e94bd891c56669dc",
+            "start": {
+              "offset": 5638,
+              "line": 213,
+              "column": 10
+            },
+            "end": {
+              "offset": 5711,
+              "line": 215,
+              "column": 9
             }
           }
         ]
@@ -9523,6 +10962,25 @@
               "offset": 5686,
               "line": 214,
               "column": 26
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "apexUnit_903d59f870554f40",
+        "context": "trigger ParserTrigger on Account (\n    before insert,\n    before update,\n    before delete,\n    after insert,\n    after update,\n    after delete,\n    after undelete\n) {\n\n    // ============================================================\n    // Trigger context variables\n    // ============================================================\n\n    System.debug(Trigger.isExecuting);\n    System.debug(Trigger.isBefore);\n    System.debug(Trigger.isAfter);\n    System.debug(Trigger.isInsert);\n    System.debug(Trigger.isUpdate);\n    System.debug(Trigger.isDelete);\n    System.debug(Trigger.isUndelete);\n    System.debug(Trigger.new);\n    System.debug(Trigger.old);\n    System.debug(Trigger.newMap);\n    System.debug(Trigger.oldMap);\n    System.debug(Trigger.operationType);\n    System.debug(Trigger.size);\n\n\n    // ============================================================\n    // Trigger 内のメンバー宣言（クラス / インターフェース / enum / メソッド / フィールド / プロパティ）\n    // ============================================================\n\n    private static final String PREFIX = 'Trigger: ';\n\n    static Integer invocationCount = 0;\n\n    public String label { get; set; }\n\n    private void log(String message) {\n        System.debug(PREFIX + message);\n    }\n\n    public class TriggerHelper {\n        public void run() {\n            System.debug('helper');\n        }\n    }\n\n    public interface TriggerHandler {\n        void handle();\n    }\n\n    public enum Phase {\n        BEFORE_PHASE,\n        AFTER_PHASE\n    }\n\n\n    // ============================================================\n    // operationType による分岐（switch on enum）\n    // ============================================================\n\n    switch on Trigger.operationType {\n        when BEFORE_INSERT, BEFORE_UPDATE {\n            invocationCount++;\n        }\n        when AFTER_DELETE {\n            invocationCount--;\n        }\n        when else {\n            invocationCount += 0;\n        }\n    }\n\n\n    // ============================================================\n    // Before Insert\n    // ============================================================\n\n    if (Trigger.isBefore && Trigger.isInsert) {\n\n        for (Account account : Trigger.new) {\n\n            if (String.isBlank(account.Name)) {\n                account.Name = 'Default Account';\n            }\n\n            account.Description = 'Created by trigger';\n        }\n    }\n\n\n    // ============================================================\n    // Before Update\n    // ============================================================\n\n    if (Trigger.isBefore && Trigger.isUpdate) {\n\n        for (Account account : Trigger.new) {\n\n            Account oldAccount = Trigger.oldMap.get(account.Id);\n\n            if (account.Name != oldAccount.Name) {\n                account.Description = 'Name changed';\n            }\n\n            if (account.AnnualRevenue < 0) {\n                account.addError('AnnualRevenue must be positive');\n            }\n        }\n    }\n\n\n    // ============================================================\n    // Before Delete\n    // ============================================================\n\n    if (Trigger.isBefore && Trigger.isDelete) {\n\n        for (Account account : Trigger.old) {\n            System.debug('Deleting: ' + account.Name);\n        }\n    }\n\n\n    // ============================================================\n    // After Insert\n    // ============================================================\n\n    if (Trigger.isAfter && Trigger.isInsert) {\n\n        List<Contact> contacts = new List<Contact>();\n\n        for (Account account : Trigger.new) {\n            contacts.add(\n                new Contact(\n                    LastName = account.Name,\n                    AccountId = account.Id\n                )\n            );\n        }\n\n        if (!contacts.isEmpty()) {\n            insert as user contacts;\n        }\n    }\n\n\n    // ============================================================\n    // After Update\n    // ============================================================\n\n    if (Trigger.isAfter && Trigger.isUpdate) {\n\n        Set<Id> accountIds = new Set<Id>();\n\n        accountIds.addAll(Trigger.newMap.keySet());\n\n        List<Account> accounts = [\n            SELECT\n                Id,\n                Name,\n                Industry,\n                (\n                    SELECT Id, FirstName, LastName\n                    FROM Contacts\n                )\n            FROM Account\n            WHERE Id IN :accountIds\n        ];\n\n        List<Contact> toUpdate = new List<Contact>();\n\n        for (Account account : accounts) {\n            for (Contact contact : account.Contacts) {\n                contact.Description = account.Name;\n                toUpdate.add(contact);\n            }\n        }\n\n        update toUpdate;\n    }\n\n\n    // ============================================================\n    // After Delete\n    // ============================================================\n\n    if (Trigger.isAfter && Trigger.isDelete) {\n\n        List<Task> tasks = [SELECT Id FROM Task WHERE WhatId IN :Trigger.oldMap.keySet() ALL ROWS];\n\n        delete tasks;\n\n        for (Account account : Trigger.old) {\n            System.debug('Deleted: ' + account.Id);\n        }\n    }\n\n\n    // ============================================================\n    // After Undelete\n    // ============================================================\n\n    if (Trigger.isAfter && Trigger.isUndelete) {\n\n        try {\n            for (Account account : Trigger.new) {\n                log('Restored: ' + account.Id);\n            }\n        } catch (Exception e) {\n            System.debug(e.getMessage());\n        }\n    }\n}",
+        "source": [
+          {
+            "sourceKey": "triggerUnit_10616a21c686dbb8",
+            "start": {
+              "offset": 63,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 5719,
+              "line": 217,
+              "column": 1
             }
           }
         ]

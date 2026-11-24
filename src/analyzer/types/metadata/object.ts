@@ -80,7 +80,8 @@ export const SEARCH_LAYOUT_LISTS = [
     'searchResultsCustomButtons',
 ] as const;
 
-export type SearchLayoutsJson = Partial<Record<(typeof SEARCH_LAYOUT_LISTS)[number], string[]>>;
+export type SearchLayoutsJson = JsonType<'objectSearchLayouts'> &
+    Partial<Record<(typeof SEARCH_LAYOUT_LISTS)[number], string[]>>;
 
 export const OBJECT_ACTION_OVERRIDE_SCHEMA = {
     actionName: 'string',
@@ -96,7 +97,11 @@ export type ObjectActionOverrideJson = JsonType<'objectActionOverride'> &
     PropertiesOf<typeof OBJECT_ACTION_OVERRIDE_SCHEMA>;
 
 /** 名前項目 (`<nameField>`)。type は Text か AutoNumber */
-export type NameFieldJson = { label?: string; type?: string; displayFormat?: string };
+export type NameFieldJson = JsonType<'objectNameField'> & {
+    label?: string;
+    type?: string;
+    displayFormat?: string;
+};
 
 /**
  * オブジェクト。<名前>.object-meta.xml と、フォルダの中の項目・入力規則などのファイルを 1 つにまとめたもの。
@@ -244,6 +249,8 @@ const OBJECT_KNOWN_ELEMENTS = [
 /** 検索レイアウト。要素がなければ持たない (保存済みのオブジェクトの objectKey を変えないため) */
 const searchLayoutsEntry = (
     objectElement: XmlElement | undefined,
+    file: XmlFile,
+    registry: XmlSourceRegistry,
 ): { searchLayouts?: SearchLayoutsJson } => {
     const element = objectElement ? childOf(objectElement, 'searchLayouts') : undefined;
     if (!element) return {};
@@ -253,7 +260,17 @@ const searchLayoutsEntry = (
             return values.length ? [[name, values]] : [];
         }),
     );
-    return Object.keys(layouts).length ? { searchLayouts: layouts } : {};
+    return Object.keys(layouts).length
+        ? {
+              searchLayouts: makeXmlJson<SearchLayoutsJson>(
+                  'objectSearchLayouts',
+                  layouts as Omit<SearchLayoutsJson, 'kind' | 'sourceKeys'>,
+                  element,
+                  file,
+                  registry,
+              ),
+          }
+        : {};
 };
 
 /** オブジェクトのフォルダから読んだファイルを、CustomObjectJson にする */
@@ -303,15 +320,21 @@ export const makeCustomObjectJson = (
             ...readProperties(objectElement, OBJECT_SCHEMA),
             ...(nameField
                 ? {
-                      nameField: readProperties(nameField, {
-                          label: 'string',
-                          type: 'string',
-                          displayFormat: 'string',
-                      }),
+                      nameField: makeXmlJson<NameFieldJson>(
+                          'objectNameField',
+                          readProperties(nameField, {
+                              label: 'string',
+                              type: 'string',
+                              displayFormat: 'string',
+                          }),
+                          nameField,
+                          objectFile,
+                          registry,
+                      ),
                   }
                 : {}),
             ...members,
-            ...searchLayoutsEntry(objectElement),
+            ...searchLayoutsEntry(objectElement, objectFile, registry),
             ...nonEmptyEntry(
                 'actionOverrides',
                 (objectElement ? childrenOf(objectElement, 'actionOverrides') : []).map(

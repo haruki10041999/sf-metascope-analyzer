@@ -7,7 +7,7 @@
     "base": {
       "kind": "object",
       "sourceKeys": {
-        "objectKey": "object_06fb94e85015da8a",
+        "objectKey": "object_dd81e370d3c6e89a",
         "sourceKey": "object_d3c23da4c239845d"
       },
       "apiName": "Account",
@@ -18,7 +18,7 @@
         {
           "kind": "field",
           "sourceKeys": {
-            "objectKey": "field_84a11f14c3e2e470",
+            "objectKey": "field_1105345acb8397e9",
             "sourceKey": "field_fc9abb3ca21d6dab"
           },
           "apiName": "Tier__c",
@@ -26,6 +26,11 @@
           "type": "Picklist",
           "required": false,
           "valueSet": {
+            "kind": "valueSet",
+            "sourceKeys": {
+              "objectKey": "valueSet_cc735488da3d2803",
+              "sourceKey": "valueSet_dbe473a6c951c70e"
+            },
             "restricted": true,
             "sorted": false,
             "values": [
@@ -158,7 +163,27 @@
         ]
       },
       {
-        "objectKey": "field_84a11f14c3e2e470",
+        "objectKey": "valueSet_cc735488da3d2803",
+        "context": "<valueSet>\n        <restricted>true</restricted>\n        <valueSetDefinition>\n            <sorted>false</sorted>\n            <value>\n                <fullName>Gold</fullName>\n                <default>true</default>\n                <label>Gold</label>\n            </value>\n            <value>\n                <fullName>Silver</fullName>\n                <default>false</default>\n                <label>Silver</label>\n            </value>\n            <value>\n                <fullName>Bronze</fullName>\n                <default>false</default>\n                <label>Bronze</label>\n            </value>\n        </valueSetDefinition>\n    </valueSet>",
+        "source": [
+          {
+            "sourceKey": "valueSet_dbe473a6c951c70e",
+            "filePath": "Account/fields/Tier__c.field-meta.xml",
+            "start": {
+              "offset": 219,
+              "line": 7,
+              "column": 4
+            },
+            "end": {
+              "offset": 864,
+              "line": 27,
+              "column": 15
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "field_1105345acb8397e9",
         "context": "<CustomField xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fullName>Tier__c</fullName>\n    <label>Tier</label>\n    <required>false</required>\n    <type>Picklist</type>\n    <valueSet>\n        <restricted>true</restricted>\n        <valueSetDefinition>\n            <sorted>false</sorted>\n            <value>\n                <fullName>Gold</fullName>\n                <default>true</default>\n                <label>Gold</label>\n            </value>\n            <value>\n                <fullName>Silver</fullName>\n                <default>false</default>\n                <label>Silver</label>\n            </value>\n            <value>\n                <fullName>Bronze</fullName>\n                <default>false</default>\n                <label>Bronze</label>\n            </value>\n        </valueSetDefinition>\n    </valueSet>\n</CustomField>",
         "source": [
           {
@@ -218,7 +243,7 @@
         ]
       },
       {
-        "objectKey": "object_06fb94e85015da8a",
+        "objectKey": "object_dd81e370d3c6e89a",
         "context": "<CustomObject xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <enableHistory>true</enableHistory>\n    <sharingModel>ReadWrite</sharingModel>\n</CustomObject>",
         "source": [
           {

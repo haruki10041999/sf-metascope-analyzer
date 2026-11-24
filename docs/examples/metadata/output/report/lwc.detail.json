@@ -230,7 +230,7 @@
     "status": "unchanged",
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\accountList",
     "sourceKeys": {
-      "objectKey": "lwcElement_ba6a69ced1e1eb24",
+      "objectKey": "lwcElement_e3e8f5f0f67318c3",
       "sourceKey": "lwcElement_fa191c2761e26688"
     },
     "component": "c/accountList",
@@ -319,7 +319,7 @@
     "status": "unchanged",
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\lwc\\broken",
     "sourceKeys": {
-      "objectKey": "lwcElement_b5ab7359048d42ad",
+      "objectKey": "lwcElement_505aa20605a1bac6",
       "sourceKey": "lwcElement_dcd2df94fbc96369"
     },
     "component": "c/broken",

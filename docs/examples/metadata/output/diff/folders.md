@@ -82,6 +82,7 @@
 | auraBundle | 2 | 1 |
 | auraDefinitionBundle | 2 | 1 |
 | auraHandler | 1 | 0 |
+| auraJavascript | 2 | 0 |
 | auraMethod | 1 | 0 |
 | auraRegisterEvent | 2 | 0 |
 | autoResponseRule | 2 | 1 |
@@ -89,6 +90,7 @@
 | categoryGroupVisibility | 2 | 1 |
 | classAccess | 6 | 1 |
 | criterion | 23 | 3 |
+| criterionValue | 23 | 0 |
 | cspTrustedSite | 2 | 1 |
 | customApplication | 2 | 1 |
 | customLabel | 6 | 4 |
@@ -113,10 +115,12 @@
 | flexiPageComponent | 9 | 2 |
 | flexiPageField | 3 | 1 |
 | flexiPageRegion | 6 | 3 |
+| flexiPageVisibilityRule | 1 | 1 |
 | flow | 4 | 2 |
 | flowActionCall | 2 | 0 |
 | flowAssignment | 5 | 2 |
 | flowDecision | 2 | 1 |
+| flowEdge | 17 | 9 |
 | flowFormula | 2 | 1 |
 | flowParameter | 4 | 1 |
 | flowRecordLookup | 1 | 1 |
@@ -140,11 +144,13 @@
 | layoutAction | 5 | 2 |
 | layoutAssignment | 4 | 2 |
 | layoutItem | 22 | 7 |
+| layoutPosition | 22 | 2 |
 | layoutRelatedList | 2 | 1 |
 | layoutSection | 8 | 1 |
 | loginFlow | 2 | 1 |
 | loginHours | 2 | 1 |
 | loginIpRange | 3 | 1 |
+| markupAttribute | 15 | 0 |
 | markupElement | 16 | 0 |
 | markupText | 4 | 0 |
 | matchingRule | 2 | 1 |

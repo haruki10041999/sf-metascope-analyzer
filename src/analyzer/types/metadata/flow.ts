@@ -143,7 +143,8 @@ export type FlowValue =
 export type FlowProperties = Record<string, FlowValue>;
 
 /** 接続 (要素の外に出したもの)。edgeType は接続の要素名 (rules の中のものは rules[<名前>].connector) */
-export type FlowEdge = {
+/** 接続 (metadata 8 からノード。位置は接続の要素。開始の参照は startElementReference の要素) */
+export type FlowEdge = JsonType<'flowEdge'> & {
     from: string;
     to: string;
     edgeType: string;
@@ -256,19 +257,31 @@ const propertiesEntry = (properties: FlowProperties) =>
 // ---------------------------------------------------------------------------
 
 /** 要素の中の接続を取り出す。rules など名前を持つ子の中のものは edgeType に <子の要素名>[<名前>]. を付ける */
-const collectEdges = (from: string, element: XmlElement, prefix = ''): FlowEdge[] =>
+const collectEdges = (
+    from: string,
+    element: XmlElement,
+    file: XmlFile,
+    registry: XmlSourceRegistry,
+    prefix = '',
+): FlowEdge[] =>
     element.children.flatMap((child): FlowEdge[] => {
         if (isConnector(child.name)) {
             const to = readText(child, 'targetReference');
             if (!to) return [];
             const isGoTo = readText(child, 'isGoTo') === 'true';
             return [
-                { from, to, edgeType: `${prefix}${child.name}`, ...(isGoTo ? { isGoTo } : {}) },
+                makeMetadataJson<FlowEdge>(
+                    'flowEdge',
+                    { from, to, edgeType: `${prefix}${child.name}`, ...(isGoTo ? { isGoTo } : {}) },
+                    child,
+                    file,
+                    registry,
+                ),
             ];
         }
         const name = readText(child, 'name');
         return child.children.length && name !== undefined
-            ? collectEdges(from, child, `${prefix}${child.name}[${name}].`)
+            ? collectEdges(from, child, file, registry, `${prefix}${child.name}[${name}].`)
             : [];
     });
 
@@ -495,11 +508,25 @@ export const makeFlowJson = (
 
     const startElementReference = readText(root, 'startElementReference');
     const edges: FlowEdge[] = [
-        ...(startElement ? collectEdges(FLOW_START, startElement) : []),
+        ...(startElement ? collectEdges(FLOW_START, startElement, file, registry) : []),
         ...(startElementReference
-            ? [{ from: FLOW_START, to: startElementReference, edgeType: 'startElementReference' }]
+            ? [
+                  makeMetadataJson<FlowEdge>(
+                      'flowEdge',
+                      {
+                          from: FLOW_START,
+                          to: startElementReference,
+                          edgeType: 'startElementReference',
+                      },
+                      childOf(root, 'startElementReference'),
+                      file,
+                      registry,
+                  ),
+              ]
             : []),
-        ...elementXml.flatMap((element) => collectEdges(readText(element, 'name') ?? '', element)),
+        ...elementXml.flatMap((element) =>
+            collectEdges(readText(element, 'name') ?? '', element, file, registry),
+        ),
     ];
 
     const processMetadataValues = childrenOf(root, 'processMetadataValues')

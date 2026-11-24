@@ -1,8 +1,12 @@
 {
   "source": {
+    "kind": "apexSource",
+    "sourceKeys": {},
     "fileName": "AccountTrigger.trigger",
     "fileType": "trigger",
     "content": {
+      "kind": "triggerUnit",
+      "sourceKeys": {},
       "name": "AccountTrigger",
       "object": "Account",
       "case": [
@@ -48,6 +52,8 @@
           "sourceKeys": {},
           "conditionBlock": [
             {
+              "kind": "ifBranch",
+              "sourceKeys": {},
               "condition": {
                 "kind": "logical",
                 "sourceKeys": {},
@@ -163,6 +169,19 @@
         "offset": 90,
         "line": 2,
         "column": 24
+      }
+    },
+    {
+      "context": "(Trigger.isBefore && Trigger.isInsert)",
+      "start": {
+        "offset": 100,
+        "line": 3,
+        "column": 7
+      },
+      "end": {
+        "offset": 138,
+        "line": 3,
+        "column": 45
       }
     },
     {
@@ -410,6 +429,32 @@
         "offset": 192,
         "line": 5,
         "column": 5
+      }
+    },
+    {
+      "context": "trigger AccountTrigger on Account (after update, before delete) {\n    System.debug('start');\n    if (Trigger.isBefore && Trigger.isInsert) {\n        AccountService.validate(Trigger.new);\n    }\n    System.debug('done');\n}",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 220,
+        "line": 7,
+        "column": 1
+      }
+    },
+    {
+      "context": "trigger AccountTrigger on Account (after update, before delete) {\n    System.debug('start');\n    if (Trigger.isBefore && Trigger.isInsert) {\n        AccountService.validate(Trigger.new);\n    }\n    System.debug('done');\n}",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 220,
+        "line": 7,
+        "column": 1
       }
     }
   ],

@@ -1,3 +1,3 @@
 export type { SourceJson } from './source';
 export { regenerateSourceObjects } from './source';
-export { keysOf, makeNodeJson, structureKeysOf, type ApexNode } from './node';
+export { keysOf, makeDerivedNodeJson, makeNodeJson, type ApexNode } from './node';

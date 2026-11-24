@@ -1,0 +1,140 @@
+{
+  "filePath": "labels/CustomLabels.labels-meta.xml",
+  "resolvedError": [],
+  "dataType": "customLabels",
+  "result": {
+    "id": "customLabels_CustomLabels",
+    "base": {
+      "kind": "customLabels",
+      "sourceKeys": {
+        "objectKey": "customLabels_11a7d873b7e48c6d",
+        "sourceKey": "customLabels_6edabdfc9952357e"
+      },
+      "name": "CustomLabels",
+      "labels": [
+        {
+          "kind": "customLabel",
+          "sourceKeys": {
+            "objectKey": "customLabel_bf93390a569ee606",
+            "sourceKey": "customLabel_2602698c7799c4eb"
+          },
+          "fullName": "AccountListTitle",
+          "value": "取引先一覧",
+          "language": "ja",
+          "protected": false,
+          "shortDescription": "AccountListTitle",
+          "categories": [
+            "lwc",
+            "account"
+          ]
+        },
+        {
+          "kind": "customLabel",
+          "sourceKeys": {
+            "objectKey": "customLabel_cb4221f0503f2e6b",
+            "sourceKey": "customLabel_f6f9b118b5dff23e"
+          },
+          "fullName": "BannerMessage",
+          "value": "お知らせ",
+          "language": "ja",
+          "protected": false,
+          "shortDescription": "BannerMessage"
+        },
+        {
+          "kind": "customLabel",
+          "sourceKeys": {
+            "objectKey": "customLabel_c122c4550f0157c0",
+            "sourceKey": "customLabel_d7110aaa1163058e"
+          },
+          "fullName": "Invoice_Overdue",
+          "value": "支払期限を過ぎています",
+          "language": "ja",
+          "protected": true,
+          "shortDescription": "Invoice_Overdue"
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "customLabel_bf93390a569ee606",
+        "context": "<labels>\n        <fullName>AccountListTitle</fullName>\n        <categories>lwc, account</categories>\n        <language>ja</language>\n        <protected>false</protected>\n        <shortDescription>AccountListTitle</shortDescription>\n        <value>取引先一覧</value>\n    </labels>",
+        "source": [
+          {
+            "sourceKey": "customLabel_2602698c7799c4eb",
+            "filePath": "labels/CustomLabels.labels-meta.xml",
+            "start": {
+              "offset": 106,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 380,
+              "line": 10,
+              "column": 13
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "customLabel_cb4221f0503f2e6b",
+        "context": "<labels>\n        <fullName>BannerMessage</fullName>\n        <language>ja</language>\n        <protected>false</protected>\n        <shortDescription>BannerMessage</shortDescription>\n        <value>お知らせ</value>\n    </labels>",
+        "source": [
+          {
+            "sourceKey": "customLabel_f6f9b118b5dff23e",
+            "filePath": "labels/CustomLabels.labels-meta.xml",
+            "start": {
+              "offset": 385,
+              "line": 11,
+              "column": 4
+            },
+            "end": {
+              "offset": 606,
+              "line": 17,
+              "column": 13
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "customLabel_c122c4550f0157c0",
+        "context": "<labels>\n        <fullName>Invoice_Overdue</fullName>\n        <language>ja</language>\n        <protected>true</protected>\n        <shortDescription>Invoice_Overdue</shortDescription>\n        <value>支払期限を過ぎています</value>\n    </labels>",
+        "source": [
+          {
+            "sourceKey": "customLabel_d7110aaa1163058e",
+            "filePath": "labels/CustomLabels.labels-meta.xml",
+            "start": {
+              "offset": 611,
+              "line": 18,
+              "column": 4
+            },
+            "end": {
+              "offset": 842,
+              "line": 24,
+              "column": 13
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "customLabels_11a7d873b7e48c6d",
+        "context": "<CustomLabels xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <labels>\n        <fullName>AccountListTitle</fullName>\n        <categories>lwc, account</categories>\n        <language>ja</language>\n        <protected>false</protected>\n        <shortDescription>AccountListTitle</shortDescription>\n        <value>取引先一覧</value>\n    </labels>\n    <labels>\n        <fullName>BannerMessage</fullName>\n        <language>ja</language>\n        <protected>false</protected>\n        <shortDescription>BannerMessage</shortDescription>\n        <value>お知らせ</value>\n    </labels>\n    <labels>\n        <fullName>Invoice_Overdue</fullName>\n        <language>ja</language>\n        <protected>true</protected>\n        <shortDescription>Invoice_Overdue</shortDescription>\n        <value>支払期限を過ぎています</value>\n    </labels>\n</CustomLabels>",
+        "source": [
+          {
+            "sourceKey": "customLabels_6edabdfc9952357e",
+            "filePath": "labels/CustomLabels.labels-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 858,
+              "line": 25,
+              "column": 15
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1907,6 +1907,86 @@
   {
     "language": "apex",
     "unit": "ParserTest",
+    "owner": "ParserTest.AccountReader",
+    "memberType": "method",
+    "name": "getAccount",
+    "member": "ParserTest.AccountReader.getAccount",
+    "signature": "getAccount()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.AccountReader.getAccount()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "return",
+        "label": "return new Account();",
+        "detail": "return new Account();",
+        "line": 312
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest.AccountReader",
+    "memberType": "method",
+    "name": "nameOfAccount",
+    "member": "ParserTest.AccountReader.nameOfAccount",
+    "signature": "nameOfAccount()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.AccountReader.nameOfAccount()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "return",
+        "label": "return getAccount().Name;",
+        "detail": "return getAccount().Name;",
+        "line": 316
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "language": "apex",
+    "unit": "ParserTest",
     "owner": "ParserTest",
     "memberType": "method",
     "name": "aggregateSoql",
@@ -1928,28 +2008,28 @@
         "kind": "query",
         "label": "List<AggregateResult> aggregates = [",
         "detail": "List<AggregateResult> aggregates = [\n            SELECT\n                Industry,\n                COUNT(Id) total,\n                COUNT_DISTINCT(OwnerId),\n                MIN(AnnualRevenue),\n                MAX(AnnualRevenue),\n                SUM(AnnualRevenue),\n                AVG(AnnualRevenue)\n            FROM Account\n            GROUP BY Industry\n            HAVING COUNT(Id) > 10\n            ORDER BY COUNT(Id) DESC\n        ];",
-        "line": 605
+        "line": 641
       },
       {
         "id": "n4",
         "kind": "query",
         "label": "Integer total = [SELECT COUNT() FROM Account];",
         "detail": "Integer total = [SELECT COUNT() FROM Account];",
-        "line": 620
+        "line": 656
       },
       {
         "id": "n5",
         "kind": "query",
         "label": "List<AggregateResult> rollup = [",
         "detail": "List<AggregateResult> rollup = [\n            SELECT Industry, Type, GROUPING(Industry), COUNT(Id)\n            FROM Account\n            GROUP BY ROLLUP(Industry, Type)\n        ];",
-        "line": 622
+        "line": 658
       },
       {
         "id": "n6",
         "kind": "query",
         "label": "List<AggregateResult> cube = [",
         "detail": "List<AggregateResult> cube = [\n            SELECT Industry, Type, COUNT(Id)\n            FROM Account\n            GROUP BY CUBE(Industry, Type)\n        ];",
-        "line": 628
+        "line": 664
       }
     ],
     "edges": [
@@ -2004,14 +2084,14 @@
         "kind": "query",
         "label": "List<Account> accounts = [",
         "detail": "List<Account> accounts = [\n            SELECT Id, Name, Industry, AnnualRevenue, CreatedDate\n            FROM Account\n            WHERE Industry = 'Technology'\n            ORDER BY Name ASC NULLS FIRST, CreatedDate DESC NULLS LAST, Industry\n            LIMIT 100\n            OFFSET 10\n        ];",
-        "line": 501
+        "line": 537
       },
       {
         "id": "n4",
         "kind": "return",
         "label": "return [",
         "detail": "return [\n            SELECT Id\n            FROM Account\n            LIMIT :pageSize\n            OFFSET :pageOffset\n        ];",
-        "line": 510
+        "line": 546
       }
     ],
     "edges": [
@@ -2137,154 +2217,154 @@
         "kind": "decision",
         "label": "value > 100",
         "detail": "value > 100",
-        "line": 317
+        "line": 329
       },
       {
         "id": "n4",
         "kind": "process",
         "label": "System.debug('large');",
         "detail": "System.debug('large');",
-        "line": 318
+        "line": 330
       },
       {
         "id": "n5",
         "kind": "decision",
         "label": "value > 50",
         "detail": "value > 50",
-        "line": 319
+        "line": 331
       },
       {
         "id": "n6",
         "kind": "process",
         "label": "System.debug('medium');",
         "detail": "System.debug('medium');",
-        "line": 320
+        "line": 332
       },
       {
         "id": "n7",
         "kind": "process",
         "label": "System.debug('small');",
         "detail": "System.debug('small');",
-        "line": 322
+        "line": 334
       },
       {
         "id": "n8",
         "kind": "decision",
         "label": "value == 0",
         "detail": "value == 0",
-        "line": 325
+        "line": 337
       },
       {
         "id": "n9",
         "kind": "return",
         "label": "return;",
         "detail": "return;",
-        "line": 325
+        "line": 337
       },
       {
         "id": "n10",
         "kind": "loop",
         "label": "for (Integer i = 0, j = 10; i < j; i++, j--)",
         "detail": "for (Integer i = 0, j = 10; i < j; i++, j--)",
-        "line": 327
+        "line": 339
       },
       {
         "id": "n11",
         "kind": "decision",
         "label": "i == 5",
         "detail": "i == 5",
-        "line": 328
+        "line": 340
       },
       {
         "id": "n12",
         "kind": "decision",
         "label": "i == 8",
         "detail": "i == 8",
-        "line": 331
+        "line": 343
       },
       {
         "id": "n13",
         "kind": "process",
         "label": "Integer k;",
         "detail": "Integer k;",
-        "line": 336
+        "line": 348
       },
       {
         "id": "n14",
         "kind": "loop",
         "label": "for (k = 0; k < 3; k++)",
         "detail": "for (k = 0; k < 3; k++)",
-        "line": 337
+        "line": 349
       },
       {
         "id": "n15",
         "kind": "process",
         "label": "System.debug(k);",
         "detail": "System.debug(k);",
-        "line": 338
+        "line": 350
       },
       {
         "id": "n16",
         "kind": "loop",
         "label": "for (;;)",
         "detail": "for (;;)",
-        "line": 341
+        "line": 353
       },
       {
         "id": "n17",
         "kind": "loop",
         "label": "for (Account account : accounts)",
         "detail": "for (Account account : accounts)",
-        "line": 345
+        "line": 357
       },
       {
         "id": "n18",
         "kind": "process",
         "label": "System.debug(account.Name);",
         "detail": "System.debug(account.Name);",
-        "line": 346
+        "line": 358
       },
       {
         "id": "n19",
         "kind": "loop",
         "label": "for (List<Account> chunk : [SELECT Id FROM Account])",
         "detail": "for (List<Account> chunk : [SELECT Id FROM Account])",
-        "line": 349
+        "line": 361
       },
       {
         "id": "n20",
         "kind": "process",
         "label": "System.debug(chunk.size());",
         "detail": "System.debug(chunk.size());",
-        "line": 350
+        "line": 362
       },
       {
         "id": "n21",
         "kind": "loop",
         "label": "while (value > 0)",
         "detail": "while (value > 0)",
-        "line": 353
+        "line": 365
       },
       {
         "id": "n22",
         "kind": "process",
         "label": "value--;",
         "detail": "value--;",
-        "line": 354
+        "line": 366
       },
       {
         "id": "n23",
         "kind": "loop",
         "label": "do … while (value < 10)",
         "detail": "do … while (value < 10)",
-        "line": 357
+        "line": 369
       },
       {
         "id": "n24",
         "kind": "process",
         "label": "value++;",
         "detail": "value++;",
-        "line": 358
+        "line": 370
       }
     ],
     "edges": [
@@ -2552,28 +2632,28 @@
         "kind": "dml",
         "label": "Database.SaveResult[] results = Database.insert(accounts, f…",
         "detail": "Database.SaveResult[] results = Database.insert(accounts, false);",
-        "line": 469
+        "line": 481
       },
       {
         "id": "n4",
         "kind": "dml",
         "label": "Database.update(accounts, false);",
         "detail": "Database.update(accounts, false);",
-        "line": 471
+        "line": 483
       },
       {
         "id": "n5",
         "kind": "dml",
         "label": "Database.delete(accounts, false);",
         "detail": "Database.delete(accounts, false);",
-        "line": 473
+        "line": 485
       },
       {
         "id": "n6",
         "kind": "dml",
         "label": "Database.upsert(accounts, false);",
         "detail": "Database.upsert(accounts, false);",
-        "line": 475
+        "line": 487
       }
     ],
     "edges": [
@@ -2628,70 +2708,70 @@
         "kind": "dml",
         "label": "insert account;",
         "detail": "insert account;",
-        "line": 446
+        "line": 458
       },
       {
         "id": "n4",
         "kind": "dml",
         "label": "insert as user account;",
         "detail": "insert as user account;",
-        "line": 448
+        "line": 460
       },
       {
         "id": "n5",
         "kind": "dml",
         "label": "update as system accounts;",
         "detail": "update as system accounts;",
-        "line": 450
+        "line": 462
       },
       {
         "id": "n6",
         "kind": "dml",
         "label": "upsert account;",
         "detail": "upsert account;",
-        "line": 452
+        "line": 464
       },
       {
         "id": "n7",
         "kind": "dml",
         "label": "upsert accounts Account.ExternalId__c;",
         "detail": "upsert accounts Account.ExternalId__c;",
-        "line": 454
+        "line": 466
       },
       {
         "id": "n8",
         "kind": "dml",
         "label": "upsert as user accounts Account.ExternalId__c;",
         "detail": "upsert as user accounts Account.ExternalId__c;",
-        "line": 456
+        "line": 468
       },
       {
         "id": "n9",
         "kind": "dml",
         "label": "delete account;",
         "detail": "delete account;",
-        "line": 458
+        "line": 470
       },
       {
         "id": "n10",
         "kind": "dml",
         "label": "undelete account;",
         "detail": "undelete account;",
-        "line": 460
+        "line": 472
       },
       {
         "id": "n11",
         "kind": "dml",
         "label": "merge account duplicate;",
         "detail": "merge account duplicate;",
-        "line": 462
+        "line": 474
       },
       {
         "id": "n12",
         "kind": "dml",
         "label": "merge as system account duplicate;",
         "detail": "merge as system account duplicate;",
-        "line": 464
+        "line": 476
       }
     ],
     "edges": [
@@ -2757,6 +2837,108 @@
     "unit": "ParserTest",
     "owner": "ParserTest",
     "memberType": "method",
+    "name": "dynamicSoqlExample",
+    "member": "ParserTest.dynamicSoqlExample",
+    "signature": "dynamicSoqlExample()",
+    "nodes": [
+      {
+        "id": "n1",
+        "kind": "start",
+        "label": "ParserTest.dynamicSoqlExample()"
+      },
+      {
+        "id": "n2",
+        "kind": "end",
+        "label": "終了"
+      },
+      {
+        "id": "n3",
+        "kind": "query",
+        "label": "List<Account> accountsA = Database.query(",
+        "detail": "List<Account> accountsA = Database.query(\n            'SELECT Id, Name FROM Account WHERE IsActive__c = true'\n        );",
+        "line": 491
+      },
+      {
+        "id": "n4",
+        "kind": "process",
+        "label": "String fields = 'Id, Name';\nString soqlB = 'SELECT ' + fields + ' FROM Account';",
+        "detail": "String fields = 'Id, Name';\nString soqlB = 'SELECT ' + fields + ' FROM Account';",
+        "line": 495,
+        "count": 2
+      },
+      {
+        "id": "n5",
+        "kind": "query",
+        "label": "List<Account> accountsB = Database.query(soqlB);",
+        "detail": "List<Account> accountsB = Database.query(soqlB);",
+        "line": 498
+      },
+      {
+        "id": "n6",
+        "kind": "process",
+        "label": "String soqlC = 'SELECT Id FROM Account WHERE Name = :accoun…",
+        "detail": "String soqlC = 'SELECT Id FROM Account WHERE Name = :accountName';",
+        "line": 500
+      },
+      {
+        "id": "n7",
+        "kind": "query",
+        "label": "List<Account> accountsC = Database.query(soqlC);",
+        "detail": "List<Account> accountsC = Database.query(soqlC);",
+        "line": 501
+      },
+      {
+        "id": "n8",
+        "kind": "process",
+        "label": "Map<String, Object> binds = new Map<String, Object>{\nList<SObject> accountsD = Database.queryWithBinds(",
+        "detail": "Map<String, Object> binds = new Map<String, Object>{\n            'accountName' => 'Acme'\n        };\nList<SObject> accountsD = Database.queryWithBinds(\n            'SELECT Id FROM Account WHERE Name = :accountName',\n            binds,\n            AccessLevel.USER_MODE\n        );",
+        "line": 503,
+        "count": 2
+      }
+    ],
+    "edges": [
+      {
+        "from": "n1",
+        "to": "n3",
+        "kind": "normal"
+      },
+      {
+        "from": "n3",
+        "to": "n4",
+        "kind": "normal"
+      },
+      {
+        "from": "n4",
+        "to": "n5",
+        "kind": "normal"
+      },
+      {
+        "from": "n5",
+        "to": "n6",
+        "kind": "normal"
+      },
+      {
+        "from": "n6",
+        "to": "n7",
+        "kind": "normal"
+      },
+      {
+        "from": "n7",
+        "to": "n8",
+        "kind": "normal"
+      },
+      {
+        "from": "n8",
+        "to": "n2",
+        "kind": "normal"
+      }
+    ]
+  },
+  {
+    "language": "apex",
+    "unit": "ParserTest",
+    "owner": "ParserTest",
+    "memberType": "method",
     "name": "exceptionHandling",
     "member": "ParserTest.exceptionHandling",
     "signature": "exceptionHandling()",
@@ -2775,21 +2957,21 @@
         "id": "n3",
         "kind": "try",
         "label": "try",
-        "line": 417
+        "line": 429
       },
       {
         "id": "n4",
         "kind": "query",
         "label": "Account account = [SELECT Id, Name FROM Account LIMIT 1];",
         "detail": "Account account = [SELECT Id, Name FROM Account LIMIT 1];",
-        "line": 418
+        "line": 430
       },
       {
         "id": "n5",
         "kind": "process",
         "label": "System.debug(account);",
         "detail": "System.debug(account);",
-        "line": 419
+        "line": 431
       },
       {
         "id": "n6",
@@ -2801,7 +2983,7 @@
         "kind": "process",
         "label": "System.debug(e.getMessage());",
         "detail": "System.debug(e.getMessage());",
-        "line": 421
+        "line": 433
       },
       {
         "id": "n8",
@@ -2813,7 +2995,7 @@
         "kind": "process",
         "label": "System.debug(e.getMessage());",
         "detail": "System.debug(e.getMessage());",
-        "line": 423
+        "line": 435
       },
       {
         "id": "n10",
@@ -2825,20 +3007,20 @@
         "kind": "process",
         "label": "System.debug('finally');",
         "detail": "System.debug('finally');",
-        "line": 425
+        "line": 437
       },
       {
         "id": "n12",
         "kind": "try",
         "label": "try",
-        "line": 428
+        "line": 440
       },
       {
         "id": "n13",
         "kind": "process",
         "label": "throwExample();",
         "detail": "throwExample();",
-        "line": 429
+        "line": 441
       },
       {
         "id": "n14",
@@ -2850,7 +3032,7 @@
         "kind": "process",
         "label": "System.debug('only finally');",
         "detail": "System.debug('only finally');",
-        "line": 431
+        "line": 443
       }
     ],
     "edges": [
@@ -2962,35 +3144,35 @@
         "kind": "query",
         "label": "List<AggregateResult> dates = [",
         "detail": "List<AggregateResult> dates = [\n            SELECT\n                CALENDAR_MONTH(CreatedDate),\n                CALENDAR_QUARTER(CreatedDate),\n                CALENDAR_YEAR(CreatedDate),\n                DAY_IN_MONTH(CreatedDate),\n                DAY_IN_WEEK(CreatedDate),\n                DAY_IN_YEAR(CreatedDate),\n                DAY_ONLY(CreatedDate),\n                FISCAL_MONTH(CreatedDate),\n                FISCAL_QUARTER(CreatedDate),\n                FISCAL_YEAR(CreatedDate),\n                HOUR_IN_DAY(CreatedDate),\n                WEEK_IN_MONTH(CreatedDate),\n                WEEK_IN_YEAR(CreatedDate)\n            FROM Account\n            GROUP BY CALENDAR_MONTH(CreatedDate), CALENDAR_YEAR(CreatedDate)\n        ];",
-        "line": 642
+        "line": 678
       },
       {
         "id": "n4",
         "kind": "query",
         "label": "List<Account> formatted = [",
         "detail": "List<Account> formatted = [\n            SELECT Id, FORMAT(CreatedDate), FORMAT(convertCurrency(AnnualRevenue)), TOLABEL(Type)\n            FROM Account\n        ];",
-        "line": 661
+        "line": 697
       },
       {
         "id": "n5",
         "kind": "query",
         "label": "List<Account> allFields = [SELECT FIELDS(ALL) FROM Account …",
         "detail": "List<Account> allFields = [SELECT FIELDS(ALL) FROM Account LIMIT 200];",
-        "line": 666
+        "line": 702
       },
       {
         "id": "n6",
         "kind": "query",
         "label": "List<Account> standardFields = [SELECT FIELDS(STANDARD) FRO…",
         "detail": "List<Account> standardFields = [SELECT FIELDS(STANDARD) FROM Account];",
-        "line": 668
+        "line": 704
       },
       {
         "id": "n7",
         "kind": "query",
         "label": "List<Account> customFields = [SELECT FIELDS(CUSTOM) FROM Ac…",
         "detail": "List<Account> customFields = [SELECT FIELDS(CUSTOM) FROM Account LIMIT 200];",
-        "line": 670
+        "line": 706
       }
     ],
     "edges": [
@@ -3159,7 +3341,7 @@
         "kind": "process",
         "label": "System.debug(value);",
         "detail": "System.debug(value);",
-        "line": 775
+        "line": 811
       }
     ],
     "edges": [
@@ -3199,7 +3381,7 @@
         "kind": "return",
         "label": "return value;",
         "detail": "return value;",
-        "line": 779
+        "line": 815
       }
     ],
     "edges": [
@@ -3239,7 +3421,7 @@
         "kind": "process",
         "label": "this.value = value;",
         "detail": "this.value = value;",
-        "line": 771
+        "line": 807
       }
     ],
     "edges": [
@@ -3440,7 +3622,7 @@
         "kind": "return",
         "label": "return [",
         "detail": "return [\n            SELECT Id\n            FROM Account\n            WHERE DISTANCE(BillingAddress, GEOLOCATION(37.775, -122.418), 'km') < 20\n            ORDER BY DISTANCE(BillingAddress, :here, 'mi')\n        ];",
-        "line": 680
+        "line": 716
       }
     ],
     "edges": [
@@ -3667,7 +3849,7 @@
         "kind": "return",
         "label": "return [",
         "detail": "return [\n            SELECT\n                Id,\n                Name,\n                Owner.Name,\n                Parent.Owner.Name,\n                (\n                    SELECT Id, FirstName, Account.Name\n                    FROM Contacts\n                    WHERE Email != NULL\n                    ORDER BY LastName\n                    LIMIT 10\n                )\n            FROM Account a\n            WHERE a.Industry = 'Technology'\n        ];",
-        "line": 561
+        "line": 597
       }
     ],
     "edges": [
@@ -3707,14 +3889,14 @@
         "kind": "process",
         "label": "System.debug(UserInfo.getUserId());",
         "detail": "System.debug(UserInfo.getUserId());",
-        "line": 486
+        "line": 522
       },
       {
         "id": "n4",
         "kind": "process",
         "label": "System.debug('versioned');",
         "detail": "System.debug('versioned');",
-        "line": 490
+        "line": 526
       }
     ],
     "edges": [
@@ -3759,70 +3941,70 @@
         "kind": "query",
         "label": "List<Account> mine = [SELECT Id FROM Account USING SCOPE Mi…",
         "detail": "List<Account> mine = [SELECT Id FROM Account USING SCOPE Mine];",
-        "line": 695
+        "line": 731
       },
       {
         "id": "n4",
         "kind": "query",
         "label": "List<Account> userMode = [SELECT Id FROM Account WITH USER_…",
         "detail": "List<Account> userMode = [SELECT Id FROM Account WITH USER_MODE];",
-        "line": 697
+        "line": 733
       },
       {
         "id": "n5",
         "kind": "query",
         "label": "List<Account> systemMode = [SELECT Id FROM Account WITH SYS…",
         "detail": "List<Account> systemMode = [SELECT Id FROM Account WITH SYSTEM_MODE];",
-        "line": 699
+        "line": 735
       },
       {
         "id": "n6",
         "kind": "query",
         "label": "List<Account> secured = [SELECT Id FROM Account WITH SECURI…",
         "detail": "List<Account> secured = [SELECT Id FROM Account WITH SECURITY_ENFORCED];",
-        "line": 701
+        "line": 737
       },
       {
         "id": "n7",
         "kind": "query",
         "label": "List<Knowledge__kav> articles = [",
         "detail": "List<Knowledge__kav> articles = [\n            SELECT Title\n            FROM Knowledge__kav\n            WITH DATA CATEGORY Geography__c AT (Usa__c, Uk__c)\n                AND Product__c ABOVE_OR_BELOW Mobile__c\n                AND Topic__c ABOVE Root__c\n                AND Region__c BELOW Asia__c\n        ];",
-        "line": 703
+        "line": 739
       },
       {
         "id": "n8",
         "kind": "query",
         "label": "List<Account> deleted = [SELECT Id FROM Account WHERE IsDel…",
         "detail": "List<Account> deleted = [SELECT Id FROM Account WHERE IsDeleted = true ALL ROWS];",
-        "line": 712
+        "line": 748
       },
       {
         "id": "n9",
         "kind": "query",
         "label": "List<Account> locked = [SELECT Id FROM Account FOR UPDATE];",
         "detail": "List<Account> locked = [SELECT Id FROM Account FOR UPDATE];",
-        "line": 714
+        "line": 750
       },
       {
         "id": "n10",
         "kind": "query",
         "label": "List<Account> viewed = [SELECT Id FROM Account FOR VIEW];",
         "detail": "List<Account> viewed = [SELECT Id FROM Account FOR VIEW];",
-        "line": 716
+        "line": 752
       },
       {
         "id": "n11",
         "kind": "query",
         "label": "List<Account> referenced = [SELECT Id FROM Account FOR REFE…",
         "detail": "List<Account> referenced = [SELECT Id FROM Account FOR REFERENCE];",
-        "line": 718
+        "line": 754
       },
       {
         "id": "n12",
         "kind": "query",
         "label": "List<FAQ__kav> tracked = [SELECT Id FROM FAQ__kav UPDATE TR…",
         "detail": "List<FAQ__kav> tracked = [SELECT Id FROM FAQ__kav UPDATE TRACKING, VIEWSTAT];",
-        "line": 720
+        "line": 756
       }
     ],
     "edges": [
@@ -3907,42 +4089,42 @@
         "kind": "query",
         "label": "List<List<SObject>> simple = [FIND 'test' IN ALL FIELDS RET…",
         "detail": "List<List<SObject>> simple = [FIND 'test' IN ALL FIELDS RETURNING Account, Contact];",
-        "line": 730
+        "line": 766
       },
       {
         "id": "n4",
         "kind": "query",
         "label": "List<List<SObject>> bound = [",
         "detail": "List<List<SObject>> bound = [\n            FIND :keyword\n            IN NAME FIELDS\n            RETURNING\n                Account(Id, Name WHERE Industry = 'Technology' ORDER BY Name LIMIT 10),\n                Contact(Id, FirstName, LastName),\n                Lead(Id, FirstName, LastName USING LISTVIEW = MyLeads OFFSET 5)\n            WITH DIVISION = 'Global'\n            WITH SNIPPET (target_length = 120)\n            WITH NETWORK IN ('0DBxx0000000001', '0DBxx0000000002')\n            WITH PRICEBOOKID = '01sxx0000000001'\n            WITH METADATA = 'LABELS'\n            LIMIT 100\n            UPDATE TRACKING, VIEWSTAT\n        ];",
-        "line": 732
+        "line": 768
       },
       {
         "id": "n5",
         "kind": "query",
         "label": "List<List<SObject>> emails = [FIND 'a@example.com' IN EMAIL…",
         "detail": "List<List<SObject>> emails = [FIND 'a@example.com' IN EMAIL FIELDS RETURNING Contact(Email)];",
-        "line": 748
+        "line": 784
       },
       {
         "id": "n6",
         "kind": "query",
         "label": "List<List<SObject>> phones = [FIND '555' IN PHONE FIELDS RE…",
         "detail": "List<List<SObject>> phones = [FIND '555' IN PHONE FIELDS RETURNING Contact];",
-        "line": 750
+        "line": 786
       },
       {
         "id": "n7",
         "kind": "query",
         "label": "List<List<SObject>> sidebar = [FIND 'x' IN SIDEBAR FIELDS R…",
         "detail": "List<List<SObject>> sidebar = [FIND 'x' IN SIDEBAR FIELDS RETURNING Account WITH NETWORK = '0DBxx0000000001'];",
-        "line": 752
+        "line": 788
       },
       {
         "id": "n8",
         "kind": "query",
         "label": "List<List<SObject>> categorized = [",
         "detail": "List<List<SObject>> categorized = [\n            FIND 'help'\n            RETURNING KnowledgeArticleVersion(Id, Title)\n            WITH DATA CATEGORY Geography__c AT Usa__c\n        ];",
-        "line": 754
+        "line": 790
       }
     ],
     "edges": [
@@ -4007,35 +4189,35 @@
         "kind": "decision",
         "label": "switch on text",
         "detail": "switch on text",
-        "line": 364
+        "line": 376
       },
       {
         "id": "n4",
         "kind": "return",
         "label": "return 'Alpha';",
         "detail": "return 'Alpha';",
-        "line": 366
+        "line": 378
       },
       {
         "id": "n5",
         "kind": "return",
         "label": "return 'Beta or Gamma';",
         "detail": "return 'Beta or Gamma';",
-        "line": 369
+        "line": 381
       },
       {
         "id": "n6",
         "kind": "return",
         "label": "return 'null';",
         "detail": "return 'null';",
-        "line": 372
+        "line": 384
       },
       {
         "id": "n7",
         "kind": "return",
         "label": "return 'Unknown';",
         "detail": "return 'Unknown';",
-        "line": 375
+        "line": 387
       }
     ],
     "edges": [
@@ -4114,7 +4296,7 @@
         "kind": "throw",
         "label": "throw new CustomException('Something went wrong');",
         "detail": "throw new CustomException('Something went wrong');",
-        "line": 436
+        "line": 448
       }
     ],
     "edges": [
@@ -4195,7 +4377,7 @@
         "kind": "return",
         "label": "return [",
         "detail": "return [\n            SELECT\n                Id,\n                TYPEOF What\n                    WHEN Account THEN Name, Phone\n                    WHEN Opportunity THEN Amount, CloseDate\n                    ELSE Name\n                END\n            FROM Event\n        ];",
-        "line": 586
+        "line": 622
       }
     ],
     "edges": [
@@ -4235,7 +4417,7 @@
         "kind": "return",
         "label": "return [",
         "detail": "return [\n            SELECT Id, Name\n            FROM Account\n            WHERE\n                Industry = :industry\n                AND AnnualRevenue > :revenue\n                AND AnnualRevenue >= 1000\n                AND AnnualRevenue < 1000000\n                AND AnnualRevenue <= -1.5\n                AND NumberOfEmployees != 0\n                AND Name LIKE 'Test%'\n                AND (Phone = NULL OR Fax != NULL)\n                AND (NOT Name = 'Excluded')\n                AND Id IN :ids\n                AND Id NOT IN :new Set<Id>()\n                AND Industry IN ('Technology', 'Finance')\n                AND Type NOT IN ('Other')\n                AND Interests__c INCLUDES ('Golf', 'Tennis')\n                AND Interests__c EXCLUDES ('Chess')\n                AND IsDeleted = false\n…",
-        "line": 525
+        "line": 561
       }
     ],
     "edges": [
@@ -4275,7 +4457,7 @@
         "kind": "process",
         "label": "System.debug('without sharing');",
         "detail": "System.debug('without sharing');",
-        "line": 789
+        "line": 825
       }
     ],
     "edges": [

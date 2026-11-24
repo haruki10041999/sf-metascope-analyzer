@@ -32,7 +32,8 @@ type P5Text = DefaultTreeAdapterTypes.TextNode;
 type P5Attribute = P5Element['attrs'][number];
 
 /** {…} の式。LWC のテンプレートの式は名前の参照だけなので、ドットで分けられれば path を持つ */
-export type LwcExpressionJson = {
+/** テンプレートの式 ({…})。位置は属性 (テキストの中の式はテキスト全体) のもの */
+export type LwcExpressionJson = JsonType<'lwcExpression'> & {
     /** {} の中の文字列 (前後の空白を除く) */
     text: string;
     /** row.id → ['row', 'id']。名前の参照でなければ持たない */
@@ -42,7 +43,9 @@ export type LwcExpressionJson = {
 };
 
 /** 属性の値。{…} は式、引用符付きの文字列・式は static (title="{title}" は LWC1034 の違反)、値なしは boolean */
-export type LwcAttributeValueJson =
+export type LwcAttributeValueJson = JsonType<'lwcValue'> & LwcAttributeValueBody;
+
+type LwcAttributeValueBody =
     | { type: 'static'; value: string }
     | { type: 'expression'; expression: LwcExpressionJson }
     | { type: 'boolean' };
@@ -75,7 +78,8 @@ export type LwcTextJson = JsonType<'lwcText'> & {
 };
 
 /** タグ名から分かる、参照するコンポーネント (docs/lwc-implementation.md) */
-export type LwcComponentRefJson = {
+/** タグが参照するコンポーネント。位置は要素のもの */
+export type LwcComponentRefJson = JsonType<'lwcComponentRef'> & {
     namespace: string;
     /** camelCase (c-account-row → accountRow) */
     name: string;
@@ -91,7 +95,8 @@ export type LwcElementType = 'html' | 'component' | 'slot' | 'template' | 'dynam
  * Salesforce のメタデータを参照する属性 (lightning-* のカタログ (lightning.ts) にあるもの。6.5.4)。
  * 値が式のものは、JS の値・import と合わせて解析で解決する
  */
-export type LwcMetadataRefJson = {
+/** 属性が参照するメタデータ。位置は属性のもの */
+export type LwcMetadataRefJson = JsonType<'lwcMetadataRef'> & {
     /** 属性名 (field-name / object-api-name など) */
     attribute: string;
     refType: LwcMetadataRefType;
@@ -233,14 +238,24 @@ export const makeLwcTemplateJson = (
     const attributeSpan = (element: P5Element, name: string) =>
         spanOf(element.sourceCodeLocation?.attrs?.[name]);
 
-    const makeExpression = (text: string, scope: ReadonlySet<string>): LwcExpressionJson => {
+    const makeExpression = (
+        text: string,
+        scope: ReadonlySet<string>,
+        span: Span | undefined,
+    ): LwcExpressionJson => {
         const trimmed = text.trim();
         const path = NAME_PATH.test(trimmed) ? trimmed.split('.') : undefined;
-        return {
-            text: trimmed,
-            ...(path ? { path } : {}),
-            local: path ? scope.has(path[0]!) : false,
-        };
+        return makeSpanJson<LwcExpressionJson>(
+            'lwcExpression',
+            {
+                text: trimmed,
+                ...(path ? { path } : {}),
+                local: path ? scope.has(path[0]!) : false,
+            },
+            span,
+            file,
+            registry,
+        );
     };
 
     /** 属性の値。parse5 は引用符の有無を残さないので、ソースの書き方 (= の次の文字) で決める */
@@ -250,37 +265,54 @@ export const makeLwcTemplateJson = (
         scope: ReadonlySet<string>,
     ): LwcAttributeValueJson => {
         const location = element.sourceCodeLocation?.attrs?.[attribute.name];
+        const span = spanOf(location);
+        // makeSpanJson の Omit は共用体の要素ごとに分けないので、中身の型で受けて渡す
+        const value = (properties: LwcAttributeValueBody) =>
+            makeSpanJson<LwcAttributeValueJson>(
+                'lwcValue',
+                properties as Omit<LwcAttributeValueJson, 'kind' | 'sourceKeys'>,
+                span,
+                file,
+                registry,
+            );
         const raw = location ? file.source.slice(location.startOffset, location.endOffset) : '';
         const equal = raw.indexOf('=');
         if (location && equal < 0) {
-            return { type: 'boolean' };
+            return value({ type: 'boolean' });
         }
         const written = raw.slice(equal + 1).trimStart();
         if (written.startsWith('{') && attribute.value.endsWith('}')) {
-            return {
+            return value({
                 type: 'expression',
-                expression: makeExpression(attribute.value.slice(1, -1), scope),
-            };
+                expression: makeExpression(attribute.value.slice(1, -1), scope, span),
+            });
         }
-        return { type: 'static', value: attribute.value };
+        return value({ type: 'static', value: attribute.value });
     };
 
-    const makeComponentRef = (tag: string): LwcComponentRefJson | undefined => {
+    const makeComponentRef = (element: P5Element): LwcComponentRefJson | undefined => {
+        const tag = element.tagName;
         const separator = tag.indexOf('-');
         if (separator <= 0) return undefined;
         const tagNamespace = tag.slice(0, separator);
         const name = kebabToCamel(tag.slice(separator + 1));
-        return {
-            namespace: tagNamespace,
-            name,
-            module: `${tagNamespace}/${name}`,
-            source:
-                tagNamespace === namespace
-                    ? 'local'
-                    : tagNamespace === 'lightning'
-                      ? 'lightning'
-                      : 'package',
-        };
+        return makeSpanJson<LwcComponentRefJson>(
+            'lwcComponentRef',
+            {
+                namespace: tagNamespace,
+                name,
+                module: `${tagNamespace}/${name}`,
+                source:
+                    tagNamespace === namespace
+                        ? 'local'
+                        : tagNamespace === 'lightning'
+                          ? 'lightning'
+                          : 'package',
+            },
+            elementSpan(element),
+            file,
+            registry,
+        );
     };
 
     const elementTypeOf = (element: P5Element): LwcElementType => {
@@ -296,14 +328,26 @@ export const makeLwcTemplateJson = (
     const formObjects: (LwcAttributeValueJson | undefined)[] = [];
 
     /** カタログでメタデータを参照するとした属性 */
-    const makeMetadataRefs = (tag: string, attributes: LwcAttributeJson[]): LwcMetadataRefJson[] =>
+    const makeMetadataRefs = (
+        element: P5Element,
+        attributes: LwcAttributeJson[],
+    ): LwcMetadataRefJson[] =>
         attributes.flatMap((attribute): LwcMetadataRefJson[] => {
-            const refType = getLightningMetadataRef(tag, attribute.name);
+            const refType = getLightningMetadataRef(element.tagName, attribute.name);
             if (!refType) return [];
+            const ref = (properties: Omit<LwcMetadataRefJson, 'kind' | 'sourceKeys'>) => [
+                makeSpanJson<LwcMetadataRefJson>(
+                    'lwcMetadataRef',
+                    properties,
+                    attributeSpan(element, attribute.name),
+                    file,
+                    registry,
+                ),
+            ];
             const { value } = attribute;
             const base = { attribute: attribute.name, refType };
             if (value.type === 'expression') {
-                return [{ ...base, expression: value.expression }];
+                return ref({ ...base, expression: value.expression });
             }
             if (value.type !== 'static') return [];
             // 項目 (field-name) は、祖先のレコードフォームのオブジェクトと合わせる
@@ -312,19 +356,18 @@ export const makeLwcTemplateJson = (
                     ? formObjects.at(-1)
                     : undefined;
             if (form?.type === 'static') {
-                return [{ ...base, value: `${form.value}.${value.value}` }];
+                return ref({ ...base, value: `${form.value}.${value.value}` });
             }
             if (form?.type === 'expression') {
-                return [{ ...base, value: value.value, objectExpression: form.expression }];
+                return ref({ ...base, value: value.value, objectExpression: form.expression });
             }
-            return [{ ...base, value: value.value }];
+            return ref({ ...base, value: value.value });
         });
 
     /** 要素 (制御のディレクティブを除いた属性で作る) */
     const makeElement = (element: P5Element, scope: ReadonlySet<string>): LwcElementJson => {
         const elementType = elementTypeOf(element);
-        const component =
-            elementType === 'component' ? makeComponentRef(element.tagName) : undefined;
+        const component = elementType === 'component' ? makeComponentRef(element) : undefined;
         const attributes: LwcAttributeJson[] = [];
         const directives: LwcDirectiveJson[] = [];
         const events: LwcHandlerJson[] = [];
@@ -373,7 +416,7 @@ export const makeLwcTemplateJson = (
             elementType === 'slot'
                 ? (element.attrs.find((a) => a.name === 'name')?.value ?? '')
                 : undefined;
-        const metadataRefs = makeMetadataRefs(element.tagName, attributes);
+        const metadataRefs = makeMetadataRefs(element, attributes);
 
         // レコードフォームの中の lightning-input-field などは、このフォームのオブジェクトの項目
         const providesObject = getLightningComponentSpec(element.tagName)?.providesObject === true;
@@ -499,8 +542,10 @@ export const makeLwcTemplateJson = (
                 const text = node.value.replace(/\s+/g, ' ').trim();
                 if (!text) continue;
                 closeChain();
+                // テキストの中の式の位置は、テキスト全体 (空白をまとめた文字列なので、式ごとの位置は取らない)
+                const textSpan = spanOf(node.sourceCodeLocation);
                 const expressions = [...text.matchAll(/\{([^{}]*)\}/g)].map((m) =>
-                    makeExpression(m[1]!, scope),
+                    makeExpression(m[1]!, scope, textSpan),
                 );
                 result.push(
                     makeSpanJson<LwcTextJson>(

@@ -1,4 +1,4 @@
-import { ConvertKeys, JsonType, StructureJsonType } from '../../../types';
+import { ConvertKeys, JsonType } from '../../../types';
 
 import {
     compareSourceDistance,
@@ -12,8 +12,7 @@ import { isRecord } from '../../../types/commons/utils';
 
 // 方針: docs/apex-implementation.md
 
-export type JsonNode =
-    JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>;
+export type JsonNode = JsonType<string>;
 
 /**
  * 対応付けの根拠。nearest / similar / recovery は推定。
@@ -58,7 +57,7 @@ const quoteKeyString = (value: string): string =>
         }
     })}"`;
 
-/** kind と sourceKeys を持つ JSON ノード (JsonType / StructureJsonType) か */
+/** kind と sourceKeys を持つ JSON ノード (JsonType) か */
 export const isNode = (value: unknown): value is JsonNode =>
     typeof value === 'object' && value !== null && 'kind' in value && 'sourceKeys' in value;
 
@@ -119,7 +118,7 @@ export const isSameValue = (before: unknown, after: unknown): boolean =>
 export type Pair<T> = T | { before: T; after: T };
 
 /**
- * 対応付いた組の sourceKeys。before / after を、キー (objectKey / sourceKey、StructureJsonType は base / name など) ごとに
+ * 対応付いた組の sourceKeys。before / after を、キー (objectKey / sourceKey) ごとに
  * まとめ、同じ値なら単体、違えば { before, after } にする
  */
 export type SourceKeysDiff<K> = K extends string

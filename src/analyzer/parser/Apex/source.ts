@@ -8,6 +8,9 @@ import {
     CompilationUnitJson,
     SourceJson,
     TriggerUnitJson,
+    type JsonType,
+    makeContentKeyedJson,
+    makeDerivedNodeJson,
     makeAnonymousUnitJson,
     makeCompilationUnitJson,
     makeTriggerUnitJson,
@@ -30,15 +33,21 @@ type UnitJson = CompilationUnitJson | TriggerUnitJson | AnonymousUnitJson;
 type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
 
 /** ソースの JSON。読めなかったとき (IR・JSON を作れなかった) は fileType: 'error' で中身を持たない (理由は resolvedError) */
-export type ApexSourceJson =
-    | {
-          /** ファイル名 (Foo.cls) */
-          fileName: string;
-          fileType: ApexSourceFileType;
-          /** fileType を除いた CompilationUnitJson / TriggerUnitJson / AnonymousUnitJson */
-          content: DistributiveOmit<UnitJson, 'fileType'>;
-      }
-    | { fileName: string; fileType: 'error' };
+/**
+ * ソースのファイルの入れ物のノード (apex 9 から)。位置はファイルの IR の根 (中身全体) のもの、objectKey は中身から作る。
+ * ファイル全体を読めなかったとき (fileType: 'error') は位置を持たない (sourceKey はファイル名から作る)
+ */
+export type ApexSourceJson = JsonType<'apexSource'> &
+    (
+        | {
+              /** ファイル名 (Foo.cls) */
+              fileName: string;
+              fileType: ApexSourceFileType;
+              /** fileType を除いた CompilationUnitJson / TriggerUnitJson / AnonymousUnitJson */
+              content: DistributiveOmit<UnitJson, 'fileType'>;
+          }
+        | { fileName: string; fileType: 'error' }
+    );
 
 /** ソースの構文エラー・IR を作れなかったところ。単位の中で区別できるよう filePath (ファイル名) を持つ */
 export type ApexSourceResolvedError = ApexResolvedErrorEntry & { filePath: string };
@@ -102,7 +111,10 @@ export const parseApexSource = async (
     const unitNode = built.result;
     if (!unitNode) {
         return {
-            source: { fileName, fileType: 'error' },
+            source: makeContentKeyedJson<ApexSourceJson>('apexSource', `apexSource_${fileName}`, {
+                fileName,
+                fileType: 'error',
+            }),
             sourceObject: [],
             resolvedError,
         };
@@ -114,7 +126,12 @@ export const parseApexSource = async (
             : unitNode.kind === 'anonymousUnit'
               ? makeAnonymousUnitJson(unitNode)
               : makeTriggerUnitJson(unitNode);
-    const sourceObject = regenerateSourceObjects(collectSourceObjects(unitNode), unit);
     const { fileType: _fileType, ...content } = unit;
-    return { source: { fileName, fileType, content }, sourceObject, resolvedError };
+    const sourceJson = makeDerivedNodeJson<ApexSourceJson>('apexSource', unitNode, {
+        fileName,
+        fileType,
+        content,
+    });
+    const sourceObject = regenerateSourceObjects(collectSourceObjects(unitNode), sourceJson);
+    return { source: sourceJson, sourceObject, resolvedError };
 };

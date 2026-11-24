@@ -136,7 +136,7 @@ const membersOfType = (
                 : declaration.kind === 'class' && declaration.extend
                   ? { type: apexTypeTextOf(declaration.extend) }
                   : {}),
-            sourceKeys: declaration.sourceKeys.base,
+            sourceKeys: declaration.sourceKeys,
         }),
     ];
     if (declaration.kind === 'interface') {
@@ -150,7 +150,7 @@ const membersOfType = (
                     type: apexTypeTextOf(method.returnType),
                     modifier: method.modifier,
                     access: ownAccess,
-                    sourceKeys: method.sourceKeys.base,
+                    sourceKeys: method.sourceKeys,
                 }),
             );
         }
@@ -173,7 +173,7 @@ const membersOfType = (
                         params: paramsOf(block.param),
                         type: apexTypeTextOf(block.returnType),
                         modifier: block.modifier,
-                        sourceKeys: block.sourceKeys.base,
+                        sourceKeys: block.sourceKeys,
                     }),
                 );
                 break;
@@ -184,7 +184,7 @@ const membersOfType = (
                         name: block.name.join('.'),
                         params: paramsOf(block.param),
                         modifier: block.modifier,
-                        sourceKeys: block.sourceKeys.base,
+                        sourceKeys: block.sourceKeys,
                     }),
                 );
                 break;
@@ -195,7 +195,7 @@ const membersOfType = (
                         name: block.name,
                         type: apexTypeTextOf(block.variantType),
                         modifier: block.modifier,
-                        sourceKeys: block.sourceKeys.base,
+                        sourceKeys: block.sourceKeys,
                     }),
                 );
                 break;

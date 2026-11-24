@@ -51,9 +51,13 @@ describe('Apex の単位とメタデータ (-meta.xml)', () => {
         const trigger = await parseUnit('after', 'AccountTrigger.trigger');
         assert.equal(trigger.result.id, 'trigger_AccountTrigger');
         assert.equal(metaOf(trigger).kind, 'apexTriggerMeta');
-        assert.deepEqual(metaOf(trigger).packageVersions, [
-            { namespace: 'acme', majorNumber: 1, minorNumber: 4 },
-        ]);
+        // packageVersions の要素は位置を持つノード (apex 9)
+        const versions = metaOf(trigger).packageVersions ?? [];
+        assert.deepEqual(
+            versions.map(({ sourceKeys: _sourceKeys, ...version }) => version),
+            [{ kind: 'packageVersion', namespace: 'acme', majorNumber: 1, minorNumber: 4 }],
+        );
+        assert.ok(versions.every((v) => v.sourceKeys.objectKey.startsWith('packageVersion_')));
     });
 
     it('読めない -meta.xml は meta を null にし、単位の resolvedError に filePath 付きで入れる', async () => {
@@ -118,10 +122,16 @@ describe('Apex のメタデータの Diff (makeApexUnitDiffs)', () => {
             before: 'Active',
             after: 'Inactive',
         });
-        assert.deepEqual(trigger.fields.packageVersions, {
-            status: 'added',
-            value: [{ namespace: 'acme', majorNumber: 1, minorNumber: 4 }],
-        });
+        // 要素はノード (apex 9) なので、kind / sourceKeys を中身 (value) から分ける
+        const added = trigger.fields.packageVersions as {
+            status: string;
+            value: { kind: string; value: unknown }[];
+        };
+        assert.equal(added.status, 'added');
+        assert.deepEqual(
+            added.value.map((v) => [v.kind, v.value]),
+            [['packageVersion', { namespace: 'acme', majorNumber: 1, minorNumber: 4 }]],
+        );
     });
 
     it('読めなくなった -meta.xml は値ごとの変更', () => {

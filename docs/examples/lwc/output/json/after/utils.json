@@ -29,13 +29,28 @@
   "result": {
     "id": "utils",
     "base": {
+      "kind": "lwcBundle",
+      "sourceKeys": {
+        "objectKey": "lwcBundle_5b2f1495b1f4eb7d",
+        "sourceKey": "lwcModule_93679611643e30c1"
+      },
       "name": "utils",
       "namespace": "c",
       "modules": [
         {
+          "kind": "lwcBundleModule",
+          "sourceKeys": {
+            "objectKey": "lwcBundleModule_d2f9fc9c3c322ba3",
+            "sourceKey": "lwcModule_93679611643e30c1"
+          },
           "fileName": "utils.ts",
           "main": true,
           "module": {
+            "kind": "lwcModule",
+            "sourceKeys": {
+              "objectKey": "lwcModule_856352619332b2d1",
+              "sourceKey": "lwcModule_93679611643e30c1"
+            },
             "fileType": "ts",
             "imports": [],
             "exports": [
@@ -121,14 +136,8 @@
               {
                 "kind": "lwcDeclaration",
                 "sourceKeys": {
-                  "base": {
-                    "objectKey": "variableDeclarator_1930d95a3bd1a249",
-                    "sourceKey": "variableDeclarator_16aa2915d8ab2816"
-                  },
-                  "name": {
-                    "objectKey": "identifier_b5be9071a21bee74",
-                    "sourceKey": "identifier_6292a2379f14c028"
-                  }
+                  "objectKey": "variableDeclarator_1930d95a3bd1a249",
+                  "sourceKey": "variableDeclarator_16aa2915d8ab2816"
                 },
                 "name": "formatter",
                 "declarationType": "variable",
@@ -211,19 +220,21 @@
                       ]
                     }
                   ]
+                },
+                "nameRef": {
+                  "kind": "declarationName",
+                  "sourceKeys": {
+                    "objectKey": "declarationName_4275cb053c22dbb2",
+                    "sourceKey": "identifier_6292a2379f14c028"
+                  },
+                  "name": "formatter"
                 }
               },
               {
                 "kind": "lwcDeclaration",
                 "sourceKeys": {
-                  "base": {
-                    "objectKey": "variableDeclarator_77000f0ea5d97163",
-                    "sourceKey": "variableDeclarator_3d05eb6f9b3bb55f"
-                  },
-                  "name": {
-                    "objectKey": "identifier_c23258fedf0e69e2",
-                    "sourceKey": "identifier_1b168443823e4402"
-                  }
+                  "objectKey": "variableDeclarator_77000f0ea5d97163",
+                  "sourceKey": "variableDeclarator_3d05eb6f9b3bb55f"
                 },
                 "name": "formatAmount",
                 "declarationType": "function",
@@ -248,7 +259,13 @@
                       "primitiveType": "number"
                     },
                     "optional": false,
-                    "modifier": {}
+                    "modifier": {
+                      "kind": "lwcModifiers",
+                      "sourceKeys": {
+                        "objectKey": "lwcModifiers_44136fa355b3678a",
+                        "sourceKey": "identifier_69bdda3e2b142fca"
+                      }
+                    }
                   }
                 ],
                 "returnType": {
@@ -289,19 +306,21 @@
                       "name": "value"
                     }
                   ]
+                },
+                "nameRef": {
+                  "kind": "declarationName",
+                  "sourceKeys": {
+                    "objectKey": "declarationName_6fc66ed005095254",
+                    "sourceKey": "identifier_1b168443823e4402"
+                  },
+                  "name": "formatAmount"
                 }
               },
               {
                 "kind": "lwcDeclaration",
                 "sourceKeys": {
-                  "base": {
-                    "objectKey": "functionDeclaration_54361c1a62e136c4",
-                    "sourceKey": "functionDeclaration_0a79353f1fa514e6"
-                  },
-                  "name": {
-                    "objectKey": "identifier_65ecd2d79ae90803",
-                    "sourceKey": "identifier_d55f733ebcaa304a"
-                  }
+                  "objectKey": "functionDeclaration_54361c1a62e136c4",
+                  "sourceKey": "functionDeclaration_0a79353f1fa514e6"
                 },
                 "name": "toRows",
                 "declarationType": "function",
@@ -323,12 +342,23 @@
                       },
                       "type": "array",
                       "elementType": {
+                        "kind": "lwcType",
+                        "sourceKeys": {
+                          "objectKey": "tSUnknownKeyword_6ef5499dc7a933b0",
+                          "sourceKey": "tSUnknownKeyword_27b0f01f3713e094"
+                        },
                         "type": "primitive",
                         "primitiveType": "unknown"
                       }
                     },
                     "optional": false,
-                    "modifier": {}
+                    "modifier": {
+                      "kind": "lwcModifiers",
+                      "sourceKeys": {
+                        "objectKey": "lwcModifiers_44136fa355b3678a",
+                        "sourceKey": "identifier_0838790aa54880ae"
+                      }
+                    }
                   },
                   {
                     "kind": "lwcParameter",
@@ -355,7 +385,13 @@
                       "value": 50
                     },
                     "optional": true,
-                    "modifier": {}
+                    "modifier": {
+                      "kind": "lwcModifiers",
+                      "sourceKeys": {
+                        "objectKey": "lwcModifiers_44136fa355b3678a",
+                        "sourceKey": "assignmentPattern_10e0b0ff204b53ae"
+                      }
+                    }
                   }
                 ],
                 "returnType": {
@@ -366,6 +402,11 @@
                   },
                   "type": "array",
                   "elementType": {
+                    "kind": "lwcType",
+                    "sourceKeys": {
+                      "objectKey": "tSTypeReference_eca924ff86bb9059",
+                      "sourceKey": "tSTypeReference_f1e23c3bea5e1805"
+                    },
                     "type": "custom",
                     "customType": [
                       "Row"
@@ -445,7 +486,13 @@
                               },
                               "variant": "record",
                               "optional": false,
-                              "modifier": {}
+                              "modifier": {
+                                "kind": "lwcModifiers",
+                                "sourceKeys": {
+                                  "objectKey": "lwcModifiers_44136fa355b3678a",
+                                  "sourceKey": "identifier_e19b20775a963a14"
+                                }
+                              }
                             }
                           ],
                           "expression": {
@@ -479,19 +526,21 @@
                       ]
                     }
                   }
-                ]
+                ],
+                "nameRef": {
+                  "kind": "declarationName",
+                  "sourceKeys": {
+                    "objectKey": "declarationName_5f0b5c2f40bf9bf7",
+                    "sourceKey": "identifier_d55f733ebcaa304a"
+                  },
+                  "name": "toRows"
+                }
               },
               {
                 "kind": "lwcClass",
                 "sourceKeys": {
-                  "base": {
-                    "objectKey": "classDeclaration_a25f963799748c6b",
-                    "sourceKey": "classDeclaration_2339a07b182c50cf"
-                  },
-                  "name": {
-                    "objectKey": "identifier_d91240c09a642c56",
-                    "sourceKey": "identifier_bac3a0545c29ba06"
-                  }
+                  "objectKey": "classDeclaration_a25f963799748c6b",
+                  "sourceKey": "classDeclaration_2339a07b182c50cf"
                 },
                 "name": "RowCache",
                 "exported": true,
@@ -499,14 +548,8 @@
                   {
                     "kind": "lwcField",
                     "sourceKeys": {
-                      "base": {
-                        "objectKey": "classProperty_758cf63ce31e9922",
-                        "sourceKey": "classProperty_ed5934413838da48"
-                      },
-                      "name": {
-                        "objectKey": "identifier_9b47a1b339d67b64",
-                        "sourceKey": "identifier_c650005bfc6de562"
-                      }
+                      "objectKey": "classProperty_758cf63ce31e9922",
+                      "sourceKey": "classProperty_ed5934413838da48"
                     },
                     "name": "instances",
                     "init": {
@@ -519,22 +562,29 @@
                     },
                     "optional": false,
                     "modifier": {
+                      "kind": "lwcModifiers",
+                      "sourceKeys": {
+                        "objectKey": "lwcModifiers_feedae4c592b2a85",
+                        "sourceKey": "classProperty_ed5934413838da48"
+                      },
                       "declaration": [
                         "static"
                       ]
+                    },
+                    "nameRef": {
+                      "kind": "declarationName",
+                      "sourceKeys": {
+                        "objectKey": "declarationName_79190866d8f16cca",
+                        "sourceKey": "identifier_c650005bfc6de562"
+                      },
+                      "name": "instances"
                     }
                   },
                   {
                     "kind": "lwcField",
                     "sourceKeys": {
-                      "base": {
-                        "objectKey": "classPrivateProperty_691af30cf4b92a63",
-                        "sourceKey": "classPrivateProperty_cb51342bd1dbebba"
-                      },
-                      "name": {
-                        "objectKey": "privateName_31e8da859e155537",
-                        "sourceKey": "privateName_6f353786f6f115c8"
-                      }
+                      "objectKey": "classPrivateProperty_691af30cf4b92a63",
+                      "sourceKey": "classPrivateProperty_cb51342bd1dbebba"
                     },
                     "name": "#rows",
                     "init": {
@@ -576,25 +626,52 @@
                       ]
                     },
                     "optional": false,
-                    "modifier": {}
+                    "modifier": {
+                      "kind": "lwcModifiers",
+                      "sourceKeys": {
+                        "objectKey": "lwcModifiers_44136fa355b3678a",
+                        "sourceKey": "classPrivateProperty_cb51342bd1dbebba"
+                      }
+                    },
+                    "nameRef": {
+                      "kind": "declarationName",
+                      "sourceKeys": {
+                        "objectKey": "declarationName_01332f6eda930d16",
+                        "sourceKey": "privateName_6f353786f6f115c8"
+                      },
+                      "name": "#rows"
+                    }
                   },
                   {
                     "kind": "lwcProperty",
                     "sourceKeys": {
-                      "base": {
-                        "objectKey": "classMethod_ba5455bb3b7fae89",
-                        "sourceKey": "classMethod_37e28ded3f859b60"
-                      },
-                      "name": {
-                        "objectKey": "identifier_798f08ea7fe551be",
-                        "sourceKey": "identifier_edc8453caac5feaf"
-                      }
+                      "objectKey": "classMethod_ba5455bb3b7fae89",
+                      "sourceKey": "classMethod_37e28ded3f859b60"
                     },
                     "name": "size",
                     "isGetter": true,
                     "isSetter": false,
+                    "nameRef": {
+                      "kind": "declarationName",
+                      "sourceKeys": {
+                        "objectKey": "declarationName_36115cf70a52bd79",
+                        "sourceKey": "identifier_edc8453caac5feaf"
+                      },
+                      "name": "size"
+                    },
                     "getterContent": {
-                      "modifier": {},
+                      "kind": "lwcAccessor",
+                      "sourceKeys": {
+                        "objectKey": "lwcAccessor_c3fceb9f26a337f1",
+                        "sourceKey": "classMethod_37e28ded3f859b60"
+                      },
+                      "modifier": {
+                        "kind": "lwcModifiers",
+                        "sourceKeys": {
+                          "objectKey": "lwcModifiers_44136fa355b3678a",
+                          "sourceKey": "classMethod_37e28ded3f859b60"
+                        }
+                      },
                       "block": [
                         {
                           "kind": "jsReturn",
@@ -645,14 +722,8 @@
                   {
                     "kind": "lwcMethod",
                     "sourceKeys": {
-                      "base": {
-                        "objectKey": "classMethod_e19899f4141f9bfc",
-                        "sourceKey": "classMethod_0e5b7e2f2f8c52cb"
-                      },
-                      "name": {
-                        "objectKey": "identifier_eccf44b162ae881a",
-                        "sourceKey": "identifier_d247922a27988f02"
-                      }
+                      "objectKey": "classMethod_e19899f4141f9bfc",
+                      "sourceKey": "classMethod_0e5b7e2f2f8c52cb"
                     },
                     "name": "put",
                     "returnType": {
@@ -680,6 +751,11 @@
                           },
                           "type": "array",
                           "elementType": {
+                            "kind": "lwcType",
+                            "sourceKeys": {
+                              "objectKey": "tSTypeReference_eca924ff86bb9059",
+                              "sourceKey": "tSTypeReference_38ccccf7f76ab68d"
+                            },
                             "type": "custom",
                             "customType": [
                               "Row"
@@ -687,11 +763,23 @@
                           }
                         },
                         "optional": false,
-                        "modifier": {}
+                        "modifier": {
+                          "kind": "lwcModifiers",
+                          "sourceKeys": {
+                            "objectKey": "lwcModifiers_44136fa355b3678a",
+                            "sourceKey": "identifier_591aeedbf5aec222"
+                          }
+                        }
                       }
                     ],
                     "async": false,
-                    "modifier": {},
+                    "modifier": {
+                      "kind": "lwcModifiers",
+                      "sourceKeys": {
+                        "objectKey": "lwcModifiers_44136fa355b3678a",
+                        "sourceKey": "classMethod_0e5b7e2f2f8c52cb"
+                      }
+                    },
                     "block": [
                       {
                         "kind": "jsLocalVariable",
@@ -759,6 +847,11 @@
                             },
                             "conditionBlock": [
                               {
+                                "kind": "jsIfBranch",
+                                "sourceKeys": {
+                                  "objectKey": "jsIfBranch_ec386368e4cc5a14",
+                                  "sourceKey": "unaryExpression_610e6fce3e5f0da8"
+                                },
                                 "condition": {
                                   "kind": "jsUnary",
                                   "sourceKeys": {
@@ -824,6 +917,11 @@
                             },
                             "cases": [
                               {
+                                "kind": "jsSwitchCase",
+                                "sourceKeys": {
+                                  "objectKey": "switchCase_c2c5c51e5eba59bc",
+                                  "sourceKey": "switchCase_d4965d8cb90d8845"
+                                },
                                 "test": {
                                   "kind": "jsString",
                                   "sourceKeys": {
@@ -843,6 +941,11 @@
                                 ]
                               },
                               {
+                                "kind": "jsSwitchCase",
+                                "sourceKeys": {
+                                  "objectKey": "switchCase_bab391cdde177ecc",
+                                  "sourceKey": "switchCase_1baf780a4eb02f54"
+                                },
                                 "block": [
                                   {
                                     "kind": "jsExpression",
@@ -951,23 +1054,33 @@
                           "name": "count"
                         }
                       }
-                    ]
+                    ],
+                    "nameRef": {
+                      "kind": "declarationName",
+                      "sourceKeys": {
+                        "objectKey": "declarationName_37e9ceb129bb94c6",
+                        "sourceKey": "identifier_d247922a27988f02"
+                      },
+                      "name": "put"
+                    }
                   }
-                ]
+                ],
+                "nameRef": {
+                  "kind": "declarationName",
+                  "sourceKeys": {
+                    "objectKey": "declarationName_8442847a773db8e4",
+                    "sourceKey": "identifier_bac3a0545c29ba06"
+                  },
+                  "name": "RowCache"
+                }
               }
             ],
             "typeDeclarations": [
               {
                 "kind": "lwcTypeDeclaration",
                 "sourceKeys": {
-                  "base": {
-                    "objectKey": "tSTypeAliasDeclaration_e019d67c80f7a353",
-                    "sourceKey": "tSTypeAliasDeclaration_8085b692e1e57ed2"
-                  },
-                  "name": {
-                    "objectKey": "identifier_0aa5574baae5928e",
-                    "sourceKey": "identifier_7285102c40b1ebdb"
-                  }
+                  "objectKey": "tSTypeAliasDeclaration_e019d67c80f7a353",
+                  "sourceKey": "tSTypeAliasDeclaration_8085b692e1e57ed2"
                 },
                 "name": "SortDirection",
                 "exported": true,
@@ -981,39 +1094,66 @@
                   "type": "union",
                   "types": [
                     {
+                      "kind": "lwcType",
+                      "sourceKeys": {
+                        "objectKey": "tSLiteralType_8a967d582b9369d9",
+                        "sourceKey": "tSLiteralType_2444fad956ca63c9"
+                      },
                       "type": "literal",
                       "value": "'asc'"
                     },
                     {
+                      "kind": "lwcType",
+                      "sourceKeys": {
+                        "objectKey": "tSLiteralType_223d4517b410b7bf",
+                        "sourceKey": "tSLiteralType_a07d53121d8109a4"
+                      },
                       "type": "literal",
                       "value": "'desc'"
                     },
                     {
+                      "kind": "lwcType",
+                      "sourceKeys": {
+                        "objectKey": "tSLiteralType_df949dbd11c11f1f",
+                        "sourceKey": "tSLiteralType_9717d8b33aca2a65"
+                      },
                       "type": "literal",
                       "value": "'none'"
                     }
                   ]
+                },
+                "nameRef": {
+                  "kind": "declarationName",
+                  "sourceKeys": {
+                    "objectKey": "declarationName_8e04e674b61e7c84",
+                    "sourceKey": "identifier_7285102c40b1ebdb"
+                  },
+                  "name": "SortDirection"
                 }
               },
               {
                 "kind": "lwcTypeDeclaration",
                 "sourceKeys": {
-                  "base": {
-                    "objectKey": "tSInterfaceDeclaration_df2c82cd7b9ad6fc",
-                    "sourceKey": "tSInterfaceDeclaration_99e56e61201c064d"
-                  },
-                  "name": {
-                    "objectKey": "identifier_edd3fb088cbf6f22",
-                    "sourceKey": "identifier_76677c85a714b38a"
-                  }
+                  "objectKey": "tSInterfaceDeclaration_df2c82cd7b9ad6fc",
+                  "sourceKey": "tSInterfaceDeclaration_99e56e61201c064d"
                 },
                 "name": "Row",
                 "exported": true,
                 "declarationType": "interface",
                 "members": [
                   {
+                    "kind": "lwcTypeMember",
+                    "sourceKeys": {
+                      "objectKey": "tSPropertySignature_79d9469053ace213",
+                      "sourceKey": "tSPropertySignature_efebcbd935f4d552"
+                    },
                     "name": "id",
                     "memberType": {
+                      "kind": "lwcType",
+                      "sourceKeys": {
+                        "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
+                        "sourceKey": "tSStringKeyword_744ee5b356659ac1"
+                      },
                       "type": "primitive",
                       "primitiveType": "string"
                     },
@@ -1021,8 +1161,18 @@
                     "method": false
                   },
                   {
+                    "kind": "lwcTypeMember",
+                    "sourceKeys": {
+                      "objectKey": "tSPropertySignature_3eba4ad825edd81a",
+                      "sourceKey": "tSPropertySignature_423e39b9e2de06d8"
+                    },
                     "name": "name",
                     "memberType": {
+                      "kind": "lwcType",
+                      "sourceKeys": {
+                        "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
+                        "sourceKey": "tSStringKeyword_fd76745a8991657f"
+                      },
                       "type": "primitive",
                       "primitiveType": "string"
                     },
@@ -1030,8 +1180,18 @@
                     "method": false
                   },
                   {
+                    "kind": "lwcTypeMember",
+                    "sourceKeys": {
+                      "objectKey": "tSPropertySignature_242026caed59c1de",
+                      "sourceKey": "tSPropertySignature_e422fcc6c36086ce"
+                    },
                     "name": "amount",
                     "memberType": {
+                      "kind": "lwcType",
+                      "sourceKeys": {
+                        "objectKey": "tSNumberKeyword_850ba0354605a53c",
+                        "sourceKey": "tSNumberKeyword_cfc52850e93c16cb"
+                      },
                       "type": "primitive",
                       "primitiveType": "number"
                     },
@@ -1039,27 +1199,39 @@
                     "method": false
                   },
                   {
+                    "kind": "lwcTypeMember",
+                    "sourceKeys": {
+                      "objectKey": "tSPropertySignature_f052756d0f9c317e",
+                      "sourceKey": "tSPropertySignature_378f1701db0522d8"
+                    },
                     "name": "industry",
                     "memberType": {
+                      "kind": "lwcType",
+                      "sourceKeys": {
+                        "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
+                        "sourceKey": "tSStringKeyword_58c6f345968701bc"
+                      },
                       "type": "primitive",
                       "primitiveType": "string"
                     },
                     "optional": true,
                     "method": false
                   }
-                ]
+                ],
+                "nameRef": {
+                  "kind": "declarationName",
+                  "sourceKeys": {
+                    "objectKey": "declarationName_0b11366066cca533",
+                    "sourceKey": "identifier_76677c85a714b38a"
+                  },
+                  "name": "Row"
+                }
               },
               {
                 "kind": "lwcTypeDeclaration",
                 "sourceKeys": {
-                  "base": {
-                    "objectKey": "tSEnumDeclaration_9f3f0539111e607b",
-                    "sourceKey": "tSEnumDeclaration_6ed577bebdbf13b3"
-                  },
-                  "name": {
-                    "objectKey": "identifier_86e215c12acf0674",
-                    "sourceKey": "identifier_dea04ef78f32a5c8"
-                  }
+                  "objectKey": "tSEnumDeclaration_9f3f0539111e607b",
+                  "sourceKey": "tSEnumDeclaration_6ed577bebdbf13b3"
                 },
                 "name": "ViewKind",
                 "exported": true,
@@ -1067,7 +1239,15 @@
                 "enumMembers": [
                   "Table",
                   "Tile"
-                ]
+                ],
+                "nameRef": {
+                  "kind": "declarationName",
+                  "sourceKeys": {
+                    "objectKey": "declarationName_2cc27e3b84b4bce2",
+                    "sourceKey": "identifier_dea04ef78f32a5c8"
+                  },
+                  "name": "ViewKind"
+                }
               }
             ]
           }
@@ -1087,6 +1267,86 @@
       "skippedFiles": []
     },
     "sourceObject": [
+      {
+        "objectKey": "tSUnionType_0ef9d59498831908",
+        "context": "'asc' | 'desc' | 'none'",
+        "source": [
+          {
+            "sourceKey": "tSUnionType_e1a5e179314f5b8b",
+            "start": {
+              "offset": 28,
+              "line": 1,
+              "column": 28
+            },
+            "end": {
+              "offset": 51,
+              "line": 1,
+              "column": 51
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "tSLiteralType_8a967d582b9369d9",
+        "context": "'asc'",
+        "source": [
+          {
+            "sourceKey": "tSLiteralType_2444fad956ca63c9",
+            "start": {
+              "offset": 28,
+              "line": 1,
+              "column": 28
+            },
+            "end": {
+              "offset": 33,
+              "line": 1,
+              "column": 33
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "tSLiteralType_223d4517b410b7bf",
+        "context": "'desc'",
+        "source": [
+          {
+            "sourceKey": "tSLiteralType_a07d53121d8109a4",
+            "start": {
+              "offset": 36,
+              "line": 1,
+              "column": 36
+            },
+            "end": {
+              "offset": 42,
+              "line": 1,
+              "column": 42
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "tSLiteralType_df949dbd11c11f1f",
+        "context": "'none'",
+        "source": [
+          {
+            "sourceKey": "tSLiteralType_9717d8b33aca2a65",
+            "start": {
+              "offset": 45,
+              "line": 1,
+              "column": 45
+            },
+            "end": {
+              "offset": 51,
+              "line": 1,
+              "column": 51
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
       {
         "objectKey": "tSTypeAliasDeclaration_e019d67c80f7a353",
         "context": "type SortDirection = 'asc' | 'desc' | 'none';",
@@ -1128,20 +1388,252 @@
         ]
       },
       {
-        "objectKey": "tSUnionType_0ef9d59498831908",
-        "context": "'asc' | 'desc' | 'none'",
+        "objectKey": "declarationName_8e04e674b61e7c84",
+        "context": "SortDirection",
         "source": [
           {
-            "sourceKey": "tSUnionType_e1a5e179314f5b8b",
+            "sourceKey": "identifier_7285102c40b1ebdb",
             "start": {
-              "offset": 28,
+              "offset": 12,
               "line": 1,
-              "column": 28
+              "column": 12
             },
             "end": {
-              "offset": 51,
+              "offset": 25,
               "line": 1,
+              "column": 25
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "tSPropertySignature_79d9469053ace213",
+        "context": "id: string;",
+        "source": [
+          {
+            "sourceKey": "tSPropertySignature_efebcbd935f4d552",
+            "start": {
+              "offset": 81,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 92,
+              "line": 4,
+              "column": 15
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
+        "context": "string",
+        "source": [
+          {
+            "sourceKey": "tSStringKeyword_744ee5b356659ac1",
+            "start": {
+              "offset": 85,
+              "line": 4,
+              "column": 8
+            },
+            "end": {
+              "offset": 91,
+              "line": 4,
+              "column": 14
+            },
+            "filePath": "utils/utils.ts"
+          },
+          {
+            "sourceKey": "tSStringKeyword_fd76745a8991657f",
+            "start": {
+              "offset": 103,
+              "line": 5,
+              "column": 10
+            },
+            "end": {
+              "offset": 109,
+              "line": 5,
+              "column": 16
+            },
+            "filePath": "utils/utils.ts"
+          },
+          {
+            "sourceKey": "tSStringKeyword_58c6f345968701bc",
+            "start": {
+              "offset": 147,
+              "line": 7,
+              "column": 15
+            },
+            "end": {
+              "offset": 153,
+              "line": 7,
+              "column": 21
+            },
+            "filePath": "utils/utils.ts"
+          },
+          {
+            "sourceKey": "tSStringKeyword_23f45f5da4ea75ed",
+            "start": {
+              "offset": 341,
+              "line": 17,
+              "column": 45
+            },
+            "end": {
+              "offset": 347,
+              "line": 17,
               "column": 51
+            },
+            "filePath": "utils/utils.ts"
+          },
+          {
+            "sourceKey": "tSStringKeyword_4dfc916ac7e76fa9",
+            "start": {
+              "offset": 648,
+              "line": 27,
+              "column": 20
+            },
+            "end": {
+              "offset": 654,
+              "line": 27,
+              "column": 26
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "tSPropertySignature_3eba4ad825edd81a",
+        "context": "name: string;",
+        "source": [
+          {
+            "sourceKey": "tSPropertySignature_423e39b9e2de06d8",
+            "start": {
+              "offset": 97,
+              "line": 5,
+              "column": 4
+            },
+            "end": {
+              "offset": 110,
+              "line": 5,
+              "column": 17
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "tSPropertySignature_242026caed59c1de",
+        "context": "amount?: number;",
+        "source": [
+          {
+            "sourceKey": "tSPropertySignature_e422fcc6c36086ce",
+            "start": {
+              "offset": 115,
+              "line": 6,
+              "column": 4
+            },
+            "end": {
+              "offset": 131,
+              "line": 6,
+              "column": 20
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "tSNumberKeyword_850ba0354605a53c",
+        "context": "number",
+        "source": [
+          {
+            "sourceKey": "tSNumberKeyword_cfc52850e93c16cb",
+            "start": {
+              "offset": 124,
+              "line": 6,
+              "column": 13
+            },
+            "end": {
+              "offset": 130,
+              "line": 6,
+              "column": 19
+            },
+            "filePath": "utils/utils.ts"
+          },
+          {
+            "sourceKey": "tSNumberKeyword_2fcf03249a327969",
+            "start": {
+              "offset": 332,
+              "line": 17,
+              "column": 36
+            },
+            "end": {
+              "offset": 338,
+              "line": 17,
+              "column": 42
+            },
+            "filePath": "utils/utils.ts"
+          },
+          {
+            "sourceKey": "tSNumberKeyword_c11b27c79e517021",
+            "start": {
+              "offset": 427,
+              "line": 19,
+              "column": 50
+            },
+            "end": {
+              "offset": 433,
+              "line": 19,
+              "column": 56
+            },
+            "filePath": "utils/utils.ts"
+          },
+          {
+            "sourceKey": "tSNumberKeyword_6356bc174fec2a51",
+            "start": {
+              "offset": 681,
+              "line": 29,
+              "column": 16
+            },
+            "end": {
+              "offset": 687,
+              "line": 29,
+              "column": 22
+            },
+            "filePath": "utils/utils.ts"
+          },
+          {
+            "sourceKey": "tSNumberKeyword_c1c42cb102cfa933",
+            "start": {
+              "offset": 751,
+              "line": 33,
+              "column": 22
+            },
+            "end": {
+              "offset": 757,
+              "line": 33,
+              "column": 28
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "tSPropertySignature_f052756d0f9c317e",
+        "context": "industry?: string;",
+        "source": [
+          {
+            "sourceKey": "tSPropertySignature_378f1701db0522d8",
+            "start": {
+              "offset": 136,
+              "line": 7,
+              "column": 4
+            },
+            "end": {
+              "offset": 154,
+              "line": 7,
+              "column": 22
             },
             "filePath": "utils/utils.ts"
           }
@@ -1188,6 +1680,26 @@
         ]
       },
       {
+        "objectKey": "declarationName_0b11366066cca533",
+        "context": "Row",
+        "source": [
+          {
+            "sourceKey": "identifier_76677c85a714b38a",
+            "start": {
+              "offset": 71,
+              "line": 3,
+              "column": 17
+            },
+            "end": {
+              "offset": 74,
+              "line": 3,
+              "column": 20
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
         "objectKey": "tSEnumDeclaration_9f3f0539111e607b",
         "context": "enum ViewKind {\n    Table,\n    Tile,\n}",
         "source": [
@@ -1209,6 +1721,26 @@
       },
       {
         "objectKey": "identifier_86e215c12acf0674",
+        "context": "ViewKind",
+        "source": [
+          {
+            "sourceKey": "identifier_dea04ef78f32a5c8",
+            "start": {
+              "offset": 170,
+              "line": 10,
+              "column": 12
+            },
+            "end": {
+              "offset": 178,
+              "line": 10,
+              "column": 20
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "declarationName_2cc27e3b84b4bce2",
         "context": "ViewKind",
         "source": [
           {
@@ -1302,60 +1834,6 @@
               "offset": 1125,
               "line": 49,
               "column": 31
-            },
-            "filePath": "utils/utils.ts"
-          }
-        ]
-      },
-      {
-        "objectKey": "variableDeclarator_1930d95a3bd1a249",
-        "context": "formatter = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' })",
-        "source": [
-          {
-            "sourceKey": "variableDeclarator_16aa2915d8ab2816",
-            "start": {
-              "offset": 211,
-              "line": 15,
-              "column": 6
-            },
-            "end": {
-              "offset": 293,
-              "line": 15,
-              "column": 88
-            },
-            "filePath": "utils/utils.ts"
-          }
-        ]
-      },
-      {
-        "objectKey": "identifier_b5be9071a21bee74",
-        "context": "formatter",
-        "source": [
-          {
-            "sourceKey": "identifier_6292a2379f14c028",
-            "start": {
-              "offset": 211,
-              "line": 15,
-              "column": 6
-            },
-            "end": {
-              "offset": 220,
-              "line": 15,
-              "column": 15
-            },
-            "filePath": "utils/utils.ts"
-          },
-          {
-            "sourceKey": "identifier_0815104caa48c6c7",
-            "start": {
-              "offset": 351,
-              "line": 17,
-              "column": 55
-            },
-            "end": {
-              "offset": 360,
-              "line": 17,
-              "column": 64
             },
             "filePath": "utils/utils.ts"
           }
@@ -1542,20 +2020,74 @@
         ]
       },
       {
-        "objectKey": "variableDeclarator_77000f0ea5d97163",
-        "context": "formatAmount = (value: number): string => formatter.format(value)",
+        "objectKey": "variableDeclarator_1930d95a3bd1a249",
+        "context": "formatter = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' })",
         "source": [
           {
-            "sourceKey": "variableDeclarator_3d05eb6f9b3bb55f",
+            "sourceKey": "variableDeclarator_16aa2915d8ab2816",
             "start": {
-              "offset": 309,
-              "line": 17,
-              "column": 13
+              "offset": 211,
+              "line": 15,
+              "column": 6
             },
             "end": {
-              "offset": 374,
+              "offset": 293,
+              "line": 15,
+              "column": 88
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_b5be9071a21bee74",
+        "context": "formatter",
+        "source": [
+          {
+            "sourceKey": "identifier_6292a2379f14c028",
+            "start": {
+              "offset": 211,
+              "line": 15,
+              "column": 6
+            },
+            "end": {
+              "offset": 220,
+              "line": 15,
+              "column": 15
+            },
+            "filePath": "utils/utils.ts"
+          },
+          {
+            "sourceKey": "identifier_0815104caa48c6c7",
+            "start": {
+              "offset": 351,
               "line": 17,
-              "column": 78
+              "column": 55
+            },
+            "end": {
+              "offset": 360,
+              "line": 17,
+              "column": 64
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "declarationName_4275cb053c22dbb2",
+        "context": "formatter",
+        "source": [
+          {
+            "sourceKey": "identifier_6292a2379f14c028",
+            "start": {
+              "offset": 211,
+              "line": 15,
+              "column": 6
+            },
+            "end": {
+              "offset": 220,
+              "line": 15,
+              "column": 15
             },
             "filePath": "utils/utils.ts"
           }
@@ -1582,15 +2114,15 @@
         ]
       },
       {
-        "objectKey": "tSNumberKeyword_850ba0354605a53c",
-        "context": "number",
+        "objectKey": "lwcModifiers_44136fa355b3678a",
+        "context": "value: number",
         "source": [
           {
-            "sourceKey": "tSNumberKeyword_2fcf03249a327969",
+            "sourceKey": "identifier_69bdda3e2b142fca",
             "start": {
-              "offset": 332,
+              "offset": 325,
               "line": 17,
-              "column": 36
+              "column": 29
             },
             "end": {
               "offset": 338,
@@ -1600,78 +2132,100 @@
             "filePath": "utils/utils.ts"
           },
           {
-            "sourceKey": "tSNumberKeyword_c11b27c79e517021",
+            "sourceKey": "identifier_0838790aa54880ae",
             "start": {
-              "offset": 427,
+              "offset": 400,
               "line": 19,
-              "column": 50
+              "column": 23
             },
             "end": {
-              "offset": 433,
+              "offset": 418,
               "line": 19,
-              "column": 56
+              "column": 41
             },
             "filePath": "utils/utils.ts"
           },
           {
-            "sourceKey": "tSNumberKeyword_6356bc174fec2a51",
+            "sourceKey": "assignmentPattern_10e0b0ff204b53ae",
             "start": {
-              "offset": 681,
-              "line": 29,
-              "column": 16
+              "offset": 420,
+              "line": 19,
+              "column": 43
             },
             "end": {
-              "offset": 687,
-              "line": 29,
-              "column": 22
+              "offset": 438,
+              "line": 19,
+              "column": 61
             },
             "filePath": "utils/utils.ts"
           },
           {
-            "sourceKey": "tSNumberKeyword_c1c42cb102cfa933",
+            "sourceKey": "identifier_e19b20775a963a14",
             "start": {
-              "offset": 751,
-              "line": 33,
-              "column": 22
+              "offset": 489,
+              "line": 20,
+              "column": 40
             },
             "end": {
-              "offset": 757,
-              "line": 33,
-              "column": 28
-            },
-            "filePath": "utils/utils.ts"
-          }
-        ]
-      },
-      {
-        "objectKey": "tSStringKeyword_7d896e6512bf9cb2",
-        "context": "string",
-        "source": [
-          {
-            "sourceKey": "tSStringKeyword_23f45f5da4ea75ed",
-            "start": {
-              "offset": 341,
-              "line": 17,
-              "column": 45
-            },
-            "end": {
-              "offset": 347,
-              "line": 17,
-              "column": 51
+              "offset": 495,
+              "line": 20,
+              "column": 46
             },
             "filePath": "utils/utils.ts"
           },
           {
-            "sourceKey": "tSStringKeyword_4dfc916ac7e76fa9",
+            "sourceKey": "classPrivateProperty_cb51342bd1dbebba",
             "start": {
-              "offset": 648,
+              "offset": 632,
               "line": 27,
-              "column": 20
+              "column": 4
             },
             "end": {
-              "offset": 654,
+              "offset": 663,
               "line": 27,
-              "column": 26
+              "column": 35
+            },
+            "filePath": "utils/utils.ts"
+          },
+          {
+            "sourceKey": "classMethod_37e28ded3f859b60",
+            "start": {
+              "offset": 669,
+              "line": 29,
+              "column": 4
+            },
+            "end": {
+              "offset": 727,
+              "line": 31,
+              "column": 5
+            },
+            "filePath": "utils/utils.ts"
+          },
+          {
+            "sourceKey": "identifier_591aeedbf5aec222",
+            "start": {
+              "offset": 737,
+              "line": 33,
+              "column": 8
+            },
+            "end": {
+              "offset": 748,
+              "line": 33,
+              "column": 19
+            },
+            "filePath": "utils/utils.ts"
+          },
+          {
+            "sourceKey": "classMethod_0e5b7e2f2f8c52cb",
+            "start": {
+              "offset": 733,
+              "line": 33,
+              "column": 4
+            },
+            "end": {
+              "offset": 1090,
+              "line": 46,
+              "column": 5
             },
             "filePath": "utils/utils.ts"
           }
@@ -1718,20 +2272,40 @@
         ]
       },
       {
-        "objectKey": "functionDeclaration_54361c1a62e136c4",
-        "context": "function toRows(records: unknown[], limit: number = 50): Row[] {\n    return records.slice(0, limit).map((record) => record as Row);\n}",
+        "objectKey": "variableDeclarator_77000f0ea5d97163",
+        "context": "formatAmount = (value: number): string => formatter.format(value)",
         "source": [
           {
-            "sourceKey": "functionDeclaration_0a79353f1fa514e6",
+            "sourceKey": "variableDeclarator_3d05eb6f9b3bb55f",
             "start": {
-              "offset": 384,
-              "line": 19,
-              "column": 7
+              "offset": 309,
+              "line": 17,
+              "column": 13
             },
             "end": {
-              "offset": 517,
-              "line": 21,
-              "column": 1
+              "offset": 374,
+              "line": 17,
+              "column": 78
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "declarationName_6fc66ed005095254",
+        "context": "formatAmount",
+        "source": [
+          {
+            "sourceKey": "identifier_1b168443823e4402",
+            "start": {
+              "offset": 309,
+              "line": 17,
+              "column": 13
+            },
+            "end": {
+              "offset": 321,
+              "line": 17,
+              "column": 25
             },
             "filePath": "utils/utils.ts"
           }
@@ -1772,6 +2346,26 @@
               "offset": 418,
               "line": 19,
               "column": 41
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "tSUnknownKeyword_6ef5499dc7a933b0",
+        "context": "unknown",
+        "source": [
+          {
+            "sourceKey": "tSUnknownKeyword_27b0f01f3713e094",
+            "start": {
+              "offset": 409,
+              "line": 19,
+              "column": 32
+            },
+            "end": {
+              "offset": 416,
+              "line": 19,
+              "column": 39
             },
             "filePath": "utils/utils.ts"
           }
@@ -1846,6 +2440,68 @@
               "offset": 748,
               "line": 33,
               "column": 19
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "tSTypeReference_eca924ff86bb9059",
+        "context": "Row",
+        "source": [
+          {
+            "sourceKey": "tSTypeReference_f1e23c3bea5e1805",
+            "start": {
+              "offset": 441,
+              "line": 19,
+              "column": 64
+            },
+            "end": {
+              "offset": 444,
+              "line": 19,
+              "column": 67
+            },
+            "filePath": "utils/utils.ts"
+          },
+          {
+            "sourceKey": "tSTypeReference_936d04eef2f63ac0",
+            "start": {
+              "offset": 510,
+              "line": 20,
+              "column": 61
+            },
+            "end": {
+              "offset": 513,
+              "line": 20,
+              "column": 64
+            },
+            "filePath": "utils/utils.ts"
+          },
+          {
+            "sourceKey": "tSTypeReference_7eb0520b3d88d2b4",
+            "start": {
+              "offset": 656,
+              "line": 27,
+              "column": 28
+            },
+            "end": {
+              "offset": 659,
+              "line": 27,
+              "column": 31
+            },
+            "filePath": "utils/utils.ts"
+          },
+          {
+            "sourceKey": "tSTypeReference_38ccccf7f76ab68d",
+            "start": {
+              "offset": 743,
+              "line": 33,
+              "column": 14
+            },
+            "end": {
+              "offset": 746,
+              "line": 33,
+              "column": 17
             },
             "filePath": "utils/utils.ts"
           }
@@ -2074,53 +2730,19 @@
         ]
       },
       {
-        "objectKey": "tSTypeReference_eca924ff86bb9059",
-        "context": "Row",
+        "objectKey": "functionDeclaration_54361c1a62e136c4",
+        "context": "function toRows(records: unknown[], limit: number = 50): Row[] {\n    return records.slice(0, limit).map((record) => record as Row);\n}",
         "source": [
           {
-            "sourceKey": "tSTypeReference_936d04eef2f63ac0",
+            "sourceKey": "functionDeclaration_0a79353f1fa514e6",
             "start": {
-              "offset": 510,
-              "line": 20,
-              "column": 61
-            },
-            "end": {
-              "offset": 513,
-              "line": 20,
-              "column": 64
-            },
-            "filePath": "utils/utils.ts"
-          },
-          {
-            "sourceKey": "tSTypeReference_7eb0520b3d88d2b4",
-            "start": {
-              "offset": 656,
-              "line": 27,
-              "column": 28
-            },
-            "end": {
-              "offset": 659,
-              "line": 27,
-              "column": 31
-            },
-            "filePath": "utils/utils.ts"
-          }
-        ]
-      },
-      {
-        "objectKey": "classDeclaration_a25f963799748c6b",
-        "context": "class RowCache {\n    static instances = 0;\n\n    #rows = new Map<string, Row>();\n\n    get size(): number {\n        return this.#rows.size;\n    }\n\n    put(rows: Row[]): number {\n        let count = 0;\n        for (const row of rows) {\n            if (!row.id) continue;\n            switch (row.name) {\n                case '':\n                    break;\n                default:\n                    this.#rows.set(row.id, row);\n                    count++;\n            }\n        }\n        return count;\n    }\n}",
-        "source": [
-          {
-            "sourceKey": "classDeclaration_2339a07b182c50cf",
-            "start": {
-              "offset": 584,
-              "line": 24,
+              "offset": 384,
+              "line": 19,
               "column": 7
             },
             "end": {
-              "offset": 1092,
-              "line": 47,
+              "offset": 517,
+              "line": 21,
               "column": 1
             },
             "filePath": "utils/utils.ts"
@@ -2128,7 +2750,47 @@
         ]
       },
       {
+        "objectKey": "declarationName_5f0b5c2f40bf9bf7",
+        "context": "toRows",
+        "source": [
+          {
+            "sourceKey": "identifier_d55f733ebcaa304a",
+            "start": {
+              "offset": 393,
+              "line": 19,
+              "column": 16
+            },
+            "end": {
+              "offset": 399,
+              "line": 19,
+              "column": 22
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
         "objectKey": "classProperty_758cf63ce31e9922",
+        "context": "static instances = 0;",
+        "source": [
+          {
+            "sourceKey": "classProperty_ed5934413838da48",
+            "start": {
+              "offset": 605,
+              "line": 25,
+              "column": 4
+            },
+            "end": {
+              "offset": 626,
+              "line": 25,
+              "column": 25
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcModifiers_feedae4c592b2a85",
         "context": "static instances = 0;",
         "source": [
           {
@@ -2162,6 +2824,66 @@
               "offset": 621,
               "line": 25,
               "column": 20
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "declarationName_79190866d8f16cca",
+        "context": "instances",
+        "source": [
+          {
+            "sourceKey": "identifier_c650005bfc6de562",
+            "start": {
+              "offset": 612,
+              "line": 25,
+              "column": 11
+            },
+            "end": {
+              "offset": 621,
+              "line": 25,
+              "column": 20
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "newExpression_80ba0ec4643c6630",
+        "context": "new Map<string, Row>()",
+        "source": [
+          {
+            "sourceKey": "newExpression_a0d468d0cc0f3cb6",
+            "start": {
+              "offset": 640,
+              "line": 27,
+              "column": 12
+            },
+            "end": {
+              "offset": 662,
+              "line": 27,
+              "column": 34
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_933e9a4614ad71c5",
+        "context": "Map",
+        "source": [
+          {
+            "sourceKey": "identifier_01ad693da974af4b",
+            "start": {
+              "offset": 644,
+              "line": 27,
+              "column": 16
+            },
+            "end": {
+              "offset": 647,
+              "line": 27,
+              "column": 19
             },
             "filePath": "utils/utils.ts"
           }
@@ -2208,40 +2930,40 @@
         ]
       },
       {
-        "objectKey": "newExpression_80ba0ec4643c6630",
-        "context": "new Map<string, Row>()",
+        "objectKey": "declarationName_01332f6eda930d16",
+        "context": "#rows",
         "source": [
           {
-            "sourceKey": "newExpression_a0d468d0cc0f3cb6",
+            "sourceKey": "privateName_6f353786f6f115c8",
             "start": {
-              "offset": 640,
+              "offset": 632,
               "line": 27,
-              "column": 12
+              "column": 4
             },
             "end": {
-              "offset": 662,
+              "offset": 637,
               "line": 27,
-              "column": 34
+              "column": 9
             },
             "filePath": "utils/utils.ts"
           }
         ]
       },
       {
-        "objectKey": "identifier_933e9a4614ad71c5",
-        "context": "Map",
+        "objectKey": "classMethod_ba5455bb3b7fae89",
+        "context": "get size(): number {\n        return this.#rows.size;\n    }",
         "source": [
           {
-            "sourceKey": "identifier_01ad693da974af4b",
+            "sourceKey": "classMethod_37e28ded3f859b60",
             "start": {
-              "offset": 644,
-              "line": 27,
-              "column": 16
+              "offset": 669,
+              "line": 29,
+              "column": 4
             },
             "end": {
-              "offset": 647,
-              "line": 27,
-              "column": 19
+              "offset": 727,
+              "line": 31,
+              "column": 5
             },
             "filePath": "utils/utils.ts"
           }
@@ -2356,7 +3078,7 @@
         ]
       },
       {
-        "objectKey": "classMethod_ba5455bb3b7fae89",
+        "objectKey": "lwcAccessor_c3fceb9f26a337f1",
         "context": "get size(): number {\n        return this.#rows.size;\n    }",
         "source": [
           {
@@ -2396,40 +3118,20 @@
         ]
       },
       {
-        "objectKey": "classMethod_e19899f4141f9bfc",
-        "context": "put(rows: Row[]): number {\n        let count = 0;\n        for (const row of rows) {\n            if (!row.id) continue;\n            switch (row.name) {\n                case '':\n                    break;\n                default:\n                    this.#rows.set(row.id, row);\n                    count++;\n            }\n        }\n        return count;\n    }",
+        "objectKey": "declarationName_36115cf70a52bd79",
+        "context": "size",
         "source": [
           {
-            "sourceKey": "classMethod_0e5b7e2f2f8c52cb",
+            "sourceKey": "identifier_edc8453caac5feaf",
             "start": {
-              "offset": 733,
-              "line": 33,
-              "column": 4
+              "offset": 673,
+              "line": 29,
+              "column": 8
             },
             "end": {
-              "offset": 1090,
-              "line": 46,
-              "column": 5
-            },
-            "filePath": "utils/utils.ts"
-          }
-        ]
-      },
-      {
-        "objectKey": "identifier_eccf44b162ae881a",
-        "context": "put",
-        "source": [
-          {
-            "sourceKey": "identifier_d247922a27988f02",
-            "start": {
-              "offset": 733,
-              "line": 33,
-              "column": 4
-            },
-            "end": {
-              "offset": 736,
-              "line": 33,
-              "column": 7
+              "offset": 677,
+              "line": 29,
+              "column": 12
             },
             "filePath": "utils/utils.ts"
           }
@@ -2714,6 +3416,26 @@
         ]
       },
       {
+        "objectKey": "jsIfBranch_ec386368e4cc5a14",
+        "context": "!row.id",
+        "source": [
+          {
+            "sourceKey": "unaryExpression_610e6fce3e5f0da8",
+            "start": {
+              "offset": 833,
+              "line": 36,
+              "column": 16
+            },
+            "end": {
+              "offset": 840,
+              "line": 36,
+              "column": 23
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
         "objectKey": "ifStatement_9938210bc559dd14",
         "context": "if (!row.id) continue;",
         "source": [
@@ -2774,6 +3496,26 @@
         ]
       },
       {
+        "objectKey": "switchCase_c2c5c51e5eba59bc",
+        "context": "case '':\n                    break;",
+        "source": [
+          {
+            "sourceKey": "switchCase_d4965d8cb90d8845",
+            "start": {
+              "offset": 900,
+              "line": 38,
+              "column": 16
+            },
+            "end": {
+              "offset": 935,
+              "line": 39,
+              "column": 26
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
         "objectKey": "stringLiteral_1fb0babbdedea16e",
         "context": "''",
         "source": [
@@ -2808,6 +3550,26 @@
               "offset": 935,
               "line": 39,
               "column": 26
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "switchCase_bab391cdde177ecc",
+        "context": "default:\n                    this.#rows.set(row.id, row);\n                    count++;",
+        "source": [
+          {
+            "sourceKey": "switchCase_1baf780a4eb02f54",
+            "start": {
+              "offset": 952,
+              "line": 40,
+              "column": 16
+            },
+            "end": {
+              "offset": 1038,
+              "line": 42,
+              "column": 28
             },
             "filePath": "utils/utils.ts"
           }
@@ -2934,6 +3696,146 @@
         ]
       },
       {
+        "objectKey": "classMethod_e19899f4141f9bfc",
+        "context": "put(rows: Row[]): number {\n        let count = 0;\n        for (const row of rows) {\n            if (!row.id) continue;\n            switch (row.name) {\n                case '':\n                    break;\n                default:\n                    this.#rows.set(row.id, row);\n                    count++;\n            }\n        }\n        return count;\n    }",
+        "source": [
+          {
+            "sourceKey": "classMethod_0e5b7e2f2f8c52cb",
+            "start": {
+              "offset": 733,
+              "line": 33,
+              "column": 4
+            },
+            "end": {
+              "offset": 1090,
+              "line": 46,
+              "column": 5
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_eccf44b162ae881a",
+        "context": "put",
+        "source": [
+          {
+            "sourceKey": "identifier_d247922a27988f02",
+            "start": {
+              "offset": 733,
+              "line": 33,
+              "column": 4
+            },
+            "end": {
+              "offset": 736,
+              "line": 33,
+              "column": 7
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "declarationName_37e9ceb129bb94c6",
+        "context": "put",
+        "source": [
+          {
+            "sourceKey": "identifier_d247922a27988f02",
+            "start": {
+              "offset": 733,
+              "line": 33,
+              "column": 4
+            },
+            "end": {
+              "offset": 736,
+              "line": 33,
+              "column": 7
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "classDeclaration_a25f963799748c6b",
+        "context": "class RowCache {\n    static instances = 0;\n\n    #rows = new Map<string, Row>();\n\n    get size(): number {\n        return this.#rows.size;\n    }\n\n    put(rows: Row[]): number {\n        let count = 0;\n        for (const row of rows) {\n            if (!row.id) continue;\n            switch (row.name) {\n                case '':\n                    break;\n                default:\n                    this.#rows.set(row.id, row);\n                    count++;\n            }\n        }\n        return count;\n    }\n}",
+        "source": [
+          {
+            "sourceKey": "classDeclaration_2339a07b182c50cf",
+            "start": {
+              "offset": 584,
+              "line": 24,
+              "column": 7
+            },
+            "end": {
+              "offset": 1092,
+              "line": 47,
+              "column": 1
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "declarationName_8442847a773db8e4",
+        "context": "RowCache",
+        "source": [
+          {
+            "sourceKey": "identifier_bac3a0545c29ba06",
+            "start": {
+              "offset": 590,
+              "line": 24,
+              "column": 13
+            },
+            "end": {
+              "offset": 598,
+              "line": 24,
+              "column": 21
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcModule_856352619332b2d1",
+        "context": "",
+        "source": [
+          {
+            "sourceKey": "lwcModule_93679611643e30c1",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcBundleModule_d2f9fc9c3c322ba3",
+        "context": "",
+        "source": [
+          {
+            "sourceKey": "lwcModule_93679611643e30c1",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "filePath": "utils/utils.ts"
+          }
+        ]
+      },
+      {
         "objectKey": "lwcBundleMeta_750374b0d2d703f7",
         "context": "<LightningComponentBundle xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <apiVersion>61.0</apiVersion>\n    <isExposed>false</isExposed>\n</LightningComponentBundle>",
         "source": [
@@ -2950,6 +3852,26 @@
               "line": 5,
               "column": 27
             }
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcBundle_5b2f1495b1f4eb7d",
+        "context": "",
+        "source": [
+          {
+            "sourceKey": "lwcModule_93679611643e30c1",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "filePath": "utils/utils.ts"
           }
         ]
       }

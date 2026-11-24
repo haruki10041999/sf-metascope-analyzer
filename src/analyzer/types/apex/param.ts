@@ -16,6 +16,6 @@ export const makeParameterJson = (target: FormalParameterTypeClass): ParameterJs
     return makeNodeJson<ParameterJson>('parameter', target, {
         variant: name.getFields().value,
         variantType: makeTypeJson(valueType),
-        modifier: makeModifiersJson(modifiers),
+        modifier: makeModifiersJson(target, modifiers),
     });
 };

@@ -1,12 +1,16 @@
 {
   "source": {
+    "kind": "apexSource",
+    "sourceKeys": {},
     "fileName": "Level.cls",
     "fileType": "cls",
     "content": {
       "kind": "enum",
-      "sourceKeys": {
-        "base": {},
-        "name": {}
+      "sourceKeys": {},
+      "nameRef": {
+        "kind": "declarationName",
+        "sourceKeys": {},
+        "name": "Level"
       },
       "name": "Level",
       "members": [
@@ -22,6 +26,8 @@
         }
       ],
       "modifier": {
+        "kind": "modifiers",
+        "sourceKeys": {},
         "keyword": [
           {
             "kind": "modifier",
@@ -78,6 +84,32 @@
         "offset": 7,
         "line": 1,
         "column": 7
+      },
+      "end": {
+        "offset": 39,
+        "line": 4,
+        "column": 1
+      }
+    },
+    {
+      "context": "public enum Level {\n    LOW,\n    HIGH\n}",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 39,
+        "line": 4,
+        "column": 1
+      }
+    },
+    {
+      "context": "public enum Level {\n    LOW,\n    HIGH\n}",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
       },
       "end": {
         "offset": 39,

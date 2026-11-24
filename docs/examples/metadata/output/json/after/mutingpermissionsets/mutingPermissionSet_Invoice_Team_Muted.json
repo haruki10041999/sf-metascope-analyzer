@@ -1,0 +1,138 @@
+{
+  "filePath": "mutingpermissionsets/Invoice_Team_Muted.mutingpermissionset-meta.xml",
+  "resolvedError": [],
+  "dataType": "mutingPermissionSet",
+  "result": {
+    "id": "mutingPermissionSet_Invoice_Team_Muted",
+    "base": {
+      "kind": "mutingPermissionSet",
+      "sourceKeys": {
+        "objectKey": "mutingPermissionSet_d408db916cbb2824",
+        "sourceKey": "mutingPermissionSet_1d95312d26f61ce0"
+      },
+      "name": "Invoice_Team_Muted",
+      "label": "Invoice Team Muted",
+      "fieldPermissions": [
+        {
+          "kind": "fieldPermission",
+          "sourceKeys": {
+            "objectKey": "fieldPermission_6c1a53216036c5cd",
+            "sourceKey": "fieldPermission_99d5034a91fd483a"
+          },
+          "field": "Invoice__c.Approved__c",
+          "readable": false,
+          "editable": true
+        }
+      ],
+      "objectPermissions": [
+        {
+          "kind": "objectPermission",
+          "sourceKeys": {
+            "objectKey": "objectPermission_b0f1e6c05e1c1721",
+            "sourceKey": "objectPermission_f6c0b17cded170d2"
+          },
+          "object": "Invoice__c",
+          "allowCreate": false,
+          "allowRead": false,
+          "allowEdit": false,
+          "allowDelete": true,
+          "viewAllRecords": true,
+          "modifyAllRecords": true
+        }
+      ],
+      "userPermissions": [
+        {
+          "kind": "userPermission",
+          "sourceKeys": {
+            "objectKey": "userPermission_59cc70777c966e65",
+            "sourceKey": "userPermission_a663e2397977f29e"
+          },
+          "name": "ModifyAllData",
+          "enabled": true
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "fieldPermission_6c1a53216036c5cd",
+        "context": "<fieldPermissions>\n        <editable>true</editable>\n        <field>Invoice__c.Approved__c</field>\n        <readable>false</readable>\n    </fieldPermissions>",
+        "source": [
+          {
+            "sourceKey": "fieldPermission_99d5034a91fd483a",
+            "filePath": "mutingpermissionsets/Invoice_Team_Muted.mutingpermissionset-meta.xml",
+            "start": {
+              "offset": 113,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 270,
+              "line": 7,
+              "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "objectPermission_b0f1e6c05e1c1721",
+        "context": "<objectPermissions>\n        <allowCreate>false</allowCreate>\n        <allowDelete>true</allowDelete>\n        <allowEdit>false</allowEdit>\n        <allowRead>false</allowRead>\n        <modifyAllRecords>true</modifyAllRecords>\n        <object>Invoice__c</object>\n        <viewAllRecords>true</viewAllRecords>\n    </objectPermissions>",
+        "source": [
+          {
+            "sourceKey": "objectPermission_f6c0b17cded170d2",
+            "filePath": "mutingpermissionsets/Invoice_Team_Muted.mutingpermissionset-meta.xml",
+            "start": {
+              "offset": 313,
+              "line": 9,
+              "column": 4
+            },
+            "end": {
+              "offset": 644,
+              "line": 17,
+              "column": 24
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "userPermission_59cc70777c966e65",
+        "context": "<userPermissions>\n        <enabled>true</enabled>\n        <name>ModifyAllData</name>\n    </userPermissions>",
+        "source": [
+          {
+            "sourceKey": "userPermission_a663e2397977f29e",
+            "filePath": "mutingpermissionsets/Invoice_Team_Muted.mutingpermissionset-meta.xml",
+            "start": {
+              "offset": 649,
+              "line": 18,
+              "column": 4
+            },
+            "end": {
+              "offset": 756,
+              "line": 21,
+              "column": 22
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "mutingPermissionSet_d408db916cbb2824",
+        "context": "<MutingPermissionSet xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fieldPermissions>\n        <editable>true</editable>\n        <field>Invoice__c.Approved__c</field>\n        <readable>false</readable>\n    </fieldPermissions>\n    <label>Invoice Team Muted</label>\n    <objectPermissions>\n        <allowCreate>false</allowCreate>\n        <allowDelete>true</allowDelete>\n        <allowEdit>false</allowEdit>\n        <allowRead>false</allowRead>\n        <modifyAllRecords>true</modifyAllRecords>\n        <object>Invoice__c</object>\n        <viewAllRecords>true</viewAllRecords>\n    </objectPermissions>\n    <userPermissions>\n        <enabled>true</enabled>\n        <name>ModifyAllData</name>\n    </userPermissions>\n</MutingPermissionSet>",
+        "source": [
+          {
+            "sourceKey": "mutingPermissionSet_1d95312d26f61ce0",
+            "filePath": "mutingpermissionsets/Invoice_Team_Muted.mutingpermissionset-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 779,
+              "line": 22,
+              "column": 22
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

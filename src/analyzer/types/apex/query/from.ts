@@ -21,12 +21,12 @@ const makeFromFieldJson = (target: FromNameTypeClass): FromFieldJson => {
     return fromFieldJson;
 };
 
-export type FromJson = {
+/** FROM のオブジェクトの並び */
+export type FromJson = JsonType<'soqlFrom'> & {
     field: FromFieldJson[];
 };
 
-export const makeFromJson = (target: FromNameListTypeClass): FromJson => {
-    return {
+export const makeFromJson = (target: FromNameListTypeClass): FromJson =>
+    makeNodeJson<FromJson>('soqlFrom', target, {
         field: target.getFields().value.map((v) => makeFromFieldJson(v)),
-    };
-};
+    });

@@ -71,36 +71,50 @@
   "result": {
     "id": "class_Broken",
     "base": {
+      "kind": "apexUnit",
+      "sourceKeys": {
+        "objectKey": "apexUnit_390f81de006b767c",
+        "sourceKey": "compilationUnit_8acde8ceab43bc41"
+      },
       "name": "Broken",
       "unitType": "class",
       "source": {
+        "kind": "apexSource",
+        "sourceKeys": {
+          "objectKey": "apexSource_f10b166568cedab7",
+          "sourceKey": "compilationUnit_8acde8ceab43bc41"
+        },
         "fileName": "Broken.cls",
         "fileType": "cls",
         "content": {
           "kind": "class",
           "sourceKeys": {
-            "base": {
-              "objectKey": "classDeclaration_097b407b64e401be",
-              "sourceKey": "classDeclaration_316ccc84364cdbc4"
-            },
-            "name": {
-              "objectKey": "id_b37259d059092602",
+            "objectKey": "classDeclaration_097b407b64e401be",
+            "sourceKey": "classDeclaration_316ccc84364cdbc4"
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {
+              "objectKey": "declarationName_7d041fc954d2a986",
               "sourceKey": "id_c2b0d451f4f1b4cc"
-            }
+            },
+            "name": "Broken"
           },
           "name": "Broken",
           "block": [
             {
               "kind": "method",
               "sourceKeys": {
-                "base": {
-                  "objectKey": "methodDeclaration_212a200eab1e77ba",
-                  "sourceKey": "methodDeclaration_c53faf02d9d77339"
-                },
-                "name": {
-                  "objectKey": "id_173f4a982cfa79db",
+                "objectKey": "methodDeclaration_212a200eab1e77ba",
+                "sourceKey": "methodDeclaration_c53faf02d9d77339"
+              },
+              "nameRef": {
+                "kind": "declarationName",
+                "sourceKeys": {
+                  "objectKey": "declarationName_46bdaaa16a483c7c",
                   "sourceKey": "id_1b3fefd9f203fcb6"
-                }
+                },
+                "name": "run"
               },
               "name": "run",
               "returnType": "void",
@@ -121,7 +135,13 @@
                     "type": "primitive",
                     "primitiveType": "Integer"
                   },
-                  "modifier": {},
+                  "modifier": {
+                    "kind": "modifiers",
+                    "sourceKeys": {
+                      "objectKey": "modifiers_44136fa355b3678a",
+                      "sourceKey": "localVariableDeclaration_987cb3020780c6ae"
+                    }
+                  },
                   "variants": [
                     {
                       "kind": "variant",
@@ -183,6 +203,11 @@
                 }
               ],
               "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {
+                  "objectKey": "modifiers_b09596894868e30e",
+                  "sourceKey": "classBodyDeclaration_8553a5288dc81700"
+                },
                 "keyword": [
                   {
                     "kind": "modifier",
@@ -197,6 +222,11 @@
             }
           ],
           "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {
+              "objectKey": "modifiers_b09596894868e30e",
+              "sourceKey": "typeDeclaration_8acde8ceab43bc41"
+            },
             "keyword": [
               {
                 "kind": "modifier",
@@ -211,11 +241,35 @@
         }
       },
       "meta": {
+        "kind": "apexMetaFile",
+        "sourceKeys": {
+          "objectKey": "apexMetaFile_fec5a2a5cf4001fd",
+          "sourceKey": "apexMetaFile_d2e42cf9d9a547fe"
+        },
         "fileName": "Broken.cls-meta.xml",
         "meta": null
       }
     },
     "sourceObject": [
+      {
+        "objectKey": "apexSource_f10b166568cedab7",
+        "context": "public class Broken {\n    public void run() {\n        Integer x = ;\n        foo(1, );\n        b();\n    }\n}",
+        "source": [
+          {
+            "sourceKey": "compilationUnit_8acde8ceab43bc41",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 106,
+              "line": 7,
+              "column": 1
+            }
+          }
+        ]
+      },
       {
         "objectKey": "classDeclaration_097b407b64e401be",
         "context": "class Broken {\n    public void run() {\n        Integer x = ;\n        foo(1, );\n        b();\n    }\n}",
@@ -236,7 +290,7 @@
         ]
       },
       {
-        "objectKey": "id_b37259d059092602",
+        "objectKey": "declarationName_7d041fc954d2a986",
         "context": "Broken",
         "source": [
           {
@@ -274,7 +328,7 @@
         ]
       },
       {
-        "objectKey": "id_173f4a982cfa79db",
+        "objectKey": "declarationName_46bdaaa16a483c7c",
         "context": "run",
         "source": [
           {
@@ -326,6 +380,25 @@
               "offset": 61,
               "line": 3,
               "column": 15
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_44136fa355b3678a",
+        "context": "Integer x = ;\n        foo(1, )",
+        "source": [
+          {
+            "sourceKey": "localVariableDeclaration_987cb3020780c6ae",
+            "start": {
+              "offset": 54,
+              "line": 3,
+              "column": 8
+            },
+            "end": {
+              "offset": 84,
+              "line": 4,
+              "column": 16
             }
           }
         ]
@@ -464,6 +537,44 @@
         ]
       },
       {
+        "objectKey": "modifiers_b09596894868e30e",
+        "context": "public void run() {\n        Integer x = ;\n        foo(1, );\n        b();\n    }",
+        "source": [
+          {
+            "sourceKey": "classBodyDeclaration_8553a5288dc81700",
+            "start": {
+              "offset": 26,
+              "line": 2,
+              "column": 4
+            },
+            "end": {
+              "offset": 104,
+              "line": 6,
+              "column": 5
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_b09596894868e30e",
+        "context": "public class Broken {\n    public void run() {\n        Integer x = ;\n        foo(1, );\n        b();\n    }\n}",
+        "source": [
+          {
+            "sourceKey": "typeDeclaration_8acde8ceab43bc41",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 106,
+              "line": 7,
+              "column": 1
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "modifier_ff9740e1ee9f633a",
         "context": "public",
         "source": [
@@ -491,6 +602,45 @@
               "offset": 6,
               "line": 1,
               "column": 6
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "apexMetaFile_fec5a2a5cf4001fd",
+        "context": "",
+        "source": [
+          {
+            "sourceKey": "apexMetaFile_d2e42cf9d9a547fe",
+            "filePath": "Broken.cls-meta.xml",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "apexUnit_390f81de006b767c",
+        "context": "public class Broken {\n    public void run() {\n        Integer x = ;\n        foo(1, );\n        b();\n    }\n}",
+        "source": [
+          {
+            "sourceKey": "compilationUnit_8acde8ceab43bc41",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 106,
+              "line": 7,
+              "column": 1
             }
           }
         ]

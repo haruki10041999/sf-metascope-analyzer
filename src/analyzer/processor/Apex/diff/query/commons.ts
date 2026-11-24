@@ -1,9 +1,9 @@
 import {
-    DateFormulaJson,
-    FieldJson,
-    SignedNumberJson,
+    DateFormulaBody,
+    FieldBody,
+    SignedNumberBody,
     SingleConditionJson,
-    SoqlFunctionJson,
+    SoqlFunctionBody,
     ValueJson,
 } from '../../../../types';
 
@@ -30,7 +30,7 @@ export const makeUnorderedValueListDiff = <T>(before: T[], after: T[]): TypedLis
         () => undefined as never,
     );
 
-export type FieldTerm = FieldJson | SoqlFunctionJson;
+export type FieldTerm = FieldBody | SoqlFunctionBody;
 
 /** 項目と SOQL 関数の差分。種類 (type) が違うものは ReplacementDiff */
 export type FieldTermDiff =
@@ -61,7 +61,7 @@ export const makeFieldTermSequenceDiff = (
     );
 
 /** AND / OR の項は集合として比べるので、項の中の値は値として比べる */
-export type SignedNumberJsonDiff = ValueDiff<SignedNumberJson>;
-export type DateFormulaJsonDiff = ValueDiff<DateFormulaJson>;
+export type SignedNumberJsonDiff = ValueDiff<SignedNumberBody>;
+export type DateFormulaJsonDiff = ValueDiff<DateFormulaBody>;
 export type ValueJsonDiff = ValueDiff<ValueJson>;
 export type SingleConditionJsonDiff = TypedListItemDiff<SingleConditionJson, never>;

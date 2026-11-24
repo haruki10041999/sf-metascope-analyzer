@@ -58,10 +58,10 @@ export type ValueSetJsonDiff = {
     valueSetName?: PresentDiff<string, ValueDiff<string>>;
     controllingField?: PresentDiff<string, ValueDiff<string>>;
     values?: PresentDiff<PicklistValueJson[], PicklistValuesDiff[]>;
-    /** 依存する選択リストの対応表は B. 集合 (値ごとの組) */
+    /** 依存する選択リストの対応表は B. 集合 (値ごとの組。制御項目の値は名前の順にした中身で比べる) */
     valueSettings?: PresentDiff<
-        PicklistValueSettingJson[],
-        TypedListDiff<PicklistValueSettingJson, never>
+        PicklistValueSettingBody[],
+        TypedListDiff<PicklistValueSettingBody, never>
     >;
 };
 
@@ -106,9 +106,15 @@ export const makeValueSetDiff = (
     ),
 });
 
-/** 制御項目の値の並びは順に意味がないので、名前の順にしてから比べる */
-const sortSetting = (setting: PicklistValueSettingJson): PicklistValueSettingJson => ({
-    ...setting,
+/** 対応表の 1 組の中身 (kind・sourceKeys を除いたもの) */
+type PicklistValueSettingBody = Omit<PicklistValueSettingJson, 'kind' | 'sourceKeys'>;
+
+/**
+ * 制御項目の値の並びは順に意味がないので、名前の順にしてから比べる。
+ * 1 組はノード (metadata 8) で、ノードは objectKey (書いた順の中身) で比べられるので、並べ替えた中身にしてから比べる
+ */
+const sortSetting = (setting: PicklistValueSettingJson): PicklistValueSettingBody => ({
+    valueName: setting.valueName,
     controllingFieldValues: [...setting.controllingFieldValues].sort(),
 });
 

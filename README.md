@@ -1,6 +1,6 @@
 # sf-metascope-analyzer
 
-Salesforce DX プロジェクト（Apex・LWC・オブジェクト・権限・Flow など）を解析し、ドキュメントの作成とコードの理解を助ける MCP サーバーです。解析結果・依存関係を返し、利用者が自由に組めるレポート（1 つの HTML）を作ります。差分（前回保存した時点・git の範囲）と影響の調査は、その補助です。計画と進み具合は [docs/implementation-roadmap.md](docs/implementation-roadmap.md) にあります。
+Salesforce DX プロジェクト（Apex・LWC・オブジェクト・権限・Flow など）を解析し、ドキュメントの作成とコードの理解を助ける MCP サーバーです。解析結果・依存関係を返し、利用者が自由に組めるレポート（1 つの HTML）を作ります。差分（前回保存した時点・git の範囲）と影響の調査は、その補助です。計画とやることは [docs/plan.md](docs/plan.md) にまとめています。
 
 ## MCP サーバーの起動
 

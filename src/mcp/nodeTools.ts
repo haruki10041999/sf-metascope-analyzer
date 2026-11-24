@@ -6,7 +6,7 @@ import { type Repository, manifestUnitOf, unitName } from '../analyzer/unit';
 import { type ProcessorSource, processorGetter } from './context';
 
 // 保存の置き場 (SQLite) のノードの行を問い合わせる MCP のツール (docs/implementation-roadmap.md 5 章の Q4)。
-// ノード = 解析結果の JsonType・StructureJsonType 1 つ (Apex のメソッド・LWC のテンプレートの要素・フローの要素など)。
+// ノード = 解析結果の JsonType 1 つ (Apex のメソッド・LWC のテンプレートの要素・フローの要素など)。
 // 依存関係のツールと同じく、名前・種類・位置だけを返す (中身は返さないので、機密の値は出ない)
 
 const text = (value: unknown) => ({

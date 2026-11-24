@@ -4,6 +4,13 @@ import { describe, it } from 'node:test';
 
 import { LwcParser, parseStylesheet } from '../../src/analyzer/parser/Lwc';
 import type { CssAtRuleJson, CssRuleJson, LwcStylesheetJson } from '../../src/analyzer/types';
+import { lwcShape } from './lwcShape';
+
+/** 位置と、P1 で足したノードの kind (lwcValue・lwcExpression・cssDeclaration など) を両側から除いて比べる (lwcShape.ts) */
+const deepEqual = (actual: unknown, expected: unknown, message?: string) =>
+    message === undefined
+        ? assert.deepEqual(lwcShape(actual), lwcShape(expected))
+        : assert.deepEqual(lwcShape(actual), lwcShape(expected), message);
 
 // LWC の CSS の JSON と検証 (docs/lwc-implementation.md)
 
@@ -19,17 +26,17 @@ describe('LWC の CSS (JSON)', () => {
             '\n',
         );
         const result = parse(source, 'accountList/accountList.css');
-        assert.deepEqual(result.resolvedError, []);
+        deepEqual(result.resolvedError, []);
         const stylesheet = result.stylesheet as LwcStylesheetJson;
         assert.equal(stylesheet.kind, 'lwcStylesheet');
-        assert.deepEqual(
+        deepEqual(
             stylesheet.rules.map((r) => (r.kind === 'cssRule' ? r.selector : `@${r.name}`)),
             [':host', '.parent, .total', '.tile', '@media'],
         );
 
         const host = stylesheet.rules[0] as CssRuleJson;
         assert.equal(host.usesHost, true);
-        assert.deepEqual(host.declarations[1], {
+        deepEqual(host.declarations[1], {
             prop: '--account-list-gap',
             value: '0.5rem',
             important: false,
@@ -37,7 +44,7 @@ describe('LWC の CSS (JSON)', () => {
         });
 
         const tile = stylesheet.rules[2] as CssRuleJson;
-        assert.deepEqual(tile.declarations[1], {
+        deepEqual(tile.declarations[1], {
             prop: 'border-bottom',
             value: '1px solid var(--slds-g-color-border-base-1, #c9c9c9)',
             important: true,
@@ -67,7 +74,7 @@ describe('LWC の CSS (JSON)', () => {
         const stylesheet = stylesheetOf(
             '@import \'c/shared\';\n@import "c/theme";\n.a { color: red; }',
         );
-        assert.deepEqual(stylesheet.imports, ['c/shared', 'c/theme']);
+        deepEqual(stylesheet.imports, ['c/shared', 'c/theme']);
         assert.equal(stylesheet.rules.length, 1);
     });
 
@@ -81,8 +88,8 @@ describe('LWC の CSS (検証)', () => {
     it('構文エラーは JSON を作らず (null)、CSS_SYNTAX の resolvedError にする', () => {
         const result = parse('.a { color: red;\n');
         assert.equal(result.stylesheet, null);
-        assert.deepEqual(result.sourceObjects, []);
-        assert.deepEqual(
+        deepEqual(result.sourceObjects, []);
+        deepEqual(
             result.resolvedError.map((e) => [e.phase, e.code, e.errorMessage]),
             [['syntax', 'CSS_SYNTAX', 'Unclosed block']],
         );
@@ -91,7 +98,7 @@ describe('LWC の CSS (検証)', () => {
     it('LWC の仕様違反は、複数あってもすべて resolvedError にする (JSON は作る)', () => {
         const result = parse(':root { color: red; }\n#foo { color: blue; }\n.ok { color: red; }\n');
         assert.equal(result.stylesheet?.kind, 'lwcStylesheet');
-        assert.deepEqual(
+        deepEqual(
             result.resolvedError.map((e) => [e.phase, e.code, e.start.line, e.context]),
             [
                 ['lwc', 'LWC_CSS', 1, ':root'],
@@ -104,12 +111,12 @@ describe('LWC の CSS (検証)', () => {
         const result = await LwcParser.parseLwcBundle(`${BUNDLES}/broken`);
         assert.equal(result.dataType, 'lwcBundle');
         const css = result.resolvedError.filter((e) => e.filePath === 'broken/broken.css');
-        assert.deepEqual(
+        deepEqual(
             css.map((e) => [e.code, e.context]),
             [['LWC_CSS', ':root']],
         );
         if (result.dataType === 'lwcBundle') {
-            assert.deepEqual(
+            deepEqual(
                 result.result.base.stylesheets.map((s) => [s.fileName, s.stylesheet?.kind]),
                 [['broken.css', 'lwcStylesheet']],
             );

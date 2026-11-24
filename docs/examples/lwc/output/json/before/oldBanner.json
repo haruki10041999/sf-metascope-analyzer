@@ -5,13 +5,28 @@
   "result": {
     "id": "oldBanner",
     "base": {
+      "kind": "lwcBundle",
+      "sourceKeys": {
+        "objectKey": "lwcBundle_0c8fc0f0de276c1c",
+        "sourceKey": "lwcModule_884a7d7f69f068ce"
+      },
       "name": "oldBanner",
       "namespace": "c",
       "modules": [
         {
+          "kind": "lwcBundleModule",
+          "sourceKeys": {
+            "objectKey": "lwcBundleModule_fd65d8e05accd28a",
+            "sourceKey": "lwcModule_884a7d7f69f068ce"
+          },
           "fileName": "oldBanner.js",
           "main": true,
           "module": {
+            "kind": "lwcModule",
+            "sourceKeys": {
+              "objectKey": "lwcModule_c9c5631f0890a180",
+              "sourceKey": "lwcModule_884a7d7f69f068ce"
+            },
             "fileType": "js",
             "imports": [
               {
@@ -52,14 +67,8 @@
             "component": {
               "kind": "lwcComponent",
               "sourceKeys": {
-                "base": {
-                  "objectKey": "classDeclaration_8cce34dffc0f6c42",
-                  "sourceKey": "classDeclaration_d5e737fe7423f3c5"
-                },
-                "name": {
-                  "objectKey": "identifier_ee32ac8668c203d0",
-                  "sourceKey": "identifier_0d8b35173d16c937"
-                }
+                "objectKey": "classDeclaration_8cce34dffc0f6c42",
+                "sourceKey": "classDeclaration_d5e737fe7423f3c5"
               },
               "name": "OldBanner",
               "superClass": {
@@ -74,14 +83,8 @@
                 {
                   "kind": "lwcField",
                   "sourceKeys": {
-                    "base": {
-                      "objectKey": "classProperty_6518cd4aca19dbc9",
-                      "sourceKey": "classProperty_087ec57f8161a963"
-                    },
-                    "name": {
-                      "objectKey": "identifier_2275bd58faafea4f",
-                      "sourceKey": "identifier_eb0758eb08c783e6"
-                    }
+                    "objectKey": "classProperty_6518cd4aca19dbc9",
+                    "sourceKey": "classProperty_087ec57f8161a963"
                   },
                   "name": "message",
                   "init": {
@@ -94,6 +97,11 @@
                   },
                   "optional": false,
                   "modifier": {
+                    "kind": "lwcModifiers",
+                    "sourceKeys": {
+                      "objectKey": "lwcModifiers_4b8ec4432dd4af45",
+                      "sourceKey": "classProperty_087ec57f8161a963"
+                    },
                     "decorator": [
                       {
                         "kind": "lwcDecorator",
@@ -105,9 +113,25 @@
                         "arg": []
                       }
                     ]
+                  },
+                  "nameRef": {
+                    "kind": "declarationName",
+                    "sourceKeys": {
+                      "objectKey": "declarationName_bf3b6494e2984cd3",
+                      "sourceKey": "identifier_eb0758eb08c783e6"
+                    },
+                    "name": "message"
                   }
                 }
-              ]
+              ],
+              "nameRef": {
+                "kind": "declarationName",
+                "sourceKeys": {
+                  "objectKey": "declarationName_2ab994292d7a7ab8",
+                  "sourceKey": "identifier_0d8b35173d16c937"
+                },
+                "name": "OldBanner"
+              }
             },
             "exports": [
               {
@@ -128,12 +152,17 @@
       ],
       "templates": [
         {
+          "kind": "lwcBundleTemplate",
+          "sourceKeys": {
+            "objectKey": "lwcBundleTemplate_b4d6f3d64e59b844",
+            "sourceKey": "lwcTemplate_78878645b83fceb8"
+          },
           "fileName": "oldBanner.html",
           "main": true,
           "template": {
             "kind": "lwcTemplate",
             "sourceKeys": {
-              "objectKey": "lwcTemplate_16ff9f4796541d61",
+              "objectKey": "lwcTemplate_fd5cf653d138d87e",
               "sourceKey": "lwcTemplate_78878645b83fceb8"
             },
             "preserveComments": false,
@@ -141,7 +170,7 @@
               {
                 "kind": "lwcElement",
                 "sourceKeys": {
-                  "objectKey": "lwcElement_a4bc8f85f1caf3e5",
+                  "objectKey": "lwcElement_0747df02ff8b96af",
                   "sourceKey": "lwcElement_80cedda11d60cd9d"
                 },
                 "tag": "p",
@@ -153,12 +182,17 @@
                   {
                     "kind": "lwcText",
                     "sourceKeys": {
-                      "objectKey": "lwcText_12a5de0573cbe6d3",
+                      "objectKey": "lwcText_7e9aa712007d813f",
                       "sourceKey": "lwcText_fd76f90f3213ee69"
                     },
                     "text": "{message}",
                     "expressions": [
                       {
+                        "kind": "lwcExpression",
+                        "sourceKeys": {
+                          "objectKey": "lwcExpression_9f4c0bf6ed1101c5",
+                          "sourceKey": "lwcExpression_fd76f90f3213ee69"
+                        },
                         "text": "message",
                         "path": [
                           "message"
@@ -267,46 +301,6 @@
         ]
       },
       {
-        "objectKey": "classDeclaration_8cce34dffc0f6c42",
-        "context": "class OldBanner extends LightningElement {\n    @api message = '';\n}",
-        "source": [
-          {
-            "sourceKey": "classDeclaration_d5e737fe7423f3c5",
-            "start": {
-              "offset": 61,
-              "line": 3,
-              "column": 15
-            },
-            "end": {
-              "offset": 128,
-              "line": 5,
-              "column": 1
-            },
-            "filePath": "oldBanner/oldBanner.js"
-          }
-        ]
-      },
-      {
-        "objectKey": "identifier_ee32ac8668c203d0",
-        "context": "OldBanner",
-        "source": [
-          {
-            "sourceKey": "identifier_0d8b35173d16c937",
-            "start": {
-              "offset": 67,
-              "line": 3,
-              "column": 21
-            },
-            "end": {
-              "offset": 76,
-              "line": 3,
-              "column": 30
-            },
-            "filePath": "oldBanner/oldBanner.js"
-          }
-        ]
-      },
-      {
         "objectKey": "identifier_4a7a59e701040717",
         "context": "LightningElement",
         "source": [
@@ -321,46 +315,6 @@
               "offset": 101,
               "line": 3,
               "column": 55
-            },
-            "filePath": "oldBanner/oldBanner.js"
-          }
-        ]
-      },
-      {
-        "objectKey": "classProperty_6518cd4aca19dbc9",
-        "context": "@api message = '';",
-        "source": [
-          {
-            "sourceKey": "classProperty_087ec57f8161a963",
-            "start": {
-              "offset": 108,
-              "line": 4,
-              "column": 4
-            },
-            "end": {
-              "offset": 126,
-              "line": 4,
-              "column": 22
-            },
-            "filePath": "oldBanner/oldBanner.js"
-          }
-        ]
-      },
-      {
-        "objectKey": "identifier_2275bd58faafea4f",
-        "context": "message",
-        "source": [
-          {
-            "sourceKey": "identifier_eb0758eb08c783e6",
-            "start": {
-              "offset": 113,
-              "line": 4,
-              "column": 9
-            },
-            "end": {
-              "offset": 120,
-              "line": 4,
-              "column": 16
             },
             "filePath": "oldBanner/oldBanner.js"
           }
@@ -407,6 +361,186 @@
         ]
       },
       {
+        "objectKey": "classProperty_6518cd4aca19dbc9",
+        "context": "@api message = '';",
+        "source": [
+          {
+            "sourceKey": "classProperty_087ec57f8161a963",
+            "start": {
+              "offset": 108,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 126,
+              "line": 4,
+              "column": 22
+            },
+            "filePath": "oldBanner/oldBanner.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcModifiers_4b8ec4432dd4af45",
+        "context": "@api message = '';",
+        "source": [
+          {
+            "sourceKey": "classProperty_087ec57f8161a963",
+            "start": {
+              "offset": 108,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 126,
+              "line": 4,
+              "column": 22
+            },
+            "filePath": "oldBanner/oldBanner.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_2275bd58faafea4f",
+        "context": "message",
+        "source": [
+          {
+            "sourceKey": "identifier_eb0758eb08c783e6",
+            "start": {
+              "offset": 113,
+              "line": 4,
+              "column": 9
+            },
+            "end": {
+              "offset": 120,
+              "line": 4,
+              "column": 16
+            },
+            "filePath": "oldBanner/oldBanner.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "declarationName_bf3b6494e2984cd3",
+        "context": "message",
+        "source": [
+          {
+            "sourceKey": "identifier_eb0758eb08c783e6",
+            "start": {
+              "offset": 113,
+              "line": 4,
+              "column": 9
+            },
+            "end": {
+              "offset": 120,
+              "line": 4,
+              "column": 16
+            },
+            "filePath": "oldBanner/oldBanner.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "classDeclaration_8cce34dffc0f6c42",
+        "context": "class OldBanner extends LightningElement {\n    @api message = '';\n}",
+        "source": [
+          {
+            "sourceKey": "classDeclaration_d5e737fe7423f3c5",
+            "start": {
+              "offset": 61,
+              "line": 3,
+              "column": 15
+            },
+            "end": {
+              "offset": 128,
+              "line": 5,
+              "column": 1
+            },
+            "filePath": "oldBanner/oldBanner.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_ee32ac8668c203d0",
+        "context": "OldBanner",
+        "source": [
+          {
+            "sourceKey": "identifier_0d8b35173d16c937",
+            "start": {
+              "offset": 67,
+              "line": 3,
+              "column": 21
+            },
+            "end": {
+              "offset": 76,
+              "line": 3,
+              "column": 30
+            },
+            "filePath": "oldBanner/oldBanner.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "declarationName_2ab994292d7a7ab8",
+        "context": "OldBanner",
+        "source": [
+          {
+            "sourceKey": "identifier_0d8b35173d16c937",
+            "start": {
+              "offset": 67,
+              "line": 3,
+              "column": 21
+            },
+            "end": {
+              "offset": 76,
+              "line": 3,
+              "column": 30
+            },
+            "filePath": "oldBanner/oldBanner.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcModule_c9c5631f0890a180",
+        "context": "",
+        "source": [
+          {
+            "sourceKey": "lwcModule_884a7d7f69f068ce",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "filePath": "oldBanner/oldBanner.js"
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcBundleModule_fd65d8e05accd28a",
+        "context": "",
+        "source": [
+          {
+            "sourceKey": "lwcModule_884a7d7f69f068ce",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "filePath": "oldBanner/oldBanner.js"
+          }
+        ]
+      },
+      {
         "objectKey": "lwcBundleMeta_750374b0d2d703f7",
         "context": "<LightningComponentBundle xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <apiVersion>61.0</apiVersion>\n    <isExposed>false</isExposed>\n</LightningComponentBundle>",
         "source": [
@@ -427,7 +561,27 @@
         ]
       },
       {
-        "objectKey": "lwcText_12a5de0573cbe6d3",
+        "objectKey": "lwcExpression_9f4c0bf6ed1101c5",
+        "context": "{message}",
+        "source": [
+          {
+            "sourceKey": "lwcExpression_fd76f90f3213ee69",
+            "filePath": "oldBanner/oldBanner.html",
+            "start": {
+              "offset": 13,
+              "line": 1,
+              "column": 13
+            },
+            "end": {
+              "offset": 22,
+              "line": 1,
+              "column": 22
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcText_7e9aa712007d813f",
         "context": "{message}",
         "source": [
           {
@@ -447,7 +601,7 @@
         ]
       },
       {
-        "objectKey": "lwcElement_a4bc8f85f1caf3e5",
+        "objectKey": "lwcElement_0747df02ff8b96af",
         "context": "<p>{message}</p>",
         "source": [
           {
@@ -467,7 +621,7 @@
         ]
       },
       {
-        "objectKey": "lwcTemplate_16ff9f4796541d61",
+        "objectKey": "lwcTemplate_fd5cf653d138d87e",
         "context": "",
         "source": [
           {
@@ -483,6 +637,46 @@
               "line": 1,
               "column": 0
             }
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcBundleTemplate_b4d6f3d64e59b844",
+        "context": "",
+        "source": [
+          {
+            "sourceKey": "lwcTemplate_78878645b83fceb8",
+            "filePath": "oldBanner/oldBanner.html",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcBundle_0c8fc0f0de276c1c",
+        "context": "",
+        "source": [
+          {
+            "sourceKey": "lwcModule_884a7d7f69f068ce",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "filePath": "oldBanner/oldBanner.js"
           }
         ]
       }

@@ -120,7 +120,11 @@ export const findSpanSourceInfo = (
     sourceObject: SpanSourceJson[],
     keys: ConvertKeys,
 ): SpanSourceInfo => {
-    const object = sourceObject.find((o) => o.objectKey === keys.objectKey);
+    // objectKey と sourceKey の組で探す (同じ objectKey の一覧が複数あることがある)
+    const object = sourceObject.find(
+        (o) =>
+            o.objectKey === keys.objectKey && o.source.some((s) => s.sourceKey === keys.sourceKey),
+    );
     const source = object?.source.find((s) => s.sourceKey === keys.sourceKey);
     if (!object || !source) {
         throw new Error('sourceInfo cannot be found');

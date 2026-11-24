@@ -1,0 +1,327 @@
+{
+  "filePath": "email/Invoice_Templates/Invoice_Sent.email-meta.xml",
+  "resolvedError": [],
+  "dataType": "emailTemplate",
+  "result": {
+    "id": "emailTemplate_Invoice_Templates.Invoice_Sent",
+    "base": {
+      "kind": "emailTemplate",
+      "sourceKeys": {
+        "objectKey": "emailTemplate_d8a41e3dca1f7036",
+        "sourceKey": "emailTemplate_9ffc47d0e0c6fca5"
+      },
+      "fullName": "Invoice_Templates/Invoice_Sent",
+      "name": "Invoice Sent",
+      "subject": {
+        "kind": "fxTemplate",
+        "sourceKeys": {
+          "objectKey": "fxTemplate_46dbd9ce1d8e3ef5",
+          "sourceKey": "fxTemplate_2c6329ce06624dd9"
+        },
+        "parts": [
+          "請求書 ",
+          {
+            "kind": "fxMerge",
+            "sourceKeys": {
+              "objectKey": "fxMerge_c61f37ffb1a6248f",
+              "sourceKey": "fxMerge_0601fb3bd51e547b"
+            },
+            "expression": {
+              "kind": "fxName",
+              "sourceKeys": {
+                "objectKey": "fxName_1f4ea12a861db411",
+                "sourceKey": "fxName_439f0cb31d2d005f"
+              },
+              "path": [
+                "Invoice__c",
+                "Name"
+              ]
+            }
+          },
+          " を送付しました"
+        ]
+      },
+      "type": "text",
+      "style": "none",
+      "uiType": "Aloha",
+      "encodingKey": "UTF-8",
+      "available": true,
+      "body": {
+        "kind": "fxTemplate",
+        "sourceKeys": {
+          "objectKey": "fxTemplate_e49cc41dc4609365",
+          "sourceKey": "fxTemplate_efff601f26b90cd6"
+        },
+        "parts": [
+          {
+            "kind": "fxMerge",
+            "sourceKeys": {
+              "objectKey": "fxMerge_e0fe66fbb664f723",
+              "sourceKey": "fxMerge_23da7f1ffdf3f2f9"
+            },
+            "expression": {
+              "kind": "fxName",
+              "sourceKeys": {
+                "objectKey": "fxName_41f2edbf5398de0d",
+                "sourceKey": "fxName_6836244a1fabbed5"
+              },
+              "path": [
+                "Invoice__c",
+                "Account__c"
+              ]
+            }
+          },
+          " 様\n\n請求書 ",
+          {
+            "kind": "fxMerge",
+            "sourceKeys": {
+              "objectKey": "fxMerge_c61f37ffb1a6248f",
+              "sourceKey": "fxMerge_2bfb1ad6837c70fe"
+            },
+            "expression": {
+              "kind": "fxName",
+              "sourceKeys": {
+                "objectKey": "fxName_1f4ea12a861db411",
+                "sourceKey": "fxName_ba366462a4ae0603"
+              },
+              "path": [
+                "Invoice__c",
+                "Name"
+              ]
+            }
+          },
+          " を送付しました。\n金額: ",
+          {
+            "kind": "fxMerge",
+            "sourceKeys": {
+              "objectKey": "fxMerge_f8fbb0fd2e6bcfc5",
+              "sourceKey": "fxMerge_4122b1d32cd2dd3f"
+            },
+            "expression": {
+              "kind": "fxName",
+              "sourceKeys": {
+                "objectKey": "fxName_86e26a6f63586c94",
+                "sourceKey": "fxName_54da0a2d32b21346"
+              },
+              "path": [
+                "Invoice__c",
+                "Amount__c"
+              ]
+            }
+          },
+          "\n"
+        ]
+      }
+    },
+    "sourceObject": [
+      {
+        "objectKey": "fxName_41f2edbf5398de0d",
+        "context": "Invoice__c.Account__c",
+        "source": [
+          {
+            "sourceKey": "fxName_6836244a1fabbed5",
+            "filePath": "email/Invoice_Templates/Invoice_Sent.email",
+            "start": {
+              "offset": 2,
+              "line": 1,
+              "column": 2
+            },
+            "end": {
+              "offset": 23,
+              "line": 1,
+              "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxMerge_e0fe66fbb664f723",
+        "context": "{!Invoice__c.Account__c}",
+        "source": [
+          {
+            "sourceKey": "fxMerge_23da7f1ffdf3f2f9",
+            "filePath": "email/Invoice_Templates/Invoice_Sent.email",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 24,
+              "line": 1,
+              "column": 24
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxName_1f4ea12a861db411",
+        "context": "Invoice__c.Name",
+        "source": [
+          {
+            "sourceKey": "fxName_ba366462a4ae0603",
+            "filePath": "email/Invoice_Templates/Invoice_Sent.email",
+            "start": {
+              "offset": 34,
+              "line": 3,
+              "column": 6
+            },
+            "end": {
+              "offset": 49,
+              "line": 3,
+              "column": 21
+            }
+          },
+          {
+            "sourceKey": "fxName_439f0cb31d2d005f",
+            "filePath": "email/Invoice_Templates/Invoice_Sent.email-meta.xml",
+            "start": {
+              "offset": 245,
+              "line": 7,
+              "column": 19
+            },
+            "end": {
+              "offset": 260,
+              "line": 7,
+              "column": 34
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxMerge_c61f37ffb1a6248f",
+        "context": "{!Invoice__c.Name}",
+        "source": [
+          {
+            "sourceKey": "fxMerge_2bfb1ad6837c70fe",
+            "filePath": "email/Invoice_Templates/Invoice_Sent.email",
+            "start": {
+              "offset": 32,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 50,
+              "line": 3,
+              "column": 22
+            }
+          },
+          {
+            "sourceKey": "fxMerge_0601fb3bd51e547b",
+            "filePath": "email/Invoice_Templates/Invoice_Sent.email-meta.xml",
+            "start": {
+              "offset": 243,
+              "line": 7,
+              "column": 17
+            },
+            "end": {
+              "offset": 261,
+              "line": 7,
+              "column": 35
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxName_86e26a6f63586c94",
+        "context": "Invoice__c.Amount__c",
+        "source": [
+          {
+            "sourceKey": "fxName_54da0a2d32b21346",
+            "filePath": "email/Invoice_Templates/Invoice_Sent.email",
+            "start": {
+              "offset": 66,
+              "line": 4,
+              "column": 6
+            },
+            "end": {
+              "offset": 86,
+              "line": 4,
+              "column": 26
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxMerge_f8fbb0fd2e6bcfc5",
+        "context": "{!Invoice__c.Amount__c}",
+        "source": [
+          {
+            "sourceKey": "fxMerge_4122b1d32cd2dd3f",
+            "filePath": "email/Invoice_Templates/Invoice_Sent.email",
+            "start": {
+              "offset": 64,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 87,
+              "line": 4,
+              "column": 27
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxTemplate_e49cc41dc4609365",
+        "context": "{!Invoice__c.Account__c} 様\n\n請求書 {!Invoice__c.Name} を送付しました。\n金額: {!Invoice__c.Amount__c}\n",
+        "source": [
+          {
+            "sourceKey": "fxTemplate_efff601f26b90cd6",
+            "filePath": "email/Invoice_Templates/Invoice_Sent.email",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 88,
+              "line": 5,
+              "column": 0
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxTemplate_46dbd9ce1d8e3ef5",
+        "context": "請求書 {!Invoice__c.Name} を送付しました",
+        "source": [
+          {
+            "sourceKey": "fxTemplate_2c6329ce06624dd9",
+            "filePath": "email/Invoice_Templates/Invoice_Sent.email-meta.xml",
+            "start": {
+              "offset": 239,
+              "line": 7,
+              "column": 13
+            },
+            "end": {
+              "offset": 269,
+              "line": 7,
+              "column": 43
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "emailTemplate_d8a41e3dca1f7036",
+        "context": "<EmailTemplate xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <available>true</available>\n    <encodingKey>UTF-8</encodingKey>\n    <name>Invoice Sent</name>\n    <style>none</style>\n    <subject>請求書 {!Invoice__c.Name} を送付しました</subject>\n    <type>text</type>\n    <uiType>Aloha</uiType>\n</EmailTemplate>",
+        "source": [
+          {
+            "sourceKey": "emailTemplate_9ffc47d0e0c6fca5",
+            "filePath": "email/Invoice_Templates/Invoice_Sent.email-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 345,
+              "line": 10,
+              "column": 16
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

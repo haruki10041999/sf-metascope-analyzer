@@ -1,0 +1,43 @@
+{
+  "filePath": "notificationtypes/Invoice_Overdue.notiftype-meta.xml",
+  "resolvedError": [],
+  "dataType": "customNotificationType",
+  "result": {
+    "id": "customNotificationType_Invoice_Overdue",
+    "base": {
+      "kind": "customNotificationType",
+      "sourceKeys": {
+        "objectKey": "customNotificationType_b23ff9e7480b0eb3",
+        "sourceKey": "customNotificationType_cd28795a97c581a7"
+      },
+      "fullName": "Invoice_Overdue",
+      "customNotifTypeName": "Invoice Overdue",
+      "masterLabel": "Invoice Overdue",
+      "description": "支払期限を過ぎた請求書の通知",
+      "desktop": true,
+      "mobile": true
+    },
+    "sourceObject": [
+      {
+        "objectKey": "customNotificationType_b23ff9e7480b0eb3",
+        "context": "<CustomNotificationType xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <customNotifTypeName>Invoice Overdue</customNotifTypeName>\n    <description>支払期限を過ぎた請求書の通知</description>\n    <desktop>true</desktop>\n    <masterLabel>Invoice Overdue</masterLabel>\n    <mobile>true</mobile>\n</CustomNotificationType>",
+        "source": [
+          {
+            "sourceKey": "customNotificationType_cd28795a97c581a7",
+            "filePath": "notificationtypes/Invoice_Overdue.notiftype-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 347,
+              "line": 8,
+              "column": 25
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

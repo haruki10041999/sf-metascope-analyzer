@@ -2,7 +2,16 @@
 // 入力は folder.ts で読んだフォルダの中身だけで、ファイルシステムには触らない。
 // JS / TS (module.ts)・js-meta.xml (meta.ts)・HTML (template.ts)・CSS (stylesheet.ts) を読み、
 // 最後に同じバンドルの中の突き合わせ (validate/bundle.ts) をする
-import type { LwcBundleJson, LwcSourceJson } from '../../types';
+import {
+    makeContentKeyedJson,
+    type JsonType,
+    type LwcBundleJson,
+    type LwcBundleModuleJson,
+    type LwcBundleStylesheetJson,
+    type LwcBundleTemplateJson,
+    type LwcSkippedFileJson,
+    type LwcSourceJson,
+} from '../../types';
 
 import {
     LwcCommonErrorListener,
@@ -108,10 +117,45 @@ export const parseLwcBundleFolder = (
     }
 
     const sourceObject: LwcSourceJson[] = [];
+    /**
+     * 中身からキーを作るノード (入れ物・根)。位置は inner (中の根) のものを借り、作ったキーの一覧としても sourceObject に載せる。
+     * inner がなければ (読めなかったファイル) 位置を持たない
+     */
+    const container = <T extends JsonType<string>>(
+        kind: T['kind'],
+        inner: JsonType<string> | null | undefined,
+        fallback: string,
+        properties: Omit<T, 'kind' | 'sourceKeys'>,
+    ): T => {
+        const json = makeContentKeyedJson<T>(
+            kind,
+            inner?.sourceKeys.sourceKey ?? `${kind}_${fallback}`,
+            properties as never,
+        );
+        const base = inner
+            ? sourceObject.find(
+                  (o) =>
+                      o.objectKey === inner.sourceKeys.objectKey &&
+                      o.source.some((s) => s.sourceKey === inner.sourceKeys.sourceKey),
+              )
+            : undefined;
+        if (base) {
+            sourceObject.push({
+                ...base,
+                objectKey: json.sourceKeys.objectKey,
+                source: base.source.filter((s) => s.sourceKey === inner!.sourceKeys.sourceKey),
+            });
+        }
+        return json;
+    };
     const modules: LwcBundleJson['modules'] = scripts.map(({ file, parsed }) => {
         const { module, sourceObjects } = convertLwcModule(parsed);
         sourceObject.push(...sourceObjects);
-        return { fileName: file.fileName, main: isMainFile(file, name, ['.js', '.ts']), module };
+        return container<LwcBundleModuleJson>('lwcBundleModule', module, file.filePath, {
+            fileName: file.fileName,
+            main: isMainFile(file, name, ['.js', '.ts']),
+            module,
+        });
     });
 
     // js-meta.xml。apiVersion は HTML / CSS の検証に渡す
@@ -133,11 +177,16 @@ export const parseLwcBundleFolder = (
         });
         sourceObject.push(...result.sourceObjects);
         resolvedError.push(...result.resolvedError);
-        return {
-            fileName: file.fileName,
-            main: isMainFile(file, name, ['.html']),
-            template: result.template,
-        };
+        return container<LwcBundleTemplateJson>(
+            'lwcBundleTemplate',
+            result.template,
+            file.filePath,
+            {
+                fileName: file.fileName,
+                main: isMainFile(file, name, ['.html']),
+                template: result.template,
+            },
+        );
     });
 
     // CSS
@@ -145,18 +194,34 @@ export const parseLwcBundleFolder = (
         const result = parseStylesheet(file.filePath, file.source, apiVersionOption);
         sourceObject.push(...result.sourceObjects);
         resolvedError.push(...result.resolvedError);
-        return { fileName: file.fileName, scoped: result.scoped, stylesheet: result.stylesheet };
+        return container<LwcBundleStylesheetJson>(
+            'lwcBundleStylesheet',
+            result.stylesheet,
+            file.filePath,
+            { fileName: file.fileName, scoped: result.scoped, stylesheet: result.stylesheet },
+        );
     });
 
-    const base: LwcBundleJson = {
-        name,
-        namespace: options.namespace ?? 'c',
-        modules,
-        templates,
-        stylesheets,
-        ...(metaResult ? { meta: metaResult.meta } : {}),
-        skippedFiles: folder.skippedFiles,
-    };
+    const base = container<LwcBundleJson>(
+        'lwcBundle',
+        modules.find((m) => m.main) ?? null,
+        bundleDir,
+        {
+            name,
+            namespace: options.namespace ?? 'c',
+            modules,
+            templates,
+            stylesheets,
+            ...(metaResult ? { meta: metaResult.meta } : {}),
+            skippedFiles: folder.skippedFiles.map((skipped) =>
+                makeContentKeyedJson<LwcSkippedFileJson>(
+                    'lwcSkippedFile',
+                    `lwcSkippedFile_${skipped.filePath}`,
+                    skipped,
+                ),
+            ),
+        },
+    );
     // 同じバンドルの中の突き合わせ (テンプレートの式・ハンドラー・lwc:ref と JS。docs/lwc-implementation.md)
     resolvedError.push(...validateBundle(base, sourceObject));
 

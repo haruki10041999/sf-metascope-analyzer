@@ -1,16 +1,10 @@
 // コンポーネント (default export のクラス) の JSON (docs/lwc-implementation.md)。
 // Apex の types/apex/declaration.ts の class と同じ形にする:
-// - 名前を持つ宣言 (コンポーネント・メンバー) は StructureJsonType (sourceKeys: { base, name })、name は string
+// - 名前を持つ宣言 (コンポーネント・メンバー) は、名前の位置を nameRef (declarationName) に持つ (lwc 4 から)。name は string
 // - メンバーはソースの順に block に入れる
 // 入力は IR v2 (lwc_IR) のノード。v2 の木にはエラーのノードがない (壊れた部分は木から落ちる) ので、
 // v1 の convertLwcValue のような、部分木のエラーを調べる処理はない (docs/ir-integration.md)
-import {
-    makeJsonType,
-    makeStructureJson,
-    type ConvertKeys,
-    type JsonType,
-    type StructureJsonType,
-} from '../commons/json';
+import { makeJsonType, type JsonType } from '../commons/json';
 import type {
     commons as ir,
     functionParameterVisitor,
@@ -18,7 +12,14 @@ import type {
     typeScriptVisitor,
 } from '../lwc_IR';
 
-import { nameOf, unwrapExpression, type LwcJsonContext, type LwcNode } from './commons';
+import {
+    makeLwcDeclarationJson,
+    nameOf,
+    unwrapExpression,
+    type LwcDeclarationJsonType,
+    type LwcJsonContext,
+    type LwcNode,
+} from './commons';
 import {
     makeLwcArgumentJson,
     makeLwcExpressionJson,
@@ -28,7 +29,7 @@ import {
     type LwcJsIdentifierJson,
     type LwcJsPatternJson,
 } from './expression';
-import type { LwcImportJson } from './import';
+import type { LwcApexRefJson, LwcImportJson, LwcSchemaRefJson } from './import';
 import { makeLwcBlockJson, makeLwcStatementJson, type LwcJsStatementJson } from './statement';
 import { makeLwcTypeJson, type LwcTypeJson } from './type';
 
@@ -42,8 +43,8 @@ export type LwcImportReferenceJson = {
     local: string;
     /** import 元 (@salesforce/schema/Account.Name など) */
     source: string;
-    apex?: { className: string; methodName: string };
-    schema?: { objectApiName: string; fieldApiName?: string };
+    apex?: LwcApexRefJson;
+    schema?: LwcSchemaRefJson;
 };
 
 /** @wire(adapter, { key: value }) の設定の 1 項目 */
@@ -67,19 +68,22 @@ export type LwcDecoratorJson = JsonType<'lwcDecorator'> & {
     /** 引数の式 (@api などの引数のないものは []) */
     arg: LwcJsArgumentJson[];
     /** @wire のとき */
-    wire?: {
-        /** アダプターの式 (getRecord・getAccounts などの識別子。第 1 引数) */
-        adapter: LwcJsExpressionJson;
-        /** アダプターを import したモジュール (lightning/uiRecordApi、@salesforce/apex/... など) */
-        adapterSource?: string;
-        /** アダプターが Apex のメソッドのとき (@salesforce/apex/<クラス>.<メソッド>) */
-        apex?: { className: string; methodName: string };
-        config: LwcWireConfigJson[];
-    };
+    wire?: LwcWireJson;
 };
 
-/** 修飾子 (Apex の ModifiersJson に当たる。TS の修飾子とデコレーター) */
-export type LwcModifiersJson = {
+/** @wire の設定 (lwc 4 からノード。位置はデコレーターのもの) */
+export type LwcWireJson = JsonType<'lwcWire'> & {
+    /** アダプターの式 (getRecord・getAccounts などの識別子。第 1 引数) */
+    adapter: LwcJsExpressionJson;
+    /** アダプターを import したモジュール (lightning/uiRecordApi、@salesforce/apex/... など) */
+    adapterSource?: string;
+    /** アダプターが Apex のメソッドのとき (@salesforce/apex/<クラス>.<メソッド>。import の参照と同じノード) */
+    apex?: LwcApexRefJson;
+    config: LwcWireConfigJson[];
+};
+
+/** 修飾子 (Apex の ModifiersJson に当たる。TS の修飾子とデコレーター)。lwc 4 からノード (位置は持ち主のもの) */
+export type LwcModifiersJson = JsonType<'lwcModifiers'> & {
     access?: 'public' | 'private' | 'protected';
     declaration?: ('static' | 'readonly' | 'abstract' | 'override' | 'declare')[];
     decorator?: LwcDecoratorJson[];
@@ -129,7 +133,7 @@ export type LwcParameterJson = JsonType<'lwcParameter'> & {
 };
 
 /** クラスのフィールド (class property)。Apex の field に当たる */
-export type LwcFieldJson = StructureJsonType<'lwcField', { name: ConvertKeys }> & {
+export type LwcFieldJson = LwcDeclarationJsonType<'lwcField'> & {
     name: string;
     /**
      * 計算されたキー ([expr]) のときの、キーの式 (lwc-json-types.md 8.8 の 3)。
@@ -143,18 +147,22 @@ export type LwcFieldJson = StructureJsonType<'lwcField', { name: ConvertKeys }> 
      */
     init?: LwcJsExpressionJson;
     /** 初期値が関数 (handleClick = () => {...}) のとき、メソッドと同じ本体の中身。そのときは init を持たない */
-    function?: LwcFunctionContentJson;
+    function?: LwcFunctionJson;
     optional: boolean;
     modifier: LwcModifiersJson;
 };
 
-/** getter / setter の中身 (Apex の AccessorContentJson に当たる) */
-export type LwcAccessorContentJson = LwcBodyContentJson & {
-    modifier: LwcModifiersJson;
-};
+/** 関数の中身のノード (フィールドの初期値の関数。lwc 4 から。位置は関数のもの) */
+export type LwcFunctionJson = JsonType<'lwcFunction'> & LwcFunctionContentJson;
+
+/** getter / setter の中身 (Apex の AccessorContentJson に当たる)。lwc 4 からノード (位置は getter / setter のもの) */
+export type LwcAccessorContentJson = JsonType<'lwcAccessor'> &
+    LwcBodyContentJson & {
+        modifier: LwcModifiersJson;
+    };
 
 /** getter / setter で定義したプロパティ (Apex の property に当たる。同じ名前の getter と setter を 1 つにする) */
-export type LwcPropertyJson = StructureJsonType<'lwcProperty', { name: ConvertKeys }> & {
+export type LwcPropertyJson = LwcDeclarationJsonType<'lwcProperty'> & {
     name: string;
     /**
      * 計算されたキー ([expr]) のときの、キーの式 (lwc-json-types.md 8.8 の 3)。
@@ -169,7 +177,7 @@ export type LwcPropertyJson = StructureJsonType<'lwcProperty', { name: ConvertKe
     setterContent?: LwcAccessorContentJson;
 };
 
-export type LwcMethodJson = StructureJsonType<'lwcMethod', { name: ConvertKeys }> &
+export type LwcMethodJson = LwcDeclarationJsonType<'lwcMethod'> &
     LwcBodyContentJson & {
         name: string;
         /**
@@ -183,7 +191,7 @@ export type LwcMethodJson = StructureJsonType<'lwcMethod', { name: ConvertKeys }
         modifier: LwcModifiersJson;
     };
 
-export type LwcConstructorJson = StructureJsonType<'lwcConstructor', { name: ConvertKeys }> &
+export type LwcConstructorJson = LwcDeclarationJsonType<'lwcConstructor'> &
     LwcBodyContentJson & {
         name: 'constructor';
         param: LwcParameterJson[];
@@ -196,7 +204,7 @@ export type LwcStaticBlockJson = JsonType<'lwcStaticBlock'> & LwcBodyContentJson
 export type LwcMemberJson =
     LwcFieldJson | LwcPropertyJson | LwcMethodJson | LwcConstructorJson | LwcStaticBlockJson;
 
-export type LwcComponentJson = StructureJsonType<'lwcComponent', { name: ConvertKeys }> & {
+export type LwcComponentJson = LwcDeclarationJsonType<'lwcComponent'> & {
     /** クラス名 (export default class {} のように名前がなければ null) */
     name: string | null;
     /**
@@ -332,7 +340,7 @@ const makeDecoratorJson = (
     const name = nameOf(callParts ? callParts.callee : expression, context);
     const args = callParts ? callParts.args : [];
 
-    let wire: LwcDecoratorJson['wire'];
+    let wire: LwcWireJson | undefined;
     if (name === 'wire') {
         const [adapterNode, configNode] = args;
         // アダプターの import は、式の先頭の識別子 (apex.getAccounts なら apex) で引く
@@ -357,19 +365,16 @@ const makeDecoratorJson = (
                     : null;
             const fieldNames = fieldNamesOf(value);
             config.push(
-                makeJsonType<'lwcWireConfig', LwcWireConfigJson>(
-                    'lwcWireConfig',
-                    context.keysOf(property),
-                    {
-                        key: nameOf(key, context),
-                        value: makeLwcExpressionJson(value, tables, context),
-                        ...(literal?.startsWith('$') ? { reactive: literal.slice(1) } : {}),
-                        ...(fieldNames.length > 0 ? { fieldNames } : {}),
-                    },
-                ),
+                // 同じプロパティの IR はデコレーターの引数 (jsProperty) にもなるので、キーは中身から作る (位置はプロパティ)
+                context.derivedJson<LwcWireConfigJson>('lwcWireConfig', property, {
+                    key: nameOf(key, context),
+                    value: makeLwcExpressionJson(value, tables, context),
+                    ...(literal?.startsWith('$') ? { reactive: literal.slice(1) } : {}),
+                    ...(fieldNames.length > 0 ? { fieldNames } : {}),
+                }),
             );
         }
-        wire = {
+        wire = context.derivedJson<LwcWireJson>('lwcWire', target, {
             // @wire() (アダプターなし) はコンパイラが受け付けないが、JSON は作るので空の識別子にする
             adapter: adapterNode
                 ? makeLwcExpressionJson(adapterNode, tables, context)
@@ -381,7 +386,7 @@ const makeDecoratorJson = (
             ...(adapterImport ? { adapterSource: adapterImport.source } : {}),
             ...(adapterImport?.apex ? { apex: adapterImport.apex } : {}),
             config,
-        };
+        });
     }
 
     return makeJsonType<'lwcDecorator', LwcDecoratorJson>('lwcDecorator', context.keysOf(target), {
@@ -402,7 +407,9 @@ type ModifierSource = {
     decorators?: ir.DecoratorTypeClass[] | null;
 } & Partial<Record<(typeof DECLARATION_MODIFIERS)[number], boolean>>;
 
+/** owner は修飾子を持つメンバー・引数のノード (位置を借りる) */
 const makeModifiersJson = (
+    owner: LwcNode,
     member: ModifierSource,
     tables: LwcImportTables,
     context: LwcJsonContext,
@@ -410,7 +417,7 @@ const makeModifiersJson = (
     const access = member.accessibility;
     const declaration = DECLARATION_MODIFIERS.filter((name) => member[name] === true);
     const decorators = member.decorators ?? [];
-    return {
+    return context.derivedJson<LwcModifiersJson>('lwcModifiers', owner, {
         ...(access === 'public' || access === 'private' || access === 'protected'
             ? { access }
             : {}),
@@ -418,7 +425,7 @@ const makeModifiersJson = (
         ...(decorators.length > 0
             ? { decorator: decorators.map((d) => makeDecoratorJson(d, tables, context)) }
             : {}),
-    };
+    });
 };
 
 const makeTypeJsonOrUndefined = (
@@ -439,10 +446,11 @@ export const makeLwcParameterJson = (
 ): LwcParameterJson => {
     // constructor(private x: T) / x = 1 / ...rest は中の名前を見る
     let target: LwcNode = param;
-    let modifier: LwcModifiersJson = {};
+    let modifier: LwcModifiersJson = makeModifiersJson(param, {}, tables, context);
     if (param.kind === 'tSParameterProperty') {
         const fields = param.getFields();
         modifier = makeModifiersJson(
+            param,
             {
                 accessibility: fields.accessibility,
                 readonly: fields.readonly,
@@ -472,7 +480,8 @@ export const makeLwcParameterJson = (
     };
     const annotation = targetFields.typeAnnotation ?? null;
     // 分割代入 ({ data, error }: T) はパターン (型注釈は variantType)
-    return makeJsonType<'lwcParameter', LwcParameterJson>('lwcParameter', context.keysOf(param), {
+    // 引数の IR は識別子・パターンそのもの (キーは名前・形だけから作られる) なので、引数のキーは中身から作る (位置は引数)
+    return context.derivedJson<LwcParameterJson>('lwcParameter', param, {
         ...(target.kind === 'identifier'
             ? { variant: (target as ir.IdentifierTypeClass).getFields().name }
             : { pattern: makeLwcPatternJson(target, tables, context) }),
@@ -643,15 +652,30 @@ const makeFieldJson = (
     const fn = value ? makeLwcFunctionContentJson(unwrapExpression(value), tables, context) : null;
     // 初期値がそのまま関数なら function だけで表す (初期値の式・文字列に同じ関数を重ねて持たない)
     const onlyFunction = fn !== null && value !== null && unwrapExpression(value) === value;
-    return makeStructureJson('lwcField', context.structureKeysOf(target, { name: member.key }), {
-        name: makeNameJson(member, context),
-        ...makeComputedKeyJson(member, tables, context),
-        ...makeTypeJsonOrUndefined(annotation?.typeAnnotation, context),
-        ...(value && !onlyFunction ? { init: makeLwcExpressionJson(value, tables, context) } : {}),
-        ...(fn ? { function: fn } : {}),
-        optional: init.kind !== 'definite' && init.optional,
-        modifier: makeModifiersJson(fieldModifierSourceOf(target), tables, context),
-    });
+    return makeLwcDeclarationJson(
+        context,
+        'lwcField',
+        context.declarationOf(target, { name: member.key }),
+        {
+            name: makeNameJson(member, context),
+            ...makeComputedKeyJson(member, tables, context),
+            ...makeTypeJsonOrUndefined(annotation?.typeAnnotation, context),
+            ...(value && !onlyFunction
+                ? { init: makeLwcExpressionJson(value, tables, context) }
+                : {}),
+            ...(fn
+                ? {
+                      function: context.derivedJson<LwcFunctionJson>(
+                          'lwcFunction',
+                          unwrapExpression(value!),
+                          fn,
+                      ),
+                  }
+                : {}),
+            optional: init.kind !== 'definite' && init.optional,
+            modifier: makeModifiersJson(target, fieldModifierSourceOf(target), tables, context),
+        },
+    );
 };
 
 const makeMethodJson = (
@@ -661,14 +685,14 @@ const makeMethodJson = (
 ): LwcMethodJson | LwcConstructorJson => {
     const fields = target.getFields();
     const member = memberKeyOf(target);
-    const sourceKeys = context.structureKeysOf(target, { name: member.key });
+    const named = context.declarationOf(target, { name: member.key });
     const body = makeLwcBodyContentJson(fields.body, tables, context);
     const param = (fields.params as LwcParameterNode[]).map((p) =>
         makeLwcParameterJson(p, tables, context),
     );
-    const modifier = makeModifiersJson(methodModifierSourceOf(target), tables, context);
+    const modifier = makeModifiersJson(target, methodModifierSourceOf(target), tables, context);
     if (fields.kind === 'constructor') {
-        return makeStructureJson('lwcConstructor', sourceKeys, {
+        return makeLwcDeclarationJson(context, 'lwcConstructor', named, {
             name: 'constructor' as const,
             param,
             modifier,
@@ -676,7 +700,7 @@ const makeMethodJson = (
         });
     }
     const returnType = 'returnType' in fields ? fields.returnType : null;
-    return makeStructureJson('lwcMethod', sourceKeys, {
+    return makeLwcDeclarationJson(context, 'lwcMethod', named, {
         name: makeNameJson(member, context),
         ...makeComputedKeyJson(member, tables, context),
         ...(returnType ? { returnType: makeLwcTypeJson(returnType, context) } : {}),
@@ -696,10 +720,10 @@ const makeAccessorJson = (
 ): LwcPropertyJson => {
     const fields = target.getFields();
     const isGetter = fields.kind === 'get';
-    const content: LwcAccessorContentJson = {
-        modifier: makeModifiersJson(methodModifierSourceOf(target), tables, context),
+    const content = context.derivedJson<LwcAccessorContentJson>('lwcAccessor', target, {
+        modifier: makeModifiersJson(target, methodModifierSourceOf(target), tables, context),
         ...makeLwcBodyContentJson(fields.body, tables, context),
-    };
+    });
     // getter は戻り値の型、setter は引数の型 (v1 と同じく先頭の引数。TS の this パラメータがあればそれを見る)
     const typeNode =
         fields.kind === 'get'
@@ -710,12 +734,17 @@ const makeAccessorJson = (
               : null;
     const member = memberKeyOf(target);
     const property: LwcPropertyJson = existing ?? {
-        ...makeStructureJson('lwcProperty', context.structureKeysOf(target, { name: member.key }), {
-            name: makeNameJson(member, context),
-            ...makeComputedKeyJson(member, tables, context),
-            isGetter: false,
-            isSetter: false,
-        }),
+        ...makeLwcDeclarationJson(
+            context,
+            'lwcProperty',
+            context.declarationOf(target, { name: member.key }),
+            {
+                name: makeNameJson(member, context),
+                ...makeComputedKeyJson(member, tables, context),
+                isGetter: false,
+                isSetter: false,
+            },
+        ),
     };
     if (isGetter) {
         property.isGetter = true;
@@ -796,10 +825,11 @@ export const makeLwcComponentJson = (
     const component = target.getFields();
     const { id } = component;
     const implement = (component.implements ?? []).map((i) => makeLwcTypeJson(i, context));
-    return makeStructureJson(
+    return makeLwcDeclarationJson(
+        context,
         'lwcComponent',
         // 名前のないクラス (export default class extends ...) は、名前の位置をクラス全体にする
-        context.structureKeysOf(target, { name: id }),
+        context.declarationOf(target, { name: id }),
         {
             name: id ? id.getFields().name : null,
             ...(component.heritage?.superClass

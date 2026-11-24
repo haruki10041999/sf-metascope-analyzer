@@ -1,0 +1,82 @@
+{
+  "filePath": "matchingRules/Account.matchingRule-meta.xml",
+  "resolvedError": [],
+  "dataType": "matchingRules",
+  "result": {
+    "id": "matchingRules_Account",
+    "base": {
+      "kind": "matchingRules",
+      "sourceKeys": {
+        "objectKey": "matchingRules_ee628d0a420975cf",
+        "sourceKey": "matchingRules_74e076a2d9582370"
+      },
+      "fullName": "Account",
+      "matchingRules": [
+        {
+          "kind": "matchingRule",
+          "sourceKeys": {
+            "objectKey": "matchingRule_4d5e275c01fbbe97",
+            "sourceKey": "matchingRule_c56d5872df05895c"
+          },
+          "fullName": "Account_Name_Match",
+          "label": "Account Name Match",
+          "ruleStatus": "Active",
+          "matchingRuleItems": [
+            {
+              "blankValueBehavior": "NullNotAllowed",
+              "fieldName": "Name",
+              "matchingMethod": "Exact"
+            },
+            {
+              "blankValueBehavior": "NullNotAllowed",
+              "fieldName": "BillingCity",
+              "matchingMethod": "Exact"
+            }
+          ]
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "matchingRule_4d5e275c01fbbe97",
+        "context": "<matchingRules>\n        <fullName>Account_Name_Match</fullName>\n        <label>Account Name Match</label>\n        <matchingRuleItems>\n            <blankValueBehavior>NullNotAllowed</blankValueBehavior>\n            <fieldName>Name</fieldName>\n            <matchingMethod>Exact</matchingMethod>\n        </matchingRuleItems>\n        <matchingRuleItems>\n            <blankValueBehavior>NullNotAllowed</blankValueBehavior>\n            <fieldName>BillingCity</fieldName>\n            <matchingMethod>Exact</matchingMethod>\n        </matchingRuleItems>\n        <ruleStatus>Active</ruleStatus>\n    </matchingRules>",
+        "source": [
+          {
+            "sourceKey": "matchingRule_c56d5872df05895c",
+            "filePath": "matchingRules/Account.matchingRule-meta.xml",
+            "start": {
+              "offset": 107,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 712,
+              "line": 17,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "matchingRules_ee628d0a420975cf",
+        "context": "<MatchingRules xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <matchingRules>\n        <fullName>Account_Name_Match</fullName>\n        <label>Account Name Match</label>\n        <matchingRuleItems>\n            <blankValueBehavior>NullNotAllowed</blankValueBehavior>\n            <fieldName>Name</fieldName>\n            <matchingMethod>Exact</matchingMethod>\n        </matchingRuleItems>\n        <matchingRuleItems>\n            <blankValueBehavior>NullNotAllowed</blankValueBehavior>\n            <fieldName>BillingCity</fieldName>\n            <matchingMethod>Exact</matchingMethod>\n        </matchingRuleItems>\n        <ruleStatus>Active</ruleStatus>\n    </matchingRules>\n</MatchingRules>",
+        "source": [
+          {
+            "sourceKey": "matchingRules_74e076a2d9582370",
+            "filePath": "matchingRules/Account.matchingRule-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 729,
+              "line": 18,
+              "column": 16
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

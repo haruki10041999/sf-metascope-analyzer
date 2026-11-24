@@ -1,7 +1,6 @@
 .sf
 .ttsc
 node_modules
-package-lock.json
 dist
 .sf-metascope
 docs/examples/report/output/*.html

@@ -1,6 +1,6 @@
 // 解析結果 (UnitParseResult) を、データベースの行 (根・ノード・位置) に分ける / 組み立て直す
 // (docs/implementation-roadmap.md 5.2・5.3)。
-// - ノード: JsonType (kind と sourceKeys) と StructureJsonType (sourceKeys が { base, name, ... }) を 1 行にする。
+// - ノード: JsonType (kind と sourceKeys) を 1 行にする (JSON はすべて JsonType。docs/plan.md 4.2)。
 //   親の中身 (content) のその場所は {"$node": <番号>} にし、子の行には親の番号と、親の中の場所 (パス) を持つ
 // - 位置: result.sourceObject は別の行 (sourceObject の 1 件 × 位置 1 つ)。context (ソースの文字列) は、
 //   単位のファイルの中身を位置で切り出したものと同じなら持たない (ファイルのパスだけ持つ)
@@ -13,8 +13,6 @@ export type NodeRow = {
     kind: string;
     objectKey: string | null;
     sourceKey: string | null;
-    /** StructureJsonType の sourceKeys (JSON)。JsonType は null */
-    structureKeys: string | null;
     /** kind・sourceKeys を除いた中身 (JSON。子のノードは {"$node": 番号}) */
     content: string;
     /**
@@ -67,8 +65,6 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const isNode = (value: unknown): value is Record<string, unknown> & { kind: string } =>
     isRecord(value) && typeof value.kind === 'string' && isRecord(value.sourceKeys);
 
-const isStructureKeys = (keys: Record<string, unknown>) => isRecord(keys.base);
-
 /** 解析結果を、根・ノード・位置の行にする。files は単位のファイルの中身 (context を持たずに済ませるため) */
 export const flattenUnit = (
     data: unknown,
@@ -86,12 +82,7 @@ export const flattenUnit = (
             const content: Record<string, unknown> = {};
             for (const [key, child] of Object.entries(rest))
                 content[key] = flatten(child, nodeId, `$.${key}`);
-            const keys = sourceKeys as Record<string, unknown>;
-            const structure = isStructureKeys(keys);
-            const main = (structure ? keys.base : keys) as {
-                objectKey?: unknown;
-                sourceKey?: unknown;
-            };
+            const main = sourceKeys as { objectKey?: unknown; sourceKey?: unknown };
             nodes.push({
                 nodeId,
                 parentId,
@@ -99,7 +90,6 @@ export const flattenUnit = (
                 kind,
                 objectKey: typeof main.objectKey === 'string' ? main.objectKey : null,
                 sourceKey: typeof main.sourceKey === 'string' ? main.sourceKey : null,
-                structureKeys: structure ? JSON.stringify(keys) : null,
                 content: JSON.stringify(content),
                 spanEntry: null,
                 spanPosition: null,
@@ -182,10 +172,7 @@ export const flattenUnit = (
 /** 行から解析結果を組み立て直す。fileText は単位のファイルの中身 (context を切り出す) */
 export const rebuildUnit = (
     root: string,
-    nodes: readonly Pick<
-        NodeRow,
-        'nodeId' | 'kind' | 'objectKey' | 'sourceKey' | 'structureKeys' | 'content'
-    >[],
+    nodes: readonly Pick<NodeRow, 'nodeId' | 'kind' | 'objectKey' | 'sourceKey' | 'content'>[],
     spans: readonly SpanRow[],
     fileText: (path: string) => string | undefined,
 ): unknown => {
@@ -201,9 +188,7 @@ export const rebuildUnit = (
         if (typeof mark === 'number' && Object.keys(value).length === 1) {
             const node = byId.get(mark);
             if (!node) throw new Error(`node ${String(mark)} がありません`);
-            const sourceKeys = node.structureKeys
-                ? JSON.parse(node.structureKeys)
-                : { objectKey: node.objectKey, sourceKey: node.sourceKey };
+            const sourceKeys = { objectKey: node.objectKey, sourceKey: node.sourceKey };
             // kind・sourceKeys を先にする (保存する前と同じキーの並び)
             const out: Record<string, unknown> = { kind: node.kind, sourceKeys };
             const content = JSON.parse(node.content) as Record<string, unknown>;

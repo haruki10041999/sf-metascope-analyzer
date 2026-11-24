@@ -1,20 +1,26 @@
 {
   "source": {
+    "kind": "apexSource",
+    "sourceKeys": {},
     "fileName": "Shape.cls",
     "fileType": "cls",
     "content": {
       "kind": "class",
-      "sourceKeys": {
-        "base": {},
-        "name": {}
+      "sourceKeys": {},
+      "nameRef": {
+        "kind": "declarationName",
+        "sourceKeys": {},
+        "name": "Shape"
       },
       "name": "Shape",
       "block": [
         {
           "kind": "method",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
+          "sourceKeys": {},
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "area"
           },
           "name": "area",
           "returnType": {
@@ -25,6 +31,8 @@
           },
           "param": [],
           "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {},
             "keyword": [
               {
                 "kind": "modifier",
@@ -41,6 +49,8 @@
         }
       ],
       "modifier": {
+        "kind": "modifiers",
+        "sourceKeys": {},
         "keyword": [
           {
             "kind": "modifier",
@@ -141,6 +151,45 @@
         "offset": 16,
         "line": 1,
         "column": 16
+      },
+      "end": {
+        "offset": 67,
+        "line": 3,
+        "column": 1
+      }
+    },
+    {
+      "context": "public abstract Decimal area();",
+      "start": {
+        "offset": 34,
+        "line": 2,
+        "column": 4
+      },
+      "end": {
+        "offset": 65,
+        "line": 2,
+        "column": 35
+      }
+    },
+    {
+      "context": "public abstract class Shape {\n    public abstract Decimal area();\n}",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 67,
+        "line": 3,
+        "column": 1
+      }
+    },
+    {
+      "context": "public abstract class Shape {\n    public abstract Decimal area();\n}",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
       },
       "end": {
         "offset": 67,

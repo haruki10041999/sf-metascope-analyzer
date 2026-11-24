@@ -12,6 +12,7 @@ import {
     IfConditionBlockJson,
     IfStatementJson,
     InsertStatementJson,
+    LocalVariableDeclarationBody,
     LocalVariableDeclarationJson,
     LocalVariableStatementJson,
     MergeStatementJson,
@@ -523,8 +524,8 @@ const makeVariantListDiff = (
     );
 
 const makeLocalVariableFieldsDiff = (
-    before: LocalVariableDeclarationJson,
-    after: LocalVariableDeclarationJson,
+    before: LocalVariableDeclarationBody,
+    after: LocalVariableDeclarationBody,
     sources?: Sources,
 ): LocalVariableDeclarationFieldsDiff => ({
     variants: makeVariantListDiff(before.variants, after.variants, sources),

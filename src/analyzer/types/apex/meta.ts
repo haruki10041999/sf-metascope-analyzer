@@ -23,7 +23,11 @@ export const APEX_META_SCHEMA = {
 } as const;
 
 /** 管理パッケージのバージョン (`<packageVersions>`)。namespace で識別する */
-export type PackageVersionJson = { namespace: string; majorNumber?: number; minorNumber?: number };
+export type PackageVersionJson = JsonType<'packageVersion'> & {
+    namespace: string;
+    majorNumber?: number;
+    minorNumber?: number;
+};
 
 type ApexMetaBody = {
     packageVersions?: PackageVersionJson[];
@@ -68,10 +72,21 @@ export const makeApexMetaJson = (
             ...readProperties(element, APEX_META_SCHEMA),
             ...nonEmptyEntry(
                 'packageVersions',
-                childrenOf(element, 'packageVersions').map((version) => ({
-                    namespace: readText(version, 'namespace') ?? '',
-                    ...readProperties(version, { majorNumber: 'number', minorNumber: 'number' }),
-                })),
+                childrenOf(element, 'packageVersions').map((version) =>
+                    makeXmlJson<PackageVersionJson>(
+                        'packageVersion',
+                        {
+                            namespace: readText(version, 'namespace') ?? '',
+                            ...readProperties(version, {
+                                majorNumber: 'number',
+                                minorNumber: 'number',
+                            }),
+                        },
+                        version,
+                        file,
+                        registry,
+                    ),
+                ),
             ),
         },
         element,

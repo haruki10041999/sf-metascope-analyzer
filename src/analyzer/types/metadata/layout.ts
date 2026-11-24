@@ -70,7 +70,12 @@ export type LayoutSectionJson = JsonType<'layoutSection'> &
     };
 
 /** 項目の位置。section はセクションのラベル (ラベルがなければ番号)、column・row は 1 始まり */
-export type LayoutItemPosition = { section: string; column: number; row: number };
+/** 項目の位置 (セクション・列・行。metadata 8 からノード。ソースの位置は項目の要素) */
+export type LayoutItemPosition = JsonType<'layoutPosition'> & {
+    section: string;
+    column: number;
+    row: number;
+};
 
 /** 項目 (項目・リンク・Visualforce・空白など) */
 export type LayoutItemJson = JsonType<'layoutItem'> &
@@ -134,7 +139,14 @@ const makeItems = (
                 'layoutItem',
                 {
                     ...readProperties(item, LAYOUT_ITEM_SCHEMA),
-                    position: { section: sectionName, column: columnIndex + 1, row: rowIndex + 1 },
+                    // 位置 (セクション・列・行) もノード (metadata 8 から)。ソースの位置は項目の要素
+                    position: makeMetadataJson<LayoutItemPosition>(
+                        'layoutPosition',
+                        { section: sectionName, column: columnIndex + 1, row: rowIndex + 1 },
+                        item,
+                        file,
+                        registry,
+                    ),
                 },
                 item,
                 file,

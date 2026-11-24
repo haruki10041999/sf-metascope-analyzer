@@ -16,6 +16,7 @@ import {
     criterionTextsOf,
     filterLogicTextOf,
 } from '../../src/analyzer/types';
+import { p1Shape } from './lwcShape';
 
 // 値の木の中の条件の行・数式・テンプレート (docs/json-redesign-plan.md の段階 M7)
 
@@ -64,7 +65,11 @@ describe('値の木の中の条件の行・数式 (段階 M7)', () => {
         assert.equal(filterLogicTextOf(rule.properties!.conditionLogic as never), '1 OR 2');
         const lookup = json.elements!.find((e) => e.name === 'Get')!;
         const [filter] = lookup.properties!.filters as unknown as CriterionJson[];
-        assert.deepEqual(filter!.right, { type: 'value', value: 'Bank', valueType: 'stringValue' });
+        assert.deepEqual(p1Shape(filter!.right), {
+            type: 'value',
+            value: 'Bank',
+            valueType: 'stringValue',
+        });
         assert.deepEqual(flow.resolvedError, []);
     });
 

@@ -3,17 +3,13 @@ import {
     JsonType,
     SourceSpan as SourceInfo,
     SourceJson,
-    StructureJsonType,
     isJsonType,
-    isStructureJsonType,
 } from '../../types';
 import { makeConvertKeys } from '../commons/source';
 
 export type ExtractConvertNode<T> = T extends readonly (infer U)[]
     ? ExtractConvertNode<U>[]
-    : T extends
-            | JsonType<string>
-            | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>
+    : T extends JsonType<string>
       ? T extends { kind: infer Kind extends string }
           ? {
                 [K in Kind]: ConvertKeys;
@@ -33,10 +29,7 @@ type ExtractConvertNodeProperties<T> = {
     ]: ExtractConvertNode<T[K]>;
 };
 
-export type ExtractConvert<
-    T extends
-        JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>,
-> = ExtractConvertNode<T>;
+export type ExtractConvert<T extends JsonType<string>> = ExtractConvertNode<T>;
 
 const _extractConvertKeys = (target: unknown): unknown => {
     if (Array.isArray(target)) {
@@ -51,7 +44,7 @@ const _extractConvertKeys = (target: unknown): unknown => {
         return undefined;
     }
 
-    if (isJsonType(target) || isStructureJsonType(target)) {
+    if (isJsonType(target)) {
         const { kind } = target;
 
         const children = Object.fromEntries(
@@ -76,19 +69,11 @@ const _extractConvertKeys = (target: unknown): unknown => {
     return Object.keys(extracted).length > 0 ? extracted : undefined;
 };
 
-export const extractConvert = <
-    T extends
-        JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>,
->(
-    target: unknown,
-): ExtractConvert<T> => {
+export const extractConvert = <T extends JsonType<string>>(target: unknown): ExtractConvert<T> => {
     return _extractConvertKeys(target) as ExtractConvert<T>;
 };
 
-export const matchdJsonIndexes = <
-    T extends
-        JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>,
->(
+export const matchdJsonIndexes = <T extends JsonType<string>>(
     target: T[],
     objectKey: string,
 ): { index: number; data: T }[] => {
@@ -128,13 +113,7 @@ export const findConvertKeys = (target: unknown, property: Set<string>): Convert
     return result;
 };
 
-const _findJson = <
-    T extends
-        JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>,
->(
-    target: unknown,
-    baseJson: T,
-): T | undefined => {
+const _findJson = <T extends JsonType<string>>(target: unknown, baseJson: T): T | undefined => {
     if (Array.isArray(target)) {
         for (const value of target) {
             const result = _findJson(value, baseJson);
@@ -151,7 +130,7 @@ const _findJson = <
         return undefined;
     }
 
-    if (isJsonType(target) || isStructureJsonType(target)) {
+    if (isJsonType(target)) {
         const baseConvertKeys = makeConvertKeys(baseJson);
         const convertKeys = makeConvertKeys(target);
 
@@ -175,13 +154,10 @@ const _findJson = <
     return undefined;
 };
 
-export const findJson = <
-    T extends
-        JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>,
->(
+export const findJson = <T extends JsonType<string>>(
     target: unknown,
     baseJson: T,
-): JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>> => {
+): JsonType<string> => {
     const targetJson = _findJson(target, baseJson);
 
     if (!targetJson) {
@@ -194,17 +170,11 @@ export const findJson = <
     return targetJson;
 };
 
-const _matchedObjectJson = <
-    T extends
-        JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>,
->(
+const _matchedObjectJson = <T extends JsonType<string>>(
     target: unknown,
     baseJson: T,
     results: T[],
-):
-    | JsonType<string>
-    | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>
-    | undefined => {
+): JsonType<string> | undefined => {
     if (Array.isArray(target)) {
         for (const value of target) {
             _matchedObjectJson(value, baseJson, results);
@@ -215,7 +185,7 @@ const _matchedObjectJson = <
         return undefined;
     }
 
-    if (isJsonType(target) || isStructureJsonType(target)) {
+    if (isJsonType(target)) {
         const baseConvertKeys = makeConvertKeys(baseJson);
         const convertKeys = makeConvertKeys(target);
 
@@ -229,10 +199,7 @@ const _matchedObjectJson = <
     }
 };
 
-export const matchedObjectJson = <
-    T extends
-        JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>,
->(
+export const matchedObjectJson = <T extends JsonType<string>>(
     target: unknown,
     baseJson: T,
 ): T[] => {

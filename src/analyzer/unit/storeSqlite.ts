@@ -22,7 +22,7 @@ import type { UnitParseResult } from './unitType';
 // ファイル: <置き場>/metascope.db。表:
 //   meta (置き場所の版) / source (hash → LF にそろえた中身) / snapshot (before の目録)
 //   unit (番号・key・種類・解析結果の版・根) / unit_file (単位のファイルと hash)
-//   node (JsonType・StructureJsonType を 1 行。子は親の中身の {"$node": 番号}) / span (sourceObject の位置)
+//   node (JsonType を 1 行。子は親の中身の {"$node": 番号}) / span (sourceObject の位置)
 //   derived (定義・参照) / file_stat (作業ツリーのファイルの大きさ・更新時刻・hash)
 // - node・span・unit_file は単位を整数の番号 (unit.id) で引く (64 文字の key を行ごとに持たない)。
 //   node・span は WITHOUT ROWID (主キーの木 1 つにする)
@@ -56,7 +56,6 @@ CREATE TABLE IF NOT EXISTS node (
     kind TEXT NOT NULL,
     object_key TEXT,
     source_key TEXT,
-    structure_keys TEXT,
     content TEXT NOT NULL,
     span_entry INTEGER,
     span_position INTEGER,
@@ -230,7 +229,7 @@ export class SqliteStoreBackend implements StoreBackend {
         // 列に別名を付けて、読んだ行をそのまま使う (行ごとに詰め替えない。NPSP の 170 万行で約 2 秒かかっていた)
         const nodes = this.statement(
             `SELECT node_id AS nodeId, kind, object_key AS objectKey, source_key AS sourceKey,
-                structure_keys AS structureKeys, content FROM node WHERE unit_id = ?`,
+                content FROM node WHERE unit_id = ?`,
         ).all(unit.id) as unknown as Parameters<typeof rebuildUnit>[1];
         const spans = this.statement(
             `SELECT entry, position, object_key AS objectKey, source_key AS sourceKey,
@@ -306,7 +305,7 @@ export class SqliteStoreBackend implements StoreBackend {
                 ).run(unitId, file.path, file.hash, fileNo);
             });
             const insertNode = this.statement(
-                'INSERT INTO node (unit_id, node_id, parent_id, path, kind, object_key, source_key, structure_keys, content, span_entry, span_position) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                'INSERT INTO node (unit_id, node_id, parent_id, path, kind, object_key, source_key, content, span_entry, span_position) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             );
             for (const node of nodes) {
                 insertNode.run(
@@ -317,7 +316,6 @@ export class SqliteStoreBackend implements StoreBackend {
                     node.kind,
                     node.objectKey,
                     node.sourceKey,
-                    node.structureKeys,
                     node.content,
                     node.spanEntry,
                     node.spanPosition,

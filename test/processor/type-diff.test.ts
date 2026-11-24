@@ -57,20 +57,27 @@ describe('type diff', () => {
     });
 
     it('aligns qualified names from the end and diffs generics as a sequence', () => {
+        // 型引数も type のノード (apex 8)。objectKey は中身の hash なので、中身が同じなら同じキーにする
+        const primitive = (name: string, sourceKey: string): TypeJson => ({
+            kind: 'type',
+            sourceKeys: { objectKey: `type-${name}`, sourceKey },
+            type: 'primitive',
+            primitiveType: name,
+        });
+        const id = primitive('Id', 'id-before');
+        const stringBefore = primitive('String', 'string-before');
+        const stringAfter = primitive('String', 'string-after');
         assert.deepEqual(
             makeTypeContentDiff(
                 {
                     type: 'custom',
                     customType: ['Outer', 'Inner'],
-                    generic: [
-                        { type: 'primitive', primitiveType: 'Id' },
-                        { type: 'primitive', primitiveType: 'String' },
-                    ],
+                    generic: [id, stringBefore],
                 },
                 {
                     type: 'custom',
                     customType: ['ns', 'Outer', 'Inner'],
-                    generic: [{ type: 'primitive', primitiveType: 'String' }],
+                    generic: [stringAfter],
                 },
             ),
             {
@@ -86,14 +93,10 @@ describe('type diff', () => {
                         ],
                     },
                     generic: [
-                        {
-                            status: 'removed',
-                            index: 0,
-                            value: { type: 'primitive', primitiveType: 'Id' },
-                        },
+                        { status: 'removed', index: 0, value: id },
                         {
                             status: 'unchanged',
-                            value: { type: 'primitive', primitiveType: 'String' },
+                            value: stringBefore,
                             index: { before: 1, after: 0 },
                         },
                     ],

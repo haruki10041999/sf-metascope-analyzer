@@ -1,4 +1,4 @@
-import { FieldJson, SelectEntryJson } from '../../../../types';
+import { FieldBody, SelectEntryJson } from '../../../../types';
 
 import {
     ListItemDiff,
@@ -48,7 +48,7 @@ export const makeFieldPathDiff = (before: string[], after: string[]): FieldPathD
     return { status: 'changed', parts: parts.reverse() };
 };
 
-export const makeFieldDiff = (before: FieldJson, after: FieldJson): FieldJsonDiff => ({
+export const makeFieldDiff = (before: FieldBody, after: FieldBody): FieldJsonDiff => ({
     type: 'field',
     field: makeFieldPathDiff(before.field, after.field),
 });

@@ -14,6 +14,7 @@ import {
     parseFormulaSyntax,
     templateTextOf,
 } from '../../src/analyzer/types';
+import { p1Shape } from './lwcShape';
 
 // マークアップの木と、差し込みを含む文字列のテンプレート (docs/json-redesign-plan.md の段階 M6)
 
@@ -57,7 +58,7 @@ describe('マークアップの木とテンプレート (段階 M6)', () => {
         const page = result.result.base as ApexPageJson;
         const [field, p] = page.markup!.body as MarkupElementJson[];
         assert.equal(field!.tag, 'apex:outputField');
-        assert.deepEqual(shape(field!.attributes[0]), {
+        assert.deepEqual(p1Shape(shape(field!.attributes[0])), {
             name: 'value',
             value: {
                 kind: 'fxTemplate',

@@ -569,9 +569,11 @@ const makePattern = (node: LwcNode, scope: ExpressionContext): LwcJsPatternJson 
                 {
                     properties: properties.map((property) => {
                         const fields = property.getFields();
-                        return makeJsonType<'jsPatternProperty', LwcJsPatternPropertyJson>(
+                        // 分割代入のプロパティの IR (objectProperty) はオブジェクトのプロパティ (jsProperty) と同じキーに
+                        // なりうるので、キーは中身から作る (位置はプロパティ)
+                        return context.derivedJson<LwcJsPatternPropertyJson>(
                             'jsPatternProperty',
-                            context.keysOf(property),
+                            property,
                             {
                                 ...makePropertyKeyJson(fields, scope),
                                 value: makePattern(fields.value, scope),

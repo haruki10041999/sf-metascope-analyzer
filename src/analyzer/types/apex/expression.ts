@@ -30,7 +30,7 @@ import type {
     TypeRefTypeClass,
 } from '../apex_IR';
 
-import { makeNodeJson } from './commons/node';
+import { makeDerivedNodeJson, makeNodeJson } from './commons/node';
 import {
     type TypeContentJson,
     type TypeJson,
@@ -132,8 +132,11 @@ export type NewJson = JsonType<'new'> & {
     size?: BaseExpressionJson;
 };
 
-/** new Map の初期化の 1 組 (kind を持たない入れ物) */
-export type NewEntryJson = { key: BaseExpressionJson; value: BaseExpressionJson };
+/** new Map の初期化の 1 組 (key => value) */
+export type NewEntryJson = JsonType<'newEntry'> & {
+    key: BaseExpressionJson;
+    value: BaseExpressionJson;
+};
 
 /** new の型の名前 (List<Account> / Outer.Inner / X[]) */
 const makeNewTypeJson = (target: CreatedNameTypeClass, array: boolean): TypeJson => {
@@ -143,11 +146,14 @@ const makeNewTypeJson = (target: CreatedNameTypeClass, array: boolean): TypeJson
     const generic: readonly TypeRefTypeClass[] | null =
         pairs.at(-1)?.getFields().right?.getFields().value ?? null;
     const content: TypeContentJson = makeTypeContentJsonOfNames(names, generic);
-    return makeNodeJson<TypeJson>(
-        'type',
-        target,
-        array ? { type: 'array', elementType: content, dimension: 1 } : content,
-    );
+    if (!array) return makeNodeJson<TypeJson>('type', target, content);
+    // new X[] の配列の型は IR に対応するノードがない (createdName は X だけの中身なので、そのキーを配列の型に使うと
+    // new X() の型と同じキーになってしまう)。要素の型 X が createdName のキーを持つ
+    return makeDerivedNodeJson<TypeJson>('type', target, {
+        type: 'array',
+        elementType: makeNodeJson<TypeJson>('type', target, content),
+        dimension: 1,
+    });
 };
 
 const makeNewJson = (target: NewExpressionTypeClass): NewJson => {
@@ -187,10 +193,10 @@ const makeNewJson = (target: NewExpressionTypeClass): NewJson => {
                 newType,
                 entries: rest.getFields().value.map((v) => {
                     const { left, right } = v.getFields();
-                    return {
+                    return makeNodeJson<NewEntryJson>('newEntry', v, {
                         key: makeExpressionJsonConvert(left),
                         value: makeExpressionJsonConvert(right),
-                    };
+                    });
                 }),
             });
         case 'noRest':

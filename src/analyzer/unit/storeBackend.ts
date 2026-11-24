@@ -29,7 +29,7 @@ export type FileStatEntry = FileStat & { hash: string; checkedAt: number };
 /** 単位のファイルの中身 (解析結果を書くときに、位置からソースの文字列を作れるように渡す) */
 export type UnitSourceFile = ManifestFile & { text: string };
 
-/** ノード (JsonType・StructureJsonType の行) の検索 (docs/implementation-roadmap.md 5 章の Q4) */
+/** ノード (JsonType の行) の検索 (docs/implementation-roadmap.md 5 章の Q4) */
 export type NodeQuery = {
     /** 探す単位の key (今の状態・前回の基準の単位だけを見るため) */
     unitKeys: readonly string[];

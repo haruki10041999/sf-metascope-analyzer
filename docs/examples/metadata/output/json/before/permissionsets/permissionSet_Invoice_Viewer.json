@@ -1,0 +1,107 @@
+{
+  "filePath": "permissionsets/Invoice_Viewer.permissionset-meta.xml",
+  "resolvedError": [],
+  "dataType": "permissionSet",
+  "result": {
+    "id": "permissionSet_Invoice_Viewer",
+    "base": {
+      "kind": "permissionSet",
+      "sourceKeys": {
+        "objectKey": "permissionSet_44df74550694e293",
+        "sourceKey": "permissionSet_6c0634ef2e3d9eb6"
+      },
+      "name": "Invoice_Viewer",
+      "label": "Invoice Viewer",
+      "fieldPermissions": [
+        {
+          "kind": "fieldPermission",
+          "sourceKeys": {
+            "objectKey": "fieldPermission_b73cebb1562adc62",
+            "sourceKey": "fieldPermission_025309aec4cf5bdd"
+          },
+          "field": "Invoice__c.Amount__c",
+          "readable": true,
+          "editable": false
+        }
+      ],
+      "objectPermissions": [
+        {
+          "kind": "objectPermission",
+          "sourceKeys": {
+            "objectKey": "objectPermission_ab00743a2ceb0b58",
+            "sourceKey": "objectPermission_f14ca038ba93bc7a"
+          },
+          "object": "Invoice__c",
+          "allowCreate": false,
+          "allowRead": true,
+          "allowEdit": false,
+          "allowDelete": false,
+          "viewAllRecords": false,
+          "modifyAllRecords": false
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "fieldPermission_b73cebb1562adc62",
+        "context": "<fieldPermissions>\n        <editable>false</editable>\n        <field>Invoice__c.Amount__c</field>\n        <readable>true</readable>\n    </fieldPermissions>",
+        "source": [
+          {
+            "sourceKey": "fieldPermission_025309aec4cf5bdd",
+            "filePath": "permissionsets/Invoice_Viewer.permissionset-meta.xml",
+            "start": {
+              "offset": 107,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 262,
+              "line": 7,
+              "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "objectPermission_ab00743a2ceb0b58",
+        "context": "<objectPermissions>\n        <allowCreate>false</allowCreate>\n        <allowDelete>false</allowDelete>\n        <allowEdit>false</allowEdit>\n        <allowRead>true</allowRead>\n        <modifyAllRecords>false</modifyAllRecords>\n        <object>Invoice__c</object>\n        <viewAllRecords>false</viewAllRecords>\n    </objectPermissions>",
+        "source": [
+          {
+            "sourceKey": "objectPermission_f14ca038ba93bc7a",
+            "filePath": "permissionsets/Invoice_Viewer.permissionset-meta.xml",
+            "start": {
+              "offset": 301,
+              "line": 9,
+              "column": 4
+            },
+            "end": {
+              "offset": 634,
+              "line": 17,
+              "column": 24
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "permissionSet_44df74550694e293",
+        "context": "<PermissionSet xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <fieldPermissions>\n        <editable>false</editable>\n        <field>Invoice__c.Amount__c</field>\n        <readable>true</readable>\n    </fieldPermissions>\n    <label>Invoice Viewer</label>\n    <objectPermissions>\n        <allowCreate>false</allowCreate>\n        <allowDelete>false</allowDelete>\n        <allowEdit>false</allowEdit>\n        <allowRead>true</allowRead>\n        <modifyAllRecords>false</modifyAllRecords>\n        <object>Invoice__c</object>\n        <viewAllRecords>false</viewAllRecords>\n    </objectPermissions>\n</PermissionSet>",
+        "source": [
+          {
+            "sourceKey": "permissionSet_6c0634ef2e3d9eb6",
+            "filePath": "permissionsets/Invoice_Viewer.permissionset-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 651,
+              "line": 18,
+              "column": 16
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

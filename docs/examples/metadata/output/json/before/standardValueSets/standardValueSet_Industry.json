@@ -1,0 +1,101 @@
+{
+  "filePath": "standardValueSets/Industry.standardValueSet-meta.xml",
+  "resolvedError": [],
+  "dataType": "standardValueSet",
+  "result": {
+    "id": "standardValueSet_Industry",
+    "base": {
+      "kind": "standardValueSet",
+      "sourceKeys": {
+        "objectKey": "standardValueSet_eb8ef2c91838e03e",
+        "sourceKey": "standardValueSet_702290ef5e4f0924"
+      },
+      "fullName": "Industry",
+      "sorted": false,
+      "standardValue": [
+        {
+          "kind": "standardValue",
+          "sourceKeys": {
+            "objectKey": "standardValue_77966e98cf72eb75",
+            "sourceKey": "standardValue_2dd5ec9cf157002e"
+          },
+          "fullName": "Agriculture",
+          "label": "Agriculture",
+          "default": false
+        },
+        {
+          "kind": "standardValue",
+          "sourceKeys": {
+            "objectKey": "standardValue_41891587aa8fd471",
+            "sourceKey": "standardValue_ebbde18f622b2bb2"
+          },
+          "fullName": "Banking",
+          "label": "Banking",
+          "default": false
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "standardValue_77966e98cf72eb75",
+        "context": "<standardValue>\n        <fullName>Agriculture</fullName>\n        <default>false</default>\n        <label>Agriculture</label>\n    </standardValue>",
+        "source": [
+          {
+            "sourceKey": "standardValue_2dd5ec9cf157002e",
+            "filePath": "standardValueSets/Industry.standardValueSet-meta.xml",
+            "start": {
+              "offset": 137,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 282,
+              "line": 8,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "standardValue_41891587aa8fd471",
+        "context": "<standardValue>\n        <fullName>Banking</fullName>\n        <default>false</default>\n        <label>Banking</label>\n    </standardValue>",
+        "source": [
+          {
+            "sourceKey": "standardValue_ebbde18f622b2bb2",
+            "filePath": "standardValueSets/Industry.standardValueSet-meta.xml",
+            "start": {
+              "offset": 287,
+              "line": 9,
+              "column": 4
+            },
+            "end": {
+              "offset": 424,
+              "line": 13,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "standardValueSet_eb8ef2c91838e03e",
+        "context": "<StandardValueSet xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <sorted>false</sorted>\n    <standardValue>\n        <fullName>Agriculture</fullName>\n        <default>false</default>\n        <label>Agriculture</label>\n    </standardValue>\n    <standardValue>\n        <fullName>Banking</fullName>\n        <default>false</default>\n        <label>Banking</label>\n    </standardValue>\n</StandardValueSet>",
+        "source": [
+          {
+            "sourceKey": "standardValueSet_702290ef5e4f0924",
+            "filePath": "standardValueSets/Industry.standardValueSet-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 444,
+              "line": 14,
+              "column": 19
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

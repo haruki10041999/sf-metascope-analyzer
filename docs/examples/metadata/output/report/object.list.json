@@ -3,7 +3,7 @@
     "status": "changed",
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Account",
     "sourceKeys": {
-      "objectKey": "object_4531d0b418ec4f56",
+      "objectKey": "object_4884e842661ced88",
       "sourceKey": "object_5e4501090ced50f4"
     },
     "changedProperties": [
@@ -60,7 +60,7 @@
     "status": "changed",
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice__c",
     "sourceKeys": {
-      "objectKey": "object_d918b341e7e90768",
+      "objectKey": "object_3ca19d9edd6f3b77",
       "sourceKey": "object_f6c2bf7f8e39ece3"
     },
     "changedProperties": [
@@ -82,7 +82,7 @@
     "status": "changed",
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\objects\\Invoice_Line__c",
     "sourceKeys": {
-      "objectKey": "object_260a222b30172abe",
+      "objectKey": "object_9faf0377a674ad0c",
       "sourceKey": "object_97265b6e92059763"
     },
     "changedProperties": [

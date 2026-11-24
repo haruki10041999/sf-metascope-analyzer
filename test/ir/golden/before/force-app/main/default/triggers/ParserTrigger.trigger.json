@@ -1,8 +1,12 @@
 {
   "source": {
+    "kind": "apexSource",
+    "sourceKeys": {},
     "fileName": "ParserTrigger.trigger",
     "fileType": "trigger",
     "content": {
+      "kind": "triggerUnit",
+      "sourceKeys": {},
       "name": "ParserTrigger",
       "object": "Account",
       "case": [
@@ -462,6 +466,8 @@
             "primitiveType": "String"
           },
           "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {},
             "keyword": [
               {
                 "kind": "modifier",
@@ -503,6 +509,8 @@
             "primitiveType": "Integer"
           },
           "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {},
             "keyword": [
               {
                 "kind": "modifier",
@@ -514,9 +522,11 @@
         },
         {
           "kind": "property",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
+          "sourceKeys": {},
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "label"
           },
           "name": "label",
           "variantType": {
@@ -527,13 +537,25 @@
           },
           "isGetter": true,
           "getterContent": {
-            "modifier": {}
+            "kind": "accessor",
+            "sourceKeys": {},
+            "modifier": {
+              "kind": "modifiers",
+              "sourceKeys": {}
+            }
           },
           "isSetter": true,
           "setterContent": {
-            "modifier": {}
+            "kind": "accessor",
+            "sourceKeys": {},
+            "modifier": {
+              "kind": "modifiers",
+              "sourceKeys": {}
+            }
           },
           "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {},
             "keyword": [
               {
                 "kind": "modifier",
@@ -545,9 +567,11 @@
         },
         {
           "kind": "method",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
+          "sourceKeys": {},
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "log"
           },
           "name": "log",
           "returnType": "void",
@@ -562,7 +586,10 @@
                 "type": "primitive",
                 "primitiveType": "String"
               },
-              "modifier": {}
+              "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {}
+              }
             }
           ],
           "block": [
@@ -601,6 +628,8 @@
             }
           ],
           "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {},
             "keyword": [
               {
                 "kind": "modifier",
@@ -612,17 +641,21 @@
         },
         {
           "kind": "class",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
+          "sourceKeys": {},
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "TriggerHelper"
           },
           "name": "TriggerHelper",
           "block": [
             {
               "kind": "method",
-              "sourceKeys": {
-                "base": {},
-                "name": {}
+              "sourceKeys": {},
+              "nameRef": {
+                "kind": "declarationName",
+                "sourceKeys": {},
+                "name": "run"
               },
               "name": "run",
               "returnType": "void",
@@ -653,6 +686,8 @@
                 }
               ],
               "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {},
                 "keyword": [
                   {
                     "kind": "modifier",
@@ -664,6 +699,8 @@
             }
           ],
           "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {},
             "keyword": [
               {
                 "kind": "modifier",
@@ -675,25 +712,34 @@
         },
         {
           "kind": "interface",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
+          "sourceKeys": {},
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "TriggerHandler"
           },
           "name": "TriggerHandler",
           "block": [
             {
               "kind": "interfaceMethod",
-              "sourceKeys": {
-                "base": {},
-                "name": {}
+              "sourceKeys": {},
+              "nameRef": {
+                "kind": "declarationName",
+                "sourceKeys": {},
+                "name": "handle"
               },
               "name": "handle",
               "returnType": "void",
               "param": [],
-              "modifier": {}
+              "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {}
+              }
             }
           ],
           "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {},
             "keyword": [
               {
                 "kind": "modifier",
@@ -705,9 +751,11 @@
         },
         {
           "kind": "enum",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
+          "sourceKeys": {},
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "Phase"
           },
           "name": "Phase",
           "members": [
@@ -723,6 +771,8 @@
             }
           ],
           "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {},
             "keyword": [
               {
                 "kind": "modifier",
@@ -749,6 +799,8 @@
           },
           "when": [
             {
+              "kind": "switchWhen",
+              "sourceKeys": {},
               "condition": {
                 "kind": "switchCondition",
                 "sourceKeys": {},
@@ -784,6 +836,8 @@
               ]
             },
             {
+              "kind": "switchWhen",
+              "sourceKeys": {},
               "condition": {
                 "kind": "switchCondition",
                 "sourceKeys": {},
@@ -814,6 +868,8 @@
               ]
             },
             {
+              "kind": "switchWhen",
+              "sourceKeys": {},
               "condition": {
                 "kind": "switchCondition",
                 "sourceKeys": {},
@@ -848,6 +904,8 @@
           "sourceKeys": {},
           "conditionBlock": [
             {
+              "kind": "ifBranch",
+              "sourceKeys": {},
               "condition": {
                 "kind": "logical",
                 "sourceKeys": {},
@@ -908,6 +966,8 @@
                       "sourceKeys": {},
                       "conditionBlock": [
                         {
+                          "kind": "ifBranch",
+                          "sourceKeys": {},
                           "condition": {
                             "kind": "memberAccess",
                             "sourceKeys": {},
@@ -1002,6 +1062,8 @@
           "sourceKeys": {},
           "conditionBlock": [
             {
+              "kind": "ifBranch",
+              "sourceKeys": {},
               "condition": {
                 "kind": "logical",
                 "sourceKeys": {},
@@ -1068,7 +1130,10 @@
                           "Account"
                         ]
                       },
-                      "modifier": {},
+                      "modifier": {
+                        "kind": "modifiers",
+                        "sourceKeys": {}
+                      },
                       "variants": [
                         {
                           "kind": "variant",
@@ -1115,6 +1180,8 @@
                       "sourceKeys": {},
                       "conditionBlock": [
                         {
+                          "kind": "ifBranch",
+                          "sourceKeys": {},
                           "condition": {
                             "kind": "binary",
                             "sourceKeys": {},
@@ -1180,6 +1247,8 @@
                       "sourceKeys": {},
                       "conditionBlock": [
                         {
+                          "kind": "ifBranch",
+                          "sourceKeys": {},
                           "condition": {
                             "kind": "binary",
                             "sourceKeys": {},
@@ -1241,6 +1310,8 @@
           "sourceKeys": {},
           "conditionBlock": [
             {
+              "kind": "ifBranch",
+              "sourceKeys": {},
               "condition": {
                 "kind": "logical",
                 "sourceKeys": {},
@@ -1347,6 +1418,8 @@
           "sourceKeys": {},
           "conditionBlock": [
             {
+              "kind": "ifBranch",
+              "sourceKeys": {},
               "condition": {
                 "kind": "logical",
                 "sourceKeys": {},
@@ -1385,13 +1458,18 @@
                     "sourceKeys": {},
                     "type": "list",
                     "elementType": {
+                      "kind": "type",
+                      "sourceKeys": {},
                       "type": "custom",
                       "customType": [
                         "Contact"
                       ]
                     }
                   },
-                  "modifier": {},
+                  "modifier": {
+                    "kind": "modifiers",
+                    "sourceKeys": {}
+                  },
                   "variants": [
                     {
                       "kind": "variant",
@@ -1405,6 +1483,8 @@
                           "sourceKeys": {},
                           "type": "list",
                           "elementType": {
+                            "kind": "type",
+                            "sourceKeys": {},
                             "type": "custom",
                             "customType": [
                               "Contact"
@@ -1524,6 +1604,8 @@
                   "sourceKeys": {},
                   "conditionBlock": [
                     {
+                      "kind": "ifBranch",
+                      "sourceKeys": {},
                       "condition": {
                         "kind": "unary",
                         "sourceKeys": {},
@@ -1566,6 +1648,8 @@
           "sourceKeys": {},
           "conditionBlock": [
             {
+              "kind": "ifBranch",
+              "sourceKeys": {},
               "condition": {
                 "kind": "logical",
                 "sourceKeys": {},
@@ -1604,11 +1688,16 @@
                     "sourceKeys": {},
                     "type": "set",
                     "elementType": {
+                      "kind": "type",
+                      "sourceKeys": {},
                       "type": "primitive",
                       "primitiveType": "Id"
                     }
                   },
-                  "modifier": {},
+                  "modifier": {
+                    "kind": "modifiers",
+                    "sourceKeys": {}
+                  },
                   "variants": [
                     {
                       "kind": "variant",
@@ -1622,6 +1711,8 @@
                           "sourceKeys": {},
                           "type": "set",
                           "elementType": {
+                            "kind": "type",
+                            "sourceKeys": {},
                             "type": "primitive",
                             "primitiveType": "Id"
                           }
@@ -1676,13 +1767,18 @@
                     "sourceKeys": {},
                     "type": "list",
                     "elementType": {
+                      "kind": "type",
+                      "sourceKeys": {},
                       "type": "custom",
                       "customType": [
                         "Account"
                       ]
                     }
                   },
-                  "modifier": {},
+                  "modifier": {
+                    "kind": "modifiers",
+                    "sourceKeys": {}
+                  },
                   "variants": [
                     {
                       "kind": "variant",
@@ -1692,6 +1788,8 @@
                         "kind": "soql",
                         "sourceKeys": {},
                         "select": {
+                          "kind": "soqlSelect",
+                          "sourceKeys": {},
                           "field": [
                             {
                               "kind": "selectEntry",
@@ -1721,6 +1819,8 @@
                               "kind": "subQuery",
                               "sourceKeys": {},
                               "select": {
+                                "kind": "soqlSelect",
+                                "sourceKeys": {},
                                 "field": [
                                   {
                                     "kind": "selectEntry",
@@ -1749,6 +1849,8 @@
                                 ]
                               },
                               "from": {
+                                "kind": "soqlFrom",
+                                "sourceKeys": {},
                                 "field": [
                                   {
                                     "kind": "fromField",
@@ -1763,6 +1865,8 @@
                           ]
                         },
                         "from": {
+                          "kind": "soqlFrom",
+                          "sourceKeys": {},
                           "field": [
                             {
                               "kind": "fromField",
@@ -1774,12 +1878,18 @@
                           ]
                         },
                         "where": {
+                          "kind": "soqlWhere",
+                          "sourceKeys": {},
                           "condition": {
+                            "kind": "soqlLogical",
+                            "sourceKeys": {},
                             "condition": [
                               {
                                 "kind": "singleCondition",
                                 "sourceKeys": {},
                                 "field": {
+                                  "kind": "soqlField",
+                                  "sourceKeys": {},
                                   "type": "field",
                                   "field": [
                                     "Id"
@@ -1787,6 +1897,8 @@
                                 },
                                 "operator": "IN",
                                 "value": {
+                                  "kind": "soqlValue",
+                                  "sourceKeys": {},
                                   "type": "bind",
                                   "value": {
                                     "kind": "identifier",
@@ -1810,13 +1922,18 @@
                     "sourceKeys": {},
                     "type": "list",
                     "elementType": {
+                      "kind": "type",
+                      "sourceKeys": {},
                       "type": "custom",
                       "customType": [
                         "Contact"
                       ]
                     }
                   },
-                  "modifier": {},
+                  "modifier": {
+                    "kind": "modifiers",
+                    "sourceKeys": {}
+                  },
                   "variants": [
                     {
                       "kind": "variant",
@@ -1830,6 +1947,8 @@
                           "sourceKeys": {},
                           "type": "list",
                           "elementType": {
+                            "kind": "type",
+                            "sourceKeys": {},
                             "type": "custom",
                             "customType": [
                               "Contact"
@@ -1962,6 +2081,8 @@
           "sourceKeys": {},
           "conditionBlock": [
             {
+              "kind": "ifBranch",
+              "sourceKeys": {},
               "condition": {
                 "kind": "logical",
                 "sourceKeys": {},
@@ -2000,13 +2121,18 @@
                     "sourceKeys": {},
                     "type": "list",
                     "elementType": {
+                      "kind": "type",
+                      "sourceKeys": {},
                       "type": "custom",
                       "customType": [
                         "Task"
                       ]
                     }
                   },
-                  "modifier": {},
+                  "modifier": {
+                    "kind": "modifiers",
+                    "sourceKeys": {}
+                  },
                   "variants": [
                     {
                       "kind": "variant",
@@ -2016,6 +2142,8 @@
                         "kind": "soql",
                         "sourceKeys": {},
                         "select": {
+                          "kind": "soqlSelect",
+                          "sourceKeys": {},
                           "field": [
                             {
                               "kind": "selectEntry",
@@ -2028,6 +2156,8 @@
                           ]
                         },
                         "from": {
+                          "kind": "soqlFrom",
+                          "sourceKeys": {},
                           "field": [
                             {
                               "kind": "fromField",
@@ -2039,12 +2169,18 @@
                           ]
                         },
                         "where": {
+                          "kind": "soqlWhere",
+                          "sourceKeys": {},
                           "condition": {
+                            "kind": "soqlLogical",
+                            "sourceKeys": {},
                             "condition": [
                               {
                                 "kind": "singleCondition",
                                 "sourceKeys": {},
                                 "field": {
+                                  "kind": "soqlField",
+                                  "sourceKeys": {},
                                   "type": "field",
                                   "field": [
                                     "WhatId"
@@ -2052,6 +2188,8 @@
                                 },
                                 "operator": "IN",
                                 "value": {
+                                  "kind": "soqlValue",
+                                  "sourceKeys": {},
                                   "type": "bind",
                                   "value": {
                                     "kind": "memberAccess",
@@ -2170,6 +2308,8 @@
           "sourceKeys": {},
           "conditionBlock": [
             {
+              "kind": "ifBranch",
+              "sourceKeys": {},
               "condition": {
                 "kind": "logical",
                 "sourceKeys": {},
@@ -2205,6 +2345,8 @@
                   "sourceKeys": {},
                   "block": [
                     {
+                      "kind": "tryClause",
+                      "sourceKeys": {},
                       "condition": "try",
                       "block": [
                         {
@@ -2274,6 +2416,8 @@
                       ]
                     },
                     {
+                      "kind": "tryClause",
+                      "sourceKeys": {},
                       "condition": "catch",
                       "variant": "e",
                       "variantType": {
@@ -2498,6 +2642,149 @@
       }
     },
     {
+      "context": "(!contacts.isEmpty())",
+      "start": {
+        "offset": 3848,
+        "line": 145,
+        "column": 11
+      },
+      "end": {
+        "offset": 3869,
+        "line": 145,
+        "column": 32
+      }
+    },
+    {
+      "context": "(String.isBlank(account.Name))",
+      "start": {
+        "offset": 2261,
+        "line": 86,
+        "column": 15
+      },
+      "end": {
+        "offset": 2291,
+        "line": 86,
+        "column": 45
+      }
+    },
+    {
+      "context": "(Trigger.isAfter && Trigger.isDelete)",
+      "start": {
+        "offset": 5012,
+        "line": 191,
+        "column": 7
+      },
+      "end": {
+        "offset": 5049,
+        "line": 191,
+        "column": 44
+      }
+    },
+    {
+      "context": "(Trigger.isAfter && Trigger.isInsert)",
+      "start": {
+        "offset": 3508,
+        "line": 132,
+        "column": 7
+      },
+      "end": {
+        "offset": 3545,
+        "line": 132,
+        "column": 44
+      }
+    },
+    {
+      "context": "(Trigger.isAfter && Trigger.isUndelete)",
+      "start": {
+        "offset": 5459,
+        "line": 207,
+        "column": 7
+      },
+      "end": {
+        "offset": 5498,
+        "line": 207,
+        "column": 46
+      }
+    },
+    {
+      "context": "(Trigger.isAfter && Trigger.isUpdate)",
+      "start": {
+        "offset": 4091,
+        "line": 155,
+        "column": 7
+      },
+      "end": {
+        "offset": 4128,
+        "line": 155,
+        "column": 44
+      }
+    },
+    {
+      "context": "(Trigger.isBefore && Trigger.isDelete)",
+      "start": {
+        "offset": 3183,
+        "line": 120,
+        "column": 7
+      },
+      "end": {
+        "offset": 3221,
+        "line": 120,
+        "column": 45
+      }
+    },
+    {
+      "context": "(Trigger.isBefore && Trigger.isInsert)",
+      "start": {
+        "offset": 2157,
+        "line": 82,
+        "column": 7
+      },
+      "end": {
+        "offset": 2195,
+        "line": 82,
+        "column": 45
+      }
+    },
+    {
+      "context": "(Trigger.isBefore && Trigger.isUpdate)",
+      "start": {
+        "offset": 2598,
+        "line": 99,
+        "column": 7
+      },
+      "end": {
+        "offset": 2636,
+        "line": 99,
+        "column": 45
+      }
+    },
+    {
+      "context": "(account.AnnualRevenue < 0)",
+      "start": {
+        "offset": 2888,
+        "line": 109,
+        "column": 15
+      },
+      "end": {
+        "offset": 2915,
+        "line": 109,
+        "column": 42
+      }
+    },
+    {
+      "context": "(account.Name != oldAccount.Name)",
+      "start": {
+        "offset": 2768,
+        "line": 105,
+        "column": 15
+      },
+      "end": {
+        "offset": 2801,
+        "line": 105,
+        "column": 48
+      }
+    },
+    {
       "context": "0",
       "start": {
         "offset": 1163,
@@ -2534,6 +2821,32 @@
         "offset": 2914,
         "line": 109,
         "column": 41
+      }
+    },
+    {
+      "context": ":Trigger.oldMap.keySet()",
+      "start": {
+        "offset": 5117,
+        "line": 193,
+        "column": 64
+      },
+      "end": {
+        "offset": 5141,
+        "line": 193,
+        "column": 88
+      }
+    },
+    {
+      "context": ":accountIds",
+      "start": {
+        "offset": 4522,
+        "line": 171,
+        "column": 24
+      },
+      "end": {
+        "offset": 4533,
+        "line": 171,
+        "column": 35
       }
     },
     {
@@ -2586,6 +2899,19 @@
         "offset": 5150,
         "line": 193,
         "column": 97
+      }
+    },
+    {
+      "context": "Account oldAccount = Trigger.oldMap.get(account.Id)",
+      "start": {
+        "offset": 2699,
+        "line": 103,
+        "column": 12
+      },
+      "end": {
+        "offset": 2750,
+        "line": 103,
+        "column": 63
       }
     },
     {
@@ -2664,6 +2990,32 @@
         "offset": 3624,
         "line": 136,
         "column": 20
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
+        "offset": 4243,
+        "line": 161,
+        "column": 13
+      },
+      "end": {
+        "offset": 4250,
+        "line": 161,
+        "column": 20
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
+        "offset": 4490,
+        "line": 170,
+        "column": 17
+      },
+      "end": {
+        "offset": 4497,
+        "line": 170,
+        "column": 24
       }
     },
     {
@@ -2799,6 +3151,32 @@
     {
       "context": "Contact",
       "start": {
+        "offset": 3562,
+        "line": 134,
+        "column": 13
+      },
+      "end": {
+        "offset": 3569,
+        "line": 134,
+        "column": 20
+      }
+    },
+    {
+      "context": "Contact",
+      "start": {
+        "offset": 3591,
+        "line": 134,
+        "column": 42
+      },
+      "end": {
+        "offset": 3598,
+        "line": 134,
+        "column": 49
+      }
+    },
+    {
+      "context": "Contact",
+      "start": {
         "offset": 3696,
         "line": 138,
         "column": 20
@@ -2812,6 +3190,32 @@
     {
       "context": "Contact",
       "start": {
+        "offset": 4559,
+        "line": 174,
+        "column": 13
+      },
+      "end": {
+        "offset": 4566,
+        "line": 174,
+        "column": 20
+      }
+    },
+    {
+      "context": "Contact",
+      "start": {
+        "offset": 4588,
+        "line": 174,
+        "column": 42
+      },
+      "end": {
+        "offset": 4595,
+        "line": 174,
+        "column": 49
+      }
+    },
+    {
+      "context": "Contact",
+      "start": {
         "offset": 4661,
         "line": 177,
         "column": 17
@@ -2820,6 +3224,19 @@
         "offset": 4668,
         "line": 177,
         "column": 24
+      }
+    },
+    {
+      "context": "Contacts",
+      "start": {
+        "offset": 4446,
+        "line": 168,
+        "column": 25
+      },
+      "end": {
+        "offset": 4454,
+        "line": 168,
+        "column": 33
       }
     },
     {
@@ -2875,6 +3292,45 @@
       }
     },
     {
+      "context": "Id IN :accountIds",
+      "start": {
+        "offset": 4516,
+        "line": 171,
+        "column": 18
+      },
+      "end": {
+        "offset": 4533,
+        "line": 171,
+        "column": 35
+      }
+    },
+    {
+      "context": "Id",
+      "start": {
+        "offset": 4144,
+        "line": 157,
+        "column": 12
+      },
+      "end": {
+        "offset": 4146,
+        "line": 157,
+        "column": 14
+      }
+    },
+    {
+      "context": "Id",
+      "start": {
+        "offset": 4169,
+        "line": 157,
+        "column": 37
+      },
+      "end": {
+        "offset": 4171,
+        "line": 157,
+        "column": 39
+      }
+    },
+    {
       "context": "Id",
       "start": {
         "offset": 4300,
@@ -2903,6 +3359,19 @@
     {
       "context": "Id",
       "start": {
+        "offset": 4516,
+        "line": 171,
+        "column": 18
+      },
+      "end": {
+        "offset": 4518,
+        "line": 171,
+        "column": 20
+      }
+    },
+    {
+      "context": "Id",
+      "start": {
         "offset": 5088,
         "line": 193,
         "column": 35
@@ -2911,6 +3380,45 @@
         "offset": 5090,
         "line": 193,
         "column": 37
+      }
+    },
+    {
+      "context": "Id",
+      "start": {
+        "offset": 5088,
+        "line": 193,
+        "column": 35
+      },
+      "end": {
+        "offset": 5090,
+        "line": 193,
+        "column": 37
+      }
+    },
+    {
+      "context": "Id, FirstName, LastName",
+      "start": {
+        "offset": 4397,
+        "line": 167,
+        "column": 27
+      },
+      "end": {
+        "offset": 4420,
+        "line": 167,
+        "column": 50
+      }
+    },
+    {
+      "context": "Id,\n                Name,\n                Industry,\n                (\n                    SELECT Id, FirstName, LastName\n                    FROM Contacts\n                )",
+      "start": {
+        "offset": 4300,
+        "line": 163,
+        "column": 16
+      },
+      "end": {
+        "offset": 4472,
+        "line": 169,
+        "column": 17
       }
     },
     {
@@ -2992,6 +3500,19 @@
       }
     },
     {
+      "context": "List<Account> accounts = [\n            SELECT\n                Id,\n                Name,\n                Industry,\n                (\n                    SELECT Id, FirstName, LastName\n                    FROM Contacts\n                )\n            FROM Account\n            WHERE Id IN :accountIds\n        ]",
+      "start": {
+        "offset": 4238,
+        "line": 161,
+        "column": 8
+      },
+      "end": {
+        "offset": 4543,
+        "line": 172,
+        "column": 9
+      }
+    },
+    {
       "context": "List<Account> accounts = [\n            SELECT\n                Id,\n                Name,\n                Industry,\n                (\n                    SELECT Id, FirstName, LastName\n                    FROM Contacts\n                )\n            FROM Account\n            WHERE Id IN :accountIds\n        ];",
       "start": {
         "offset": 4238,
@@ -3018,6 +3539,19 @@
       }
     },
     {
+      "context": "List<Contact> contacts = new List<Contact>()",
+      "start": {
+        "offset": 3557,
+        "line": 134,
+        "column": 8
+      },
+      "end": {
+        "offset": 3601,
+        "line": 134,
+        "column": 52
+      }
+    },
+    {
       "context": "List<Contact> contacts = new List<Contact>();",
       "start": {
         "offset": 3557,
@@ -3028,6 +3562,19 @@
         "offset": 3602,
         "line": 134,
         "column": 53
+      }
+    },
+    {
+      "context": "List<Contact> toUpdate = new List<Contact>()",
+      "start": {
+        "offset": 4554,
+        "line": 174,
+        "column": 8
+      },
+      "end": {
+        "offset": 4598,
+        "line": 174,
+        "column": 52
       }
     },
     {
@@ -3093,6 +3640,19 @@
         "offset": 4596,
         "line": 174,
         "column": 50
+      }
+    },
+    {
+      "context": "List<Task> tasks = [SELECT Id FROM Task WHERE WhatId IN :Trigger.oldMap.keySet() ALL ROWS]",
+      "start": {
+        "offset": 5061,
+        "line": 193,
+        "column": 8
+      },
+      "end": {
+        "offset": 5151,
+        "line": 193,
+        "column": 98
       }
     },
     {
@@ -3226,6 +3786,19 @@
       }
     },
     {
+      "context": "Set<Id> accountIds = new Set<Id>()",
+      "start": {
+        "offset": 4140,
+        "line": 157,
+        "column": 8
+      },
+      "end": {
+        "offset": 4174,
+        "line": 157,
+        "column": 42
+      }
+    },
+    {
       "context": "Set<Id> accountIds = new Set<Id>();",
       "start": {
         "offset": 4140,
@@ -3288,6 +3861,19 @@
         "offset": 1204,
         "line": 39,
         "column": 37
+      }
+    },
+    {
+      "context": "String message",
+      "start": {
+        "offset": 1227,
+        "line": 41,
+        "column": 21
+      },
+      "end": {
+        "offset": 1241,
+        "line": 41,
+        "column": 35
       }
     },
     {
@@ -4068,6 +4654,32 @@
         "offset": 5701,
         "line": 214,
         "column": 41
+      }
+    },
+    {
+      "context": "Task",
+      "start": {
+        "offset": 5066,
+        "line": 193,
+        "column": 13
+      },
+      "end": {
+        "offset": 5070,
+        "line": 193,
+        "column": 17
+      }
+    },
+    {
+      "context": "Task",
+      "start": {
+        "offset": 5096,
+        "line": 193,
+        "column": 43
+      },
+      "end": {
+        "offset": 5100,
+        "line": 193,
+        "column": 47
       }
     },
     {
@@ -5202,6 +5814,32 @@
       }
     },
     {
+      "context": "WHERE Id IN :accountIds",
+      "start": {
+        "offset": 4510,
+        "line": 171,
+        "column": 12
+      },
+      "end": {
+        "offset": 4533,
+        "line": 171,
+        "column": 35
+      }
+    },
+    {
+      "context": "WHERE WhatId IN :Trigger.oldMap.keySet()",
+      "start": {
+        "offset": 5101,
+        "line": 193,
+        "column": 48
+      },
+      "end": {
+        "offset": 5141,
+        "line": 193,
+        "column": 88
+      }
+    },
+    {
       "context": "WhatId IN :Trigger.oldMap.keySet()",
       "start": {
         "offset": 5107,
@@ -5212,6 +5850,32 @@
         "offset": 5141,
         "line": 193,
         "column": 88
+      }
+    },
+    {
+      "context": "WhatId IN :Trigger.oldMap.keySet()",
+      "start": {
+        "offset": 5107,
+        "line": 193,
+        "column": 54
+      },
+      "end": {
+        "offset": 5141,
+        "line": 193,
+        "column": 88
+      }
+    },
+    {
+      "context": "WhatId",
+      "start": {
+        "offset": 5107,
+        "line": 193,
+        "column": 54
+      },
+      "end": {
+        "offset": 5113,
+        "line": 193,
+        "column": 60
       }
     },
     {
@@ -5904,6 +6568,19 @@
       }
     },
     {
+      "context": "catch (Exception e) {\n            System.debug(e.getMessage());\n        }",
+      "start": {
+        "offset": 5638,
+        "line": 213,
+        "column": 10
+      },
+      "end": {
+        "offset": 5711,
+        "line": 215,
+        "column": 9
+      }
+    },
+    {
       "context": "class TriggerHelper {\n        public void run() {\n            System.debug('helper');\n        }\n    }",
       "start": {
         "offset": 1303,
@@ -6252,6 +6929,32 @@
         "offset": 4803,
         "line": 180,
         "column": 13
+      }
+    },
+    {
+      "context": "get;",
+      "start": {
+        "offset": 1193,
+        "line": 39,
+        "column": 26
+      },
+      "end": {
+        "offset": 1197,
+        "line": 39,
+        "column": 30
+      }
+    },
+    {
+      "context": "get;",
+      "start": {
+        "offset": 1193,
+        "line": 39,
+        "column": 26
+      },
+      "end": {
+        "offset": 1197,
+        "line": 39,
+        "column": 30
       }
     },
     {
@@ -6736,6 +7439,32 @@
       }
     },
     {
+      "context": "private static final String PREFIX = 'Trigger: ';",
+      "start": {
+        "offset": 1075,
+        "line": 35,
+        "column": 4
+      },
+      "end": {
+        "offset": 1124,
+        "line": 35,
+        "column": 53
+      }
+    },
+    {
+      "context": "private void log(String message) {\n        System.debug(PREFIX + message);\n    }",
+      "start": {
+        "offset": 1210,
+        "line": 41,
+        "column": 4
+      },
+      "end": {
+        "offset": 1290,
+        "line": 43,
+        "column": 5
+      }
+    },
+    {
       "context": "private",
       "start": {
         "offset": 1075,
@@ -6759,6 +7488,71 @@
         "offset": 1217,
         "line": 41,
         "column": 11
+      }
+    },
+    {
+      "context": "public String label { get; set; }",
+      "start": {
+        "offset": 1171,
+        "line": 39,
+        "column": 4
+      },
+      "end": {
+        "offset": 1204,
+        "line": 39,
+        "column": 37
+      }
+    },
+    {
+      "context": "public class TriggerHelper {\n        public void run() {\n            System.debug('helper');\n        }\n    }",
+      "start": {
+        "offset": 1296,
+        "line": 45,
+        "column": 4
+      },
+      "end": {
+        "offset": 1404,
+        "line": 49,
+        "column": 5
+      }
+    },
+    {
+      "context": "public enum Phase {\n        BEFORE_PHASE,\n        AFTER_PHASE\n    }",
+      "start": {
+        "offset": 1478,
+        "line": 55,
+        "column": 4
+      },
+      "end": {
+        "offset": 1545,
+        "line": 58,
+        "column": 5
+      }
+    },
+    {
+      "context": "public interface TriggerHandler {\n        void handle();\n    }",
+      "start": {
+        "offset": 1410,
+        "line": 51,
+        "column": 4
+      },
+      "end": {
+        "offset": 1472,
+        "line": 53,
+        "column": 5
+      }
+    },
+    {
+      "context": "public void run() {\n            System.debug('helper');\n        }",
+      "start": {
+        "offset": 1333,
+        "line": 46,
+        "column": 8
+      },
+      "end": {
+        "offset": 1398,
+        "line": 48,
+        "column": 9
       }
     },
     {
@@ -6837,6 +7631,45 @@
         "offset": 1348,
         "line": 46,
         "column": 23
+      }
+    },
+    {
+      "context": "set;",
+      "start": {
+        "offset": 1198,
+        "line": 39,
+        "column": 31
+      },
+      "end": {
+        "offset": 1202,
+        "line": 39,
+        "column": 35
+      }
+    },
+    {
+      "context": "set;",
+      "start": {
+        "offset": 1198,
+        "line": 39,
+        "column": 31
+      },
+      "end": {
+        "offset": 1202,
+        "line": 39,
+        "column": 35
+      }
+    },
+    {
+      "context": "static Integer invocationCount = 0;",
+      "start": {
+        "offset": 1130,
+        "line": 37,
+        "column": 4
+      },
+      "end": {
+        "offset": 1165,
+        "line": 37,
+        "column": 39
       }
     },
     {
@@ -6970,6 +7803,32 @@
       }
     },
     {
+      "context": "trigger ParserTrigger on Account (\n    before insert,\n    before update,\n    before delete,\n    after insert,\n    after update,\n    after delete,\n    after undelete\n) {\n\n    // ============================================================\n    // Trigger context variables\n    // ============================================================\n\n    System.debug(Trigger.isExecuting);\n    System.debug(Trigger.isBefore);\n    System.debug(Trigger.isAfter);\n    System.debug(Trigger.isInsert);\n    System.debug(Trigger.isUpdate);\n    System.debug(Trigger.isDelete);\n    System.debug(Trigger.isUndelete);\n    System.debug(Trigger.new);\n    System.debug(Trigger.old);\n    System.debug(Trigger.newMap);\n    System.debug(Trigger.oldMap);\n    System.debug(Trigger.operationType);\n    System.debug(Trigger.size);\n\n\n    // ============================================================\n    // Trigger 内のメンバー宣言（クラス / インターフェース / enum / メソッド / フィールド / プロパティ）\n    // ============================================================\n\n    private static final String PREFIX = 'Trigger: ';\n\n    static Integer invocationCount = 0;\n\n    public String label { get; set; }\n\n    private void log(String message) {\n        System.debug(PREFIX + message);\n    }\n\n    public class TriggerHelper {\n        public void run() {\n            System.debug('helper');\n        }\n    }\n\n    public interface TriggerHandler {\n        void handle();\n    }\n\n    public enum Phase {\n        BEFORE_PHASE,\n        AFTER_PHASE\n    }\n\n\n    // ============================================================\n    // operationType による分岐（switch on enum）\n    // ============================================================\n\n    switch on Trigger.operationType {\n        when BEFORE_INSERT, BEFORE_UPDATE {\n            invocationCount++;\n        }\n        when AFTER_DELETE {\n            invocationCount--;\n        }\n        when else {\n            invocationCount += 0;\n        }\n    }\n\n\n    // ============================================================\n    // Before Insert\n    // ============================================================\n\n    if (Trigger.isBefore && Trigger.isInsert) {\n\n        for (Account account : Trigger.new) {\n\n            if (String.isBlank(account.Name)) {\n                account.Name = 'Default Account';\n            }\n\n            account.Description = 'Created by trigger';\n        }\n    }\n\n\n    // ============================================================\n    // Before Update\n    // ============================================================\n\n    if (Trigger.isBefore && Trigger.isUpdate) {\n\n        for (Account account : Trigger.new) {\n\n            Account oldAccount = Trigger.oldMap.get(account.Id);\n\n            if (account.Name != oldAccount.Name) {\n                account.Description = 'Name changed';\n            }\n\n            if (account.AnnualRevenue < 0) {\n                account.addError('AnnualRevenue must be positive');\n            }\n        }\n    }\n\n\n    // ============================================================\n    // Before Delete\n    // ============================================================\n\n    if (Trigger.isBefore && Trigger.isDelete) {\n\n        for (Account account : Trigger.old) {\n            System.debug('Deleting: ' + account.Name);\n        }\n    }\n\n\n    // ============================================================\n    // After Insert\n    // ============================================================\n\n    if (Trigger.isAfter && Trigger.isInsert) {\n\n        List<Contact> contacts = new List<Contact>();\n\n        for (Account account : Trigger.new) {\n            contacts.add(\n                new Contact(\n                    LastName = account.Name,\n                    AccountId = account.Id\n                )\n            );\n        }\n\n        if (!contacts.isEmpty()) {\n            insert as user contacts;\n        }\n    }\n\n\n    // ============================================================\n    // After Update\n    // ============================================================\n\n    if (Trigger.isAfter && Trigger.isUpdate) {\n\n        Set<Id> accountIds = new Set<Id>();\n\n        accountIds.addAll(Trigger.newMap.keySet());\n\n        List<Account> accounts = [\n            SELECT\n                Id,\n                Name,\n                Industry,\n                (\n                    SELECT Id, FirstName, LastName\n                    FROM Contacts\n                )\n            FROM Account\n            WHERE Id IN :accountIds\n        ];\n\n        List<Contact> toUpdate = new List<Contact>();\n\n        for (Account account : accounts) {\n            for (Contact contact : account.Contacts) {\n                contact.Description = account.Name;\n                toUpdate.add(contact);\n            }\n        }\n\n        update toUpdate;\n    }\n\n\n    // ============================================================\n    // After Delete\n    // ============================================================\n\n    if (Trigger.isAfter && Trigger.isDelete) {\n\n        List<Task> tasks = [SELECT Id FROM Task WHERE WhatId IN :Trigger.oldMap.keySet() ALL ROWS];\n\n        delete tasks;\n\n        for (Account account : Trigger.old) {\n            System.debug('Deleted: ' + account.Id);\n        }\n    }\n\n\n    // ============================================================\n    // After Undelete\n    // ============================================================\n\n    if (Trigger.isAfter && Trigger.isUndelete) {\n\n        try {\n            for (Account account : Trigger.new) {\n                log('Restored: ' + account.Id);\n            }\n        } catch (Exception e) {\n            System.debug(e.getMessage());\n        }\n    }\n}",
+      "start": {
+        "offset": 63,
+        "line": 2,
+        "column": 0
+      },
+      "end": {
+        "offset": 5719,
+        "line": 217,
+        "column": 1
+      }
+    },
+    {
+      "context": "trigger ParserTrigger on Account (\n    before insert,\n    before update,\n    before delete,\n    after insert,\n    after update,\n    after delete,\n    after undelete\n) {\n\n    // ============================================================\n    // Trigger context variables\n    // ============================================================\n\n    System.debug(Trigger.isExecuting);\n    System.debug(Trigger.isBefore);\n    System.debug(Trigger.isAfter);\n    System.debug(Trigger.isInsert);\n    System.debug(Trigger.isUpdate);\n    System.debug(Trigger.isDelete);\n    System.debug(Trigger.isUndelete);\n    System.debug(Trigger.new);\n    System.debug(Trigger.old);\n    System.debug(Trigger.newMap);\n    System.debug(Trigger.oldMap);\n    System.debug(Trigger.operationType);\n    System.debug(Trigger.size);\n\n\n    // ============================================================\n    // Trigger 内のメンバー宣言（クラス / インターフェース / enum / メソッド / フィールド / プロパティ）\n    // ============================================================\n\n    private static final String PREFIX = 'Trigger: ';\n\n    static Integer invocationCount = 0;\n\n    public String label { get; set; }\n\n    private void log(String message) {\n        System.debug(PREFIX + message);\n    }\n\n    public class TriggerHelper {\n        public void run() {\n            System.debug('helper');\n        }\n    }\n\n    public interface TriggerHandler {\n        void handle();\n    }\n\n    public enum Phase {\n        BEFORE_PHASE,\n        AFTER_PHASE\n    }\n\n\n    // ============================================================\n    // operationType による分岐（switch on enum）\n    // ============================================================\n\n    switch on Trigger.operationType {\n        when BEFORE_INSERT, BEFORE_UPDATE {\n            invocationCount++;\n        }\n        when AFTER_DELETE {\n            invocationCount--;\n        }\n        when else {\n            invocationCount += 0;\n        }\n    }\n\n\n    // ============================================================\n    // Before Insert\n    // ============================================================\n\n    if (Trigger.isBefore && Trigger.isInsert) {\n\n        for (Account account : Trigger.new) {\n\n            if (String.isBlank(account.Name)) {\n                account.Name = 'Default Account';\n            }\n\n            account.Description = 'Created by trigger';\n        }\n    }\n\n\n    // ============================================================\n    // Before Update\n    // ============================================================\n\n    if (Trigger.isBefore && Trigger.isUpdate) {\n\n        for (Account account : Trigger.new) {\n\n            Account oldAccount = Trigger.oldMap.get(account.Id);\n\n            if (account.Name != oldAccount.Name) {\n                account.Description = 'Name changed';\n            }\n\n            if (account.AnnualRevenue < 0) {\n                account.addError('AnnualRevenue must be positive');\n            }\n        }\n    }\n\n\n    // ============================================================\n    // Before Delete\n    // ============================================================\n\n    if (Trigger.isBefore && Trigger.isDelete) {\n\n        for (Account account : Trigger.old) {\n            System.debug('Deleting: ' + account.Name);\n        }\n    }\n\n\n    // ============================================================\n    // After Insert\n    // ============================================================\n\n    if (Trigger.isAfter && Trigger.isInsert) {\n\n        List<Contact> contacts = new List<Contact>();\n\n        for (Account account : Trigger.new) {\n            contacts.add(\n                new Contact(\n                    LastName = account.Name,\n                    AccountId = account.Id\n                )\n            );\n        }\n\n        if (!contacts.isEmpty()) {\n            insert as user contacts;\n        }\n    }\n\n\n    // ============================================================\n    // After Update\n    // ============================================================\n\n    if (Trigger.isAfter && Trigger.isUpdate) {\n\n        Set<Id> accountIds = new Set<Id>();\n\n        accountIds.addAll(Trigger.newMap.keySet());\n\n        List<Account> accounts = [\n            SELECT\n                Id,\n                Name,\n                Industry,\n                (\n                    SELECT Id, FirstName, LastName\n                    FROM Contacts\n                )\n            FROM Account\n            WHERE Id IN :accountIds\n        ];\n\n        List<Contact> toUpdate = new List<Contact>();\n\n        for (Account account : accounts) {\n            for (Contact contact : account.Contacts) {\n                contact.Description = account.Name;\n                toUpdate.add(contact);\n            }\n        }\n\n        update toUpdate;\n    }\n\n\n    // ============================================================\n    // After Delete\n    // ============================================================\n\n    if (Trigger.isAfter && Trigger.isDelete) {\n\n        List<Task> tasks = [SELECT Id FROM Task WHERE WhatId IN :Trigger.oldMap.keySet() ALL ROWS];\n\n        delete tasks;\n\n        for (Account account : Trigger.old) {\n            System.debug('Deleted: ' + account.Id);\n        }\n    }\n\n\n    // ============================================================\n    // After Undelete\n    // ============================================================\n\n    if (Trigger.isAfter && Trigger.isUndelete) {\n\n        try {\n            for (Account account : Trigger.new) {\n                log('Restored: ' + account.Id);\n            }\n        } catch (Exception e) {\n            System.debug(e.getMessage());\n        }\n    }\n}",
+      "start": {
+        "offset": 63,
+        "line": 2,
+        "column": 0
+      },
+      "end": {
+        "offset": 5719,
+        "line": 217,
+        "column": 1
+      }
+    },
+    {
       "context": "try {\n            for (Account account : Trigger.new) {\n                log('Restored: ' + account.Id);\n            }\n        } catch (Exception e) {\n            System.debug(e.getMessage());\n        }",
       "start": {
         "offset": 5510,
@@ -7009,6 +7868,19 @@
       }
     },
     {
+      "context": "void handle();",
+      "start": {
+        "offset": 1452,
+        "line": 52,
+        "column": 8
+      },
+      "end": {
+        "offset": 1466,
+        "line": 52,
+        "column": 22
+      }
+    },
+    {
       "context": "void log(String message) {\n        System.debug(PREFIX + message);\n    }",
       "start": {
         "offset": 1218,
@@ -7031,6 +7903,58 @@
       "end": {
         "offset": 1398,
         "line": 48,
+        "column": 9
+      }
+    },
+    {
+      "context": "when AFTER_DELETE {\n            invocationCount--;\n        }",
+      "start": {
+        "offset": 1859,
+        "line": 69,
+        "column": 8
+      },
+      "end": {
+        "offset": 1919,
+        "line": 71,
+        "column": 9
+      }
+    },
+    {
+      "context": "when BEFORE_INSERT, BEFORE_UPDATE {\n            invocationCount++;\n        }",
+      "start": {
+        "offset": 1774,
+        "line": 66,
+        "column": 8
+      },
+      "end": {
+        "offset": 1850,
+        "line": 68,
+        "column": 9
+      }
+    },
+    {
+      "context": "when else {\n            invocationCount += 0;\n        }",
+      "start": {
+        "offset": 1928,
+        "line": 72,
+        "column": 8
+      },
+      "end": {
+        "offset": 1983,
+        "line": 74,
+        "column": 9
+      }
+    },
+    {
+      "context": "{\n            for (Account account : Trigger.new) {\n                log('Restored: ' + account.Id);\n            }\n        }",
+      "start": {
+        "offset": 5514,
+        "line": 209,
+        "column": 12
+      },
+      "end": {
+        "offset": 5637,
+        "line": 213,
         "column": 9
       }
     }

@@ -12,11 +12,8 @@ import {
 // LWC の CSS (.css) の JSON。中間表現は作らず、postcss の木から直接作る (XML と同じ方式)。
 // 方針: docs/lwc-implementation.md
 
-/**
- * 宣言 1 つ。規則の中で prop で決まる値なので kind を持たない (メタデータの値と同じ扱い)。
- * 空白の書き方 (raws) は持たない
- */
-export type CssDeclarationJson = {
+/** 宣言 1 つ (位置つきのノード。lwc 4 から)。空白の書き方 (raws) は持たない */
+export type CssDeclarationJson = JsonType<'cssDeclaration'> & {
     prop: string;
     /** 値 (連続する空白は 1 つにする。!important は含まない) */
     value: string;
@@ -88,13 +85,19 @@ export const makeLwcStylesheetJson = (
     const makeDeclaration = (decl: Declaration): CssDeclarationJson => {
         const value = normalizeSpace(decl.value);
         const uses = [...new Set([...value.matchAll(VAR_PATTERN)].map((m) => m[1]!))];
-        return {
-            prop: decl.prop,
-            value,
-            important: decl.important === true,
-            ...(uses.length ? { uses } : {}),
-            ...(decl.prop.startsWith('--') ? { defines: decl.prop } : {}),
-        };
+        return makeSpanJson<CssDeclarationJson>(
+            'cssDeclaration',
+            {
+                prop: decl.prop,
+                value,
+                important: decl.important === true,
+                ...(uses.length ? { uses } : {}),
+                ...(decl.prop.startsWith('--') ? { defines: decl.prop } : {}),
+            },
+            spanOf(decl),
+            file,
+            registry,
+        );
     };
 
     const declarationsOf = (nodes: ChildNode[]) =>

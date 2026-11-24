@@ -1,0 +1,160 @@
+{
+  "filePath": "translations/ja.translation-meta.xml",
+  "resolvedError": [],
+  "dataType": "translations",
+  "result": {
+    "id": "translations_ja",
+    "base": {
+      "kind": "translations",
+      "sourceKeys": {
+        "objectKey": "translations_20f77a4093ac7c1a",
+        "sourceKey": "translations_3291b7a8c360a7f0"
+      },
+      "fullName": "ja",
+      "customLabels": [
+        {
+          "kind": "labelTranslation",
+          "sourceKeys": {
+            "objectKey": "labelTranslation_dcd69a8201a65dc3",
+            "sourceKey": "labelTranslation_fbf95690b1ac4bb2"
+          },
+          "name": "AccountListTitle",
+          "label": "取引先一覧"
+        },
+        {
+          "kind": "labelTranslation",
+          "sourceKeys": {
+            "objectKey": "labelTranslation_4e0823fa74c3d785",
+            "sourceKey": "labelTranslation_f23929f4bd69efa4"
+          },
+          "name": "BannerMessage",
+          "label": "お知らせ"
+        }
+      ],
+      "customTabs": [
+        {
+          "kind": "tabTranslation",
+          "sourceKeys": {
+            "objectKey": "tabTranslation_4844ed45c5971a6e",
+            "sourceKey": "tabTranslation_fafc2c9cd151ea88"
+          },
+          "name": "Invoice__c",
+          "label": "請求書"
+        }
+      ],
+      "customApplications": [
+        {
+          "kind": "applicationTranslation",
+          "sourceKeys": {
+            "objectKey": "applicationTranslation_8d25bb24afc5d11d",
+            "sourceKey": "applicationTranslation_14a47bdf21885f14"
+          },
+          "name": "Invoice_App",
+          "label": "請求書アプリ"
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "labelTranslation_dcd69a8201a65dc3",
+        "context": "<customLabels>\n        <label>取引先一覧</label>\n        <name>AccountListTitle</name>\n    </customLabels>",
+        "source": [
+          {
+            "sourceKey": "labelTranslation_fbf95690b1ac4bb2",
+            "filePath": "translations/ja.translation-meta.xml",
+            "start": {
+              "offset": 220,
+              "line": 7,
+              "column": 4
+            },
+            "end": {
+              "offset": 321,
+              "line": 10,
+              "column": 19
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "labelTranslation_4e0823fa74c3d785",
+        "context": "<customLabels>\n        <label>お知らせ</label>\n        <name>BannerMessage</name>\n    </customLabels>",
+        "source": [
+          {
+            "sourceKey": "labelTranslation_f23929f4bd69efa4",
+            "filePath": "translations/ja.translation-meta.xml",
+            "start": {
+              "offset": 326,
+              "line": 11,
+              "column": 4
+            },
+            "end": {
+              "offset": 423,
+              "line": 14,
+              "column": 19
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "tabTranslation_4844ed45c5971a6e",
+        "context": "<customTabs>\n        <label>請求書</label>\n        <name>Invoice__c</name>\n    </customTabs>",
+        "source": [
+          {
+            "sourceKey": "tabTranslation_fafc2c9cd151ea88",
+            "filePath": "translations/ja.translation-meta.xml",
+            "start": {
+              "offset": 428,
+              "line": 15,
+              "column": 4
+            },
+            "end": {
+              "offset": 517,
+              "line": 18,
+              "column": 17
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "applicationTranslation_8d25bb24afc5d11d",
+        "context": "<customApplications>\n        <label>請求書アプリ</label>\n        <name>Invoice_App</name>\n    </customApplications>",
+        "source": [
+          {
+            "sourceKey": "applicationTranslation_14a47bdf21885f14",
+            "filePath": "translations/ja.translation-meta.xml",
+            "start": {
+              "offset": 106,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 215,
+              "line": 6,
+              "column": 25
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "translations_20f77a4093ac7c1a",
+        "context": "<Translations xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <customApplications>\n        <label>請求書アプリ</label>\n        <name>Invoice_App</name>\n    </customApplications>\n    <customLabels>\n        <label>取引先一覧</label>\n        <name>AccountListTitle</name>\n    </customLabels>\n    <customLabels>\n        <label>お知らせ</label>\n        <name>BannerMessage</name>\n    </customLabels>\n    <customTabs>\n        <label>請求書</label>\n        <name>Invoice__c</name>\n    </customTabs>\n</Translations>",
+        "source": [
+          {
+            "sourceKey": "translations_3291b7a8c360a7f0",
+            "filePath": "translations/ja.translation-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 533,
+              "line": 19,
+              "column": 15
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,145 @@
+// Lwc の JSON のすべてのノードの共用体と、kind から型を引く表 (docs/plan.md 5.1)。
+// 走査 (processor/commons/node.ts の walk) で kind ごとに型を絞るのに使う。
+// lwc の JSON の型を足したら、ここにも足す (test/converter/json-node-union.test.ts が漏れを見つける)
+import type * as J from './index';
+
+/** Lwc の JSON のすべてのノード */
+export type LwcNodeJson =
+    | J.CssAtRuleJson
+    | J.CssDeclarationJson
+    | J.CssRuleJson
+    | J.CssStatementJson
+    | J.LwcAccessorContentJson
+    | J.LwcApexRefJson
+    | J.LwcAttributeJson
+    | J.LwcAttributeValueJson
+    | J.LwcBranchJson
+    | J.LwcBundleJson
+    | J.LwcBundleMetaJson
+    | J.LwcBundleModuleJson
+    | J.LwcBundleStylesheetJson
+    | J.LwcBundleTemplateJson
+    | J.LwcClassJson
+    | J.LwcComponentJson
+    | J.LwcComponentRefJson
+    | J.LwcConstructorJson
+    | J.LwcDeclarationJson
+    | J.LwcDeclarationNameJson
+    | J.LwcDecoratorJson
+    | J.LwcDirectiveJson
+    | J.LwcElementJson
+    | J.LwcExportJson
+    | J.LwcExpressionJson
+    | J.LwcFieldJson
+    | J.LwcForEachJson
+    | J.LwcFunctionJson
+    | J.LwcHandlerJson
+    | J.LwcIfJson
+    | J.LwcImportJson
+    | J.LwcImportSpecifierJson
+    | J.LwcJsArgumentJson
+    | J.LwcJsArrayJson
+    | J.LwcJsArrayPatternJson
+    | J.LwcJsAssignmentJson
+    | J.LwcJsAssignmentPatternJson
+    | J.LwcJsAwaitJson
+    | J.LwcJsBigIntJson
+    | J.LwcJsBinaryJson
+    | J.LwcJsBlockStatementJson
+    | J.LwcJsBooleanJson
+    | J.LwcJsBreakStatementJson
+    | J.LwcJsCallJson
+    | J.LwcJsClassDeclarationJson
+    | J.LwcJsClassJson
+    | J.LwcJsConditionalJson
+    | J.LwcJsContinueStatementJson
+    | J.LwcJsDebuggerStatementJson
+    | J.LwcJsDirectiveJson
+    | J.LwcJsDoWhileStatementJson
+    | J.LwcJsEmptyStatementJson
+    | J.LwcJsExpressionJson
+    | J.LwcJsExpressionStatementJson
+    | J.LwcJsForControlJson
+    | J.LwcJsForInStatementJson
+    | J.LwcJsForOfStatementJson
+    | J.LwcJsForStatementJson
+    | J.LwcJsFunctionDeclarationJson
+    | J.LwcJsFunctionJson
+    | J.LwcJsIdentifierJson
+    | J.LwcJsIfBranchJson
+    | J.LwcJsIfStatementJson
+    | J.LwcJsImportCallJson
+    | J.LwcJsInstantiationJson
+    | J.LwcJsLabeledStatementJson
+    | J.LwcJsLocalVariableJson
+    | J.LwcJsLogicalJson
+    | J.LwcJsMemberAccessJson
+    | J.LwcJsMetaPropertyJson
+    | J.LwcJsNewJson
+    | J.LwcJsNonNullJson
+    | J.LwcJsNullJson
+    | J.LwcJsNumberJson
+    | J.LwcJsObjectJson
+    | J.LwcJsObjectMethodJson
+    | J.LwcJsObjectPatternJson
+    | J.LwcJsParenthesizedJson
+    | J.LwcJsPatternJson
+    | J.LwcJsPatternPropertyJson
+    | J.LwcJsPrivateNameJson
+    | J.LwcJsPropertyJson
+    | J.LwcJsRegExpJson
+    | J.LwcJsRestJson
+    | J.LwcJsReturnStatementJson
+    | J.LwcJsSequenceJson
+    | J.LwcJsSpreadJson
+    | J.LwcJsStatementJson
+    | J.LwcJsStringJson
+    | J.LwcJsSuperJson
+    | J.LwcJsSwitchCaseJson
+    | J.LwcJsSwitchStatementJson
+    | J.LwcJsTaggedTemplateJson
+    | J.LwcJsTemplateJson
+    | J.LwcJsThisJson
+    | J.LwcJsThrowStatementJson
+    | J.LwcJsTryClauseJson
+    | J.LwcJsTryStatementJson
+    | J.LwcJsTypeCastJson
+    | J.LwcJsUnaryJson
+    | J.LwcJsUnsupportedJson
+    | J.LwcJsUnsupportedStatementJson
+    | J.LwcJsVariantJson
+    | J.LwcJsVoidPatternJson
+    | J.LwcJsWhileStatementJson
+    | J.LwcJsWithStatementJson
+    | J.LwcJsYieldJson
+    | J.LwcMemberJson
+    | J.LwcMetadataRefJson
+    | J.LwcMethodJson
+    | J.LwcModifiersJson
+    | J.LwcModuleDeclarationJson
+    | J.LwcModuleJson
+    | J.LwcParameterJson
+    | J.LwcPropertyJson
+    | J.LwcSchemaRefJson
+    | J.LwcSkippedFileJson
+    | J.LwcStaticBlockJson
+    | J.LwcStylesheetJson
+    | J.LwcTargetConfigJson
+    | J.LwcTargetPropertyJson
+    | J.LwcTemplateJson
+    | J.LwcTemplateNodeJson
+    | J.LwcTextJson
+    | J.LwcTypeDeclarationJson
+    | J.LwcTypeIndexerContentJson
+    | J.LwcTypeJson
+    | J.LwcTypeMemberContentJson
+    | J.LwcTypeMemberJson
+    | J.LwcTypeParamJson
+    | J.LwcWireConfigJson
+    | J.LwcWireJson;
+
+/** Lwc の JSON のノードの kind */
+export type LwcNodeKind = LwcNodeJson['kind'];
+
+/** kind が K の Lwc のノード */
+export type LwcNodeOf<K extends LwcNodeKind> = Extract<LwcNodeJson, { kind: K }>;

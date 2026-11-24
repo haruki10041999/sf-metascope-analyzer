@@ -1,12 +1,16 @@
 {
   "source": {
+    "kind": "apexSource",
+    "sourceKeys": {},
     "fileName": "Unchanged.cls",
     "fileType": "cls",
     "content": {
       "kind": "class",
-      "sourceKeys": {
-        "base": {},
-        "name": {}
+      "sourceKeys": {},
+      "nameRef": {
+        "kind": "declarationName",
+        "sourceKeys": {},
+        "name": "Unchanged"
       },
       "name": "Unchanged",
       "block": [
@@ -32,6 +36,8 @@
             "primitiveType": "Integer"
           },
           "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {},
             "keyword": [
               {
                 "kind": "modifier",
@@ -43,6 +49,8 @@
         }
       ],
       "modifier": {
+        "kind": "modifiers",
+        "sourceKeys": {},
         "keyword": [
           {
             "kind": "modifier",
@@ -112,6 +120,45 @@
         "offset": 9,
         "line": 3,
         "column": 7
+      },
+      "end": {
+        "offset": 59,
+        "line": 6,
+        "column": 1
+      }
+    },
+    {
+      "context": "public Integer value = 1;",
+      "start": {
+        "offset": 32,
+        "line": 5,
+        "column": 4
+      },
+      "end": {
+        "offset": 57,
+        "line": 5,
+        "column": 29
+      }
+    },
+    {
+      "context": "public class Unchanged {\n\n    public Integer value = 1;\n}",
+      "start": {
+        "offset": 2,
+        "line": 3,
+        "column": 0
+      },
+      "end": {
+        "offset": 59,
+        "line": 6,
+        "column": 1
+      }
+    },
+    {
+      "context": "public class Unchanged {\n\n    public Integer value = 1;\n}",
+      "start": {
+        "offset": 2,
+        "line": 3,
+        "column": 0
       },
       "end": {
         "offset": 59,

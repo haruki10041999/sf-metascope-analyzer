@@ -8,7 +8,7 @@ import type {
     SoslLiteralTypeClass,
 } from '../../apex_IR';
 
-import { makeNodeJson } from '../commons/node';
+import { makeDerivedNodeJson, makeNodeJson } from '../commons/node';
 import { SoqlFunctionJson, makeSoqlFunctionJson } from './soqlFunction';
 import { FieldOrderJson } from './orderBy';
 import { LogicalConditionJson, makeLogicalConditionJson } from './commons';
@@ -50,7 +50,8 @@ const makeSoslFieldJson = (target: SoslFieldTypeClass): SoslFieldJson => {
     });
 };
 
-export type FieldSpecJson = {
+/** RETURNING のオブジェクト 1 つ */
+export type FieldSpecJson = JsonType<'soslFieldSpec'> & {
     object: string[];
     field?: SoslFieldJson[];
     where?: LogicalConditionJson;
@@ -64,9 +65,11 @@ const makeFieldSpecJson = (target: FieldSpecTypeClass): FieldSpecJson => {
     const { value, spec } = target.getFields();
     // 括弧の部分 (spec) がなければ、object だけを持つ
     if (!spec) {
-        return { object: makeSoslIdJson(value) };
+        return makeNodeJson<FieldSpecJson>('soslFieldSpec', target, {
+            object: makeSoslIdJson(value),
+        });
     }
-    return {
+    return makeNodeJson<FieldSpecJson>('soslFieldSpec', target, {
         object: makeSoslIdJson(value),
         field: spec.fieldList.getFields().value.map((f) => makeSoslFieldJson(f)),
         ...(spec.where ? { where: makeLogicalConditionJson(spec.where) } : {}),
@@ -78,12 +81,15 @@ const makeFieldSpecJson = (target: FieldSpecTypeClass): FieldSpecJson => {
         ...(spec.listView ? { listView: makeSoslIdJson(spec.listView) } : {}),
         ...(spec.limitClause ? { limit: makeLimitJson(spec.limitClause) } : {}),
         ...(spec.offsetClause ? { offset: makeOffsetJson(spec.offsetClause) } : {}),
-    };
+    });
 };
 
-/** FIND の検索語。リテラル (FIND 'term' / FIND {term}) は検索語、バインド (FIND :term) は式 */
-export type SoslFindJson =
-    { type: 'literal'; value: string } | { type: 'bind'; value: BaseExpressionJson };
+/**
+ * FIND の検索語。リテラル (FIND 'term' / FIND {term}) は検索語、バインド (FIND :term) は式。
+ * リテラルは IR に対応するノードがないので、位置は SOSL 全体のもの。バインドはバインド式のもの
+ */
+export type SoslFindJson = JsonType<'soslFind'> &
+    ({ type: 'literal'; value: string } | { type: 'bind'; value: BaseExpressionJson });
 
 // SOSL 全体の位置を持つノード
 export type SoslJson = JsonType<'sosl'> & {
@@ -105,17 +111,23 @@ export const makeSoslJson = (target: SoslLiteralTypeClass | SoslLiteralAltTypeCl
             // 検索語は FIND リテラルのトークンから取り出す。バインド式 (:var) は中の式を出す
             find =
                 search.kind === 'literal'
-                    ? { type: 'literal', value: extractFindSearchTerm(search.text) }
-                    : {
+                    ? makeDerivedNodeJson<SoslFindJson>('soslFind', target, {
+                          type: 'literal',
+                          value: extractFindSearchTerm(search.text),
+                      })
+                    : makeNodeJson<SoslFindJson>('soslFind', search.expr, {
                           type: 'bind',
                           value: makeExpressionJsonConvert(search.expr.getFields().value),
-                      };
+                      });
             clauses = soslClauses;
             break;
         }
         case 'soslLiteralAlt': {
             const { value, soslClauses } = target.getFields();
-            find = { type: 'literal', value: extractFindSearchTerm(value) };
+            find = makeDerivedNodeJson<SoslFindJson>('soslFind', target, {
+                type: 'literal',
+                value: extractFindSearchTerm(value),
+            });
             clauses = soslClauses;
             break;
         }

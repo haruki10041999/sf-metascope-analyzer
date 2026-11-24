@@ -240,8 +240,14 @@ describe('LWC diff samples (docs/examples/repository の lwc)', () => {
         });
         assert.deepEqual(changed.fields.variant, { status: 'added', value: 'brand' });
         assert.deepEqual(
-            buttons.filter((b) => b.status === 'added').map((b) => b.value.attributes[1].value),
-            [{ type: 'static', value: '保存' }],
+            // 属性の値はノード (lwcValue。lwc 4 から)。位置は除いて比べる
+            buttons
+                .filter((b) => b.status === 'added')
+                .map((b) => {
+                    const { sourceKeys: _sourceKeys, ...value } = b.value.attributes[1].value;
+                    return value;
+                }),
+            [{ kind: 'lwcValue', type: 'static', value: '保存' }],
         );
 
         // lwc:if で囲んだ <p> は、追加した分岐の中への移動

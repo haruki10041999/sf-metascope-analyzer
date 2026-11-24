@@ -1,10 +1,9 @@
-import { ConvertKeys, JsonType, SourceSpan, StructureJsonType, isJsonType } from '../../types';
+import { ConvertKeys, JsonType, SourceSpan } from '../../types';
 
 // Apex / メタデータ / LWC で共通の、JSON ノードのキーとソース位置の扱い
 
-/** sourceKeys の形 (JsonType は ConvertKeys、StructureJsonType は { base, ... }) を問わない JSON ノード */
-export type KeyedJson =
-    JsonType<string> | StructureJsonType<string, Record<string, ConvertKeys | ConvertKeys[]>>;
+/** キーを持つ JSON ノード (すべて JsonType。docs/plan.md 4.2) */
+export type KeyedJson = JsonType<string>;
 
 /** ソース位置の一覧。Apex の SourceJson、XML の XmlSourceJson のどちらもこの形 */
 export type SourceObject = {
@@ -13,14 +12,8 @@ export type SourceObject = {
     source: ({ sourceKey: string } & Omit<SourceSpan, 'context'>)[];
 };
 
-/** ノードを識別するキー。StructureJsonType は base のキー */
-export const makeConvertKeys = (target: KeyedJson): ConvertKeys => {
-    if (isJsonType(target)) {
-        return target.sourceKeys;
-    }
-
-    return target.sourceKeys.base;
-};
+/** ノードを識別するキー */
+export const makeConvertKeys = (target: KeyedJson): ConvertKeys => target.sourceKeys;
 
 /** ノードのソース位置 (sourceObject は before / after それぞれの解析結果のもの) */
 export const findNodeSourceInfo = <T extends KeyedJson>(
@@ -28,7 +21,13 @@ export const findNodeSourceInfo = <T extends KeyedJson>(
     baseJson: T,
 ): { sourceKeys: ConvertKeys } & SourceSpan => {
     const baseConvertKeys = makeConvertKeys(baseJson);
-    const si = sourceInfo.find((si) => si.objectKey === baseConvertKeys.objectKey);
+    // objectKey と sourceKey の組で探す。IR に対応するノードがない JSON は、中身が同じなら同じ objectKey で、
+    // 位置を借りた元のノードごとに別の一覧になっている (types/apex/commons/source.ts の regenerateSourceObjects)
+    const si = sourceInfo.find(
+        (si) =>
+            si.objectKey === baseConvertKeys.objectKey &&
+            si.source.some((s) => s.sourceKey === baseConvertKeys.sourceKey),
+    );
     const s = si?.source.find((s) => s.sourceKey === baseConvertKeys.sourceKey);
 
     if (si && s) {

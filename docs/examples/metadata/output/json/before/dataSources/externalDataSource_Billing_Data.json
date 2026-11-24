@@ -1,0 +1,44 @@
+{
+  "filePath": "dataSources/Billing_Data.dataSource-meta.xml",
+  "resolvedError": [],
+  "dataType": "externalDataSource",
+  "result": {
+    "id": "externalDataSource_Billing_Data",
+    "base": {
+      "kind": "externalDataSource",
+      "sourceKeys": {
+        "objectKey": "externalDataSource_ac58a4c88b13708f",
+        "sourceKey": "externalDataSource_ecf33a26ab44cd8b"
+      },
+      "fullName": "Billing_Data",
+      "label": "Billing Data",
+      "type": "OData4",
+      "endpoint": "https://billing.example.com/odata",
+      "principalType": "Anonymous",
+      "protocol": "NoAuthentication",
+      "isWritable": false
+    },
+    "sourceObject": [
+      {
+        "objectKey": "externalDataSource_ac58a4c88b13708f",
+        "context": "<ExternalDataSource xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <endpoint>https://billing.example.com/odata</endpoint>\n    <isWritable>false</isWritable>\n    <label>Billing Data</label>\n    <principalType>Anonymous</principalType>\n    <protocol>NoAuthentication</protocol>\n    <type>OData4</type>\n</ExternalDataSource>",
+        "source": [
+          {
+            "sourceKey": "externalDataSource_ecf33a26ab44cd8b",
+            "filePath": "dataSources/Billing_Data.dataSource-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 366,
+              "line": 9,
+              "column": 21
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

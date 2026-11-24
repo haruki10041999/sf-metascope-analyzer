@@ -15,7 +15,7 @@ import {
 // (Apex は processor/Apex/diff/gumtree/tree.ts)。方針: docs/lwc-json-types.md 6 章 (段階 4)
 // - 文・式はすべて kind を持つので、ラベルはほぼ kind のまま (Apex の getExpressionLabel のような形からの推定は要らない)
 // - jsMemberAccess は Apex の memberAccess と同じく type (object / method) をラベルに含める
-// - try の節は condition ごと、if の分岐・switch の case は分岐のラベルにする (Apex の if.branch・try.catch と同じ考え方)
+// - try の節は condition ごと、switch の case は default かどうかでラベルを分ける (Apex の tryClause と同じ考え方)
 // - 型 (lwcType) は葉にし、中身で比べる (Apex の型と同じ)
 
 /** 実ノードのラベル。同じ kind で形が大きく違うものは形も含める */
@@ -26,19 +26,22 @@ const getNodeLabel = (node: JsonNode): string => {
             return `${node.kind}:${String(raw.type)}`;
         case 'jsFunction':
             return raw.arrow === true ? 'jsFunction:arrow' : 'jsFunction';
+        // try・catch・finally の節、case と default は、種類の違うもの同士を対応付けない (lwc 4 からノード)
+        case 'jsTryClause':
+            return `${node.kind}:${String(raw.condition)}`;
+        case 'jsSwitchCase':
+            return 'test' in raw ? node.kind : `${node.kind}:default`;
         default:
             return node.kind;
     }
 };
 
-/** kind を持たない入れ物 (分岐・節) のラベル */
-const getElementLabel = (owner: string, role: string, value: Record<string, unknown>) => {
-    if (owner === 'jsIf' && role === 'conditionBlock') return 'jsIf.branch';
-    if (owner === 'jsTry' && role === 'block') return `jsTry.${String(value.condition)}`;
-    if (owner === 'jsSwitch' && role === 'cases')
-        return 'test' in value ? 'jsSwitch.case' : 'jsSwitch.default';
-    return undefined;
-};
+/**
+ * kind を持たない入れ物のラベル。if の分岐・try の節・switch の case は lwc 4 からノード
+ * (jsIfBranch・jsTryClause・jsSwitchCase) なので、ここに残るものはない
+ */
+const getElementLabel = (_owner: string, _role: string, _value: Record<string, unknown>) =>
+    undefined;
 
 /** 子の順序が意味を持たない並び (デコレーター・import の参照・型の集合) */
 const UNORDERED_LABELS = [/\.decorator$/, /\.implement$/];

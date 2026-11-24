@@ -1,12 +1,16 @@
 {
   "source": {
+    "kind": "apexSource",
+    "sourceKeys": {},
     "fileName": "ParserEnum.cls",
     "fileType": "cls",
     "content": {
       "kind": "enum",
-      "sourceKeys": {
-        "base": {},
-        "name": {}
+      "sourceKeys": {},
+      "nameRef": {
+        "kind": "declarationName",
+        "sourceKeys": {},
+        "name": "ParserEnum"
       },
       "name": "ParserEnum",
       "members": [
@@ -32,6 +36,8 @@
         }
       ],
       "modifier": {
+        "kind": "modifiers",
+        "sourceKeys": {},
         "keyword": [
           {
             "kind": "modifier",
@@ -114,6 +120,32 @@
         "offset": 50,
         "line": 2,
         "column": 7
+      },
+      "end": {
+        "offset": 122,
+        "line": 7,
+        "column": 1
+      }
+    },
+    {
+      "context": "public enum ParserEnum {\n    DRAFT,\n    SUBMITTED,\n    APPROVED,\n    REJECTED\n}",
+      "start": {
+        "offset": 43,
+        "line": 2,
+        "column": 0
+      },
+      "end": {
+        "offset": 122,
+        "line": 7,
+        "column": 1
+      }
+    },
+    {
+      "context": "public enum ParserEnum {\n    DRAFT,\n    SUBMITTED,\n    APPROVED,\n    REJECTED\n}",
+      "start": {
+        "offset": 43,
+        "line": 2,
+        "column": 0
       },
       "end": {
         "offset": 122,

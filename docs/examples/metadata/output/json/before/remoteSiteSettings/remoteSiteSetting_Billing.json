@@ -1,0 +1,41 @@
+{
+  "filePath": "remoteSiteSettings/Billing.remoteSite-meta.xml",
+  "resolvedError": [],
+  "dataType": "remoteSiteSetting",
+  "result": {
+    "id": "remoteSiteSetting_Billing",
+    "base": {
+      "kind": "remoteSiteSetting",
+      "sourceKeys": {
+        "objectKey": "remoteSiteSetting_740f82b2fba9d8bd",
+        "sourceKey": "remoteSiteSetting_1c2e6d7b652cf7f4"
+      },
+      "fullName": "Billing",
+      "url": "https://billing.example.com",
+      "isActive": true,
+      "disableProtocolSecurity": false
+    },
+    "sourceObject": [
+      {
+        "objectKey": "remoteSiteSetting_740f82b2fba9d8bd",
+        "context": "<RemoteSiteSetting xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <disableProtocolSecurity>false</disableProtocolSecurity>\n    <isActive>true</isActive>\n    <url>https://billing.example.com</url>\n</RemoteSiteSetting>",
+        "source": [
+          {
+            "sourceKey": "remoteSiteSetting_1c2e6d7b652cf7f4",
+            "filePath": "remoteSiteSettings/Billing.remoteSite-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 261,
+              "line": 6,
+              "column": 20
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

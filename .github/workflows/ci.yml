@@ -1,4 +1,4 @@
-# 型チェック・整形の確認・テスト・ビルド (docs/todo.md 1 章)
+# 型チェック・整形の確認・テスト・ビルド・依存の監査 (docs/plan.md 10 章 P0)
 name: CI
 
 on:
@@ -9,24 +9,29 @@ on:
 
 jobs:
     check:
-        name: check (${{ matrix.os }})
+        name: check (${{ matrix.os }}, Node ${{ matrix.node }})
         runs-on: ${{ matrix.os }}
         strategy:
             fail-fast: false
             matrix:
                 # 手元の開発は Windows。Linux でも動くことを確かめる
                 os: [windows-latest, ubuntu-latest]
+                # engines の下限 (24.15 以上。node:sqlite を使う) と、手元の開発の版 (.nvmrc)
+                node: [24, 26]
         steps:
             - uses: actions/checkout@v4
 
             - uses: actions/setup-node@v4
               with:
-                  # package.json の engines (>=24.15。保存に node:sqlite を使う)
-                  node-version: 24
+                  node-version: ${{ matrix.node }}
+                  cache: npm
 
-            # package-lock.json は .gitignore で持っていないので npm ci は使えない
             - name: Install
-              run: npm install --no-audit --no-fund
+              run: npm ci --no-audit --no-fund
+
+            # 本番の依存 (dependencies) に high 以上の脆弱性があれば止める
+            - name: Audit
+              run: npm audit --omit=dev --audit-level=high
 
             - name: Typecheck (src・テスト・サンプルのスクリプト)
               run: npm run typecheck

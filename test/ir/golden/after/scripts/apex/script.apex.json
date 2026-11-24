@@ -1,8 +1,12 @@
 {
   "source": {
+    "kind": "apexSource",
+    "sourceKeys": {},
     "fileName": "script.apex",
     "fileType": "anonymous",
     "content": {
+      "kind": "anonymousUnit",
+      "sourceKeys": {},
       "block": [
         {
           "kind": "field",
@@ -25,13 +29,18 @@
             "type": "primitive",
             "primitiveType": "Integer"
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "method",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
+          "sourceKeys": {},
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "helper"
           },
           "name": "helper",
           "returnType": "void",
@@ -46,7 +55,10 @@
                 "type": "primitive",
                 "primitiveType": "Integer"
               },
-              "modifier": {}
+              "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {}
+              }
             }
           ],
           "block": [
@@ -86,7 +98,10 @@
               }
             }
           ],
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "expression",
@@ -115,14 +130,21 @@
           "kind": "for",
           "sourceKeys": {},
           "condition": {
+            "kind": "forControl",
+            "sourceKeys": {},
             "initializer": {
+              "kind": "localVariableDeclaration",
+              "sourceKeys": {},
               "variantType": {
                 "kind": "type",
                 "sourceKeys": {},
                 "type": "primitive",
                 "primitiveType": "Integer"
               },
-              "modifier": {},
+              "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {}
+              },
               "variants": [
                 {
                   "kind": "variant",
@@ -171,6 +193,8 @@
               "sourceKeys": {},
               "conditionBlock": [
                 {
+                  "kind": "ifBranch",
+                  "sourceKeys": {},
                   "condition": {
                     "kind": "binary",
                     "sourceKeys": {},
@@ -223,6 +247,8 @@
               "sourceKeys": {},
               "conditionBlock": [
                 {
+                  "kind": "ifBranch",
+                  "sourceKeys": {},
                   "condition": {
                     "kind": "binary",
                     "sourceKeys": {},
@@ -336,6 +362,32 @@
       }
     },
     {
+      "context": "(k == 1)",
+      "start": {
+        "offset": 155,
+        "line": 9,
+        "column": 7
+      },
+      "end": {
+        "offset": 163,
+        "line": 9,
+        "column": 15
+      }
+    },
+    {
+      "context": "(k >= 2)",
+      "start": {
+        "offset": 227,
+        "line": 13,
+        "column": 7
+      },
+      "end": {
+        "offset": 235,
+        "line": 13,
+        "column": 15
+      }
+    },
+    {
       "context": "0",
       "start": {
         "offset": 131,
@@ -401,6 +453,45 @@
       }
     },
     {
+      "context": "Integer k = 0",
+      "start": {
+        "offset": 119,
+        "line": 8,
+        "column": 5
+      },
+      "end": {
+        "offset": 132,
+        "line": 8,
+        "column": 18
+      }
+    },
+    {
+      "context": "Integer k = 0",
+      "start": {
+        "offset": 119,
+        "line": 8,
+        "column": 5
+      },
+      "end": {
+        "offset": 132,
+        "line": 8,
+        "column": 18
+      }
+    },
+    {
+      "context": "Integer k = 0; k < 5; k++",
+      "start": {
+        "offset": 119,
+        "line": 8,
+        "column": 5
+      },
+      "end": {
+        "offset": 144,
+        "line": 8,
+        "column": 30
+      }
+    },
+    {
       "context": "Integer limitSize = 20;",
       "start": {
         "offset": 0,
@@ -411,6 +502,58 @@
         "offset": 23,
         "line": 1,
         "column": 23
+      }
+    },
+    {
+      "context": "Integer limitSize = 20;",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 23,
+        "line": 1,
+        "column": 23
+      }
+    },
+    {
+      "context": "Integer limitSize = 20;\n\nvoid helper(Integer n) {\n    System.debug(LoggingLevel.WARN, n);\n}\n\nSystem.debug('end');\nfor (Integer k = 0; k < 5; k++) {\n    if (k == 1) {\n        System.debug('skip');\n        continue;\n    }\n    if (k >= 2) {\n        System.debug('stop');\n        break;\n    }\n}\nhelper(limitSize);",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 309,
+        "line": 18,
+        "column": 18
+      }
+    },
+    {
+      "context": "Integer limitSize = 20;\n\nvoid helper(Integer n) {\n    System.debug(LoggingLevel.WARN, n);\n}\n\nSystem.debug('end');\nfor (Integer k = 0; k < 5; k++) {\n    if (k == 1) {\n        System.debug('skip');\n        continue;\n    }\n    if (k >= 2) {\n        System.debug('stop');\n        break;\n    }\n}\nhelper(limitSize);",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 309,
+        "line": 18,
+        "column": 18
+      }
+    },
+    {
+      "context": "Integer n",
+      "start": {
+        "offset": 37,
+        "line": 3,
+        "column": 12
+      },
+      "end": {
+        "offset": 46,
+        "line": 3,
+        "column": 21
       }
     },
     {
@@ -918,6 +1061,19 @@
         "offset": 87,
         "line": 4,
         "column": 37
+      }
+    },
+    {
+      "context": "void helper(Integer n) {\n    System.debug(LoggingLevel.WARN, n);\n}",
+      "start": {
+        "offset": 25,
+        "line": 3,
+        "column": 0
+      },
+      "end": {
+        "offset": 91,
+        "line": 5,
+        "column": 1
       }
     },
     {

@@ -1,0 +1,417 @@
+{
+  "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+  "resolvedError": [],
+  "dataType": "permissionSet",
+  "result": {
+    "id": "permissionSet_Invoice_Manager",
+    "base": {
+      "kind": "permissionSet",
+      "sourceKeys": {
+        "objectKey": "permissionSet_c63b3dd9be5e8b8b",
+        "sourceKey": "permissionSet_66c65958a93475fc"
+      },
+      "name": "Invoice_Manager",
+      "label": "Invoice Manager",
+      "description": "請求書を管理・承認する",
+      "hasActivationRequired": false,
+      "classAccesses": [
+        {
+          "kind": "classAccess",
+          "sourceKeys": {
+            "objectKey": "classAccess_e418c3ab2d446925",
+            "sourceKey": "classAccess_65d32997f6a670ae"
+          },
+          "apexClass": "AccountService",
+          "enabled": true
+        },
+        {
+          "kind": "classAccess",
+          "sourceKeys": {
+            "objectKey": "classAccess_7f23a5503647ae62",
+            "sourceKey": "classAccess_a5757912708f2557"
+          },
+          "apexClass": "NewHelper",
+          "enabled": true
+        }
+      ],
+      "customPermissions": [
+        {
+          "kind": "customPermissionAccess",
+          "sourceKeys": {
+            "objectKey": "customPermissionAccess_27e11322ee9a9932",
+            "sourceKey": "customPermissionAccess_8e213eb50556113d"
+          },
+          "name": "Approve_Invoice",
+          "enabled": true
+        }
+      ],
+      "fieldPermissions": [
+        {
+          "kind": "fieldPermission",
+          "sourceKeys": {
+            "objectKey": "fieldPermission_aaa100381ce7d463",
+            "sourceKey": "fieldPermission_b654c9c9429748a1"
+          },
+          "field": "Invoice__c.Amount__c",
+          "readable": true,
+          "editable": true
+        },
+        {
+          "kind": "fieldPermission",
+          "sourceKeys": {
+            "objectKey": "fieldPermission_b17d02b8f2e293b6",
+            "sourceKey": "fieldPermission_e3b8dd9a1c70e02e"
+          },
+          "field": "Invoice__c.Approved__c",
+          "readable": true,
+          "editable": true
+        },
+        {
+          "kind": "fieldPermission",
+          "sourceKeys": {
+            "objectKey": "fieldPermission_25a2eabf84d5a698",
+            "sourceKey": "fieldPermission_7a4e2c75d3aeb07a"
+          },
+          "field": "Invoice__c.Missing__c",
+          "readable": true,
+          "editable": false
+        }
+      ],
+      "objectPermissions": [
+        {
+          "kind": "objectPermission",
+          "sourceKeys": {
+            "objectKey": "objectPermission_248af890aac730b8",
+            "sourceKey": "objectPermission_3268943b95374199"
+          },
+          "object": "Invoice__c",
+          "allowCreate": true,
+          "allowRead": true,
+          "allowEdit": true,
+          "allowDelete": true,
+          "viewAllRecords": true,
+          "modifyAllRecords": true
+        },
+        {
+          "kind": "objectPermission",
+          "sourceKeys": {
+            "objectKey": "objectPermission_55784922962ae9d2",
+            "sourceKey": "objectPermission_b8f7b5ded3d9ab4d"
+          },
+          "object": "Payment__c",
+          "allowCreate": false,
+          "allowRead": false,
+          "allowEdit": true,
+          "allowDelete": false,
+          "viewAllRecords": false,
+          "modifyAllRecords": false
+        }
+      ],
+      "recordTypeVisibilities": [
+        {
+          "kind": "recordTypeVisibility",
+          "sourceKeys": {
+            "objectKey": "recordTypeVisibility_29a6facabc64db34",
+            "sourceKey": "recordTypeVisibility_28922c73b72d3563"
+          },
+          "recordType": "Invoice__c.Standard",
+          "visible": true,
+          "default": true
+        }
+      ],
+      "userPermissions": [
+        {
+          "kind": "userPermission",
+          "sourceKeys": {
+            "objectKey": "userPermission_71d47d725591d358",
+            "sourceKey": "userPermission_5f23d88982946349"
+          },
+          "name": "ApiEnabled",
+          "enabled": true
+        },
+        {
+          "kind": "userPermission",
+          "sourceKeys": {
+            "objectKey": "userPermission_59cc70777c966e65",
+            "sourceKey": "userPermission_970cc408087788ec"
+          },
+          "name": "ModifyAllData",
+          "enabled": true
+        }
+      ],
+      "tabSettings": [
+        {
+          "kind": "tabSetting",
+          "sourceKeys": {
+            "objectKey": "tabSetting_a5e96d7b322c0141",
+            "sourceKey": "tabSetting_303bd0fba88ae35a"
+          },
+          "tab": "Invoice__c",
+          "visibility": "Visible"
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "classAccess_e418c3ab2d446925",
+        "context": "<classAccesses>\n        <apexClass>AccountService</apexClass>\n        <enabled>true</enabled>\n    </classAccesses>",
+        "source": [
+          {
+            "sourceKey": "classAccess_65d32997f6a670ae",
+            "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+            "start": {
+              "offset": 107,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 221,
+              "line": 6,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "classAccess_7f23a5503647ae62",
+        "context": "<classAccesses>\n        <apexClass>NewHelper</apexClass>\n        <enabled>true</enabled>\n    </classAccesses>",
+        "source": [
+          {
+            "sourceKey": "classAccess_a5757912708f2557",
+            "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+            "start": {
+              "offset": 226,
+              "line": 7,
+              "column": 4
+            },
+            "end": {
+              "offset": 335,
+              "line": 10,
+              "column": 20
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "customPermissionAccess_27e11322ee9a9932",
+        "context": "<customPermissions>\n        <enabled>true</enabled>\n        <name>Approve_Invoice</name>\n    </customPermissions>",
+        "source": [
+          {
+            "sourceKey": "customPermissionAccess_8e213eb50556113d",
+            "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+            "start": {
+              "offset": 340,
+              "line": 11,
+              "column": 4
+            },
+            "end": {
+              "offset": 453,
+              "line": 14,
+              "column": 24
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fieldPermission_aaa100381ce7d463",
+        "context": "<fieldPermissions>\n        <editable>true</editable>\n        <field>Invoice__c.Amount__c</field>\n        <readable>true</readable>\n    </fieldPermissions>",
+        "source": [
+          {
+            "sourceKey": "fieldPermission_b654c9c9429748a1",
+            "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+            "start": {
+              "offset": 501,
+              "line": 16,
+              "column": 4
+            },
+            "end": {
+              "offset": 655,
+              "line": 20,
+              "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fieldPermission_b17d02b8f2e293b6",
+        "context": "<fieldPermissions>\n        <editable>true</editable>\n        <field>Invoice__c.Approved__c</field>\n        <readable>true</readable>\n    </fieldPermissions>",
+        "source": [
+          {
+            "sourceKey": "fieldPermission_e3b8dd9a1c70e02e",
+            "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+            "start": {
+              "offset": 660,
+              "line": 21,
+              "column": 4
+            },
+            "end": {
+              "offset": 816,
+              "line": 25,
+              "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fieldPermission_25a2eabf84d5a698",
+        "context": "<fieldPermissions>\n        <editable>false</editable>\n        <field>Invoice__c.Missing__c</field>\n        <readable>true</readable>\n    </fieldPermissions>",
+        "source": [
+          {
+            "sourceKey": "fieldPermission_7a4e2c75d3aeb07a",
+            "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+            "start": {
+              "offset": 821,
+              "line": 26,
+              "column": 4
+            },
+            "end": {
+              "offset": 977,
+              "line": 30,
+              "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "objectPermission_248af890aac730b8",
+        "context": "<objectPermissions>\n        <allowCreate>true</allowCreate>\n        <allowDelete>true</allowDelete>\n        <allowEdit>true</allowEdit>\n        <allowRead>true</allowRead>\n        <modifyAllRecords>true</modifyAllRecords>\n        <object>Invoice__c</object>\n        <viewAllRecords>true</viewAllRecords>\n    </objectPermissions>",
+        "source": [
+          {
+            "sourceKey": "objectPermission_3268943b95374199",
+            "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+            "start": {
+              "offset": 1074,
+              "line": 33,
+              "column": 4
+            },
+            "end": {
+              "offset": 1402,
+              "line": 41,
+              "column": 24
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "objectPermission_55784922962ae9d2",
+        "context": "<objectPermissions>\n        <allowCreate>false</allowCreate>\n        <allowDelete>false</allowDelete>\n        <allowEdit>true</allowEdit>\n        <allowRead>false</allowRead>\n        <modifyAllRecords>false</modifyAllRecords>\n        <object>Payment__c</object>\n        <viewAllRecords>false</viewAllRecords>\n    </objectPermissions>",
+        "source": [
+          {
+            "sourceKey": "objectPermission_b8f7b5ded3d9ab4d",
+            "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+            "start": {
+              "offset": 1407,
+              "line": 42,
+              "column": 4
+            },
+            "end": {
+              "offset": 1740,
+              "line": 50,
+              "column": 24
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "recordTypeVisibility_29a6facabc64db34",
+        "context": "<recordTypeVisibilities>\n        <default>true</default>\n        <recordType>Invoice__c.Standard</recordType>\n        <visible>true</visible>\n    </recordTypeVisibilities>",
+        "source": [
+          {
+            "sourceKey": "recordTypeVisibility_28922c73b72d3563",
+            "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+            "start": {
+              "offset": 1745,
+              "line": 51,
+              "column": 4
+            },
+            "end": {
+              "offset": 1916,
+              "line": 55,
+              "column": 29
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "userPermission_71d47d725591d358",
+        "context": "<userPermissions>\n        <enabled>true</enabled>\n        <name>ApiEnabled</name>\n    </userPermissions>",
+        "source": [
+          {
+            "sourceKey": "userPermission_5f23d88982946349",
+            "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+            "start": {
+              "offset": 2029,
+              "line": 60,
+              "column": 4
+            },
+            "end": {
+              "offset": 2133,
+              "line": 63,
+              "column": 22
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "userPermission_59cc70777c966e65",
+        "context": "<userPermissions>\n        <enabled>true</enabled>\n        <name>ModifyAllData</name>\n    </userPermissions>",
+        "source": [
+          {
+            "sourceKey": "userPermission_970cc408087788ec",
+            "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+            "start": {
+              "offset": 2138,
+              "line": 64,
+              "column": 4
+            },
+            "end": {
+              "offset": 2245,
+              "line": 67,
+              "column": 22
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "tabSetting_a5e96d7b322c0141",
+        "context": "<tabSettings>\n        <tab>Invoice__c</tab>\n        <visibility>Visible</visibility>\n    </tabSettings>",
+        "source": [
+          {
+            "sourceKey": "tabSetting_303bd0fba88ae35a",
+            "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+            "start": {
+              "offset": 1921,
+              "line": 56,
+              "column": 4
+            },
+            "end": {
+              "offset": 2024,
+              "line": 59,
+              "column": 18
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "permissionSet_c63b3dd9be5e8b8b",
+        "context": "<PermissionSet xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <classAccesses>\n        <apexClass>AccountService</apexClass>\n        <enabled>true</enabled>\n    </classAccesses>\n    <classAccesses>\n        <apexClass>NewHelper</apexClass>\n        <enabled>true</enabled>\n    </classAccesses>\n    <customPermissions>\n        <enabled>true</enabled>\n        <name>Approve_Invoice</name>\n    </customPermissions>\n    <description>請求書を管理・承認する</description>\n    <fieldPermissions>\n        <editable>true</editable>\n        <field>Invoice__c.Amount__c</field>\n        <readable>true</readable>\n    </fieldPermissions>\n    <fieldPermissions>\n        <editable>true</editable>\n        <field>Invoice__c.Approved__c</field>\n        <readable>true</readable>\n    </fieldPermissions>\n    <fieldPermissions>\n        <editable>false</editable>\n        <field>Invoice__c.Missing__c</field>\n        <readable>true</readable>\n    </fieldPermissions>\n    <hasActivationRequired>false</hasActivationRequired>\n    <label>Invoice Manager</label>\n    <objectPermissions>\n        <allowCreate>true</allowCreate>\n        <allowDelete>true</allowDelete>\n        <allowEdit>true</allowEdit>\n        <allowRead>true</allowRead>\n        <modifyAllRecords>true</modifyAllRecords>\n        <object>Invoice__c</object>\n        <viewAllRecords>true</viewAllRecords>\n    </objectPermissions>\n    <objectPermissions>\n        <allowCreate>false</allowCreate>\n        <allowDelete>false</allowDelete>\n        <allowEdit>true</allowEdit>\n        <allowRead>false</allowRead>\n        <modifyAllRecords>false</modifyAllRecords>\n        <object>Payment__c</object>\n        <viewAllRecords>false</viewAllRecords>\n    </objectPermissions>\n    <recordTypeVisibilities>\n        <default>true</default>\n        <recordType>Invoice__c.Standard</recordType>\n        <visible>true</visible>\n    </recordTypeVisibilities>\n    <tabSettings>\n        <tab>Invoice__c</tab>\n        <visibility>Visible</visibility>\n    </tabSettings>\n    <userPermissions>\n        <enabled>true</enabled>\n        <name>ApiEnabled</name>\n    </userPermissions>\n    <userPermissions>\n        <enabled>true</enabled>\n        <name>ModifyAllData</name>\n    </userPermissions>\n</PermissionSet>",
+        "source": [
+          {
+            "sourceKey": "permissionSet_66c65958a93475fc",
+            "filePath": "permissionsets/Invoice_Manager.permissionset-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 2262,
+              "line": 68,
+              "column": 16
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

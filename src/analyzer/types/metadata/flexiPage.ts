@@ -36,7 +36,8 @@ export const FLEXI_PAGE_SCHEMA = {
 } as const;
 
 /** 表示条件 (visibilityRule)。条件の行は leftValue・operator・rightValue を criterion にしたもの (段階 M5) */
-export type FlexiPageVisibilityRule = {
+/** 部品・項目の表示条件 (metadata 8 からノード。位置は visibilityRule の要素) */
+export type FlexiPageVisibilityRule = JsonType<'flexiPageVisibilityRule'> & {
     booleanFilter?: FilterLogicValue;
     criteria: CriterionJson[];
 };
@@ -136,15 +137,21 @@ const readVisibilityRule = (
     if (!rule) return {};
     const booleanFilter = childOf(rule, 'booleanFilter');
     return {
-        visibilityRule: {
-            ...(booleanFilter
-                ? { booleanFilter: readFilterLogic(booleanFilter, { file, registry }) }
-                : {}),
-            criteria: readCriteria(rule, 'criteria', VISIBILITY_CRITERION_NAMES, {
-                file,
-                registry,
-            }),
-        },
+        visibilityRule: makeMetadataJson<FlexiPageVisibilityRule>(
+            'flexiPageVisibilityRule',
+            {
+                ...(booleanFilter
+                    ? { booleanFilter: readFilterLogic(booleanFilter, { file, registry }) }
+                    : {}),
+                criteria: readCriteria(rule, 'criteria', VISIBILITY_CRITERION_NAMES, {
+                    file,
+                    registry,
+                }),
+            },
+            rule,
+            file,
+            registry,
+        ),
     };
 };
 

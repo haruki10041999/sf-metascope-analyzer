@@ -1,5 +1,7 @@
 {
   "module": {
+    "kind": "lwcModule",
+    "sourceKeys": {},
     "fileType": "ts",
     "imports": [
       {
@@ -38,10 +40,7 @@
     ],
     "component": {
       "kind": "lwcComponent",
-      "sourceKeys": {
-        "base": {},
-        "name": {}
-      },
+      "sourceKeys": {},
       "name": "Broken",
       "superClass": {
         "kind": "jsIdentifier",
@@ -51,10 +50,7 @@
       "block": [
         {
           "kind": "lwcField",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "value",
           "variantType": {
             "kind": "lwcType",
@@ -69,6 +65,8 @@
           },
           "optional": false,
           "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {},
             "decorator": [
               {
                 "kind": "lwcDecorator",
@@ -83,9 +81,19 @@
                 "arg": []
               }
             ]
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "value"
           }
         }
-      ]
+      ],
+      "nameRef": {
+        "kind": "declarationName",
+        "sourceKeys": {},
+        "name": "Broken"
+      }
     },
     "exports": [
       {
@@ -102,6 +110,19 @@
   },
   "sourceObject": [
     {
+      "context": "",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      }
+    },
+    {
       "context": "''",
       "start": {
         "offset": 140,
@@ -112,6 +133,19 @@
         "offset": 142,
         "line": 4,
         "column": 34
+      }
+    },
+    {
+      "context": "@api @track value: string = '';",
+      "start": {
+        "offset": 112,
+        "line": 4,
+        "column": 4
+      },
+      "end": {
+        "offset": 143,
+        "line": 4,
+        "column": 35
       }
     },
     {
@@ -151,6 +185,19 @@
         "offset": 123,
         "line": 4,
         "column": 15
+      }
+    },
+    {
+      "context": "Broken",
+      "start": {
+        "offset": 74,
+        "line": 3,
+        "column": 21
+      },
+      "end": {
+        "offset": 80,
+        "line": 3,
+        "column": 27
       }
     },
     {
@@ -268,6 +315,19 @@
         "offset": 37,
         "line": 1,
         "column": 37
+      }
+    },
+    {
+      "context": "value",
+      "start": {
+        "offset": 124,
+        "line": 4,
+        "column": 16
+      },
+      "end": {
+        "offset": 129,
+        "line": 4,
+        "column": 21
       }
     },
     {

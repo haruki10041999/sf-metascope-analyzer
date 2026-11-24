@@ -35,8 +35,14 @@ describe('makeModifiersJson', () => {
         const [access, declaration] = modifier.keyword;
         assert.ok(access.sourceKeys.objectKey.startsWith('modifier_'));
         assert.notEqual(access.sourceKeys.sourceKey, declaration.sourceKeys.sourceKey);
-        // 分類のキー (access・lwcAnnotation など) は持たない
-        assert.deepEqual(Object.keys(modifier).sort(), ['annotation', 'keyword']);
+        // 分類のキー (access・lwcAnnotation など) は持たない。一覧はノード (apex 8)
+        assert.deepEqual(Object.keys(modifier).sort(), [
+            'annotation',
+            'keyword',
+            'kind',
+            'sourceKeys',
+        ]);
+        assert.equal(modifier.kind, 'modifiers');
     });
 
     it('アノテーションの引数はリテラルの式の配列 (引用符を持たない)', async () => {
@@ -68,8 +74,19 @@ describe('makeModifiersJson', () => {
         );
     });
 
-    it('修飾子がなければ持たない', async () => {
+    it('修飾子がなければ keyword・annotation を持たない (一覧のノードだけ。apex 8)', async () => {
         const { modifier } = await memberModifier('void run() {}');
-        assert.deepEqual(modifier, {});
+        assert.deepEqual(Object.keys(modifier).sort(), ['kind', 'sourceKeys']);
+        assert.equal(modifier.kind, 'modifiers');
+    });
+
+    it('中身が同じ修飾子の一覧は、持ち主が違っても同じ objectKey になる (位置は持ち主ごと)', async () => {
+        const { json } = await toJson(
+            'public class A { public void a() { Integer x = 1; } public void b() { Integer y = 2; } }',
+            unitRules.cls,
+        );
+        const [a, b] = find(json, (n) => n.kind === 'method').map((m) => m.modifier);
+        assert.equal(a.sourceKeys.objectKey, b.sourceKeys.objectKey);
+        assert.notEqual(a.sourceKeys.sourceKey, b.sourceKeys.sourceKey);
     });
 });

@@ -45,6 +45,7 @@ import type {
     PermissionSetJson,
     ProfileJson,
 } from '../../src/analyzer/types';
+import { p1Shape } from '../converter/lwcShape';
 
 // フォルダ単位のメタデータ (権限・ラベル・Flow・画面)。方針: docs/metadata-implementation.md 10 章
 // サンプルは docs/examples/repository (run-folders.ts と同じもの)
@@ -442,7 +443,7 @@ describe('画面', () => {
             }
         ).fields.items;
         const status = items.find((i) => i.fields?.field?.value === 'Status__c')!;
-        assert.deepEqual(status.fields!.position, {
+        assert.deepEqual(p1Shape(status.fields!.position), {
             status: 'changed',
             before: { section: 'Information', column: 2, row: 1 },
             after: { section: 'Approval', column: 1, row: 1 },

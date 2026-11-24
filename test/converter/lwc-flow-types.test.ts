@@ -1,3 +1,4 @@
+import { lwcShape } from './lwcShape';
 // Flow の型注釈の JSON (docs/lwc-json-types.md 7 章の 8)。
 // // @flow の .js を LwcParser と同じ道 (parseLwcModule → convertLwcModule) で読み、TS と同じ形の JSON になるかを確かめる
 import { describe, it } from 'node:test';
@@ -17,7 +18,7 @@ const moduleOf = (file: string, source: string): LwcModuleJson => {
     const parsed = parseLwcModule(file, source);
     // 構文エラーも、LWC Compiler の検証のエラーもない (Flow の型を空白にしてから検証する。json-redesign-plan.md 4 章の 7)。
     // enum は TS と同じく型を空白にできない (実行時の値を作る) ので、検証しない旨の TS_UNSUPPORTED だけは出てよい
-    assert.deepEqual(
+    deepEqual(
         parsed.resolvedError.filter((e) => e.code !== 'TS_UNSUPPORTED').map((e) => e.code),
         [],
     );
@@ -26,18 +27,14 @@ const moduleOf = (file: string, source: string): LwcModuleJson => {
     return module;
 };
 
-/** 位置と文字列 (sourceKeys・text) を除いた形 */
-const shape = (value: unknown): unknown => {
-    if (Array.isArray(value)) return value.map(shape);
-    if (value && typeof value === 'object') {
-        return Object.fromEntries(
-            Object.entries(value)
-                .filter(([key]) => key !== 'sourceKeys' && key !== 'text')
-                .map(([key, v]) => [key, shape(v)]),
-        );
-    }
-    return value;
-};
+/** 位置と文字列 (sourceKeys・text) と、P1 で足したノードの kind を除いた形 (lwcShape.ts) */
+const shape = (value: unknown): unknown => lwcShape(value, new Set(['text']));
+
+/** 位置と、P1 で足したノードの kind を両側から除いて比べる (lwcShape.ts) */
+const deepEqual = (actual: unknown, expected: unknown, message?: string) =>
+    message === undefined
+        ? assert.deepEqual(lwcShape(actual), lwcShape(expected))
+        : assert.deepEqual(lwcShape(actual), lwcShape(expected), message);
 
 const componentOf = (module: LwcModuleJson): LwcComponentJson => {
     assert.ok(module.component && module.component.kind === 'lwcComponent');
@@ -118,9 +115,9 @@ describe('LWC の JSON: Flow の型', () => {
         assert.equal(flow.fileType, 'js');
 
         for (const name of ['record', 'items', 'pair', 'mode', 'both', 'seen']) {
-            assert.deepEqual(shape(fieldType(flow, name)), shape(fieldType(ts, name)), name);
+            deepEqual(shape(fieldType(flow, name)), shape(fieldType(ts, name)), name);
         }
-        assert.deepEqual(shape(fieldType(flow, 'seen')), {
+        deepEqual(shape(fieldType(flow, 'seen')), {
             kind: 'lwcType',
             type: 'typeof',
             target: ['Color'],
@@ -130,20 +127,16 @@ describe('LWC の JSON: Flow の型', () => {
             componentOf(module).block.find(
                 (m) => m.kind === 'lwcMethod' && (m as LwcMethodJson).name === 'handle',
             ) as LwcMethodJson;
-        assert.deepEqual(shape(method(flow).returnType), shape(method(ts).returnType));
-        assert.deepEqual(
+        deepEqual(shape(method(flow).returnType), shape(method(ts).returnType));
+        deepEqual(
             method(flow).param.map((p) => shape(p.variantType)),
             method(ts).param.map((p) => shape(p.variantType)),
         );
 
         for (const name of ['Row', 'Handler', 'Shape', 'Color']) {
-            assert.deepEqual(
-                shape(typeDeclaration(flow, name)),
-                shape(typeDeclaration(ts, name)),
-                name,
-            );
+            deepEqual(shape(typeDeclaration(flow, name)), shape(typeDeclaration(ts, name)), name);
         }
-        assert.deepEqual(shape(typeDeclaration(flow, 'Handler').variantType), {
+        deepEqual(shape(typeDeclaration(flow, 'Handler').variantType), {
             kind: 'lwcType',
             type: 'function',
             params: [
@@ -169,7 +162,7 @@ describe('LWC の JSON: Flow の型', () => {
             'sample/sample.ts',
             'export default class Sample { a: string | null | void; }\n',
         );
-        assert.deepEqual(shape(fieldType(flow, 'a')), shape(fieldType(ts, 'a')));
+        deepEqual(shape(fieldType(flow, 'a')), shape(fieldType(ts, 'a')));
     });
 
     it('Flow だけの型は構造で表す (exact・スプレッド・variance・indexer・* ・$Keys など)', () => {
@@ -189,7 +182,7 @@ type Big = 1n;
         );
         const variant = (name: string) => shape(typeDeclaration(module, name).variantType);
 
-        assert.deepEqual(variant('Base'), {
+        deepEqual(variant('Base'), {
             kind: 'lwcType',
             type: 'object',
             members: [
@@ -210,7 +203,7 @@ type Big = 1n;
             ],
             exactness: 'exact',
         });
-        assert.deepEqual(variant('Ext'), {
+        deepEqual(variant('Ext'), {
             kind: 'lwcType',
             type: 'object',
             members: [],
@@ -229,18 +222,18 @@ type Big = 1n;
             spreads: [{ type: 'custom', customType: ['Base'] }],
             exactness: 'inexact',
         });
-        assert.deepEqual(variant('Keys'), {
+        deepEqual(variant('Keys'), {
             kind: 'lwcType',
             type: 'custom',
             customType: ['$Keys'],
             generic: [{ type: 'custom', customType: ['Base'] }],
         });
-        assert.deepEqual(variant('Any'), {
+        deepEqual(variant('Any'), {
             kind: 'lwcType',
             type: 'primitive',
             primitiveType: '*',
         });
-        assert.deepEqual(variant('Fn'), {
+        deepEqual(variant('Fn'), {
             kind: 'lwcType',
             type: 'function',
             params: [
@@ -249,7 +242,7 @@ type Big = 1n;
             ],
             returnType: { type: 'primitive', primitiveType: 'void' },
         });
-        assert.deepEqual(variant('Method'), {
+        deepEqual(variant('Method'), {
             kind: 'lwcType',
             type: 'object',
             members: [
@@ -272,12 +265,12 @@ type Big = 1n;
                 },
             ],
         });
-        assert.deepEqual(variant('Big'), { kind: 'lwcType', type: 'literal', value: '1n' });
+        deepEqual(variant('Big'), { kind: 'lwcType', type: 'literal', value: '1n' });
 
         const id = typeDeclaration(module, 'Id');
         assert.equal(id.declarationType, 'type');
         assert.equal(id.opaque, true);
-        assert.deepEqual(shape(id.supertype), {
+        deepEqual(shape(id.supertype), {
             kind: 'lwcType',
             type: 'primitive',
             primitiveType: 'string',
@@ -285,11 +278,11 @@ type Big = 1n;
 
         const named = typeDeclaration(module, 'Named');
         assert.equal(named.declarationType, 'interface');
-        assert.deepEqual(
+        deepEqual(
             named.extend?.map((t) => shape(t)),
             [{ kind: 'lwcType', type: 'custom', customType: ['Base'] }],
         );
-        assert.deepEqual(named.members, [
+        deepEqual(named.members, [
             {
                 name: 'name',
                 memberType: { type: 'primitive', primitiveType: 'string' },
@@ -327,7 +320,7 @@ export default class Sample extends LightningElement implements Named {
 }
 `;
         const parsed = parseLwcModule('sample/sample.js', source);
-        assert.deepEqual(
+        deepEqual(
             parsed.resolvedError.map((e) => `${e.code}: ${e.errorMessage}`),
             [],
         );
@@ -335,7 +328,7 @@ export default class Sample extends LightningElement implements Named {
         const later = componentOf(convertLwcModule(parsed).module!).block.find(
             (m) => m.kind === 'lwcField' && (m as LwcFieldJson).name === 'later',
         ) as LwcFieldJson | undefined;
-        assert.deepEqual(later?.modifier.declaration, ['declare']);
+        deepEqual(later?.modifier.declaration, ['declare']);
         assert.ok(later?.variantType);
         // 型を消しても LWC の違反 (@api の名前の禁止など) は出る
         const invalid = parseLwcModule(
@@ -348,7 +341,7 @@ export default class Sample extends LightningElement {
 `,
         );
         // 構文エラー (LWC1007) ではなく、本当の違反 (LWC1110: slot は予約の名前)
-        assert.deepEqual(
+        deepEqual(
             invalid.resolvedError.map((e) => e.code),
             ['LWC1110'],
         );
@@ -378,7 +371,7 @@ describe('LWC の型: 種類ごとの型 (other をなくした。lwc-json-types
             ].join('\n'),
         );
         const typeOf = (name: string) => shape(typeDeclaration(module, name).variantType) as never;
-        assert.deepEqual(typeOf('Cond'), {
+        deepEqual(typeOf('Cond'), {
             kind: 'lwcType',
             type: 'conditional',
             checkType: { type: 'custom', customType: ['T'] },
@@ -386,7 +379,7 @@ describe('LWC の型: 種類ごとの型 (other をなくした。lwc-json-types
             trueType: { type: 'literal', value: "'a'" },
             falseType: { type: 'literal', value: "'b'" },
         });
-        assert.deepEqual(typeOf('Mapped'), {
+        deepEqual(typeOf('Mapped'), {
             kind: 'lwcType',
             type: 'mapped',
             key: 'K',
@@ -404,13 +397,13 @@ describe('LWC の型: 種類ごとの型 (other をなくした。lwc-json-types
             optional: '+',
         });
         assert.equal((typeOf('Index') as { type: string }).type, 'indexedAccess');
-        assert.deepEqual(typeOf('Tpl'), {
+        deepEqual(typeOf('Tpl'), {
             kind: 'lwcType',
             type: 'templateLiteral',
             quasis: ['id-', ''],
             types: [{ type: 'primitive', primitiveType: 'number' }],
         });
-        assert.deepEqual(typeOf('Imp'), {
+        deepEqual(typeOf('Imp'), {
             kind: 'lwcType',
             type: 'import',
             source: './x',
@@ -419,7 +412,7 @@ describe('LWC の型: 種類ごとの型 (other をなくした。lwc-json-types
         });
         assert.equal(JSON.stringify(typeOf('Inf')).includes('"type":"infer","name":"U"'), true);
         const pred = typeOf('Pred') as { returnType: unknown };
-        assert.deepEqual(pred.returnType, {
+        deepEqual(pred.returnType, {
             type: 'predicate',
             parameterName: 'x',
             asserts: false,

@@ -1,0 +1,72 @@
+{
+  "filePath": "messageChannels/Invoice_Selected.messageChannel-meta.xml",
+  "resolvedError": [],
+  "dataType": "messageChannel",
+  "result": {
+    "id": "messageChannel_Invoice_Selected",
+    "base": {
+      "kind": "messageChannel",
+      "sourceKeys": {
+        "objectKey": "messageChannel_8e66fb9342ddeb6b",
+        "sourceKey": "messageChannel_f796122ad014b159"
+      },
+      "fullName": "Invoice_Selected",
+      "masterLabel": "Invoice Selected",
+      "description": "請求書の選択",
+      "isExposed": true,
+      "lightningMessageFields": [
+        {
+          "kind": "messageChannelField",
+          "sourceKeys": {
+            "objectKey": "messageChannelField_1a30a559819b3c8a",
+            "sourceKey": "messageChannelField_f2beb84e3251536b"
+          },
+          "fieldName": "invoiceId",
+          "description": "選択した請求書の Id"
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "messageChannelField_1a30a559819b3c8a",
+        "context": "<lightningMessageFields>\n        <description>選択した請求書の Id</description>\n        <fieldName>invoiceId</fieldName>\n    </lightningMessageFields>",
+        "source": [
+          {
+            "sourceKey": "messageChannelField_f2beb84e3251536b",
+            "filePath": "messageChannels/Invoice_Selected.messageChannel-meta.xml",
+            "start": {
+              "offset": 187,
+              "line": 5,
+              "column": 4
+            },
+            "end": {
+              "offset": 329,
+              "line": 8,
+              "column": 29
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "messageChannel_8e66fb9342ddeb6b",
+        "context": "<LightningMessageChannel xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <description>請求書の選択</description>\n    <isExposed>true</isExposed>\n    <lightningMessageFields>\n        <description>選択した請求書の Id</description>\n        <fieldName>invoiceId</fieldName>\n    </lightningMessageFields>\n    <masterLabel>Invoice Selected</masterLabel>\n</LightningMessageChannel>",
+        "source": [
+          {
+            "sourceKey": "messageChannel_f796122ad014b159",
+            "filePath": "messageChannels/Invoice_Selected.messageChannel-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 404,
+              "line": 10,
+              "column": 26
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

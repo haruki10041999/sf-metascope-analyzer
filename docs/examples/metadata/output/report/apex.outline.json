@@ -817,8 +817,8 @@
     "status": "unchanged",
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
-      "objectKey": "classDeclaration_91e1dad870200378",
-      "sourceKey": "classDeclaration_802d1f698607d99e"
+      "objectKey": "classDeclaration_dadf38e1ff51ba56",
+      "sourceKey": "classDeclaration_b0d081a41097c661"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1447,8 +1447,63 @@
     "status": "unchanged",
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
+      "objectKey": "classDeclaration_e88fe7f377a1f7c9",
+      "sourceKey": "classDeclaration_1b5971043a4d18f5"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest.AccountReader",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "class",
+    "name": "AccountReader",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_fdcad94d608493b7",
+      "sourceKey": "methodDeclaration_40bf56ada81fab82"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest.AccountReader",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "getAccount",
+    "params": [],
+    "type": "Account",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
+      "objectKey": "methodDeclaration_54d054cf1d5182c8",
+      "sourceKey": "methodDeclaration_6f757ae2f69f6315"
+    },
+    "className": "ParserTest",
+    "unitType": "class",
+    "owner": "ParserTest.AccountReader",
+    "access": "public",
+    "static": false,
+    "annotations": [],
+    "memberType": "method",
+    "name": "nameOfAccount",
+    "params": [],
+    "type": "String",
+    "isTest": true
+  },
+  {
+    "status": "unchanged",
+    "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
+    "sourceKeys": {
       "objectKey": "methodDeclaration_9ec5255f3b1b8b2f",
-      "sourceKey": "methodDeclaration_1caca1ae27226e03"
+      "sourceKey": "methodDeclaration_e8e9e82ae2053125"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1470,7 +1525,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "methodDeclaration_095f50f90b16f4ff",
-      "sourceKey": "methodDeclaration_d6bfbccae4ec388e"
+      "sourceKey": "methodDeclaration_a4c8c27fa7d5bb43"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1494,7 +1549,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "methodDeclaration_531be9be3dcea70d",
-      "sourceKey": "methodDeclaration_2a767147f03ae6f6"
+      "sourceKey": "methodDeclaration_3e7c91953e20da9c"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1513,7 +1568,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "methodDeclaration_c819e553ccd5bb5a",
-      "sourceKey": "methodDeclaration_68b377369f00a03e"
+      "sourceKey": "methodDeclaration_c35e453ada74edc8"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1532,7 +1587,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "methodDeclaration_2823f6849aaf16f3",
-      "sourceKey": "methodDeclaration_60b4f4a9c004a543"
+      "sourceKey": "methodDeclaration_6a581d1c83074c82"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1555,7 +1610,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "methodDeclaration_b38c8339d88a00df",
-      "sourceKey": "methodDeclaration_4c4e226a54253d2e"
+      "sourceKey": "methodDeclaration_06ffcb7dcdf096c0"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1576,7 +1631,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "methodDeclaration_41d22bb41b476086",
-      "sourceKey": "methodDeclaration_6a310a0bc245ef9d"
+      "sourceKey": "methodDeclaration_cfb1ce6689de54ab"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1595,7 +1650,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "methodDeclaration_0f9dd743f9fda8b9",
-      "sourceKey": "methodDeclaration_a91ce3a58fa1bafa"
+      "sourceKey": "methodDeclaration_df8b3dfbb1a003a2"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1616,7 +1671,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "methodDeclaration_23e46663a66947e4",
-      "sourceKey": "methodDeclaration_9dad114a5b687ebb"
+      "sourceKey": "methodDeclaration_6f78cecc399169ca"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1638,7 +1693,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "methodDeclaration_ce703d8b1e1a3f2d",
-      "sourceKey": "methodDeclaration_83d8e2548a2b84aa"
+      "sourceKey": "methodDeclaration_b79ff556ffdf2475"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1661,7 +1716,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "methodDeclaration_2f9502402731775d",
-      "sourceKey": "methodDeclaration_8c50b5bb12f8776b"
+      "sourceKey": "methodDeclaration_6eac4272727b11ef"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1680,7 +1735,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "methodDeclaration_cdf2216928a80ec3",
-      "sourceKey": "methodDeclaration_3952b9aa33e41e96"
+      "sourceKey": "methodDeclaration_cb4278e518780d3c"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1699,7 +1754,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "methodDeclaration_73d3a2d6b3a48b89",
-      "sourceKey": "methodDeclaration_cf164d03a5187efa"
+      "sourceKey": "methodDeclaration_59e98b29a88360c6"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1718,7 +1773,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "methodDeclaration_4e64d0bf2198b28c",
-      "sourceKey": "methodDeclaration_469d0d8e2719adf2"
+      "sourceKey": "methodDeclaration_a72e9452cfd112bc"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1737,7 +1792,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "methodDeclaration_0fb634d1b010a8b9",
-      "sourceKey": "methodDeclaration_30bcc1bda1bca4b3"
+      "sourceKey": "methodDeclaration_56ec6082b24cba4a"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1758,7 +1813,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "methodDeclaration_af2685891d76b7de",
-      "sourceKey": "methodDeclaration_a38af552255fefe0"
+      "sourceKey": "methodDeclaration_2ffac071757f5a36"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1777,7 +1832,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "methodDeclaration_ae7b03fdc1ca0acf",
-      "sourceKey": "methodDeclaration_82841ca7391749dd"
+      "sourceKey": "methodDeclaration_f03c9f66d4c0c09a"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1798,7 +1853,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "classDeclaration_7d08ab3f08866f90",
-      "sourceKey": "classDeclaration_f2b787f0e5754850"
+      "sourceKey": "classDeclaration_ea10f99186d40440"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1815,7 +1870,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "variableDeclarator_c3df56c1825077f4",
-      "sourceKey": "variableDeclarator_206a9f92ef3b0246"
+      "sourceKey": "variableDeclarator_002687850a37d274"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1833,7 +1888,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "constructorDeclaration_9bcdcd11a7aadede",
-      "sourceKey": "constructorDeclaration_4ebfd5c39b8a93ec"
+      "sourceKey": "constructorDeclaration_20817c8cbc8af3ad"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1853,7 +1908,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "methodDeclaration_162ededd72508e89",
-      "sourceKey": "methodDeclaration_dba6e4a2316860cf"
+      "sourceKey": "methodDeclaration_ffb63a3602a612ce"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1872,7 +1927,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "methodDeclaration_5f9c265300f2404c",
-      "sourceKey": "methodDeclaration_551b446513087359"
+      "sourceKey": "methodDeclaration_17953333b94e2194"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1891,7 +1946,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "classDeclaration_47dbcdd4bc0eb6b4",
-      "sourceKey": "classDeclaration_549665333762a807"
+      "sourceKey": "classDeclaration_fdf6aebd18c3bbff"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1908,7 +1963,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "methodDeclaration_8fa32b0ae82a36af",
-      "sourceKey": "methodDeclaration_a36ee912225bae81"
+      "sourceKey": "methodDeclaration_8079e84b96522bb2"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1927,7 +1982,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "classDeclaration_5b47aa7107488c6c",
-      "sourceKey": "classDeclaration_988c121b2c8ffc31"
+      "sourceKey": "classDeclaration_26d7eba087126464"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1945,7 +2000,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "methodDeclaration_f1f82df8d746d2e8",
-      "sourceKey": "methodDeclaration_e0d379b819a10f2e"
+      "sourceKey": "methodDeclaration_a58cf1eb319da3e7"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1964,7 +2019,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "enumDeclaration_28eba76aeb23297a",
-      "sourceKey": "enumDeclaration_b18b9325e7c098ff"
+      "sourceKey": "enumDeclaration_19c2de54cb4c0e22"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -1982,7 +2037,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "enumDeclaration_df87b042cfe68e06",
-      "sourceKey": "enumDeclaration_41ca5e056e624e99"
+      "sourceKey": "enumDeclaration_6fba042ea04e4ca2"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -2000,7 +2055,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "interfaceDeclaration_cb44929c9f141b3c",
-      "sourceKey": "interfaceDeclaration_9f3cce4cf57f9481"
+      "sourceKey": "interfaceDeclaration_b3f9fe6cb77f8bdb"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -2017,7 +2072,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "interfaceMethodDeclaration_a7ddf1ae8c48434a",
-      "sourceKey": "interfaceMethodDeclaration_05216c7a5f50638c"
+      "sourceKey": "interfaceMethodDeclaration_68c632f0d8835743"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -2036,7 +2091,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "interfaceDeclaration_0d33e729014c0d6f",
-      "sourceKey": "interfaceDeclaration_9f5cac8719b5bd72"
+      "sourceKey": "interfaceDeclaration_b909b2b392571c57"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -2053,7 +2108,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "interfaceMethodDeclaration_132ad6bbd6d471ff",
-      "sourceKey": "interfaceMethodDeclaration_f03fd4df64bcb3dc"
+      "sourceKey": "interfaceMethodDeclaration_a33883853622239a"
     },
     "className": "ParserTest",
     "unitType": "class",
@@ -2075,7 +2130,7 @@
     "filePath": "D:\\Projects\\WS\\sf-metascope-analyzer\\docs\\examples\\repository\\after\\force-app\\main\\default\\classes\\ParserTest.cls",
     "sourceKeys": {
       "objectKey": "classDeclaration_fa64ce622f2b3c0e",
-      "sourceKey": "classDeclaration_5e5dda48d99e908c"
+      "sourceKey": "classDeclaration_c95151223342cb8d"
     },
     "className": "ParserTest",
     "unitType": "class",

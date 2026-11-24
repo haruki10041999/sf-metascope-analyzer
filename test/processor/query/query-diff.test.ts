@@ -12,6 +12,7 @@ import {
 import { makeValueDiff } from '../../../src/analyzer/processor/commons/diff/commons';
 import type {
     FieldOrderJson,
+    OrderByJson,
     SelectEntryJson,
     SoqlJson,
     SoqlFunctionJson,
@@ -90,14 +91,28 @@ describe('SOQL and SOSL diff', () => {
 
     it('compares SOQL date-function arguments by field and timezone flag', () => {
         const before: SoqlFunctionJson = {
+            kind: 'soqlFunction',
+            sourceKeys: keys('day-only-before'),
             type: 'soqlFunction',
             func: 'DAY_ONLY',
-            arg: { name: ['CreatedDate'], isConvertTimeZone: false },
+            arg: {
+                kind: 'soqlDateField',
+                sourceKeys: keys('created-date'),
+                name: ['CreatedDate'],
+                isConvertTimeZone: false,
+            },
         };
         const after: SoqlFunctionJson = {
+            kind: 'soqlFunction',
+            sourceKeys: keys('day-only-after'),
             type: 'soqlFunction',
             func: 'DAY_ONLY',
-            arg: { name: ['CreatedDate'], isConvertTimeZone: true },
+            arg: {
+                kind: 'soqlDateField',
+                sourceKeys: keys('created-date-tz'),
+                name: ['CreatedDate'],
+                isConvertTimeZone: true,
+            },
         };
 
         assert.deepEqual(makeSoqlFunctionDiff(before, after).arg, {
@@ -145,8 +160,16 @@ describe('SOQL and SOSL diff', () => {
             type: 'field',
             field: ['CreatedDate'],
         };
-        const before = { orderBy: [first, second] };
-        const after = { orderBy: [second, first] };
+        const before: OrderByJson = {
+            kind: 'soqlOrderBy',
+            sourceKeys: keys('order-before'),
+            orderBy: [first, second],
+        };
+        const after: OrderByJson = {
+            kind: 'soqlOrderBy',
+            sourceKeys: keys('order-after'),
+            orderBy: [second, first],
+        };
 
         assert.deepEqual(
             (makeOrderByDiff(before, after) as { orderBy: { status: string }[] }).orderBy.map(
@@ -160,21 +183,34 @@ describe('SOQL and SOSL diff', () => {
         const before: SoqlJson = {
             kind: 'soql',
             sourceKeys: keys('query-before'),
-            select: { field: [] },
-            from: { field: [] },
+            select: { kind: 'soqlSelect', sourceKeys: keys('select'), field: [] },
+            from: { kind: 'soqlFrom', sourceKeys: keys('from'), field: [] },
         };
         const after: SoqlJson = {
             ...before,
             sourceKeys: keys('query-after'),
-            where: { condition: { condition: [], operator: 'AND' } },
+            where: {
+                kind: 'soqlWhere',
+                sourceKeys: keys('where'),
+                condition: {
+                    kind: 'soqlLogical',
+                    sourceKeys: keys('where-and'),
+                    condition: [],
+                    operator: 'AND',
+                },
+            },
         };
 
         const diff = makeSoqlDiff(before, after);
         assert.equal(diff.status, 'changed');
         if (diff.status === 'changed' && 'fields' in diff) {
+            // WHERE 句はノード (apex 7) なので、kind / sourceKeys を中身から分けて added にする
+            const { kind, sourceKeys, ...content } = after.where!;
             assert.deepEqual(diff.fields.where, {
+                kind,
+                sourceKeys,
                 status: 'added',
-                value: after.where,
+                value: content,
             });
         } else {
             assert.fail('Expected a field-level SOQL diff');
@@ -185,19 +221,35 @@ describe('SOQL and SOSL diff', () => {
         const before: SoslJson = {
             kind: 'sosl',
             sourceKeys: keys('sosl-before'),
-            find: { type: 'literal', value: 'Acme' },
+            find: {
+                kind: 'soslFind',
+                sourceKeys: keys('find-acme'),
+                type: 'literal',
+                value: 'Acme',
+            },
             fieldSpec: [],
         };
         const after: SoslJson = {
             ...before,
             sourceKeys: keys('sosl-after'),
-            find: { type: 'literal', value: 'Globex' },
+            find: {
+                kind: 'soslFind',
+                sourceKeys: keys('find-globex'),
+                type: 'literal',
+                value: 'Globex',
+            },
         };
 
         const diff = makeSoslDiff(before, after);
         assert.equal(diff.status, 'changed');
         if (diff.status === 'changed' && 'fields' in diff) {
+            // FIND の検索語はノード (apex 7)。objectKey が違うので changed、中身は検索語
             assert.deepEqual(diff.fields.find, {
+                kind: 'soslFind',
+                sourceKeys: {
+                    objectKey: { before: 'find-acme', after: 'find-globex' },
+                    sourceKey: { before: 'find-acme-source', after: 'find-globex-source' },
+                },
                 status: 'changed',
                 before: { type: 'literal', value: 'Acme' },
                 after: { type: 'literal', value: 'Globex' },
@@ -211,12 +263,19 @@ describe('SOQL and SOSL diff', () => {
         const literal: SoslJson = {
             kind: 'sosl',
             sourceKeys: keys('sosl'),
-            find: { type: 'literal', value: 'term' },
+            find: {
+                kind: 'soslFind',
+                sourceKeys: keys('find-literal'),
+                type: 'literal',
+                value: 'term',
+            },
         };
         const bind: SoslJson = {
             ...literal,
             sourceKeys: keys('sosl-bind'),
             find: {
+                kind: 'soslFind',
+                sourceKeys: keys('find-bind'),
                 type: 'bind',
                 value: { kind: 'identifier', sourceKeys: keys('term'), name: 'term' },
             },

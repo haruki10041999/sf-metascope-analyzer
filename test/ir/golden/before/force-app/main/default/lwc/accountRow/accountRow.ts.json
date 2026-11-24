@@ -1,5 +1,7 @@
 {
   "module": {
+    "kind": "lwcModule",
+    "sourceKeys": {},
     "fileType": "ts",
     "imports": [
       {
@@ -48,10 +50,7 @@
     ],
     "component": {
       "kind": "lwcComponent",
-      "sourceKeys": {
-        "base": {},
-        "name": {}
-      },
+      "sourceKeys": {},
       "name": "AccountRow",
       "superClass": {
         "kind": "jsIdentifier",
@@ -61,10 +60,7 @@
       "block": [
         {
           "kind": "lwcField",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "recordId",
           "variantType": {
             "kind": "lwcType",
@@ -74,6 +70,8 @@
           },
           "optional": false,
           "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {},
             "decorator": [
               {
                 "kind": "lwcDecorator",
@@ -82,14 +80,16 @@
                 "arg": []
               }
             ]
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "recordId"
           }
         },
         {
           "kind": "lwcField",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "name",
           "variantType": {
             "kind": "lwcType",
@@ -104,6 +104,8 @@
           },
           "optional": false,
           "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {},
             "decorator": [
               {
                 "kind": "lwcDecorator",
@@ -112,14 +114,16 @@
                 "arg": []
               }
             ]
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "name"
           }
         },
         {
           "kind": "lwcField",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "amount",
           "variantType": {
             "kind": "lwcType",
@@ -129,6 +133,8 @@
           },
           "optional": true,
           "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {},
             "decorator": [
               {
                 "kind": "lwcDecorator",
@@ -137,19 +143,31 @@
                 "arg": []
               }
             ]
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "amount"
           }
         },
         {
           "kind": "lwcProperty",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "formattedAmount",
           "isGetter": true,
           "isSetter": false,
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "formattedAmount"
+          },
           "getterContent": {
-            "modifier": {},
+            "kind": "lwcAccessor",
+            "sourceKeys": {},
+            "modifier": {
+              "kind": "lwcModifiers",
+              "sourceKeys": {}
+            },
             "block": [
               {
                 "kind": "jsReturn",
@@ -198,10 +216,7 @@
         },
         {
           "kind": "lwcMethod",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "handleClick",
           "returnType": {
             "kind": "lwcType",
@@ -211,7 +226,10 @@
           },
           "param": [],
           "async": false,
-          "modifier": {},
+          "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {}
+          },
           "block": [
             {
               "kind": "jsExpression",
@@ -281,9 +299,19 @@
                 ]
               }
             }
-          ]
+          ],
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "handleClick"
+          }
         }
-      ]
+      ],
+      "nameRef": {
+        "kind": "declarationName",
+        "sourceKeys": {},
+        "name": "AccountRow"
+      }
     },
     "exports": [
       {
@@ -299,6 +327,19 @@
     "typeDeclarations": []
   },
   "sourceObject": [
+    {
+      "context": "",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      }
+    },
     {
       "context": "''",
       "start": {
@@ -378,6 +419,45 @@
       }
     },
     {
+      "context": "@api recordId!: string;",
+      "start": {
+        "offset": 149,
+        "line": 5,
+        "column": 4
+      },
+      "end": {
+        "offset": 172,
+        "line": 5,
+        "column": 27
+      }
+    },
+    {
+      "context": "@api recordId!: string;",
+      "start": {
+        "offset": 177,
+        "line": 6,
+        "column": 4
+      },
+      "end": {
+        "offset": 200,
+        "line": 6,
+        "column": 27
+      }
+    },
+    {
+      "context": "@api recordId!: string;",
+      "start": {
+        "offset": 205,
+        "line": 7,
+        "column": 4
+      },
+      "end": {
+        "offset": 226,
+        "line": 7,
+        "column": 25
+      }
+    },
+    {
       "context": "@api",
       "start": {
         "offset": 149,
@@ -430,6 +510,19 @@
       }
     },
     {
+      "context": "AccountRow",
+      "start": {
+        "offset": 107,
+        "line": 4,
+        "column": 21
+      },
+      "end": {
+        "offset": 117,
+        "line": 4,
+        "column": 31
+      }
+    },
+    {
       "context": "CustomEvent",
       "start": {
         "offset": 375,
@@ -466,6 +559,19 @@
         "offset": 25,
         "line": 1,
         "column": 25
+      }
+    },
+    {
+      "context": "amount",
+      "start": {
+        "offset": 210,
+        "line": 7,
+        "column": 9
+      },
+      "end": {
+        "offset": 216,
+        "line": 7,
+        "column": 15
       }
     },
     {
@@ -586,6 +692,19 @@
       }
     },
     {
+      "context": "formattedAmount",
+      "start": {
+        "offset": 236,
+        "line": 9,
+        "column": 8
+      },
+      "end": {
+        "offset": 251,
+        "line": 9,
+        "column": 23
+      }
+    },
+    {
       "context": "get formattedAmount(): string {\n        return formatAmount(this.amount ?? 0);\n    }",
       "start": {
         "offset": 232,
@@ -596,6 +715,58 @@
         "offset": 316,
         "line": 11,
         "column": 5
+      }
+    },
+    {
+      "context": "get formattedAmount(): string {\n        return formatAmount(this.amount ?? 0);\n    }",
+      "start": {
+        "offset": 232,
+        "line": 9,
+        "column": 4
+      },
+      "end": {
+        "offset": 316,
+        "line": 11,
+        "column": 5
+      }
+    },
+    {
+      "context": "get formattedAmount(): string {\n        return formatAmount(this.amount ?? 0);\n    }",
+      "start": {
+        "offset": 232,
+        "line": 9,
+        "column": 4
+      },
+      "end": {
+        "offset": 316,
+        "line": 11,
+        "column": 5
+      }
+    },
+    {
+      "context": "get formattedAmount(): string {\n        return formatAmount(this.amount ?? 0);\n    }",
+      "start": {
+        "offset": 322,
+        "line": 13,
+        "column": 4
+      },
+      "end": {
+        "offset": 445,
+        "line": 15,
+        "column": 5
+      }
+    },
+    {
+      "context": "handleClick",
+      "start": {
+        "offset": 322,
+        "line": 13,
+        "column": 4
+      },
+      "end": {
+        "offset": 333,
+        "line": 13,
+        "column": 15
       }
     },
     {
@@ -664,6 +835,19 @@
       }
     },
     {
+      "context": "name",
+      "start": {
+        "offset": 182,
+        "line": 6,
+        "column": 9
+      },
+      "end": {
+        "offset": 186,
+        "line": 6,
+        "column": 13
+      }
+    },
+    {
       "context": "new CustomEvent('select', { detail: { recordId: this.recordId } })",
       "start": {
         "offset": 371,
@@ -687,6 +871,19 @@
         "offset": 225,
         "line": 7,
         "column": 24
+      }
+    },
+    {
+      "context": "recordId",
+      "start": {
+        "offset": 154,
+        "line": 5,
+        "column": 9
+      },
+      "end": {
+        "offset": 162,
+        "line": 5,
+        "column": 17
       }
     },
     {

@@ -1,15 +1,16 @@
 // TS・Flow の型注釈の JSON (docs/lwc-implementation.md)。Apex の types/apex/type.ts と同じ形:
-// 境界ノード (LwcTypeJson) は最上位の型だけで、型引数・要素型はキーのない中身 (LwcTypeContentJson) で持つ。
+// 型引数・要素型などの入れ子の型も、型のノード (LwcTypeJson) で持つ (lwc 4 から)。
 // Flow の型は、TS の同じ意味の型と同じ形にする (docs/lwc-json-types.md 7 章の 8)。
 // 入力は IR v2 (lwc_IR) のノード。v2 の木にはエラーのノードがないので、部分木の検査はしない
-import type { JsonType } from '../commons/json';
+import { makeJsonType, type JsonType } from '../commons/json';
 import type { commons, flowVisitor, typeScriptVisitor } from '../lwc_IR';
 
 import { isLwcNode, nameOf, type LwcJsonContext, type LwcNode } from './commons';
 
-export type LwcTypeMemberContentJson = {
+/** 型のメンバー (lwc 4 からノード。位置はメンバーのもの) */
+export type LwcTypeMemberContentJson = JsonType<'lwcTypeMember'> & {
     name: string;
-    memberType?: LwcTypeContentJson;
+    memberType?: LwcTypeJson;
     optional: boolean;
     /** メソッドのシグネチャ (foo(): void)。getter / setter も含む */
     method: boolean;
@@ -18,13 +19,19 @@ export type LwcTypeMemberContentJson = {
 };
 
 /** インデックス (TS の [key: string]: T・Flow の [key: string]: T / [string]: T) */
-export type LwcTypeIndexerContentJson = {
+export type LwcTypeIndexerContentJson = JsonType<'lwcTypeIndexer'> & {
     /** キーの名前 (Flow の [string]: T は持たない) */
     name?: string;
-    keyType?: LwcTypeContentJson;
-    valueType?: LwcTypeContentJson;
+    keyType?: LwcTypeJson;
+    valueType?: LwcTypeJson;
     /** Flow の variance (+[key: string]: T) */
     variance?: 'plus' | 'minus';
+};
+
+/** 関数の型の引数 (lwc 4 からノード。位置は引数のもの) */
+export type LwcTypeParamJson = JsonType<'lwcTypeParam'> & {
+    name?: string;
+    paramType?: LwcTypeJson;
 };
 
 export type LwcTypeContentJson =
@@ -34,76 +41,76 @@ export type LwcTypeContentJson =
      * Row / Promise<Row[]> / a.B (Apex の custom。generic は型引数)。Flow の $Keys<T> なども。
      * customType は名前の並び (a.B は ['a', 'B']。Apex の customType と同じ。lwc-json-types.md 8.8 の残りを直した)
      */
-    | { type: 'custom'; customType: string[]; generic?: LwcTypeContentJson[] }
-    | { type: 'array'; elementType: LwcTypeContentJson }
+    | { type: 'custom'; customType: string[]; generic?: LwcTypeJson[] }
+    | { type: 'array'; elementType: LwcTypeJson }
     /** Flow の ?T は T | null | void の union */
-    | { type: 'union' | 'intersection'; types: LwcTypeContentJson[] }
+    | { type: 'union' | 'intersection'; types: LwcTypeJson[] }
     | { type: 'literal'; value: string }
     | {
           type: 'object';
           members: LwcTypeMemberContentJson[];
           indexers?: LwcTypeIndexerContentJson[];
           /** Flow の { ...A, b: T } の ...A (メンバーとの順番は持たない) */
-          spreads?: LwcTypeContentJson[];
+          spreads?: LwcTypeJson[];
           /** Flow の {| |} は exact、{ ... } は inexact。どちらでもないときは持たない */
           exactness?: 'exact' | 'inexact';
       }
     | {
           type: 'function';
           /** 名前は Flow の名前のない引数 ((string) => void) では持たない。残りの引数は ...args */
-          params: { name?: string; paramType?: LwcTypeContentJson }[];
-          returnType?: LwcTypeContentJson;
+          params: LwcTypeParamJson[];
+          returnType?: LwcTypeJson;
           /** new (...) => T (TS のコンストラクタの型)。abstract new は abstract も持つ */
           construct?: true;
           abstract?: true;
       }
-    | { type: 'tuple'; elementTypes: LwcTypeContentJson[] }
+    | { type: 'tuple'; elementTypes: LwcTypeJson[] }
     /** typeof x / typeof a.b (target は名前の並び) */
     | { type: 'typeof'; target: string[] }
     /** A extends B ? C : D */
     | {
           type: 'conditional';
-          checkType: LwcTypeContentJson;
-          extendsType: LwcTypeContentJson;
-          trueType: LwcTypeContentJson;
-          falseType: LwcTypeContentJson;
+          checkType: LwcTypeJson;
+          extendsType: LwcTypeJson;
+          trueType: LwcTypeJson;
+          falseType: LwcTypeJson;
       }
     /** { [K in T as N]?: V } (readonly・optional は '+' (書いただけのときも) か '-') */
     | {
           type: 'mapped';
           key: string;
-          constraint: LwcTypeContentJson;
-          nameType?: LwcTypeContentJson;
-          valueType?: LwcTypeContentJson;
+          constraint: LwcTypeJson;
+          nameType?: LwcTypeJson;
+          valueType?: LwcTypeJson;
           readonly?: '+' | '-';
           optional?: '+' | '-';
       }
     /** T[K] (Flow の T?.[K] は optional) */
     | {
           type: 'indexedAccess';
-          objectType: LwcTypeContentJson;
-          indexType: LwcTypeContentJson;
+          objectType: LwcTypeJson;
+          indexType: LwcTypeJson;
           optional?: true;
       }
     /** keyof T / readonly T[] / unique symbol */
-    | { type: 'operator'; operator: string; argument: LwcTypeContentJson }
+    | { type: 'operator'; operator: string; argument: LwcTypeJson }
     /** `a${T}b` (quasis は書いた文字列。types より 1 つ多い) */
-    | { type: 'templateLiteral'; quasis: string[]; types: LwcTypeContentJson[] }
+    | { type: 'templateLiteral'; quasis: string[]; types: LwcTypeJson[] }
     /** import('x').A<T> */
     | {
           type: 'import';
           source: string;
           qualifier?: string[];
-          generic?: LwcTypeContentJson[];
+          generic?: LwcTypeJson[];
       }
     /** infer U extends C */
-    | { type: 'infer'; name: string; constraint?: LwcTypeContentJson }
+    | { type: 'infer'; name: string; constraint?: LwcTypeJson }
     /** x is T / asserts x / asserts x is T (parameterName の this は 'this') */
     | {
           type: 'predicate';
           parameterName: string;
           asserts: boolean;
-          predicateType?: LwcTypeContentJson;
+          predicateType?: LwcTypeJson;
       }
     /** 上のどれでもない型 (nodeType は IR のノードの種類)。Apex の unsupported に当たる */
     | { type: 'unknown'; nodeType: string };
@@ -183,13 +190,17 @@ const makeFlowPropertyContentJson = (
           : value.kind === 'functionTypeAnnotation'
             ? (value as commons.FunctionTypeAnnotationTypeClass).getFields().returnType
             : value;
-    return {
-        name: nameOf(fields.key, context),
-        ...(memberType ? { memberType: makeLwcTypeContentJson(memberType, context) } : {}),
-        optional: fields.optional,
-        method: fields.method,
-        ...varianceOf(fields.variance),
-    };
+    return makeJsonType<'lwcTypeMember', LwcTypeMemberContentJson>(
+        'lwcTypeMember',
+        context.keysOf(property),
+        {
+            name: nameOf(fields.key, context),
+            ...(memberType ? { memberType: makeLwcTypeJson(memberType, context) } : {}),
+            optional: fields.optional,
+            method: fields.method,
+            ...varianceOf(fields.variance),
+        },
+    );
 };
 
 /**
@@ -220,12 +231,16 @@ export const makeLwcTypeMemberContentJson = (
         default:
             return null;
     }
-    return {
-        name: nameOf(fields.key, context),
-        ...(annotation ? { memberType: makeLwcTypeContentJson(annotation, context) } : {}),
-        optional: fields.optional,
-        method: member.kind === 'tSMethodSignature',
-    };
+    return makeJsonType<'lwcTypeMember', LwcTypeMemberContentJson>(
+        'lwcTypeMember',
+        context.keysOf(member),
+        {
+            name: nameOf(fields.key, context),
+            ...(annotation ? { memberType: makeLwcTypeJson(annotation, context) } : {}),
+            optional: fields.optional,
+            method: member.kind === 'tSMethodSignature',
+        },
+    );
 };
 
 /** インデックス (TS の tSIndexSignature・Flow の objectTypeIndexer)。それ以外は null */
@@ -239,26 +254,32 @@ const makeIndexerContentJson = (
                 member as commons.TSIndexSignatureTypeClass
             ).getFields();
             const keyAnnotation = parameter.getFields().typeAnnotation;
-            return {
-                name: parameter.getFields().name,
-                ...(keyAnnotation
-                    ? { keyType: makeLwcTypeContentJson(keyAnnotation, context) }
-                    : {}),
-                ...(typeAnnotation
-                    ? { valueType: makeLwcTypeContentJson(typeAnnotation, context) }
-                    : {}),
-            };
+            return makeJsonType<'lwcTypeIndexer', LwcTypeIndexerContentJson>(
+                'lwcTypeIndexer',
+                context.keysOf(member),
+                {
+                    name: parameter.getFields().name,
+                    ...(keyAnnotation ? { keyType: makeLwcTypeJson(keyAnnotation, context) } : {}),
+                    ...(typeAnnotation
+                        ? { valueType: makeLwcTypeJson(typeAnnotation, context) }
+                        : {}),
+                },
+            );
         }
         case 'objectTypeIndexer': {
             const { id, key, value, variance } = (
                 member as commons.ObjectTypeIndexerTypeClass
             ).getFields();
-            return {
-                ...(id ? { name: id.getFields().name } : {}),
-                keyType: makeLwcTypeContentJson(key, context),
-                valueType: makeLwcTypeContentJson(value, context),
-                ...varianceOf(variance),
-            };
+            return makeJsonType<'lwcTypeIndexer', LwcTypeIndexerContentJson>(
+                'lwcTypeIndexer',
+                context.keysOf(member),
+                {
+                    ...(id ? { name: id.getFields().name } : {}),
+                    keyType: makeLwcTypeJson(key, context),
+                    valueType: makeLwcTypeJson(value, context),
+                    ...varianceOf(variance),
+                },
+            );
         }
         default:
             return null;
@@ -273,12 +294,12 @@ const makeFlowObjectContentJson = (
     // 呼び出し ({ (x: T): U }) と内部スロット ([[foo]]: T) は、TS の呼び出しのシグネチャと同じく持たない
     const { properties, indexers, exactness } = node.getFields();
     const members: LwcTypeMemberContentJson[] = [];
-    const spreads: LwcTypeContentJson[] = [];
+    const spreads: LwcTypeJson[] = [];
     for (const property of properties) {
         if (property.kind === 'objectTypeProperty') {
             members.push(makeFlowPropertyContentJson(property, context));
         } else {
-            spreads.push(makeLwcTypeContentJson(property.getFields().argument, context));
+            spreads.push(makeLwcTypeJson(property.getFields().argument, context));
         }
     }
     const indexerJson = indexers.flatMap((i) => makeIndexerContentJson(i, context) ?? []);
@@ -295,7 +316,7 @@ const makeFlowObjectContentJson = (
 const makeFunctionParamContentJson = (
     param: commons.TSFunctionTypeFields['params'][number],
     context: LwcJsonContext,
-): { name?: string; paramType?: LwcTypeContentJson } => {
+): LwcTypeParamJson => {
     const annotation = param.getFields().typeAnnotation;
     let name: string;
     if (param.kind === 'identifier') {
@@ -309,10 +330,10 @@ const makeFunctionParamContentJson = (
     } else {
         name = context.textOf(param);
     }
-    return {
+    return makeJsonType<'lwcTypeParam', LwcTypeParamJson>('lwcTypeParam', context.keysOf(param), {
         name,
-        ...(annotation ? { paramType: makeLwcTypeContentJson(annotation, context) } : {}),
-    };
+        ...(annotation ? { paramType: makeLwcTypeJson(annotation, context) } : {}),
+    });
 };
 
 /** Flow の関数の型の引数 (x: T / T / ...rest: T)。this の引数は名前を this にする (TS の this: T と同じ) */
@@ -320,7 +341,7 @@ const makeFlowFunctionParamContentJson = (
     param: flowVisitor.FunctionTypeParamTypeClass,
     as: 'param' | 'rest' | 'this',
     context: LwcJsonContext,
-): { name?: string; paramType: LwcTypeContentJson } => {
+): LwcTypeParamJson => {
     const { name, typeAnnotation } = param.getFields();
     const paramName =
         as === 'this'
@@ -328,10 +349,10 @@ const makeFlowFunctionParamContentJson = (
             : as === 'rest'
               ? `...${name ? name.getFields().name : ''}`
               : name?.getFields().name;
-    return {
+    return makeJsonType<'lwcTypeParam', LwcTypeParamJson>('lwcTypeParam', context.keysOf(param), {
         ...(paramName !== undefined ? { name: paramName } : {}),
-        paramType: makeLwcTypeContentJson(typeAnnotation, context),
-    };
+        paramType: makeLwcTypeJson(typeAnnotation, context),
+    });
 };
 
 /** 名前 (a.B・Identifier・TSQualifiedName・QualifiedTypeIdentifier) を名前の並びにする */
@@ -347,7 +368,7 @@ const makeCustomContentJson = (
     typeArguments: readonly LwcNode[] | undefined,
     context: LwcJsonContext,
 ): LwcTypeContentJson => {
-    const generic = (typeArguments ?? []).map((a) => makeLwcTypeContentJson(a, context));
+    const generic = (typeArguments ?? []).map((a) => makeLwcTypeJson(a, context));
     return { type: 'custom', customType, ...(generic.length > 0 ? { generic } : {}) };
 };
 
@@ -382,7 +403,7 @@ export const makeLwcTypeContentJson = (
     if (FLOW_LITERALS.has(node.kind)) {
         return { type: 'literal', value: context.textOf(node) };
     }
-    const content = (child: LwcNode) => makeLwcTypeContentJson(child, context);
+    const content = (child: LwcNode) => makeLwcTypeJson(child, context);
 
     switch (node.kind) {
         case 'tSParenthesizedType':
@@ -463,8 +484,15 @@ export const makeLwcTypeContentJson = (
                         (node as commons.NullableTypeAnnotationTypeClass).getFields()
                             .typeAnnotation,
                     ),
-                    { type: 'primitive', primitiveType: 'null' },
-                    { type: 'primitive', primitiveType: 'void' },
+                    // ソースにない型なので、位置は ?T のものを借りる (中身からキーを作る)
+                    context.derivedJson<LwcTypeJson>('lwcType', node, {
+                        type: 'primitive',
+                        primitiveType: 'null',
+                    }),
+                    context.derivedJson<LwcTypeJson>('lwcType', node, {
+                        type: 'primitive',
+                        primitiveType: 'void',
+                    }),
                 ],
             };
         case 'tSUnionType':

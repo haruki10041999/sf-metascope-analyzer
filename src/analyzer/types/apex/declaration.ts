@@ -1,4 +1,4 @@
-import { ConvertKeys, JsonType, StructureJsonType, makeStructureJson } from '../commons';
+import { JsonType } from '../commons';
 
 import type {
     AnonymousMemberDeclarationTypeClass,
@@ -20,7 +20,7 @@ import type {
     VariableDeclaratorsTypeClass,
 } from '../apex_IR';
 
-import { keysOf, makeNodeJson, structureKeysOf } from './commons/node';
+import { type ApexNode, keysOf, makeDerivedNodeJson, makeNodeJson } from './commons/node';
 import { BaseExpressionJson, makeExpressionJsonConvert } from './expression';
 import { TypeJson, makeTypeJson } from './type';
 import { ModifiersJson, makeModifiersJson } from './modifier';
@@ -28,10 +28,19 @@ import { ParameterJson, makeParameterJson } from './param';
 import { StatementJson, makeBlockJson } from './statement';
 
 /**
- * 本体を持つ宣言は StructureJsonType。sourceKeys には、宣言全体 (base) と名前 (name) の位置を持つ。
+ * 本体を持つ宣言も JsonType (apex 9 から)。sourceKeys は宣言全体の位置、名前の位置は nameRef (declarationName) に持つ。
  * v2 の木にはエラーのノードがないので、v1 のような部分木のエラーの検査はしない
  */
-type DeclarationKeys = { name: ConvertKeys };
+/**
+ * 宣言の名前の位置 (名前そのものは宣言の name にも文字列で持つ。docs/plan.md 4.2)。
+ * コンストラクターの名前 (修飾された名前) は . でつないだもの
+ */
+export type DeclarationNameJson = JsonType<'declarationName'> & { name: string };
+
+// 名前の IR (id) の objectKey は名前の文字列だけから作られ、式の識別子 (identifier) と同じキーになるので、
+// objectKey は kind を含めて中身から作る (位置は名前の IR のもの)
+const makeDeclarationNameJson = (target: ApexNode, name: string): DeclarationNameJson =>
+    makeDerivedNodeJson<DeclarationNameJson>('declarationName', target, { name });
 
 const makeNameJson = (target: IdTypeClass): string => target.getFields().value;
 
@@ -63,7 +72,9 @@ const makeVariantsJson = (target: VariableDeclaratorsTypeClass): VariantJson[] =
         });
     });
 
-export type MethodDeclarationJson = StructureJsonType<'method', DeclarationKeys> & {
+export type MethodDeclarationJson = JsonType<'method'> & {
+    /** 名前の位置 */
+    nameRef: DeclarationNameJson;
     name: string;
     returnType: 'void' | TypeJson;
     /** 引数 (書いた順)。なければ空 */
@@ -76,7 +87,8 @@ export const makeMethodDeclarationJson = (
 ): MethodDeclarationJson => {
     const { name, returnType, parameters, block } = target.getFields();
     const param = makeParametersJson(parameters);
-    return makeStructureJson('method', structureKeysOf<DeclarationKeys>(target, { name }), {
+    return makeNodeJson<MethodDeclarationJson>('method', target, {
+        nameRef: makeDeclarationNameJson(name, makeNameJson(name)),
         name: makeNameJson(name),
         returnType: makeReturnTypeJson(returnType),
         param: param,
@@ -85,7 +97,9 @@ export const makeMethodDeclarationJson = (
     });
 };
 
-export type InterfaceMethodJson = StructureJsonType<'interfaceMethod', DeclarationKeys> & {
+export type InterfaceMethodJson = JsonType<'interfaceMethod'> & {
+    /** 名前の位置 */
+    nameRef: DeclarationNameJson;
     name: string;
     returnType: 'void' | TypeJson;
     /** 引数 (書いた順)。なければ空 */
@@ -98,19 +112,18 @@ const makeInterfaceMethodJson = (
 ): InterfaceMethodJson => {
     const { name, returnType, parameters, modifiers } = target.getFields();
     const param = makeParametersJson(parameters);
-    return makeStructureJson(
-        'interfaceMethod',
-        structureKeysOf<DeclarationKeys>(target, { name }),
-        {
-            name: makeNameJson(name),
-            returnType: makeReturnTypeJson(returnType),
-            param: param,
-            modifier: makeModifiersJson(modifiers),
-        },
-    );
+    return makeNodeJson<InterfaceMethodJson>('interfaceMethod', target, {
+        nameRef: makeDeclarationNameJson(name, makeNameJson(name)),
+        name: makeNameJson(name),
+        returnType: makeReturnTypeJson(returnType),
+        param: param,
+        modifier: makeModifiersJson(target, modifiers),
+    });
 };
 
-export type InterfaceDeclarationJson = StructureJsonType<'interface', DeclarationKeys> & {
+export type InterfaceDeclarationJson = JsonType<'interface'> & {
+    /** 名前の位置 */
+    nameRef: DeclarationNameJson;
     name: string;
     block?: InterfaceMethodJson[];
     extend?: TypeJson[];
@@ -120,7 +133,8 @@ export const makeInterfaceDeclarationJson = (
     target: InterfaceDeclarationTypeClass,
 ): InterfaceDeclarationJson => {
     const { name, extend, body } = target.getFields();
-    return makeStructureJson('interface', structureKeysOf<DeclarationKeys>(target, { name }), {
+    return makeNodeJson<InterfaceDeclarationJson>('interface', target, {
+        nameRef: makeDeclarationNameJson(name, makeNameJson(name)),
         name: makeNameJson(name),
         block: body.getFields().declaration.map((b) => makeInterfaceMethodJson(b)),
         ...(extend ? { extend: makeTypeListJson(extend) } : {}),
@@ -146,7 +160,9 @@ type ClassBlockJson =
     | (ClassDeclarationJson & { modifier: ModifiersJson })
     | NotSetBlockJson;
 
-export type ClassDeclarationJson = StructureJsonType<'class', DeclarationKeys> & {
+export type ClassDeclarationJson = JsonType<'class'> & {
+    /** 名前の位置 */
+    nameRef: DeclarationNameJson;
     name: string;
     block: ClassBlockJson[];
     extend?: TypeJson;
@@ -172,11 +188,12 @@ export const makeClassDeclarationJson = (
             case 'member':
                 return {
                     ...makeMemberDeclarationJson(member.declaration),
-                    modifier: makeModifiersJson(member.modifiers),
+                    modifier: makeModifiersJson(b, member.modifiers),
                 };
         }
     });
-    return makeStructureJson('class', structureKeysOf<DeclarationKeys>(target, { name }), {
+    return makeNodeJson<ClassDeclarationJson>('class', target, {
+        nameRef: makeDeclarationNameJson(name, makeNameJson(name)),
         name: makeNameJson(name),
         block: block,
         ...(extend ? { extend: makeTypeJson(extend) } : {}),
@@ -192,14 +209,17 @@ export type EnumConstantJson = JsonType<'enumConstant'> & {
 const makeEnumConstantJson = (target: IdTypeClass): EnumConstantJson =>
     makeNodeJson<EnumConstantJson>('enumConstant', target, { name: makeNameJson(target) });
 
-export type EnumDeclarationJson = StructureJsonType<'enum', DeclarationKeys> & {
+export type EnumDeclarationJson = JsonType<'enum'> & {
+    /** 名前の位置 */
+    nameRef: DeclarationNameJson;
     name: string;
     members?: EnumConstantJson[];
 };
 
 export const makeEnumDeclarationJson = (target: EnumDeclarationTypeClass): EnumDeclarationJson => {
     const { name, constants } = target.getFields();
-    return makeStructureJson('enum', structureKeysOf<DeclarationKeys>(target, { name }), {
+    return makeNodeJson<EnumDeclarationJson>('enum', target, {
+        nameRef: makeDeclarationNameJson(name, makeNameJson(name)),
         name: makeNameJson(name),
         // `enum E {}` のように定数がなければ members を持たない
         ...(constants
@@ -208,12 +228,15 @@ export const makeEnumDeclarationJson = (target: EnumDeclarationTypeClass): EnumD
     });
 };
 
-export type AccessorContentJson = {
+/** プロパティの get / set 1 つ。`get;`・`set;` (自動プロパティ) は本体を持たない */
+export type AccessorContentJson = JsonType<'accessor'> & {
     block?: StatementJson[];
     modifier: ModifiersJson;
 };
 
-export type PropertyDeclarationJson = StructureJsonType<'property', DeclarationKeys> & {
+export type PropertyDeclarationJson = JsonType<'property'> & {
+    /** 名前の位置 */
+    nameRef: DeclarationNameJson;
     name: string;
     variantType: TypeJson;
     isGetter: boolean;
@@ -234,10 +257,10 @@ export const makePropertyDeclarationJson = (
         const { block: accessor, modifiers } = b.getFields();
         // `get;`・`set;` (自動プロパティ) は本体を持たない
         const accessorBlock = accessor.getFields().block;
-        const content: AccessorContentJson = {
+        const content = makeNodeJson<AccessorContentJson>('accessor', b, {
             ...(accessorBlock ? { block: makeBlockJson(accessorBlock) } : {}),
-            modifier: makeModifiersJson(modifiers),
-        };
+            modifier: makeModifiersJson(b, modifiers),
+        });
         if (accessor.kind === 'getter') {
             getterContent = content;
         } else {
@@ -245,7 +268,8 @@ export const makePropertyDeclarationJson = (
         }
     });
 
-    return makeStructureJson('property', structureKeysOf<DeclarationKeys>(target, { name }), {
+    return makeNodeJson<PropertyDeclarationJson>('property', target, {
+        nameRef: makeDeclarationNameJson(name, makeNameJson(name)),
         name: makeNameJson(name),
         variantType: makeTypeJson(valueType),
         isGetter: getterContent !== undefined,
@@ -255,7 +279,7 @@ export const makePropertyDeclarationJson = (
     });
 };
 
-// field は本体を持たないので StructureJsonType にしない (ローカル変数の文と同じ扱い)
+// field は名前を variants に持つので nameRef を持たない (ローカル変数の文と同じ扱い)
 export type FieldDeclarationJson = JsonType<'field'> & {
     variants: VariantJson[];
     variantType: TypeJson;
@@ -271,7 +295,9 @@ export const makeFieldDeclarationJson = (
     });
 };
 
-export type ConstructorDeclarationJson = StructureJsonType<'constructor', DeclarationKeys> & {
+export type ConstructorDeclarationJson = JsonType<'constructor'> & {
+    /** 名前の位置 */
+    nameRef: DeclarationNameJson;
     name: string[];
     /** 引数 (書いた順)。なければ空 */
     param: ParameterJson[];
@@ -284,30 +310,53 @@ export const makeConstructorDeclarationJson = (
     const { name, parameters, block } = target.getFields();
     const param = makeParametersJson(parameters);
     // name の位置は、修飾された名前 (qualifiedName) 全体のもの
-    return makeStructureJson('constructor', structureKeysOf<DeclarationKeys>(target, { name }), {
+    return makeNodeJson<ConstructorDeclarationJson>('constructor', target, {
+        nameRef: makeDeclarationNameJson(
+            name,
+            name
+                .getFields()
+                .value.map((v) => makeNameJson(v))
+                .join('.'),
+        ),
         name: name.getFields().value.map((v) => makeNameJson(v)),
         param: param,
         block: makeBlockJson(block),
     });
 };
 
-/** ローカル変数の宣言 (localVariable の文と、通常の for の初期化)。型は項目と同じ名前 (variantType) */
-export type LocalVariableDeclarationJson = {
+/**
+ * ローカル変数の宣言の中身 (localVariable の文に展開する)。型は項目と同じ名前 (variantType)。
+ * 通常の for の初期化に単独で置くときは LocalVariableDeclarationJson (ノード)
+ */
+export type LocalVariableDeclarationBody = {
     variants: VariantJson[];
     variantType: TypeJson;
     modifier: ModifiersJson;
 };
 
-export const makeLocalVariableDeclarationJson = (
+/** 通常の for の初期化のローカル変数の宣言 */
+export type LocalVariableDeclarationJson = JsonType<'localVariableDeclaration'> &
+    LocalVariableDeclarationBody;
+
+export const makeLocalVariableDeclarationBody = (
     target: LocalVariableDeclarationTypeClass,
-): LocalVariableDeclarationJson => {
+): LocalVariableDeclarationBody => {
     const { declarators, valueType, modifiers } = target.getFields();
     return {
         variantType: makeTypeJson(valueType),
-        modifier: makeModifiersJson(modifiers),
+        modifier: makeModifiersJson(target, modifiers),
         variants: makeVariantsJson(declarators),
     };
 };
+
+export const makeLocalVariableDeclarationJson = (
+    target: LocalVariableDeclarationTypeClass,
+): LocalVariableDeclarationJson =>
+    makeNodeJson<LocalVariableDeclarationJson>(
+        'localVariableDeclaration',
+        target,
+        makeLocalVariableDeclarationBody(target),
+    );
 
 export type MemberDeclarationJson =
     | MethodDeclarationJson

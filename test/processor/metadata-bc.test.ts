@@ -41,6 +41,7 @@ import type {
 } from '../../src/analyzer/types';
 import { criterionTextsOf, templateTextOf } from '../../src/analyzer/types';
 import { markupTagsOf } from '../../src/analyzer/processor/Metadata/markup';
+import { p1Shape } from '../converter/lwcShape';
 
 // 優先度 B・C のメタデータ (docs/metadata-implementation.md) 10 章。サンプルは docs/examples/repository
 
@@ -261,7 +262,7 @@ describe('優先度 B: 本体のファイルを伴う種類・バンドル', () 
             'lightning:button',
             'lightning:card',
         ]);
-        assert.deepEqual(card.javascript, {
+        assert.deepEqual(p1Shape(card.javascript), {
             controller: ['doInit', 'handleClick', 'toggleLines'],
             helper: ['load'],
         });
@@ -399,7 +400,7 @@ describe('オブジェクトの読んでいなかった子・文字列からの 
         assert.equal(invoice.dataType, 'object');
         if (invoice.dataType !== 'object') return;
         const json = invoice.result.base;
-        assert.deepEqual(json.searchLayouts, {
+        assert.deepEqual(p1Shape(json.searchLayouts), {
             customTabListAdditionalFields: ['Amount__c', 'Status__c'],
             searchResultsAdditionalFields: ['Account__c', 'Amount__c'],
         });

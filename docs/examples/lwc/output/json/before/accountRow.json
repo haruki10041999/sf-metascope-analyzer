@@ -5,13 +5,28 @@
   "result": {
     "id": "accountRow",
     "base": {
+      "kind": "lwcBundle",
+      "sourceKeys": {
+        "objectKey": "lwcBundle_209149b4bc00d79a",
+        "sourceKey": "lwcModule_762340386871e8be"
+      },
       "name": "accountRow",
       "namespace": "c",
       "modules": [
         {
+          "kind": "lwcBundleModule",
+          "sourceKeys": {
+            "objectKey": "lwcBundleModule_521b10fd319d4e29",
+            "sourceKey": "lwcModule_762340386871e8be"
+          },
           "fileName": "accountRow.ts",
           "main": true,
           "module": {
+            "kind": "lwcModule",
+            "sourceKeys": {
+              "objectKey": "lwcModule_084c5c80f4d06448",
+              "sourceKey": "lwcModule_762340386871e8be"
+            },
             "fileType": "ts",
             "imports": [
               {
@@ -76,14 +91,8 @@
             "component": {
               "kind": "lwcComponent",
               "sourceKeys": {
-                "base": {
-                  "objectKey": "classDeclaration_21c699d2067b18b7",
-                  "sourceKey": "classDeclaration_708d48e56a9247e0"
-                },
-                "name": {
-                  "objectKey": "identifier_ddf1d0960e926bec",
-                  "sourceKey": "identifier_5cc18900adc0c4ed"
-                }
+                "objectKey": "classDeclaration_21c699d2067b18b7",
+                "sourceKey": "classDeclaration_708d48e56a9247e0"
               },
               "name": "AccountRow",
               "superClass": {
@@ -98,14 +107,8 @@
                 {
                   "kind": "lwcField",
                   "sourceKeys": {
-                    "base": {
-                      "objectKey": "classProperty_965403362b95bd25",
-                      "sourceKey": "classProperty_8467314cc28e0ab2"
-                    },
-                    "name": {
-                      "objectKey": "identifier_897ce2f14578ffd5",
-                      "sourceKey": "identifier_162661872606055d"
-                    }
+                    "objectKey": "classProperty_965403362b95bd25",
+                    "sourceKey": "classProperty_8467314cc28e0ab2"
                   },
                   "name": "recordId",
                   "variantType": {
@@ -119,6 +122,11 @@
                   },
                   "optional": false,
                   "modifier": {
+                    "kind": "lwcModifiers",
+                    "sourceKeys": {
+                      "objectKey": "lwcModifiers_4b8ec4432dd4af45",
+                      "sourceKey": "classProperty_8467314cc28e0ab2"
+                    },
                     "decorator": [
                       {
                         "kind": "lwcDecorator",
@@ -130,19 +138,21 @@
                         "arg": []
                       }
                     ]
+                  },
+                  "nameRef": {
+                    "kind": "declarationName",
+                    "sourceKeys": {
+                      "objectKey": "declarationName_966316e9d5c2b501",
+                      "sourceKey": "identifier_162661872606055d"
+                    },
+                    "name": "recordId"
                   }
                 },
                 {
                   "kind": "lwcField",
                   "sourceKeys": {
-                    "base": {
-                      "objectKey": "classProperty_5991bac21dbdd748",
-                      "sourceKey": "classProperty_40d61b52593fa7d3"
-                    },
-                    "name": {
-                      "objectKey": "identifier_9f9fb3012fddb442",
-                      "sourceKey": "identifier_fc72ff2e72f14069"
-                    }
+                    "objectKey": "classProperty_5991bac21dbdd748",
+                    "sourceKey": "classProperty_40d61b52593fa7d3"
                   },
                   "name": "name",
                   "variantType": {
@@ -164,6 +174,11 @@
                   },
                   "optional": false,
                   "modifier": {
+                    "kind": "lwcModifiers",
+                    "sourceKeys": {
+                      "objectKey": "lwcModifiers_4b8ec4432dd4af45",
+                      "sourceKey": "classProperty_40d61b52593fa7d3"
+                    },
                     "decorator": [
                       {
                         "kind": "lwcDecorator",
@@ -175,19 +190,21 @@
                         "arg": []
                       }
                     ]
+                  },
+                  "nameRef": {
+                    "kind": "declarationName",
+                    "sourceKeys": {
+                      "objectKey": "declarationName_03b541ca8efb6e80",
+                      "sourceKey": "identifier_fc72ff2e72f14069"
+                    },
+                    "name": "name"
                   }
                 },
                 {
                   "kind": "lwcField",
                   "sourceKeys": {
-                    "base": {
-                      "objectKey": "classProperty_58a2fa7f525b0865",
-                      "sourceKey": "classProperty_86b2df10ce902a26"
-                    },
-                    "name": {
-                      "objectKey": "identifier_7e2721591e1edb8c",
-                      "sourceKey": "identifier_c7fb7798e746462d"
-                    }
+                    "objectKey": "classProperty_58a2fa7f525b0865",
+                    "sourceKey": "classProperty_86b2df10ce902a26"
                   },
                   "name": "amount",
                   "variantType": {
@@ -201,6 +218,11 @@
                   },
                   "optional": true,
                   "modifier": {
+                    "kind": "lwcModifiers",
+                    "sourceKeys": {
+                      "objectKey": "lwcModifiers_4b8ec4432dd4af45",
+                      "sourceKey": "classProperty_86b2df10ce902a26"
+                    },
                     "decorator": [
                       {
                         "kind": "lwcDecorator",
@@ -212,25 +234,46 @@
                         "arg": []
                       }
                     ]
+                  },
+                  "nameRef": {
+                    "kind": "declarationName",
+                    "sourceKeys": {
+                      "objectKey": "declarationName_ff8d09793c957d38",
+                      "sourceKey": "identifier_c7fb7798e746462d"
+                    },
+                    "name": "amount"
                   }
                 },
                 {
                   "kind": "lwcProperty",
                   "sourceKeys": {
-                    "base": {
-                      "objectKey": "classMethod_5ac46ff12f2187fa",
-                      "sourceKey": "classMethod_2daccc555f6b74b9"
-                    },
-                    "name": {
-                      "objectKey": "identifier_f5d7097fae799cb0",
-                      "sourceKey": "identifier_8e91b0ab16e7a03c"
-                    }
+                    "objectKey": "classMethod_5ac46ff12f2187fa",
+                    "sourceKey": "classMethod_2daccc555f6b74b9"
                   },
                   "name": "formattedAmount",
                   "isGetter": true,
                   "isSetter": false,
+                  "nameRef": {
+                    "kind": "declarationName",
+                    "sourceKeys": {
+                      "objectKey": "declarationName_6fdaa8cba131ec6c",
+                      "sourceKey": "identifier_8e91b0ab16e7a03c"
+                    },
+                    "name": "formattedAmount"
+                  },
                   "getterContent": {
-                    "modifier": {},
+                    "kind": "lwcAccessor",
+                    "sourceKeys": {
+                      "objectKey": "lwcAccessor_b63d1d727bacda23",
+                      "sourceKey": "classMethod_2daccc555f6b74b9"
+                    },
+                    "modifier": {
+                      "kind": "lwcModifiers",
+                      "sourceKeys": {
+                        "objectKey": "lwcModifiers_44136fa355b3678a",
+                        "sourceKey": "classMethod_2daccc555f6b74b9"
+                      }
+                    },
                     "block": [
                       {
                         "kind": "jsReturn",
@@ -304,14 +347,8 @@
                 {
                   "kind": "lwcMethod",
                   "sourceKeys": {
-                    "base": {
-                      "objectKey": "classMethod_12db8ce24ece786f",
-                      "sourceKey": "classMethod_c84d7d5323911274"
-                    },
-                    "name": {
-                      "objectKey": "identifier_637ebbfbf07cd948",
-                      "sourceKey": "identifier_be0278750f5d3c25"
-                    }
+                    "objectKey": "classMethod_12db8ce24ece786f",
+                    "sourceKey": "classMethod_c84d7d5323911274"
                   },
                   "name": "handleClick",
                   "returnType": {
@@ -325,7 +362,13 @@
                   },
                   "param": [],
                   "async": false,
-                  "modifier": {},
+                  "modifier": {
+                    "kind": "lwcModifiers",
+                    "sourceKeys": {
+                      "objectKey": "lwcModifiers_44136fa355b3678a",
+                      "sourceKey": "classMethod_c84d7d5323911274"
+                    }
+                  },
                   "block": [
                     {
                       "kind": "jsExpression",
@@ -431,9 +474,25 @@
                         ]
                       }
                     }
-                  ]
+                  ],
+                  "nameRef": {
+                    "kind": "declarationName",
+                    "sourceKeys": {
+                      "objectKey": "declarationName_2ad04a76c7f46121",
+                      "sourceKey": "identifier_be0278750f5d3c25"
+                    },
+                    "name": "handleClick"
+                  }
                 }
-              ]
+              ],
+              "nameRef": {
+                "kind": "declarationName",
+                "sourceKeys": {
+                  "objectKey": "declarationName_ef27b7752019bffd",
+                  "sourceKey": "identifier_5cc18900adc0c4ed"
+                },
+                "name": "AccountRow"
+              }
             },
             "exports": [
               {
@@ -455,12 +514,17 @@
       ],
       "templates": [
         {
+          "kind": "lwcBundleTemplate",
+          "sourceKeys": {
+            "objectKey": "lwcBundleTemplate_e1c6d3b6abb9c449",
+            "sourceKey": "lwcTemplate_ea525b72a36bf648"
+          },
           "fileName": "accountRow.html",
           "main": true,
           "template": {
             "kind": "lwcTemplate",
             "sourceKeys": {
-              "objectKey": "lwcTemplate_5dacb4b38d502af2",
+              "objectKey": "lwcTemplate_3527cdef094f2446",
               "sourceKey": "lwcTemplate_ea525b72a36bf648"
             },
             "preserveComments": false,
@@ -468,7 +532,7 @@
               {
                 "kind": "lwcElement",
                 "sourceKeys": {
-                  "objectKey": "lwcElement_36641d20b5206416",
+                  "objectKey": "lwcElement_d446a73e4bac20ad",
                   "sourceKey": "lwcElement_c26adcdb6c3fa81b"
                 },
                 "tag": "a",
@@ -477,11 +541,16 @@
                   {
                     "kind": "lwcAttribute",
                     "sourceKeys": {
-                      "objectKey": "lwcAttribute_09e04a16bbed627e",
+                      "objectKey": "lwcAttribute_369dbb425c27c05e",
                       "sourceKey": "lwcAttribute_2263d759f9bb7c9e"
                     },
                     "name": "href",
                     "value": {
+                      "kind": "lwcValue",
+                      "sourceKeys": {
+                        "objectKey": "lwcValue_53970890307df4cb",
+                        "sourceKey": "lwcValue_2263d759f9bb7c9e"
+                      },
                       "type": "static",
                       "value": "#"
                     }
@@ -492,13 +561,23 @@
                   {
                     "kind": "lwcHandler",
                     "sourceKeys": {
-                      "objectKey": "lwcHandler_36bea6b75b7718fd",
+                      "objectKey": "lwcHandler_94c928f1db5a2207",
                       "sourceKey": "lwcHandler_4682584d578a9f8a"
                     },
                     "event": "click",
                     "handler": {
+                      "kind": "lwcValue",
+                      "sourceKeys": {
+                        "objectKey": "lwcValue_659d2c94d3634b8f",
+                        "sourceKey": "lwcValue_4682584d578a9f8a"
+                      },
                       "type": "expression",
                       "expression": {
+                        "kind": "lwcExpression",
+                        "sourceKeys": {
+                          "objectKey": "lwcExpression_83cbbef7627cd80c",
+                          "sourceKey": "lwcExpression_4682584d578a9f8a"
+                        },
                         "text": "handleClick",
                         "path": [
                           "handleClick"
@@ -512,12 +591,17 @@
                   {
                     "kind": "lwcText",
                     "sourceKeys": {
-                      "objectKey": "lwcText_28a9ffdbd1a7731b",
+                      "objectKey": "lwcText_1cd605174edd1587",
                       "sourceKey": "lwcText_0645683cede42c54"
                     },
                     "text": "{name}",
                     "expressions": [
                       {
+                        "kind": "lwcExpression",
+                        "sourceKeys": {
+                          "objectKey": "lwcExpression_ad09ee312c29d84c",
+                          "sourceKey": "lwcExpression_0645683cede42c54"
+                        },
                         "text": "name",
                         "path": [
                           "name"
@@ -531,7 +615,7 @@
               {
                 "kind": "lwcElement",
                 "sourceKeys": {
-                  "objectKey": "lwcElement_ac30650b5e0b5a65",
+                  "objectKey": "lwcElement_462d9fc78909ca75",
                   "sourceKey": "lwcElement_56109ecfd085ce73"
                 },
                 "tag": "span",
@@ -540,11 +624,16 @@
                   {
                     "kind": "lwcAttribute",
                     "sourceKeys": {
-                      "objectKey": "lwcAttribute_970c300da40bb9f6",
+                      "objectKey": "lwcAttribute_217f80242a201aa9",
                       "sourceKey": "lwcAttribute_6d8cc5d6a8f53e83"
                     },
                     "name": "class",
                     "value": {
+                      "kind": "lwcValue",
+                      "sourceKeys": {
+                        "objectKey": "lwcValue_87977fe52e4313e7",
+                        "sourceKey": "lwcValue_6d8cc5d6a8f53e83"
+                      },
                       "type": "static",
                       "value": "amount"
                     }
@@ -556,12 +645,17 @@
                   {
                     "kind": "lwcText",
                     "sourceKeys": {
-                      "objectKey": "lwcText_49b49c24e0c05681",
+                      "objectKey": "lwcText_628595278b134cf6",
                       "sourceKey": "lwcText_cef0fa5aa0fc95e1"
                     },
                     "text": "{formattedAmount}",
                     "expressions": [
                       {
+                        "kind": "lwcExpression",
+                        "sourceKeys": {
+                          "objectKey": "lwcExpression_5197592ebd54c357",
+                          "sourceKey": "lwcExpression_cef0fa5aa0fc95e1"
+                        },
                         "text": "formattedAmount",
                         "path": [
                           "formattedAmount"
@@ -578,12 +672,17 @@
       ],
       "stylesheets": [
         {
+          "kind": "lwcBundleStylesheet",
+          "sourceKeys": {
+            "objectKey": "lwcBundleStylesheet_be2ce61fcb174925",
+            "sourceKey": "lwcStylesheet_ba373bb123d6d071"
+          },
           "fileName": "accountRow.css",
           "scoped": false,
           "stylesheet": {
             "kind": "lwcStylesheet",
             "sourceKeys": {
-              "objectKey": "lwcStylesheet_45076b2b00bbc870",
+              "objectKey": "lwcStylesheet_1496f070861a73f3",
               "sourceKey": "lwcStylesheet_ba373bb123d6d071"
             },
             "scoped": false,
@@ -592,7 +691,7 @@
               {
                 "kind": "cssRule",
                 "sourceKeys": {
-                  "objectKey": "cssRule_db549f3c5bea8244",
+                  "objectKey": "cssRule_f1c949883a2180b8",
                   "sourceKey": "cssRule_72a4ef33806295d0"
                 },
                 "selector": ".amount",
@@ -601,6 +700,11 @@
                 ],
                 "declarations": [
                   {
+                    "kind": "cssDeclaration",
+                    "sourceKeys": {
+                      "objectKey": "cssDeclaration_762cb17530be141c",
+                      "sourceKey": "cssDeclaration_69cfe36c0ef11c48"
+                    },
                     "prop": "margin-left",
                     "value": "0.25rem",
                     "important": false
@@ -745,46 +849,6 @@
         ]
       },
       {
-        "objectKey": "classDeclaration_21c699d2067b18b7",
-        "context": "class AccountRow extends LightningElement {\n    @api recordId!: string;\n    @api name: string = '';\n    @api amount?: number;\n\n    get formattedAmount(): string {\n        return formatAmount(this.amount ?? 0);\n    }\n\n    handleClick(): void {\n        this.dispatchEvent(new CustomEvent('select', { detail: { recordId: this.recordId } }));\n    }\n}",
-        "source": [
-          {
-            "sourceKey": "classDeclaration_708d48e56a9247e0",
-            "start": {
-              "offset": 101,
-              "line": 4,
-              "column": 15
-            },
-            "end": {
-              "offset": 447,
-              "line": 16,
-              "column": 1
-            },
-            "filePath": "accountRow/accountRow.ts"
-          }
-        ]
-      },
-      {
-        "objectKey": "identifier_ddf1d0960e926bec",
-        "context": "AccountRow",
-        "source": [
-          {
-            "sourceKey": "identifier_5cc18900adc0c4ed",
-            "start": {
-              "offset": 107,
-              "line": 4,
-              "column": 21
-            },
-            "end": {
-              "offset": 117,
-              "line": 4,
-              "column": 31
-            },
-            "filePath": "accountRow/accountRow.ts"
-          }
-        ]
-      },
-      {
         "objectKey": "identifier_4a7a59e701040717",
         "context": "LightningElement",
         "source": [
@@ -799,46 +863,6 @@
               "offset": 142,
               "line": 4,
               "column": 56
-            },
-            "filePath": "accountRow/accountRow.ts"
-          }
-        ]
-      },
-      {
-        "objectKey": "classProperty_965403362b95bd25",
-        "context": "@api recordId!: string;",
-        "source": [
-          {
-            "sourceKey": "classProperty_8467314cc28e0ab2",
-            "start": {
-              "offset": 149,
-              "line": 5,
-              "column": 4
-            },
-            "end": {
-              "offset": 172,
-              "line": 5,
-              "column": 27
-            },
-            "filePath": "accountRow/accountRow.ts"
-          }
-        ]
-      },
-      {
-        "objectKey": "identifier_897ce2f14578ffd5",
-        "context": "recordId",
-        "source": [
-          {
-            "sourceKey": "identifier_162661872606055d",
-            "start": {
-              "offset": 154,
-              "line": 5,
-              "column": 9
-            },
-            "end": {
-              "offset": 162,
-              "line": 5,
-              "column": 17
             },
             "filePath": "accountRow/accountRow.ts"
           }
@@ -941,6 +965,134 @@
         ]
       },
       {
+        "objectKey": "classProperty_965403362b95bd25",
+        "context": "@api recordId!: string;",
+        "source": [
+          {
+            "sourceKey": "classProperty_8467314cc28e0ab2",
+            "start": {
+              "offset": 149,
+              "line": 5,
+              "column": 4
+            },
+            "end": {
+              "offset": 172,
+              "line": 5,
+              "column": 27
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcModifiers_4b8ec4432dd4af45",
+        "context": "@api recordId!: string;",
+        "source": [
+          {
+            "sourceKey": "classProperty_8467314cc28e0ab2",
+            "start": {
+              "offset": 149,
+              "line": 5,
+              "column": 4
+            },
+            "end": {
+              "offset": 172,
+              "line": 5,
+              "column": 27
+            },
+            "filePath": "accountRow/accountRow.ts"
+          },
+          {
+            "sourceKey": "classProperty_40d61b52593fa7d3",
+            "start": {
+              "offset": 177,
+              "line": 6,
+              "column": 4
+            },
+            "end": {
+              "offset": 200,
+              "line": 6,
+              "column": 27
+            },
+            "filePath": "accountRow/accountRow.ts"
+          },
+          {
+            "sourceKey": "classProperty_86b2df10ce902a26",
+            "start": {
+              "offset": 205,
+              "line": 7,
+              "column": 4
+            },
+            "end": {
+              "offset": 226,
+              "line": 7,
+              "column": 25
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_897ce2f14578ffd5",
+        "context": "recordId",
+        "source": [
+          {
+            "sourceKey": "identifier_162661872606055d",
+            "start": {
+              "offset": 154,
+              "line": 5,
+              "column": 9
+            },
+            "end": {
+              "offset": 162,
+              "line": 5,
+              "column": 17
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "declarationName_966316e9d5c2b501",
+        "context": "recordId",
+        "source": [
+          {
+            "sourceKey": "identifier_162661872606055d",
+            "start": {
+              "offset": 154,
+              "line": 5,
+              "column": 9
+            },
+            "end": {
+              "offset": 162,
+              "line": 5,
+              "column": 17
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "stringLiteral_1fb0babbdedea16e",
+        "context": "''",
+        "source": [
+          {
+            "sourceKey": "stringLiteral_b2ca8a4a6782f9dc",
+            "start": {
+              "offset": 197,
+              "line": 6,
+              "column": 24
+            },
+            "end": {
+              "offset": 199,
+              "line": 6,
+              "column": 26
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
         "objectKey": "classProperty_5991bac21dbdd748",
         "context": "@api name: string = '';",
         "source": [
@@ -981,20 +1133,40 @@
         ]
       },
       {
-        "objectKey": "stringLiteral_1fb0babbdedea16e",
-        "context": "''",
+        "objectKey": "declarationName_03b541ca8efb6e80",
+        "context": "name",
         "source": [
           {
-            "sourceKey": "stringLiteral_b2ca8a4a6782f9dc",
+            "sourceKey": "identifier_fc72ff2e72f14069",
             "start": {
-              "offset": 197,
+              "offset": 182,
               "line": 6,
-              "column": 24
+              "column": 9
             },
             "end": {
-              "offset": 199,
+              "offset": 186,
               "line": 6,
-              "column": 26
+              "column": 13
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "tSNumberKeyword_850ba0354605a53c",
+        "context": "number",
+        "source": [
+          {
+            "sourceKey": "tSNumberKeyword_579064a0403c6288",
+            "start": {
+              "offset": 219,
+              "line": 7,
+              "column": 18
+            },
+            "end": {
+              "offset": 225,
+              "line": 7,
+              "column": 24
             },
             "filePath": "accountRow/accountRow.ts"
           }
@@ -1041,20 +1213,74 @@
         ]
       },
       {
-        "objectKey": "tSNumberKeyword_850ba0354605a53c",
-        "context": "number",
+        "objectKey": "declarationName_ff8d09793c957d38",
+        "context": "amount",
         "source": [
           {
-            "sourceKey": "tSNumberKeyword_579064a0403c6288",
+            "sourceKey": "identifier_c7fb7798e746462d",
             "start": {
-              "offset": 219,
+              "offset": 210,
               "line": 7,
-              "column": 18
+              "column": 9
             },
             "end": {
-              "offset": 225,
+              "offset": 216,
               "line": 7,
-              "column": 24
+              "column": 15
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "classMethod_5ac46ff12f2187fa",
+        "context": "get formattedAmount(): string {\n        return formatAmount(this.amount ?? 0);\n    }",
+        "source": [
+          {
+            "sourceKey": "classMethod_2daccc555f6b74b9",
+            "start": {
+              "offset": 232,
+              "line": 9,
+              "column": 4
+            },
+            "end": {
+              "offset": 316,
+              "line": 11,
+              "column": 5
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcModifiers_44136fa355b3678a",
+        "context": "get formattedAmount(): string {\n        return formatAmount(this.amount ?? 0);\n    }",
+        "source": [
+          {
+            "sourceKey": "classMethod_2daccc555f6b74b9",
+            "start": {
+              "offset": 232,
+              "line": 9,
+              "column": 4
+            },
+            "end": {
+              "offset": 316,
+              "line": 11,
+              "column": 5
+            },
+            "filePath": "accountRow/accountRow.ts"
+          },
+          {
+            "sourceKey": "classMethod_c84d7d5323911274",
+            "start": {
+              "offset": 322,
+              "line": 13,
+              "column": 4
+            },
+            "end": {
+              "offset": 445,
+              "line": 15,
+              "column": 5
             },
             "filePath": "accountRow/accountRow.ts"
           }
@@ -1229,7 +1455,7 @@
         ]
       },
       {
-        "objectKey": "classMethod_5ac46ff12f2187fa",
+        "objectKey": "lwcAccessor_b63d1d727bacda23",
         "context": "get formattedAmount(): string {\n        return formatAmount(this.amount ?? 0);\n    }",
         "source": [
           {
@@ -1269,40 +1495,20 @@
         ]
       },
       {
-        "objectKey": "classMethod_12db8ce24ece786f",
-        "context": "handleClick(): void {\n        this.dispatchEvent(new CustomEvent('select', { detail: { recordId: this.recordId } }));\n    }",
+        "objectKey": "declarationName_6fdaa8cba131ec6c",
+        "context": "formattedAmount",
         "source": [
           {
-            "sourceKey": "classMethod_c84d7d5323911274",
+            "sourceKey": "identifier_8e91b0ab16e7a03c",
             "start": {
-              "offset": 322,
-              "line": 13,
-              "column": 4
+              "offset": 236,
+              "line": 9,
+              "column": 8
             },
             "end": {
-              "offset": 445,
-              "line": 15,
-              "column": 5
-            },
-            "filePath": "accountRow/accountRow.ts"
-          }
-        ]
-      },
-      {
-        "objectKey": "identifier_637ebbfbf07cd948",
-        "context": "handleClick",
-        "source": [
-          {
-            "sourceKey": "identifier_be0278750f5d3c25",
-            "start": {
-              "offset": 322,
-              "line": 13,
-              "column": 4
-            },
-            "end": {
-              "offset": 333,
-              "line": 13,
-              "column": 15
+              "offset": 251,
+              "line": 9,
+              "column": 23
             },
             "filePath": "accountRow/accountRow.ts"
           }
@@ -1509,6 +1715,26 @@
         ]
       },
       {
+        "objectKey": "classMethod_12db8ce24ece786f",
+        "context": "handleClick(): void {\n        this.dispatchEvent(new CustomEvent('select', { detail: { recordId: this.recordId } }));\n    }",
+        "source": [
+          {
+            "sourceKey": "classMethod_c84d7d5323911274",
+            "start": {
+              "offset": 322,
+              "line": 13,
+              "column": 4
+            },
+            "end": {
+              "offset": 445,
+              "line": 15,
+              "column": 5
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
         "objectKey": "tSVoidKeyword_9a0d7732e44e61dc",
         "context": "void",
         "source": [
@@ -1523,6 +1749,146 @@
               "offset": 341,
               "line": 13,
               "column": 23
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_637ebbfbf07cd948",
+        "context": "handleClick",
+        "source": [
+          {
+            "sourceKey": "identifier_be0278750f5d3c25",
+            "start": {
+              "offset": 322,
+              "line": 13,
+              "column": 4
+            },
+            "end": {
+              "offset": 333,
+              "line": 13,
+              "column": 15
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "declarationName_2ad04a76c7f46121",
+        "context": "handleClick",
+        "source": [
+          {
+            "sourceKey": "identifier_be0278750f5d3c25",
+            "start": {
+              "offset": 322,
+              "line": 13,
+              "column": 4
+            },
+            "end": {
+              "offset": 333,
+              "line": 13,
+              "column": 15
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "classDeclaration_21c699d2067b18b7",
+        "context": "class AccountRow extends LightningElement {\n    @api recordId!: string;\n    @api name: string = '';\n    @api amount?: number;\n\n    get formattedAmount(): string {\n        return formatAmount(this.amount ?? 0);\n    }\n\n    handleClick(): void {\n        this.dispatchEvent(new CustomEvent('select', { detail: { recordId: this.recordId } }));\n    }\n}",
+        "source": [
+          {
+            "sourceKey": "classDeclaration_708d48e56a9247e0",
+            "start": {
+              "offset": 101,
+              "line": 4,
+              "column": 15
+            },
+            "end": {
+              "offset": 447,
+              "line": 16,
+              "column": 1
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_ddf1d0960e926bec",
+        "context": "AccountRow",
+        "source": [
+          {
+            "sourceKey": "identifier_5cc18900adc0c4ed",
+            "start": {
+              "offset": 107,
+              "line": 4,
+              "column": 21
+            },
+            "end": {
+              "offset": 117,
+              "line": 4,
+              "column": 31
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "declarationName_ef27b7752019bffd",
+        "context": "AccountRow",
+        "source": [
+          {
+            "sourceKey": "identifier_5cc18900adc0c4ed",
+            "start": {
+              "offset": 107,
+              "line": 4,
+              "column": 21
+            },
+            "end": {
+              "offset": 117,
+              "line": 4,
+              "column": 31
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcModule_084c5c80f4d06448",
+        "context": "",
+        "source": [
+          {
+            "sourceKey": "lwcModule_762340386871e8be",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "filePath": "accountRow/accountRow.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcBundleModule_521b10fd319d4e29",
+        "context": "",
+        "source": [
+          {
+            "sourceKey": "lwcModule_762340386871e8be",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
             },
             "filePath": "accountRow/accountRow.ts"
           }
@@ -1549,7 +1915,27 @@
         ]
       },
       {
-        "objectKey": "lwcAttribute_09e04a16bbed627e",
+        "objectKey": "lwcValue_53970890307df4cb",
+        "context": "href=\"#\"",
+        "source": [
+          {
+            "sourceKey": "lwcValue_2263d759f9bb7c9e",
+            "filePath": "accountRow/accountRow.html",
+            "start": {
+              "offset": 18,
+              "line": 2,
+              "column": 7
+            },
+            "end": {
+              "offset": 26,
+              "line": 2,
+              "column": 15
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcAttribute_369dbb425c27c05e",
         "context": "href=\"#\"",
         "source": [
           {
@@ -1569,7 +1955,47 @@
         ]
       },
       {
-        "objectKey": "lwcHandler_36bea6b75b7718fd",
+        "objectKey": "lwcExpression_83cbbef7627cd80c",
+        "context": "onclick={handleClick}",
+        "source": [
+          {
+            "sourceKey": "lwcExpression_4682584d578a9f8a",
+            "filePath": "accountRow/accountRow.html",
+            "start": {
+              "offset": 27,
+              "line": 2,
+              "column": 16
+            },
+            "end": {
+              "offset": 48,
+              "line": 2,
+              "column": 37
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcValue_659d2c94d3634b8f",
+        "context": "onclick={handleClick}",
+        "source": [
+          {
+            "sourceKey": "lwcValue_4682584d578a9f8a",
+            "filePath": "accountRow/accountRow.html",
+            "start": {
+              "offset": 27,
+              "line": 2,
+              "column": 16
+            },
+            "end": {
+              "offset": 48,
+              "line": 2,
+              "column": 37
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcHandler_94c928f1db5a2207",
         "context": "onclick={handleClick}",
         "source": [
           {
@@ -1589,7 +2015,27 @@
         ]
       },
       {
-        "objectKey": "lwcText_28a9ffdbd1a7731b",
+        "objectKey": "lwcExpression_ad09ee312c29d84c",
+        "context": "{name}",
+        "source": [
+          {
+            "sourceKey": "lwcExpression_0645683cede42c54",
+            "filePath": "accountRow/accountRow.html",
+            "start": {
+              "offset": 49,
+              "line": 2,
+              "column": 38
+            },
+            "end": {
+              "offset": 55,
+              "line": 2,
+              "column": 44
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcText_1cd605174edd1587",
         "context": "{name}",
         "source": [
           {
@@ -1609,7 +2055,7 @@
         ]
       },
       {
-        "objectKey": "lwcElement_36641d20b5206416",
+        "objectKey": "lwcElement_d446a73e4bac20ad",
         "context": "<a href=\"#\" onclick={handleClick}>{name}</a>",
         "source": [
           {
@@ -1629,7 +2075,27 @@
         ]
       },
       {
-        "objectKey": "lwcAttribute_970c300da40bb9f6",
+        "objectKey": "lwcValue_87977fe52e4313e7",
+        "context": "class=\"amount\"",
+        "source": [
+          {
+            "sourceKey": "lwcValue_6d8cc5d6a8f53e83",
+            "filePath": "accountRow/accountRow.html",
+            "start": {
+              "offset": 70,
+              "line": 3,
+              "column": 10
+            },
+            "end": {
+              "offset": 84,
+              "line": 3,
+              "column": 24
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcAttribute_217f80242a201aa9",
         "context": "class=\"amount\"",
         "source": [
           {
@@ -1649,7 +2115,27 @@
         ]
       },
       {
-        "objectKey": "lwcText_49b49c24e0c05681",
+        "objectKey": "lwcExpression_5197592ebd54c357",
+        "context": "{formattedAmount}",
+        "source": [
+          {
+            "sourceKey": "lwcExpression_cef0fa5aa0fc95e1",
+            "filePath": "accountRow/accountRow.html",
+            "start": {
+              "offset": 85,
+              "line": 3,
+              "column": 25
+            },
+            "end": {
+              "offset": 102,
+              "line": 3,
+              "column": 42
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcText_628595278b134cf6",
         "context": "{formattedAmount}",
         "source": [
           {
@@ -1669,7 +2155,7 @@
         ]
       },
       {
-        "objectKey": "lwcElement_ac30650b5e0b5a65",
+        "objectKey": "lwcElement_462d9fc78909ca75",
         "context": "<span class=\"amount\">{formattedAmount}</span>",
         "source": [
           {
@@ -1689,7 +2175,7 @@
         ]
       },
       {
-        "objectKey": "lwcTemplate_5dacb4b38d502af2",
+        "objectKey": "lwcTemplate_3527cdef094f2446",
         "context": "",
         "source": [
           {
@@ -1709,7 +2195,47 @@
         ]
       },
       {
-        "objectKey": "cssRule_db549f3c5bea8244",
+        "objectKey": "lwcBundleTemplate_e1c6d3b6abb9c449",
+        "context": "",
+        "source": [
+          {
+            "sourceKey": "lwcTemplate_ea525b72a36bf648",
+            "filePath": "accountRow/accountRow.html",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "cssDeclaration_762cb17530be141c",
+        "context": "margin-left: 0.25rem;\n",
+        "source": [
+          {
+            "sourceKey": "cssDeclaration_69cfe36c0ef11c48",
+            "filePath": "accountRow/accountRow.css",
+            "start": {
+              "offset": 14,
+              "line": 2,
+              "column": 4
+            },
+            "end": {
+              "offset": 36,
+              "line": 3,
+              "column": 0
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "cssRule_f1c949883a2180b8",
         "context": ".amount {\n    margin-left: 0.25rem;\n}\n",
         "source": [
           {
@@ -1729,7 +2255,7 @@
         ]
       },
       {
-        "objectKey": "lwcStylesheet_45076b2b00bbc870",
+        "objectKey": "lwcStylesheet_1496f070861a73f3",
         "context": "",
         "source": [
           {
@@ -1745,6 +2271,46 @@
               "line": 1,
               "column": 0
             }
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcBundleStylesheet_be2ce61fcb174925",
+        "context": "",
+        "source": [
+          {
+            "sourceKey": "lwcStylesheet_ba373bb123d6d071",
+            "filePath": "accountRow/accountRow.css",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcBundle_209149b4bc00d79a",
+        "context": "",
+        "source": [
+          {
+            "sourceKey": "lwcModule_762340386871e8be",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "filePath": "accountRow/accountRow.ts"
           }
         ]
       }

@@ -69,6 +69,14 @@ export type UnitLineage = 'apex' | 'lwc' | 'object' | 'objectTranslation' | 'met
  * - apex 6: 型の customType をいつも名前の並びにし、SOQL の FORMULA を { type: 'formula', value }、
  *   WITH の条件を { mode: 'EXPRESSION', condition }、TYPEOF の節を typeOfWhen (位置つき) にし、ALL ROWS の値をなくした。
  *   merge を master / merged に分け、メソッド・コンストラクタの param をいつも配列にした (A6)
+ * - apex 7: SOQL・SOSL の kind のないオブジェクトをすべて JsonType にした (select・from・where・orderBy・論理条件・
+ *   値・項目・関数・WITH・FIND・RETURNING のオブジェクトなど。kind は soql* / sosl*。docs/plan.md 4.3 の 1)
+ * - apex 8: 文・宣言の kind のない入れ物をノードにした (ifBranch・switchWhen・whenType・tryClause・forControl・
+ *   localVariableDeclaration・modifiers・annotationArg・accessor・newEntry)。入れ子の型 (要素・キー・値・型引数) も
+ *   type のノードにした。IR に対応するノードがないもの (修飾子の一覧など) の objectKey は中身から作る (docs/plan.md 4.3 の 2)
+ * - apex 9: 宣言 (class・interface・enum・method・interfaceMethod・property・constructor) を StructureJsonType から
+ *   JsonType にし、名前の位置を nameRef (declarationName) に持たせた。単位の根 (apexUnit)・ファイル (apexSource・
+ *   apexMetaFile)・トリガーと匿名 Apex の中身 (triggerUnit・anonymousUnit)・packageVersion もノードにした (4.3 の 3)
  * - lwc 1 / object 1 / objectTranslation 1 / metadata 1: 系統ごとの版を入れた (2026-11-16)
  * - object 2: 子 (レコードタイプ・リストビューなど 8 種類) に skippedElements、選択リストの valueSettings、
  *   ボタン・リンクの page を足した (docs/json-redesign-plan.md の M3)
@@ -88,18 +96,26 @@ export type UnitLineage = 'apex' | 'lwc' | 'object' | 'objectTranslation' | 'met
  *   共有先・承認者 (sharingPrincipals・approver) に kind と位置を付け、Flow の変数の型・入出力をノードの直下にした。
  *   FlexiPage の部品・項目の properties を attributes (template の properties は templateAttributes) にした (M8)
  * - object 6: レコードタイプ・ビジネスプロセスの使える選択リスト値に kind (picklistValueSelection) と位置を付けた (M8)
+ * - object 7 / objectTranslation 2 / metadata 8: kind のない型のある部品をノードにした (条件の右辺 criterionValue、
+ *   FlexiPage の表示条件、Flow の接続 flowEdge、レイアウトの項目の位置、項目セットの項目、名前項目・検索レイアウト、
+ *   選択リストの値の集合 valueSet・対応表 picklistValueSetting・参照の絞り込み lookupFilter、翻訳のセクション・caseValue、
+ *   マークアップの属性・Aura の JS の一覧)。値の木と名前 → 値の辞書は値のまま残す (docs/plan.md 4.3 の 5)
  * - lwc 2: 型の JSON の text (書いた文字列) をなくし、other を種類ごとの型 (conditional・mapped・indexedAccess・operator・
  *   templateLiteral・import・infer・predicate・コンストラクタの function、ほかは unknown) にした。customType・typeof の target を
  *   名前の並びにし、interface の extends を型の JSON の並びにした (docs/lwc-json-types.md 8.8 の残り)
  * - lwc 3: クラスのメンバーの計算されたキー ([expr]) に、キーの式 computedKey を足した。import の参照 (references) を JSON から
  *   消して解析 (processor/Lwc/calls.ts) に移し、引数に既定値の式 init と rest を足した (docs/lwc-json-types.md 8.8 の残り)
+ * - lwc 4: kind のない入れ物をすべてノードにした (jsIfBranch・jsSwitchCase・jsTryClause・jsForControl・lwcModifiers・
+ *   lwcFunction・lwcAccessor・lwcWire・lwcApexRef・lwcSchemaRef・lwcTypeMember・lwcTypeIndexer・lwcTypeParam・lwcModule、
+ *   テンプレートの lwcValue・lwcExpression・lwcComponentRef・lwcMetadataRef、CSS の cssDeclaration、バンドルの入れ物と根)。
+ *   入れ子の型も lwcType にし、名前を持つ宣言を StructureJsonType から JsonType + nameRef (declarationName) にした (docs/plan.md 4.3 の 4)
  */
 export const UNIT_FORMAT_VERSIONS: Readonly<Record<UnitLineage, number>> = {
-    apex: 6,
-    lwc: 3,
-    object: 6,
-    objectTranslation: 1,
-    metadata: 7,
+    apex: 9,
+    lwc: 4,
+    object: 7,
+    objectTranslation: 2,
+    metadata: 8,
 };
 
 export type UnitType<R extends UnitParseResult = UnitParseResult> = {

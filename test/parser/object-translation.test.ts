@@ -11,6 +11,7 @@ import {
 } from '../../src/analyzer/parser/Metadata/objectTranslation';
 import { splitTranslationName } from '../../src/analyzer/types/metadata/objectTranslation';
 import { writeSaveDataInfo } from '../../src/analyzer/parser/commons';
+import { p1Shape } from '../converter/lwcShape';
 
 /** docs/examples/metadata の翻訳のサンプルを、本番と同じ流れ (ObjectTranslationParser) で読む */
 
@@ -91,7 +92,7 @@ describe('ObjectTranslationParser', () => {
             [['validationRuleTranslation', 'Amount_Positive', '金額は正の値にしてください。']],
         );
         assert.deepEqual(
-            base.layouts?.map((l) => [l.kind, l.layout, l.sections]),
+            base.layouts?.map((l) => [l.kind, l.layout, p1Shape(l.sections)]),
             [
                 [
                     'layoutTranslation',
@@ -106,7 +107,7 @@ describe('ObjectTranslationParser', () => {
 
     it('reads case values as plain values and keeps source positions with the file path', async () => {
         const { result } = await parse('Account-ja');
-        assert.deepEqual(result.base.caseValues, [{ value: '取引先', plural: false }]);
+        assert.deepEqual(p1Shape(result.base.caseValues), [{ value: '取引先', plural: false }]);
         const files = result.sourceObject.flatMap((s) => s.source.map((source) => source.filePath));
         assert.ok(files.includes('Account-ja/Tier__c.fieldTranslation-meta.xml'));
         assert.ok(files.includes('Account-ja/Account-ja.objectTranslation-meta.xml'));

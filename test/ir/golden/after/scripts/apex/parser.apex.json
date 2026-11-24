@@ -1,22 +1,30 @@
 {
   "source": {
+    "kind": "apexSource",
+    "sourceKeys": {},
     "fileName": "parser.apex",
     "fileType": "anonymous",
     "content": {
+      "kind": "anonymousUnit",
+      "sourceKeys": {},
       "block": [
         {
           "kind": "class",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
+          "sourceKeys": {},
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "AnonymousHelper"
           },
           "name": "AnonymousHelper",
           "block": [
             {
               "kind": "method",
-              "sourceKeys": {
-                "base": {},
-                "name": {}
+              "sourceKeys": {},
+              "nameRef": {
+                "kind": "declarationName",
+                "sourceKeys": {},
+                "name": "greet"
               },
               "name": "greet",
               "returnType": {
@@ -36,7 +44,10 @@
                     "type": "primitive",
                     "primitiveType": "String"
                   },
-                  "modifier": {}
+                  "modifier": {
+                    "kind": "modifiers",
+                    "sourceKeys": {}
+                  }
                 }
               ],
               "block": [
@@ -61,6 +72,8 @@
                 }
               ],
               "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {},
                 "keyword": [
                   {
                     "kind": "modifier",
@@ -72,6 +85,8 @@
             }
           ],
           "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {},
             "keyword": [
               {
                 "kind": "modifier",
@@ -83,17 +98,21 @@
         },
         {
           "kind": "interface",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
+          "sourceKeys": {},
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "AnonymousHandler"
           },
           "name": "AnonymousHandler",
           "block": [
             {
               "kind": "interfaceMethod",
-              "sourceKeys": {
-                "base": {},
-                "name": {}
+              "sourceKeys": {},
+              "nameRef": {
+                "kind": "declarationName",
+                "sourceKeys": {},
+                "name": "handle"
               },
               "name": "handle",
               "returnType": "void",
@@ -108,13 +127,21 @@
                     "type": "primitive",
                     "primitiveType": "String"
                   },
-                  "modifier": {}
+                  "modifier": {
+                    "kind": "modifiers",
+                    "sourceKeys": {}
+                  }
                 }
               ],
-              "modifier": {}
+              "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {}
+              }
             }
           ],
           "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {},
             "keyword": [
               {
                 "kind": "modifier",
@@ -126,9 +153,11 @@
         },
         {
           "kind": "enum",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
+          "sourceKeys": {},
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "AnonymousStatus"
           },
           "name": "AnonymousStatus",
           "members": [
@@ -144,6 +173,8 @@
             }
           ],
           "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {},
             "keyword": [
               {
                 "kind": "modifier",
@@ -155,9 +186,11 @@
         },
         {
           "kind": "method",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
+          "sourceKeys": {},
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "describe"
           },
           "name": "describe",
           "returnType": {
@@ -177,7 +210,10 @@
                 "type": "primitive",
                 "primitiveType": "Object"
               },
-              "modifier": {}
+              "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {}
+              }
             }
           ],
           "block": [
@@ -206,6 +242,8 @@
             }
           ],
           "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {},
             "keyword": [
               {
                 "kind": "modifier",
@@ -217,9 +255,11 @@
         },
         {
           "kind": "method",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
+          "sourceKeys": {},
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "square"
           },
           "name": "square",
           "returnType": {
@@ -239,7 +279,10 @@
                 "type": "primitive",
                 "primitiveType": "Integer"
               },
-              "modifier": {}
+              "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {}
+              }
             }
           ],
           "block": [
@@ -264,6 +307,8 @@
             }
           ],
           "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {},
             "keyword": [
               {
                 "kind": "modifier",
@@ -289,7 +334,10 @@
             "type": "primitive",
             "primitiveType": "Id"
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -312,7 +360,10 @@
             "type": "primitive",
             "primitiveType": "String"
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -350,7 +401,10 @@
             "type": "primitive",
             "primitiveType": "Integer"
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -373,7 +427,10 @@
             "type": "primitive",
             "primitiveType": "Long"
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -396,7 +453,10 @@
             "type": "primitive",
             "primitiveType": "Double"
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -419,7 +479,10 @@
             "type": "primitive",
             "primitiveType": "Decimal"
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -442,7 +505,10 @@
             "type": "primitive",
             "primitiveType": "Boolean"
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -472,7 +538,10 @@
             "type": "primitive",
             "primitiveType": "Date"
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -502,7 +571,10 @@
             "type": "primitive",
             "primitiveType": "Datetime"
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -554,7 +626,10 @@
             "type": "primitive",
             "primitiveType": "Time"
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -578,6 +653,8 @@
             "primitiveType": "String"
           },
           "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {},
             "keyword": [
               {
                 "kind": "modifier",
@@ -603,6 +680,8 @@
                   "sourceKeys": {},
                   "type": "list",
                   "elementType": {
+                    "kind": "type",
+                    "sourceKeys": {},
                     "type": "primitive",
                     "primitiveType": "String"
                   }
@@ -616,11 +695,16 @@
             "sourceKeys": {},
             "type": "list",
             "elementType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "primitive",
               "primitiveType": "String"
             }
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -638,6 +722,8 @@
                   "sourceKeys": {},
                   "type": "set",
                   "elementType": {
+                    "kind": "type",
+                    "sourceKeys": {},
                     "type": "primitive",
                     "primitiveType": "Id"
                   }
@@ -651,11 +737,16 @@
             "sourceKeys": {},
             "type": "set",
             "elementType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "primitive",
               "primitiveType": "Id"
             }
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -673,10 +764,14 @@
                   "sourceKeys": {},
                   "type": "map",
                   "keyType": {
+                    "kind": "type",
+                    "sourceKeys": {},
                     "type": "primitive",
                     "primitiveType": "Id"
                   },
                   "valueType": {
+                    "kind": "type",
+                    "sourceKeys": {},
                     "type": "custom",
                     "customType": [
                       "Account"
@@ -692,17 +787,24 @@
             "sourceKeys": {},
             "type": "map",
             "keyType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "primitive",
               "primitiveType": "Id"
             },
             "valueType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "custom",
               "customType": [
                 "Account"
               ]
             }
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -720,16 +822,22 @@
                   "sourceKeys": {},
                   "type": "map",
                   "keyType": {
+                    "kind": "type",
+                    "sourceKeys": {},
                     "type": "primitive",
                     "primitiveType": "String"
                   },
                   "valueType": {
+                    "kind": "type",
+                    "sourceKeys": {},
                     "type": "primitive",
                     "primitiveType": "Integer"
                   }
                 },
                 "entries": [
                   {
+                    "kind": "newEntry",
+                    "sourceKeys": {},
                     "key": {
                       "kind": "string",
                       "sourceKeys": {},
@@ -742,6 +850,8 @@
                     }
                   },
                   {
+                    "kind": "newEntry",
+                    "sourceKeys": {},
                     "key": {
                       "kind": "string",
                       "sourceKeys": {},
@@ -762,15 +872,22 @@
             "sourceKeys": {},
             "type": "map",
             "keyType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "primitive",
               "primitiveType": "String"
             },
             "valueType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "primitive",
               "primitiveType": "Integer"
             }
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -788,6 +905,8 @@
                   "sourceKeys": {},
                   "type": "set",
                   "elementType": {
+                    "kind": "type",
+                    "sourceKeys": {},
                     "type": "primitive",
                     "primitiveType": "String"
                   }
@@ -812,11 +931,16 @@
             "sourceKeys": {},
             "type": "set",
             "elementType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "primitive",
               "primitiveType": "String"
             }
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -834,6 +958,8 @@
                   "sourceKeys": {},
                   "type": "set",
                   "elementType": {
+                    "kind": "type",
+                    "sourceKeys": {},
                     "type": "primitive",
                     "primitiveType": "String"
                   }
@@ -847,11 +973,16 @@
             "sourceKeys": {},
             "type": "set",
             "elementType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "primitive",
               "primitiveType": "String"
             }
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -869,6 +1000,8 @@
                   "sourceKeys": {},
                   "type": "array",
                   "elementType": {
+                    "kind": "type",
+                    "sourceKeys": {},
                     "type": "primitive",
                     "primitiveType": "Integer"
                   },
@@ -899,12 +1032,17 @@
             "sourceKeys": {},
             "type": "array",
             "elementType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "primitive",
               "primitiveType": "Integer"
             },
             "dimension": 1
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -922,6 +1060,8 @@
                   "sourceKeys": {},
                   "type": "array",
                   "elementType": {
+                    "kind": "type",
+                    "sourceKeys": {},
                     "type": "primitive",
                     "primitiveType": "String"
                   },
@@ -940,12 +1080,17 @@
             "sourceKeys": {},
             "type": "array",
             "elementType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "primitive",
               "primitiveType": "String"
             },
             "dimension": 1
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "expression",
@@ -993,6 +1138,8 @@
                   "sourceKeys": {},
                   "type": "list",
                   "elementType": {
+                    "kind": "type",
+                    "sourceKeys": {},
                     "type": "primitive",
                     "primitiveType": "String"
                   }
@@ -1232,7 +1379,10 @@
               "Account"
             ]
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "insert",
@@ -1348,7 +1498,10 @@
               "Account"
             ]
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "expression",
@@ -1476,7 +1629,10 @@
               "Account"
             ]
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "insert",
@@ -1536,6 +1692,8 @@
                   "sourceKeys": {},
                   "type": "list",
                   "elementType": {
+                    "kind": "type",
+                    "sourceKeys": {},
                     "type": "custom",
                     "customType": [
                       "Account"
@@ -1639,13 +1797,18 @@
             "sourceKeys": {},
             "type": "list",
             "elementType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "custom",
               "customType": [
                 "Account"
               ]
             }
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -1686,6 +1849,8 @@
             "sourceKeys": {},
             "type": "array",
             "elementType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "custom",
               "customType": [
                 "Database",
@@ -1694,7 +1859,10 @@
             },
             "dimension": 1
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -1708,6 +1876,8 @@
                 "kind": "soql",
                 "sourceKeys": {},
                 "select": {
+                  "kind": "soqlSelect",
+                  "sourceKeys": {},
                   "field": [
                     {
                       "kind": "selectEntry",
@@ -1744,6 +1914,8 @@
                   ]
                 },
                 "from": {
+                  "kind": "soqlFrom",
+                  "sourceKeys": {},
                   "field": [
                     {
                       "kind": "fromField",
@@ -1755,12 +1927,18 @@
                   ]
                 },
                 "where": {
+                  "kind": "soqlWhere",
+                  "sourceKeys": {},
                   "condition": {
+                    "kind": "soqlLogical",
+                    "sourceKeys": {},
                     "condition": [
                       {
                         "kind": "singleCondition",
                         "sourceKeys": {},
                         "field": {
+                          "kind": "soqlField",
+                          "sourceKeys": {},
                           "type": "field",
                           "field": [
                             "Id"
@@ -1768,6 +1946,8 @@
                         },
                         "operator": "=",
                         "value": {
+                          "kind": "soqlValue",
+                          "sourceKeys": {},
                           "type": "bind",
                           "value": {
                             "kind": "identifier",
@@ -1787,13 +1967,18 @@
             "sourceKeys": {},
             "type": "list",
             "elementType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "custom",
               "customType": [
                 "Account"
               ]
             }
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -1807,6 +1992,8 @@
                 "kind": "soql",
                 "sourceKeys": {},
                 "select": {
+                  "kind": "soqlSelect",
+                  "sourceKeys": {},
                   "field": [
                     {
                       "kind": "selectEntry",
@@ -1836,6 +2023,8 @@
                   ]
                 },
                 "from": {
+                  "kind": "soqlFrom",
+                  "sourceKeys": {},
                   "field": [
                     {
                       "kind": "fromField",
@@ -1847,12 +2036,18 @@
                   ]
                 },
                 "where": {
+                  "kind": "soqlWhere",
+                  "sourceKeys": {},
                   "condition": {
+                    "kind": "soqlLogical",
+                    "sourceKeys": {},
                     "condition": [
                       {
                         "kind": "singleCondition",
                         "sourceKeys": {},
                         "field": {
+                          "kind": "soqlField",
+                          "sourceKeys": {},
                           "type": "field",
                           "field": [
                             "AccountId"
@@ -1860,6 +2055,8 @@
                         },
                         "operator": "=",
                         "value": {
+                          "kind": "soqlValue",
+                          "sourceKeys": {},
                           "type": "bind",
                           "value": {
                             "kind": "identifier",
@@ -1879,13 +2076,18 @@
             "sourceKeys": {},
             "type": "list",
             "elementType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "custom",
               "customType": [
                 "Contact"
               ]
             }
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -1899,6 +2101,8 @@
                 "kind": "soql",
                 "sourceKeys": {},
                 "select": {
+                  "kind": "soqlSelect",
+                  "sourceKeys": {},
                   "field": [
                     {
                       "kind": "selectEntry",
@@ -1929,6 +2133,8 @@
                   ]
                 },
                 "from": {
+                  "kind": "soqlFrom",
+                  "sourceKeys": {},
                   "field": [
                     {
                       "kind": "fromField",
@@ -1944,6 +2150,8 @@
                   "sourceKeys": {},
                   "field": [
                     {
+                      "kind": "soqlField",
+                      "sourceKeys": {},
                       "type": "field",
                       "field": [
                         "Industry"
@@ -1951,11 +2159,15 @@
                     }
                   ],
                   "having": {
+                    "kind": "soqlLogical",
+                    "sourceKeys": {},
                     "condition": [
                       {
                         "kind": "singleCondition",
                         "sourceKeys": {},
                         "field": {
+                          "kind": "soqlFunction",
+                          "sourceKeys": {},
                           "type": "soqlFunction",
                           "func": "COUNT",
                           "arg": [
@@ -1964,6 +2176,8 @@
                         },
                         "operator": ">",
                         "value": {
+                          "kind": "soqlValue",
+                          "sourceKeys": {},
                           "type": "number",
                           "value": "1",
                           "valueType": "integer"
@@ -1980,13 +2194,18 @@
             "sourceKeys": {},
             "type": "list",
             "elementType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "custom",
               "customType": [
                 "AggregateResult"
               ]
             }
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -2000,6 +2219,8 @@
                 "kind": "soql",
                 "sourceKeys": {},
                 "select": {
+                  "kind": "soqlSelect",
+                  "sourceKeys": {},
                   "field": [
                     {
                       "kind": "selectEntry",
@@ -2039,6 +2260,8 @@
                   ]
                 },
                 "from": {
+                  "kind": "soqlFrom",
+                  "sourceKeys": {},
                   "field": [
                     {
                       "kind": "fromField",
@@ -2057,13 +2280,18 @@
             "sourceKeys": {},
             "type": "list",
             "elementType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "custom",
               "customType": [
                 "Account"
               ]
             }
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -2077,6 +2305,8 @@
                 "kind": "soql",
                 "sourceKeys": {},
                 "select": {
+                  "kind": "soqlSelect",
+                  "sourceKeys": {},
                   "field": [
                     {
                       "kind": "selectEntry",
@@ -2088,6 +2318,8 @@
                   ]
                 },
                 "from": {
+                  "kind": "soqlFrom",
+                  "sourceKeys": {},
                   "field": [
                     {
                       "kind": "fromField",
@@ -2112,13 +2344,18 @@
             "sourceKeys": {},
             "type": "list",
             "elementType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "custom",
               "customType": [
                 "Account"
               ]
             }
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -2132,6 +2369,8 @@
                 "kind": "soql",
                 "sourceKeys": {},
                 "select": {
+                  "kind": "soqlSelect",
+                  "sourceKeys": {},
                   "field": [
                     {
                       "kind": "selectEntry",
@@ -2152,6 +2391,8 @@
                   ]
                 },
                 "from": {
+                  "kind": "soqlFrom",
+                  "sourceKeys": {},
                   "field": [
                     {
                       "kind": "fromField",
@@ -2163,12 +2404,18 @@
                   ]
                 },
                 "where": {
+                  "kind": "soqlWhere",
+                  "sourceKeys": {},
                   "condition": {
+                    "kind": "soqlLogical",
+                    "sourceKeys": {},
                     "condition": [
                       {
                         "kind": "singleCondition",
                         "sourceKeys": {},
                         "field": {
+                          "kind": "soqlField",
+                          "sourceKeys": {},
                           "type": "field",
                           "field": [
                             "Id"
@@ -2176,6 +2423,8 @@
                         },
                         "operator": "=",
                         "value": {
+                          "kind": "soqlValue",
+                          "sourceKeys": {},
                           "type": "bind",
                           "value": {
                             "kind": "identifier",
@@ -2202,13 +2451,18 @@
             "sourceKeys": {},
             "type": "list",
             "elementType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "custom",
               "customType": [
                 "Account"
               ]
             }
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -2222,6 +2476,8 @@
                 "kind": "soql",
                 "sourceKeys": {},
                 "select": {
+                  "kind": "soqlSelect",
+                  "sourceKeys": {},
                   "field": [
                     {
                       "kind": "selectEntry",
@@ -2242,6 +2498,8 @@
                   ]
                 },
                 "from": {
+                  "kind": "soqlFrom",
+                  "sourceKeys": {},
                   "field": [
                     {
                       "kind": "fromField",
@@ -2253,6 +2511,8 @@
                   ]
                 },
                 "with": {
+                  "kind": "soqlWith",
+                  "sourceKeys": {},
                   "mode": "USER_MODE"
                 }
               }
@@ -2263,13 +2523,18 @@
             "sourceKeys": {},
             "type": "list",
             "elementType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "custom",
               "customType": [
                 "Account"
               ]
             }
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -2283,6 +2548,8 @@
                 "kind": "soql",
                 "sourceKeys": {},
                 "select": {
+                  "kind": "soqlSelect",
+                  "sourceKeys": {},
                   "field": [
                     {
                       "kind": "selectEntry",
@@ -2293,6 +2560,8 @@
                   ]
                 },
                 "from": {
+                  "kind": "soqlFrom",
+                  "sourceKeys": {},
                   "field": [
                     {
                       "kind": "fromField",
@@ -2304,12 +2573,18 @@
                   ]
                 },
                 "where": {
+                  "kind": "soqlWhere",
+                  "sourceKeys": {},
                   "condition": {
+                    "kind": "soqlLogical",
+                    "sourceKeys": {},
                     "condition": [
                       {
                         "kind": "singleCondition",
                         "sourceKeys": {},
                         "field": {
+                          "kind": "soqlField",
+                          "sourceKeys": {},
                           "type": "field",
                           "field": [
                             "CreatedDate"
@@ -2317,6 +2592,8 @@
                         },
                         "operator": "=",
                         "value": {
+                          "kind": "soqlValue",
+                          "sourceKeys": {},
                           "type": "dateFormula",
                           "func": "THIS_MONTH"
                         }
@@ -2333,7 +2610,10 @@
             "type": "primitive",
             "primitiveType": "Integer"
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -2347,12 +2627,16 @@
                 "kind": "sosl",
                 "sourceKeys": {},
                 "find": {
+                  "kind": "soslFind",
+                  "sourceKeys": {},
                   "type": "literal",
                   "value": "test"
                 },
                 "group": "ALL",
                 "fieldSpec": [
                   {
+                    "kind": "soslFieldSpec",
+                    "sourceKeys": {},
                     "object": [
                       "Account"
                     ],
@@ -2374,6 +2658,8 @@
                     ]
                   },
                   {
+                    "kind": "soslFieldSpec",
+                    "sourceKeys": {},
                     "object": [
                       "Contact"
                     ],
@@ -2403,8 +2689,12 @@
             "sourceKeys": {},
             "type": "list",
             "elementType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "list",
               "elementType": {
+                "kind": "type",
+                "sourceKeys": {},
                 "type": "custom",
                 "customType": [
                   "SObject"
@@ -2412,13 +2702,18 @@
               }
             }
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "if",
           "sourceKeys": {},
           "conditionBlock": [
             {
+              "kind": "ifBranch",
+              "sourceKeys": {},
               "condition": {
                 "kind": "binary",
                 "sourceKeys": {},
@@ -2461,6 +2756,8 @@
               ]
             },
             {
+              "kind": "ifBranch",
+              "sourceKeys": {},
               "condition": {
                 "kind": "binary",
                 "sourceKeys": {},
@@ -2503,6 +2800,8 @@
               ]
             },
             {
+              "kind": "ifBranch",
+              "sourceKeys": {},
               "condition": "else",
               "block": [
                 {
@@ -2536,14 +2835,21 @@
           "kind": "for",
           "sourceKeys": {},
           "condition": {
+            "kind": "forControl",
+            "sourceKeys": {},
             "initializer": {
+              "kind": "localVariableDeclaration",
+              "sourceKeys": {},
               "variantType": {
                 "kind": "type",
                 "sourceKeys": {},
                 "type": "primitive",
                 "primitiveType": "Integer"
               },
-              "modifier": {},
+              "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {}
+              },
               "variants": [
                 {
                   "kind": "variant",
@@ -2592,6 +2898,8 @@
               "sourceKeys": {},
               "conditionBlock": [
                 {
+                  "kind": "ifBranch",
+                  "sourceKeys": {},
                   "condition": {
                     "kind": "binary",
                     "sourceKeys": {},
@@ -2640,6 +2948,8 @@
               "sourceKeys": {},
               "conditionBlock": [
                 {
+                  "kind": "ifBranch",
+                  "sourceKeys": {},
                   "condition": {
                     "kind": "binary",
                     "sourceKeys": {},
@@ -2755,6 +3065,8 @@
             "kind": "soql",
             "sourceKeys": {},
             "select": {
+              "kind": "soqlSelect",
+              "sourceKeys": {},
               "field": [
                 {
                   "kind": "selectEntry",
@@ -2767,6 +3079,8 @@
               ]
             },
             "from": {
+              "kind": "soqlFrom",
+              "sourceKeys": {},
               "field": [
                 {
                   "kind": "fromField",
@@ -2838,7 +3152,10 @@
             "type": "primitive",
             "primitiveType": "Integer"
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "while",
@@ -2897,7 +3214,10 @@
             "type": "primitive",
             "primitiveType": "Integer"
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "doWhile",
@@ -2960,7 +3280,10 @@
             "type": "primitive",
             "primitiveType": "String"
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "switch",
@@ -2972,6 +3295,8 @@
           },
           "when": [
             {
+              "kind": "switchWhen",
+              "sourceKeys": {},
               "condition": {
                 "kind": "switchCondition",
                 "sourceKeys": {},
@@ -3010,6 +3335,8 @@
               ]
             },
             {
+              "kind": "switchWhen",
+              "sourceKeys": {},
               "condition": {
                 "kind": "switchCondition",
                 "sourceKeys": {},
@@ -3053,6 +3380,8 @@
               ]
             },
             {
+              "kind": "switchWhen",
+              "sourceKeys": {},
               "condition": {
                 "kind": "switchCondition",
                 "sourceKeys": {},
@@ -3121,13 +3450,18 @@
             "type": "primitive",
             "primitiveType": "String"
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "try",
           "sourceKeys": {},
           "block": [
             {
+              "kind": "tryClause",
+              "sourceKeys": {},
               "condition": "try",
               "block": [
                 {
@@ -3141,7 +3475,10 @@
                       "Account"
                     ]
                   },
-                  "modifier": {},
+                  "modifier": {
+                    "kind": "modifiers",
+                    "sourceKeys": {}
+                  },
                   "variants": [
                     {
                       "kind": "variant",
@@ -3151,6 +3488,8 @@
                         "kind": "soql",
                         "sourceKeys": {},
                         "select": {
+                          "kind": "soqlSelect",
+                          "sourceKeys": {},
                           "field": [
                             {
                               "kind": "selectEntry",
@@ -3171,6 +3510,8 @@
                           ]
                         },
                         "from": {
+                          "kind": "soqlFrom",
+                          "sourceKeys": {},
                           "field": [
                             {
                               "kind": "fromField",
@@ -3182,12 +3523,18 @@
                           ]
                         },
                         "where": {
+                          "kind": "soqlWhere",
+                          "sourceKeys": {},
                           "condition": {
+                            "kind": "soqlLogical",
+                            "sourceKeys": {},
                             "condition": [
                               {
                                 "kind": "singleCondition",
                                 "sourceKeys": {},
                                 "field": {
+                                  "kind": "soqlField",
+                                  "sourceKeys": {},
                                   "type": "field",
                                   "field": [
                                     "Id"
@@ -3195,6 +3542,8 @@
                                 },
                                 "operator": "=",
                                 "value": {
+                                  "kind": "soqlValue",
+                                  "sourceKeys": {},
                                   "type": "bind",
                                   "value": {
                                     "kind": "identifier",
@@ -3244,6 +3593,8 @@
                   "sourceKeys": {},
                   "conditionBlock": [
                     {
+                      "kind": "ifBranch",
+                      "sourceKeys": {},
                       "condition": {
                         "kind": "binary",
                         "sourceKeys": {},
@@ -3289,6 +3640,8 @@
               ]
             },
             {
+              "kind": "tryClause",
+              "sourceKeys": {},
               "condition": "catch",
               "variant": "e",
               "variantType": {
@@ -3334,6 +3687,8 @@
               ]
             },
             {
+              "kind": "tryClause",
+              "sourceKeys": {},
               "condition": "catch",
               "variant": "e",
               "variantType": {
@@ -3379,6 +3734,8 @@
               ]
             },
             {
+              "kind": "tryClause",
+              "sourceKeys": {},
               "condition": "finally",
               "block": [
                 {
@@ -3436,7 +3793,10 @@
             "type": "primitive",
             "primitiveType": "String"
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -3466,7 +3826,10 @@
             "type": "primitive",
             "primitiveType": "Integer"
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -3503,7 +3866,10 @@
             "type": "primitive",
             "primitiveType": "String"
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -3570,7 +3936,10 @@
             "type": "primitive",
             "primitiveType": "Integer"
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -3641,7 +4010,10 @@
             "type": "primitive",
             "primitiveType": "Integer"
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -3762,7 +4134,10 @@
             "type": "primitive",
             "primitiveType": "Boolean"
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -3811,7 +4186,10 @@
               "SObject"
             ]
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "field",
@@ -3848,13 +4226,18 @@
               "Account"
             ]
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "if",
           "sourceKeys": {},
           "conditionBlock": [
             {
+              "kind": "ifBranch",
+              "sourceKeys": {},
               "condition": {
                 "kind": "instanceof",
                 "sourceKeys": {},
@@ -3884,7 +4267,10 @@
                       "Account"
                     ]
                   },
-                  "modifier": {},
+                  "modifier": {
+                    "kind": "modifiers",
+                    "sourceKeys": {}
+                  },
                   "variants": [
                     {
                       "kind": "variant",
@@ -3975,7 +4361,10 @@
               "Type"
             ]
           },
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "runAs",
@@ -4447,6 +4836,19 @@
       }
     },
     {
+      "context": "'a' => 1",
+      "start": {
+        "offset": 1414,
+        "line": 68,
+        "column": 56
+      },
+      "end": {
+        "offset": 1422,
+        "line": 68,
+        "column": 64
+      }
+    },
+    {
       "context": "'a'",
       "start": {
         "offset": 1414,
@@ -4470,6 +4872,19 @@
         "offset": 1989,
         "line": 95,
         "column": 27
+      }
+    },
+    {
+      "context": "'b' => 2",
+      "start": {
+        "offset": 1424,
+        "line": 68,
+        "column": 66
+      },
+      "end": {
+        "offset": 1432,
+        "line": 68,
+        "column": 74
       }
     },
     {
@@ -4759,6 +5174,32 @@
       }
     },
     {
+      "context": "(Math.mod(i, 2) == 0)",
+      "start": {
+        "offset": 4559,
+        "line": 207,
+        "column": 7
+      },
+      "end": {
+        "offset": 4580,
+        "line": 207,
+        "column": 28
+      }
+    },
+    {
+      "context": "(a == null)",
+      "start": {
+        "offset": 5498,
+        "line": 260,
+        "column": 7
+      },
+      "end": {
+        "offset": 5509,
+        "line": 260,
+        "column": 18
+      }
+    },
+    {
       "context": "(count != 0)",
       "start": {
         "offset": 6222,
@@ -4837,6 +5278,32 @@
       }
     },
     {
+      "context": "(count == 0)",
+      "start": {
+        "offset": 4380,
+        "line": 198,
+        "column": 3
+      },
+      "end": {
+        "offset": 4392,
+        "line": 198,
+        "column": 15
+      }
+    },
+    {
+      "context": "(count > 0)",
+      "start": {
+        "offset": 4431,
+        "line": 200,
+        "column": 10
+      },
+      "end": {
+        "offset": 4442,
+        "line": 200,
+        "column": 21
+      }
+    },
+    {
       "context": "(count ^ total) << 1",
       "start": {
         "offset": 6086,
@@ -4863,6 +5330,19 @@
       }
     },
     {
+      "context": "(i == 7)",
+      "start": {
+        "offset": 4614,
+        "line": 210,
+        "column": 7
+      },
+      "end": {
+        "offset": 4622,
+        "line": 210,
+        "column": 15
+      }
+    },
+    {
       "context": "(name == 'Test' || name.startsWith('A'))",
       "start": {
         "offset": 6173,
@@ -4873,6 +5353,19 @@
         "offset": 6213,
         "line": 289,
         "column": 47
+      }
+    },
+    {
+      "context": "(objectValue instanceof Account)",
+      "start": {
+        "offset": 6344,
+        "line": 296,
+        "column": 3
+      },
+      "end": {
+        "offset": 6376,
+        "line": 296,
+        "column": 35
       }
     },
     {
@@ -5068,6 +5561,19 @@
         "offset": 1567,
         "line": 74,
         "column": 37
+      }
+    },
+    {
+      "context": "1",
+      "start": {
+        "offset": 3470,
+        "line": 164,
+        "column": 23
+      },
+      "end": {
+        "offset": 3471,
+        "line": 164,
+        "column": 24
       }
     },
     {
@@ -5344,6 +5850,58 @@
       }
     },
     {
+      "context": ":accountId",
+      "start": {
+        "offset": 3190,
+        "line": 151,
+        "column": 15
+      },
+      "end": {
+        "offset": 3200,
+        "line": 151,
+        "column": 25
+      }
+    },
+    {
+      "context": ":accountId",
+      "start": {
+        "offset": 3308,
+        "line": 157,
+        "column": 22
+      },
+      "end": {
+        "offset": 3318,
+        "line": 157,
+        "column": 32
+      }
+    },
+    {
+      "context": ":accountId",
+      "start": {
+        "offset": 3758,
+        "line": 174,
+        "column": 72
+      },
+      "end": {
+        "offset": 3768,
+        "line": 174,
+        "column": 82
+      }
+    },
+    {
+      "context": ":accountId",
+      "start": {
+        "offset": 5449,
+        "line": 258,
+        "column": 57
+      },
+      "end": {
+        "offset": 5459,
+        "line": 258,
+        "column": 67
+      }
+    },
+    {
       "context": "AVG(AnnualRevenue)",
       "start": {
         "offset": 3389,
@@ -5354,6 +5912,19 @@
         "offset": 3407,
         "line": 161,
         "column": 50
+      }
+    },
+    {
+      "context": "Account a = [SELECT Id, Name FROM Account WHERE Id = :accountId LIMIT 1]",
+      "start": {
+        "offset": 5396,
+        "line": 258,
+        "column": 4
+      },
+      "end": {
+        "offset": 5468,
+        "line": 258,
+        "column": 76
       }
     },
     {
@@ -5383,6 +5954,32 @@
       }
     },
     {
+      "context": "Account account = new Account(Name = 'Anonymous Account');",
+      "start": {
+        "offset": 2146,
+        "line": 102,
+        "column": 0
+      },
+      "end": {
+        "offset": 2204,
+        "line": 102,
+        "column": 58
+      }
+    },
+    {
+      "context": "Account accountValue = (Account) objectValue",
+      "start": {
+        "offset": 6383,
+        "line": 297,
+        "column": 4
+      },
+      "end": {
+        "offset": 6427,
+        "line": 297,
+        "column": 48
+      }
+    },
+    {
       "context": "Account accountValue = (Account) objectValue;",
       "start": {
         "offset": 6383,
@@ -5393,6 +5990,19 @@
         "offset": 6428,
         "line": 297,
         "column": 49
+      }
+    },
+    {
+      "context": "Account castedAccount = (Account) objectValue;",
+      "start": {
+        "offset": 6293,
+        "line": 294,
+        "column": 0
+      },
+      "end": {
+        "offset": 6339,
+        "line": 294,
+        "column": 46
       }
     },
     {
@@ -5422,6 +6032,19 @@
       }
     },
     {
+      "context": "Account duplicate = new Account(Name = 'Duplicate');",
+      "start": {
+        "offset": 2443,
+        "line": 120,
+        "column": 0
+      },
+      "end": {
+        "offset": 2495,
+        "line": 120,
+        "column": 52
+      }
+    },
+    {
       "context": "Account retrieved = accounts.get(account.Id);",
       "start": {
         "offset": 2284,
@@ -5432,6 +6055,45 @@
         "offset": 2329,
         "line": 110,
         "column": 45
+      }
+    },
+    {
+      "context": "Account retrieved = accounts.get(account.Id);",
+      "start": {
+        "offset": 2284,
+        "line": 110,
+        "column": 0
+      },
+      "end": {
+        "offset": 2329,
+        "line": 110,
+        "column": 45
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
+        "offset": 1313,
+        "line": 66,
+        "column": 8
+      },
+      "end": {
+        "offset": 1320,
+        "line": 66,
+        "column": 15
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
+        "offset": 1345,
+        "line": 66,
+        "column": 40
+      },
+      "end": {
+        "offset": 1352,
+        "line": 66,
+        "column": 47
       }
     },
     {
@@ -5502,6 +6164,32 @@
     {
       "context": "Account",
       "start": {
+        "offset": 2739,
+        "line": 135,
+        "column": 5
+      },
+      "end": {
+        "offset": 2746,
+        "line": 135,
+        "column": 12
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
+        "offset": 2771,
+        "line": 135,
+        "column": 37
+      },
+      "end": {
+        "offset": 2778,
+        "line": 135,
+        "column": 44
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
         "offset": 2789,
         "line": 136,
         "column": 8
@@ -5541,6 +6229,32 @@
     {
       "context": "Account",
       "start": {
+        "offset": 3088,
+        "line": 148,
+        "column": 5
+      },
+      "end": {
+        "offset": 3095,
+        "line": 148,
+        "column": 12
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
+        "offset": 3167,
+        "line": 150,
+        "column": 9
+      },
+      "end": {
+        "offset": 3174,
+        "line": 150,
+        "column": 16
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
         "offset": 3167,
         "line": 150,
         "column": 9
@@ -5567,6 +6281,32 @@
     {
       "context": "Account",
       "start": {
+        "offset": 3417,
+        "line": 162,
+        "column": 9
+      },
+      "end": {
+        "offset": 3424,
+        "line": 162,
+        "column": 16
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
+        "offset": 3481,
+        "line": 167,
+        "column": 5
+      },
+      "end": {
+        "offset": 3488,
+        "line": 167,
+        "column": 12
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
         "offset": 3602,
         "line": 169,
         "column": 9
@@ -5575,6 +6315,32 @@
         "offset": 3609,
         "line": 169,
         "column": 16
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
+        "offset": 3602,
+        "line": 169,
+        "column": 9
+      },
+      "end": {
+        "offset": 3609,
+        "line": 169,
+        "column": 16
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
+        "offset": 3619,
+        "line": 172,
+        "column": 5
+      },
+      "end": {
+        "offset": 3626,
+        "line": 172,
+        "column": 12
       }
     },
     {
@@ -5593,6 +6359,32 @@
     {
       "context": "Account",
       "start": {
+        "offset": 3665,
+        "line": 172,
+        "column": 51
+      },
+      "end": {
+        "offset": 3672,
+        "line": 172,
+        "column": 58
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
+        "offset": 3691,
+        "line": 174,
+        "column": 5
+      },
+      "end": {
+        "offset": 3698,
+        "line": 174,
+        "column": 12
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
         "offset": 3739,
         "line": 174,
         "column": 53
@@ -5606,6 +6398,32 @@
     {
       "context": "Account",
       "start": {
+        "offset": 3739,
+        "line": 174,
+        "column": 53
+      },
+      "end": {
+        "offset": 3746,
+        "line": 174,
+        "column": 60
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
+        "offset": 3788,
+        "line": 176,
+        "column": 5
+      },
+      "end": {
+        "offset": 3795,
+        "line": 176,
+        "column": 12
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
         "offset": 3838,
         "line": 176,
         "column": 55
@@ -5614,6 +6432,32 @@
         "offset": 3845,
         "line": 176,
         "column": 62
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
+        "offset": 3838,
+        "line": 176,
+        "column": 55
+      },
+      "end": {
+        "offset": 3845,
+        "line": 176,
+        "column": 62
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
+        "offset": 3908,
+        "line": 178,
+        "column": 44
+      },
+      "end": {
+        "offset": 3915,
+        "line": 178,
+        "column": 51
       }
     },
     {
@@ -5671,6 +6515,19 @@
     {
       "context": "Account",
       "start": {
+        "offset": 4773,
+        "line": 220,
+        "column": 36
+      },
+      "end": {
+        "offset": 4780,
+        "line": 220,
+        "column": 43
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
         "offset": 5396,
         "line": 258,
         "column": 4
@@ -5679,6 +6536,19 @@
         "offset": 5403,
         "line": 258,
         "column": 11
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
+        "offset": 5430,
+        "line": 258,
+        "column": 38
+      },
+      "end": {
+        "offset": 5437,
+        "line": 258,
+        "column": 45
       }
     },
     {
@@ -5786,6 +6656,19 @@
       }
     },
     {
+      "context": "Account(Id, Name)",
+      "start": {
+        "offset": 4182,
+        "line": 189,
+        "column": 8
+      },
+      "end": {
+        "offset": 4199,
+        "line": 189,
+        "column": 25
+      }
+    },
+    {
       "context": "Account.Name",
       "start": {
         "offset": 3256,
@@ -5822,6 +6705,45 @@
         "offset": 3318,
         "line": 157,
         "column": 32
+      }
+    },
+    {
+      "context": "AccountId = :accountId",
+      "start": {
+        "offset": 3296,
+        "line": 157,
+        "column": 10
+      },
+      "end": {
+        "offset": 3318,
+        "line": 157,
+        "column": 32
+      }
+    },
+    {
+      "context": "AccountId",
+      "start": {
+        "offset": 3296,
+        "line": 157,
+        "column": 10
+      },
+      "end": {
+        "offset": 3305,
+        "line": 157,
+        "column": 19
+      }
+    },
+    {
+      "context": "AggregateResult",
+      "start": {
+        "offset": 3328,
+        "line": 160,
+        "column": 5
+      },
+      "end": {
+        "offset": 3343,
+        "line": 160,
+        "column": 20
       }
     },
     {
@@ -5929,6 +6851,32 @@
       }
     },
     {
+      "context": "Boolean complexCondition =\n    enabled\n    && count >= 0\n    && (name == 'Test' || name.startsWith('A'))\n    && !(count != 0);",
+      "start": {
+        "offset": 6109,
+        "line": 286,
+        "column": 0
+      },
+      "end": {
+        "offset": 6235,
+        "line": 290,
+        "column": 21
+      }
+    },
+    {
+      "context": "Boolean enabled = true;",
+      "start": {
+        "offset": 916,
+        "line": 47,
+        "column": 0
+      },
+      "end": {
+        "offset": 939,
+        "line": 47,
+        "column": 23
+      }
+    },
+    {
       "context": "Boolean enabled = true;",
       "start": {
         "offset": 916,
@@ -6007,6 +6955,32 @@
       }
     },
     {
+      "context": "COUNT()",
+      "start": {
+        "offset": 3895,
+        "line": 178,
+        "column": 31
+      },
+      "end": {
+        "offset": 3902,
+        "line": 178,
+        "column": 38
+      }
+    },
+    {
+      "context": "COUNT(Id) > 1",
+      "start": {
+        "offset": 3458,
+        "line": 164,
+        "column": 11
+      },
+      "end": {
+        "offset": 3471,
+        "line": 164,
+        "column": 24
+      }
+    },
+    {
       "context": "COUNT(Id) > 1",
       "start": {
         "offset": 3458,
@@ -6033,6 +7007,32 @@
       }
     },
     {
+      "context": "COUNT(Id)",
+      "start": {
+        "offset": 3458,
+        "line": 164,
+        "column": 11
+      },
+      "end": {
+        "offset": 3467,
+        "line": 164,
+        "column": 20
+      }
+    },
+    {
+      "context": "Contact",
+      "start": {
+        "offset": 3210,
+        "line": 154,
+        "column": 5
+      },
+      "end": {
+        "offset": 3217,
+        "line": 154,
+        "column": 12
+      }
+    },
+    {
       "context": "Contact",
       "start": {
         "offset": 3278,
@@ -6046,6 +7046,32 @@
       }
     },
     {
+      "context": "Contact",
+      "start": {
+        "offset": 3278,
+        "line": 156,
+        "column": 9
+      },
+      "end": {
+        "offset": 3285,
+        "line": 156,
+        "column": 16
+      }
+    },
+    {
+      "context": "Contact(Id, Name)",
+      "start": {
+        "offset": 4209,
+        "line": 190,
+        "column": 8
+      },
+      "end": {
+        "offset": 4226,
+        "line": 190,
+        "column": 25
+      }
+    },
+    {
       "context": "CreatedDate = THIS_MONTH",
       "start": {
         "offset": 3922,
@@ -6056,6 +7082,32 @@
         "offset": 3946,
         "line": 178,
         "column": 82
+      }
+    },
+    {
+      "context": "CreatedDate = THIS_MONTH",
+      "start": {
+        "offset": 3922,
+        "line": 178,
+        "column": 58
+      },
+      "end": {
+        "offset": 3946,
+        "line": 178,
+        "column": 82
+      }
+    },
+    {
+      "context": "CreatedDate",
+      "start": {
+        "offset": 3922,
+        "line": 178,
+        "column": 58
+      },
+      "end": {
+        "offset": 3933,
+        "line": 178,
+        "column": 69
       }
     },
     {
@@ -6085,6 +7137,32 @@
       }
     },
     {
+      "context": "Database.SaveResult[] saveResults = Database.insert(dmlAccounts, false);",
+      "start": {
+        "offset": 2871,
+        "line": 141,
+        "column": 0
+      },
+      "end": {
+        "offset": 2943,
+        "line": 141,
+        "column": 72
+      }
+    },
+    {
+      "context": "Database.SaveResult[]",
+      "start": {
+        "offset": 2871,
+        "line": 141,
+        "column": 0
+      },
+      "end": {
+        "offset": 2892,
+        "line": 141,
+        "column": 21
+      }
+    },
+    {
       "context": "Database.SaveResult[]",
       "start": {
         "offset": 2871,
@@ -6108,6 +7186,19 @@
         "offset": 2942,
         "line": 141,
         "column": 71
+      }
+    },
+    {
+      "context": "Date today = Date.today();",
+      "start": {
+        "offset": 941,
+        "line": 49,
+        "column": 0
+      },
+      "end": {
+        "offset": 967,
+        "line": 49,
+        "column": 26
       }
     },
     {
@@ -6176,6 +7267,19 @@
       }
     },
     {
+      "context": "Datetime now = Datetime.now();",
+      "start": {
+        "offset": 969,
+        "line": 51,
+        "column": 0
+      },
+      "end": {
+        "offset": 999,
+        "line": 51,
+        "column": 30
+      }
+    },
+    {
       "context": "Datetime",
       "start": {
         "offset": 969,
@@ -6228,6 +7332,19 @@
       }
     },
     {
+      "context": "Decimal decimalValue = 100.25;",
+      "start": {
+        "offset": 884,
+        "line": 45,
+        "column": 0
+      },
+      "end": {
+        "offset": 914,
+        "line": 45,
+        "column": 30
+      }
+    },
+    {
       "context": "Decimal",
       "start": {
         "offset": 884,
@@ -6238,6 +7355,19 @@
         "offset": 891,
         "line": 45,
         "column": 7
+      }
+    },
+    {
+      "context": "Double doubleValue = 10.5;",
+      "start": {
+        "offset": 856,
+        "line": 43,
+        "column": 0
+      },
+      "end": {
+        "offset": 882,
+        "line": 43,
+        "column": 26
       }
     },
     {
@@ -6277,6 +7407,19 @@
         "offset": 5646,
         "line": 265,
         "column": 18
+      }
+    },
+    {
+      "context": "FIELDS(ALL)",
+      "start": {
+        "offset": 3648,
+        "line": 172,
+        "column": 34
+      },
+      "end": {
+        "offset": 3659,
+        "line": 172,
+        "column": 45
       }
     },
     {
@@ -6347,6 +7490,19 @@
     {
       "context": "Id = :accountId",
       "start": {
+        "offset": 3185,
+        "line": 151,
+        "column": 10
+      },
+      "end": {
+        "offset": 3200,
+        "line": 151,
+        "column": 25
+      }
+    },
+    {
+      "context": "Id = :accountId",
+      "start": {
         "offset": 3753,
         "line": 174,
         "column": 67
@@ -6355,6 +7511,32 @@
         "offset": 3768,
         "line": 174,
         "column": 82
+      }
+    },
+    {
+      "context": "Id = :accountId",
+      "start": {
+        "offset": 3753,
+        "line": 174,
+        "column": 67
+      },
+      "end": {
+        "offset": 3768,
+        "line": 174,
+        "column": 82
+      }
+    },
+    {
+      "context": "Id = :accountId",
+      "start": {
+        "offset": 5444,
+        "line": 258,
+        "column": 52
+      },
+      "end": {
+        "offset": 5459,
+        "line": 258,
+        "column": 67
       }
     },
     {
@@ -6397,6 +7579,71 @@
       }
     },
     {
+      "context": "Id accountId;",
+      "start": {
+        "offset": 753,
+        "line": 35,
+        "column": 0
+      },
+      "end": {
+        "offset": 766,
+        "line": 35,
+        "column": 13
+      }
+    },
+    {
+      "context": "Id",
+      "start": {
+        "offset": 1279,
+        "line": 64,
+        "column": 4
+      },
+      "end": {
+        "offset": 1281,
+        "line": 64,
+        "column": 6
+      }
+    },
+    {
+      "context": "Id",
+      "start": {
+        "offset": 1297,
+        "line": 64,
+        "column": 22
+      },
+      "end": {
+        "offset": 1299,
+        "line": 64,
+        "column": 24
+      }
+    },
+    {
+      "context": "Id",
+      "start": {
+        "offset": 1309,
+        "line": 66,
+        "column": 4
+      },
+      "end": {
+        "offset": 1311,
+        "line": 66,
+        "column": 6
+      }
+    },
+    {
+      "context": "Id",
+      "start": {
+        "offset": 1341,
+        "line": 66,
+        "column": 36
+      },
+      "end": {
+        "offset": 1343,
+        "line": 66,
+        "column": 38
+      }
+    },
+    {
       "context": "Id",
       "start": {
         "offset": 3124,
@@ -6407,6 +7654,19 @@
         "offset": 3126,
         "line": 149,
         "column": 13
+      }
+    },
+    {
+      "context": "Id",
+      "start": {
+        "offset": 3185,
+        "line": 151,
+        "column": 10
+      },
+      "end": {
+        "offset": 3187,
+        "line": 151,
+        "column": 12
       }
     },
     {
@@ -6446,6 +7706,19 @@
         "offset": 3727,
         "line": 174,
         "column": 41
+      }
+    },
+    {
+      "context": "Id",
+      "start": {
+        "offset": 3753,
+        "line": 174,
+        "column": 67
+      },
+      "end": {
+        "offset": 3755,
+        "line": 174,
+        "column": 69
       }
     },
     {
@@ -6503,6 +7776,19 @@
     {
       "context": "Id",
       "start": {
+        "offset": 4765,
+        "line": 220,
+        "column": 28
+      },
+      "end": {
+        "offset": 4767,
+        "line": 220,
+        "column": 30
+      }
+    },
+    {
+      "context": "Id",
+      "start": {
         "offset": 5416,
         "line": 258,
         "column": 24
@@ -6511,6 +7797,19 @@
         "offset": 5418,
         "line": 258,
         "column": 26
+      }
+    },
+    {
+      "context": "Id",
+      "start": {
+        "offset": 5444,
+        "line": 258,
+        "column": 52
+      },
+      "end": {
+        "offset": 5446,
+        "line": 258,
+        "column": 54
       }
     },
     {
@@ -6540,6 +7839,84 @@
       }
     },
     {
+      "context": "Id, Name",
+      "start": {
+        "offset": 3725,
+        "line": 174,
+        "column": 39
+      },
+      "end": {
+        "offset": 3733,
+        "line": 174,
+        "column": 47
+      }
+    },
+    {
+      "context": "Id, Name",
+      "start": {
+        "offset": 3824,
+        "line": 176,
+        "column": 41
+      },
+      "end": {
+        "offset": 3832,
+        "line": 176,
+        "column": 49
+      }
+    },
+    {
+      "context": "Id, Name",
+      "start": {
+        "offset": 5416,
+        "line": 258,
+        "column": 24
+      },
+      "end": {
+        "offset": 5424,
+        "line": 258,
+        "column": 32
+      }
+    },
+    {
+      "context": "Id, Name, Account.Name",
+      "start": {
+        "offset": 3246,
+        "line": 155,
+        "column": 11
+      },
+      "end": {
+        "offset": 3268,
+        "line": 155,
+        "column": 33
+      }
+    },
+    {
+      "context": "Id, Name, Industry, AnnualRevenue",
+      "start": {
+        "offset": 3124,
+        "line": 149,
+        "column": 11
+      },
+      "end": {
+        "offset": 3157,
+        "line": 149,
+        "column": 44
+      }
+    },
+    {
+      "context": "Id, TOLABEL(Type), FORMAT(CreatedDate), convertCurrency(AnnualRevenue)",
+      "start": {
+        "offset": 3522,
+        "line": 168,
+        "column": 11
+      },
+      "end": {
+        "offset": 3592,
+        "line": 168,
+        "column": 81
+      }
+    },
+    {
       "context": "Industry",
       "start": {
         "offset": 3134,
@@ -6563,6 +7940,45 @@
         "offset": 3376,
         "line": 161,
         "column": 19
+      }
+    },
+    {
+      "context": "Industry",
+      "start": {
+        "offset": 3438,
+        "line": 163,
+        "column": 13
+      },
+      "end": {
+        "offset": 3446,
+        "line": 163,
+        "column": 21
+      }
+    },
+    {
+      "context": "Industry, COUNT(Id), AVG(AnnualRevenue)",
+      "start": {
+        "offset": 3368,
+        "line": 161,
+        "column": 11
+      },
+      "end": {
+        "offset": 3407,
+        "line": 161,
+        "column": 50
+      }
+    },
+    {
+      "context": "Integer accountCount = [SELECT COUNT() FROM Account WHERE CreatedDate = THIS_MONTH];",
+      "start": {
+        "offset": 3864,
+        "line": 178,
+        "column": 0
+      },
+      "end": {
+        "offset": 3948,
+        "line": 178,
+        "column": 84
       }
     },
     {
@@ -6592,6 +8008,32 @@
       }
     },
     {
+      "context": "Integer arithmetic = (count + total) * 2 - total / 2;",
+      "start": {
+        "offset": 5998,
+        "line": 282,
+        "column": 0
+      },
+      "end": {
+        "offset": 6051,
+        "line": 282,
+        "column": 53
+      }
+    },
+    {
+      "context": "Integer bits = (count & total) | (count ^ total) << 1;",
+      "start": {
+        "offset": 6053,
+        "line": 284,
+        "column": 0
+      },
+      "end": {
+        "offset": 6107,
+        "line": 284,
+        "column": 54
+      }
+    },
+    {
       "context": "Integer bits = (count & total) | (count ^ total) << 1;",
       "start": {
         "offset": 6053,
@@ -6618,6 +8060,58 @@
       }
     },
     {
+      "context": "Integer count = 0, total = 10, missing;",
+      "start": {
+        "offset": 791,
+        "line": 39,
+        "column": 0
+      },
+      "end": {
+        "offset": 830,
+        "line": 39,
+        "column": 39
+      }
+    },
+    {
+      "context": "Integer i = 0",
+      "start": {
+        "offset": 4522,
+        "line": 206,
+        "column": 5
+      },
+      "end": {
+        "offset": 4535,
+        "line": 206,
+        "column": 18
+      }
+    },
+    {
+      "context": "Integer i = 0",
+      "start": {
+        "offset": 4522,
+        "line": 206,
+        "column": 5
+      },
+      "end": {
+        "offset": 4535,
+        "line": 206,
+        "column": 18
+      }
+    },
+    {
+      "context": "Integer i = 0; i < 10; i++",
+      "start": {
+        "offset": 4522,
+        "line": 206,
+        "column": 5
+      },
+      "end": {
+        "offset": 4548,
+        "line": 206,
+        "column": 31
+      }
+    },
+    {
       "context": "Integer index = 0;",
       "start": {
         "offset": 4823,
@@ -6627,6 +8121,32 @@
       "end": {
         "offset": 4841,
         "line": 224,
+        "column": 18
+      }
+    },
+    {
+      "context": "Integer index = 0;",
+      "start": {
+        "offset": 4823,
+        "line": 224,
+        "column": 0
+      },
+      "end": {
+        "offset": 4841,
+        "line": 224,
+        "column": 18
+      }
+    },
+    {
+      "context": "Integer retry = 0;",
+      "start": {
+        "offset": 4879,
+        "line": 230,
+        "column": 0
+      },
+      "end": {
+        "offset": 4897,
+        "line": 230,
         "column": 18
       }
     },
@@ -6670,6 +8190,19 @@
       }
     },
     {
+      "context": "Integer stringLength = 'hello'.length();",
+      "start": {
+        "offset": 5915,
+        "line": 278,
+        "column": 0
+      },
+      "end": {
+        "offset": 5955,
+        "line": 278,
+        "column": 40
+      }
+    },
+    {
       "context": "Integer value",
       "start": {
         "offset": 564,
@@ -6680,6 +8213,58 @@
         "offset": 577,
         "line": 26,
         "column": 36
+      }
+    },
+    {
+      "context": "Integer value",
+      "start": {
+        "offset": 564,
+        "line": 26,
+        "column": 23
+      },
+      "end": {
+        "offset": 577,
+        "line": 26,
+        "column": 36
+      }
+    },
+    {
+      "context": "Integer",
+      "start": {
+        "offset": 1370,
+        "line": 68,
+        "column": 12
+      },
+      "end": {
+        "offset": 1377,
+        "line": 68,
+        "column": 19
+      }
+    },
+    {
+      "context": "Integer",
+      "start": {
+        "offset": 1404,
+        "line": 68,
+        "column": 46
+      },
+      "end": {
+        "offset": 1411,
+        "line": 68,
+        "column": 53
+      }
+    },
+    {
+      "context": "Integer",
+      "start": {
+        "offset": 1554,
+        "line": 74,
+        "column": 24
+      },
+      "end": {
+        "offset": 1561,
+        "line": 74,
+        "column": 31
       }
     },
     {
@@ -6839,6 +8424,32 @@
       }
     },
     {
+      "context": "Integer[] numbers = new Integer[] { 1, 2, 3 };",
+      "start": {
+        "offset": 1530,
+        "line": 74,
+        "column": 0
+      },
+      "end": {
+        "offset": 1576,
+        "line": 74,
+        "column": 46
+      }
+    },
+    {
+      "context": "Integer[]",
+      "start": {
+        "offset": 1530,
+        "line": 74,
+        "column": 0
+      },
+      "end": {
+        "offset": 1539,
+        "line": 74,
+        "column": 9
+      }
+    },
+    {
       "context": "Integer[]",
       "start": {
         "offset": 1530,
@@ -6904,6 +8515,19 @@
       }
     },
     {
+      "context": "List<Account> accountList = [\n    SELECT Id, Name, Industry, AnnualRevenue\n    FROM Account\n    WHERE Id = :accountId\n];",
+      "start": {
+        "offset": 3083,
+        "line": 148,
+        "column": 0
+      },
+      "end": {
+        "offset": 3203,
+        "line": 152,
+        "column": 2
+      }
+    },
+    {
       "context": "List<Account> allFields = [SELECT FIELDS(ALL) FROM Account LIMIT 200];",
       "start": {
         "offset": 3614,
@@ -6914,6 +8538,32 @@
         "offset": 3684,
         "line": 172,
         "column": 70
+      }
+    },
+    {
+      "context": "List<Account> allFields = [SELECT FIELDS(ALL) FROM Account LIMIT 200];",
+      "start": {
+        "offset": 3614,
+        "line": 172,
+        "column": 0
+      },
+      "end": {
+        "offset": 3684,
+        "line": 172,
+        "column": 70
+      }
+    },
+    {
+      "context": "List<Account> dmlAccounts = new List<Account>{\n    new Account(Name = 'A'),\n    new Account(Name = 'B'),\n    new Account(Name = 'C')\n};",
+      "start": {
+        "offset": 2734,
+        "line": 135,
+        "column": 0
+      },
+      "end": {
+        "offset": 2869,
+        "line": 139,
+        "column": 2
       }
     },
     {
@@ -6943,6 +8593,19 @@
       }
     },
     {
+      "context": "List<Account> functionAccounts = [\n    SELECT Id, TOLABEL(Type), FORMAT(CreatedDate), convertCurrency(AnnualRevenue)\n    FROM Account\n];",
+      "start": {
+        "offset": 3476,
+        "line": 167,
+        "column": 0
+      },
+      "end": {
+        "offset": 3612,
+        "line": 170,
+        "column": 2
+      }
+    },
+    {
       "context": "List<Account> lockedAccounts = [SELECT Id, Name FROM Account WHERE Id = :accountId FOR UPDATE];",
       "start": {
         "offset": 3686,
@@ -6953,6 +8616,32 @@
         "offset": 3781,
         "line": 174,
         "column": 95
+      }
+    },
+    {
+      "context": "List<Account> lockedAccounts = [SELECT Id, Name FROM Account WHERE Id = :accountId FOR UPDATE];",
+      "start": {
+        "offset": 3686,
+        "line": 174,
+        "column": 0
+      },
+      "end": {
+        "offset": 3781,
+        "line": 174,
+        "column": 95
+      }
+    },
+    {
+      "context": "List<Account> userModeAccounts = [SELECT Id, Name FROM Account WITH USER_MODE];",
+      "start": {
+        "offset": 3783,
+        "line": 176,
+        "column": 0
+      },
+      "end": {
+        "offset": 3862,
+        "line": 176,
+        "column": 79
       }
     },
     {
@@ -7073,6 +8762,19 @@
       }
     },
     {
+      "context": "List<AggregateResult> results = [\n    SELECT Industry, COUNT(Id), AVG(AnnualRevenue)\n    FROM Account\n    GROUP BY Industry\n    HAVING COUNT(Id) > 1\n];",
+      "start": {
+        "offset": 3323,
+        "line": 160,
+        "column": 0
+      },
+      "end": {
+        "offset": 3474,
+        "line": 165,
+        "column": 2
+      }
+    },
+    {
       "context": "List<AggregateResult>",
       "start": {
         "offset": 3323,
@@ -7083,6 +8785,19 @@
         "offset": 3344,
         "line": 160,
         "column": 21
+      }
+    },
+    {
+      "context": "List<Contact> contactList = [\n    SELECT Id, Name, Account.Name\n    FROM Contact\n    WHERE AccountId = :accountId\n];",
+      "start": {
+        "offset": 3205,
+        "line": 154,
+        "column": 0
+      },
+      "end": {
+        "offset": 3321,
+        "line": 158,
+        "column": 2
       }
     },
     {
@@ -7125,6 +8840,19 @@
       }
     },
     {
+      "context": "List<List<SObject>> searchResults = [\n    FIND 'test'\n    IN ALL FIELDS\n    RETURNING\n        Account(Id, Name),\n        Contact(Id, Name)\n];",
+      "start": {
+        "offset": 4088,
+        "line": 185,
+        "column": 0
+      },
+      "end": {
+        "offset": 4229,
+        "line": 191,
+        "column": 2
+      }
+    },
+    {
       "context": "List<List<SObject>>",
       "start": {
         "offset": 4088,
@@ -7135,6 +8863,32 @@
         "offset": 4107,
         "line": 185,
         "column": 19
+      }
+    },
+    {
+      "context": "List<SObject>",
+      "start": {
+        "offset": 4093,
+        "line": 185,
+        "column": 5
+      },
+      "end": {
+        "offset": 4106,
+        "line": 185,
+        "column": 18
+      }
+    },
+    {
+      "context": "List<String> names = new List<String>();",
+      "start": {
+        "offset": 1233,
+        "line": 62,
+        "column": 0
+      },
+      "end": {
+        "offset": 1273,
+        "line": 62,
+        "column": 40
       }
     },
     {
@@ -7203,6 +8957,19 @@
       }
     },
     {
+      "context": "Long longValue = 100L;",
+      "start": {
+        "offset": 832,
+        "line": 41,
+        "column": 0
+      },
+      "end": {
+        "offset": 854,
+        "line": 41,
+        "column": 22
+      }
+    },
+    {
       "context": "Long",
       "start": {
         "offset": 832,
@@ -7213,6 +8980,19 @@
         "offset": 836,
         "line": 41,
         "column": 4
+      }
+    },
+    {
+      "context": "Map<Id, Account> accounts = new Map<Id, Account>();",
+      "start": {
+        "offset": 1305,
+        "line": 66,
+        "column": 0
+      },
+      "end": {
+        "offset": 1356,
+        "line": 66,
+        "column": 51
       }
     },
     {
@@ -7252,6 +9032,19 @@
         "offset": 1353,
         "line": 66,
         "column": 48
+      }
+    },
+    {
+      "context": "Map<String, Integer> scores = new Map<String, Integer>{ 'a' => 1, 'b' => 2 };",
+      "start": {
+        "offset": 1358,
+        "line": 68,
+        "column": 0
+      },
+      "end": {
+        "offset": 1435,
+        "line": 68,
+        "column": 77
       }
     },
     {
@@ -7606,6 +9399,19 @@
       }
     },
     {
+      "context": "Object value",
+      "start": {
+        "offset": 488,
+        "line": 22,
+        "column": 23
+      },
+      "end": {
+        "offset": 500,
+        "line": 22,
+        "column": 35
+      }
+    },
+    {
       "context": "Object",
       "start": {
         "offset": 488,
@@ -7788,6 +9594,32 @@
       }
     },
     {
+      "context": "SObject objectValue = new Account(Name = 'Cast Test');",
+      "start": {
+        "offset": 6237,
+        "line": 292,
+        "column": 0
+      },
+      "end": {
+        "offset": 6291,
+        "line": 292,
+        "column": 54
+      }
+    },
+    {
+      "context": "SObject",
+      "start": {
+        "offset": 4098,
+        "line": 185,
+        "column": 10
+      },
+      "end": {
+        "offset": 4105,
+        "line": 185,
+        "column": 17
+      }
+    },
+    {
       "context": "SObject",
       "start": {
         "offset": 6237,
@@ -7798,6 +9630,19 @@
         "offset": 6244,
         "line": 292,
         "column": 7
+      }
+    },
+    {
+      "context": "Set<Id> ids = new Set<Id>();",
+      "start": {
+        "offset": 1275,
+        "line": 64,
+        "column": 0
+      },
+      "end": {
+        "offset": 1303,
+        "line": 64,
+        "column": 28
       }
     },
     {
@@ -7850,6 +9695,32 @@
         "offset": 1528,
         "line": 72,
         "column": 42
+      }
+    },
+    {
+      "context": "Set<String> emptyTags = new Set<String>{};",
+      "start": {
+        "offset": 1486,
+        "line": 72,
+        "column": 0
+      },
+      "end": {
+        "offset": 1528,
+        "line": 72,
+        "column": 42
+      }
+    },
+    {
+      "context": "Set<String> tags = new Set<String>{ 'x', 'y' };",
+      "start": {
+        "offset": 1437,
+        "line": 70,
+        "column": 0
+      },
+      "end": {
+        "offset": 1484,
+        "line": 70,
+        "column": 47
       }
     },
     {
@@ -7944,6 +9815,19 @@
       }
     },
     {
+      "context": "String converted = String.valueOf(123);",
+      "start": {
+        "offset": 5957,
+        "line": 280,
+        "column": 0
+      },
+      "end": {
+        "offset": 5996,
+        "line": 280,
+        "column": 39
+      }
+    },
+    {
       "context": "String describe(Object value) {\n    return String.valueOf(value);\n}",
       "start": {
         "offset": 472,
@@ -7983,6 +9867,19 @@
       }
     },
     {
+      "context": "String name = 'Test';",
+      "start": {
+        "offset": 768,
+        "line": 37,
+        "column": 0
+      },
+      "end": {
+        "offset": 789,
+        "line": 37,
+        "column": 21
+      }
+    },
+    {
       "context": "String name",
       "start": {
         "offset": 285,
@@ -7993,6 +9890,32 @@
         "offset": 296,
         "line": 8,
         "column": 35
+      }
+    },
+    {
+      "context": "String name",
+      "start": {
+        "offset": 285,
+        "line": 8,
+        "column": 24
+      },
+      "end": {
+        "offset": 296,
+        "line": 8,
+        "column": 35
+      }
+    },
+    {
+      "context": "String result = enabled ? 'enabled' : 'disabled';",
+      "start": {
+        "offset": 5172,
+        "line": 250,
+        "column": 0
+      },
+      "end": {
+        "offset": 5221,
+        "line": 250,
+        "column": 49
       }
     },
     {
@@ -8022,6 +9945,19 @@
       }
     },
     {
+      "context": "String status = 'NEW';",
+      "start": {
+        "offset": 4942,
+        "line": 236,
+        "column": 0
+      },
+      "end": {
+        "offset": 4964,
+        "line": 236,
+        "column": 22
+      }
+    },
+    {
       "context": "String upper = 'hello'.toUpperCase();",
       "start": {
         "offset": 5876,
@@ -8032,6 +9968,32 @@
         "offset": 5913,
         "line": 276,
         "column": 37
+      }
+    },
+    {
+      "context": "String upper = 'hello'.toUpperCase();",
+      "start": {
+        "offset": 5876,
+        "line": 276,
+        "column": 0
+      },
+      "end": {
+        "offset": 5913,
+        "line": 276,
+        "column": 37
+      }
+    },
+    {
+      "context": "String value",
+      "start": {
+        "offset": 393,
+        "line": 14,
+        "column": 16
+      },
+      "end": {
+        "offset": 405,
+        "line": 14,
+        "column": 28
       }
     },
     {
@@ -8063,6 +10025,110 @@
     {
       "context": "String",
       "start": {
+        "offset": 1238,
+        "line": 62,
+        "column": 5
+      },
+      "end": {
+        "offset": 1244,
+        "line": 62,
+        "column": 11
+      }
+    },
+    {
+      "context": "String",
+      "start": {
+        "offset": 1263,
+        "line": 62,
+        "column": 30
+      },
+      "end": {
+        "offset": 1269,
+        "line": 62,
+        "column": 36
+      }
+    },
+    {
+      "context": "String",
+      "start": {
+        "offset": 1362,
+        "line": 68,
+        "column": 4
+      },
+      "end": {
+        "offset": 1368,
+        "line": 68,
+        "column": 10
+      }
+    },
+    {
+      "context": "String",
+      "start": {
+        "offset": 1396,
+        "line": 68,
+        "column": 38
+      },
+      "end": {
+        "offset": 1402,
+        "line": 68,
+        "column": 44
+      }
+    },
+    {
+      "context": "String",
+      "start": {
+        "offset": 1441,
+        "line": 70,
+        "column": 4
+      },
+      "end": {
+        "offset": 1447,
+        "line": 70,
+        "column": 10
+      }
+    },
+    {
+      "context": "String",
+      "start": {
+        "offset": 1464,
+        "line": 70,
+        "column": 27
+      },
+      "end": {
+        "offset": 1470,
+        "line": 70,
+        "column": 33
+      }
+    },
+    {
+      "context": "String",
+      "start": {
+        "offset": 1490,
+        "line": 72,
+        "column": 4
+      },
+      "end": {
+        "offset": 1496,
+        "line": 72,
+        "column": 10
+      }
+    },
+    {
+      "context": "String",
+      "start": {
+        "offset": 1518,
+        "line": 72,
+        "column": 32
+      },
+      "end": {
+        "offset": 1524,
+        "line": 72,
+        "column": 38
+      }
+    },
+    {
+      "context": "String",
+      "start": {
         "offset": 1599,
         "line": 76,
         "column": 21
@@ -8071,6 +10137,32 @@
         "offset": 1605,
         "line": 76,
         "column": 27
+      }
+    },
+    {
+      "context": "String",
+      "start": {
+        "offset": 1599,
+        "line": 76,
+        "column": 21
+      },
+      "end": {
+        "offset": 1605,
+        "line": 76,
+        "column": 27
+      }
+    },
+    {
+      "context": "String",
+      "start": {
+        "offset": 1809,
+        "line": 85,
+        "column": 22
+      },
+      "end": {
+        "offset": 1815,
+        "line": 85,
+        "column": 28
       }
     },
     {
@@ -8253,6 +10345,32 @@
         "offset": 1609,
         "line": 76,
         "column": 31
+      }
+    },
+    {
+      "context": "String[] sized = new String[5];",
+      "start": {
+        "offset": 1578,
+        "line": 76,
+        "column": 0
+      },
+      "end": {
+        "offset": 1609,
+        "line": 76,
+        "column": 31
+      }
+    },
+    {
+      "context": "String[]",
+      "start": {
+        "offset": 1578,
+        "line": 76,
+        "column": 0
+      },
+      "end": {
+        "offset": 1586,
+        "line": 76,
+        "column": 8
       }
     },
     {
@@ -8552,6 +10670,19 @@
         "offset": 6804,
         "line": 314,
         "column": 6
+      }
+    },
+    {
+      "context": "System.Type accountType = Account.class;",
+      "start": {
+        "offset": 6469,
+        "line": 301,
+        "column": 0
+      },
+      "end": {
+        "offset": 6509,
+        "line": 301,
+        "column": 40
       }
     },
     {
@@ -9166,6 +11297,19 @@
       }
     },
     {
+      "context": "THIS_MONTH",
+      "start": {
+        "offset": 3936,
+        "line": 178,
+        "column": 72
+      },
+      "end": {
+        "offset": 3946,
+        "line": 178,
+        "column": 82
+      }
+    },
+    {
       "context": "TOLABEL(Type)",
       "start": {
         "offset": 3526,
@@ -9176,6 +11320,19 @@
         "offset": 3539,
         "line": 168,
         "column": 28
+      }
+    },
+    {
+      "context": "Time timeValue = Time.newInstance(12, 30, 0, 0);",
+      "start": {
+        "offset": 1001,
+        "line": 53,
+        "column": 0
+      },
+      "end": {
+        "offset": 1049,
+        "line": 53,
+        "column": 48
       }
     },
     {
@@ -9267,6 +11424,97 @@
         "offset": 6717,
         "line": 308,
         "column": 47
+      }
+    },
+    {
+      "context": "WHERE AccountId = :accountId",
+      "start": {
+        "offset": 3290,
+        "line": 157,
+        "column": 4
+      },
+      "end": {
+        "offset": 3318,
+        "line": 157,
+        "column": 32
+      }
+    },
+    {
+      "context": "WHERE CreatedDate = THIS_MONTH",
+      "start": {
+        "offset": 3916,
+        "line": 178,
+        "column": 52
+      },
+      "end": {
+        "offset": 3946,
+        "line": 178,
+        "column": 82
+      }
+    },
+    {
+      "context": "WHERE Id = :accountId",
+      "start": {
+        "offset": 3179,
+        "line": 151,
+        "column": 4
+      },
+      "end": {
+        "offset": 3200,
+        "line": 151,
+        "column": 25
+      }
+    },
+    {
+      "context": "WHERE Id = :accountId",
+      "start": {
+        "offset": 3747,
+        "line": 174,
+        "column": 61
+      },
+      "end": {
+        "offset": 3768,
+        "line": 174,
+        "column": 82
+      }
+    },
+    {
+      "context": "WHERE Id = :accountId",
+      "start": {
+        "offset": 5438,
+        "line": 258,
+        "column": 46
+      },
+      "end": {
+        "offset": 5459,
+        "line": 258,
+        "column": 67
+      }
+    },
+    {
+      "context": "WITH USER_MODE",
+      "start": {
+        "offset": 3846,
+        "line": 176,
+        "column": 63
+      },
+      "end": {
+        "offset": 3860,
+        "line": 176,
+        "column": 77
+      }
+    },
+    {
+      "context": "[\n    FIND 'test'\n    IN ALL FIELDS\n    RETURNING\n        Account(Id, Name),\n        Contact(Id, Name)\n]",
+      "start": {
+        "offset": 4124,
+        "line": 185,
+        "column": 36
+      },
+      "end": {
+        "offset": 4228,
+        "line": 191,
+        "column": 1
       }
     },
     {
@@ -9904,6 +12152,32 @@
         "offset": 6338,
         "line": 294,
         "column": 45
+      }
+    },
+    {
+      "context": "catch (Exception e) {\n    System.debug(e.getMessage());\n}",
+      "start": {
+        "offset": 5630,
+        "line": 265,
+        "column": 2
+      },
+      "end": {
+        "offset": 5687,
+        "line": 267,
+        "column": 1
+      }
+    },
+    {
+      "context": "catch (QueryException e) {\n    System.debug(e.getMessage());\n}",
+      "start": {
+        "offset": 5567,
+        "line": 263,
+        "column": 2
+      },
+      "end": {
+        "offset": 5629,
+        "line": 265,
+        "column": 1
       }
     },
     {
@@ -10557,6 +12831,19 @@
       }
     },
     {
+      "context": "final String CONSTANT = 'constant';",
+      "start": {
+        "offset": 1051,
+        "line": 55,
+        "column": 0
+      },
+      "end": {
+        "offset": 1086,
+        "line": 55,
+        "column": 35
+      }
+    },
+    {
       "context": "final",
       "start": {
         "offset": 1051,
@@ -10567,6 +12854,19 @@
         "offset": 1056,
         "line": 55,
         "column": 5
+      }
+    },
+    {
+      "context": "finally {\n    System.debug('finished');\n}",
+      "start": {
+        "offset": 5688,
+        "line": 267,
+        "column": 2
+      },
+      "end": {
+        "offset": 5729,
+        "line": 269,
+        "column": 1
       }
     },
     {
@@ -11714,6 +14014,19 @@
       }
     },
     {
+      "context": "private Integer square(Integer value) {\n    return value * value;\n}",
+      "start": {
+        "offset": 541,
+        "line": 26,
+        "column": 0
+      },
+      "end": {
+        "offset": 608,
+        "line": 28,
+        "column": 1
+      }
+    },
+    {
       "context": "private",
       "start": {
         "offset": 541,
@@ -11724,6 +14037,84 @@
         "offset": 548,
         "line": 26,
         "column": 7
+      }
+    },
+    {
+      "context": "public String greet(String name) {\n        return 'Hello ' + name;\n    }",
+      "start": {
+        "offset": 265,
+        "line": 8,
+        "column": 4
+      },
+      "end": {
+        "offset": 337,
+        "line": 10,
+        "column": 5
+      }
+    },
+    {
+      "context": "public class AnonymousHelper {\n    public String greet(String name) {\n        return 'Hello ' + name;\n    }\n}",
+      "start": {
+        "offset": 230,
+        "line": 7,
+        "column": 0
+      },
+      "end": {
+        "offset": 339,
+        "line": 11,
+        "column": 1
+      }
+    },
+    {
+      "context": "public class AnonymousHelper {\n    public String greet(String name) {\n        return 'Hello ' + name;\n    }\n}\n\npublic interface AnonymousHandler {\n    void handle(String value);\n}\n\npublic enum AnonymousStatus {\n    OPEN,\n    CLOSED\n}\n\nstatic String describe(Object value) {\n    return String.valueOf(value);\n}\n\nprivate Integer square(Integer value) {\n    return value * value;\n}\n\n\n// ============================================================\n// Variables\n// ============================================================\n\nId accountId;\n\nString name = 'Test';\n\nInteger count = 0, total = 10, missing;\n\nLong longValue = 100L;\n\nDouble doubleValue = 10.5;\n\nDecimal decimalValue = 100.25;\n\nBoolean enabled = true;\n\nDate today = Date.today();\n\nDatetime now = Datetime.now();\n\nTime timeValue = Time.newInstance(12, 30, 0, 0);\n\nfinal String CONSTANT = 'constant';\n\n\n// ============================================================\n// Collections\n// ============================================================\n\nList<String> names = new List<String>();\n\nSet<Id> ids = new Set<Id>();\n\nMap<Id, Account> accounts = new Map<Id, Account>();\n\nMap<String, Integer> scores = new Map<String, Integer>{ 'a' => 1, 'b' => 2 };\n\nSet<String> tags = new Set<String>{ 'x', 'y' };\n\nSet<String> emptyTags = new Set<String>{};\n\nInteger[] numbers = new Integer[] { 1, 2, 3 };\n\nString[] sized = new String[5];\n\n\n// ============================================================\n// Collection operations\n// ============================================================\n\nnames.add('Alice');\n\nnames.addAll(new List<String>{ 'Charlie', 'David' });\n\nnames[0] = 'Bob';\n\nSystem.debug(names.size());\n\nSystem.debug(names.isEmpty());\n\nSystem.debug(names.contains('Alice'));\n\nSystem.debug(scores.get('a') ?? 0);\n\n\n// ============================================================\n// sObject / DML\n// ============================================================\n\nAccount account = new Account(Name = 'Anonymous Account');\n\ninsert account;\n\naccountId = account.Id;\n\naccounts.put(account.Id, account);\n\nAccount retrieved = accounts.get(account.Id);\n\nSystem.debug(retrieved?.Name);\n\naccount.Name = 'Updated';\n\nupdate as user account;\n\nupsert account Account.Id;\n\nAccount duplicate = new Account(Name = 'Duplicate');\n\ninsert duplicate;\n\nmerge as system account duplicate;\n\ndelete account;\n\nundelete account;\n\n\n// ============================================================\n// Database DML\n// ============================================================\n\nList<Account> dmlAccounts = new List<Account>{\n    new Account(Name = 'A'),\n    new Account(Name = 'B'),\n    new Account(Name = 'C')\n};\n\nDatabase.SaveResult[] saveResults = Database.insert(dmlAccounts, false);\n\n\n// ============================================================\n// SOQL\n// ============================================================\n\nList<Account> accountList = [\n    SELECT Id, Name, Industry, AnnualRevenue\n    FROM Account\n    WHERE Id = :accountId\n];\n\nList<Contact> contactList = [\n    SELECT Id, Name, Account.Name\n    FROM Contact\n    WHERE AccountId = :accountId\n];\n\nList<AggregateResult> results = [\n    SELECT Industry, COUNT(Id), AVG(AnnualRevenue)\n    FROM Account\n    GROUP BY Industry\n    HAVING COUNT(Id) > 1\n];\n\nList<Account> functionAccounts = [\n    SELECT Id, TOLABEL(Type), FORMAT(CreatedDate), convertCurrency(AnnualRevenue)\n    FROM Account\n];\n\nList<Account> allFields = [SELECT FIELDS(ALL) FROM Account LIMIT 200];\n\nList<Account> lockedAccounts = [SELECT Id, Name FROM Account WHERE Id = :accountId FOR UPDATE];\n\nList<Account> userModeAccounts = [SELECT Id, Name FROM Account WITH USER_MODE];\n\nInteger accountCount = [SELECT COUNT() FROM Account WHERE CreatedDate = THIS_MONTH];\n\n\n// ============================================================\n// SOSL\n// ============================================================\n\nList<List<SObject>> searchResults = [\n    FIND 'test'\n    IN ALL FIELDS\n    RETURNING\n        Account(Id, Name),\n        Contact(Id, Name)\n];\n\n\n// ============================================================\n// Control flow\n// ============================================================\n\nif (count == 0) {\n    System.debug('zero');\n} else if (count > 0) {\n    System.debug('positive');\n} else {\n    System.debug('negative');\n}\n\nfor (Integer i = 0; i < 10; i++) {\n    if (Math.mod(i, 2) == 0) {\n        continue;\n    }\n    if (i == 7) {\n        break;\n    }\n    System.debug(i);\n}\n\nfor (Account item : accountList) {\n    System.debug(item.Name);\n}\n\nfor (Account item : [SELECT Id FROM Account LIMIT 5]) {\n    System.debug(item.Id);\n}\n\nInteger index = 0;\n\nwhile (index < 5) {\n    index++;\n}\n\nInteger retry = 0;\n\ndo {\n    retry += 1;\n} while (retry < 3);\n\nString status = 'NEW';\n\nswitch on status {\n    when 'NEW' {\n        System.debug('new');\n    }\n    when 'PROCESSING', 'PENDING' {\n        System.debug('processing');\n    }\n    when else {\n        System.debug('unknown');\n    }\n}\n\nString result = enabled ? 'enabled' : 'disabled';\n\n\n// ============================================================\n// Try / Catch / Finally / throw\n// ============================================================\n\ntry {\n    Account a = [SELECT Id, Name FROM Account WHERE Id = :accountId LIMIT 1];\n    System.debug(a);\n    if (a == null) {\n        throw new QueryException('not found');\n    }\n} catch (QueryException e) {\n    System.debug(e.getMessage());\n} catch (Exception e) {\n    System.debug(e.getMessage());\n} finally {\n    System.debug('finished');\n}\n\n\n// ============================================================\n// Expressions\n// ============================================================\n\nString upper = 'hello'.toUpperCase();\n\nInteger stringLength = 'hello'.length();\n\nString converted = String.valueOf(123);\n\nInteger arithmetic = (count + total) * 2 - total / 2;\n\nInteger bits = (count & total) | (count ^ total) << 1;\n\nBoolean complexCondition =\n    enabled\n    && count >= 0\n    && (name == 'Test' || name.startsWith('A'))\n    && !(count != 0);\n\nSObject objectValue = new Account(Name = 'Cast Test');\n\nAccount castedAccount = (Account) objectValue;\n\nif (objectValue instanceof Account) {\n    Account accountValue = (Account) objectValue;\n    System.debug(accountValue.Name);\n}\n\nSystem.Type accountType = Account.class;\n\n\n// ============================================================\n// System.runAs / assertions\n// ============================================================\n\nSystem.runAs(new User(Id = UserInfo.getUserId())) {\n    System.debug('run as');\n}\n\nSystem.assertEquals(3, dmlAccounts.size());\n\nSystem.assert(enabled);\n\nAssert.isTrue(enabled, 'should be enabled');",
+      "start": {
+        "offset": 230,
+        "line": 7,
+        "column": 0
+      },
+      "end": {
+        "offset": 6867,
+        "line": 316,
+        "column": 44
+      }
+    },
+    {
+      "context": "public class AnonymousHelper {\n    public String greet(String name) {\n        return 'Hello ' + name;\n    }\n}\n\npublic interface AnonymousHandler {\n    void handle(String value);\n}\n\npublic enum AnonymousStatus {\n    OPEN,\n    CLOSED\n}\n\nstatic String describe(Object value) {\n    return String.valueOf(value);\n}\n\nprivate Integer square(Integer value) {\n    return value * value;\n}\n\n\n// ============================================================\n// Variables\n// ============================================================\n\nId accountId;\n\nString name = 'Test';\n\nInteger count = 0, total = 10, missing;\n\nLong longValue = 100L;\n\nDouble doubleValue = 10.5;\n\nDecimal decimalValue = 100.25;\n\nBoolean enabled = true;\n\nDate today = Date.today();\n\nDatetime now = Datetime.now();\n\nTime timeValue = Time.newInstance(12, 30, 0, 0);\n\nfinal String CONSTANT = 'constant';\n\n\n// ============================================================\n// Collections\n// ============================================================\n\nList<String> names = new List<String>();\n\nSet<Id> ids = new Set<Id>();\n\nMap<Id, Account> accounts = new Map<Id, Account>();\n\nMap<String, Integer> scores = new Map<String, Integer>{ 'a' => 1, 'b' => 2 };\n\nSet<String> tags = new Set<String>{ 'x', 'y' };\n\nSet<String> emptyTags = new Set<String>{};\n\nInteger[] numbers = new Integer[] { 1, 2, 3 };\n\nString[] sized = new String[5];\n\n\n// ============================================================\n// Collection operations\n// ============================================================\n\nnames.add('Alice');\n\nnames.addAll(new List<String>{ 'Charlie', 'David' });\n\nnames[0] = 'Bob';\n\nSystem.debug(names.size());\n\nSystem.debug(names.isEmpty());\n\nSystem.debug(names.contains('Alice'));\n\nSystem.debug(scores.get('a') ?? 0);\n\n\n// ============================================================\n// sObject / DML\n// ============================================================\n\nAccount account = new Account(Name = 'Anonymous Account');\n\ninsert account;\n\naccountId = account.Id;\n\naccounts.put(account.Id, account);\n\nAccount retrieved = accounts.get(account.Id);\n\nSystem.debug(retrieved?.Name);\n\naccount.Name = 'Updated';\n\nupdate as user account;\n\nupsert account Account.Id;\n\nAccount duplicate = new Account(Name = 'Duplicate');\n\ninsert duplicate;\n\nmerge as system account duplicate;\n\ndelete account;\n\nundelete account;\n\n\n// ============================================================\n// Database DML\n// ============================================================\n\nList<Account> dmlAccounts = new List<Account>{\n    new Account(Name = 'A'),\n    new Account(Name = 'B'),\n    new Account(Name = 'C')\n};\n\nDatabase.SaveResult[] saveResults = Database.insert(dmlAccounts, false);\n\n\n// ============================================================\n// SOQL\n// ============================================================\n\nList<Account> accountList = [\n    SELECT Id, Name, Industry, AnnualRevenue\n    FROM Account\n    WHERE Id = :accountId\n];\n\nList<Contact> contactList = [\n    SELECT Id, Name, Account.Name\n    FROM Contact\n    WHERE AccountId = :accountId\n];\n\nList<AggregateResult> results = [\n    SELECT Industry, COUNT(Id), AVG(AnnualRevenue)\n    FROM Account\n    GROUP BY Industry\n    HAVING COUNT(Id) > 1\n];\n\nList<Account> functionAccounts = [\n    SELECT Id, TOLABEL(Type), FORMAT(CreatedDate), convertCurrency(AnnualRevenue)\n    FROM Account\n];\n\nList<Account> allFields = [SELECT FIELDS(ALL) FROM Account LIMIT 200];\n\nList<Account> lockedAccounts = [SELECT Id, Name FROM Account WHERE Id = :accountId FOR UPDATE];\n\nList<Account> userModeAccounts = [SELECT Id, Name FROM Account WITH USER_MODE];\n\nInteger accountCount = [SELECT COUNT() FROM Account WHERE CreatedDate = THIS_MONTH];\n\n\n// ============================================================\n// SOSL\n// ============================================================\n\nList<List<SObject>> searchResults = [\n    FIND 'test'\n    IN ALL FIELDS\n    RETURNING\n        Account(Id, Name),\n        Contact(Id, Name)\n];\n\n\n// ============================================================\n// Control flow\n// ============================================================\n\nif (count == 0) {\n    System.debug('zero');\n} else if (count > 0) {\n    System.debug('positive');\n} else {\n    System.debug('negative');\n}\n\nfor (Integer i = 0; i < 10; i++) {\n    if (Math.mod(i, 2) == 0) {\n        continue;\n    }\n    if (i == 7) {\n        break;\n    }\n    System.debug(i);\n}\n\nfor (Account item : accountList) {\n    System.debug(item.Name);\n}\n\nfor (Account item : [SELECT Id FROM Account LIMIT 5]) {\n    System.debug(item.Id);\n}\n\nInteger index = 0;\n\nwhile (index < 5) {\n    index++;\n}\n\nInteger retry = 0;\n\ndo {\n    retry += 1;\n} while (retry < 3);\n\nString status = 'NEW';\n\nswitch on status {\n    when 'NEW' {\n        System.debug('new');\n    }\n    when 'PROCESSING', 'PENDING' {\n        System.debug('processing');\n    }\n    when else {\n        System.debug('unknown');\n    }\n}\n\nString result = enabled ? 'enabled' : 'disabled';\n\n\n// ============================================================\n// Try / Catch / Finally / throw\n// ============================================================\n\ntry {\n    Account a = [SELECT Id, Name FROM Account WHERE Id = :accountId LIMIT 1];\n    System.debug(a);\n    if (a == null) {\n        throw new QueryException('not found');\n    }\n} catch (QueryException e) {\n    System.debug(e.getMessage());\n} catch (Exception e) {\n    System.debug(e.getMessage());\n} finally {\n    System.debug('finished');\n}\n\n\n// ============================================================\n// Expressions\n// ============================================================\n\nString upper = 'hello'.toUpperCase();\n\nInteger stringLength = 'hello'.length();\n\nString converted = String.valueOf(123);\n\nInteger arithmetic = (count + total) * 2 - total / 2;\n\nInteger bits = (count & total) | (count ^ total) << 1;\n\nBoolean complexCondition =\n    enabled\n    && count >= 0\n    && (name == 'Test' || name.startsWith('A'))\n    && !(count != 0);\n\nSObject objectValue = new Account(Name = 'Cast Test');\n\nAccount castedAccount = (Account) objectValue;\n\nif (objectValue instanceof Account) {\n    Account accountValue = (Account) objectValue;\n    System.debug(accountValue.Name);\n}\n\nSystem.Type accountType = Account.class;\n\n\n// ============================================================\n// System.runAs / assertions\n// ============================================================\n\nSystem.runAs(new User(Id = UserInfo.getUserId())) {\n    System.debug('run as');\n}\n\nSystem.assertEquals(3, dmlAccounts.size());\n\nSystem.assert(enabled);\n\nAssert.isTrue(enabled, 'should be enabled');",
+      "start": {
+        "offset": 230,
+        "line": 7,
+        "column": 0
+      },
+      "end": {
+        "offset": 6867,
+        "line": 316,
+        "column": 44
+      }
+    },
+    {
+      "context": "public enum AnonymousStatus {\n    OPEN,\n    CLOSED\n}",
+      "start": {
+        "offset": 411,
+        "line": 17,
+        "column": 0
+      },
+      "end": {
+        "offset": 463,
+        "line": 20,
+        "column": 1
+      }
+    },
+    {
+      "context": "public interface AnonymousHandler {\n    void handle(String value);\n}",
+      "start": {
+        "offset": 341,
+        "line": 13,
+        "column": 0
+      },
+      "end": {
+        "offset": 409,
+        "line": 15,
+        "column": 1
       }
     },
     {
@@ -12062,6 +14453,19 @@
         "offset": 563,
         "line": 26,
         "column": 22
+      }
+    },
+    {
+      "context": "static String describe(Object value) {\n    return String.valueOf(value);\n}",
+      "start": {
+        "offset": 465,
+        "line": 22,
+        "column": 0
+      },
+      "end": {
+        "offset": 539,
+        "line": 24,
+        "column": 1
       }
     },
     {
@@ -12416,6 +14820,58 @@
       }
     },
     {
+      "context": "void handle(String value);",
+      "start": {
+        "offset": 381,
+        "line": 14,
+        "column": 4
+      },
+      "end": {
+        "offset": 407,
+        "line": 14,
+        "column": 30
+      }
+    },
+    {
+      "context": "when 'NEW' {\n        System.debug('new');\n    }",
+      "start": {
+        "offset": 4989,
+        "line": 239,
+        "column": 4
+      },
+      "end": {
+        "offset": 5036,
+        "line": 241,
+        "column": 5
+      }
+    },
+    {
+      "context": "when 'PROCESSING', 'PENDING' {\n        System.debug('processing');\n    }",
+      "start": {
+        "offset": 5041,
+        "line": 242,
+        "column": 4
+      },
+      "end": {
+        "offset": 5113,
+        "line": 244,
+        "column": 5
+      }
+    },
+    {
+      "context": "when else {\n        System.debug('unknown');\n    }",
+      "start": {
+        "offset": 5118,
+        "line": 245,
+        "column": 4
+      },
+      "end": {
+        "offset": 5168,
+        "line": 247,
+        "column": 5
+      }
+    },
+    {
       "context": "while (index < 5) {\n    index++;\n}",
       "start": {
         "offset": 4843,
@@ -12425,6 +14881,32 @@
       "end": {
         "offset": 4877,
         "line": 228,
+        "column": 1
+      }
+    },
+    {
+      "context": "{\n    Account a = [SELECT Id, Name FROM Account WHERE Id = :accountId LIMIT 1];\n    System.debug(a);\n    if (a == null) {\n        throw new QueryException('not found');\n    }\n}",
+      "start": {
+        "offset": 5390,
+        "line": 257,
+        "column": 4
+      },
+      "end": {
+        "offset": 5566,
+        "line": 263,
+        "column": 1
+      }
+    },
+    {
+      "context": "{\n    System.debug('negative');\n}",
+      "start": {
+        "offset": 4482,
+        "line": 202,
+        "column": 7
+      },
+      "end": {
+        "offset": 4515,
+        "line": 204,
         "column": 1
       }
     }

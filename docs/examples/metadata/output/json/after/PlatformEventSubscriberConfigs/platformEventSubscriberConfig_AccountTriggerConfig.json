@@ -1,0 +1,41 @@
+{
+  "filePath": "PlatformEventSubscriberConfigs/AccountTriggerConfig.platformEventSubscriberConfig-meta.xml",
+  "resolvedError": [],
+  "dataType": "platformEventSubscriberConfig",
+  "result": {
+    "id": "platformEventSubscriberConfig_AccountTriggerConfig",
+    "base": {
+      "kind": "platformEventSubscriberConfig",
+      "sourceKeys": {
+        "objectKey": "platformEventSubscriberConfig_aac37910286aae1f",
+        "sourceKey": "platformEventSubscriberConfig_19f299fd3009730c"
+      },
+      "fullName": "AccountTriggerConfig",
+      "masterLabel": "Account Trigger Config",
+      "platformEventConsumer": "AccountTrigger",
+      "batchSize": 100
+    },
+    "sourceObject": [
+      {
+        "objectKey": "platformEventSubscriberConfig_aac37910286aae1f",
+        "context": "<PlatformEventSubscriberConfig xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <batchSize>100</batchSize>\n    <masterLabel>Account Trigger Config</masterLabel>\n    <platformEventConsumer>AccountTrigger</platformEventConsumer>\n</PlatformEventSubscriberConfig>",
+        "source": [
+          {
+            "sourceKey": "platformEventSubscriberConfig_19f299fd3009730c",
+            "filePath": "PlatformEventSubscriberConfigs/AccountTriggerConfig.platformEventSubscriberConfig-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 302,
+              "line": 6,
+              "column": 32
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -32,14 +32,15 @@ describe('makeLogicalConditionJson', () => {
             const [logical] = find(json, (n) => isLogicalConditionJson(n));
             assert.ok(logical, where);
 
-            // 論理条件は非境界ノード (キーを持たない)。単一条件だけが境界ノード
+            // 論理条件もノード (kind: soqlLogical と位置を持つ。apex 7・docs/plan.md 4.3 の 1)
+            assert.equal(logical.kind, 'soqlLogical');
+            assert.ok(logical.sourceKeys.objectKey && logical.sourceKeys.sourceKey);
             assert.equal(Object.hasOwn(logical, 'operator'), operator !== null);
             assert.equal(logical.operator, operator ?? undefined);
             assert.equal(logical.condition.length, count);
             assert.ok(
                 logical.condition.every((c: { kind: string }) => c.kind === 'singleCondition'),
             );
-            assert.equal(Object.hasOwn(logical, 'sourceKeys'), false);
         });
     }
 });

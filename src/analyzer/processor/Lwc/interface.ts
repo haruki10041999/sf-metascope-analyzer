@@ -43,7 +43,7 @@ export const lwcInterfaceOf = (bundle: LwcBundleJson): LwcInterfaceMember[] => {
                 name: member.name,
                 ...(member.variantType ? { type: lwcTypeTextOf(member.variantType) } : {}),
                 accessor: 'field',
-                sourceKeys: member.sourceKeys.base,
+                sourceKeys: member.sourceKeys,
             });
         } else if (
             member.kind === 'lwcProperty' &&
@@ -59,7 +59,7 @@ export const lwcInterfaceOf = (bundle: LwcBundleJson): LwcInterfaceMember[] => {
                         : member.isGetter
                           ? 'get'
                           : 'set',
-                sourceKeys: member.sourceKeys.base,
+                sourceKeys: member.sourceKeys,
             });
         } else if (member.kind === 'lwcMethod' && hasApi(member.modifier)) {
             result.push({
@@ -69,7 +69,7 @@ export const lwcInterfaceOf = (bundle: LwcBundleJson): LwcInterfaceMember[] => {
                     (p) => p.variant ?? (p.pattern?.kind === 'jsArrayPattern' ? '[...]' : '{...}'),
                 ),
                 ...(member.returnType ? { type: lwcTypeTextOf(member.returnType) } : {}),
-                sourceKeys: member.sourceKeys.base,
+                sourceKeys: member.sourceKeys,
             });
         }
     }

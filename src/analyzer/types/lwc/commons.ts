@@ -2,12 +2,15 @@
 // 入力は IR v2 (lwc_IR) のノード。ソースの文字列はノードの位置 (getSpan) から読み、
 // JSON を作る段階でキー (sourceKeys) とソース位置の一覧 (sourceObject) を作る (docs/ir-integration.md 3.2)。
 // v2 の木にはエラーのノードがないので、v1 の convertLwcValue のような、部分木のエラーを調べる処理はない
-import type { ConvertKeys } from '../commons/json';
+import { type ConvertKeys, type JsonType, makeContentKeyedJson } from '../commons/json';
 import type { TypeField } from '../commons/ir';
 import { hash } from '../commons/utils';
 import { LwcCommonTypeClass } from '../lwc_IR/commonVisitor';
 
 import type { LwcSourceJson } from './bundle';
+
+// union の各要素ごとに Omit する
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
 
 /** IR v2 の、任意のノード */
 export type LwcNode = LwcCommonTypeClass<string, TypeField<string>>;
@@ -65,19 +68,70 @@ export class LwcJsonContext {
     }
 
     /**
-     * StructureJson の sourceKeys。base はノード自身、ほかは { JSON 側の名前: 子ノード }。
-     * 子ノードがない (名前のないクラスなど) ときは、ノード全体の位置にする (v1 と同じ)
+     * IR に対応するノードがない JSON (if の節・修飾子の一覧・関数の中身など) を作る (docs/plan.md 4.2)。
+     * objectKey はこの JSON 自身の中身から作り (makeContentKeyedJson)、位置は node のものを借りる。
+     * 借りた位置は、作った objectKey の一覧として sourceObject に登録する
      */
-    structureKeysOf<TKey extends string>(
+    derivedJson<T extends JsonType<string>>(
+        kind: T['kind'],
         node: LwcNode,
-        children: Readonly<Record<TKey, LwcNode | null | undefined>>,
-    ): { base: ConvertKeys } & Record<TKey, ConvertKeys> {
+        properties: DistributiveOmit<T, 'kind' | 'sourceKeys'>,
+    ): T {
         const base = this.keysOf(node);
-        const sourceKeys: Record<string, ConvertKeys> = { base };
-        for (const [name, child] of Object.entries<LwcNode | null | undefined>(children)) {
-            sourceKeys[name] = child ? this.keysOf(child) : base;
+        const json = makeContentKeyedJson<T>(kind, base.sourceKey, properties);
+        const position = this.sourceObjects
+            .get(base.objectKey)
+            ?.source.find((s) => s.sourceKey === base.sourceKey);
+        if (position) {
+            const objectKey = json.sourceKeys.objectKey;
+            const existing = this.sourceObjects.get(objectKey);
+            if (!existing) {
+                this.sourceObjects.set(objectKey, {
+                    objectKey,
+                    context: this.textOf(node),
+                    source: [position],
+                });
+            } else if (!existing.source.some((s) => s.sourceKey === position.sourceKey)) {
+                existing.source.push(position);
+            }
         }
-        return sourceKeys as { base: ConvertKeys } & Record<TKey, ConvertKeys>;
+        return json;
+    }
+
+    /**
+     * ファイルの根 (モジュール) の JSON。位置はファイルの先頭 (長さ 0) にする
+     * (ファイル全体の位置にすると、ファイル全体のソースを位置の一覧に持ってしまうため)。objectKey は中身から作る
+     */
+    fileRootJson<T extends JsonType<string>>(
+        kind: T['kind'],
+        properties: DistributiveOmit<T, 'kind' | 'sourceKeys'>,
+    ): T {
+        const start = { offset: 0, line: 1, column: 0 };
+        const position = { start, end: start, filePath: this.filePath };
+        const json = makeContentKeyedJson<T>(kind, `${kind}_${hash(position)}`, properties);
+        const { objectKey, sourceKey } = json.sourceKeys;
+        const existing = this.sourceObjects.get(objectKey);
+        if (!existing) {
+            this.sourceObjects.set(objectKey, {
+                objectKey,
+                context: '',
+                source: [{ sourceKey, ...position }],
+            });
+        } else if (!existing.source.some((s) => s.sourceKey === sourceKey)) {
+            existing.source.push({ sourceKey, ...position });
+        }
+        return json;
+    }
+
+    /**
+     * 名前を持つ宣言 (クラス・メンバー・関数・型の宣言など) のノードと、名前のノード。
+     * 名前のない宣言 (export default class extends ...) は、名前の位置を宣言全体にする (v1 と同じ)
+     */
+    declarationOf(
+        node: LwcNode,
+        children: Readonly<{ name: LwcNode | null | undefined }>,
+    ): LwcDeclaration {
+        return { node, nameNode: children.name ?? node };
     }
 
     /** keysOf で登録したソース位置 */
@@ -85,6 +139,46 @@ export class LwcJsonContext {
         return [...this.sourceObjects.values()];
     }
 }
+
+/** 名前を持つ宣言のノードと名前のノード (LwcJsonContext.declarationOf) */
+export type LwcDeclaration = { node: LwcNode; nameNode: LwcNode };
+
+/**
+ * 宣言の名前の位置 (Apex の declarationName と同じ。名前そのものは宣言の name にも持つ)。
+ * objectKey は中身から作る (名前の IR の objectKey は式の識別子と同じになりうるため。docs/plan.md 4.2)
+ */
+export type LwcDeclarationNameJson = JsonType<'declarationName'> & { name: string };
+
+/** 名前を持つ宣言の JsonType (名前の位置は nameRef。lwc 4 から) */
+export type LwcDeclarationJsonType<TKind extends string> = JsonType<TKind> & {
+    /** 名前の位置 */
+    nameRef: LwcDeclarationNameJson;
+};
+
+/**
+ * 名前を持つ宣言の JSON。キーは宣言のノード、名前の位置は nameRef (declarationName) に持つ。
+ * 名前のない宣言 (name が null) の nameRef の name は ''
+ */
+export const makeLwcDeclarationJson = <const TKind extends string, TProperties extends object>(
+    context: LwcJsonContext,
+    kind: TKind,
+    declaration: LwcDeclaration,
+    properties: TProperties,
+): LwcDeclarationJsonType<TKind> & TProperties => {
+    const name = (properties as { name?: unknown }).name;
+    return {
+        kind,
+        sourceKeys: context.keysOf(declaration.node),
+        ...properties,
+        nameRef: context.derivedJson<LwcDeclarationNameJson>(
+            'declarationName',
+            declaration.nameNode,
+            {
+                name: typeof name === 'string' ? name : '',
+            },
+        ),
+    } as LwcDeclarationJsonType<TKind> & TProperties;
+};
 
 /** 式を包むノード (括弧・TS の型アサーション x as T / x! / <T>x / x satisfies T・Flow の型キャスト) */
 const WRAPPER_TYPES = new Set([

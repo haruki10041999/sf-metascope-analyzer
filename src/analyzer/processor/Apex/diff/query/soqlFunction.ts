@@ -3,7 +3,7 @@ import {
     CoordinateValueJson,
     DateFieldNameJson,
     DistanceValueJson,
-    SoqlFunctionJson,
+    SoqlFunctionBody,
 } from '../../../../types';
 
 import {
@@ -28,11 +28,11 @@ export type DistanceValueJsonDiff = {
 
 export type NestedSoqlFunctionDiff = {
     func: ValueDiff<string>;
-    arg: ValueDiff<Exclude<Extract<SoqlFunctionJson, { func: 'FORMAT' }>['arg'], string[]>['arg']>;
+    arg: ValueDiff<Exclude<Extract<SoqlFunctionBody, { func: 'FORMAT' }>['arg'], string[]>['arg']>;
 };
 
 export type SoqlFunctionArgDiff =
-    | ValueDiff<NonNullable<SoqlFunctionJson['arg']>>
+    | ValueDiff<NonNullable<SoqlFunctionBody['arg']>>
     | {
           status: 'changed';
           fields:
@@ -43,9 +43,9 @@ export type SoqlFunctionArgDiff =
       };
 
 export type SoqlFunctionJsonDiff = {
-    type: SoqlFunctionJson['type'];
-    func: ValueDiff<SoqlFunctionJson['func']>;
-    arg: OptionalDiff<NonNullable<SoqlFunctionJson['arg']>, SoqlFunctionArgDiff>;
+    type: SoqlFunctionBody['type'];
+    func: ValueDiff<SoqlFunctionBody['func']>;
+    arg: OptionalDiff<NonNullable<SoqlFunctionBody['arg']>, SoqlFunctionArgDiff>;
 };
 
 const isStringArray = (value: unknown): value is string[] =>
@@ -69,7 +69,7 @@ const isDistanceValue = (value: unknown): value is DistanceValueJson =>
 
 const isNestedFunction = (
     value: unknown,
-): value is Exclude<Extract<SoqlFunctionJson, { func: 'FORMAT' }>['arg'], string[]> =>
+): value is Exclude<Extract<SoqlFunctionBody, { func: 'FORMAT' }>['arg'], string[]> =>
     typeof value === 'object' && value !== null && !Array.isArray(value) && 'func' in value;
 
 const makeDistanceValueDiff = (
@@ -82,10 +82,10 @@ const makeDistanceValueDiff = (
 });
 
 const makeSoqlFunctionArgDiff = (
-    beforeFunc: SoqlFunctionJson['func'],
-    afterFunc: SoqlFunctionJson['func'],
-    before: NonNullable<SoqlFunctionJson['arg']>,
-    after: NonNullable<SoqlFunctionJson['arg']>,
+    beforeFunc: SoqlFunctionBody['func'],
+    afterFunc: SoqlFunctionBody['func'],
+    before: NonNullable<SoqlFunctionBody['arg']>,
+    after: NonNullable<SoqlFunctionBody['arg']>,
 ): SoqlFunctionArgDiff => {
     if (isSameValue(before, after) || beforeFunc !== afterFunc) return makeValueDiff(before, after);
     if (
@@ -136,8 +136,8 @@ const makeSoqlFunctionArgDiff = (
 };
 
 export const makeSoqlFunctionDiff = (
-    before: SoqlFunctionJson,
-    after: SoqlFunctionJson,
+    before: SoqlFunctionBody,
+    after: SoqlFunctionBody,
 ): SoqlFunctionJsonDiff => ({
     type: 'soqlFunction',
     func: makeValueDiff(before.func, after.func),

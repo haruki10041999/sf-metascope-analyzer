@@ -37,13 +37,14 @@ const makeElseJson = (target: ElseClauseTypeClass): TypeOfBlockJson => {
     });
 };
 
-export type TypeOfJson = {
+/** TYPEOF の中身。TYPEOF は SELECT の項目にしか置けないので、項目のノード (selectEntry) に展開する */
+export type TypeOfBody = {
     type: 'typeOf';
     field: string[];
     block: TypeOfBlockJson[];
 };
 
-export const makeTypeOfJson = (target: TypeOfTypeClass): TypeOfJson => {
+export const makeTypeOfBody = (target: TypeOfTypeClass): TypeOfBody => {
     const { value, whenClause, elseClause } = target.getFields();
     return {
         type: 'typeOf',

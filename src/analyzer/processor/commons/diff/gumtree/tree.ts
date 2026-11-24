@@ -5,7 +5,7 @@ import { JsonNode, getObjectKey, getValueKey } from '../commons';
 // GumTree の木 (Apex・LWC で共通)。方針: docs/apex-implementation.md・4 章、docs/lwc-implementation.md
 // 言語ごとに違うのはラベルの付け方などだけなので、それを GumTreeLanguage として渡す (Apex は processor/Apex/diff/gumtree/tree.ts)
 
-/** GumTree が比べる木のノード。JsonType / StructureJsonType は実ノード、それ以外は仮想ノード */
+/** GumTree が比べる木のノード。JsonType は実ノード、それ以外は仮想ノード */
 export type GumTreeNode = {
     /** 木の中での前順の番号 */
     id: number;
@@ -25,7 +25,7 @@ export type GumTreeNode = {
     parent: GumTreeNode | undefined;
     /** 元の値 */
     raw: unknown;
-    /** 元の JsonType / StructureJsonType。仮想ノードは undefined */
+    /** 元の JsonType。仮想ノードは undefined */
     source: JsonNode | undefined;
     height: number;
     size: number;

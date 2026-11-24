@@ -118,8 +118,8 @@
       "kind": "objectTranslation",
       "sourceKeys": {
         "objectKey": {
-          "before": "objectTranslation_c0a602ece322bb83",
-          "after": "objectTranslation_7dfc2a8bbad4d897"
+          "before": "objectTranslation_c870d17bd746f792",
+          "after": "objectTranslation_4254f3969dad7e22"
         },
         "sourceKey": "objectTranslation_53a3b33d94e742a5"
       },
@@ -381,7 +381,7 @@
           {
             "kind": "layoutTranslation",
             "sourceKeys": {
-              "objectKey": "layoutTranslation_a6db85e749b4f21c",
+              "objectKey": "layoutTranslation_0e9014dae2e475e1",
               "sourceKey": "layoutTranslation_f9bd716cd023e9f5"
             },
             "status": "unchanged",
@@ -389,6 +389,11 @@
               "layout": "Invoice Layout",
               "sections": [
                 {
+                  "kind": "layoutSectionTranslation",
+                  "sourceKeys": {
+                    "objectKey": "layoutSectionTranslation_e955fdabd4cde021",
+                    "sourceKey": "layoutSectionTranslation_f9308887c5f60ad7"
+                  },
                   "section": "Information",
                   "label": "請求情報"
                 }

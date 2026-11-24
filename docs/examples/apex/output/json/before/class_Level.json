@@ -5,22 +5,34 @@
   "result": {
     "id": "class_Level",
     "base": {
+      "kind": "apexUnit",
+      "sourceKeys": {
+        "objectKey": "apexUnit_91eeb70d2e13b098",
+        "sourceKey": "compilationUnit_85c2aa72031b77db"
+      },
       "name": "Level",
       "unitType": "class",
       "source": {
+        "kind": "apexSource",
+        "sourceKeys": {
+          "objectKey": "apexSource_1a8984e1fe689800",
+          "sourceKey": "compilationUnit_85c2aa72031b77db"
+        },
         "fileName": "Level.cls",
         "fileType": "cls",
         "content": {
           "kind": "enum",
           "sourceKeys": {
-            "base": {
-              "objectKey": "enumDeclaration_88615620734e9ab8",
-              "sourceKey": "enumDeclaration_400e15c550824b0c"
-            },
-            "name": {
-              "objectKey": "id_aab591c86602230e",
+            "objectKey": "enumDeclaration_88615620734e9ab8",
+            "sourceKey": "enumDeclaration_400e15c550824b0c"
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {
+              "objectKey": "declarationName_90bd7dd2512524a8",
               "sourceKey": "id_1cb6d4a8529624af"
-            }
+            },
+            "name": "Level"
           },
           "name": "Level",
           "members": [
@@ -42,6 +54,11 @@
             }
           ],
           "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {
+              "objectKey": "modifiers_b09596894868e30e",
+              "sourceKey": "typeDeclaration_85c2aa72031b77db"
+            },
             "keyword": [
               {
                 "kind": "modifier",
@@ -57,6 +74,25 @@
       }
     },
     "sourceObject": [
+      {
+        "objectKey": "apexSource_1a8984e1fe689800",
+        "context": "public enum Level {\n    LOW,\n    HIGH\n}",
+        "source": [
+          {
+            "sourceKey": "compilationUnit_85c2aa72031b77db",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 39,
+              "line": 4,
+              "column": 1
+            }
+          }
+        ]
+      },
       {
         "objectKey": "enumDeclaration_88615620734e9ab8",
         "context": "enum Level {\n    LOW,\n    HIGH\n}",
@@ -77,7 +113,7 @@
         ]
       },
       {
-        "objectKey": "id_aab591c86602230e",
+        "objectKey": "declarationName_90bd7dd2512524a8",
         "context": "Level",
         "source": [
           {
@@ -134,6 +170,25 @@
         ]
       },
       {
+        "objectKey": "modifiers_b09596894868e30e",
+        "context": "public enum Level {\n    LOW,\n    HIGH\n}",
+        "source": [
+          {
+            "sourceKey": "typeDeclaration_85c2aa72031b77db",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 39,
+              "line": 4,
+              "column": 1
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "modifier_ff9740e1ee9f633a",
         "context": "public",
         "source": [
@@ -148,6 +203,25 @@
               "offset": 6,
               "line": 1,
               "column": 6
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "apexUnit_91eeb70d2e13b098",
+        "context": "public enum Level {\n    LOW,\n    HIGH\n}",
+        "source": [
+          {
+            "sourceKey": "compilationUnit_85c2aa72031b77db",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 39,
+              "line": 4,
+              "column": 1
             }
           }
         ]

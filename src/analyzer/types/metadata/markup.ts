@@ -58,7 +58,11 @@ const parseMarkup = (
 };
 
 /** 属性 1 つ。値は差し込みを含めば fxTemplate (段階 M6) */
-export type MarkupAttributeJson = { name: string; value: TemplateValue };
+/** 属性 1 つ (metadata 8 からノード。位置は属性を書いた要素のもの) */
+export type MarkupAttributeJson = JsonType<'markupAttribute'> & {
+    name: string;
+    value: TemplateValue;
+};
 
 /** マークアップの要素 (タグ・属性 (書いた順)・子) */
 export type MarkupElementJson = JsonType<'markupElement'> & {
@@ -133,10 +137,15 @@ const makeMarkupElement = (
             tag: element.name,
             attributes: Object.keys(element.attributes)
                 .filter((name) => !isNamespaceAttribute(name))
-                .map((name) => ({
-                    name,
-                    value: readAttributeTemplate(element, name, { file, registry }),
-                })),
+                .map((name) =>
+                    makeMetadataJson<MarkupAttributeJson>(
+                        'markupAttribute',
+                        { name, value: readAttributeTemplate(element, name, { file, registry }) },
+                        element,
+                        file,
+                        registry,
+                    ),
+                ),
             children: makeMarkupNodes(element, file, registry),
         },
         element,
@@ -347,6 +356,10 @@ export const AURA_BUNDLE_TYPES = Object.keys(
 ) as (keyof typeof AURA_BUNDLE_ROOTS)[];
 
 /** Aura のバンドル (aura/<名前>/)。メインのマークアップの構造と、JS のファイルの関数の名前 */
+/** Aura の JS のファイルの関数の名前 (metadata 8 からノード。位置はルートの要素のもの) */
+export type AuraJavascriptJson = JsonType<'auraJavascript'> &
+    Partial<Record<'controller' | 'helper' | 'renderer', string[]>>;
+
 export type AuraBundleJson = JsonType<'auraBundle'> & {
     /** バンドル名 */
     name: string;
@@ -365,7 +378,7 @@ export type AuraBundleJson = JsonType<'auraBundle'> & {
     /** ルートの中身の木 (aura: の宣言 (attributes などに出すもの) は持たない。段階 M6) */
     body: MarkupNodeJson[];
     /** Controller.js / Helper.js / Renderer.js の関数の名前 (書いた順)。キーは controller / helper / renderer */
-    javascript?: Partial<Record<'controller' | 'helper' | 'renderer', string[]>>;
+    javascript?: AuraJavascriptJson;
     /** バンドルの中のファイル (名前の順) */
     files: string[];
     /** <名前>.<種類>-meta.xml。読めなければ持たない (理由は resolvedError) */
@@ -415,7 +428,7 @@ export const makeAuraBundleJson = (
             const names = [...extra.source.matchAll(JS_FUNCTION)].map((m) => m[1]!);
             return [[match[1]!.toLowerCase(), names]];
         }),
-    ) as AuraBundleJson['javascript'];
+    ) as Omit<AuraJavascriptJson, 'kind' | 'sourceKeys'>;
     const dependencies = childrenOf(root, 'aura:dependency').flatMap((element) =>
         element.attributes.resource ? [element.attributes.resource] : [],
     );
@@ -466,7 +479,17 @@ export const makeAuraBundleJson = (
             ...nonEmptyEntry('dependencies', dependencies),
             ...nonEmptyEntry('messageChannels', [...messageChannels].sort()),
             body: makeMarkupNodes(root, file, registry, AURA_DECLARATION_TAGS),
-            ...(javascript && Object.keys(javascript).length ? { javascript } : {}),
+            ...(javascript && Object.keys(javascript).length
+                ? {
+                      javascript: makeMetadataJson<AuraJavascriptJson>(
+                          'auraJavascript',
+                          javascript,
+                          root,
+                          file,
+                          registry,
+                      ),
+                  }
+                : {}),
             files: [
                 file.filePath.split('/').pop()!,
                 ...extras.map((extra) => extra.fileName),

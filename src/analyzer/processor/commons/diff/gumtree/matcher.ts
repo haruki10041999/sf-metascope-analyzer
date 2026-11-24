@@ -308,7 +308,7 @@ export const matchTrees = (
     // -----------------------------------------------------------------------
 
     /**
-     * まだ対応のない実ノード (JsonType / StructureJsonType) のうち、同じ hash が両方の木に 1 つずつしかないものを対応付ける。
+     * まだ対応のない実ノード (JsonType) のうち、同じ hash が両方の木に 1 つずつしかないものを対応付ける。
      * minHeight 未満の小さな部分木 (`Trigger.isBefore` など) が別の式の中へ移動したものを拾うため
      */
     const matchUniqueNodes = () => {

@@ -1,10 +1,11 @@
+import { JsonType } from '../../commons';
 import type {
     WhereClauseTypeClass,
     WhereFieldExpressionTypeClass,
     WhereLogicalExpressionTypeClass,
 } from '../../apex_IR';
 
-import { makeNodeJson } from '../commons/node';
+import { makeDerivedNodeJson, makeNodeJson } from '../commons/node';
 import {
     makeComparisonOperatorJson,
     makeValueJson,
@@ -14,8 +15,11 @@ import {
 } from './commons';
 import { unquoteApexString } from '../primary';
 
-/** FORMULA('...') の条件の左辺。value は数式 (引用符を除き、エスケープを戻したもの) */
-export type FormulaFieldJson = {
+/**
+ * FORMULA('...') の条件の左辺。value は数式 (引用符を除き、エスケープを戻したもの)。
+ * IR に対応するノードがないので、位置は条件 (whereFieldExpression) のもの
+ */
+export type FormulaFieldJson = JsonType<'soqlFormula'> & {
     type: 'formula';
     value: string;
 };
@@ -28,7 +32,10 @@ export const makeWhereSingleConditionJson = (
     switch (fields.kind) {
         case 'formula':
             return makeNodeJson<SingleConditionJson>('singleCondition', target, {
-                field: { type: 'formula', value: unquoteApexString(fields.formula) },
+                field: makeDerivedNodeJson<FormulaFieldJson>('soqlFormula', target, {
+                    type: 'formula',
+                    value: unquoteApexString(fields.formula),
+                }),
                 operator: makeComparisonOperatorJson(fields.operator),
                 value: makeValueJson(fields.right),
             });
@@ -54,18 +61,18 @@ export const makeWhereLogicalExpressionJson = (
                 return makeWhereSingleConditionJson(value);
         }
     });
-    return {
+    return makeNodeJson<LogicalConditionJson>('soqlLogical', target, {
         condition: condition,
         ...(fields.operator !== null ? { operator: fields.operator } : {}),
-    };
+    });
 };
 
-export type WhereJson = {
+/** WHERE 句 */
+export type WhereJson = JsonType<'soqlWhere'> & {
     condition: LogicalConditionJson;
 };
 
-export const makeWhereJson = (target: WhereClauseTypeClass): WhereJson => {
-    return {
+export const makeWhereJson = (target: WhereClauseTypeClass): WhereJson =>
+    makeNodeJson<WhereJson>('soqlWhere', target, {
         condition: makeWhereLogicalExpressionJson(target.getFields().value),
-    };
-};
+    });

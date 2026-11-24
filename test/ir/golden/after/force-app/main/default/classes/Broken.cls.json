@@ -1,20 +1,26 @@
 {
   "source": {
+    "kind": "apexSource",
+    "sourceKeys": {},
     "fileName": "Broken.cls",
     "fileType": "cls",
     "content": {
       "kind": "class",
-      "sourceKeys": {
-        "base": {},
-        "name": {}
+      "sourceKeys": {},
+      "nameRef": {
+        "kind": "declarationName",
+        "sourceKeys": {},
+        "name": "Broken"
       },
       "name": "Broken",
       "block": [
         {
           "kind": "method",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
+          "sourceKeys": {},
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "run"
           },
           "name": "run",
           "returnType": "void",
@@ -29,7 +35,10 @@
                 "type": "primitive",
                 "primitiveType": "Integer"
               },
-              "modifier": {},
+              "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {}
+              },
               "variants": [
                 {
                   "kind": "variant",
@@ -70,6 +79,8 @@
             }
           ],
           "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {},
             "keyword": [
               {
                 "kind": "modifier",
@@ -81,6 +92,8 @@
         }
       ],
       "modifier": {
+        "kind": "modifiers",
+        "sourceKeys": {},
         "keyword": [
           {
             "kind": "modifier",
@@ -129,6 +142,19 @@
         "offset": 19,
         "line": 1,
         "column": 19
+      }
+    },
+    {
+      "context": "Integer x = ;\n        foo(1, )",
+      "start": {
+        "offset": 54,
+        "line": 3,
+        "column": 8
+      },
+      "end": {
+        "offset": 84,
+        "line": 4,
+        "column": 16
       }
     },
     {
@@ -220,6 +246,45 @@
         "offset": 79,
         "line": 4,
         "column": 11
+      }
+    },
+    {
+      "context": "public class Broken {\n    public void run() {\n        Integer x = ;\n        foo(1, );\n        b();\n    }\n}",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 106,
+        "line": 7,
+        "column": 1
+      }
+    },
+    {
+      "context": "public class Broken {\n    public void run() {\n        Integer x = ;\n        foo(1, );\n        b();\n    }\n}",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 106,
+        "line": 7,
+        "column": 1
+      }
+    },
+    {
+      "context": "public void run() {\n        Integer x = ;\n        foo(1, );\n        b();\n    }",
+      "start": {
+        "offset": 26,
+        "line": 2,
+        "column": 4
+      },
+      "end": {
+        "offset": 104,
+        "line": 6,
+        "column": 5
       }
     },
     {

@@ -7,7 +7,7 @@
     "base": {
       "kind": "object",
       "sourceKeys": {
-        "objectKey": "object_260a222b30172abe",
+        "objectKey": "object_9faf0377a674ad0c",
         "sourceKey": "object_97265b6e92059763"
       },
       "apiName": "Invoice_Line__c",
@@ -17,6 +17,11 @@
       "sharingModel": "ControlledByParent",
       "deploymentStatus": "Deployed",
       "nameField": {
+        "kind": "objectNameField",
+        "sourceKeys": {
+          "objectKey": "objectNameField_8c66d945f3a4e60b",
+          "sourceKey": "objectNameField_975d978969aa7894"
+        },
         "label": "Line Name",
         "type": "Text"
       },
@@ -125,7 +130,27 @@
         ]
       },
       {
-        "objectKey": "object_260a222b30172abe",
+        "objectKey": "objectNameField_8c66d945f3a4e60b",
+        "context": "<nameField>\n        <label>Line Name</label>\n        <type>Text</type>\n    </nameField>",
+        "source": [
+          {
+            "sourceKey": "objectNameField_975d978969aa7894",
+            "filePath": "Invoice_Line__c/Invoice_Line__c.object-meta.xml",
+            "start": {
+              "offset": 188,
+              "line": 5,
+              "column": 4
+            },
+            "end": {
+              "offset": 275,
+              "line": 8,
+              "column": 16
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "object_9faf0377a674ad0c",
         "context": "<CustomObject xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <deploymentStatus>Deployed</deploymentStatus>\n    <label>Invoice Line</label>\n    <nameField>\n        <label>Line Name</label>\n        <type>Text</type>\n    </nameField>\n    <pluralLabel>Invoice Lines</pluralLabel>\n    <sharingModel>ControlledByParent</sharingModel>\n</CustomObject>",
         "source": [
           {

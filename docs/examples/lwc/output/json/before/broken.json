@@ -121,13 +121,28 @@
   "result": {
     "id": "broken",
     "base": {
+      "kind": "lwcBundle",
+      "sourceKeys": {
+        "objectKey": "lwcBundle_88a43c5672799766",
+        "sourceKey": "lwcModule_a59cf804cf8ffefd"
+      },
       "name": "broken",
       "namespace": "c",
       "modules": [
         {
+          "kind": "lwcBundleModule",
+          "sourceKeys": {
+            "objectKey": "lwcBundleModule_0aeba604f0495bc3",
+            "sourceKey": "lwcModule_a59cf804cf8ffefd"
+          },
           "fileName": "broken.ts",
           "main": true,
           "module": {
+            "kind": "lwcModule",
+            "sourceKeys": {
+              "objectKey": "lwcModule_531b64613b0a26f4",
+              "sourceKey": "lwcModule_a59cf804cf8ffefd"
+            },
             "fileType": "ts",
             "imports": [
               {
@@ -179,14 +194,8 @@
             "component": {
               "kind": "lwcComponent",
               "sourceKeys": {
-                "base": {
-                  "objectKey": "classDeclaration_ffac4f052b28791a",
-                  "sourceKey": "classDeclaration_a03e602956c9d56d"
-                },
-                "name": {
-                  "objectKey": "identifier_1a3a6fd4c00bce68",
-                  "sourceKey": "identifier_b79a23af7140afca"
-                }
+                "objectKey": "classDeclaration_ffac4f052b28791a",
+                "sourceKey": "classDeclaration_a03e602956c9d56d"
               },
               "name": "Broken",
               "superClass": {
@@ -201,14 +210,8 @@
                 {
                   "kind": "lwcField",
                   "sourceKeys": {
-                    "base": {
-                      "objectKey": "classProperty_fff535b23d3f5885",
-                      "sourceKey": "classProperty_ee0277806011b964"
-                    },
-                    "name": {
-                      "objectKey": "identifier_e4544106445ec702",
-                      "sourceKey": "identifier_379a701265ffe98b"
-                    }
+                    "objectKey": "classProperty_fff535b23d3f5885",
+                    "sourceKey": "classProperty_ee0277806011b964"
                   },
                   "name": "value",
                   "variantType": {
@@ -230,6 +233,11 @@
                   },
                   "optional": false,
                   "modifier": {
+                    "kind": "lwcModifiers",
+                    "sourceKeys": {
+                      "objectKey": "lwcModifiers_35ebd238fac54e99",
+                      "sourceKey": "classProperty_ee0277806011b964"
+                    },
                     "decorator": [
                       {
                         "kind": "lwcDecorator",
@@ -250,9 +258,25 @@
                         "arg": []
                       }
                     ]
+                  },
+                  "nameRef": {
+                    "kind": "declarationName",
+                    "sourceKeys": {
+                      "objectKey": "declarationName_ae1fca77a81ea8b5",
+                      "sourceKey": "identifier_379a701265ffe98b"
+                    },
+                    "name": "value"
                   }
                 }
-              ]
+              ],
+              "nameRef": {
+                "kind": "declarationName",
+                "sourceKeys": {
+                  "objectKey": "declarationName_7d041fc954d2a986",
+                  "sourceKey": "identifier_b79a23af7140afca"
+                },
+                "name": "Broken"
+              }
             },
             "exports": [
               {
@@ -274,12 +298,17 @@
       ],
       "templates": [
         {
+          "kind": "lwcBundleTemplate",
+          "sourceKeys": {
+            "objectKey": "lwcBundleTemplate_0c1ac5b318c39a91",
+            "sourceKey": "lwcTemplate_94fef1a64e2c17ce"
+          },
           "fileName": "broken.html",
           "main": true,
           "template": {
             "kind": "lwcTemplate",
             "sourceKeys": {
-              "objectKey": "lwcTemplate_54cc3dbdf2bc4c36",
+              "objectKey": "lwcTemplate_e79ee7c1172c077e",
               "sourceKey": "lwcTemplate_94fef1a64e2c17ce"
             },
             "preserveComments": false,
@@ -287,20 +316,30 @@
               {
                 "kind": "lwcIf",
                 "sourceKeys": {
-                  "objectKey": "lwcIf_051bcd8c9c5a6163",
+                  "objectKey": "lwcIf_b46f60161efaa46e",
                   "sourceKey": "lwcIf_a577510968e26167"
                 },
                 "branches": [
                   {
                     "kind": "lwcBranch",
                     "sourceKeys": {
-                      "objectKey": "lwcBranch_458642d56c85c8bd",
+                      "objectKey": "lwcBranch_52b9c01c3c97eda8",
                       "sourceKey": "lwcBranch_a577510968e26167"
                     },
                     "directive": "lwc:if",
                     "condition": {
+                      "kind": "lwcValue",
+                      "sourceKeys": {
+                        "objectKey": "lwcValue_52ff71fe8d14623b",
+                        "sourceKey": "lwcValue_96b0a4999fde5229"
+                      },
                       "type": "expression",
                       "expression": {
+                        "kind": "lwcExpression",
+                        "sourceKeys": {
+                          "objectKey": "lwcExpression_4fd11a614bc01520",
+                          "sourceKey": "lwcExpression_96b0a4999fde5229"
+                        },
                         "text": "value",
                         "path": [
                           "value"
@@ -339,12 +378,17 @@
               {
                 "kind": "lwcElement",
                 "sourceKeys": {
-                  "objectKey": "lwcElement_b5ab7359048d42ad",
+                  "objectKey": "lwcElement_505aa20605a1bac6",
                   "sourceKey": "lwcElement_dcd2df94fbc96369"
                 },
                 "tag": "c-child",
                 "elementType": "component",
                 "component": {
+                  "kind": "lwcComponentRef",
+                  "sourceKeys": {
+                    "objectKey": "lwcComponentRef_0c51f7128b8a216b",
+                    "sourceKey": "lwcComponentRef_dcd2df94fbc96369"
+                  },
                   "namespace": "c",
                   "name": "child",
                   "module": "c/child",
@@ -356,13 +400,23 @@
                   {
                     "kind": "lwcHandler",
                     "sourceKeys": {
-                      "objectKey": "lwcHandler_36bea6b75b7718fd",
+                      "objectKey": "lwcHandler_94c928f1db5a2207",
                       "sourceKey": "lwcHandler_90e6620fe35d0d2f"
                     },
                     "event": "click",
                     "handler": {
+                      "kind": "lwcValue",
+                      "sourceKeys": {
+                        "objectKey": "lwcValue_659d2c94d3634b8f",
+                        "sourceKey": "lwcValue_90e6620fe35d0d2f"
+                      },
                       "type": "expression",
                       "expression": {
+                        "kind": "lwcExpression",
+                        "sourceKeys": {
+                          "objectKey": "lwcExpression_83cbbef7627cd80c",
+                          "sourceKey": "lwcExpression_90e6620fe35d0d2f"
+                        },
                         "text": "handleClick",
                         "path": [
                           "handleClick"
@@ -380,12 +434,17 @@
       ],
       "stylesheets": [
         {
+          "kind": "lwcBundleStylesheet",
+          "sourceKeys": {
+            "objectKey": "lwcBundleStylesheet_72340bed25a03374",
+            "sourceKey": "lwcStylesheet_3a57db51714cb77d"
+          },
           "fileName": "broken.css",
           "scoped": false,
           "stylesheet": {
             "kind": "lwcStylesheet",
             "sourceKeys": {
-              "objectKey": "lwcStylesheet_a17e592f34c77c7c",
+              "objectKey": "lwcStylesheet_992da2aaa2117a13",
               "sourceKey": "lwcStylesheet_3a57db51714cb77d"
             },
             "scoped": false,
@@ -394,7 +453,7 @@
               {
                 "kind": "cssRule",
                 "sourceKeys": {
-                  "objectKey": "cssRule_d142fee28f91cc75",
+                  "objectKey": "cssRule_291350776e306b7b",
                   "sourceKey": "cssRule_b40d22e14292ffa4"
                 },
                 "selector": ":root",
@@ -403,6 +462,11 @@
                 ],
                 "declarations": [
                   {
+                    "kind": "cssDeclaration",
+                    "sourceKeys": {
+                      "objectKey": "cssDeclaration_40ead342c09d6817",
+                      "sourceKey": "cssDeclaration_62cf8a0e14fbf0c6"
+                    },
                     "prop": "color",
                     "value": "red",
                     "important": false
@@ -527,46 +591,6 @@
         ]
       },
       {
-        "objectKey": "classDeclaration_ffac4f052b28791a",
-        "context": "class Broken extends LightningElement {\n    @api @track value: string = '';\n}",
-        "source": [
-          {
-            "sourceKey": "classDeclaration_a03e602956c9d56d",
-            "start": {
-              "offset": 68,
-              "line": 3,
-              "column": 15
-            },
-            "end": {
-              "offset": 145,
-              "line": 5,
-              "column": 1
-            },
-            "filePath": "broken/broken.ts"
-          }
-        ]
-      },
-      {
-        "objectKey": "identifier_1a3a6fd4c00bce68",
-        "context": "Broken",
-        "source": [
-          {
-            "sourceKey": "identifier_b79a23af7140afca",
-            "start": {
-              "offset": 74,
-              "line": 3,
-              "column": 21
-            },
-            "end": {
-              "offset": 80,
-              "line": 3,
-              "column": 27
-            },
-            "filePath": "broken/broken.ts"
-          }
-        ]
-      },
-      {
         "objectKey": "identifier_4a7a59e701040717",
         "context": "LightningElement",
         "source": [
@@ -581,46 +605,6 @@
               "offset": 105,
               "line": 3,
               "column": 52
-            },
-            "filePath": "broken/broken.ts"
-          }
-        ]
-      },
-      {
-        "objectKey": "classProperty_fff535b23d3f5885",
-        "context": "@api @track value: string = '';",
-        "source": [
-          {
-            "sourceKey": "classProperty_ee0277806011b964",
-            "start": {
-              "offset": 112,
-              "line": 4,
-              "column": 4
-            },
-            "end": {
-              "offset": 143,
-              "line": 4,
-              "column": 35
-            },
-            "filePath": "broken/broken.ts"
-          }
-        ]
-      },
-      {
-        "objectKey": "identifier_e4544106445ec702",
-        "context": "value",
-        "source": [
-          {
-            "sourceKey": "identifier_379a701265ffe98b",
-            "start": {
-              "offset": 124,
-              "line": 4,
-              "column": 16
-            },
-            "end": {
-              "offset": 129,
-              "line": 4,
-              "column": 21
             },
             "filePath": "broken/broken.ts"
           }
@@ -707,6 +691,186 @@
         ]
       },
       {
+        "objectKey": "classProperty_fff535b23d3f5885",
+        "context": "@api @track value: string = '';",
+        "source": [
+          {
+            "sourceKey": "classProperty_ee0277806011b964",
+            "start": {
+              "offset": 112,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 143,
+              "line": 4,
+              "column": 35
+            },
+            "filePath": "broken/broken.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcModifiers_35ebd238fac54e99",
+        "context": "@api @track value: string = '';",
+        "source": [
+          {
+            "sourceKey": "classProperty_ee0277806011b964",
+            "start": {
+              "offset": 112,
+              "line": 4,
+              "column": 4
+            },
+            "end": {
+              "offset": 143,
+              "line": 4,
+              "column": 35
+            },
+            "filePath": "broken/broken.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_e4544106445ec702",
+        "context": "value",
+        "source": [
+          {
+            "sourceKey": "identifier_379a701265ffe98b",
+            "start": {
+              "offset": 124,
+              "line": 4,
+              "column": 16
+            },
+            "end": {
+              "offset": 129,
+              "line": 4,
+              "column": 21
+            },
+            "filePath": "broken/broken.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "declarationName_ae1fca77a81ea8b5",
+        "context": "value",
+        "source": [
+          {
+            "sourceKey": "identifier_379a701265ffe98b",
+            "start": {
+              "offset": 124,
+              "line": 4,
+              "column": 16
+            },
+            "end": {
+              "offset": 129,
+              "line": 4,
+              "column": 21
+            },
+            "filePath": "broken/broken.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "classDeclaration_ffac4f052b28791a",
+        "context": "class Broken extends LightningElement {\n    @api @track value: string = '';\n}",
+        "source": [
+          {
+            "sourceKey": "classDeclaration_a03e602956c9d56d",
+            "start": {
+              "offset": 68,
+              "line": 3,
+              "column": 15
+            },
+            "end": {
+              "offset": 145,
+              "line": 5,
+              "column": 1
+            },
+            "filePath": "broken/broken.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "identifier_1a3a6fd4c00bce68",
+        "context": "Broken",
+        "source": [
+          {
+            "sourceKey": "identifier_b79a23af7140afca",
+            "start": {
+              "offset": 74,
+              "line": 3,
+              "column": 21
+            },
+            "end": {
+              "offset": 80,
+              "line": 3,
+              "column": 27
+            },
+            "filePath": "broken/broken.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "declarationName_7d041fc954d2a986",
+        "context": "Broken",
+        "source": [
+          {
+            "sourceKey": "identifier_b79a23af7140afca",
+            "start": {
+              "offset": 74,
+              "line": 3,
+              "column": 21
+            },
+            "end": {
+              "offset": 80,
+              "line": 3,
+              "column": 27
+            },
+            "filePath": "broken/broken.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcModule_531b64613b0a26f4",
+        "context": "",
+        "source": [
+          {
+            "sourceKey": "lwcModule_a59cf804cf8ffefd",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "filePath": "broken/broken.ts"
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcBundleModule_0aeba604f0495bc3",
+        "context": "",
+        "source": [
+          {
+            "sourceKey": "lwcModule_a59cf804cf8ffefd",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "filePath": "broken/broken.ts"
+          }
+        ]
+      },
+      {
         "objectKey": "lwcBundleMeta_750374b0d2d703f7",
         "context": "<LightningComponentBundle xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <apiVersion>61.0</apiVersion>\n    <isExposed>false</isExposed>\n</LightningComponentBundle>",
         "source": [
@@ -767,7 +931,47 @@
         ]
       },
       {
-        "objectKey": "lwcBranch_458642d56c85c8bd",
+        "objectKey": "lwcExpression_4fd11a614bc01520",
+        "context": "lwc:if={value}",
+        "source": [
+          {
+            "sourceKey": "lwcExpression_96b0a4999fde5229",
+            "filePath": "broken/broken.html",
+            "start": {
+              "offset": 36,
+              "line": 2,
+              "column": 25
+            },
+            "end": {
+              "offset": 50,
+              "line": 2,
+              "column": 39
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcValue_52ff71fe8d14623b",
+        "context": "lwc:if={value}",
+        "source": [
+          {
+            "sourceKey": "lwcValue_96b0a4999fde5229",
+            "filePath": "broken/broken.html",
+            "start": {
+              "offset": 36,
+              "line": 2,
+              "column": 25
+            },
+            "end": {
+              "offset": 50,
+              "line": 2,
+              "column": 39
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcBranch_52b9c01c3c97eda8",
         "context": "<div if:true={value} lwc:if={value}>if:true と lwc:if は同時に使えない</div>",
         "source": [
           {
@@ -787,7 +991,7 @@
         ]
       },
       {
-        "objectKey": "lwcIf_051bcd8c9c5a6163",
+        "objectKey": "lwcIf_b46f60161efaa46e",
         "context": "<div if:true={value} lwc:if={value}>if:true と lwc:if は同時に使えない</div>",
         "source": [
           {
@@ -807,7 +1011,67 @@
         ]
       },
       {
-        "objectKey": "lwcHandler_36bea6b75b7718fd",
+        "objectKey": "lwcComponentRef_0c51f7128b8a216b",
+        "context": "<c-child onClick={handleClick}></c-child>",
+        "source": [
+          {
+            "sourceKey": "lwcComponentRef_dcd2df94fbc96369",
+            "filePath": "broken/broken.html",
+            "start": {
+              "offset": 87,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 128,
+              "line": 3,
+              "column": 45
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcExpression_83cbbef7627cd80c",
+        "context": "onClick={handleClick}",
+        "source": [
+          {
+            "sourceKey": "lwcExpression_90e6620fe35d0d2f",
+            "filePath": "broken/broken.html",
+            "start": {
+              "offset": 96,
+              "line": 3,
+              "column": 13
+            },
+            "end": {
+              "offset": 117,
+              "line": 3,
+              "column": 34
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcValue_659d2c94d3634b8f",
+        "context": "onClick={handleClick}",
+        "source": [
+          {
+            "sourceKey": "lwcValue_90e6620fe35d0d2f",
+            "filePath": "broken/broken.html",
+            "start": {
+              "offset": 96,
+              "line": 3,
+              "column": 13
+            },
+            "end": {
+              "offset": 117,
+              "line": 3,
+              "column": 34
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcHandler_94c928f1db5a2207",
         "context": "onClick={handleClick}",
         "source": [
           {
@@ -827,7 +1091,7 @@
         ]
       },
       {
-        "objectKey": "lwcElement_b5ab7359048d42ad",
+        "objectKey": "lwcElement_505aa20605a1bac6",
         "context": "<c-child onClick={handleClick}></c-child>",
         "source": [
           {
@@ -847,7 +1111,7 @@
         ]
       },
       {
-        "objectKey": "lwcTemplate_54cc3dbdf2bc4c36",
+        "objectKey": "lwcTemplate_e79ee7c1172c077e",
         "context": "",
         "source": [
           {
@@ -867,7 +1131,47 @@
         ]
       },
       {
-        "objectKey": "cssRule_d142fee28f91cc75",
+        "objectKey": "lwcBundleTemplate_0c1ac5b318c39a91",
+        "context": "",
+        "source": [
+          {
+            "sourceKey": "lwcTemplate_94fef1a64e2c17ce",
+            "filePath": "broken/broken.html",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "cssDeclaration_40ead342c09d6817",
+        "context": "color: red;\n",
+        "source": [
+          {
+            "sourceKey": "cssDeclaration_62cf8a0e14fbf0c6",
+            "filePath": "broken/broken.css",
+            "start": {
+              "offset": 12,
+              "line": 2,
+              "column": 4
+            },
+            "end": {
+              "offset": 24,
+              "line": 3,
+              "column": 0
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "cssRule_291350776e306b7b",
         "context": ":root {\n    color: red;\n}\n",
         "source": [
           {
@@ -887,7 +1191,7 @@
         ]
       },
       {
-        "objectKey": "lwcStylesheet_a17e592f34c77c7c",
+        "objectKey": "lwcStylesheet_992da2aaa2117a13",
         "context": "",
         "source": [
           {
@@ -903,6 +1207,46 @@
               "line": 1,
               "column": 0
             }
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcBundleStylesheet_72340bed25a03374",
+        "context": "",
+        "source": [
+          {
+            "sourceKey": "lwcStylesheet_3a57db51714cb77d",
+            "filePath": "broken/broken.css",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "lwcBundle_88a43c5672799766",
+        "context": "",
+        "source": [
+          {
+            "sourceKey": "lwcModule_a59cf804cf8ffefd",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "filePath": "broken/broken.ts"
           }
         ]
       }

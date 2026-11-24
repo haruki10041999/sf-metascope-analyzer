@@ -11,6 +11,13 @@ import type {
     LwcTemplateNodeJson,
     LwcTextJson,
 } from '../../src/analyzer/types';
+import { lwcShape } from './lwcShape';
+
+/** 位置と、P1 で足したノードの kind (lwcValue・lwcExpression・cssDeclaration など) を両側から除いて比べる (lwcShape.ts) */
+const deepEqual = (actual: unknown, expected: unknown, message?: string) =>
+    message === undefined
+        ? assert.deepEqual(lwcShape(actual), lwcShape(expected))
+        : assert.deepEqual(lwcShape(actual), lwcShape(expected), message);
 
 // LWC のテンプレート (HTML) の JSON と検証 (docs/lwc-implementation.md)
 
@@ -40,19 +47,19 @@ describe('LWC のテンプレート (JSON)', () => {
         const result = parseTemplate('accountList/accountList.html', source, {
             name: 'accountList',
         });
-        assert.deepEqual(result.resolvedError, []);
+        deepEqual(result.resolvedError, []);
         const template = result.template as LwcTemplateJson;
         assert.equal(template.kind, 'lwcTemplate');
 
         const card = template.children[0] as LwcElementJson;
         assert.equal(card.tag, 'lightning-card');
-        assert.deepEqual(card.component, {
+        deepEqual(card.component, {
             namespace: 'lightning',
             name: 'card',
             module: 'lightning/card',
             source: 'lightning',
         });
-        assert.deepEqual(
+        deepEqual(
             card.attributes.map((a) => [a.name, a.propertyName, a.value.type]),
             [
                 ['title', 'title', 'expression'],
@@ -62,14 +69,14 @@ describe('LWC のテンプレート (JSON)', () => {
 
         // lwc:if / lwc:elseif / lwc:else は 1 つの分岐の並び。<template> は消え、その子が分岐の子になる
         const ifs = card.children.filter((n): n is LwcIfJson => n.kind === 'lwcIf');
-        assert.deepEqual(
+        deepEqual(
             ifs[0]!.branches.map((b) => b.directive),
             ['lwc:if', 'lwc:elseif', 'lwc:else'],
         );
 
         // 子コンポーネント (同じ名前空間) は local。ループの名前 (row) の参照は local な式
         const row = elements(template).find((e) => e.tag === 'c-account-row')!;
-        assert.deepEqual(row.component, {
+        deepEqual(row.component, {
             namespace: 'c',
             name: 'accountRow',
             module: 'c/accountRow',
@@ -77,11 +84,11 @@ describe('LWC のテンプレート (JSON)', () => {
         });
         const recordId = row.attributes.find((a) => a.name === 'record-id')!;
         assert.equal(recordId.propertyName, 'recordId');
-        assert.deepEqual(recordId.value, {
+        deepEqual(recordId.value, {
             type: 'expression',
             expression: { text: 'row.id', path: ['row', 'id'], local: true },
         });
-        assert.deepEqual(
+        deepEqual(
             row.events.map((e) => [e.event, e.handler]),
             [
                 [
@@ -98,7 +105,7 @@ describe('LWC のテンプレート (JSON)', () => {
         const loops = walk(template.children).filter(
             (n): n is LwcForEachJson => n.kind === 'lwcForEach',
         );
-        assert.deepEqual(
+        deepEqual(
             loops.map((l) => [l.iteratorType, l.item, l.index, l.iteratorName]),
             [
                 ['for:each', 'row', 'index', undefined],
@@ -108,7 +115,7 @@ describe('LWC のテンプレート (JSON)', () => {
 
         // ディレクティブ (制御以外) と slot
         const table = elements(template).find((e) => e.tag === 'table')!;
-        assert.deepEqual(
+        deepEqual(
             table.directives.map((d) => [d.name, d.value]),
             [['lwc:ref', { type: 'static', value: 'table' }]],
         );
@@ -131,12 +138,12 @@ describe('LWC のテンプレート (JSON)', () => {
         assert.equal(loop.kind, 'lwcForEach');
         const inner = loop.children[0] as LwcIfJson;
         assert.equal(inner.kind, 'lwcIf');
-        assert.deepEqual(inner.branches[0]!.condition, {
+        deepEqual(inner.branches[0]!.condition, {
             type: 'expression',
             expression: { text: 'r.visible', path: ['r', 'visible'], local: true },
         });
         const li = inner.branches[0]!.children[0] as LwcElementJson;
-        assert.deepEqual(
+        deepEqual(
             li.directives.map((d) => d.name),
             ['key'],
         );
@@ -146,12 +153,12 @@ describe('LWC のテンプレート (JSON)', () => {
         const template = templateOf(
             '<p if:true={a}>1</p><p if:false={a}>2</p><input disabled title="{t}">',
         );
-        assert.deepEqual(
+        deepEqual(
             template.children.map((n) => (n.kind === 'lwcIf' ? n.branches[0]!.directive : n.kind)),
             ['if:true', 'if:false', 'lwcElement'],
         );
         const input = template.children[2] as LwcElementJson;
-        assert.deepEqual(
+        deepEqual(
             input.attributes.map((a) => [a.name, a.value.type]),
             [
                 ['disabled', 'boolean'],
@@ -164,7 +171,7 @@ describe('LWC のテンプレート (JSON)', () => {
         const template = templateOf(
             '<lwc:component lwc:is={ctor}></lwc:component><my-widget lwc:external></my-widget><acme-chart></acme-chart>',
         );
-        assert.deepEqual(
+        deepEqual(
             elements(template).map((e) => [e.elementType, e.component?.source]),
             [
                 ['dynamic', undefined],
@@ -178,7 +185,7 @@ describe('LWC のテンプレート (JSON)', () => {
         const [element] = elements(
             templateOf('<c-foo class="a" data-id="1" tabindex="0" aria-label="x"></c-foo>'),
         );
-        assert.deepEqual(
+        deepEqual(
             element!.attributes.map((a) => [a.name, a.propertyName]),
             [
                 ['class', undefined],
@@ -200,7 +207,7 @@ describe('LWC のテンプレート (検証)', () => {
     it('ルートが <template> でなければ template は null。理由は resolvedError (phase syntax)', () => {
         const result = parseTemplate('x/x.html', '<div>{a}</div>');
         assert.equal(result.template, null);
-        assert.deepEqual(
+        deepEqual(
             result.resolvedError.map((e) => [e.phase, e.code]),
             [['syntax', 'LWC1079']],
         );
@@ -209,8 +216,8 @@ describe('LWC のテンプレート (検証)', () => {
     it('HTML の構文エラーは LWC1058 (parse5 のコードを contextType に持つ)。JSON は作る', () => {
         const result = parseTemplate('x/x.html', '<template><c-foo/></template>');
         assert.equal(result.template?.kind, 'lwcTemplate');
-        assert.deepEqual(result.resolvedError[0]!.phase, 'syntax');
-        assert.deepEqual(result.resolvedError[0]!.code, 'LWC1058');
+        deepEqual(result.resolvedError[0]!.phase, 'syntax');
+        deepEqual(result.resolvedError[0]!.code, 'LWC1058');
         assert.equal(
             result.resolvedError[0]!.contextType,
             'non-void-html-element-start-tag-with-trailing-solidus',
@@ -222,7 +229,7 @@ describe('LWC のテンプレート (検証)', () => {
             'x/x.html',
             '<template><p lwc:else></p><c-a onClick={h}></c-a><p key={k}>x</p></template>',
         );
-        assert.deepEqual(
+        deepEqual(
             result.resolvedError.map((e) => [e.phase, e.code, e.level]),
             [
                 ['lwc', 'LWC1165', 'error'],
@@ -237,19 +244,19 @@ describe('LWC のテンプレート (検証)', () => {
             'x/x.html',
             '<template><lwc:component lwc:is={ctor}></lwc:component><div lwc:on={handlers}></div></template>',
         );
-        assert.deepEqual(result.resolvedError, []);
+        deepEqual(result.resolvedError, []);
     });
 
     it('バンドルのテンプレートの診断は、バンドルの resolvedError に入る', async () => {
         const result = await LwcParser.parseLwcBundle(`${BUNDLES}/broken`);
-        assert.deepEqual(
+        deepEqual(
             result.resolvedError
                 .filter((e) => e.filePath === 'broken/broken.html')
                 .map((e) => e.code),
             ['LWC1166', 'LWC1055', 'TEMPLATE_UNKNOWN_HANDLER'],
         );
         if (result.dataType === 'lwcBundle') {
-            assert.deepEqual(
+            deepEqual(
                 result.result.base.templates.map((t) => [t.fileName, t.main, t.template?.kind]),
                 [['broken.html', true, 'lwcTemplate']],
             );
@@ -275,7 +282,7 @@ describe('LWC のテンプレート (メタデータの参照)', () => {
                 .filter((e) => e.metadataRefs)
                 .map((e) => [e.tag, e.metadataRefs!.map((r) => [r.attribute, r.refType, r.value])]),
         );
-        assert.deepEqual(refs, {
+        deepEqual(refs, {
             'lightning-card': [['icon-name', 'icon', 'standard:account']],
             'lightning-record-edit-form': [
                 ['object-api-name', 'object', 'Account'],

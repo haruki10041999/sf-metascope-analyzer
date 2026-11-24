@@ -1,5 +1,7 @@
 {
   "module": {
+    "kind": "lwcModule",
+    "sourceKeys": {},
     "fileType": "ts",
     "imports": [
       {
@@ -143,6 +145,8 @@
         ],
         "typeOnly": false,
         "apex": {
+          "kind": "lwcApexRef",
+          "sourceKeys": {},
           "className": "AccountController",
           "methodName": "getAccounts"
         }
@@ -163,6 +167,8 @@
         ],
         "typeOnly": false,
         "apex": {
+          "kind": "lwcApexRef",
+          "sourceKeys": {},
           "className": "AccountController",
           "methodName": "deleteAccount"
         }
@@ -183,6 +189,8 @@
         ],
         "typeOnly": false,
         "schema": {
+          "kind": "lwcSchemaRef",
+          "sourceKeys": {},
           "objectApiName": "Account",
           "fieldApiName": "Name"
         }
@@ -203,6 +211,8 @@
         ],
         "typeOnly": false,
         "schema": {
+          "kind": "lwcSchemaRef",
+          "sourceKeys": {},
           "objectApiName": "Account",
           "fieldApiName": "Industry"
         }
@@ -278,10 +288,7 @@
     ],
     "component": {
       "kind": "lwcComponent",
-      "sourceKeys": {
-        "base": {},
-        "name": {}
-      },
+      "sourceKeys": {},
       "name": "AccountList",
       "superClass": {
         "kind": "jsCall",
@@ -302,10 +309,7 @@
       "block": [
         {
           "kind": "lwcField",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "recordId",
           "variantType": {
             "kind": "lwcType",
@@ -315,6 +319,8 @@
           },
           "optional": false,
           "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {},
             "decorator": [
               {
                 "kind": "lwcDecorator",
@@ -323,14 +329,16 @@
                 "arg": []
               }
             ]
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "recordId"
           }
         },
         {
           "kind": "lwcField",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "title",
           "variantType": {
             "kind": "lwcType",
@@ -345,6 +353,8 @@
           },
           "optional": false,
           "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {},
             "decorator": [
               {
                 "kind": "lwcDecorator",
@@ -353,14 +363,16 @@
                 "arg": []
               }
             ]
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "title"
           }
         },
         {
           "kind": "lwcField",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "maxRows",
           "variantType": {
             "kind": "lwcType",
@@ -375,6 +387,8 @@
           },
           "optional": true,
           "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {},
             "decorator": [
               {
                 "kind": "lwcDecorator",
@@ -383,20 +397,24 @@
                 "arg": []
               }
             ]
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "maxRows"
           }
         },
         {
           "kind": "lwcField",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "rows",
           "variantType": {
             "kind": "lwcType",
             "sourceKeys": {},
             "type": "array",
             "elementType": {
+              "kind": "lwcType",
+              "sourceKeys": {},
               "type": "custom",
               "customType": [
                 "Row"
@@ -410,6 +428,8 @@
           },
           "optional": false,
           "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {},
             "access": "private",
             "decorator": [
               {
@@ -419,14 +439,16 @@
                 "arg": []
               }
             ]
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "rows"
           }
         },
         {
           "kind": "lwcField",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "viewMode",
           "variantType": {
             "kind": "lwcType",
@@ -442,14 +464,19 @@
             "value": "table"
           },
           "optional": false,
-          "modifier": {}
+          "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {}
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "viewMode"
+          }
         },
         {
           "kind": "lwcField",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "sortDirection",
           "variantType": {
             "kind": "lwcType",
@@ -465,14 +492,19 @@
             "value": "asc"
           },
           "optional": false,
-          "modifier": {}
+          "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {}
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "sortDirection"
+          }
         },
         {
           "kind": "lwcField",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "error",
           "variantType": {
             "kind": "lwcType",
@@ -481,14 +513,19 @@
             "primitiveType": "unknown"
           },
           "optional": true,
-          "modifier": {}
+          "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {}
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "error"
+          }
         },
         {
           "kind": "lwcField",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "record",
           "variantType": {
             "kind": "lwcType",
@@ -496,8 +533,12 @@
             "type": "object",
             "members": [
               {
+                "kind": "lwcTypeMember",
+                "sourceKeys": {},
                 "name": "data",
                 "memberType": {
+                  "kind": "lwcType",
+                  "sourceKeys": {},
                   "type": "primitive",
                   "primitiveType": "unknown"
                 },
@@ -505,8 +546,12 @@
                 "method": false
               },
               {
+                "kind": "lwcTypeMember",
+                "sourceKeys": {},
                 "name": "error",
                 "memberType": {
+                  "kind": "lwcType",
+                  "sourceKeys": {},
                   "type": "primitive",
                   "primitiveType": "unknown"
                 },
@@ -517,6 +562,8 @@
           },
           "optional": true,
           "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {},
             "decorator": [
               {
                 "kind": "lwcDecorator",
@@ -569,6 +616,8 @@
                   }
                 ],
                 "wire": {
+                  "kind": "lwcWire",
+                  "sourceKeys": {},
                   "adapter": {
                     "kind": "jsIdentifier",
                     "sourceKeys": {},
@@ -612,14 +661,16 @@
                 }
               }
             ]
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "record"
           }
         },
         {
           "kind": "lwcField",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "recordByName",
           "variantType": {
             "kind": "lwcType",
@@ -627,8 +678,12 @@
             "type": "object",
             "members": [
               {
+                "kind": "lwcTypeMember",
+                "sourceKeys": {},
                 "name": "data",
                 "memberType": {
+                  "kind": "lwcType",
+                  "sourceKeys": {},
                   "type": "primitive",
                   "primitiveType": "unknown"
                 },
@@ -636,8 +691,12 @@
                 "method": false
               },
               {
+                "kind": "lwcTypeMember",
+                "sourceKeys": {},
                 "name": "error",
                 "memberType": {
+                  "kind": "lwcType",
+                  "sourceKeys": {},
                   "type": "primitive",
                   "primitiveType": "unknown"
                 },
@@ -648,6 +707,8 @@
           },
           "optional": true,
           "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {},
             "decorator": [
               {
                 "kind": "lwcDecorator",
@@ -712,6 +773,8 @@
                   }
                 ],
                 "wire": {
+                  "kind": "lwcWire",
+                  "sourceKeys": {},
                   "adapter": {
                     "kind": "jsIdentifier",
                     "sourceKeys": {},
@@ -772,14 +835,16 @@
                 }
               }
             ]
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "recordByName"
           }
         },
         {
           "kind": "lwcMethod",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "wiredAccounts",
           "returnType": {
             "kind": "lwcType",
@@ -825,10 +890,16 @@
                 "type": "object",
                 "members": [
                   {
+                    "kind": "lwcTypeMember",
+                    "sourceKeys": {},
                     "name": "data",
                     "memberType": {
+                      "kind": "lwcType",
+                      "sourceKeys": {},
                       "type": "array",
                       "elementType": {
+                        "kind": "lwcType",
+                        "sourceKeys": {},
                         "type": "primitive",
                         "primitiveType": "unknown"
                       }
@@ -837,8 +908,12 @@
                     "method": false
                   },
                   {
+                    "kind": "lwcTypeMember",
+                    "sourceKeys": {},
                     "name": "error",
                     "memberType": {
+                      "kind": "lwcType",
+                      "sourceKeys": {},
                       "type": "primitive",
                       "primitiveType": "unknown"
                     },
@@ -848,11 +923,16 @@
                 ]
               },
               "optional": false,
-              "modifier": {}
+              "modifier": {
+                "kind": "lwcModifiers",
+                "sourceKeys": {}
+              }
             }
           ],
           "async": false,
           "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {},
             "decorator": [
               {
                 "kind": "lwcDecorator",
@@ -894,6 +974,8 @@
                   }
                 ],
                 "wire": {
+                  "kind": "lwcWire",
+                  "sourceKeys": {},
                   "adapter": {
                     "kind": "jsIdentifier",
                     "sourceKeys": {},
@@ -901,6 +983,8 @@
                   },
                   "adapterSource": "@salesforce/apex/AccountController.getAccounts",
                   "apex": {
+                    "kind": "lwcApexRef",
+                    "sourceKeys": {},
                     "className": "AccountController",
                     "methodName": "getAccounts"
                   },
@@ -938,6 +1022,8 @@
               "sourceKeys": {},
               "conditionBlock": [
                 {
+                  "kind": "jsIfBranch",
+                  "sourceKeys": {},
                   "condition": {
                     "kind": "jsIdentifier",
                     "sourceKeys": {},
@@ -983,6 +1069,8 @@
                   ]
                 },
                 {
+                  "kind": "jsIfBranch",
+                  "sourceKeys": {},
                   "condition": {
                     "kind": "jsIdentifier",
                     "sourceKeys": {},
@@ -1018,19 +1106,31 @@
                 }
               ]
             }
-          ]
+          ],
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "wiredAccounts"
+          }
         },
         {
           "kind": "lwcProperty",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "parentName",
           "isGetter": true,
           "isSetter": false,
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "parentName"
+          },
           "getterContent": {
-            "modifier": {},
+            "kind": "lwcAccessor",
+            "sourceKeys": {},
+            "modifier": {
+              "kind": "lwcModifiers",
+              "sourceKeys": {}
+            },
             "block": [
               {
                 "kind": "jsReturn",
@@ -1079,10 +1179,14 @@
                     "type": "union",
                     "types": [
                       {
+                        "kind": "lwcType",
+                        "sourceKeys": {},
                         "type": "primitive",
                         "primitiveType": "string"
                       },
                       {
+                        "kind": "lwcType",
+                        "sourceKeys": {},
                         "type": "primitive",
                         "primitiveType": "undefined"
                       }
@@ -1098,10 +1202,14 @@
             "type": "union",
             "types": [
               {
+                "kind": "lwcType",
+                "sourceKeys": {},
                 "type": "primitive",
                 "primitiveType": "string"
               },
               {
+                "kind": "lwcType",
+                "sourceKeys": {},
                 "type": "primitive",
                 "primitiveType": "undefined"
               }
@@ -1110,15 +1218,22 @@
         },
         {
           "kind": "lwcProperty",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "hasRows",
           "isGetter": true,
           "isSetter": false,
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "hasRows"
+          },
           "getterContent": {
-            "modifier": {},
+            "kind": "lwcAccessor",
+            "sourceKeys": {},
+            "modifier": {
+              "kind": "lwcModifiers",
+              "sourceKeys": {}
+            },
             "block": [
               {
                 "kind": "jsReturn",
@@ -1163,15 +1278,22 @@
         },
         {
           "kind": "lwcProperty",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "isTable",
           "isGetter": true,
           "isSetter": false,
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "isTable"
+          },
           "getterContent": {
-            "modifier": {},
+            "kind": "lwcAccessor",
+            "sourceKeys": {},
+            "modifier": {
+              "kind": "lwcModifiers",
+              "sourceKeys": {}
+            },
             "block": [
               {
                 "kind": "jsReturn",
@@ -1209,15 +1331,22 @@
         },
         {
           "kind": "lwcProperty",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "totalAmount",
           "isGetter": true,
           "isSetter": false,
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "totalAmount"
+          },
           "getterContent": {
-            "modifier": {},
+            "kind": "lwcAccessor",
+            "sourceKeys": {},
+            "modifier": {
+              "kind": "lwcModifiers",
+              "sourceKeys": {}
+            },
             "block": [
               {
                 "kind": "jsReturn",
@@ -1261,14 +1390,20 @@
                               "sourceKeys": {},
                               "variant": "sum",
                               "optional": false,
-                              "modifier": {}
+                              "modifier": {
+                                "kind": "lwcModifiers",
+                                "sourceKeys": {}
+                              }
                             },
                             {
                               "kind": "lwcParameter",
                               "sourceKeys": {},
                               "variant": "row",
                               "optional": false,
-                              "modifier": {}
+                              "modifier": {
+                                "kind": "lwcModifiers",
+                                "sourceKeys": {}
+                              }
                             }
                           ],
                           "expression": {
@@ -1329,10 +1464,7 @@
         },
         {
           "kind": "lwcMethod",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "handleSelect",
           "returnType": {
             "kind": "lwcType",
@@ -1354,6 +1486,8 @@
                 ],
                 "generic": [
                   {
+                    "kind": "lwcType",
+                    "sourceKeys": {},
                     "type": "custom",
                     "customType": [
                       "SelectDetail"
@@ -1362,11 +1496,17 @@
                 ]
               },
               "optional": false,
-              "modifier": {}
+              "modifier": {
+                "kind": "lwcModifiers",
+                "sourceKeys": {}
+              }
             }
           ],
           "async": false,
-          "modifier": {},
+          "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {}
+          },
           "block": [
             {
               "kind": "jsLocalVariable",
@@ -1603,14 +1743,16 @@
                 ]
               }
             }
-          ]
+          ],
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "handleSelect"
+          }
         },
         {
           "kind": "lwcMethod",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "handleDelete",
           "returnType": {
             "kind": "lwcType",
@@ -1621,6 +1763,8 @@
             ],
             "generic": [
               {
+                "kind": "lwcType",
+                "sourceKeys": {},
                 "type": "primitive",
                 "primitiveType": "void"
               }
@@ -1640,11 +1784,17 @@
                 ]
               },
               "optional": false,
-              "modifier": {}
+              "modifier": {
+                "kind": "lwcModifiers",
+                "sourceKeys": {}
+              }
             }
           ],
           "async": true,
-          "modifier": {},
+          "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {}
+          },
           "block": [
             {
               "kind": "jsLocalVariable",
@@ -1714,6 +1864,8 @@
               "sourceKeys": {},
               "block": [
                 {
+                  "kind": "jsTryClause",
+                  "sourceKeys": {},
                   "condition": "try",
                   "block": [
                     {
@@ -1811,6 +1963,8 @@
                   ]
                 },
                 {
+                  "kind": "jsTryClause",
+                  "sourceKeys": {},
                   "condition": "catch",
                   "param": {
                     "kind": "jsIdentifier",
@@ -1847,14 +2001,16 @@
                 }
               ]
             }
-          ]
+          ],
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "handleDelete"
+          }
         },
         {
           "kind": "lwcMethod",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "refresh",
           "returnType": {
             "kind": "lwcType",
@@ -1865,6 +2021,8 @@
           "param": [],
           "async": false,
           "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {},
             "decorator": [
               {
                 "kind": "lwcDecorator",
@@ -1905,16 +2063,20 @@
                 "memberArg": []
               }
             }
-          ]
+          ],
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "refresh"
+          }
         },
         {
           "kind": "lwcField",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "handleReload",
           "function": {
+            "kind": "lwcFunction",
+            "sourceKeys": {},
             "arrow": true,
             "param": [],
             "returnType": {
@@ -1926,6 +2088,8 @@
               ],
               "generic": [
                 {
+                  "kind": "lwcType",
+                  "sourceKeys": {},
                   "type": "primitive",
                   "primitiveType": "void"
                 }
@@ -2184,7 +2348,10 @@
                             "primitiveType": "unknown"
                           },
                           "optional": false,
-                          "modifier": {}
+                          "modifier": {
+                            "kind": "lwcModifiers",
+                            "sourceKeys": {}
+                          }
                         }
                       ],
                       "block": [
@@ -2221,16 +2388,23 @@
             ]
           },
           "optional": false,
-          "modifier": {}
+          "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {}
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "handleReload"
+          }
         },
         {
           "kind": "lwcField",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "handleOpenList",
           "function": {
+            "kind": "lwcFunction",
+            "sourceKeys": {},
             "arrow": true,
             "param": [],
             "returnType": {
@@ -2347,14 +2521,19 @@
             ]
           },
           "optional": false,
-          "modifier": {}
+          "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {}
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "handleOpenList"
+          }
         },
         {
           "kind": "lwcMethod",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "connectedCallback",
           "returnType": {
             "kind": "lwcType",
@@ -2364,7 +2543,10 @@
           },
           "param": [],
           "async": false,
-          "modifier": {},
+          "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {}
+          },
           "block": [
             {
               "kind": "jsExpression",
@@ -2400,9 +2582,19 @@
                 ]
               }
             }
-          ]
+          ],
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "connectedCallback"
+          }
         }
-      ]
+      ],
+      "nameRef": {
+        "kind": "declarationName",
+        "sourceKeys": {},
+        "name": "AccountList"
+      }
     },
     "exports": [
       {
@@ -2418,10 +2610,7 @@
     "typeDeclarations": [
       {
         "kind": "lwcTypeDeclaration",
-        "sourceKeys": {
-          "base": {},
-          "name": {}
-        },
+        "sourceKeys": {},
         "name": "ViewMode",
         "exported": false,
         "declarationType": "type",
@@ -2431,29 +2620,39 @@
           "type": "union",
           "types": [
             {
+              "kind": "lwcType",
+              "sourceKeys": {},
               "type": "literal",
               "value": "'table'"
             },
             {
+              "kind": "lwcType",
+              "sourceKeys": {},
               "type": "literal",
               "value": "'tile'"
             }
           ]
+        },
+        "nameRef": {
+          "kind": "declarationName",
+          "sourceKeys": {},
+          "name": "ViewMode"
         }
       },
       {
         "kind": "lwcTypeDeclaration",
-        "sourceKeys": {
-          "base": {},
-          "name": {}
-        },
+        "sourceKeys": {},
         "name": "SelectDetail",
         "exported": false,
         "declarationType": "interface",
         "members": [
           {
+            "kind": "lwcTypeMember",
+            "sourceKeys": {},
             "name": "recordId",
             "memberType": {
+              "kind": "lwcType",
+              "sourceKeys": {},
               "type": "primitive",
               "primitiveType": "string"
             },
@@ -2461,19 +2660,41 @@
             "method": false
           },
           {
+            "kind": "lwcTypeMember",
+            "sourceKeys": {},
             "name": "index",
             "memberType": {
+              "kind": "lwcType",
+              "sourceKeys": {},
               "type": "primitive",
               "primitiveType": "number"
             },
             "optional": false,
             "method": false
           }
-        ]
+        ],
+        "nameRef": {
+          "kind": "declarationName",
+          "sourceKeys": {},
+          "name": "SelectDetail"
+        }
       }
     ]
   },
   "sourceObject": [
+    {
+      "context": "",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      }
+    },
     {
       "context": "'$maxRows'",
       "start": {
@@ -2524,6 +2745,110 @@
         "offset": 1544,
         "line": 40,
         "column": 46
+      }
+    },
+    {
+      "context": "'@salesforce/apex/AccountController.deleteAccount'",
+      "start": {
+        "offset": 409,
+        "line": 7,
+        "column": 26
+      },
+      "end": {
+        "offset": 459,
+        "line": 7,
+        "column": 76
+      }
+    },
+    {
+      "context": "'@salesforce/apex/AccountController.deleteAccount'",
+      "start": {
+        "offset": 409,
+        "line": 7,
+        "column": 26
+      },
+      "end": {
+        "offset": 459,
+        "line": 7,
+        "column": 76
+      }
+    },
+    {
+      "context": "'@salesforce/apex/AccountController.getAccounts'",
+      "start": {
+        "offset": 333,
+        "line": 6,
+        "column": 24
+      },
+      "end": {
+        "offset": 381,
+        "line": 6,
+        "column": 72
+      }
+    },
+    {
+      "context": "'@salesforce/apex/AccountController.getAccounts'",
+      "start": {
+        "offset": 333,
+        "line": 6,
+        "column": 24
+      },
+      "end": {
+        "offset": 381,
+        "line": 6,
+        "column": 72
+      }
+    },
+    {
+      "context": "'@salesforce/schema/Account.Industry'",
+      "start": {
+        "offset": 546,
+        "line": 9,
+        "column": 27
+      },
+      "end": {
+        "offset": 583,
+        "line": 9,
+        "column": 64
+      }
+    },
+    {
+      "context": "'@salesforce/schema/Account.Industry'",
+      "start": {
+        "offset": 546,
+        "line": 9,
+        "column": 27
+      },
+      "end": {
+        "offset": 583,
+        "line": 9,
+        "column": 64
+      }
+    },
+    {
+      "context": "'@salesforce/schema/Account.Name'",
+      "start": {
+        "offset": 484,
+        "line": 8,
+        "column": 23
+      },
+      "end": {
+        "offset": 517,
+        "line": 8,
+        "column": 56
+      }
+    },
+    {
+      "context": "'@salesforce/schema/Account.Name'",
+      "start": {
+        "offset": 484,
+        "line": 8,
+        "column": 23
+      },
+      "end": {
+        "offset": 517,
+        "line": 8,
+        "column": 56
       }
     },
     {
@@ -2735,6 +3060,32 @@
       }
     },
     {
+      "context": "'table'",
+      "start": {
+        "offset": 765,
+        "line": 14,
+        "column": 16
+      },
+      "end": {
+        "offset": 772,
+        "line": 14,
+        "column": 23
+      }
+    },
+    {
+      "context": "'tile'",
+      "start": {
+        "offset": 775,
+        "line": 14,
+        "column": 26
+      },
+      "end": {
+        "offset": 781,
+        "line": 14,
+        "column": 32
+      }
+    },
+    {
       "context": "'view'",
       "start": {
         "offset": 2665,
@@ -2771,6 +3122,32 @@
         "offset": 3581,
         "line": 104,
         "column": 13
+      }
+    },
+    {
+      "context": "(): void => {\n        this[NavigationMixin.Navigate]({\n            type: 'standard__objectPage',\n            attributes: { objectApiName: 'Account', actionName: 'list' },\n            state: { filterName: 'Recent' },\n        });\n    }",
+      "start": {
+        "offset": 3705,
+        "line": 110,
+        "column": 21
+      },
+      "end": {
+        "offset": 3938,
+        "line": 116,
+        "column": 5
+      }
+    },
+    {
+      "context": "(): void => {\n        this[NavigationMixin.Navigate]({\n            type: 'standard__objectPage',\n            attributes: { objectApiName: 'Account', actionName: 'list' },\n            state: { filterName: 'Recent' },\n        });\n    }",
+      "start": {
+        "offset": 3705,
+        "line": 110,
+        "column": 21
+      },
+      "end": {
+        "offset": 3938,
+        "line": 116,
+        "column": 5
       }
     },
     {
@@ -2932,6 +3309,32 @@
     {
       "context": "@api recordId!: string;",
       "start": {
+        "offset": 1000,
+        "line": 24,
+        "column": 4
+      },
+      "end": {
+        "offset": 1027,
+        "line": 24,
+        "column": 31
+      }
+    },
+    {
+      "context": "@api recordId!: string;",
+      "start": {
+        "offset": 3049,
+        "line": 90,
+        "column": 4
+      },
+      "end": {
+        "offset": 3115,
+        "line": 93,
+        "column": 5
+      }
+    },
+    {
+      "context": "@api recordId!: string;",
+      "start": {
         "offset": 934,
         "line": 22,
         "column": 4
@@ -2940,6 +3343,32 @@
         "offset": 957,
         "line": 22,
         "column": 27
+      }
+    },
+    {
+      "context": "@api recordId!: string;",
+      "start": {
+        "offset": 934,
+        "line": 22,
+        "column": 4
+      },
+      "end": {
+        "offset": 957,
+        "line": 22,
+        "column": 27
+      }
+    },
+    {
+      "context": "@api recordId!: string;",
+      "start": {
+        "offset": 962,
+        "line": 23,
+        "column": 4
+      },
+      "end": {
+        "offset": 995,
+        "line": 23,
+        "column": 37
       }
     },
     {
@@ -3034,6 +3463,19 @@
       }
     },
     {
+      "context": "@track private rows: Row[] = [];",
+      "start": {
+        "offset": 1032,
+        "line": 25,
+        "column": 4
+      },
+      "end": {
+        "offset": 1064,
+        "line": 25,
+        "column": 36
+      }
+    },
+    {
       "context": "@track",
       "start": {
         "offset": 1032,
@@ -3044,6 +3486,19 @@
         "offset": 1038,
         "line": 25,
         "column": 10
+      }
+    },
+    {
+      "context": "@wire(getAccounts, { parentId: '$recordId', limitSize: '$maxRows' })",
+      "start": {
+        "offset": 1502,
+        "line": 40,
+        "column": 4
+      },
+      "end": {
+        "offset": 1570,
+        "line": 40,
+        "column": 72
       }
     },
     {
@@ -3073,6 +3528,19 @@
       }
     },
     {
+      "context": "@wire(getAccounts, { parentId: '$recordId', limitSize: '$maxRows' })\n    wiredAccounts({ data, error }: { data?: unknown[]; error?: unknown }): void {\n        if (data) {\n            this.rows = toRows(data);\n        } else if (error) {\n            this.error = error;\n        }\n    }",
+      "start": {
+        "offset": 1502,
+        "line": 40,
+        "column": 4
+      },
+      "end": {
+        "offset": 1786,
+        "line": 47,
+        "column": 5
+      }
+    },
+    {
       "context": "@wire(getRecord, { recordId: '$recordId', fields: [NAME_FIELD, INDUSTRY_FIELD] })",
       "start": {
         "offset": 1167,
@@ -3083,6 +3551,32 @@
         "offset": 1248,
         "line": 30,
         "column": 85
+      }
+    },
+    {
+      "context": "@wire(getRecord, { recordId: '$recordId', fields: [NAME_FIELD, INDUSTRY_FIELD] })",
+      "start": {
+        "offset": 1167,
+        "line": 30,
+        "column": 4
+      },
+      "end": {
+        "offset": 1248,
+        "line": 30,
+        "column": 85
+      }
+    },
+    {
+      "context": "@wire(getRecord, { recordId: '$recordId', fields: [NAME_FIELD, INDUSTRY_FIELD] })\n    record?: { data?: unknown; error?: unknown };",
+      "start": {
+        "offset": 1167,
+        "line": 30,
+        "column": 4
+      },
+      "end": {
+        "offset": 1298,
+        "line": 31,
+        "column": 49
       }
     },
     {
@@ -3112,6 +3606,19 @@
       }
     },
     {
+      "context": "@wire(getRecord, {\n        recordId: '$recordId',\n        fields: ['Account.Name'],\n        optionalFields: ['Account.Industry'],\n    })",
+      "start": {
+        "offset": 1304,
+        "line": 33,
+        "column": 4
+      },
+      "end": {
+        "offset": 1440,
+        "line": 37,
+        "column": 6
+      }
+    },
+    {
       "context": "@wire(getRecord, {\n        recordId: '$recordId',\n        fields: ['Account.Name'],\n        optionalFields: ['Account.Industry'],\n    })\n    recordByName?: { data?: unknown; error?: unknown };",
       "start": {
         "offset": 1304,
@@ -3122,6 +3629,32 @@
         "offset": 1496,
         "line": 38,
         "column": 55
+      }
+    },
+    {
+      "context": "@wire(getRecord, {\n        recordId: '$recordId',\n        fields: ['Account.Name'],\n        optionalFields: ['Account.Industry'],\n    })\n    recordByName?: { data?: unknown; error?: unknown };",
+      "start": {
+        "offset": 1304,
+        "line": 33,
+        "column": 4
+      },
+      "end": {
+        "offset": 1496,
+        "line": 38,
+        "column": 55
+      }
+    },
+    {
+      "context": "AccountList",
+      "start": {
+        "offset": 874,
+        "line": 21,
+        "column": 21
+      },
+      "end": {
+        "offset": 885,
+        "line": 21,
+        "column": 32
       }
     },
     {
@@ -3426,6 +3959,19 @@
     {
       "context": "Row",
       "start": {
+        "offset": 1053,
+        "line": 25,
+        "column": 25
+      },
+      "end": {
+        "offset": 1056,
+        "line": 25,
+        "column": 28
+      }
+    },
+    {
+      "context": "Row",
+      "start": {
         "offset": 663,
         "line": 11,
         "column": 14
@@ -3452,6 +3998,19 @@
     {
       "context": "SelectDetail",
       "start": {
+        "offset": 2236,
+        "line": 65,
+        "column": 36
+      },
+      "end": {
+        "offset": 2248,
+        "line": 65,
+        "column": 48
+      }
+    },
+    {
+      "context": "SelectDetail",
+      "start": {
         "offset": 2365,
         "line": 68,
         "column": 28
@@ -3460,6 +4019,19 @@
         "offset": 2377,
         "line": 68,
         "column": 40
+      }
+    },
+    {
+      "context": "SelectDetail",
+      "start": {
+        "offset": 794,
+        "line": 16,
+        "column": 10
+      },
+      "end": {
+        "offset": 806,
+        "line": 16,
+        "column": 22
       }
     },
     {
@@ -3580,6 +4152,19 @@
       }
     },
     {
+      "context": "ViewMode",
+      "start": {
+        "offset": 754,
+        "line": 14,
+        "column": 5
+      },
+      "end": {
+        "offset": 762,
+        "line": 14,
+        "column": 13
+      }
+    },
+    {
       "context": "['Account.Industry']",
       "start": {
         "offset": 1412,
@@ -3668,6 +4253,32 @@
         "offset": 30,
         "line": 1,
         "column": 30
+      }
+    },
+    {
+      "context": "async (): Promise<void> => {\n        const row = this.template.querySelector('c-account-row');\n        await refreshApex(this.record);\n        updateRecord({ fields: { Id: this.recordId } })\n            .then(() => {\n                this.dispatchEvent(\n                    new CustomEvent('reloaded', { detail: { count: this.rows.length, row } }),\n                );\n            })\n            .catch((error: unknown) => {\n                this.error = error;\n            });\n    }",
+      "start": {
+        "offset": 3201,
+        "line": 96,
+        "column": 19
+      },
+      "end": {
+        "offset": 3681,
+        "line": 108,
+        "column": 5
+      }
+    },
+    {
+      "context": "async (): Promise<void> => {\n        const row = this.template.querySelector('c-account-row');\n        await refreshApex(this.record);\n        updateRecord({ fields: { Id: this.recordId } })\n            .then(() => {\n                this.dispatchEvent(\n                    new CustomEvent('reloaded', { detail: { count: this.rows.length, row } }),\n                );\n            })\n            .catch((error: unknown) => {\n                this.error = error;\n            });\n    }",
+      "start": {
+        "offset": 3201,
+        "line": 96,
+        "column": 19
+      },
+      "end": {
+        "offset": 3681,
+        "line": 108,
+        "column": 5
       }
     },
     {
@@ -3801,6 +4412,19 @@
       }
     },
     {
+      "context": "catch (error) {\n            this.error = error;\n        }",
+      "start": {
+        "offset": 2980,
+        "line": 85,
+        "column": 10
+      },
+      "end": {
+        "offset": 3037,
+        "line": 87,
+        "column": 9
+      }
+    },
+    {
       "context": "class AccountList extends NavigationMixin(LightningElement) {\n    @api recordId!: string;\n    @api title: string = TITLE_LABEL;\n    @api maxRows?: number = 10;\n    @track private rows: Row[] = [];\n    viewMode: ViewMode = 'table';\n    sortDirection: SortDirection = 'asc';\n    error?: unknown;\n\n    @wire(getRecord, { recordId: '$recordId', fields: [NAME_FIELD, INDUSTRY_FIELD] })\n    record?: { data?: unknown; error?: unknown };\n\n    @wire(getRecord, {\n        recordId: '$recordId',\n        fields: ['Account.Name'],\n        optionalFields: ['Account.Industry'],\n    })\n    recordByName?: { data?: unknown; error?: unknown };\n\n    @wire(getAccounts, { parentId: '$recordId', limitSize: '$maxRows' })\n    wiredAccounts({ data, error }: { data?: unknown[]; error?: unknown }): void {\n        if (data) {\n            this.rows = toRows(data);\n        } else if (error) {\n            this.error = error;\n        }\n    }\n\n    get parentName(): string | undefined {\n        return getFieldValue(this.record?.data, NAME_FIELD) as string | undefined;\n    }\n\n    get hasRows(): boolean {\n        return this.rows.length > 0;\n    }\n\n    get isTable(): boolean {\n        return this.viewMode === 'table';\n    }\n\n    get totalAmount(): string {\n        return formatAmount(this.rows.reduce((sum, row) => sum + (row.amount ?? 0), 0));\n    }\n\n    handleSelect(event: CustomEvent<SelectDetail>): void {\n        const { recordId, index } = event.detail;\n        this.dispatchEvent(\n            new CustomEvent<SelectDetail>('accountselect', {\n                detail: { recordId, index },\n                bubbles: true,\n                composed: false,\n            }),\n        );\n        this[NavigationMixin.Navigate]({\n            type: 'standard__recordPage',\n            attributes: { recordId, actionName: 'view' },\n        });\n    }\n\n    async handleDelete(event: Event): Promise<void> {\n        const recordId = (event.target as HTMLElement).dataset.id!;\n        try {\n            await deleteAccount({ recordId });\n            this.dispatchEvent(new ShowToastEvent({ title: '削除しました', variant: 'success' }));\n        } catch (error) {\n            this.error = error;\n        }\n    }\n\n    @api\n    refresh(): void {\n        this.refs.table?.focus();\n    }\n\n    /** 関数を初期値にしたフィールド (ハンドラー)。本体の呼び出し・イベントはメソッドと同じく JSON に入る */\n    handleReload = async (): Promise<void> => {\n        const row = this.template.querySelector('c-account-row');\n        await refreshApex(this.record);\n        updateRecord({ fields: { Id: this.recordId } })\n            .then(() => {\n                this.dispatchEvent(\n                    new CustomEvent('reloaded', { detail: { count: this.rows.length, row } }),\n                );\n            })\n            .catch((error: unknown) => {\n                this.error = error;\n            });\n    };\n\n    handleOpenList = (): void => {\n        this[NavigationMixin.Navigate]({\n            type: 'standard__objectPage',\n            attributes: { objectApiName: 'Account', actionName: 'list' },\n            state: { filterName: 'Recent' },\n        });\n    };\n\n    connectedCallback(): void {\n        window.addEventListener('resize', this.handleReload);\n    }\n}",
       "start": {
         "offset": 868,
@@ -3824,6 +4448,19 @@
         "offset": 2505,
         "line": 71,
         "column": 31
+      }
+    },
+    {
+      "context": "connectedCallback",
+      "start": {
+        "offset": 3945,
+        "line": 118,
+        "column": 4
+      },
+      "end": {
+        "offset": 3962,
+        "line": 118,
+        "column": 21
       }
     },
     {
@@ -3933,6 +4570,32 @@
     {
       "context": "data",
       "start": {
+        "offset": 1591,
+        "line": 41,
+        "column": 20
+      },
+      "end": {
+        "offset": 1595,
+        "line": 41,
+        "column": 24
+      }
+    },
+    {
+      "context": "data",
+      "start": {
+        "offset": 1665,
+        "line": 42,
+        "column": 12
+      },
+      "end": {
+        "offset": 1669,
+        "line": 42,
+        "column": 16
+      }
+    },
+    {
+      "context": "data",
+      "start": {
         "offset": 1665,
         "line": 42,
         "column": 12
@@ -3954,6 +4617,45 @@
         "offset": 1708,
         "line": 43,
         "column": 35
+      }
+    },
+    {
+      "context": "data?: unknown;",
+      "start": {
+        "offset": 1264,
+        "line": 31,
+        "column": 15
+      },
+      "end": {
+        "offset": 1279,
+        "line": 31,
+        "column": 30
+      }
+    },
+    {
+      "context": "data?: unknown;",
+      "start": {
+        "offset": 1462,
+        "line": 38,
+        "column": 21
+      },
+      "end": {
+        "offset": 1477,
+        "line": 38,
+        "column": 36
+      }
+    },
+    {
+      "context": "data?: unknown[];",
+      "start": {
+        "offset": 1608,
+        "line": 41,
+        "column": 37
+      },
+      "end": {
+        "offset": 1625,
+        "line": 41,
+        "column": 54
       }
     },
     {
@@ -4037,6 +4739,19 @@
     {
       "context": "error",
       "start": {
+        "offset": 1145,
+        "line": 28,
+        "column": 4
+      },
+      "end": {
+        "offset": 1150,
+        "line": 28,
+        "column": 9
+      }
+    },
+    {
+      "context": "error",
+      "start": {
         "offset": 1597,
         "line": 41,
         "column": 26
@@ -4058,6 +4773,32 @@
         "offset": 1602,
         "line": 41,
         "column": 31
+      }
+    },
+    {
+      "context": "error",
+      "start": {
+        "offset": 1597,
+        "line": 41,
+        "column": 26
+      },
+      "end": {
+        "offset": 1602,
+        "line": 41,
+        "column": 31
+      }
+    },
+    {
+      "context": "error",
+      "start": {
+        "offset": 1730,
+        "line": 44,
+        "column": 19
+      },
+      "end": {
+        "offset": 1735,
+        "line": 44,
+        "column": 24
       }
     },
     {
@@ -4136,6 +4877,58 @@
         "offset": 3617,
         "line": 105,
         "column": 34
+      }
+    },
+    {
+      "context": "error: unknown",
+      "start": {
+        "offset": 3603,
+        "line": 105,
+        "column": 20
+      },
+      "end": {
+        "offset": 3617,
+        "line": 105,
+        "column": 34
+      }
+    },
+    {
+      "context": "error?: unknown",
+      "start": {
+        "offset": 1280,
+        "line": 31,
+        "column": 31
+      },
+      "end": {
+        "offset": 1295,
+        "line": 31,
+        "column": 46
+      }
+    },
+    {
+      "context": "error?: unknown",
+      "start": {
+        "offset": 1478,
+        "line": 38,
+        "column": 37
+      },
+      "end": {
+        "offset": 1493,
+        "line": 38,
+        "column": 52
+      }
+    },
+    {
+      "context": "error?: unknown",
+      "start": {
+        "offset": 1626,
+        "line": 41,
+        "column": 55
+      },
+      "end": {
+        "offset": 1641,
+        "line": 41,
+        "column": 70
       }
     },
     {
@@ -4230,6 +5023,32 @@
       }
     },
     {
+      "context": "event: CustomEvent<SelectDetail>",
+      "start": {
+        "offset": 2217,
+        "line": 65,
+        "column": 17
+      },
+      "end": {
+        "offset": 2249,
+        "line": 65,
+        "column": 49
+      }
+    },
+    {
+      "context": "event: Event",
+      "start": {
+        "offset": 2717,
+        "line": 80,
+        "column": 23
+      },
+      "end": {
+        "offset": 2729,
+        "line": 80,
+        "column": 35
+      }
+    },
+    {
       "context": "event: Event",
       "start": {
         "offset": 2717,
@@ -4279,6 +5098,32 @@
         "offset": 1386,
         "line": 35,
         "column": 32
+      }
+    },
+    {
+      "context": "fields: ['Account.Name']",
+      "start": {
+        "offset": 1362,
+        "line": 35,
+        "column": 8
+      },
+      "end": {
+        "offset": 1386,
+        "line": 35,
+        "column": 32
+      }
+    },
+    {
+      "context": "fields: [NAME_FIELD, INDUSTRY_FIELD]",
+      "start": {
+        "offset": 1209,
+        "line": 30,
+        "column": 46
+      },
+      "end": {
+        "offset": 1245,
+        "line": 30,
+        "column": 82
       }
     },
     {
@@ -4373,6 +5218,32 @@
       }
     },
     {
+      "context": "get hasRows(): boolean {\n        return this.rows.length > 0;\n    }",
+      "start": {
+        "offset": 1925,
+        "line": 53,
+        "column": 4
+      },
+      "end": {
+        "offset": 1992,
+        "line": 55,
+        "column": 5
+      }
+    },
+    {
+      "context": "get isTable(): boolean {\n        return this.viewMode === 'table';\n    }",
+      "start": {
+        "offset": 1998,
+        "line": 57,
+        "column": 4
+      },
+      "end": {
+        "offset": 2070,
+        "line": 59,
+        "column": 5
+      }
+    },
+    {
       "context": "get isTable(): boolean {\n        return this.viewMode === 'table';\n    }",
       "start": {
         "offset": 1998,
@@ -4395,6 +5266,32 @@
       "end": {
         "offset": 1919,
         "line": 51,
+        "column": 5
+      }
+    },
+    {
+      "context": "get parentName(): string | undefined {\n        return getFieldValue(this.record?.data, NAME_FIELD) as string | undefined;\n    }",
+      "start": {
+        "offset": 1792,
+        "line": 49,
+        "column": 4
+      },
+      "end": {
+        "offset": 1919,
+        "line": 51,
+        "column": 5
+      }
+    },
+    {
+      "context": "get totalAmount(): string {\n        return formatAmount(this.rows.reduce((sum, row) => sum + (row.amount ?? 0), 0));\n    }",
+      "start": {
+        "offset": 2076,
+        "line": 61,
+        "column": 4
+      },
+      "end": {
+        "offset": 2198,
+        "line": 63,
         "column": 5
       }
     },
@@ -4542,6 +5439,19 @@
       }
     },
     {
+      "context": "handleDelete",
+      "start": {
+        "offset": 2704,
+        "line": 80,
+        "column": 10
+      },
+      "end": {
+        "offset": 2716,
+        "line": 80,
+        "column": 22
+      }
+    },
+    {
       "context": "handleOpenList = (): void => {\n        this[NavigationMixin.Navigate]({\n            type: 'standard__objectPage',\n            attributes: { objectApiName: 'Account', actionName: 'list' },\n            state: { filterName: 'Recent' },\n        });\n    };",
       "start": {
         "offset": 3688,
@@ -4552,6 +5462,19 @@
         "offset": 3939,
         "line": 116,
         "column": 6
+      }
+    },
+    {
+      "context": "handleOpenList",
+      "start": {
+        "offset": 3688,
+        "line": 110,
+        "column": 4
+      },
+      "end": {
+        "offset": 3702,
+        "line": 110,
+        "column": 18
       }
     },
     {
@@ -4594,6 +5517,32 @@
       }
     },
     {
+      "context": "handleReload",
+      "start": {
+        "offset": 3186,
+        "line": 96,
+        "column": 4
+      },
+      "end": {
+        "offset": 3198,
+        "line": 96,
+        "column": 16
+      }
+    },
+    {
+      "context": "handleSelect",
+      "start": {
+        "offset": 2204,
+        "line": 65,
+        "column": 4
+      },
+      "end": {
+        "offset": 2216,
+        "line": 65,
+        "column": 16
+      }
+    },
+    {
       "context": "handleSelect",
       "start": {
         "offset": 2204,
@@ -4617,6 +5566,19 @@
         "offset": 2692,
         "line": 78,
         "column": 5
+      }
+    },
+    {
+      "context": "hasRows",
+      "start": {
+        "offset": 1929,
+        "line": 53,
+        "column": 8
+      },
+      "end": {
+        "offset": 1936,
+        "line": 53,
+        "column": 15
       }
     },
     {
@@ -4830,6 +5792,19 @@
     {
       "context": "index",
       "start": {
+        "offset": 2285,
+        "line": 66,
+        "column": 26
+      },
+      "end": {
+        "offset": 2290,
+        "line": 66,
+        "column": 31
+      }
+    },
+    {
+      "context": "index",
+      "start": {
         "offset": 2434,
         "line": 69,
         "column": 36
@@ -4851,6 +5826,19 @@
         "offset": 2439,
         "line": 69,
         "column": 41
+      }
+    },
+    {
+      "context": "index: number;",
+      "start": {
+        "offset": 835,
+        "line": 18,
+        "column": 4
+      },
+      "end": {
+        "offset": 849,
+        "line": 18,
+        "column": 18
       }
     },
     {
@@ -4880,6 +5868,19 @@
       }
     },
     {
+      "context": "isTable",
+      "start": {
+        "offset": 2002,
+        "line": 57,
+        "column": 8
+      },
+      "end": {
+        "offset": 2009,
+        "line": 57,
+        "column": 15
+      }
+    },
+    {
       "context": "limitSize: '$maxRows'",
       "start": {
         "offset": 1546,
@@ -4890,6 +5891,32 @@
         "offset": 1567,
         "line": 40,
         "column": 69
+      }
+    },
+    {
+      "context": "limitSize: '$maxRows'",
+      "start": {
+        "offset": 1546,
+        "line": 40,
+        "column": 48
+      },
+      "end": {
+        "offset": 1567,
+        "line": 40,
+        "column": 69
+      }
+    },
+    {
+      "context": "maxRows",
+      "start": {
+        "offset": 1005,
+        "line": 24,
+        "column": 9
+      },
+      "end": {
+        "offset": 1012,
+        "line": 24,
+        "column": 16
       }
     },
     {
@@ -4958,6 +5985,19 @@
       }
     },
     {
+      "context": "number",
+      "start": {
+        "offset": 842,
+        "line": 18,
+        "column": 11
+      },
+      "end": {
+        "offset": 848,
+        "line": 18,
+        "column": 17
+      }
+    },
+    {
       "context": "objectApiName: 'Account'",
       "start": {
         "offset": 3828,
@@ -4968,6 +6008,19 @@
         "offset": 3852,
         "line": 113,
         "column": 50
+      }
+    },
+    {
+      "context": "optionalFields: ['Account.Industry']",
+      "start": {
+        "offset": 1396,
+        "line": 36,
+        "column": 8
+      },
+      "end": {
+        "offset": 1432,
+        "line": 36,
+        "column": 44
       }
     },
     {
@@ -4997,6 +6050,19 @@
       }
     },
     {
+      "context": "parentId: '$recordId'",
+      "start": {
+        "offset": 1523,
+        "line": 40,
+        "column": 25
+      },
+      "end": {
+        "offset": 1544,
+        "line": 40,
+        "column": 46
+      }
+    },
+    {
       "context": "parentName",
       "start": {
         "offset": 1796,
@@ -5007,6 +6073,32 @@
         "offset": 1806,
         "line": 49,
         "column": 18
+      }
+    },
+    {
+      "context": "parentName",
+      "start": {
+        "offset": 1796,
+        "line": 49,
+        "column": 8
+      },
+      "end": {
+        "offset": 1806,
+        "line": 49,
+        "column": 18
+      }
+    },
+    {
+      "context": "record",
+      "start": {
+        "offset": 1253,
+        "line": 31,
+        "column": 4
+      },
+      "end": {
+        "offset": 1259,
+        "line": 31,
+        "column": 10
       }
     },
     {
@@ -5036,6 +6128,19 @@
       }
     },
     {
+      "context": "recordByName",
+      "start": {
+        "offset": 1445,
+        "line": 38,
+        "column": 4
+      },
+      "end": {
+        "offset": 1457,
+        "line": 38,
+        "column": 16
+      }
+    },
+    {
       "context": "recordId = (event.target as HTMLElement).dataset.id!",
       "start": {
         "offset": 2762,
@@ -5046,6 +6151,19 @@
         "offset": 2814,
         "line": 81,
         "column": 66
+      }
+    },
+    {
+      "context": "recordId",
+      "start": {
+        "offset": 2275,
+        "line": 66,
+        "column": 16
+      },
+      "end": {
+        "offset": 2283,
+        "line": 66,
+        "column": 24
       }
     },
     {
@@ -5179,6 +6297,32 @@
       }
     },
     {
+      "context": "recordId",
+      "start": {
+        "offset": 939,
+        "line": 22,
+        "column": 9
+      },
+      "end": {
+        "offset": 947,
+        "line": 22,
+        "column": 17
+      }
+    },
+    {
+      "context": "recordId: '$recordId'",
+      "start": {
+        "offset": 1186,
+        "line": 30,
+        "column": 23
+      },
+      "end": {
+        "offset": 1207,
+        "line": 30,
+        "column": 44
+      }
+    },
+    {
       "context": "recordId: '$recordId'",
       "start": {
         "offset": 1186,
@@ -5202,6 +6346,45 @@
         "offset": 1352,
         "line": 34,
         "column": 29
+      }
+    },
+    {
+      "context": "recordId: '$recordId'",
+      "start": {
+        "offset": 1331,
+        "line": 34,
+        "column": 8
+      },
+      "end": {
+        "offset": 1352,
+        "line": 34,
+        "column": 29
+      }
+    },
+    {
+      "context": "recordId: string;",
+      "start": {
+        "offset": 813,
+        "line": 17,
+        "column": 4
+      },
+      "end": {
+        "offset": 830,
+        "line": 17,
+        "column": 21
+      }
+    },
+    {
+      "context": "refresh",
+      "start": {
+        "offset": 3058,
+        "line": 91,
+        "column": 4
+      },
+      "end": {
+        "offset": 3065,
+        "line": 91,
+        "column": 11
       }
     },
     {
@@ -5337,6 +6520,19 @@
     {
       "context": "row",
       "start": {
+        "offset": 2155,
+        "line": 62,
+        "column": 51
+      },
+      "end": {
+        "offset": 2158,
+        "line": 62,
+        "column": 54
+      }
+    },
+    {
+      "context": "row",
+      "start": {
         "offset": 2170,
         "line": 62,
         "column": 66
@@ -5426,6 +6622,32 @@
       }
     },
     {
+      "context": "rows",
+      "start": {
+        "offset": 1047,
+        "line": 25,
+        "column": 19
+      },
+      "end": {
+        "offset": 1051,
+        "line": 25,
+        "column": 23
+      }
+    },
+    {
+      "context": "sortDirection",
+      "start": {
+        "offset": 1103,
+        "line": 27,
+        "column": 4
+      },
+      "end": {
+        "offset": 1116,
+        "line": 27,
+        "column": 17
+      }
+    },
+    {
       "context": "sortDirection",
       "start": {
         "offset": 1103,
@@ -5493,6 +6715,32 @@
     {
       "context": "string",
       "start": {
+        "offset": 1810,
+        "line": 49,
+        "column": 22
+      },
+      "end": {
+        "offset": 1816,
+        "line": 49,
+        "column": 28
+      }
+    },
+    {
+      "context": "string",
+      "start": {
+        "offset": 1894,
+        "line": 50,
+        "column": 63
+      },
+      "end": {
+        "offset": 1900,
+        "line": 50,
+        "column": 69
+      }
+    },
+    {
+      "context": "string",
+      "start": {
         "offset": 2095,
         "line": 61,
         "column": 23
@@ -5501,6 +6749,19 @@
         "offset": 2101,
         "line": 61,
         "column": 29
+      }
+    },
+    {
+      "context": "string",
+      "start": {
+        "offset": 823,
+        "line": 17,
+        "column": 14
+      },
+      "end": {
+        "offset": 829,
+        "line": 17,
+        "column": 20
       }
     },
     {
@@ -5540,6 +6801,19 @@
         "offset": 2186,
         "line": 62,
         "column": 82
+      }
+    },
+    {
+      "context": "sum",
+      "start": {
+        "offset": 2150,
+        "line": 62,
+        "column": 46
+      },
+      "end": {
+        "offset": 2153,
+        "line": 62,
+        "column": 49
       }
     },
     {
@@ -6375,6 +7649,19 @@
       }
     },
     {
+      "context": "title",
+      "start": {
+        "offset": 967,
+        "line": 23,
+        "column": 9
+      },
+      "end": {
+        "offset": 972,
+        "line": 23,
+        "column": 14
+      }
+    },
+    {
       "context": "title: '削除しました'",
       "start": {
         "offset": 2929,
@@ -6424,6 +7711,19 @@
         "offset": 1709,
         "line": 43,
         "column": 36
+      }
+    },
+    {
+      "context": "totalAmount",
+      "start": {
+        "offset": 2080,
+        "line": 61,
+        "column": 8
+      },
+      "end": {
+        "offset": 2091,
+        "line": 61,
+        "column": 19
       }
     },
     {
@@ -6518,6 +7818,32 @@
       }
     },
     {
+      "context": "undefined",
+      "start": {
+        "offset": 1819,
+        "line": 49,
+        "column": 31
+      },
+      "end": {
+        "offset": 1828,
+        "line": 49,
+        "column": 40
+      }
+    },
+    {
+      "context": "undefined",
+      "start": {
+        "offset": 1903,
+        "line": 50,
+        "column": 72
+      },
+      "end": {
+        "offset": 1912,
+        "line": 50,
+        "column": 81
+      }
+    },
+    {
       "context": "unknown",
       "start": {
         "offset": 1153,
@@ -6533,6 +7859,84 @@
     {
       "context": "unknown",
       "start": {
+        "offset": 1271,
+        "line": 31,
+        "column": 22
+      },
+      "end": {
+        "offset": 1278,
+        "line": 31,
+        "column": 29
+      }
+    },
+    {
+      "context": "unknown",
+      "start": {
+        "offset": 1288,
+        "line": 31,
+        "column": 39
+      },
+      "end": {
+        "offset": 1295,
+        "line": 31,
+        "column": 46
+      }
+    },
+    {
+      "context": "unknown",
+      "start": {
+        "offset": 1469,
+        "line": 38,
+        "column": 28
+      },
+      "end": {
+        "offset": 1476,
+        "line": 38,
+        "column": 35
+      }
+    },
+    {
+      "context": "unknown",
+      "start": {
+        "offset": 1486,
+        "line": 38,
+        "column": 45
+      },
+      "end": {
+        "offset": 1493,
+        "line": 38,
+        "column": 52
+      }
+    },
+    {
+      "context": "unknown",
+      "start": {
+        "offset": 1615,
+        "line": 41,
+        "column": 44
+      },
+      "end": {
+        "offset": 1622,
+        "line": 41,
+        "column": 51
+      }
+    },
+    {
+      "context": "unknown",
+      "start": {
+        "offset": 1634,
+        "line": 41,
+        "column": 63
+      },
+      "end": {
+        "offset": 1641,
+        "line": 41,
+        "column": 70
+      }
+    },
+    {
+      "context": "unknown",
+      "start": {
         "offset": 3610,
         "line": 105,
         "column": 27
@@ -6541,6 +7945,19 @@
         "offset": 3617,
         "line": 105,
         "column": 34
+      }
+    },
+    {
+      "context": "unknown[]",
+      "start": {
+        "offset": 1615,
+        "line": 41,
+        "column": 44
+      },
+      "end": {
+        "offset": 1624,
+        "line": 41,
+        "column": 53
       }
     },
     {
@@ -6648,6 +8065,19 @@
       }
     },
     {
+      "context": "viewMode",
+      "start": {
+        "offset": 1069,
+        "line": 26,
+        "column": 4
+      },
+      "end": {
+        "offset": 1077,
+        "line": 26,
+        "column": 12
+      }
+    },
+    {
       "context": "viewMode: ViewMode = 'table';",
       "start": {
         "offset": 1069,
@@ -6658,6 +8088,240 @@
         "offset": 1098,
         "line": 26,
         "column": 33
+      }
+    },
+    {
+      "context": "viewMode: ViewMode = 'table';",
+      "start": {
+        "offset": 1069,
+        "line": 26,
+        "column": 4
+      },
+      "end": {
+        "offset": 1098,
+        "line": 26,
+        "column": 33
+      }
+    },
+    {
+      "context": "viewMode: ViewMode = 'table';",
+      "start": {
+        "offset": 1103,
+        "line": 27,
+        "column": 4
+      },
+      "end": {
+        "offset": 1140,
+        "line": 27,
+        "column": 41
+      }
+    },
+    {
+      "context": "viewMode: ViewMode = 'table';",
+      "start": {
+        "offset": 1145,
+        "line": 28,
+        "column": 4
+      },
+      "end": {
+        "offset": 1161,
+        "line": 28,
+        "column": 20
+      }
+    },
+    {
+      "context": "viewMode: ViewMode = 'table';",
+      "start": {
+        "offset": 1589,
+        "line": 41,
+        "column": 18
+      },
+      "end": {
+        "offset": 1643,
+        "line": 41,
+        "column": 72
+      }
+    },
+    {
+      "context": "viewMode: ViewMode = 'table';",
+      "start": {
+        "offset": 1792,
+        "line": 49,
+        "column": 4
+      },
+      "end": {
+        "offset": 1919,
+        "line": 51,
+        "column": 5
+      }
+    },
+    {
+      "context": "viewMode: ViewMode = 'table';",
+      "start": {
+        "offset": 1925,
+        "line": 53,
+        "column": 4
+      },
+      "end": {
+        "offset": 1992,
+        "line": 55,
+        "column": 5
+      }
+    },
+    {
+      "context": "viewMode: ViewMode = 'table';",
+      "start": {
+        "offset": 1998,
+        "line": 57,
+        "column": 4
+      },
+      "end": {
+        "offset": 2070,
+        "line": 59,
+        "column": 5
+      }
+    },
+    {
+      "context": "viewMode: ViewMode = 'table';",
+      "start": {
+        "offset": 2076,
+        "line": 61,
+        "column": 4
+      },
+      "end": {
+        "offset": 2198,
+        "line": 63,
+        "column": 5
+      }
+    },
+    {
+      "context": "viewMode: ViewMode = 'table';",
+      "start": {
+        "offset": 2150,
+        "line": 62,
+        "column": 46
+      },
+      "end": {
+        "offset": 2153,
+        "line": 62,
+        "column": 49
+      }
+    },
+    {
+      "context": "viewMode: ViewMode = 'table';",
+      "start": {
+        "offset": 2155,
+        "line": 62,
+        "column": 51
+      },
+      "end": {
+        "offset": 2158,
+        "line": 62,
+        "column": 54
+      }
+    },
+    {
+      "context": "viewMode: ViewMode = 'table';",
+      "start": {
+        "offset": 2204,
+        "line": 65,
+        "column": 4
+      },
+      "end": {
+        "offset": 2692,
+        "line": 78,
+        "column": 5
+      }
+    },
+    {
+      "context": "viewMode: ViewMode = 'table';",
+      "start": {
+        "offset": 2217,
+        "line": 65,
+        "column": 17
+      },
+      "end": {
+        "offset": 2249,
+        "line": 65,
+        "column": 49
+      }
+    },
+    {
+      "context": "viewMode: ViewMode = 'table';",
+      "start": {
+        "offset": 2698,
+        "line": 80,
+        "column": 4
+      },
+      "end": {
+        "offset": 3043,
+        "line": 88,
+        "column": 5
+      }
+    },
+    {
+      "context": "viewMode: ViewMode = 'table';",
+      "start": {
+        "offset": 2717,
+        "line": 80,
+        "column": 23
+      },
+      "end": {
+        "offset": 2729,
+        "line": 80,
+        "column": 35
+      }
+    },
+    {
+      "context": "viewMode: ViewMode = 'table';",
+      "start": {
+        "offset": 3186,
+        "line": 96,
+        "column": 4
+      },
+      "end": {
+        "offset": 3682,
+        "line": 108,
+        "column": 6
+      }
+    },
+    {
+      "context": "viewMode: ViewMode = 'table';",
+      "start": {
+        "offset": 3603,
+        "line": 105,
+        "column": 20
+      },
+      "end": {
+        "offset": 3617,
+        "line": 105,
+        "column": 34
+      }
+    },
+    {
+      "context": "viewMode: ViewMode = 'table';",
+      "start": {
+        "offset": 3688,
+        "line": 110,
+        "column": 4
+      },
+      "end": {
+        "offset": 3939,
+        "line": 116,
+        "column": 6
+      }
+    },
+    {
+      "context": "viewMode: ViewMode = 'table';",
+      "start": {
+        "offset": 3945,
+        "line": 118,
+        "column": 4
+      },
+      "end": {
+        "offset": 4040,
+        "line": 120,
+        "column": 5
       }
     },
     {
@@ -6689,6 +8353,19 @@
     {
       "context": "void",
       "start": {
+        "offset": 2740,
+        "line": 80,
+        "column": 46
+      },
+      "end": {
+        "offset": 2744,
+        "line": 80,
+        "column": 50
+      }
+    },
+    {
+      "context": "void",
+      "start": {
         "offset": 3069,
         "line": 91,
         "column": 15
@@ -6697,6 +8374,19 @@
         "offset": 3073,
         "line": 91,
         "column": 19
+      }
+    },
+    {
+      "context": "void",
+      "start": {
+        "offset": 3219,
+        "line": 96,
+        "column": 37
+      },
+      "end": {
+        "offset": 3223,
+        "line": 96,
+        "column": 41
       }
     },
     {
@@ -6791,6 +8481,19 @@
       }
     },
     {
+      "context": "wiredAccounts",
+      "start": {
+        "offset": 1575,
+        "line": 41,
+        "column": 4
+      },
+      "end": {
+        "offset": 1588,
+        "line": 41,
+        "column": 17
+      }
+    },
+    {
       "context": "{ Id: this.recordId }",
       "start": {
         "offset": 3367,
@@ -6814,6 +8517,19 @@
         "offset": 3544,
         "line": 102,
         "column": 90
+      }
+    },
+    {
+      "context": "{ data, error }: { data?: unknown[]; error?: unknown }",
+      "start": {
+        "offset": 1589,
+        "line": 41,
+        "column": 18
+      },
+      "end": {
+        "offset": 1643,
+        "line": 41,
+        "column": 72
       }
     },
     {
@@ -7035,6 +8751,19 @@
         "offset": 2520,
         "line": 72,
         "column": 13
+      }
+    },
+    {
+      "context": "{\n            await deleteAccount({ recordId });\n            this.dispatchEvent(new ShowToastEvent({ title: '削除しました', variant: 'success' }));\n        }",
+      "start": {
+        "offset": 2828,
+        "line": 82,
+        "column": 12
+      },
+      "end": {
+        "offset": 2979,
+        "line": 85,
+        "column": 9
       }
     },
     {

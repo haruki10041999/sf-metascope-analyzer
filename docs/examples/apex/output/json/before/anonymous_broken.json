@@ -182,12 +182,27 @@
   "result": {
     "id": "anonymous_broken",
     "base": {
+      "kind": "apexUnit",
+      "sourceKeys": {
+        "objectKey": "apexUnit_a056b0dd8810cf29",
+        "sourceKey": "anonymousUnit_63017d4983ea9dc8"
+      },
       "name": "broken",
       "unitType": "anonymous",
       "source": {
+        "kind": "apexSource",
+        "sourceKeys": {
+          "objectKey": "apexSource_40d0d3d2c8355af7",
+          "sourceKey": "anonymousUnit_63017d4983ea9dc8"
+        },
         "fileName": "broken.apex",
         "fileType": "anonymous",
         "content": {
+          "kind": "anonymousUnit",
+          "sourceKeys": {
+            "objectKey": "anonymousUnit_a6a841cc1ec81fa7",
+            "sourceKey": "anonymousUnit_63017d4983ea9dc8"
+          },
           "block": [
             {
               "kind": "expression",
@@ -223,6 +238,11 @@
                     },
                     "type": "list",
                     "elementType": {
+                      "kind": "type",
+                      "sourceKeys": {
+                        "objectKey": "typeRef_4ae4432abe2a6f7e",
+                        "sourceKey": "typeRef_7ccbe9e0e58c9be9"
+                      },
                       "type": "custom",
                       "customType": [
                         "Account"
@@ -260,6 +280,11 @@
                     "sourceKey": "query_2ccf7969867f44dc"
                   },
                   "select": {
+                    "kind": "soqlSelect",
+                    "sourceKeys": {
+                      "objectKey": "selectList_2dbaabd9127bafad",
+                      "sourceKey": "selectList_145bd877bd157847"
+                    },
                     "field": [
                       {
                         "kind": "selectEntry",
@@ -275,6 +300,11 @@
                     ]
                   },
                   "from": {
+                    "kind": "soqlFrom",
+                    "sourceKeys": {
+                      "objectKey": "fromNameList_169521d39e7466ff",
+                      "sourceKey": "fromNameList_de22d2280df94eb7"
+                    },
                     "field": [
                       {
                         "kind": "fromField",
@@ -344,7 +374,13 @@
                 "objectKey": "forStatement_79667c34129de295",
                 "sourceKey": "forStatement_01d8b263e55411cd"
               },
-              "condition": {},
+              "condition": {
+                "kind": "forControl",
+                "sourceKeys": {
+                  "objectKey": "forControl_83a79300325612cf",
+                  "sourceKey": "forControl_1f53a2e33bcea6a7"
+                }
+              },
               "block": [
                 {
                   "kind": "expression",
@@ -400,6 +436,44 @@
       }
     },
     "sourceObject": [
+      {
+        "objectKey": "apexSource_40d0d3d2c8355af7",
+        "context": "Integer x = ;\nList<Account> accs = [SELECT Id FROM Account WHERE Name = LIMIT 1];\nfor (;;) {\n    foo(1, );\n}\nreturn x +;",
+        "source": [
+          {
+            "sourceKey": "anonymousUnit_63017d4983ea9dc8",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 120,
+              "line": 6,
+              "column": 11
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "anonymousUnit_a6a841cc1ec81fa7",
+        "context": "Integer x = ;\nList<Account> accs = [SELECT Id FROM Account WHERE Name = LIMIT 1];\nfor (;;) {\n    foo(1, );\n}\nreturn x +;",
+        "source": [
+          {
+            "sourceKey": "anonymousUnit_63017d4983ea9dc8",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 120,
+              "line": 6,
+              "column": 11
+            }
+          }
+        ]
+      },
       {
         "objectKey": "expressionStatement_baa9730435509821",
         "context": "x = ;\nList<Account>",
@@ -509,6 +583,25 @@
         ]
       },
       {
+        "objectKey": "typeRef_4ae4432abe2a6f7e",
+        "context": "Account",
+        "source": [
+          {
+            "sourceKey": "typeRef_7ccbe9e0e58c9be9",
+            "start": {
+              "offset": 19,
+              "line": 2,
+              "column": 5
+            },
+            "end": {
+              "offset": 26,
+              "line": 2,
+              "column": 12
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "expressionStatement_035d59df0df3612f",
         "context": "accs = [SELECT Id FROM Account WHERE",
         "source": [
@@ -585,6 +678,25 @@
         ]
       },
       {
+        "objectKey": "selectList_2dbaabd9127bafad",
+        "context": "Id",
+        "source": [
+          {
+            "sourceKey": "selectList_145bd877bd157847",
+            "start": {
+              "offset": 43,
+              "line": 2,
+              "column": 29
+            },
+            "end": {
+              "offset": 45,
+              "line": 2,
+              "column": 31
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "selectEntry_60f7e9358613f5bb",
         "context": "Id",
         "source": [
@@ -599,6 +711,25 @@
               "offset": 45,
               "line": 2,
               "column": 31
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fromNameList_169521d39e7466ff",
+        "context": "Account",
+        "source": [
+          {
+            "sourceKey": "fromNameList_de22d2280df94eb7",
+            "start": {
+              "offset": 51,
+              "line": 2,
+              "column": 37
+            },
+            "end": {
+              "offset": 58,
+              "line": 2,
+              "column": 44
             }
           }
         ]
@@ -769,6 +900,25 @@
         ]
       },
       {
+        "objectKey": "forControl_83a79300325612cf",
+        "context": ";;",
+        "source": [
+          {
+            "sourceKey": "forControl_1f53a2e33bcea6a7",
+            "start": {
+              "offset": 87,
+              "line": 3,
+              "column": 5
+            },
+            "end": {
+              "offset": 89,
+              "line": 3,
+              "column": 7
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "expressionStatement_c3d5c7d728dc64c9",
         "context": "foo(1, );",
         "source": [
@@ -834,6 +984,25 @@
             "start": {
               "offset": 109,
               "line": 6,
+              "column": 0
+            },
+            "end": {
+              "offset": 120,
+              "line": 6,
+              "column": 11
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "apexUnit_a056b0dd8810cf29",
+        "context": "Integer x = ;\nList<Account> accs = [SELECT Id FROM Account WHERE Name = LIMIT 1];\nfor (;;) {\n    foo(1, );\n}\nreturn x +;",
+        "source": [
+          {
+            "sourceKey": "anonymousUnit_63017d4983ea9dc8",
+            "start": {
+              "offset": 0,
+              "line": 1,
               "column": 0
             },
             "end": {

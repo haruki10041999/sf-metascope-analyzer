@@ -1,0 +1,84 @@
+{
+  "filePath": "duplicateRules/Account.Account_Name_Duplicate.duplicateRule-meta.xml",
+  "resolvedError": [],
+  "dataType": "duplicateRule",
+  "result": {
+    "id": "duplicateRule_Account.Account_Name_Duplicate",
+    "base": {
+      "kind": "duplicateRule",
+      "sourceKeys": {
+        "objectKey": "duplicateRule_b454d2b657446c82",
+        "sourceKey": "duplicateRule_2d01b4ad897074ad"
+      },
+      "fullName": "Account.Account_Name_Duplicate",
+      "masterLabel": "Account Name Duplicate",
+      "description": "取引先の名前の重複",
+      "isActive": false,
+      "actionOnInsert": "Allow",
+      "actionOnUpdate": "Allow",
+      "alertText": "同じ名前の取引先があります",
+      "securityOption": "EnforceSharingRules",
+      "sortOrder": 1,
+      "operationsOnInsert": [
+        "Alert",
+        "Report"
+      ],
+      "operationsOnUpdate": [
+        "Alert"
+      ],
+      "duplicateRuleMatchRules": [
+        {
+          "kind": "duplicateRuleMatchRule",
+          "sourceKeys": {
+            "objectKey": "duplicateRuleMatchRule_30affd7b5efef2f4",
+            "sourceKey": "duplicateRuleMatchRule_d01e5653267d6fa5"
+          },
+          "matchRuleSObjectType": "Account",
+          "matchingRule": "Account_Name_Match"
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "duplicateRuleMatchRule_30affd7b5efef2f4",
+        "context": "<duplicateRuleMatchRules>\n        <matchRuleSObjectType>Account</matchRuleSObjectType>\n        <matchingRule>Account_Name_Match</matchingRule>\n    </duplicateRuleMatchRules>",
+        "source": [
+          {
+            "sourceKey": "duplicateRuleMatchRule_d01e5653267d6fa5",
+            "filePath": "duplicateRules/Account.Account_Name_Duplicate.duplicateRule-meta.xml",
+            "start": {
+              "offset": 275,
+              "line": 7,
+              "column": 4
+            },
+            "end": {
+              "offset": 448,
+              "line": 10,
+              "column": 30
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "duplicateRule_b454d2b657446c82",
+        "context": "<DuplicateRule xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <actionOnInsert>Allow</actionOnInsert>\n    <actionOnUpdate>Allow</actionOnUpdate>\n    <alertText>同じ名前の取引先があります</alertText>\n    <description>取引先の名前の重複</description>\n    <duplicateRuleMatchRules>\n        <matchRuleSObjectType>Account</matchRuleSObjectType>\n        <matchingRule>Account_Name_Match</matchingRule>\n    </duplicateRuleMatchRules>\n    <isActive>false</isActive>\n    <masterLabel>Account Name Duplicate</masterLabel>\n    <operationsOnInsert>Alert</operationsOnInsert>\n    <operationsOnInsert>Report</operationsOnInsert>\n    <operationsOnUpdate>Alert</operationsOnUpdate>\n    <securityOption>EnforceSharingRules</securityOption>\n    <sortOrder>1</sortOrder>\n</DuplicateRule>",
+        "source": [
+          {
+            "sourceKey": "duplicateRule_2d01b4ad897074ad",
+            "filePath": "duplicateRules/Account.Account_Name_Duplicate.duplicateRule-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 790,
+              "line": 18,
+              "column": 16
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

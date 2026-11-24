@@ -181,7 +181,12 @@ describe('JSON 層の形', () => {
         assert.equal(bind.find.type, 'bind');
         assert.equal(bind.find.value.kind, 'identifier');
         assert.equal(bind.find.value.name, 'term');
-        assert.deepEqual(literal.find, { type: 'literal', value: 'term' });
+        assert.equal(bind.find.kind, 'soslFind');
+        assert.deepEqual(stripKeys(literal.find), {
+            kind: 'soslFind',
+            type: 'literal',
+            value: 'term',
+        });
     });
 
     it('型の名前・SOQL の残り・merge・引数をそろえる (段階 A6)', async () => {
@@ -200,7 +205,11 @@ describe('JSON 層の形', () => {
         assert.deepEqual(types.slice(0, 3), [['Account'], ['Account'], ['ns', 'Outer', 'Inner']]);
 
         const [formula] = find(json, (n) => n.field?.type === 'formula');
-        assert.deepEqual(formula.field, { type: 'formula', value: 'Amount__c * 2' });
+        assert.deepEqual(stripKeys(formula.field), {
+            kind: 'soqlFormula',
+            type: 'formula',
+            value: 'Amount__c * 2',
+        });
 
         const [withExpression] = find(json, (n) => n.mode === 'EXPRESSION');
         assert.equal(withExpression.condition.condition[0].kind, 'singleCondition');
@@ -275,7 +284,11 @@ describe('JSON 層の形', () => {
                 `List<List<SObject>> r = [${find_} IN ALL FIELDS RETURNING Account];`,
             );
             const [sosl] = find(json, (n) => n.kind === 'sosl');
-            assert.deepEqual(sosl?.find, { type: 'literal', value: term });
+            assert.deepEqual(stripKeys(sosl?.find), {
+                kind: 'soslFind',
+                type: 'literal',
+                value: term,
+            });
         }
     });
 });
@@ -299,30 +312,32 @@ describe('SourceJson の再生成', () => {
         assert.deepEqual(result, sources);
     });
 
-    it('StructureJson の配列のキーも登録する', () => {
-        const json: any = {
-            kind: 'catchCondition',
-            sourceKeys: {
-                base: { objectKey: 'base', sourceKey: 'b' },
-                exceptionType: [{ objectKey: 'type', sourceKey: 't1' }],
-            },
-        };
+    it('中身から作ったキーは、位置を借りた元のノードごとに、そのノードの位置で登録する (docs/plan.md 4.2)', () => {
+        // 中身が同じ 2 つの修飾子の一覧 (同じ objectKey) が、別々のメソッドの位置を借りている
+        const json: any = [
+            { kind: 'modifiers', sourceKeys: { objectKey: 'modifiers_x', sourceKey: 'm1' } },
+            { kind: 'modifiers', sourceKeys: { objectKey: 'modifiers_x', sourceKey: 'm2' } },
+        ];
         const sources = [
-            { objectKey: 'base', context: 'x', source: [{ sourceKey: 'b' } as never] },
             {
-                objectKey: 'type',
-                context: 'x',
-                source: [{ sourceKey: 't1' } as never, { sourceKey: 't2' } as never],
+                objectKey: 'method_a',
+                context: 'void a() {}',
+                source: [{ sourceKey: 'm1' } as never],
+            },
+            {
+                objectKey: 'method_b',
+                context: 'void b() {}',
+                source: [{ sourceKey: 'm2' } as never],
             },
         ];
 
         const result = regenerateSourceObjects(sources, json);
 
         assert.deepEqual(
-            result.map((o) => [o.objectKey, o.source.map((s: any) => s.sourceKey)]),
+            result.map((o) => [o.objectKey, o.context, o.source.map((s: any) => s.sourceKey)]),
             [
-                ['base', ['b']],
-                ['type', ['t1']],
+                ['modifiers_x', 'void a() {}', ['m1']],
+                ['modifiers_x', 'void b() {}', ['m2']],
             ],
         );
     });

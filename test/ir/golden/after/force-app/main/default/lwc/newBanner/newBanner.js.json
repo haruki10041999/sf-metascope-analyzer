@@ -1,5 +1,7 @@
 {
   "module": {
+    "kind": "lwcModule",
+    "sourceKeys": {},
     "fileType": "js",
     "imports": [
       {
@@ -46,10 +48,7 @@
     ],
     "component": {
       "kind": "lwcComponent",
-      "sourceKeys": {
-        "base": {},
-        "name": {}
-      },
+      "sourceKeys": {},
       "name": "NewBanner",
       "superClass": {
         "kind": "jsIdentifier",
@@ -59,10 +58,7 @@
       "block": [
         {
           "kind": "lwcField",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "message",
           "init": {
             "kind": "jsIdentifier",
@@ -71,6 +67,8 @@
           },
           "optional": false,
           "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {},
             "decorator": [
               {
                 "kind": "lwcDecorator",
@@ -79,14 +77,16 @@
                 "arg": []
               }
             ]
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "message"
           }
         },
         {
           "kind": "lwcField",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "variant",
           "init": {
             "kind": "jsString",
@@ -95,6 +95,8 @@
           },
           "optional": false,
           "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {},
             "decorator": [
               {
                 "kind": "lwcDecorator",
@@ -103,18 +105,23 @@
                 "arg": []
               }
             ]
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "variant"
           }
         },
         {
           "kind": "lwcMethod",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "handleClose",
           "param": [],
           "async": false,
-          "modifier": {},
+          "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {}
+          },
           "block": [
             {
               "kind": "jsExpression",
@@ -149,9 +156,19 @@
                 ]
               }
             }
-          ]
+          ],
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "handleClose"
+          }
         }
-      ]
+      ],
+      "nameRef": {
+        "kind": "declarationName",
+        "sourceKeys": {},
+        "name": "NewBanner"
+      }
     },
     "exports": [
       {
@@ -166,6 +183,19 @@
     "declarations": []
   },
   "sourceObject": [
+    {
+      "context": "",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      }
+    },
     {
       "context": "'close'",
       "start": {
@@ -203,6 +233,32 @@
         "offset": 198,
         "line": 5,
         "column": 32
+      }
+    },
+    {
+      "context": "@api message = BANNER_LABEL;",
+      "start": {
+        "offset": 170,
+        "line": 5,
+        "column": 4
+      },
+      "end": {
+        "offset": 198,
+        "line": 5,
+        "column": 32
+      }
+    },
+    {
+      "context": "@api message = BANNER_LABEL;",
+      "start": {
+        "offset": 203,
+        "line": 6,
+        "column": 4
+      },
+      "end": {
+        "offset": 225,
+        "line": 6,
+        "column": 26
       }
     },
     {
@@ -323,6 +379,19 @@
       }
     },
     {
+      "context": "NewBanner",
+      "start": {
+        "offset": 129,
+        "line": 4,
+        "column": 21
+      },
+      "end": {
+        "offset": 138,
+        "line": 4,
+        "column": 30
+      }
+    },
+    {
       "context": "api",
       "start": {
         "offset": 27,
@@ -375,6 +444,32 @@
       }
     },
     {
+      "context": "handleClose",
+      "start": {
+        "offset": 231,
+        "line": 8,
+        "column": 4
+      },
+      "end": {
+        "offset": 242,
+        "line": 8,
+        "column": 15
+      }
+    },
+    {
+      "context": "handleClose() {\n        this.dispatchEvent(new CustomEvent('close'));\n    }",
+      "start": {
+        "offset": 231,
+        "line": 8,
+        "column": 4
+      },
+      "end": {
+        "offset": 306,
+        "line": 10,
+        "column": 5
+      }
+    },
+    {
       "context": "handleClose() {\n        this.dispatchEvent(new CustomEvent('close'));\n    }",
       "start": {
         "offset": 231,
@@ -411,6 +506,19 @@
         "offset": 44,
         "line": 1,
         "column": 44
+      }
+    },
+    {
+      "context": "message",
+      "start": {
+        "offset": 175,
+        "line": 5,
+        "column": 9
+      },
+      "end": {
+        "offset": 182,
+        "line": 5,
+        "column": 16
       }
     },
     {
@@ -476,6 +584,19 @@
         "offset": 300,
         "line": 9,
         "column": 53
+      }
+    },
+    {
+      "context": "variant",
+      "start": {
+        "offset": 208,
+        "line": 6,
+        "column": 9
+      },
+      "end": {
+        "offset": 215,
+        "line": 6,
+        "column": 16
       }
     },
     {

@@ -13,6 +13,7 @@ import {
     lwcInitReferencesOf,
 } from '../../src/analyzer/processor/Lwc/calls';
 import { lwcHeritageOf } from '../../src/analyzer/processor/Lwc/walker';
+import { lwcShape } from './lwcShape';
 import {
     makeLwcImportTables,
     type LwcBodyContentJson,
@@ -104,9 +105,15 @@ describe('LWC の JSON', () => {
         const apex = imports.find(
             (i) => i.source === '@salesforce/apex/AccountController.getAccounts',
         );
-        assert.deepEqual(apex?.apex, { className: 'AccountController', methodName: 'getAccounts' });
+        assert.deepEqual(lwcShape(apex?.apex), {
+            className: 'AccountController',
+            methodName: 'getAccounts',
+        });
         const schema = imports.find((i) => i.source === '@salesforce/schema/Account.Name');
-        assert.deepEqual(schema?.schema, { objectApiName: 'Account', fieldApiName: 'Name' });
+        assert.deepEqual(lwcShape(schema?.schema), {
+            objectApiName: 'Account',
+            fieldApiName: 'Name',
+        });
         // import type は typeOnly。specifier はソース位置を持つ
         assert.deepEqual(
             imports.map((i) => i.typeOnly),
@@ -166,7 +173,12 @@ describe('LWC の JSON', () => {
         assert.equal(rows.modifier.access, 'private');
         assert.deepEqual(rows.init?.kind === 'jsArray' && rows.init.elements, []);
         assert.ok(rows.variantType?.kind === 'lwcType' && rows.variantType.type === 'array');
-        assert.deepEqual(rows.variantType.elementType, { type: 'custom', customType: ['Row'] });
+        // 要素の型も型のノード (lwc 4 から)
+        assert.deepEqual(lwcShape(rows.variantType.elementType), {
+            kind: 'lwcType',
+            type: 'custom',
+            customType: ['Row'],
+        });
 
         const maxRows = memberOf<LwcFieldJson>(component, 'lwcField', 'maxRows');
         assert.equal(maxRows.optional, true);
@@ -206,7 +218,7 @@ describe('LWC の JSON', () => {
         const wiredAccounts = memberOf<LwcMethodJson>(component, 'lwcMethod', 'wiredAccounts');
         const [apexWire] = wiredAccounts.modifier.decorator ?? [];
         assert.ok(apexWire?.kind === 'lwcDecorator');
-        assert.deepEqual(apexWire.wire?.apex, {
+        assert.deepEqual(lwcShape(apexWire.wire?.apex), {
             className: 'AccountController',
             methodName: 'getAccounts',
         });
@@ -471,8 +483,8 @@ export default class Hello extends LightningElement {
             const second = componentOf(
                 mainModule((await LwcParser.parseLwcBundle(dir)) as LwcBundleStructureType),
             );
-            assert.equal(second.sourceKeys.base.objectKey, first!.sourceKeys.base.objectKey);
-            assert.notEqual(second.sourceKeys.base.sourceKey, first!.sourceKeys.base.sourceKey);
+            assert.equal(second.sourceKeys.objectKey, first!.sourceKeys.objectKey);
+            assert.notEqual(second.sourceKeys.sourceKey, first!.sourceKeys.sourceKey);
         });
     });
 

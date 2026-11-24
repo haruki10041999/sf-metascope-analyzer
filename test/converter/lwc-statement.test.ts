@@ -1,3 +1,4 @@
+import { lwcShape } from './lwcShape';
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
@@ -29,16 +30,8 @@ const componentOf = (source: string, fileName?: string): LwcComponentJson => {
     return component;
 };
 
-/** sourceKeys を除いた形 (比べやすくするため) */
-const shape = (value: unknown): unknown => {
-    if (Array.isArray(value)) return value.map(shape);
-    if (!value || typeof value !== 'object') return value;
-    return Object.fromEntries(
-        Object.entries(value)
-            .filter(([key]) => key !== 'sourceKeys')
-            .map(([key, child]) => [key, shape(child)]),
-    );
-};
+/** sourceKeys と、P1 で足したノードの kind を除いた形 (比べやすくするため。lwcShape.ts) */
+const shape = (value: unknown): unknown => lwcShape(value);
 
 /** メソッド run() { <本体> } の本体の文 */
 const bodyOf = (body: string, header = ''): LwcJsStatementJson[] => {

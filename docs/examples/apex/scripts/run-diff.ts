@@ -4,7 +4,7 @@
  *
  * - output/diff/unit-diff.json: makeApexUnitDiffs の結果
  * - output/diff/summary.md:     unchanged 以外の差分を、ソースの文字列付きで木の形に並べたもの
- * - output/diff/coverage.md:    JsonType / StructureJsonType の kind ごとの、JSON・差分への出現数
+ * - output/diff/coverage.md:    JsonType の kind ごとの、JSON・差分への出現数
  *
  * 実行: npx ttsx --noCheck docs/examples/apex/scripts/run-diff.ts (repository/before → after、出力は output/diff/)
  */
@@ -27,7 +27,7 @@ type Keys = { objectKey: string; sourceKey: string };
 const here = path.dirname(fileURLToPath(import.meta.url));
 const outputDirectory = path.resolve(here, '../output/diff');
 
-/** JsonType / StructureJsonType の kind の一覧 (docs/apex-implementation.md) */
+/** JsonType の kind の一覧 (docs/apex-implementation.md) */
 export const ALL_KINDS = {
     宣言: [
         'class',
@@ -282,7 +282,7 @@ const renderDiff = (
 // coverage
 // ---------------------------------------------------------------------------
 
-/** JSON の中の JsonType / StructureJsonType の kind を数える */
+/** JSON の中の JsonType の kind を数える */
 const countJsonKinds = (json: unknown, counts: Map<string, number>) => {
     if (Array.isArray(json)) {
         json.forEach((j) => countJsonKinds(j, counts));

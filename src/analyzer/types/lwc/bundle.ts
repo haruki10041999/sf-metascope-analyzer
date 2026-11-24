@@ -1,6 +1,7 @@
 // バンドル (lwc/<名前>/ のフォルダ) の JSON (docs/lwc-implementation.md)。
 // JS / TS のモジュール・HTML のテンプレート・CSS・js-meta.xml (meta)
 import type { SourceJson } from '../apex/commons';
+import type { JsonType } from '../commons/json';
 
 import type { LwcBundleMetaJson } from './meta';
 import type { LwcModuleJson } from './module';
@@ -12,7 +13,8 @@ export type LwcSourceJson = Omit<SourceJson, 'source'> & {
     source: (SourceJson['source'][number] & { filePath: string })[];
 };
 
-export type LwcBundleModuleJson = {
+/** バンドルの中のファイルの入れ物 (lwc 4 からノード)。位置は中の根 (モジュール・テンプレート・スタイルシート) のもの */
+export type LwcBundleModuleJson = JsonType<'lwcBundleModule'> & {
     /** ファイル名 (hello.ts) */
     fileName: string;
     /** メインのモジュール (<バンドル名>.ts / .js) */
@@ -21,7 +23,7 @@ export type LwcBundleModuleJson = {
     module: LwcModuleJson | null;
 };
 
-export type LwcBundleTemplateJson = {
+export type LwcBundleTemplateJson = JsonType<'lwcBundleTemplate'> & {
     /** ファイル名 (hello.html) */
     fileName: string;
     /** メインのテンプレート (<バンドル名>.html)。ほかは render() で切り替えるテンプレート */
@@ -30,7 +32,7 @@ export type LwcBundleTemplateJson = {
     template: LwcTemplateJson | null;
 };
 
-export type LwcBundleStylesheetJson = {
+export type LwcBundleStylesheetJson = JsonType<'lwcBundleStylesheet'> & {
     /** ファイル名 (hello.css) */
     fileName: string;
     /** *.scoped.css */
@@ -39,13 +41,15 @@ export type LwcBundleStylesheetJson = {
     stylesheet: LwcStylesheetJson | null;
 };
 
-export type LwcSkippedFileJson = {
+/** 読まなかったファイル (lwc 4 からノード。ソースに位置はない) */
+export type LwcSkippedFileJson = JsonType<'lwcSkippedFile'> & {
     /** バンドルのフォルダの親からの相対パス */
     filePath: string;
     reason: string;
 };
 
-export type LwcBundleJson = {
+/** バンドルの根 (lwc 4 からノード)。位置はメインのモジュールのもの */
+export type LwcBundleJson = JsonType<'lwcBundle'> & {
     /** バンドル名 (hello) */
     name: string;
     /** 名前空間 (c) */

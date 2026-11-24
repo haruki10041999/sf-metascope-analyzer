@@ -1,0 +1,169 @@
+{
+  "filePath": "escalationRules/Case.escalationRules-meta.xml",
+  "resolvedError": [],
+  "dataType": "escalationRules",
+  "result": {
+    "id": "escalationRules_Case",
+    "base": {
+      "kind": "escalationRules",
+      "sourceKeys": {
+        "objectKey": "escalationRules_279902c21dfe3e47",
+        "sourceKey": "escalationRules_e6cfb82feb5d75b6"
+      },
+      "fullName": "Case",
+      "escalationRule": [
+        {
+          "kind": "escalationRule",
+          "sourceKeys": {
+            "objectKey": "escalationRule_e3f1327155a0544f",
+            "sourceKey": "escalationRule_7c39548f562c44d1"
+          },
+          "fullName": "Standard",
+          "active": true,
+          "ruleEntry": [
+            {
+              "businessHoursSource": "Organization",
+              "criteriaItems": {
+                "kind": "criterion",
+                "sourceKeys": {
+                  "objectKey": "criterion_1439a8f8aa452043",
+                  "sourceKey": "criterion_3774f20daaba11e2"
+                },
+                "left": {
+                  "kind": "fxName",
+                  "sourceKeys": {
+                    "objectKey": "fxName_dad904266ec0b06c",
+                    "sourceKey": "fxName_91888ef636d3d980"
+                  },
+                  "path": [
+                    "Case",
+                    "Priority"
+                  ]
+                },
+                "operator": "equals",
+                "right": {
+                  "kind": "criterionValue",
+                  "sourceKeys": {
+                    "objectKey": "criterionValue_a364a14d4e4f5234",
+                    "sourceKey": "criterionValue_5cb3ed3e173fe3df"
+                  },
+                  "type": "value",
+                  "value": "High"
+                }
+              },
+              "escalationAction": {
+                "assignedTo": "Invoice_Queue",
+                "assignedToType": "Queue",
+                "minutesToEscalation": "60",
+                "notifyCaseOwner": false
+              },
+              "escalationStartTime": "CaseCreation"
+            }
+          ]
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "criterionValue_a364a14d4e4f5234",
+        "context": "<value>High</value>",
+        "source": [
+          {
+            "sourceKey": "criterionValue_5cb3ed3e173fe3df",
+            "filePath": "escalationRules/Case.escalationRules-meta.xml",
+            "start": {
+              "offset": 417,
+              "line": 11,
+              "column": 16
+            },
+            "end": {
+              "offset": 436,
+              "line": 11,
+              "column": 35
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxName_dad904266ec0b06c",
+        "context": "Case.Priority",
+        "source": [
+          {
+            "sourceKey": "fxName_91888ef636d3d980",
+            "filePath": "escalationRules/Case.escalationRules-meta.xml",
+            "start": {
+              "offset": 333,
+              "line": 9,
+              "column": 23
+            },
+            "end": {
+              "offset": 346,
+              "line": 9,
+              "column": 36
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "criterion_1439a8f8aa452043",
+        "context": "<criteriaItems>\n                <field>Case.Priority</field>\n                <operation>equals</operation>\n                <value>High</value>\n            </criteriaItems>",
+        "source": [
+          {
+            "sourceKey": "criterion_3774f20daaba11e2",
+            "filePath": "escalationRules/Case.escalationRules-meta.xml",
+            "start": {
+              "offset": 294,
+              "line": 8,
+              "column": 12
+            },
+            "end": {
+              "offset": 465,
+              "line": 12,
+              "column": 28
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "escalationRule_e3f1327155a0544f",
+        "context": "<escalationRule>\n        <fullName>Standard</fullName>\n        <active>true</active>\n        <ruleEntry>\n            <businessHoursSource>Organization</businessHoursSource>\n            <criteriaItems>\n                <field>Case.Priority</field>\n                <operation>equals</operation>\n                <value>High</value>\n            </criteriaItems>\n            <escalationAction>\n                <assignedTo>Invoice_Queue</assignedTo>\n                <assignedToType>Queue</assignedToType>\n                <minutesToEscalation>60</minutesToEscalation>\n                <notifyCaseOwner>false</notifyCaseOwner>\n            </escalationAction>\n            <escalationStartTime>CaseCreation</escalationStartTime>\n        </ruleEntry>\n    </escalationRule>",
+        "source": [
+          {
+            "sourceKey": "escalationRule_7c39548f562c44d1",
+            "filePath": "escalationRules/Case.escalationRules-meta.xml",
+            "start": {
+              "offset": 109,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 868,
+              "line": 21,
+              "column": 21
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "escalationRules_279902c21dfe3e47",
+        "context": "<EscalationRules xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <escalationRule>\n        <fullName>Standard</fullName>\n        <active>true</active>\n        <ruleEntry>\n            <businessHoursSource>Organization</businessHoursSource>\n            <criteriaItems>\n                <field>Case.Priority</field>\n                <operation>equals</operation>\n                <value>High</value>\n            </criteriaItems>\n            <escalationAction>\n                <assignedTo>Invoice_Queue</assignedTo>\n                <assignedToType>Queue</assignedToType>\n                <minutesToEscalation>60</minutesToEscalation>\n                <notifyCaseOwner>false</notifyCaseOwner>\n            </escalationAction>\n            <escalationStartTime>CaseCreation</escalationStartTime>\n        </ruleEntry>\n    </escalationRule>\n</EscalationRules>",
+        "source": [
+          {
+            "sourceKey": "escalationRules_e6cfb82feb5d75b6",
+            "filePath": "escalationRules/Case.escalationRules-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 887,
+              "line": 22,
+              "column": 18
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

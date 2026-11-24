@@ -1,0 +1,89 @@
+{
+  "filePath": "reportTypes/Invoices_with_Lines.reportType-meta.xml",
+  "resolvedError": [],
+  "dataType": "reportType",
+  "result": {
+    "id": "reportType_Invoices_with_Lines",
+    "base": {
+      "kind": "reportType",
+      "sourceKeys": {
+        "objectKey": "reportType_2cce44e466e89428",
+        "sourceKey": "reportType_78dc2e1256f0f763"
+      },
+      "fullName": "Invoices_with_Lines",
+      "label": "Invoices with Lines",
+      "description": "請求書と明細",
+      "baseObject": "Invoice__c",
+      "category": "other",
+      "deployed": true,
+      "join": {
+        "outerJoin": true,
+        "relationship": "Lines__r"
+      },
+      "sections": [
+        {
+          "kind": "reportTypeSection",
+          "sourceKeys": {
+            "objectKey": "reportTypeSection_c304b0b352d5be09",
+            "sourceKey": "reportTypeSection_2bd0e5d92fc0238e"
+          },
+          "masterLabel": "Invoices",
+          "columns": [
+            {
+              "checkedByDefault": true,
+              "field": "Amount__c",
+              "table": "Invoice__c"
+            },
+            {
+              "checkedByDefault": false,
+              "field": "Due_Date__c",
+              "table": "Invoice__c"
+            }
+          ]
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "reportTypeSection_c304b0b352d5be09",
+        "context": "<sections>\n        <columns>\n            <checkedByDefault>true</checkedByDefault>\n            <field>Amount__c</field>\n            <table>Invoice__c</table>\n        </columns>\n        <columns>\n            <checkedByDefault>false</checkedByDefault>\n            <field>Due_Date__c</field>\n            <table>Invoice__c</table>\n        </columns>\n        <masterLabel>Invoices</masterLabel>\n    </sections>",
+        "source": [
+          {
+            "sourceKey": "reportTypeSection_2bd0e5d92fc0238e",
+            "filePath": "reportTypes/Invoices_with_Lines.reportType-meta.xml",
+            "start": {
+              "offset": 387,
+              "line": 12,
+              "column": 4
+            },
+            "end": {
+              "offset": 792,
+              "line": 24,
+              "column": 15
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "reportType_2cce44e466e89428",
+        "context": "<ReportType xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <baseObject>Invoice__c</baseObject>\n    <category>other</category>\n    <deployed>true</deployed>\n    <description>請求書と明細</description>\n    <join>\n        <outerJoin>true</outerJoin>\n        <relationship>Lines__r</relationship>\n    </join>\n    <label>Invoices with Lines</label>\n    <sections>\n        <columns>\n            <checkedByDefault>true</checkedByDefault>\n            <field>Amount__c</field>\n            <table>Invoice__c</table>\n        </columns>\n        <columns>\n            <checkedByDefault>false</checkedByDefault>\n            <field>Due_Date__c</field>\n            <table>Invoice__c</table>\n        </columns>\n        <masterLabel>Invoices</masterLabel>\n    </sections>\n</ReportType>",
+        "source": [
+          {
+            "sourceKey": "reportType_78dc2e1256f0f763",
+            "filePath": "reportTypes/Invoices_with_Lines.reportType-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 806,
+              "line": 25,
+              "column": 13
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

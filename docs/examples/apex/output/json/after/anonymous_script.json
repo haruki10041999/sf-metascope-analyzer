@@ -5,12 +5,27 @@
   "result": {
     "id": "anonymous_script",
     "base": {
+      "kind": "apexUnit",
+      "sourceKeys": {
+        "objectKey": "apexUnit_49797a3ea41f1815",
+        "sourceKey": "anonymousUnit_492b6c886b284484"
+      },
       "name": "script",
       "unitType": "anonymous",
       "source": {
+        "kind": "apexSource",
+        "sourceKeys": {
+          "objectKey": "apexSource_6c9fd6769ae70ad1",
+          "sourceKey": "anonymousUnit_492b6c886b284484"
+        },
         "fileName": "script.apex",
         "fileType": "anonymous",
         "content": {
+          "kind": "anonymousUnit",
+          "sourceKeys": {
+            "objectKey": "anonymousUnit_2053cdee63a9a8fa",
+            "sourceKey": "anonymousUnit_492b6c886b284484"
+          },
           "block": [
             {
               "kind": "field",
@@ -45,19 +60,27 @@
                 "type": "primitive",
                 "primitiveType": "Integer"
               },
-              "modifier": {}
+              "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {
+                  "objectKey": "modifiers_44136fa355b3678a",
+                  "sourceKey": "anonymousBlockMember_982a66ea025d8c59"
+                }
+              }
             },
             {
               "kind": "method",
               "sourceKeys": {
-                "base": {
-                  "objectKey": "methodDeclaration_ea1bc30c4038843b",
-                  "sourceKey": "methodDeclaration_e48cdaf4da3a1c32"
-                },
-                "name": {
-                  "objectKey": "id_352aaf5556fb2f59",
+                "objectKey": "methodDeclaration_ea1bc30c4038843b",
+                "sourceKey": "methodDeclaration_e48cdaf4da3a1c32"
+              },
+              "nameRef": {
+                "kind": "declarationName",
+                "sourceKeys": {
+                  "objectKey": "declarationName_78f35b6741ed8ea1",
                   "sourceKey": "id_df587874345c4af2"
-                }
+                },
+                "name": "helper"
               },
               "name": "helper",
               "returnType": "void",
@@ -78,7 +101,13 @@
                     "type": "primitive",
                     "primitiveType": "Integer"
                   },
-                  "modifier": {}
+                  "modifier": {
+                    "kind": "modifiers",
+                    "sourceKeys": {
+                      "objectKey": "modifiers_44136fa355b3678a",
+                      "sourceKey": "formalParameter_5bf8ec752b28bf53"
+                    }
+                  }
                 }
               ],
               "block": [
@@ -136,7 +165,13 @@
                   }
                 }
               ],
-              "modifier": {}
+              "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {
+                  "objectKey": "modifiers_44136fa355b3678a",
+                  "sourceKey": "anonymousBlockMember_e48cdaf4da3a1c32"
+                }
+              }
             },
             {
               "kind": "expression",
@@ -180,7 +215,17 @@
                 "sourceKey": "forStatement_5fa735f8e3969448"
               },
               "condition": {
+                "kind": "forControl",
+                "sourceKeys": {
+                  "objectKey": "forControl_67e51c6b489fb568",
+                  "sourceKey": "forControl_8d2022319b532e04"
+                },
                 "initializer": {
+                  "kind": "localVariableDeclaration",
+                  "sourceKeys": {
+                    "objectKey": "localVariableDeclaration_48d24155f1dda2cc",
+                    "sourceKey": "localVariableDeclaration_bd1a60830dbf35f2"
+                  },
                   "variantType": {
                     "kind": "type",
                     "sourceKeys": {
@@ -190,7 +235,13 @@
                     "type": "primitive",
                     "primitiveType": "Integer"
                   },
-                  "modifier": {},
+                  "modifier": {
+                    "kind": "modifiers",
+                    "sourceKeys": {
+                      "objectKey": "modifiers_44136fa355b3678a",
+                      "sourceKey": "localVariableDeclaration_bd1a60830dbf35f2"
+                    }
+                  },
                   "variants": [
                     {
                       "kind": "variant",
@@ -263,6 +314,11 @@
                   },
                   "conditionBlock": [
                     {
+                      "kind": "ifBranch",
+                      "sourceKeys": {
+                        "objectKey": "ifBranch_22d91a7f393a499c",
+                        "sourceKey": "parExpression_3ed789dd82d581e6"
+                      },
                       "condition": {
                         "kind": "binary",
                         "sourceKeys": {
@@ -342,6 +398,11 @@
                   },
                   "conditionBlock": [
                     {
+                      "kind": "ifBranch",
+                      "sourceKeys": {
+                        "objectKey": "ifBranch_137a49e30bc10d7d",
+                        "sourceKey": "parExpression_03e1036387e9d351"
+                      },
                       "condition": {
                         "kind": "binary",
                         "sourceKeys": {
@@ -453,6 +514,44 @@
     },
     "sourceObject": [
       {
+        "objectKey": "apexSource_6c9fd6769ae70ad1",
+        "context": "Integer limitSize = 20;\n\nvoid helper(Integer n) {\n    System.debug(LoggingLevel.WARN, n);\n}\n\nSystem.debug('end');\nfor (Integer k = 0; k < 5; k++) {\n    if (k == 1) {\n        System.debug('skip');\n        continue;\n    }\n    if (k >= 2) {\n        System.debug('stop');\n        break;\n    }\n}\nhelper(limitSize);",
+        "source": [
+          {
+            "sourceKey": "anonymousUnit_492b6c886b284484",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 309,
+              "line": 18,
+              "column": 18
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "anonymousUnit_2053cdee63a9a8fa",
+        "context": "Integer limitSize = 20;\n\nvoid helper(Integer n) {\n    System.debug(LoggingLevel.WARN, n);\n}\n\nSystem.debug('end');\nfor (Integer k = 0; k < 5; k++) {\n    if (k == 1) {\n        System.debug('skip');\n        continue;\n    }\n    if (k >= 2) {\n        System.debug('stop');\n        break;\n    }\n}\nhelper(limitSize);",
+        "source": [
+          {
+            "sourceKey": "anonymousUnit_492b6c886b284484",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 309,
+              "line": 18,
+              "column": 18
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "fieldDeclaration_43b31e943441ae0e",
         "context": "Integer limitSize = 20;",
         "source": [
@@ -555,6 +654,82 @@
         ]
       },
       {
+        "objectKey": "modifiers_44136fa355b3678a",
+        "context": "Integer limitSize = 20;",
+        "source": [
+          {
+            "sourceKey": "anonymousBlockMember_982a66ea025d8c59",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 23,
+              "line": 1,
+              "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_44136fa355b3678a",
+        "context": "Integer n",
+        "source": [
+          {
+            "sourceKey": "formalParameter_5bf8ec752b28bf53",
+            "start": {
+              "offset": 37,
+              "line": 3,
+              "column": 12
+            },
+            "end": {
+              "offset": 46,
+              "line": 3,
+              "column": 21
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_44136fa355b3678a",
+        "context": "void helper(Integer n) {\n    System.debug(LoggingLevel.WARN, n);\n}",
+        "source": [
+          {
+            "sourceKey": "anonymousBlockMember_e48cdaf4da3a1c32",
+            "start": {
+              "offset": 25,
+              "line": 3,
+              "column": 0
+            },
+            "end": {
+              "offset": 91,
+              "line": 5,
+              "column": 1
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_44136fa355b3678a",
+        "context": "Integer k = 0",
+        "source": [
+          {
+            "sourceKey": "localVariableDeclaration_bd1a60830dbf35f2",
+            "start": {
+              "offset": 119,
+              "line": 8,
+              "column": 5
+            },
+            "end": {
+              "offset": 132,
+              "line": 8,
+              "column": 18
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "methodDeclaration_ea1bc30c4038843b",
         "context": "void helper(Integer n) {\n    System.debug(LoggingLevel.WARN, n);\n}",
         "source": [
@@ -574,7 +749,7 @@
         ]
       },
       {
-        "objectKey": "id_352aaf5556fb2f59",
+        "objectKey": "declarationName_78f35b6741ed8ea1",
         "context": "helper",
         "source": [
           {
@@ -588,19 +763,6 @@
               "offset": 36,
               "line": 3,
               "column": 11
-            }
-          },
-          {
-            "sourceKey": "id_5cc67d9ffa37cac1",
-            "start": {
-              "offset": 291,
-              "line": 18,
-              "column": 0
-            },
-            "end": {
-              "offset": 297,
-              "line": 18,
-              "column": 6
             }
           }
         ]
@@ -854,6 +1016,44 @@
         ]
       },
       {
+        "objectKey": "forControl_67e51c6b489fb568",
+        "context": "Integer k = 0; k < 5; k++",
+        "source": [
+          {
+            "sourceKey": "forControl_8d2022319b532e04",
+            "start": {
+              "offset": 119,
+              "line": 8,
+              "column": 5
+            },
+            "end": {
+              "offset": 144,
+              "line": 8,
+              "column": 30
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "localVariableDeclaration_48d24155f1dda2cc",
+        "context": "Integer k = 0",
+        "source": [
+          {
+            "sourceKey": "localVariableDeclaration_bd1a60830dbf35f2",
+            "start": {
+              "offset": 119,
+              "line": 8,
+              "column": 5
+            },
+            "end": {
+              "offset": 132,
+              "line": 8,
+              "column": 18
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "variableDeclarator_f28f170e411ccfe7",
         "context": "k = 0",
         "source": [
@@ -1026,6 +1226,25 @@
         ]
       },
       {
+        "objectKey": "ifBranch_22d91a7f393a499c",
+        "context": "(k == 1)",
+        "source": [
+          {
+            "sourceKey": "parExpression_3ed789dd82d581e6",
+            "start": {
+              "offset": 155,
+              "line": 9,
+              "column": 7
+            },
+            "end": {
+              "offset": 163,
+              "line": 9,
+              "column": 15
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "equalityExpression_670f09b8406fe586",
         "context": "k == 1",
         "source": [
@@ -1154,6 +1373,25 @@
               "offset": 288,
               "line": 16,
               "column": 5
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "ifBranch_137a49e30bc10d7d",
+        "context": "(k >= 2)",
+        "source": [
+          {
+            "sourceKey": "parExpression_03e1036387e9d351",
+            "start": {
+              "offset": 227,
+              "line": 13,
+              "column": 7
+            },
+            "end": {
+              "offset": 235,
+              "line": 13,
+              "column": 15
             }
           }
         ]
@@ -1311,6 +1549,25 @@
         ]
       },
       {
+        "objectKey": "id_352aaf5556fb2f59",
+        "context": "helper",
+        "source": [
+          {
+            "sourceKey": "id_5cc67d9ffa37cac1",
+            "start": {
+              "offset": 291,
+              "line": 18,
+              "column": 0
+            },
+            "end": {
+              "offset": 297,
+              "line": 18,
+              "column": 6
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "idPrimary_b4212a0fdb103b82",
         "context": "limitSize",
         "source": [
@@ -1325,6 +1582,25 @@
               "offset": 307,
               "line": 18,
               "column": 16
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "apexUnit_49797a3ea41f1815",
+        "context": "Integer limitSize = 20;\n\nvoid helper(Integer n) {\n    System.debug(LoggingLevel.WARN, n);\n}\n\nSystem.debug('end');\nfor (Integer k = 0; k < 5; k++) {\n    if (k == 1) {\n        System.debug('skip');\n        continue;\n    }\n    if (k >= 2) {\n        System.debug('stop');\n        break;\n    }\n}\nhelper(limitSize);",
+        "source": [
+          {
+            "sourceKey": "anonymousUnit_492b6c886b284484",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 309,
+              "line": 18,
+              "column": 18
             }
           }
         ]

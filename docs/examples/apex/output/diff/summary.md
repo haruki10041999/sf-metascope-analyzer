@@ -123,20 +123,20 @@
               - **added** accessLevel: "USER"
           - **changed** block (slot)
             - **moved** expression (identical): L95 `log('done');` → L99 `log('done');` ⟵ 移動元 block[0]
-          - **removed** block: L95 `log('done');`
+          - **removed** tryClause: L94 `finally { log('done'); }`
       - **changed** method (key): L99 `String describe(Status s) { switch on s { when ACTIVE { return 'active…` → L104 `String describe(Status s) { switch on s { when ACTIVE, PENDING { retur…`
         - **changed** switch (recovery): L100 `switch on s { when ACTIVE { return 'active'; } when else { return 'oth…` → L105 `switch on s { when ACTIVE, PENDING { return 'active'; } when INACTIVE,…`
           - **changed** when (slot)
             - **changed** switchCondition (slot): L101 `ACTIVE` → L106 `ACTIVE, PENDING`
               - **added** identifier PENDING: L106 `PENDING`
-          - **added** when: L109 `INACTIVE, DELETED`
+          - **added** switchWhen: L109 `when INACTIVE, DELETED { return 'inactive'; }`
       - **changed** method (key): L110 `void search(String key) { List<List<SObject>> found = [FIND :key IN AL…` → L118 `void search(String key) { List<List<SObject>> found = [FIND :key IN AL…`
         - **changed** localVariable (similar): L111 `List<List<SObject>> found = [FIND :key IN ALL FIELDS RETURNING Account…` → L119 `List<List<SObject>> found = [FIND :key IN ALL FIELDS RETURNING Account…`
           - **changed** variant (key): L111 `found = [FIND :key IN ALL FIELDS RETURNING Account(Id, Name), Contact]` → L119 `found = [FIND :key IN ALL FIELDS RETURNING Account(Id, Name, Phone), C…`
             - **changed** sosl (slot): L111 `[FIND :key IN ALL FIELDS RETURNING Account(Id, Name), Contact]` → L119 `[FIND :key IN ALL FIELDS RETURNING Account(Id, Name, Phone), Contact, …`
               - **changed** fieldSpec (slot)
                 - **added** soslField: L119 `Phone`
-              - **added** fieldSpec: {"object":["Lead"]}
+              - **added** soslFieldSpec: L119 `Lead`
         - **changed** runAs (similar): L112 `System.runAs(new User(Id = UserInfo.getUserId())) { delete [SELECT Id …` → L120 `System.runAs(new User(Id = UserInfo.getUserId())) { delete [SELECT Id …`
           - **changed** delete (similar): L113 `delete [SELECT Id FROM Contact WHERE LastName = 'x'];` → L121 `delete [SELECT Id FROM Contact WHERE LastName = 'y'];`
             - **changed** soql (slot): L113 `SELECT Id FROM Contact WHERE LastName = 'x'` → L121 `SELECT Id FROM Contact WHERE LastName = 'y'`
@@ -153,12 +153,12 @@
         - **changed** return (similar): L122 `return [ SELECT Name, COUNT(Id) cnt, (SELECT Id FROM Contacts) FROM Ac…` → L130 `return [ SELECT COUNT(Id) cnt, Name, (SELECT Id FROM Contacts WHERE La…`
           - **changed** soql (slot): L123 `SELECT Name, COUNT(Id) cnt, (SELECT Id FROM Contacts) FROM Account a U…` → L131 `SELECT COUNT(Id) cnt, Name, (SELECT Id FROM Contacts WHERE LastName !=…`
             - **changed** subQuery (key): L123 `SELECT Id FROM Contacts` → L131 `SELECT Id FROM Contacts WHERE LastName != null`
-              - **added** where: L131 `LastName != null`
+              - **added** soqlWhere: L131 `WHERE LastName != null`
             - **changed** condition
-              - **removed** condition: L126 `Name LIKE 'a%'`
-              - **removed** condition: L126 `Rating = 'Hot'`
-              - **added** condition: L134 `Industry = 'IT'`
-              - **added** condition: L134 `Rating = 'Warm'`
+              - **removed** soqlLogical: L126 `Name LIKE 'a%' AND Industry = 'IT'`
+              - **removed** soqlLogical: L126 `NOT Rating = 'Hot'`
+              - **added** soqlLogical: L134 `Industry = 'IT' AND Name LIKE 'a%'`
+              - **added** soqlLogical: L134 `NOT Rating = 'Warm'`
             - **changed** forClause (slot): L133 `FOR VIEW` → L141 `FOR REFERENCE`
               - **removed** value: "VIEW"
               - **added** value: "REFERENCE"
@@ -234,7 +234,7 @@
             - **changed** soql (slot): L146 `SELECT Id FROM Account LIMIT :x FOR UPDATE` → L154 `SELECT Id FROM Account LIMIT :y FOR UPDATE`
               - **changed** limitClause (slot): L146 `LIMIT :x` → L154 `LIMIT :y`
                 - **changed** identifier: {"name":"x"} → {"name":"y"}
-        - **changed** localVariable (similar): L147 `List<Account> tracked = [SELECT Id FROM Account UPDATE TRACKING];` → L155 `List<Account> tracked = [SELECT Id FROM Account UPDATE VIEWSTAT];`
+        - **changed** localVariable (recovery): L147 `List<Account> tracked = [SELECT Id FROM Account UPDATE TRACKING];` → L155 `List<Account> tracked = [SELECT Id FROM Account UPDATE VIEWSTAT];`
           - **changed** variant (key): L147 `tracked = [SELECT Id FROM Account UPDATE TRACKING]` → L155 `tracked = [SELECT Id FROM Account UPDATE VIEWSTAT]`
             - **changed** soql (slot): L147 `SELECT Id FROM Account UPDATE TRACKING` → L155 `SELECT Id FROM Account UPDATE VIEWSTAT`
               - **changed** updateClause (slot): L147 `TRACKING` → L155 `VIEWSTAT`
@@ -313,7 +313,7 @@
 
 - **changed** 
   - **changed** source
-    - **changed** interface → class (slot): {"name":"Shape","block":[{"kind":"interfaceMethod","sourceKeys":{"base… → {"name":"Shape","block":[{"kind":"method","sourceKeys":{"base":{"objec…
+    - **changed** interface → class (slot): {"nameRef":{"kind":"declarationName","sourceKeys":{"objectKey":"declar… → {"nameRef":{"kind":"declarationName","sourceKeys":{"objectKey":"declar…
 
 ## class_Unchanged
 
@@ -336,7 +336,7 @@
   - **changed** meta
     - **changed** apexTriggerMeta (slot): L2 `<ApexTrigger xmlns="http://soap.sforce.com/2006/04/metadata"> <apiVers…` → L2 `<ApexTrigger xmlns="http://soap.sforce.com/2006/04/metadata"> <apiVers…`
       - **changed** status: "Active" → "Inactive"
-      - **added** packageVersions: [{"namespace":"acme","majorNumber":1,"minorNumber":4}]
+      - **added** packageVersions: L4 `<packageVersions> <majorNumber>1</majorNumber> <minorNumber>4</minorNu…`
 
 ## trigger_ParserTrigger
 

@@ -14,7 +14,10 @@ const makeParameter = (objectKey: string, sourceKey: string, variant: string): P
         type: 'primitive',
         primitiveType: 'Integer',
     },
-    modifier: {},
+    modifier: {
+        kind: 'modifiers',
+        sourceKeys: { objectKey: 'modifiers-empty', sourceKey: 'modifiers-source' },
+    },
 });
 
 const makeSourceObjects = (

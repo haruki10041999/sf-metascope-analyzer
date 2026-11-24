@@ -13,6 +13,7 @@ import {
 import { XmlSyntaxError, parseXml } from '../../src/analyzer/types/commons/xml';
 import { findXmlSourceInfo } from '../../src/analyzer/types/commons/xmlJson';
 import type { CustomFieldJson } from '../../src/analyzer/types/metadata/field';
+import { p1Shape } from '../converter/lwcShape';
 
 const sample = path.resolve('docs/examples/repository');
 const objectsOf = (side: string) =>
@@ -70,7 +71,7 @@ describe('MetadataParser.parseObject', () => {
         const object = result.result.base;
         assert.equal(object.kind, 'object');
         assert.equal(object.objectType, 'custom');
-        assert.deepEqual(object.nameField, {
+        assert.deepEqual(p1Shape(object.nameField), {
             label: 'Invoice Number',
             type: 'AutoNumber',
             displayFormat: 'INV-{0000}',

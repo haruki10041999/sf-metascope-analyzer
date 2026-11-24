@@ -1,5 +1,7 @@
 {
   "module": {
+    "kind": "lwcModule",
+    "sourceKeys": {},
     "fileType": "js",
     "imports": [
       {
@@ -30,10 +32,7 @@
     ],
     "component": {
       "kind": "lwcComponent",
-      "sourceKeys": {
-        "base": {},
-        "name": {}
-      },
+      "sourceKeys": {},
       "name": "OldBanner",
       "superClass": {
         "kind": "jsIdentifier",
@@ -43,10 +42,7 @@
       "block": [
         {
           "kind": "lwcField",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
-          },
+          "sourceKeys": {},
           "name": "message",
           "init": {
             "kind": "jsString",
@@ -55,6 +51,8 @@
           },
           "optional": false,
           "modifier": {
+            "kind": "lwcModifiers",
+            "sourceKeys": {},
             "decorator": [
               {
                 "kind": "lwcDecorator",
@@ -63,9 +61,19 @@
                 "arg": []
               }
             ]
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "message"
           }
         }
-      ]
+      ],
+      "nameRef": {
+        "kind": "declarationName",
+        "sourceKeys": {},
+        "name": "OldBanner"
+      }
     },
     "exports": [
       {
@@ -81,6 +89,19 @@
   },
   "sourceObject": [
     {
+      "context": "",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      }
+    },
+    {
       "context": "''",
       "start": {
         "offset": 123,
@@ -91,6 +112,19 @@
         "offset": 125,
         "line": 4,
         "column": 21
+      }
+    },
+    {
+      "context": "@api message = '';",
+      "start": {
+        "offset": 108,
+        "line": 4,
+        "column": 4
+      },
+      "end": {
+        "offset": 126,
+        "line": 4,
+        "column": 22
       }
     },
     {
@@ -159,6 +193,19 @@
       }
     },
     {
+      "context": "OldBanner",
+      "start": {
+        "offset": 67,
+        "line": 3,
+        "column": 21
+      },
+      "end": {
+        "offset": 76,
+        "line": 3,
+        "column": 30
+      }
+    },
+    {
       "context": "api",
       "start": {
         "offset": 27,
@@ -208,6 +255,19 @@
         "offset": 44,
         "line": 1,
         "column": 44
+      }
+    },
+    {
+      "context": "message",
+      "start": {
+        "offset": 113,
+        "line": 4,
+        "column": 9
+      },
+      "end": {
+        "offset": 120,
+        "line": 4,
+        "column": 16
       }
     },
     {

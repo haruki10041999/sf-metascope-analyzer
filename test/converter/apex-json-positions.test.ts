@@ -106,9 +106,12 @@ describe('Apex の JSON: 式・変数の位置', () => {
 
     it('WITH SNIPPET (target_length = n) は targetLength に持つ', async () => {
         const result = await parseSource(SOURCE);
+        const snippets = find(result.result.base, (n) => n.mode === 'SNIPPET');
         assert.deepEqual(
-            find(result.result.base, (n) => n.mode === 'SNIPPET'),
-            [{ mode: 'SNIPPET', targetLength: '120' }],
+            snippets.map(({ sourceKeys: _sourceKeys, ...rest }) => rest),
+            [{ kind: 'soslWith', mode: 'SNIPPET', targetLength: '120' }],
         );
+        // WITH 句もノードで、位置が sourceObject にある (apex 7)
+        assert.ok(snippets.every((n) => hasSource(result, n.sourceKeys)));
     });
 });

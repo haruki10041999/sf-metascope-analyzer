@@ -27,9 +27,14 @@ import type {
 type ClassBodyItem = ClassDeclarationJson['block'][number];
 
 const keys = (objectKey: string) => ({ objectKey, sourceKey: `${objectKey}-source` });
-const structureKeys = (objectKey: string) => ({
-    base: keys(objectKey),
-    name: keys(`${objectKey}-name`),
+/** 宣言のキーと名前の位置 (apex 9 から宣言も JsonType。名前の位置は nameRef) */
+const declarationKeys = (objectKey: string) => ({
+    sourceKeys: keys(objectKey),
+    nameRef: {
+        kind: 'declarationName' as const,
+        sourceKeys: keys(objectKey + '-name'),
+        name: objectKey,
+    },
 });
 
 const primitive = (objectKey: string, primitiveType: string): TypeJson =>
@@ -45,7 +50,10 @@ const param = (objectKey: string, variant: string, type = 'Integer'): ParameterJ
     sourceKeys: keys(objectKey),
     variant,
     variantType: primitive(`${objectKey}-type`, type),
-    modifier: {},
+    modifier: {
+        kind: 'modifiers',
+        sourceKeys: { objectKey: 'modifiers-empty', sourceKey: 'modifiers-source' },
+    },
 });
 
 const statement = (objectKey: string): StatementJson => ({
@@ -54,6 +62,8 @@ const statement = (objectKey: string): StatementJson => ({
 });
 
 const modifier = (objectKey: string, name: ModifierJson['name']): ModifiersJson => ({
+    kind: 'modifiers',
+    sourceKeys: keys(`modifiers-${objectKey}`),
     keyword: [{ kind: 'modifier', sourceKeys: keys(objectKey), name }],
 });
 
@@ -64,21 +74,27 @@ const method = (
     block?: StatementJson[],
 ): MethodDeclarationJson => ({
     kind: 'method',
-    sourceKeys: structureKeys(objectKey),
+    ...declarationKeys(objectKey),
     name,
     returnType: 'void',
     param: params,
     ...(block ? { block } : {}),
 });
 
-const member = <T extends object>(declaration: T, modifiers: ModifiersJson = {}) => ({
+const member = <T extends object>(
+    declaration: T,
+    modifiers: ModifiersJson = {
+        kind: 'modifiers',
+        sourceKeys: { objectKey: 'modifiers-empty', sourceKey: 'modifiers-source' },
+    },
+) => ({
     ...declaration,
     modifier: modifiers,
 });
 
 const constructorOf = (objectKey: string, params: ParameterJson[]): ConstructorDeclarationJson => ({
     kind: 'constructor',
-    sourceKeys: structureKeys(objectKey),
+    ...declarationKeys(objectKey),
     name: ['Foo'],
     param: params,
     block: [],
@@ -190,19 +206,19 @@ describe('class body diff', () => {
     it('diffs nested classes recursively', () => {
         const inner = (objectKey: string, block: ClassBodyItem[]): ClassDeclarationJson => ({
             kind: 'class',
-            sourceKeys: structureKeys(objectKey),
+            ...declarationKeys(objectKey),
             name: 'Inner',
             block,
         });
         const before: ClassDeclarationJson = {
             kind: 'class',
-            sourceKeys: structureKeys('outer1'),
+            ...declarationKeys('outer1'),
             name: 'Outer',
             block: [member(inner('inner1', [member(field('f1', ['a']))]))],
         };
         const after: ClassDeclarationJson = {
             kind: 'class',
-            sourceKeys: structureKeys('outer2'),
+            ...declarationKeys('outer2'),
             name: 'Outer',
             extend: primitive('base', 'Object'),
             block: [member(inner('inner2', [member(field('f2', ['a'], '1'))]))],
@@ -243,11 +259,19 @@ describe('member diff', () => {
     it('distinguishes an auto-implemented accessor from an empty one', () => {
         const property = (objectKey: string, block?: StatementJson[]): PropertyDeclarationJson => ({
             kind: 'property',
-            sourceKeys: structureKeys(objectKey),
+            ...declarationKeys(objectKey),
             name: 'value',
             variantType: primitive(`${objectKey}-type`, 'Integer'),
             isGetter: true,
-            getterContent: { modifier: {}, ...(block ? { block } : {}) },
+            getterContent: {
+                kind: 'accessor',
+                sourceKeys: keys(`${objectKey}-get`),
+                modifier: {
+                    kind: 'modifiers',
+                    sourceKeys: { objectKey: 'modifiers-empty', sourceKey: 'modifiers-source' },
+                },
+                ...(block ? { block } : {}),
+            },
             isSetter: false,
         });
 

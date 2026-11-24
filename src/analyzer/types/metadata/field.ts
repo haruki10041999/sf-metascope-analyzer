@@ -27,7 +27,7 @@ export type PicklistValueJson = JsonType<'picklistValue'> & {
 } & PropertiesOf<typeof PICKLIST_VALUE_SCHEMA>;
 
 /** 選択リストの値の集合 (`<valueSet>`)。グローバル値セットを使うときは valueSetName だけを持つ */
-export type ValueSetJson = {
+export type ValueSetJson = JsonType<'valueSet'> & {
     restricted?: boolean;
     sorted?: boolean;
     valueSetName?: string;
@@ -41,7 +41,10 @@ export type ValueSetJson = {
 };
 
 /** 依存する選択リストの値 1 つと、その値を選べる制御項目の値 */
-export type PicklistValueSettingJson = { valueName: string; controllingFieldValues: string[] };
+export type PicklistValueSettingJson = JsonType<'picklistValueSetting'> & {
+    valueName: string;
+    controllingFieldValues: string[];
+};
 
 export const FIELD_SCHEMA = {
     label: 'string',
@@ -87,10 +90,11 @@ export const LOOKUP_FILTER_SCHEMA = {
     isOptional: 'boolean',
 } as const;
 
-export type LookupFilterJson = PropertiesOf<typeof LOOKUP_FILTER_SCHEMA> & {
-    /** 条件の行 (書いた順。booleanFilter の番号が順序に依る) */
-    filterItems: CriterionJson[];
-};
+export type LookupFilterJson = JsonType<'lookupFilter'> &
+    PropertiesOf<typeof LOOKUP_FILTER_SCHEMA> & {
+        /** 条件の行 (書いた順。booleanFilter の番号が順序に依る) */
+        filterItems: CriterionJson[];
+    };
 
 export type CustomFieldJson = JsonType<'field'> & {
     apiName: string;
@@ -126,29 +130,44 @@ const makeValueSetJson = (
     const sorted = readProperties(definition, { sorted: 'boolean' }).sorted;
     const valueSetName = readText(element, 'valueSetName');
     const controllingField = readText(element, 'controllingField');
-    return {
-        ...(restricted !== undefined ? { restricted } : {}),
-        ...(sorted !== undefined ? { sorted } : {}),
-        ...(valueSetName !== undefined ? { valueSetName } : {}),
-        ...(controllingField !== undefined ? { controllingField } : {}),
-        ...nonEmptyEntry(
-            'values',
-            definition
-                ? childrenOf(definition, 'value').map((value) =>
-                      makePicklistValueJson(value, file, registry),
-                  )
-                : [],
-        ),
-        ...nonEmptyEntry(
-            'valueSettings',
-            childrenOf(element, 'valueSettings').map((setting): PicklistValueSettingJson => ({
-                valueName: readText(setting, 'valueName') ?? '',
-                controllingFieldValues: childrenOf(setting, 'controllingFieldValue').map(
-                    (value) => value.text,
+    return makeXmlJson<ValueSetJson>(
+        'valueSet',
+        {
+            ...(restricted !== undefined ? { restricted } : {}),
+            ...(sorted !== undefined ? { sorted } : {}),
+            ...(valueSetName !== undefined ? { valueSetName } : {}),
+            ...(controllingField !== undefined ? { controllingField } : {}),
+            ...nonEmptyEntry(
+                'values',
+                definition
+                    ? childrenOf(definition, 'value').map((value) =>
+                          makePicklistValueJson(value, file, registry),
+                      )
+                    : [],
+            ),
+            ...nonEmptyEntry(
+                'valueSettings',
+                childrenOf(element, 'valueSettings').map((setting) =>
+                    makeXmlJson<PicklistValueSettingJson>(
+                        'picklistValueSetting',
+                        {
+                            valueName: readText(setting, 'valueName') ?? '',
+                            controllingFieldValues: childrenOf(
+                                setting,
+                                'controllingFieldValue',
+                            ).map((value) => value.text),
+                        },
+                        setting,
+                        file,
+                        registry,
+                    ),
                 ),
-            })),
-        ),
-    };
+            ),
+        },
+        element,
+        file,
+        registry,
+    );
 };
 
 /**
@@ -175,16 +194,25 @@ export const makeCustomFieldJson = (
             // 要素がないときは持たない (保存済みのオブジェクトの objectKey を変えないため)
             ...(lookupFilter
                 ? {
-                      lookupFilter: {
-                          ...readProperties(lookupFilter, LOOKUP_FILTER_SCHEMA, { file, registry }),
-                          // 条件の行 (段階 M5 で criterion にした)
-                          filterItems: readCriteria(
-                              lookupFilter,
-                              'filterItems',
-                              CRITERIA_ITEM_NAMES,
-                              { file, registry },
-                          ),
-                      },
+                      lookupFilter: makeXmlJson<LookupFilterJson>(
+                          'lookupFilter',
+                          {
+                              ...readProperties(lookupFilter, LOOKUP_FILTER_SCHEMA, {
+                                  file,
+                                  registry,
+                              }),
+                              // 条件の行 (段階 M5 で criterion にした)
+                              filterItems: readCriteria(
+                                  lookupFilter,
+                                  'filterItems',
+                                  CRITERIA_ITEM_NAMES,
+                                  { file, registry },
+                              ),
+                          },
+                          lookupFilter,
+                          file,
+                          registry,
+                      ),
                   }
                 : {}),
             ...nonEmptyEntry('skippedElements', unknownChildNames(element, FIELD_KNOWN_ELEMENTS)),

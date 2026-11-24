@@ -5,22 +5,34 @@
   "result": {
     "id": "class_Unchanged",
     "base": {
+      "kind": "apexUnit",
+      "sourceKeys": {
+        "objectKey": "apexUnit_97de8d3c400f766f",
+        "sourceKey": "compilationUnit_f16bd22eb5bc39c1"
+      },
       "name": "Unchanged",
       "unitType": "class",
       "source": {
+        "kind": "apexSource",
+        "sourceKeys": {
+          "objectKey": "apexSource_35709f6d0f83b128",
+          "sourceKey": "compilationUnit_f16bd22eb5bc39c1"
+        },
         "fileName": "Unchanged.cls",
         "fileType": "cls",
         "content": {
           "kind": "class",
           "sourceKeys": {
-            "base": {
-              "objectKey": "classDeclaration_73f0dcfaf88787f0",
-              "sourceKey": "classDeclaration_4682cca44a1e416a"
-            },
-            "name": {
-              "objectKey": "id_d1ee7f25ff6ff2be",
+            "objectKey": "classDeclaration_73f0dcfaf88787f0",
+            "sourceKey": "classDeclaration_4682cca44a1e416a"
+          },
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {
+              "objectKey": "declarationName_28e1ae2472442acb",
               "sourceKey": "id_59cbe78500ebaf44"
-            }
+            },
+            "name": "Unchanged"
           },
           "name": "Unchanged",
           "block": [
@@ -58,6 +70,11 @@
                 "primitiveType": "Integer"
               },
               "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {
+                  "objectKey": "modifiers_b09596894868e30e",
+                  "sourceKey": "classBodyDeclaration_2637213ca0542143"
+                },
                 "keyword": [
                   {
                     "kind": "modifier",
@@ -72,6 +89,11 @@
             }
           ],
           "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {
+              "objectKey": "modifiers_b09596894868e30e",
+              "sourceKey": "typeDeclaration_f16bd22eb5bc39c1"
+            },
             "keyword": [
               {
                 "kind": "modifier",
@@ -86,6 +108,11 @@
         }
       },
       "meta": {
+        "kind": "apexMetaFile",
+        "sourceKeys": {
+          "objectKey": "apexMetaFile_24eaf90710679836",
+          "sourceKey": "apexMetaFile_c91f11a4ceef8c5f"
+        },
         "fileName": "Unchanged.cls-meta.xml",
         "meta": {
           "kind": "apexClassMeta",
@@ -99,6 +126,25 @@
       }
     },
     "sourceObject": [
+      {
+        "objectKey": "apexSource_35709f6d0f83b128",
+        "context": "public class Unchanged {\n    public Integer value = 1;\n}",
+        "source": [
+          {
+            "sourceKey": "compilationUnit_f16bd22eb5bc39c1",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 56,
+              "line": 3,
+              "column": 1
+            }
+          }
+        ]
+      },
       {
         "objectKey": "classDeclaration_73f0dcfaf88787f0",
         "context": "class Unchanged {\n    public Integer value = 1;\n}",
@@ -119,7 +165,7 @@
         ]
       },
       {
-        "objectKey": "id_d1ee7f25ff6ff2be",
+        "objectKey": "declarationName_28e1ae2472442acb",
         "context": "Unchanged",
         "source": [
           {
@@ -214,6 +260,44 @@
         ]
       },
       {
+        "objectKey": "modifiers_b09596894868e30e",
+        "context": "public Integer value = 1;",
+        "source": [
+          {
+            "sourceKey": "classBodyDeclaration_2637213ca0542143",
+            "start": {
+              "offset": 29,
+              "line": 2,
+              "column": 4
+            },
+            "end": {
+              "offset": 54,
+              "line": 2,
+              "column": 29
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "modifiers_b09596894868e30e",
+        "context": "public class Unchanged {\n    public Integer value = 1;\n}",
+        "source": [
+          {
+            "sourceKey": "typeDeclaration_f16bd22eb5bc39c1",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 56,
+              "line": 3,
+              "column": 1
+            }
+          }
+        ]
+      },
+      {
         "objectKey": "modifier_ff9740e1ee9f633a",
         "context": "public",
         "source": [
@@ -261,6 +345,45 @@
               "offset": 173,
               "line": 5,
               "column": 12
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "apexMetaFile_24eaf90710679836",
+        "context": "",
+        "source": [
+          {
+            "sourceKey": "apexMetaFile_c91f11a4ceef8c5f",
+            "filePath": "Unchanged.cls-meta.xml",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "apexUnit_97de8d3c400f766f",
+        "context": "public class Unchanged {\n    public Integer value = 1;\n}",
+        "source": [
+          {
+            "sourceKey": "compilationUnit_f16bd22eb5bc39c1",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 56,
+              "line": 3,
+              "column": 1
             }
           }
         ]

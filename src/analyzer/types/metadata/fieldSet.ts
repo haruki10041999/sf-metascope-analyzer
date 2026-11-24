@@ -17,7 +17,12 @@ export const FIELD_SET_SCHEMA = {
     description: 'string',
 } as const;
 
-export type FieldSetItemJson = { field: string; isFieldManaged?: boolean; isRequired?: boolean };
+/** 項目セットの項目 1 つ (metadata 8 からノード) */
+export type FieldSetItemJson = JsonType<'fieldSetItem'> & {
+    field: string;
+    isFieldManaged?: boolean;
+    isRequired?: boolean;
+};
 
 /** 項目セット (fieldSets/*.fieldSet-meta.xml)。displayedFields は表示順 */
 export type FieldSetJson = JsonType<'fieldSet'> & {
@@ -40,10 +45,21 @@ export const makeFieldSetJson = (
             ...readProperties(element, FIELD_SET_SCHEMA),
             ...nonEmptyEntry(
                 'displayedFields',
-                childrenOf(element, 'displayedFields').map((item) => ({
-                    field: readText(item, 'field') ?? '',
-                    ...readProperties(item, { isFieldManaged: 'boolean', isRequired: 'boolean' }),
-                })),
+                childrenOf(element, 'displayedFields').map((item) =>
+                    makeXmlJson<FieldSetItemJson>(
+                        'fieldSetItem',
+                        {
+                            field: readText(item, 'field') ?? '',
+                            ...readProperties(item, {
+                                isFieldManaged: 'boolean',
+                                isRequired: 'boolean',
+                            }),
+                        },
+                        item,
+                        file,
+                        registry,
+                    ),
+                ),
             ),
             ...nonEmptyEntry(
                 'skippedElements',

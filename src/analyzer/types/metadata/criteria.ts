@@ -16,7 +16,10 @@ import {
 // 要素名は違うが同じ考え (項目・演算子・値) なので、同じ criterion にする。booleanFilter は木だけを持つ (決めたこと 8)
 
 /** 条件の右辺 */
-export type CriterionValueJson =
+export type CriterionValueJson = JsonType<'criterionValue'> & CriterionValueBody;
+
+/** 条件の右辺の中身 (metadata 8 から右辺はノード。位置は右辺の要素のもの) */
+type CriterionValueBody =
     /**
      * 書いた値 (リストビューの value・FlexiPage の rightValue など。カンマ区切りの値もそのまま)。
      * Flow の値の要素は valueType に要素名 (stringValue・numberValue など) を持つ
@@ -55,11 +58,22 @@ export const CRITERIA_ITEM_NAMES: CriterionNames = {
     valueField: 'valueField',
 };
 
-/** booleanFilter の木。row は条件の行の番号 (1 始まり。書いた順) */
-export type FilterLogicJson =
-    | { type: 'and' | 'or'; operands: FilterLogicJson[] }
-    | { type: 'not'; operand: FilterLogicJson }
+/** booleanFilter の式の木 (構文解析の結果)。row は条件の行の番号 (1 始まり。書いた順) */
+export type FilterLogicTree =
+    | { type: 'and' | 'or'; operands: FilterLogicTree[] }
+    | { type: 'not'; operand: FilterLogicTree }
     | { type: 'row'; index: number };
+
+/**
+ * JSON に入れる booleanFilter の木 (metadata 8 から各段がノード)。文字列から作るので段ごとの位置はなく、
+ * どの段も booleanFilter の要素の位置を使う (objectKey は段の中身から作る)
+ */
+export type FilterLogicJson = JsonType<'filterLogic'> &
+    (
+        | { type: 'and' | 'or'; operands: FilterLogicJson[] }
+        | { type: 'not'; operand: FilterLogicJson }
+        | { type: 'row'; index: number }
+    );
 
 /** booleanFilter の値。読めなければ文字列のまま */
 export type FilterLogicValue = FilterLogicJson | string;
@@ -75,7 +89,7 @@ export class FilterLogicSyntaxError extends Error {
 }
 
 /** booleanFilter (1 AND (2 OR NOT 3)) を木にする。AND は OR より強い。同じ演算子の並びは 1 つにまとめる */
-export const parseFilterLogic = (text: string): FilterLogicJson => {
+export const parseFilterLogic = (text: string): FilterLogicTree => {
     const tokens: { value: string; start: number }[] = [];
     const pattern = /\s*(\d+|[A-Za-z]+|\(|\)|\S)/gy;
     for (let match = pattern.exec(text); match; match = pattern.exec(text)) {
@@ -86,7 +100,7 @@ export const parseFilterLogic = (text: string): FilterLogicJson => {
     const fail = (message: string): never => {
         throw new FilterLogicSyntaxError(message, tokens[index]?.start ?? text.length);
     };
-    const chain = (type: 'and' | 'or', operand: () => FilterLogicJson): FilterLogicJson => {
+    const chain = (type: 'and' | 'or', operand: () => FilterLogicTree): FilterLogicTree => {
         const operands = [operand()];
         while (peek() === type.toUpperCase()) {
             index++;
@@ -94,16 +108,16 @@ export const parseFilterLogic = (text: string): FilterLogicJson => {
         }
         return operands.length === 1 ? operands[0]! : { type, operands };
     };
-    const or = (): FilterLogicJson => chain('or', and);
-    const and = (): FilterLogicJson => chain('and', not);
-    const not = (): FilterLogicJson => {
+    const or = (): FilterLogicTree => chain('or', and);
+    const and = (): FilterLogicTree => chain('and', not);
+    const not = (): FilterLogicTree => {
         if (peek() === 'NOT') {
             index++;
             return { type: 'not', operand: not() };
         }
         return primary();
     };
-    const primary = (): FilterLogicJson => {
+    const primary = (): FilterLogicTree => {
         const token = tokens[index];
         if (!token) return fail('condition expected');
         if (/^\d+$/.test(token.value)) {
@@ -125,7 +139,10 @@ export const parseFilterLogic = (text: string): FilterLogicJson => {
 };
 
 /** booleanFilter の木を文字列に戻す (表示用) */
-export const filterLogicTextOf = (value: FilterLogicValue, nested = false): string => {
+export const filterLogicTextOf = (
+    value: FilterLogicValue | FilterLogicTree,
+    nested = false,
+): string => {
     if (typeof value === 'string') return value;
     switch (value.type) {
         case 'row':
@@ -171,7 +188,22 @@ export const readFormula = (element: XmlElement, context: ReadContext): FormulaV
 /** booleanFilter の要素を木にする。読めなければ文字列のまま持ち、registry.problems に理由を足す */
 export const readFilterLogic = (element: XmlElement, context: ReadContext): FilterLogicValue => {
     try {
-        return parseFilterLogic(element.text);
+        const toNode = (tree: FilterLogicTree): FilterLogicJson =>
+            makeSpanJson<FilterLogicJson>(
+                'filterLogic',
+                (tree.type === 'row'
+                    ? tree
+                    : tree.type === 'not'
+                      ? { type: 'not', operand: toNode(tree.operand) }
+                      : { type: tree.type, operands: tree.operands.map(toNode) }) as Omit<
+                    FilterLogicJson,
+                    'kind' | 'sourceKeys'
+                >,
+                element,
+                element.file ?? context.file,
+                context.registry,
+            );
+        return toNode(parseFilterLogic(element.text));
     } catch (error) {
         if (!(error instanceof FilterLogicSyntaxError)) throw error;
         // 位置は要素の中身の先頭からのずれで近似する (booleanFilter に実体参照は出ない)
@@ -186,6 +218,20 @@ export const readFilterLogic = (element: XmlElement, context: ReadContext): Filt
     }
 };
 
+/** 条件の右辺のノード (位置は右辺の要素) */
+const criterionValueOf = (
+    body: CriterionValueBody,
+    element: XmlElement,
+    context: ReadContext,
+): CriterionValueJson =>
+    makeSpanJson<CriterionValueJson>(
+        'criterionValue',
+        body as Omit<CriterionValueJson, 'kind' | 'sourceKeys'>,
+        element,
+        element.file ?? context.file,
+        context.registry,
+    );
+
 /** 条件の行 1 つ */
 export const makeCriterionJson = (
     element: XmlElement,
@@ -197,11 +243,19 @@ export const makeCriterionJson = (
     const value = childOf(element, names.value);
     const valueField = names.valueField ? childOf(element, names.valueField) : undefined;
     const right: CriterionValueJson | undefined = valueField
-        ? { type: 'field', value: readFormula(valueField, context) }
+        ? criterionValueOf(
+              { type: 'field', value: readFormula(valueField, context) },
+              valueField,
+              context,
+          )
         : value
-          ? value.text.includes('{!')
-              ? { type: 'formula', value: readFormula(value, context) }
-              : { type: 'value', value: value.text }
+          ? criterionValueOf(
+                value.text.includes('{!')
+                    ? { type: 'formula', value: readFormula(value, context) }
+                    : { type: 'value', value: value.text },
+                value,
+                context,
+            )
           : undefined;
     return makeSpanJson<CriterionJson>(
         'criterion',
@@ -299,15 +353,29 @@ export const readAttributeTemplate = (
 const flowValueOf = (element: XmlElement, context: ReadContext): CriterionValueJson | undefined => {
     const [only] = element.children;
     if (!only || element.children.length !== 1) {
-        return element.text ? { type: 'value', value: element.text } : undefined;
+        return element.text
+            ? criterionValueOf({ type: 'value', value: element.text }, element, context)
+            : undefined;
     }
     switch (only.name) {
         case 'elementReference':
-            return { type: 'reference', value: readFormula(only, context) };
+            return criterionValueOf(
+                { type: 'reference', value: readFormula(only, context) },
+                element,
+                context,
+            );
         case 'formulaExpression':
-            return { type: 'formula', value: readFormula(only, context) };
+            return criterionValueOf(
+                { type: 'formula', value: readFormula(only, context) },
+                element,
+                context,
+            );
         default:
-            return { type: 'value', value: only.text, valueType: only.name };
+            return criterionValueOf(
+                { type: 'value', value: only.text, valueType: only.name },
+                element,
+                context,
+            );
     }
 };
 

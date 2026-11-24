@@ -137,14 +137,20 @@ describe('JSON 出力 / docs/examples/repository (Apex の構文のサンプル)
         });
     }
 
-    it('宣言は名前の位置を持つ境界ノードになる', async () => {
+    it('宣言は名前の位置 (nameRef) を持つノードになる (apex 9)', async () => {
         const { json } = await convert(0);
         for (const kind of ['class', 'method', 'constructor', 'property', 'enum', 'interface']) {
             const declarations = find(json, (n) => n.kind === kind);
             assert.ok(declarations.length > 0, kind);
             declarations.forEach((d) => {
-                assert.ok(d.sourceKeys.base, kind);
-                assert.ok(d.sourceKeys.name, kind);
+                assert.ok(d.sourceKeys.objectKey && d.sourceKeys.sourceKey, kind);
+                assert.equal(d.nameRef.kind, 'declarationName', kind);
+                // 名前の位置のノードは、宣言の名前を持つ (コンストラクターは . でつないだもの)
+                assert.equal(
+                    d.nameRef.name,
+                    Array.isArray(d.name) ? d.name.join('.') : d.name,
+                    kind,
+                );
             });
         }
         // field は初期値まで含めて 1 つの境界ノード
@@ -186,14 +192,20 @@ describe('JSON 出力 / docs/examples/repository (Apex の構文のサンプル)
         }
     });
 
-    it('内側の型（ジェネリクス・要素型）はキーを持たない', async () => {
-        const { json } = await convert(0);
+    it('内側の型（ジェネリクス・要素型）も type のノードで、位置を持つ (apex 8)', async () => {
+        const { json, sourceObjects } = await convert(0);
+        const registered = new Set(
+            sourceObjects.flatMap((o) => o.source.map((s) => `${o.objectKey}/${s.sourceKey}`)),
+        );
         const collections = find(json, (n) => n.kind === 'type' && n.type === 'map');
         assert.ok(collections.length > 0);
         collections.forEach((t) => {
-            assert.equal(t.keyType.kind, undefined);
-            assert.equal(t.keyType.sourceKeys, undefined);
-            assert.equal(t.valueType.sourceKeys, undefined);
+            for (const inner of [t.keyType, t.valueType]) {
+                assert.equal(inner.kind, 'type');
+                assert.ok(
+                    registered.has(`${inner.sourceKeys.objectKey}/${inner.sourceKeys.sourceKey}`),
+                );
+            }
         });
     });
 

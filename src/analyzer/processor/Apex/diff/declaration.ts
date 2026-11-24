@@ -119,7 +119,7 @@ const getModifiersKey = (modifier: ModifiersJson): string => {
  * 修飾子の objectKey も足す (修飾子だけの変更を unchanged にしないため)。
  */
 export const getMemberIdentity = (member: JsonNode & { modifier?: ModifiersJson }): string => {
-    return `${getObjectKey(member)}|${getModifiersKey(member.modifier ?? {})}`;
+    return `${getObjectKey(member)}|${member.modifier ? getModifiersKey(member.modifier) : ''}`;
 };
 
 /** 初期化ブロックの判定キー。sourceKeys を持たないので、中身の objectKey から作る */

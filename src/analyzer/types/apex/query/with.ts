@@ -8,7 +8,7 @@ import type {
     WithClauseTypeClass,
 } from '../../apex_IR';
 
-import { makeNodeJson } from '../commons/node';
+import { makeDerivedNodeJson, makeNodeJson } from '../commons/node';
 import { makeLogicalConditionJson, LogicalConditionJson } from './commons';
 import { makeExpressionJsonConvert, BaseExpressionJson } from '../expression';
 
@@ -39,12 +39,15 @@ const makeDataCategorySelectionJson = (
     });
 };
 
-export type WithJson =
-    | {
-          mode: 'SYSTEM_MODE' | 'USER_MODE' | 'SECURITY_ENFORCED';
-      }
-    | { mode: 'EXPRESSION'; condition: LogicalConditionJson }
-    | { mode: 'DATA_CATEGORY'; selection: DataCategorySelectionJson[] };
+/** SOQL の WITH 句 */
+export type WithJson = JsonType<'soqlWith'> &
+    (
+        | {
+              mode: 'SYSTEM_MODE' | 'USER_MODE' | 'SECURITY_ENFORCED';
+          }
+        | { mode: 'EXPRESSION'; condition: LogicalConditionJson }
+        | { mode: 'DATA_CATEGORY'; selection: DataCategorySelectionJson[] }
+    );
 
 const makeDataCategorySelectionListJson = (
     target: FilteringExpressionTypeClass,
@@ -58,34 +61,42 @@ export const makeWithJson = (target: WithClauseTypeClass): WithJson => {
         case 'SYSTEM_MODE':
         case 'USER_MODE':
         case 'SECURITY_ENFORCED':
-            return {
+            return makeNodeJson<WithJson>('soqlWith', target, {
                 mode: fields.kind,
-            };
+            });
         case 'DATA_CATEGORY':
-            return {
+            return makeNodeJson<WithJson>('soqlWith', target, {
                 mode: 'DATA_CATEGORY',
                 selection: makeDataCategorySelectionListJson(fields.filter),
-            };
+            });
         case 'EXPRESSION':
-            return {
+            return makeNodeJson<WithJson>('soqlWith', target, {
                 mode: 'EXPRESSION',
                 condition: makeLogicalConditionJson(fields.expression),
-            };
+            });
     }
 };
 
-export type SoslWithJson =
+/** SOSL の WITH DIVISION・PRICEBOOKID の値。リテラルは IR に対応するノードがないので、位置は WITH 句のもの */
+export type SoslWithValueJson = JsonType<'soslWithValue'> &
+    (
+        | {
+              type: 'literal';
+              value: string;
+          }
+        | {
+              type: 'bind';
+              value: BaseExpressionJson;
+          }
+    );
+
+/** SOSL の WITH 句 1 つ */
+export type SoslWithJson = JsonType<'soslWith'> & SoslWithBody;
+
+type SoslWithBody =
     | {
           mode: 'DIVISION' | 'PRICEBOOKID';
-          value:
-              | {
-                    type: 'literal';
-                    value: string;
-                }
-              | {
-                    type: 'bind';
-                    value: BaseExpressionJson;
-                };
+          value: SoslWithValueJson;
       }
     | {
           mode: 'DATA_CATEGORY';
@@ -112,22 +123,31 @@ export type SoslWithJson =
           mode: 'HIGHLIGHT' | 'SYSTEM_MODE' | 'USER_MODE';
       };
 
-export const makeSoslWithJson = (target: SoslWithClauseTypeClass): SoslWithJson => {
+export const makeSoslWithJson = (target: SoslWithClauseTypeClass): SoslWithJson =>
+    makeNodeJson<SoslWithJson>('soslWith', target, makeSoslWithBody(target));
+
+const makeSoslWithBody = (target: SoslWithClauseTypeClass): SoslWithBody => {
     const fields = target.getFields();
     switch (fields.kind) {
         case 'DIVISION':
         case 'PRICEBOOKID': {
             const content = fields.content;
             if (content.kind === 'literal') {
-                return { mode: fields.kind, value: { type: 'literal', value: content.text } };
+                return {
+                    mode: fields.kind,
+                    value: makeDerivedNodeJson<SoslWithValueJson>('soslWithValue', target, {
+                        type: 'literal',
+                        value: content.text,
+                    }),
+                };
             }
-            // バインド式 (:var) は中の式を出す
+            // バインド式 (:var) は中の式を出す。位置はバインド式のもの
             return {
                 mode: fields.kind,
-                value: {
+                value: makeNodeJson<SoslWithValueJson>('soslWithValue', content.expr, {
                     type: 'bind',
                     value: makeExpressionJsonConvert(content.expr.getFields().value),
-                },
+                }),
             };
         }
         case 'DATA_CATEGORY':
@@ -160,7 +180,7 @@ export const makeSoslWithJson = (target: SoslWithClauseTypeClass): SoslWithJson 
             // (v1 は converter が null の content を落とし、value: undefined として JSON に出なかった)
             return fields.content !== null
                 ? { mode: 'METADATA', value: fields.content }
-                : ({ mode: 'METADATA' } as SoslWithJson);
+                : ({ mode: 'METADATA' } as SoslWithBody);
         case 'HIGHLIGHT':
         case 'SYSTEM_MODE':
         case 'USER_MODE':

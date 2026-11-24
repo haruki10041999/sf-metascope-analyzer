@@ -1,0 +1,54 @@
+{
+  "filePath": "dashboards/Invoice_Dashboards/Invoice_Overview.dashboard-meta.xml",
+  "resolvedError": [],
+  "dataType": "dashboard",
+  "result": {
+    "id": "dashboard_Invoice_Dashboards.Invoice_Overview",
+    "base": {
+      "kind": "dashboard",
+      "sourceKeys": {
+        "objectKey": "dashboard_2ed6187bc8b2ab6b",
+        "sourceKey": "dashboard_c8cca3ac01d1bd78"
+      },
+      "fullName": "Invoice_Dashboards/Invoice_Overview",
+      "title": "Invoice Overview",
+      "dashboardType": "SpecifiedUser",
+      "runningUser": "admin@example.com",
+      "backgroundStartColor": "#FFFFFF",
+      "backgroundEndColor": "#FFFFFF",
+      "backgroundFadeDirection": "Diagonal",
+      "textColor": "#000000",
+      "leftSection": {
+        "columnSize": "Medium",
+        "components": {
+          "autoselectColumnsFromReport": true,
+          "componentType": "Table",
+          "header": "Open invoices",
+          "report": "Invoice_Reports/Open_Invoices"
+        }
+      }
+    },
+    "sourceObject": [
+      {
+        "objectKey": "dashboard_2ed6187bc8b2ab6b",
+        "context": "<Dashboard xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <backgroundEndColor>#FFFFFF</backgroundEndColor>\n    <backgroundFadeDirection>Diagonal</backgroundFadeDirection>\n    <backgroundStartColor>#FFFFFF</backgroundStartColor>\n    <dashboardType>SpecifiedUser</dashboardType>\n    <leftSection>\n        <columnSize>Medium</columnSize>\n        <components>\n            <autoselectColumnsFromReport>true</autoselectColumnsFromReport>\n            <componentType>Table</componentType>\n            <header>Open invoices</header>\n            <report>Invoice_Reports/Open_Invoices</report>\n        </components>\n    </leftSection>\n    <runningUser>admin@example.com</runningUser>\n    <textColor>#000000</textColor>\n    <title>Invoice Overview</title>\n</Dashboard>",
+        "source": [
+          {
+            "sourceKey": "dashboard_c8cca3ac01d1bd78",
+            "filePath": "dashboards/Invoice_Dashboards/Invoice_Overview.dashboard-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 801,
+              "line": 19,
+              "column": 12
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

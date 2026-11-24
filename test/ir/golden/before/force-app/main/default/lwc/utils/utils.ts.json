@@ -1,5 +1,7 @@
 {
   "module": {
+    "kind": "lwcModule",
+    "sourceKeys": {},
     "fileType": "ts",
     "imports": [],
     "exports": [
@@ -55,10 +57,7 @@
     "declarations": [
       {
         "kind": "lwcDeclaration",
-        "sourceKeys": {
-          "base": {},
-          "name": {}
-        },
+        "sourceKeys": {},
         "name": "formatter",
         "declarationType": "variable",
         "exported": false,
@@ -113,14 +112,16 @@
               ]
             }
           ]
+        },
+        "nameRef": {
+          "kind": "declarationName",
+          "sourceKeys": {},
+          "name": "formatter"
         }
       },
       {
         "kind": "lwcDeclaration",
-        "sourceKeys": {
-          "base": {},
-          "name": {}
-        },
+        "sourceKeys": {},
         "name": "formatAmount",
         "declarationType": "function",
         "exported": true,
@@ -138,7 +139,10 @@
               "primitiveType": "number"
             },
             "optional": false,
-            "modifier": {}
+            "modifier": {
+              "kind": "lwcModifiers",
+              "sourceKeys": {}
+            }
           }
         ],
         "returnType": {
@@ -167,14 +171,16 @@
               "name": "value"
             }
           ]
+        },
+        "nameRef": {
+          "kind": "declarationName",
+          "sourceKeys": {},
+          "name": "formatAmount"
         }
       },
       {
         "kind": "lwcDeclaration",
-        "sourceKeys": {
-          "base": {},
-          "name": {}
-        },
+        "sourceKeys": {},
         "name": "toRows",
         "declarationType": "function",
         "exported": true,
@@ -189,12 +195,17 @@
               "sourceKeys": {},
               "type": "array",
               "elementType": {
+                "kind": "lwcType",
+                "sourceKeys": {},
                 "type": "primitive",
                 "primitiveType": "unknown"
               }
             },
             "optional": false,
-            "modifier": {}
+            "modifier": {
+              "kind": "lwcModifiers",
+              "sourceKeys": {}
+            }
           }
         ],
         "returnType": {
@@ -202,6 +213,8 @@
           "sourceKeys": {},
           "type": "array",
           "elementType": {
+            "kind": "lwcType",
+            "sourceKeys": {},
             "type": "custom",
             "customType": [
               "Row"
@@ -238,7 +251,10 @@
                       "sourceKeys": {},
                       "variant": "record",
                       "optional": false,
-                      "modifier": {}
+                      "modifier": {
+                        "kind": "lwcModifiers",
+                        "sourceKeys": {}
+                      }
                     }
                   ],
                   "expression": {
@@ -263,23 +279,22 @@
               ]
             }
           }
-        ]
+        ],
+        "nameRef": {
+          "kind": "declarationName",
+          "sourceKeys": {},
+          "name": "toRows"
+        }
       },
       {
         "kind": "lwcClass",
-        "sourceKeys": {
-          "base": {},
-          "name": {}
-        },
+        "sourceKeys": {},
         "name": "RowCache",
         "exported": true,
         "block": [
           {
             "kind": "lwcField",
-            "sourceKeys": {
-              "base": {},
-              "name": {}
-            },
+            "sourceKeys": {},
             "name": "instances",
             "init": {
               "kind": "jsNumber",
@@ -288,17 +303,21 @@
             },
             "optional": false,
             "modifier": {
+              "kind": "lwcModifiers",
+              "sourceKeys": {},
               "declaration": [
                 "static"
               ]
+            },
+            "nameRef": {
+              "kind": "declarationName",
+              "sourceKeys": {},
+              "name": "instances"
             }
           },
           {
             "kind": "lwcField",
-            "sourceKeys": {
-              "base": {},
-              "name": {}
-            },
+            "sourceKeys": {},
             "name": "#rows",
             "init": {
               "kind": "jsNew",
@@ -327,19 +346,34 @@
               ]
             },
             "optional": false,
-            "modifier": {}
+            "modifier": {
+              "kind": "lwcModifiers",
+              "sourceKeys": {}
+            },
+            "nameRef": {
+              "kind": "declarationName",
+              "sourceKeys": {},
+              "name": "#rows"
+            }
           },
           {
             "kind": "lwcProperty",
-            "sourceKeys": {
-              "base": {},
-              "name": {}
-            },
+            "sourceKeys": {},
             "name": "size",
             "isGetter": true,
             "isSetter": false,
+            "nameRef": {
+              "kind": "declarationName",
+              "sourceKeys": {},
+              "name": "size"
+            },
             "getterContent": {
-              "modifier": {},
+              "kind": "lwcAccessor",
+              "sourceKeys": {},
+              "modifier": {
+                "kind": "lwcModifiers",
+                "sourceKeys": {}
+              },
               "block": [
                 {
                   "kind": "jsReturn",
@@ -374,10 +408,7 @@
           },
           {
             "kind": "lwcMethod",
-            "sourceKeys": {
-              "base": {},
-              "name": {}
-            },
+            "sourceKeys": {},
             "name": "put",
             "returnType": {
               "kind": "lwcType",
@@ -395,6 +426,8 @@
                   "sourceKeys": {},
                   "type": "array",
                   "elementType": {
+                    "kind": "lwcType",
+                    "sourceKeys": {},
                     "type": "custom",
                     "customType": [
                       "Row"
@@ -402,11 +435,17 @@
                   }
                 },
                 "optional": false,
-                "modifier": {}
+                "modifier": {
+                  "kind": "lwcModifiers",
+                  "sourceKeys": {}
+                }
               }
             ],
             "async": false,
-            "modifier": {},
+            "modifier": {
+              "kind": "lwcModifiers",
+              "sourceKeys": {}
+            },
             "block": [
               {
                 "kind": "jsLocalVariable",
@@ -450,6 +489,8 @@
                     "sourceKeys": {},
                     "conditionBlock": [
                       {
+                        "kind": "jsIfBranch",
+                        "sourceKeys": {},
                         "condition": {
                           "kind": "jsUnary",
                           "sourceKeys": {},
@@ -494,6 +535,8 @@
                     },
                     "cases": [
                       {
+                        "kind": "jsSwitchCase",
+                        "sourceKeys": {},
                         "test": {
                           "kind": "jsString",
                           "sourceKeys": {},
@@ -507,6 +550,8 @@
                         ]
                       },
                       {
+                        "kind": "jsSwitchCase",
+                        "sourceKeys": {},
                         "block": [
                           {
                             "kind": "jsExpression",
@@ -579,18 +624,25 @@
                   "name": "count"
                 }
               }
-            ]
+            ],
+            "nameRef": {
+              "kind": "declarationName",
+              "sourceKeys": {},
+              "name": "put"
+            }
           }
-        ]
+        ],
+        "nameRef": {
+          "kind": "declarationName",
+          "sourceKeys": {},
+          "name": "RowCache"
+        }
       }
     ],
     "typeDeclarations": [
       {
         "kind": "lwcTypeDeclaration",
-        "sourceKeys": {
-          "base": {},
-          "name": {}
-        },
+        "sourceKeys": {},
         "name": "SortDirection",
         "exported": true,
         "declarationType": "type",
@@ -600,29 +652,39 @@
           "type": "union",
           "types": [
             {
+              "kind": "lwcType",
+              "sourceKeys": {},
               "type": "literal",
               "value": "'asc'"
             },
             {
+              "kind": "lwcType",
+              "sourceKeys": {},
               "type": "literal",
               "value": "'desc'"
             }
           ]
+        },
+        "nameRef": {
+          "kind": "declarationName",
+          "sourceKeys": {},
+          "name": "SortDirection"
         }
       },
       {
         "kind": "lwcTypeDeclaration",
-        "sourceKeys": {
-          "base": {},
-          "name": {}
-        },
+        "sourceKeys": {},
         "name": "Row",
         "exported": true,
         "declarationType": "interface",
         "members": [
           {
+            "kind": "lwcTypeMember",
+            "sourceKeys": {},
             "name": "id",
             "memberType": {
+              "kind": "lwcType",
+              "sourceKeys": {},
               "type": "primitive",
               "primitiveType": "string"
             },
@@ -630,8 +692,12 @@
             "method": false
           },
           {
+            "kind": "lwcTypeMember",
+            "sourceKeys": {},
             "name": "name",
             "memberType": {
+              "kind": "lwcType",
+              "sourceKeys": {},
               "type": "primitive",
               "primitiveType": "string"
             },
@@ -639,15 +705,24 @@
             "method": false
           },
           {
+            "kind": "lwcTypeMember",
+            "sourceKeys": {},
             "name": "amount",
             "memberType": {
+              "kind": "lwcType",
+              "sourceKeys": {},
               "type": "primitive",
               "primitiveType": "number"
             },
             "optional": true,
             "method": false
           }
-        ]
+        ],
+        "nameRef": {
+          "kind": "declarationName",
+          "sourceKeys": {},
+          "name": "Row"
+        }
       }
     ]
   },
@@ -666,6 +741,32 @@
       }
     },
     {
+      "context": "!row.id",
+      "start": {
+        "offset": 718,
+        "line": 30,
+        "column": 16
+      },
+      "end": {
+        "offset": 725,
+        "line": 30,
+        "column": 23
+      }
+    },
+    {
+      "context": "",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      }
+    },
+    {
       "context": "#rows = new Map<string, Row>();",
       "start": {
         "offset": 517,
@@ -676,6 +777,19 @@
         "offset": 548,
         "line": 21,
         "column": 35
+      }
+    },
+    {
+      "context": "#rows",
+      "start": {
+        "offset": 517,
+        "line": 21,
+        "column": 4
+      },
+      "end": {
+        "offset": 522,
+        "line": 21,
+        "column": 9
       }
     },
     {
@@ -731,6 +845,19 @@
       }
     },
     {
+      "context": "'asc'",
+      "start": {
+        "offset": 28,
+        "line": 1,
+        "column": 28
+      },
+      "end": {
+        "offset": 33,
+        "line": 1,
+        "column": 33
+      }
+    },
+    {
       "context": "'currency'",
       "start": {
         "offset": 184,
@@ -741,6 +868,19 @@
         "offset": 194,
         "line": 9,
         "column": 68
+      }
+    },
+    {
+      "context": "'desc'",
+      "start": {
+        "offset": 36,
+        "line": 1,
+        "column": 36
+      },
+      "end": {
+        "offset": 42,
+        "line": 1,
+        "column": 42
       }
     },
     {
@@ -837,6 +977,19 @@
     {
       "context": "Row",
       "start": {
+        "offset": 342,
+        "line": 13,
+        "column": 44
+      },
+      "end": {
+        "offset": 345,
+        "line": 13,
+        "column": 47
+      }
+    },
+    {
+      "context": "Row",
+      "start": {
         "offset": 395,
         "line": 14,
         "column": 45
@@ -871,6 +1024,45 @@
         "offset": 65,
         "line": 3,
         "column": 20
+      }
+    },
+    {
+      "context": "Row",
+      "start": {
+        "offset": 62,
+        "line": 3,
+        "column": 17
+      },
+      "end": {
+        "offset": 65,
+        "line": 3,
+        "column": 20
+      }
+    },
+    {
+      "context": "Row",
+      "start": {
+        "offset": 628,
+        "line": 27,
+        "column": 14
+      },
+      "end": {
+        "offset": 631,
+        "line": 27,
+        "column": 17
+      }
+    },
+    {
+      "context": "RowCache",
+      "start": {
+        "offset": 475,
+        "line": 18,
+        "column": 13
+      },
+      "end": {
+        "offset": 483,
+        "line": 18,
+        "column": 21
       }
     },
     {
@@ -926,11 +1118,50 @@
       }
     },
     {
+      "context": "SortDirection",
+      "start": {
+        "offset": 12,
+        "line": 1,
+        "column": 12
+      },
+      "end": {
+        "offset": 25,
+        "line": 1,
+        "column": 25
+      }
+    },
+    {
+      "context": "amount?: number;",
+      "start": {
+        "offset": 106,
+        "line": 6,
+        "column": 4
+      },
+      "end": {
+        "offset": 122,
+        "line": 6,
+        "column": 20
+      }
+    },
+    {
       "context": "break;",
       "start": {
         "offset": 814,
         "line": 33,
         "column": 20
+      },
+      "end": {
+        "offset": 820,
+        "line": 33,
+        "column": 26
+      }
+    },
+    {
+      "context": "case '':\n                    break;",
+      "start": {
+        "offset": 785,
+        "line": 32,
+        "column": 16
       },
       "end": {
         "offset": 820,
@@ -1056,6 +1287,19 @@
       }
     },
     {
+      "context": "default:\n                    this.#rows.set(row.id, row);\n                    count++;",
+      "start": {
+        "offset": 837,
+        "line": 34,
+        "column": 16
+      },
+      "end": {
+        "offset": 923,
+        "line": 36,
+        "column": 28
+      }
+    },
+    {
       "context": "for (const row of rows) {\n            if (!row.id) continue;\n            switch (row.name) {\n                case '':\n                    break;\n                default:\n                    this.#rows.set(row.id, row);\n                    count++;\n            }\n        }",
       "start": {
         "offset": 676,
@@ -1108,6 +1352,19 @@
       }
     },
     {
+      "context": "formatAmount",
+      "start": {
+        "offset": 230,
+        "line": 11,
+        "column": 13
+      },
+      "end": {
+        "offset": 242,
+        "line": 11,
+        "column": 25
+      }
+    },
+    {
       "context": "formatter = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' })",
       "start": {
         "offset": 132,
@@ -1118,6 +1375,19 @@
         "offset": 214,
         "line": 9,
         "column": 88
+      }
+    },
+    {
+      "context": "formatter",
+      "start": {
+        "offset": 132,
+        "line": 9,
+        "column": 6
+      },
+      "end": {
+        "offset": 141,
+        "line": 9,
+        "column": 15
       }
     },
     {
@@ -1186,6 +1456,32 @@
       }
     },
     {
+      "context": "get size(): number {\n        return this.#rows.size;\n    }",
+      "start": {
+        "offset": 554,
+        "line": 23,
+        "column": 4
+      },
+      "end": {
+        "offset": 612,
+        "line": 25,
+        "column": 5
+      }
+    },
+    {
+      "context": "id: string;",
+      "start": {
+        "offset": 72,
+        "line": 4,
+        "column": 4
+      },
+      "end": {
+        "offset": 83,
+        "line": 4,
+        "column": 15
+      }
+    },
+    {
       "context": "if (!row.id) continue;",
       "start": {
         "offset": 714,
@@ -1196,6 +1492,19 @@
         "offset": 736,
         "line": 30,
         "column": 34
+      }
+    },
+    {
+      "context": "instances",
+      "start": {
+        "offset": 497,
+        "line": 19,
+        "column": 11
+      },
+      "end": {
+        "offset": 506,
+        "line": 19,
+        "column": 20
       }
     },
     {
@@ -1238,6 +1547,19 @@
       }
     },
     {
+      "context": "name: string;",
+      "start": {
+        "offset": 88,
+        "line": 5,
+        "column": 4
+      },
+      "end": {
+        "offset": 101,
+        "line": 5,
+        "column": 17
+      }
+    },
+    {
       "context": "new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' })",
       "start": {
         "offset": 144,
@@ -1261,6 +1583,19 @@
         "offset": 547,
         "line": 21,
         "column": 34
+      }
+    },
+    {
+      "context": "number",
+      "start": {
+        "offset": 115,
+        "line": 6,
+        "column": 13
+      },
+      "end": {
+        "offset": 121,
+        "line": 6,
+        "column": 19
       }
     },
     {
@@ -1300,6 +1635,19 @@
         "offset": 642,
         "line": 27,
         "column": 28
+      }
+    },
+    {
+      "context": "put",
+      "start": {
+        "offset": 618,
+        "line": 27,
+        "column": 4
+      },
+      "end": {
+        "offset": 621,
+        "line": 27,
+        "column": 7
       }
     },
     {
@@ -1357,6 +1705,19 @@
     {
       "context": "record",
       "start": {
+        "offset": 374,
+        "line": 14,
+        "column": 24
+      },
+      "end": {
+        "offset": 380,
+        "line": 14,
+        "column": 30
+      }
+    },
+    {
+      "context": "record",
+      "start": {
         "offset": 385,
         "line": 14,
         "column": 35
@@ -1391,6 +1752,19 @@
         "offset": 399,
         "line": 14,
         "column": 49
+      }
+    },
+    {
+      "context": "records: unknown[]",
+      "start": {
+        "offset": 321,
+        "line": 13,
+        "column": 23
+      },
+      "end": {
+        "offset": 339,
+        "line": 13,
+        "column": 41
       }
     },
     {
@@ -1576,6 +1950,19 @@
       }
     },
     {
+      "context": "rows: Row[]",
+      "start": {
+        "offset": 622,
+        "line": 27,
+        "column": 8
+      },
+      "end": {
+        "offset": 633,
+        "line": 27,
+        "column": 19
+      }
+    },
+    {
       "context": "size",
       "start": {
         "offset": 558,
@@ -1586,6 +1973,32 @@
         "offset": 562,
         "line": 23,
         "column": 12
+      }
+    },
+    {
+      "context": "size",
+      "start": {
+        "offset": 558,
+        "line": 23,
+        "column": 8
+      },
+      "end": {
+        "offset": 562,
+        "line": 23,
+        "column": 12
+      }
+    },
+    {
+      "context": "static instances = 0;",
+      "start": {
+        "offset": 490,
+        "line": 19,
+        "column": 4
+      },
+      "end": {
+        "offset": 511,
+        "line": 19,
+        "column": 25
       }
     },
     {
@@ -1625,6 +2038,32 @@
         "offset": 539,
         "line": 21,
         "column": 26
+      }
+    },
+    {
+      "context": "string",
+      "start": {
+        "offset": 76,
+        "line": 4,
+        "column": 8
+      },
+      "end": {
+        "offset": 82,
+        "line": 4,
+        "column": 14
+      }
+    },
+    {
+      "context": "string",
+      "start": {
+        "offset": 94,
+        "line": 5,
+        "column": 10
+      },
+      "end": {
+        "offset": 100,
+        "line": 5,
+        "column": 16
       }
     },
     {
@@ -1758,6 +2197,19 @@
       }
     },
     {
+      "context": "toRows",
+      "start": {
+        "offset": 314,
+        "line": 13,
+        "column": 16
+      },
+      "end": {
+        "offset": 320,
+        "line": 13,
+        "column": 22
+      }
+    },
+    {
       "context": "type SortDirection = 'asc' | 'desc';",
       "start": {
         "offset": 7,
@@ -1768,6 +2220,19 @@
         "offset": 43,
         "line": 1,
         "column": 43
+      }
+    },
+    {
+      "context": "unknown",
+      "start": {
+        "offset": 330,
+        "line": 13,
+        "column": 32
+      },
+      "end": {
+        "offset": 337,
+        "line": 13,
+        "column": 39
       }
     },
     {
@@ -1807,6 +2272,110 @@
         "offset": 259,
         "line": 11,
         "column": 42
+      }
+    },
+    {
+      "context": "value: number",
+      "start": {
+        "offset": 246,
+        "line": 11,
+        "column": 29
+      },
+      "end": {
+        "offset": 259,
+        "line": 11,
+        "column": 42
+      }
+    },
+    {
+      "context": "value: number",
+      "start": {
+        "offset": 246,
+        "line": 11,
+        "column": 29
+      },
+      "end": {
+        "offset": 259,
+        "line": 11,
+        "column": 42
+      }
+    },
+    {
+      "context": "value: number",
+      "start": {
+        "offset": 321,
+        "line": 13,
+        "column": 23
+      },
+      "end": {
+        "offset": 339,
+        "line": 13,
+        "column": 41
+      }
+    },
+    {
+      "context": "value: number",
+      "start": {
+        "offset": 374,
+        "line": 14,
+        "column": 24
+      },
+      "end": {
+        "offset": 380,
+        "line": 14,
+        "column": 30
+      }
+    },
+    {
+      "context": "value: number",
+      "start": {
+        "offset": 517,
+        "line": 21,
+        "column": 4
+      },
+      "end": {
+        "offset": 548,
+        "line": 21,
+        "column": 35
+      }
+    },
+    {
+      "context": "value: number",
+      "start": {
+        "offset": 554,
+        "line": 23,
+        "column": 4
+      },
+      "end": {
+        "offset": 612,
+        "line": 25,
+        "column": 5
+      }
+    },
+    {
+      "context": "value: number",
+      "start": {
+        "offset": 618,
+        "line": 27,
+        "column": 4
+      },
+      "end": {
+        "offset": 975,
+        "line": 40,
+        "column": 5
+      }
+    },
+    {
+      "context": "value: number",
+      "start": {
+        "offset": 622,
+        "line": 27,
+        "column": 8
+      },
+      "end": {
+        "offset": 633,
+        "line": 27,
+        "column": 19
       }
     },
     {

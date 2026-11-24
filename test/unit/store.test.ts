@@ -123,10 +123,9 @@ describe('UnitStore (保存の置き場)', () => {
             .get() as { root: string; format_version: string };
         assert.ok(!path.isAbsolute(JSON.parse(apex.root).filePath));
         assert.equal(apex.format_version, `${UNIT_FORMAT_VERSIONS.apex}.0`);
-        // ノード (JsonType・StructureJsonType を 1 行) と位置
+        // ノード (JsonType を 1 行) と位置
         const count = (sql: string) => (db.prepare(sql).get() as { n: number }).n;
         assert.ok(count('SELECT count(*) AS n FROM node') > 1000);
-        assert.ok(count('SELECT count(*) AS n FROM node WHERE structure_keys IS NOT NULL') > 0);
         // 位置のソースの文字列 (context) は持たず、単位のファイルから切り出す
         assert.ok(count('SELECT count(*) AS n FROM span') > 1000);
         assert.equal(count('SELECT count(*) AS n FROM span WHERE context IS NOT NULL'), 0);

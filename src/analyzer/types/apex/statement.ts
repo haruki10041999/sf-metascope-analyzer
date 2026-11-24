@@ -28,14 +28,19 @@ import type {
     WhileStatementTypeClass,
 } from '../apex_IR';
 
-import { makeNodeJson } from './commons/node';
+import { makeDerivedNodeJson, makeNodeJson } from './commons/node';
 import {
     BaseExpressionJson,
     makeExpressionJsonConvert,
     makeExpressionListJson,
 } from './expression';
 import { TypeJson, makeTypeContentJsonOfNames, makeTypeJson } from './type';
-import { LocalVariableDeclarationJson, makeLocalVariableDeclarationJson } from './declaration';
+import {
+    LocalVariableDeclarationBody,
+    LocalVariableDeclarationJson,
+    makeLocalVariableDeclarationBody,
+    makeLocalVariableDeclarationJson,
+} from './declaration';
 import { makeModifierJson, ModifierJson, AnnotationJson } from './modifier';
 import {
     type IdentifierJson,
@@ -116,8 +121,8 @@ const makeExpressionStatementJson = (
     });
 };
 
-/** 通常の for の for (init; condition; update)。どれも省略されうる (kind を持たない入れ物) */
-export type ForConditionJson = {
+/** 通常の for の for (init; condition; update)。どれも省略されうる */
+export type ForConditionJson = JsonType<'forControl'> & {
     initializer?: LocalVariableDeclarationJson | BaseExpressionJson[];
     condition?: BaseExpressionJson;
     update?: BaseExpressionJson[];
@@ -137,6 +142,7 @@ export type ForEachStatementJson = JsonType<'forEach'> & {
 };
 
 const makeForConditionJson = (
+    owner: ForControlTypeClass,
     control: Extract<ReturnType<ForControlTypeClass['getFields']>, { kind: 'classic' }>,
 ): ForConditionJson => {
     const { init, condition, update } = control;
@@ -146,11 +152,11 @@ const makeForConditionJson = (
             ? makeLocalVariableDeclarationJson(initValue)
             : initValue.getFields().value.map((v) => makeExpressionJsonConvert(v))
         : null;
-    return {
+    return makeNodeJson<ForConditionJson>('forControl', owner, {
         ...(initializer ? { initializer: initializer } : {}),
         ...(condition ? { condition: makeExpressionJsonConvert(condition) } : {}),
         ...(update ? { update: makeExpressionListJson(update.getFields().value) } : {}),
-    };
+    });
 };
 
 const makeForStatementJson = (
@@ -168,13 +174,17 @@ const makeForStatementJson = (
         });
     }
     return makeNodeJson<ForStatementJson>('for', target, {
-        condition: makeForConditionJson(control),
+        condition: makeForConditionJson(value, control),
         block: makeBodyJson(block),
     });
 };
 
-/** if の節 1 つ (kind を持たない入れ物)。else の節は最後 */
-export type IfConditionBlockJson = {
+/**
+ * if の節 1 つ。else の節は最後。位置は条件 (if・else if) か、else の本体のもの。
+ * if・else if の節は IR に対応するノードがない (条件の IR は条件だけの中身なので、そのキーを使うと本体が変わってもキーが
+ * 変わらない)。objectKey は節の中身から作る (makeDerivedNodeJson)
+ */
+export type IfConditionBlockJson = JsonType<'ifBranch'> & {
     condition: 'else' | BaseExpressionJson;
     block: StatementJson[];
 };
@@ -186,12 +196,19 @@ export type IfStatementJson = JsonType<'if'> & {
 const makeIfStatementJson = (target: IfStatementTypeClass): IfStatementJson => {
     const { branches, elseBlock } = target.getFields();
     // if・else if の分岐のあとに、else があれば condition: 'else' として最後に置く
-    const conditionBlock: IfConditionBlockJson[] = branches.map((branch) => ({
-        condition: makeExpressionJsonConvert(branch.condition.getFields().value),
-        block: makeBodyJson(branch.block),
-    }));
+    const conditionBlock: IfConditionBlockJson[] = branches.map((branch) =>
+        makeDerivedNodeJson<IfConditionBlockJson>('ifBranch', branch.condition, {
+            condition: makeExpressionJsonConvert(branch.condition.getFields().value),
+            block: makeBodyJson(branch.block),
+        }),
+    );
     if (elseBlock) {
-        conditionBlock.push({ condition: 'else', block: makeBodyJson(elseBlock) });
+        conditionBlock.push(
+            makeNodeJson<IfConditionBlockJson>('ifBranch', elseBlock, {
+                condition: 'else',
+                block: makeBodyJson(elseBlock),
+            }),
+        );
     }
     return makeNodeJson<IfStatementJson>('if', target, { conditionBlock });
 };
@@ -210,7 +227,7 @@ export const makeInsertStatementJson = (target: InsertStatementTypeClass): Inser
 };
 
 /** ローカル変数の宣言 (入れ子にしない。変数は variant) */
-export type LocalVariableStatementJson = JsonType<'localVariable'> & LocalVariableDeclarationJson;
+export type LocalVariableStatementJson = JsonType<'localVariable'> & LocalVariableDeclarationBody;
 
 export const makeLocalVariableStatementJson = (
     target: LocalVariableDeclarationStatementTypeClass,
@@ -218,7 +235,7 @@ export const makeLocalVariableStatementJson = (
     makeNodeJson<LocalVariableStatementJson>(
         'localVariable',
         target,
-        makeLocalVariableDeclarationJson(target.getFields().value),
+        makeLocalVariableDeclarationBody(target.getFields().value),
     );
 
 /** merge master merged; (統合先のレコードと、統合して消すレコード) */
@@ -266,12 +283,11 @@ export const makeRunAsStatementJson = (target: RunAsStatementTypeClass): RunAsSt
 export type WhenLiteralJson =
     StringLiteralJson | IntegerLiteralJson | LongLiteralJson | NullLiteralJson | IdentifierJson;
 
+/** 型の when (when Account a) の変数。IR に対応するノードがないので、位置は when の値のもの */
+export type WhenTypeJson = JsonType<'whenType'> & { variant: string; variantType: TypeJson };
+
 export type WhenConditionJson = JsonType<'switchCondition'> & {
-    condition:
-        | 'else'
-        | WhenLiteralJson[]
-        /** when Account a (型の when) */
-        | { variant: string; variantType: TypeJson };
+    condition: 'else' | WhenLiteralJson[] | WhenTypeJson;
 };
 
 const makeWhenLiteralJson = (target: WhenLiteralTypeClass): WhenLiteralJson => {
@@ -305,10 +321,10 @@ export const makeWhenConditionJson = (target: WhenValueTypeClass): WhenCondition
     switch (when.kind) {
         case 'type':
             return makeNodeJson<WhenConditionJson>('switchCondition', target, {
-                condition: {
+                condition: makeDerivedNodeJson<WhenTypeJson>('whenType', target, {
                     variant: when.variable.getFields().value,
                     variantType: makeTypeJson(when.typeRef),
-                },
+                }),
             });
         case 'else':
             return makeNodeJson<WhenConditionJson>('switchCondition', target, {
@@ -321,8 +337,8 @@ export const makeWhenConditionJson = (target: WhenValueTypeClass): WhenCondition
     }
 };
 
-/** when の節 1 つ (kind を持たない入れ物) */
-export type SwitchWhenJson = {
+/** when の節 1 つ */
+export type SwitchWhenJson = JsonType<'switchWhen'> & {
     condition: WhenConditionJson;
     block: StatementJson[];
 };
@@ -339,10 +355,10 @@ const makeSwitchStatementJson = (target: SwitchStatementTypeClass): SwitchStatem
         value: makeExpressionJsonConvert(value),
         when: blocks.map((b) => {
             const when = b.getFields();
-            return {
+            return makeNodeJson<SwitchWhenJson>('switchWhen', b, {
                 condition: makeWhenConditionJson(when.value),
                 block: makeBlockJson(when.block),
-            };
+            });
         }),
     });
 };
@@ -357,8 +373,10 @@ export const makeThrowStatementJson = (target: ThrowStatementTypeClass): ThrowSt
     });
 };
 
-/** try の節 (kind を持たない入れ物)。catch は例外の変数と型を直接持つ */
-export type TryClauseJson =
+/** try の節。catch は例外の変数と型を直接持つ。位置は try・finally は本体、catch は catch の節のもの */
+export type TryClauseJson = JsonType<'tryClause'> & TryClauseBody;
+
+type TryClauseBody =
     | { condition: 'try'; block: StatementJson[] }
     | {
           condition: 'catch';
@@ -378,7 +396,7 @@ export type TryStatementJson = JsonType<'try'> & {
 const makeCatchClauseJson = (target: CatchClauseTypeClass): TryClauseJson => {
     const { value, valueType, modifier, block } = target.getFields();
     const names = valueType.getFields().value.map((v) => v.getFields().value);
-    return {
+    return makeNodeJson<TryClauseJson>('tryClause', target, {
         condition: 'catch',
         variant: value.getFields().value,
         variantType: makeNodeJson<TypeJson>(
@@ -388,21 +406,24 @@ const makeCatchClauseJson = (target: CatchClauseTypeClass): TryClauseJson => {
         ),
         modifier: modifier.map((m) => makeModifierJson(m)),
         block: makeBlockJson(block),
-    };
+    });
 };
 
 const makeTryStatementJson = (target: TryStatementTypeClass): TryStatementJson => {
     const { block, catchClauses, finallyBlock } = target.getFields();
     return makeNodeJson<TryStatementJson>('try', target, {
         block: [
-            { condition: 'try', block: makeBlockJson(block) },
+            makeNodeJson<TryClauseJson>('tryClause', block, {
+                condition: 'try',
+                block: makeBlockJson(block),
+            }),
             ...catchClauses.map(makeCatchClauseJson),
             ...(finallyBlock
                 ? [
-                      {
-                          condition: 'finally' as const,
+                      makeNodeJson<TryClauseJson>('tryClause', finallyBlock, {
+                          condition: 'finally',
                           block: makeBlockJson(finallyBlock.getFields().block),
-                      },
+                      }),
                   ]
                 : []),
         ],

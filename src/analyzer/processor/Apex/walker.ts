@@ -317,13 +317,17 @@ const enterContext = (node: Json, context: ApexWalkContext): ApexWalkContext => 
             nestingDepth: next.nestingDepth + 1,
         };
     }
-    // 変数の宣言 (子の式から使う)
-    if (kind === 'localVariable') {
+    // 変数の宣言 (子の式から使う)。localVariableDeclaration は通常の for の初期化 (apex 8 からノード)
+    if (kind === 'localVariable' || kind === 'localVariableDeclaration') {
         for (const variant of Array.isArray(node.variants) ? node.variants : []) {
             if (isRecord(variant)) declare(next, variant.name, node.variantType);
         }
     }
     if (kind === 'forEach') declare(next, node.variant, node.variantType);
+    // catch の節の例外の変数 (apex 8 から try の節は tryClause のノード)
+    if (kind === 'tryClause' && node.condition === 'catch') {
+        declare(next, node.variant, node.variantType);
+    }
     return next;
 };
 

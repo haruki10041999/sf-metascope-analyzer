@@ -9,8 +9,8 @@
       "kind": "object",
       "sourceKeys": {
         "objectKey": {
-          "before": "object_06fb94e85015da8a",
-          "after": "object_4531d0b418ec4f56"
+          "before": "object_dd81e370d3c6e89a",
+          "after": "object_4884e842661ced88"
         },
         "sourceKey": {
           "before": "object_d3c23da4c239845d",
@@ -42,8 +42,8 @@
             "kind": "field",
             "sourceKeys": {
               "objectKey": {
-                "before": "field_84a11f14c3e2e470",
-                "after": "field_35dcb201899d1c7e"
+                "before": "field_1105345acb8397e9",
+                "after": "field_5eb29c39df241d02"
               },
               "sourceKey": {
                 "before": "field_fc9abb3ca21d6dab",
@@ -451,8 +451,8 @@
       "kind": "object",
       "sourceKeys": {
         "objectKey": {
-          "before": "object_c2205102e54c8c64",
-          "after": "object_d918b341e7e90768"
+          "before": "object_c1424784f61b6df5",
+          "after": "object_3ca19d9edd6f3b77"
         },
         "sourceKey": {
           "before": "object_b7cef1fa547990bc",
@@ -499,6 +499,11 @@
           "value": true
         },
         "nameField": {
+          "kind": "objectNameField",
+          "sourceKeys": {
+            "objectKey": "objectNameField_abd9884084e794d2",
+            "sourceKey": "objectNameField_f2da1a00c13573ea"
+          },
           "status": "unchanged",
           "value": {
             "label": "Invoice Number",
@@ -511,8 +516,8 @@
             "kind": "field",
             "sourceKeys": {
               "objectKey": {
-                "before": "field_4a8bc16e8221bf58",
-                "after": "field_5a20d9c578f74572"
+                "before": "field_8716401e09a5bb3a",
+                "after": "field_8c7b114c50ff915c"
               },
               "sourceKey": {
                 "before": "field_cb1005ef0d6f6d19",
@@ -556,6 +561,17 @@
                 "after": "Restrict"
               },
               "lookupFilter": {
+                "kind": "lookupFilter",
+                "sourceKeys": {
+                  "objectKey": {
+                    "before": "lookupFilter_eb9b6d1248aefc88",
+                    "after": "lookupFilter_c67df0a067920735"
+                  },
+                  "sourceKey": {
+                    "before": "lookupFilter_890616da9d44a1ea",
+                    "after": "lookupFilter_e6ae10911fc5fba5"
+                  }
+                },
                 "status": "changed",
                 "before": {
                   "active": true,
@@ -565,7 +581,7 @@
                     {
                       "kind": "criterion",
                       "sourceKeys": {
-                        "objectKey": "criterion_ec10bf92d30e7afe",
+                        "objectKey": "criterion_8a85a89557774a7d",
                         "sourceKey": "criterion_69dbe3e4246c8b4c"
                       },
                       "left": {
@@ -581,6 +597,11 @@
                       },
                       "operator": "equals",
                       "right": {
+                        "kind": "criterionValue",
+                        "sourceKeys": {
+                          "objectKey": "criterionValue_98943fa8f4bdea56",
+                          "sourceKey": "criterionValue_780d8786c83f9f0b"
+                        },
                         "type": "value",
                         "value": "Gold"
                       }
@@ -595,7 +616,7 @@
                     {
                       "kind": "criterion",
                       "sourceKeys": {
-                        "objectKey": "criterion_1b6b39290ad64581",
+                        "objectKey": "criterion_c78996c10c6c5d7e",
                         "sourceKey": "criterion_3076507f94058d97"
                       },
                       "left": {
@@ -611,6 +632,11 @@
                       },
                       "operator": "notEqual",
                       "right": {
+                        "kind": "criterionValue",
+                        "sourceKeys": {
+                          "objectKey": "criterionValue_1f6b06b887a5afa7",
+                          "sourceKey": "criterionValue_60423b873e60feba"
+                        },
                         "type": "value",
                         "value": "Bronze"
                       }
@@ -802,8 +828,8 @@
             "kind": "field",
             "sourceKeys": {
               "objectKey": {
-                "before": "field_6b28878aa1fea343",
-                "after": "field_c12167358fc68765"
+                "before": "field_00c59cdcd0de35bb",
+                "after": "field_2657f2070de6d5e4"
               },
               "sourceKey": {
                 "before": "field_8d0ee9a334e30086",
@@ -1160,8 +1186,8 @@
             "kind": "fieldSet",
             "sourceKeys": {
               "objectKey": {
-                "before": "fieldSet_04328ff8d677a103",
-                "after": "fieldSet_19514dab5d22dcba"
+                "before": "fieldSet_d7bc1ea30e89a29d",
+                "after": "fieldSet_3d109c1d621dd32c"
               },
               "sourceKey": "fieldSet_90f14bed7fe437cf"
             },
@@ -1182,6 +1208,14 @@
               },
               "displayedFields": [
                 {
+                  "kind": "fieldSetItem",
+                  "sourceKeys": {
+                    "objectKey": "fieldSetItem_f18a153b81429df7",
+                    "sourceKey": {
+                      "before": "fieldSetItem_81e9ad10519c6449",
+                      "after": "fieldSetItem_132e2ebeaf9a2ca2"
+                    }
+                  },
                   "status": "moved",
                   "value": {
                     "field": "Amount__c",
@@ -1195,6 +1229,14 @@
                   }
                 },
                 {
+                  "kind": "fieldSetItem",
+                  "sourceKeys": {
+                    "objectKey": "fieldSetItem_3684b340158eeb0d",
+                    "sourceKey": {
+                      "before": "fieldSetItem_132e2ebeaf9a2ca2",
+                      "after": "fieldSetItem_81e9ad10519c6449"
+                    }
+                  },
                   "status": "unchanged",
                   "match": "identical",
                   "index": {
@@ -1432,8 +1474,8 @@
       "kind": "object",
       "sourceKeys": {
         "objectKey": {
-          "before": "object_ab28daa0963b3d97",
-          "after": "object_260a222b30172abe"
+          "before": "object_8a2f3a537c5af454",
+          "after": "object_9faf0377a674ad0c"
         },
         "sourceKey": "object_97265b6e92059763"
       },
@@ -1465,6 +1507,11 @@
           "value": "Deployed"
         },
         "nameField": {
+          "kind": "objectNameField",
+          "sourceKeys": {
+            "objectKey": "objectNameField_8c66d945f3a4e60b",
+            "sourceKey": "objectNameField_975d978969aa7894"
+          },
           "status": "unchanged",
           "value": {
             "label": "Line Name",

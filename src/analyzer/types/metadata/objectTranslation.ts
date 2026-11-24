@@ -46,7 +46,11 @@ export const FIELD_TRANSLATION_SCHEMA = {
 } as const;
 
 /** 参照の絞り込み条件のメッセージの翻訳 */
-export type LookupFilterTranslationJson = { errorMessage?: string; informationalMessage?: string };
+/** 参照の絞り込みのメッセージの翻訳 (metadata 8 からノード) */
+export type LookupFilterTranslationJson = JsonType<'lookupFilterTranslation'> & {
+    errorMessage?: string;
+    informationalMessage?: string;
+};
 
 export type CustomFieldTranslationJson = JsonType<'fieldTranslation'> & {
     /** 項目の API 名 */
@@ -91,10 +95,16 @@ export const makeCustomFieldTranslationJson = (
             ),
             ...(lookupFilter
                 ? {
-                      lookupFilter: readProperties(lookupFilter, {
-                          errorMessage: 'string',
-                          informationalMessage: 'string',
-                      }),
+                      lookupFilter: makeXmlJson<LookupFilterTranslationJson>(
+                          'lookupFilterTranslation',
+                          readProperties(lookupFilter, {
+                              errorMessage: 'string',
+                              informationalMessage: 'string',
+                          }),
+                          lookupFilter,
+                          file,
+                          registry,
+                      ),
                   }
                 : {}),
         },
@@ -109,7 +119,11 @@ export const makeCustomFieldTranslationJson = (
 // ---------------------------------------------------------------------------
 
 /** レイアウトのセクション名の翻訳 */
-export type LayoutSectionTranslationJson = { section: string; label?: string };
+/** レイアウトのセクションの翻訳 (metadata 8 からノード) */
+export type LayoutSectionTranslationJson = JsonType<'layoutSectionTranslation'> & {
+    section: string;
+    label?: string;
+};
 
 /**
  * 名前で識別する翻訳の種類。element は XML の要素名、nameKey は名前の要素、schema は翻訳の値。
@@ -203,10 +217,18 @@ export const makeTranslationMemberJson = <K extends TranslationMemberKey>(
         key === 'layouts'
             ? nonEmptyEntry(
                   'sections',
-                  childrenOf(element, 'sections').map((section) => ({
-                      section: readText(section, 'section') ?? '',
-                      ...readProperties(section, { label: 'string' }),
-                  })),
+                  childrenOf(element, 'sections').map((section) =>
+                      makeXmlJson<LayoutSectionTranslationJson>(
+                          'layoutSectionTranslation',
+                          {
+                              section: readText(section, 'section') ?? '',
+                              ...readProperties(section, { label: 'string' }),
+                          },
+                          section,
+                          file,
+                          registry,
+                      ),
+                  ),
               )
             : {};
     return makeXmlJson<TranslationMemberJson<K>>(
@@ -227,7 +249,7 @@ export const makeTranslationMemberJson = <K extends TranslationMemberKey>(
 // ---------------------------------------------------------------------------
 
 /** 名詞の格 (ドイツ語などの言語で使う)。名前を持たないので集合として比べる */
-export type CaseValueJson = {
+export type CaseValueJson = JsonType<'caseValue'> & {
     value?: string;
     plural?: boolean;
     caseType?: string;
@@ -307,13 +329,19 @@ export const makeCustomObjectTranslationJson = (
 
     const caseValues = objectElement
         ? childrenOf(objectElement, 'caseValues').map((element) =>
-              readProperties(element, {
-                  value: 'string',
-                  plural: 'boolean',
-                  caseType: 'string',
-                  possessive: 'string',
-                  article: 'string',
-              }),
+              makeXmlJson<CaseValueJson>(
+                  'caseValue',
+                  readProperties(element, {
+                      value: 'string',
+                      plural: 'boolean',
+                      caseType: 'string',
+                      possessive: 'string',
+                      article: 'string',
+                  }),
+                  element,
+                  objectFile,
+                  registry,
+              ),
           )
         : [];
 

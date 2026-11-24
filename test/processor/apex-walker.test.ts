@@ -9,7 +9,7 @@ import {
     composeApexVisitors,
     walkApexParseResult,
 } from '../../src/analyzer/processor/Apex/walker';
-import { makeApexTypeNameOf } from '../../src/analyzer/processor/Apex/walker/type';
+import { makeApexTypeNameOf } from '../../src/analyzer/processor/Apex/semantic/type';
 import { getApexDependencies } from '../../src/analyzer/processor/dependency/apex';
 import type { TypeJson } from '../../src/analyzer/types/apex/type';
 
@@ -40,7 +40,7 @@ describe('makeApexTypeNameOf', () => {
                 kind: 'type',
                 sourceKeys,
                 type: 'list',
-                elementType: { type: 'custom', customType: ['Account'] },
+                elementType: { kind: 'type', sourceKeys, type: 'custom', customType: ['Account'] },
             }),
             [{ kind: 'custom', path: ['list'], name: 'Account' }],
         );
@@ -48,8 +48,13 @@ describe('makeApexTypeNameOf', () => {
             kind: 'type',
             sourceKeys,
             type: 'map',
-            keyType: { type: 'primitive', primitiveType: 'Id' },
-            valueType: { type: 'list', elementType: { type: 'custom', customType: ['Account'] } },
+            keyType: { kind: 'type', sourceKeys, type: 'primitive', primitiveType: 'Id' },
+            valueType: {
+                kind: 'type',
+                sourceKeys,
+                type: 'list',
+                elementType: { kind: 'type', sourceKeys, type: 'custom', customType: ['Account'] },
+            },
         };
         assert.deepEqual(makeApexTypeNameOf(type), [
             { kind: 'primitive', path: ['mapKey'], name: 'Id' },
@@ -64,8 +69,8 @@ describe('makeApexTypeNameOf', () => {
             type: 'custom',
             customType: ['Outer', 'Box'],
             generic: [
-                { type: 'custom', customType: ['Account'] },
-                { type: 'primitive', primitiveType: 'String' },
+                { kind: 'type', sourceKeys, type: 'custom', customType: ['Account'] },
+                { kind: 'type', sourceKeys, type: 'primitive', primitiveType: 'String' },
             ],
         };
         assert.deepEqual(makeApexTypeNameOf(type), [

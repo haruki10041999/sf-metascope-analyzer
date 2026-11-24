@@ -17,10 +17,10 @@ type StandardTypeEntry = readonly [
     status?: ApexStandardTypeStatus,
 ];
 
-/** docs/apex-standard-types.md の参照資料の API バージョン。 */
+/** docs/reference/apex-standard-types.md の参照資料の API バージョン。 */
 export const APEX_STANDARD_TYPES_REFERENCE_API_VERSION = 68;
 
-// docs/apex-standard-namespaces.md と docs/apex-standard-types.md の分割表から収録。
+// docs/reference/apex-standard-namespaces.md と docs/reference/apex-standard-types.md の分割表から収録。
 // 空の配列は、名前空間の目次に掲載されていて個別の型名が未収録のもの。
 const STANDARD_TYPES_BY_NAMESPACE: Readonly<Record<string, readonly StandardTypeEntry[]>> = {
     ApexPages: [
@@ -2662,7 +2662,7 @@ const STANDARD_TYPES_BY_NAMESPACE: Readonly<Record<string, readonly StandardType
     ],
 };
 
-// docs/apex-standard-examples.md に掲載された一部のメソッド名。
+// docs/reference/apex-standard-examples.md に掲載された一部のメソッド名。
 const METHOD_EXAMPLES: Readonly<Record<string, readonly string[]>> = {
     'System.String': ['valueOf', 'trim', 'toUpperCase', 'equals'],
     'System.Database': ['convertLead', 'countQuery', 'delete'],

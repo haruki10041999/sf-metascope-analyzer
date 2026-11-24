@@ -1,0 +1,163 @@
+{
+  "filePath": "autoResponseRules/Case.autoResponseRules-meta.xml",
+  "resolvedError": [],
+  "dataType": "autoResponseRules",
+  "result": {
+    "id": "autoResponseRules_Case",
+    "base": {
+      "kind": "autoResponseRules",
+      "sourceKeys": {
+        "objectKey": "autoResponseRules_f2e9e150023013ce",
+        "sourceKey": "autoResponseRules_41386dfbdeafb711"
+      },
+      "fullName": "Case",
+      "autoResponseRule": [
+        {
+          "kind": "autoResponseRule",
+          "sourceKeys": {
+            "objectKey": "autoResponseRule_fd75e1e8d49263b5",
+            "sourceKey": "autoResponseRule_9a4b5bbcdbc2c934"
+          },
+          "fullName": "Web_Response",
+          "active": true,
+          "ruleEntry": [
+            {
+              "criteriaItems": {
+                "kind": "criterion",
+                "sourceKeys": {
+                  "objectKey": "criterion_2c39125843ad0cd9",
+                  "sourceKey": "criterion_c0ab268d3acd83b1"
+                },
+                "left": {
+                  "kind": "fxName",
+                  "sourceKeys": {
+                    "objectKey": "fxName_1223796801f904c8",
+                    "sourceKey": "fxName_986bfce596c1a7db"
+                  },
+                  "path": [
+                    "Case",
+                    "Origin"
+                  ]
+                },
+                "operator": "equals",
+                "right": {
+                  "kind": "criterionValue",
+                  "sourceKeys": {
+                    "objectKey": "criterionValue_5020a80da6c1c1d7",
+                    "sourceKey": "criterionValue_82cc80ab9263d7c6"
+                  },
+                  "type": "value",
+                  "value": "Web"
+                }
+              },
+              "senderEmail": "support@example.com",
+              "senderName": "Support"
+            }
+          ]
+        }
+      ]
+    },
+    "sourceObject": [
+      {
+        "objectKey": "criterionValue_5020a80da6c1c1d7",
+        "context": "<value>Web</value>",
+        "source": [
+          {
+            "sourceKey": "criterionValue_82cc80ab9263d7c6",
+            "filePath": "autoResponseRules/Case.autoResponseRules-meta.xml",
+            "start": {
+              "offset": 355,
+              "line": 10,
+              "column": 16
+            },
+            "end": {
+              "offset": 373,
+              "line": 10,
+              "column": 34
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "fxName_1223796801f904c8",
+        "context": "Case.Origin",
+        "source": [
+          {
+            "sourceKey": "fxName_986bfce596c1a7db",
+            "filePath": "autoResponseRules/Case.autoResponseRules-meta.xml",
+            "start": {
+              "offset": 273,
+              "line": 8,
+              "column": 23
+            },
+            "end": {
+              "offset": 284,
+              "line": 8,
+              "column": 34
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "criterion_2c39125843ad0cd9",
+        "context": "<criteriaItems>\n                <field>Case.Origin</field>\n                <operation>equals</operation>\n                <value>Web</value>\n            </criteriaItems>",
+        "source": [
+          {
+            "sourceKey": "criterion_c0ab268d3acd83b1",
+            "filePath": "autoResponseRules/Case.autoResponseRules-meta.xml",
+            "start": {
+              "offset": 234,
+              "line": 7,
+              "column": 12
+            },
+            "end": {
+              "offset": 402,
+              "line": 11,
+              "column": 28
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "autoResponseRule_fd75e1e8d49263b5",
+        "context": "<autoResponseRule>\n        <fullName>Web_Response</fullName>\n        <active>true</active>\n        <ruleEntry>\n            <criteriaItems>\n                <field>Case.Origin</field>\n                <operation>equals</operation>\n                <value>Web</value>\n            </criteriaItems>\n            <senderEmail>support@example.com</senderEmail>\n            <senderName>Support</senderName>\n        </ruleEntry>\n    </autoResponseRule>",
+        "source": [
+          {
+            "sourceKey": "autoResponseRule_9a4b5bbcdbc2c934",
+            "filePath": "autoResponseRules/Case.autoResponseRules-meta.xml",
+            "start": {
+              "offset": 111,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 551,
+              "line": 15,
+              "column": 23
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "autoResponseRules_f2e9e150023013ce",
+        "context": "<AutoResponseRules xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <autoResponseRule>\n        <fullName>Web_Response</fullName>\n        <active>true</active>\n        <ruleEntry>\n            <criteriaItems>\n                <field>Case.Origin</field>\n                <operation>equals</operation>\n                <value>Web</value>\n            </criteriaItems>\n            <senderEmail>support@example.com</senderEmail>\n            <senderName>Support</senderName>\n        </ruleEntry>\n    </autoResponseRule>\n</AutoResponseRules>",
+        "source": [
+          {
+            "sourceKey": "autoResponseRules_41386dfbdeafb711",
+            "filePath": "autoResponseRules/Case.autoResponseRules-meta.xml",
+            "start": {
+              "offset": 39,
+              "line": 2,
+              "column": 0
+            },
+            "end": {
+              "offset": 572,
+              "line": 16,
+              "column": 20
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

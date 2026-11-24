@@ -67,13 +67,19 @@ describe('object: 消えていた情報と、レコードタイプ・ボタン�
 
     it('reads the dependent picklist mapping (valueSettings) and diffs it as a set', () => {
         const valueSet = json.fields.find((f) => f.apiName === 'City__c')!.valueSet!;
-        assert.deepEqual(valueSet.valueSettings, [
-            { valueName: 'Tokyo', controllingFieldValues: ['West', 'East'] },
-        ]);
+        // 1 組はノード (metadata 8)。位置を除いて比べる
+        const [setting] = valueSet.valueSettings!;
+        assert.ok(setting);
+        const { sourceKeys: _sourceKeys, ...body } = setting;
+        assert.deepEqual(body, {
+            kind: 'picklistValueSetting',
+            valueName: 'Tokyo',
+            controllingFieldValues: ['West', 'East'],
+        });
         // 制御項目の値の並べ替えは差分にならない。値を足すと差分になる
         const reordered = {
             ...valueSet,
-            valueSettings: [{ valueName: 'Tokyo', controllingFieldValues: ['East', 'West'] }],
+            valueSettings: [{ ...setting, controllingFieldValues: ['East', 'West'] }],
         };
         const statuses = (diff: unknown) =>
             (diff as { status: string }[]).map((item) => item.status);
@@ -82,9 +88,7 @@ describe('object: 消えていた情報と、レコードタイプ・ボタン�
         ]);
         const added = {
             ...valueSet,
-            valueSettings: [
-                { valueName: 'Tokyo', controllingFieldValues: ['East', 'West', 'North'] },
-            ],
+            valueSettings: [{ ...setting, controllingFieldValues: ['East', 'West', 'North'] }],
         };
         assert.deepEqual(statuses(makeValueSetDiff(valueSet, added).valueSettings), [
             'removed',

@@ -15,9 +15,14 @@ import type {
 } from '../../src/analyzer/types';
 
 const keys = (objectKey: string) => ({ objectKey, sourceKey: `${objectKey}-source` });
-const structureKeys = (objectKey: string) => ({
-    base: keys(objectKey),
-    name: keys(`${objectKey}-name`),
+/** 宣言のキーと名前の位置 (apex 9 から宣言も JsonType。名前の位置は nameRef) */
+const declarationKeys = (objectKey: string) => ({
+    sourceKeys: keys(objectKey),
+    nameRef: {
+        kind: 'declarationName' as const,
+        sourceKeys: keys(objectKey + '-name'),
+        name: objectKey,
+    },
 });
 
 const integerParam = (objectKey: string, variant: string): ParameterJson => ({
@@ -30,16 +35,22 @@ const integerParam = (objectKey: string, variant: string): ParameterJson => ({
         type: 'primitive',
         primitiveType: 'Integer',
     },
-    modifier: {},
+    modifier: {
+        kind: 'modifiers',
+        sourceKeys: { objectKey: 'modifiers-empty', sourceKey: 'modifiers-source' },
+    },
 });
 
 const method = (objectKey: string, name: string, param: ParameterJson[]): InterfaceMethodJson => ({
     kind: 'interfaceMethod',
-    sourceKeys: structureKeys(objectKey),
+    ...declarationKeys(objectKey),
     name,
     returnType: 'void',
     param,
-    modifier: {},
+    modifier: {
+        kind: 'modifiers',
+        sourceKeys: { objectKey: 'modifiers-empty', sourceKey: 'modifiers-source' },
+    },
 });
 
 const constant = (objectKey: string, name: string): EnumConstantJson => ({
@@ -59,13 +70,13 @@ describe('declaration diff', () => {
     it('matches interface methods by key and reports renamed ones as removed / added', () => {
         const before: InterfaceDeclarationJson = {
             kind: 'interface',
-            sourceKeys: structureKeys('i1'),
+            ...declarationKeys('i1'),
             name: 'Runner',
             block: [method('run1', 'run', [integerParam('p1', 'x')]), method('stop1', 'stop', [])],
         };
         const after: InterfaceDeclarationJson = {
             kind: 'interface',
-            sourceKeys: structureKeys('i2'),
+            ...declarationKeys('i2'),
             name: 'Runner',
             block: [
                 method('halt1', 'halt', []),
@@ -91,13 +102,13 @@ describe('declaration diff', () => {
     it('compares enum constants as a sequence', () => {
         const before: EnumDeclarationJson = {
             kind: 'enum',
-            sourceKeys: structureKeys('e1'),
+            ...declarationKeys('e1'),
             name: 'Color',
             members: [constant('red', 'RED'), constant('green', 'GREEN'), constant('blue', 'BLUE')],
         };
         const after: EnumDeclarationJson = {
             kind: 'enum',
-            sourceKeys: structureKeys('e2'),
+            ...declarationKeys('e2'),
             name: 'Color',
             members: [constant('red', 'RED'), constant('lime', 'LIME'), constant('blue', 'BLUE')],
         };

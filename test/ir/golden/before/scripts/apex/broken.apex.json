@@ -1,8 +1,12 @@
 {
   "source": {
+    "kind": "apexSource",
+    "sourceKeys": {},
     "fileName": "broken.apex",
     "fileType": "anonymous",
     "content": {
+      "kind": "anonymousUnit",
+      "sourceKeys": {},
       "block": [
         {
           "kind": "expression",
@@ -23,6 +27,8 @@
                 "sourceKeys": {},
                 "type": "list",
                 "elementType": {
+                  "kind": "type",
+                  "sourceKeys": {},
                   "type": "custom",
                   "customType": [
                     "Account"
@@ -48,6 +54,8 @@
               "kind": "soql",
               "sourceKeys": {},
               "select": {
+                "kind": "soqlSelect",
+                "sourceKeys": {},
                 "field": [
                   {
                     "kind": "selectEntry",
@@ -60,6 +68,8 @@
                 ]
               },
               "from": {
+                "kind": "soqlFrom",
+                "sourceKeys": {},
                 "field": [
                   {
                     "kind": "fromField",
@@ -105,7 +115,10 @@
         {
           "kind": "for",
           "sourceKeys": {},
-          "condition": {},
+          "condition": {
+            "kind": "forControl",
+            "sourceKeys": {}
+          },
           "block": [
             {
               "kind": "expression",
@@ -182,6 +195,45 @@
       }
     },
     {
+      "context": ";;",
+      "start": {
+        "offset": 87,
+        "line": 3,
+        "column": 5
+      },
+      "end": {
+        "offset": 89,
+        "line": 3,
+        "column": 7
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
+        "offset": 19,
+        "line": 2,
+        "column": 5
+      },
+      "end": {
+        "offset": 26,
+        "line": 2,
+        "column": 12
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
+        "offset": 51,
+        "line": 2,
+        "column": 37
+      },
+      "end": {
+        "offset": 58,
+        "line": 2,
+        "column": 44
+      }
+    },
+    {
       "context": "Account",
       "start": {
         "offset": 51,
@@ -205,6 +257,45 @@
         "offset": 45,
         "line": 2,
         "column": 31
+      }
+    },
+    {
+      "context": "Id",
+      "start": {
+        "offset": 43,
+        "line": 2,
+        "column": 29
+      },
+      "end": {
+        "offset": 45,
+        "line": 2,
+        "column": 31
+      }
+    },
+    {
+      "context": "Integer x = ;\nList<Account> accs = [SELECT Id FROM Account WHERE Name = LIMIT 1];\nfor (;;) {\n    foo(1, );\n}\nreturn x +;",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 120,
+        "line": 6,
+        "column": 11
+      }
+    },
+    {
+      "context": "Integer x = ;\nList<Account> accs = [SELECT Id FROM Account WHERE Name = LIMIT 1];\nfor (;;) {\n    foo(1, );\n}\nreturn x +;",
+      "start": {
+        "offset": 0,
+        "line": 1,
+        "column": 0
+      },
+      "end": {
+        "offset": 120,
+        "line": 6,
+        "column": 11
       }
     },
     {

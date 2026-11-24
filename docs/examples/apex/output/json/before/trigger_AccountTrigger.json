@@ -5,12 +5,27 @@
   "result": {
     "id": "trigger_AccountTrigger",
     "base": {
+      "kind": "apexUnit",
+      "sourceKeys": {
+        "objectKey": "apexUnit_9be6d3c2ce06af55",
+        "sourceKey": "triggerUnit_22cb6987e0a13aff"
+      },
       "name": "AccountTrigger",
       "unitType": "trigger",
       "source": {
+        "kind": "apexSource",
+        "sourceKeys": {
+          "objectKey": "apexSource_c00a27f7999fb925",
+          "sourceKey": "triggerUnit_22cb6987e0a13aff"
+        },
         "fileName": "AccountTrigger.trigger",
         "fileType": "trigger",
         "content": {
+          "kind": "triggerUnit",
+          "sourceKeys": {
+            "objectKey": "triggerUnit_b264b622348473e4",
+            "sourceKey": "triggerUnit_22cb6987e0a13aff"
+          },
           "name": "AccountTrigger",
           "object": "Account",
           "case": [
@@ -42,6 +57,11 @@
               },
               "conditionBlock": [
                 {
+                  "kind": "ifBranch",
+                  "sourceKeys": {
+                    "objectKey": "ifBranch_6227a45d5326f70e",
+                    "sourceKey": "parExpression_4d9e4aba8c912b48"
+                  },
                   "condition": {
                     "kind": "memberAccess",
                     "sourceKeys": {
@@ -149,6 +169,11 @@
         }
       },
       "meta": {
+        "kind": "apexMetaFile",
+        "sourceKeys": {
+          "objectKey": "apexMetaFile_5ff5600ff8b28881",
+          "sourceKey": "apexMetaFile_5edc1a87ebc705f3"
+        },
         "fileName": "AccountTrigger.trigger-meta.xml",
         "meta": {
           "kind": "apexTriggerMeta",
@@ -162,6 +187,44 @@
       }
     },
     "sourceObject": [
+      {
+        "objectKey": "apexSource_c00a27f7999fb925",
+        "context": "trigger AccountTrigger on Account (before insert, after update) {\n    if (Trigger.isBefore) {\n        AccountService.validate(Trigger.new);\n    }\n    System.debug('done');\n}",
+        "source": [
+          {
+            "sourceKey": "triggerUnit_22cb6987e0a13aff",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 173,
+              "line": 6,
+              "column": 1
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "triggerUnit_b264b622348473e4",
+        "context": "trigger AccountTrigger on Account (before insert, after update) {\n    if (Trigger.isBefore) {\n        AccountService.validate(Trigger.new);\n    }\n    System.debug('done');\n}",
+        "source": [
+          {
+            "sourceKey": "triggerUnit_22cb6987e0a13aff",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 173,
+              "line": 6,
+              "column": 1
+            }
+          }
+        ]
+      },
       {
         "objectKey": "triggerCase_4b76dda46a54d1aa",
         "context": "before insert",
@@ -215,6 +278,25 @@
               "offset": 145,
               "line": 4,
               "column": 5
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "ifBranch_6227a45d5326f70e",
+        "context": "(Trigger.isBefore)",
+        "source": [
+          {
+            "sourceKey": "parExpression_4d9e4aba8c912b48",
+            "start": {
+              "offset": 73,
+              "line": 2,
+              "column": 7
+            },
+            "end": {
+              "offset": 91,
+              "line": 2,
+              "column": 25
             }
           }
         ]
@@ -438,6 +520,45 @@
               "offset": 177,
               "line": 5,
               "column": 14
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "apexMetaFile_5ff5600ff8b28881",
+        "context": "",
+        "source": [
+          {
+            "sourceKey": "apexMetaFile_5edc1a87ebc705f3",
+            "filePath": "AccountTrigger.trigger-meta.xml",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "apexUnit_9be6d3c2ce06af55",
+        "context": "trigger AccountTrigger on Account (before insert, after update) {\n    if (Trigger.isBefore) {\n        AccountService.validate(Trigger.new);\n    }\n    System.debug('done');\n}",
+        "source": [
+          {
+            "sourceKey": "triggerUnit_22cb6987e0a13aff",
+            "start": {
+              "offset": 0,
+              "line": 1,
+              "column": 0
+            },
+            "end": {
+              "offset": 173,
+              "line": 6,
+              "column": 1
             }
           }
         ]

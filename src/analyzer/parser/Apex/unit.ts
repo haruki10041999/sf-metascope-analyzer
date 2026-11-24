@@ -4,7 +4,14 @@
 // - 匿名 Apex: <名前>.apex 1 ファイル (メタデータはない)
 // 1 単位 = 1 つの解析結果 = 置き場の 1 単位 (id は class_<名前> / trigger_<名前> / anonymous_<名前>)。
 // ここはファイルシステムに触らない (読み込みは folder.ts)
-import { getApexMetaSuffix, type SourceJson, type XmlSourceJson } from '../../types';
+import {
+    type ConvertKeys,
+    type JsonType,
+    getApexMetaSuffix,
+    makeContentKeyedJson,
+    type SourceJson,
+    type XmlSourceJson,
+} from '../../types';
 import type { XmlResolvedError } from '../commons';
 
 import { parseApexMetaSource, type ApexMetaFileJson } from './meta';
@@ -24,8 +31,11 @@ export const APEX_UNIT_PREFIXES: Readonly<Record<ApexUnitType, string>> = {
     anonymous: 'anonymous_',
 };
 
-/** 単位の JSON (LWC の LwcBundleJson に当たる)。ソース・メタデータのどちらかがなければ、そのプロパティを持たない */
-export type ApexUnitJson = {
+/**
+ * 単位の JSON (LWC の LwcBundleJson に当たる)。ソース・メタデータのどちらかがなければ、そのプロパティを持たない。
+ * 単位の根のノード (apex 9 から)。位置はソース (なければ -meta.xml) のもの、objectKey は中身から作る
+ */
+export type ApexUnitJson = JsonType<'apexUnit'> & {
     /** クラス名・トリガー名・匿名 Apex のファイル名 (拡張子を除く) */
     name: string;
     unitType: ApexUnitType;
@@ -94,6 +104,20 @@ export const parseApexUnitFiles = async (files: ApexUnitFiles): Promise<ApexUnit
         ? parseApexMetaSource(files.meta.fileName, files.meta.source)
         : undefined;
 
+    const base = makeContentKeyedJson<ApexUnitJson>(
+        'apexUnit',
+        (sourceResult?.source ?? metaResult!.meta).sourceKeys.sourceKey,
+        {
+            name: files.name,
+            unitType: files.unitType,
+            ...(sourceResult ? { source: sourceResult.source } : {}),
+            ...(metaResult ? { meta: metaResult.meta } : {}),
+        },
+    );
+    const sourceObject = [
+        ...(sourceResult?.sourceObject ?? []),
+        ...(metaResult?.sourceObject ?? []),
+    ];
     return {
         filePath: files.filePath,
         resolvedError: [
@@ -103,16 +127,23 @@ export const parseApexUnitFiles = async (files: ApexUnitFiles): Promise<ApexUnit
         dataType: 'apexUnit',
         result: {
             id: getApexUnitId(files.unitType, files.name),
-            base: {
-                name: files.name,
-                unitType: files.unitType,
-                ...(sourceResult ? { source: sourceResult.source } : {}),
-                ...(metaResult ? { meta: metaResult.meta } : {}),
-            },
-            sourceObject: [
-                ...(sourceResult?.sourceObject ?? []),
-                ...(metaResult?.sourceObject ?? []),
-            ],
+            base,
+            sourceObject: [...sourceObject, ...aliasSourceObjects(sourceObject, base.sourceKeys)],
         },
     };
 };
+
+/**
+ * 単位の根 (apexUnit) の位置の一覧。根は位置をソース (なければ -meta.xml) の根から借りるので、
+ * 借りた位置を根の objectKey の一覧としても載せる (位置を objectKey と sourceKey の組で引けるように)
+ */
+const aliasSourceObjects = (
+    sourceObject: readonly (SourceJson | XmlSourceJson)[],
+    keys: ConvertKeys,
+): (SourceJson | XmlSourceJson)[] =>
+    sourceObject
+        .flatMap((object) => {
+            const source = object.source.filter((s) => s.sourceKey === keys.sourceKey);
+            return source.length > 0 ? [{ ...object, objectKey: keys.objectKey, source }] : [];
+        })
+        .slice(0, 1) as (SourceJson | XmlSourceJson)[];

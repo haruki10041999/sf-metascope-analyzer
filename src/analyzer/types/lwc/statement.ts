@@ -9,6 +9,9 @@
 // - TS・Flow の型の宣言 (本体の中の type / interface / enum) は lwcTypeDeclaration (exported: false)
 // - 本体に書けても LWC で使わない宣言 (TS の namespace・declare・Flow の declare など) は jsUnsupportedStatement (種類だけ)
 // 入力は IR v2 (lwc_IR) のノード。v2 の木にはエラーのノードがないので、JSON にもエラーのノードはない
+// union の各要素ごとに Omit する
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+
 import { makeJsonType, type JsonType } from '../commons/json';
 import type { commons as ir, standardizedVisitor } from '../lwc_IR';
 
@@ -65,21 +68,27 @@ export type LwcJsLocalVariableJson = JsonType<'jsLocalVariable'> & {
 
 /** if / else if / else。else if は 1 つの列にする (Apex の if と同じ形) */
 export type LwcJsIfStatementJson = JsonType<'jsIf'> & {
-    conditionBlock: {
-        condition: 'else' | LwcJsExpressionJson;
-        block: LwcJsStatementJson[];
-    }[];
+    conditionBlock: LwcJsIfBranchJson[];
+};
+
+/** if の節 1 つ (lwc 4 からノード)。objectKey は節の中身から作り、位置は条件 (else は本体) のもの */
+export type LwcJsIfBranchJson = JsonType<'jsIfBranch'> & {
+    condition: 'else' | LwcJsExpressionJson;
+    block: LwcJsStatementJson[];
 };
 
 /** for (初期化; 条件; 更新) */
 export type LwcJsForStatementJson = JsonType<'jsFor'> & {
-    condition: {
-        /** let i = 0 は jsLocalVariable、i = 0 は式 */
-        initializer?: LwcJsLocalVariableJson | LwcJsExpressionJson;
-        condition?: LwcJsExpressionJson;
-        update?: LwcJsExpressionJson;
-    };
+    condition: LwcJsForControlJson;
     block: LwcJsStatementJson[];
+};
+
+/** for の (初期化; 条件; 更新) (lwc 4 からノード)。objectKey は中身から作り、位置は for 文のもの */
+export type LwcJsForControlJson = JsonType<'jsForControl'> & {
+    /** let i = 0 は jsLocalVariable、i = 0 は式 */
+    initializer?: LwcJsLocalVariableJson | LwcJsExpressionJson;
+    condition?: LwcJsExpressionJson;
+    update?: LwcJsExpressionJson;
 };
 
 /** for (x in y) / for (x of y) / for await (x of y) の共通の形 */
@@ -113,12 +122,23 @@ export type LwcJsDoWhileStatementJson = JsonType<'jsDoWhile'> & {
 export type LwcJsSwitchStatementJson = JsonType<'jsSwitch'> & {
     discriminant: LwcJsExpressionJson;
     /** test がないものは default */
-    cases: { test?: LwcJsExpressionJson; block: LwcJsStatementJson[] }[];
+    cases: LwcJsSwitchCaseJson[];
+};
+
+/** switch の case 1 つ (lwc 4 からノード) */
+export type LwcJsSwitchCaseJson = JsonType<'jsSwitchCase'> & {
+    test?: LwcJsExpressionJson;
+    block: LwcJsStatementJson[];
 };
 
 /** try / catch / finally (Apex の try と同じく節の並び。JS の catch は 1 つで、引数は省略できる) */
 export type LwcJsTryStatementJson = JsonType<'jsTry'> & {
-    block: (
+    block: LwcJsTryClauseJson[];
+};
+
+/** try の節 1 つ (lwc 4 からノード) */
+export type LwcJsTryClauseJson = JsonType<'jsTryClause'> &
+    (
         | { condition: 'try'; block: LwcJsStatementJson[] }
         | {
               condition: 'catch';
@@ -129,8 +149,7 @@ export type LwcJsTryStatementJson = JsonType<'jsTry'> & {
               block: LwcJsStatementJson[];
           }
         | { condition: 'finally'; block: LwcJsStatementJson[] }
-    )[];
-};
+    );
 
 export type LwcJsThrowStatementJson = JsonType<'jsThrow'> & { value: LwcJsExpressionJson };
 
@@ -297,15 +316,22 @@ const makeIf = (node: ir.IfStatementTypeClass, scope: StatementContext): LwcJsIf
     let current: ir.IfStatementTypeClass | null = node;
     while (current) {
         const { test, consequent, alternate } = current.getFields();
-        conditionBlock.push({
-            condition: expressionOf(test, scope),
-            block: bodyOf(consequent, scope),
-        });
+        conditionBlock.push(
+            scope.context.derivedJson<LwcJsIfBranchJson>('jsIfBranch', test, {
+                condition: expressionOf(test, scope),
+                block: bodyOf(consequent, scope),
+            }),
+        );
         current = null;
         if (alternate?.kind === 'ifStatement') {
             current = alternate as ir.IfStatementTypeClass;
         } else if (alternate) {
-            conditionBlock.push({ condition: 'else', block: bodyOf(alternate, scope) });
+            conditionBlock.push(
+                scope.context.derivedJson<LwcJsIfBranchJson>('jsIfBranch', alternate, {
+                    condition: 'else',
+                    block: bodyOf(alternate, scope),
+                }),
+            );
         }
     }
     return makeJsonType<'jsIf', LwcJsIfStatementJson>('jsIf', scope.context.keysOf(node), {
@@ -333,21 +359,34 @@ const makeTry = (
     scope: StatementContext,
 ): LwcJsTryStatementJson => {
     const { block, handler, finalizer } = node.getFields();
+    const clause = (
+        target: LwcNode,
+        properties: DistributiveOmit<LwcJsTryClauseJson, 'kind' | 'sourceKeys'>,
+    ) =>
+        makeJsonType<'jsTryClause', LwcJsTryClauseJson>(
+            'jsTryClause',
+            scope.context.keysOf(target),
+            properties,
+        );
     const blocks: LwcJsTryStatementJson['block'] = [
-        { condition: 'try', block: makeBlock(block, scope) },
+        clause(block, { condition: 'try', block: makeBlock(block, scope) }),
     ];
     if (handler) {
         const { param, body } = handler.getFields();
-        blocks.push({
-            condition: 'catch',
-            ...(param
-                ? { param: patternOf(param, scope), ...annotationOf(param, scope.context) }
-                : {}),
-            block: makeBlock(body, scope),
-        });
+        blocks.push(
+            clause(handler, {
+                condition: 'catch',
+                ...(param
+                    ? { param: patternOf(param, scope), ...annotationOf(param, scope.context) }
+                    : {}),
+                block: makeBlock(body, scope),
+            }),
+        );
     }
     if (finalizer) {
-        blocks.push({ condition: 'finally', block: makeBlock(finalizer, scope) });
+        blocks.push(
+            clause(finalizer, { condition: 'finally', block: makeBlock(finalizer, scope) }),
+        );
     }
     return makeJsonType<'jsTry', LwcJsTryStatementJson>('jsTry', scope.context.keysOf(node), {
         block: blocks,
@@ -425,7 +464,7 @@ const makeStatement = (node: LwcNode, scope: StatementContext): LwcJsStatementJs
         case 'forStatement': {
             const { init, test, update } = (node as ir.ForStatementTypeClass).getFields();
             return makeJsonType<'jsFor', LwcJsForStatementJson>('jsFor', keys(), {
-                condition: {
+                condition: scope.context.derivedJson<LwcJsForControlJson>('jsForControl', node, {
                     ...(init
                         ? {
                               initializer:
@@ -439,7 +478,7 @@ const makeStatement = (node: LwcNode, scope: StatementContext): LwcJsStatementJs
                         : {}),
                     ...(test ? { condition: expressionOf(test, scope) } : {}),
                     ...(update ? { update: expressionOf(update, scope) } : {}),
-                },
+                }),
                 block: body(),
             });
         }
@@ -472,10 +511,14 @@ const makeStatement = (node: LwcNode, scope: StatementContext): LwcJsStatementJs
                 discriminant: expressionOf(discriminant, scope),
                 cases: cases.map((switchCase) => {
                     const { test, consequent } = switchCase.getFields();
-                    return {
-                        ...(test ? { test: expressionOf(test, scope) } : {}),
-                        block: (consequent as LwcNode[]).map((s) => makeStatement(s, scope)),
-                    };
+                    return makeJsonType<'jsSwitchCase', LwcJsSwitchCaseJson>(
+                        'jsSwitchCase',
+                        scope.context.keysOf(switchCase),
+                        {
+                            ...(test ? { test: expressionOf(test, scope) } : {}),
+                            block: (consequent as LwcNode[]).map((s) => makeStatement(s, scope)),
+                        },
+                    );
                 }),
             });
         }

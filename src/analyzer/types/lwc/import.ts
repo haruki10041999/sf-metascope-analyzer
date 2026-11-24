@@ -3,7 +3,7 @@
 import { makeJsonType, type JsonType } from '../commons/json';
 import type { commons } from '../lwc_IR';
 
-import { nameOf, type LwcJsonContext } from './commons';
+import { nameOf, type LwcJsonContext, type LwcNode } from './commons';
 
 export type LwcImportCategory =
     | 'lwc'
@@ -37,9 +37,9 @@ export type LwcImportJson = JsonType<'lwcImport'> & {
     /** import type { A } (TS)。実行時には残らない */
     typeOnly: boolean;
     /** @salesforce/apex/<クラス>.<メソッド> */
-    apex?: { className: string; methodName: string };
+    apex?: LwcApexRefJson;
     /** @salesforce/schema/<オブジェクト>[.<項目>] */
-    schema?: { objectApiName: string; fieldApiName?: string };
+    schema?: LwcSchemaRefJson;
     /** c/<名前> */
     component?: string;
 };
@@ -66,26 +66,42 @@ export const getImportCategory = (source: string): LwcImportCategory => {
     return 'other';
 };
 
-/** category に応じた分解 (apex / schema / component) */
+/** import する Apex のメソッド (@salesforce/apex/<クラス>.<メソッド>)。位置は import 元の文字列のもの */
+export type LwcApexRefJson = JsonType<'lwcApexRef'> & { className: string; methodName: string };
+
+/** import するオブジェクト・項目 (@salesforce/schema/<オブジェクト>[.<項目>])。位置は import 元の文字列のもの */
+export type LwcSchemaRefJson = JsonType<'lwcSchemaRef'> & {
+    objectApiName: string;
+    fieldApiName?: string;
+};
+
+/** category に応じた分解 (apex / schema / component)。sourceNode は import 元の文字列のノード */
 const makeDetail = (
     source: string,
     category: LwcImportCategory,
+    sourceNode: LwcNode,
+    context: LwcJsonContext,
 ): Pick<LwcImportJson, 'apex' | 'schema' | 'component'> => {
     if (category === 'apex') {
         const path = source.slice(source.indexOf('/', '@salesforce/'.length) + 1);
         const dot = path.lastIndexOf('.');
         return dot > 0
-            ? { apex: { className: path.slice(0, dot), methodName: path.slice(dot + 1) } }
+            ? {
+                  apex: context.derivedJson<LwcApexRefJson>('lwcApexRef', sourceNode, {
+                      className: path.slice(0, dot),
+                      methodName: path.slice(dot + 1),
+                  }),
+              }
             : {};
     }
     if (category === 'schema') {
         const [objectApiName, ...field] = source.slice('@salesforce/schema/'.length).split('.');
         return objectApiName
             ? {
-                  schema: {
+                  schema: context.derivedJson<LwcSchemaRefJson>('lwcSchemaRef', sourceNode, {
                       objectApiName,
                       ...(field.length > 0 ? { fieldApiName: field.join('.') } : {}),
-                  },
+                  }),
               }
             : {};
     }
@@ -157,6 +173,6 @@ export const makeLwcImportJson = (
         category,
         specifiers: specifiersOf(fields).map((s) => makeSpecifierJson(s, context)),
         typeOnly: fields.importKind === 'type',
-        ...makeDetail(source, category),
+        ...makeDetail(source, category, fields.source, context),
     });
 };

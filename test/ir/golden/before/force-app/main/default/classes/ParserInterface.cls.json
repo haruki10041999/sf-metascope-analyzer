@@ -1,20 +1,26 @@
 {
   "source": {
+    "kind": "apexSource",
+    "sourceKeys": {},
     "fileName": "ParserInterface.cls",
     "fileType": "cls",
     "content": {
       "kind": "interface",
-      "sourceKeys": {
-        "base": {},
-        "name": {}
+      "sourceKeys": {},
+      "nameRef": {
+        "kind": "declarationName",
+        "sourceKeys": {},
+        "name": "ParserInterface"
       },
       "name": "ParserInterface",
       "block": [
         {
           "kind": "interfaceMethod",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
+          "sourceKeys": {},
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "execute"
           },
           "name": "execute",
           "returnType": "void",
@@ -31,16 +37,24 @@
                   "SchedulableContext"
                 ]
               },
-              "modifier": {}
+              "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {}
+              }
             }
           ],
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "interfaceMethod",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
+          "sourceKeys": {},
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "count"
           },
           "name": "count",
           "returnType": {
@@ -50,13 +64,18 @@
             "primitiveType": "Integer"
           },
           "param": [],
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "interfaceMethod",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
+          "sourceKeys": {},
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "findAccounts"
           },
           "name": "findAccounts",
           "returnType": {
@@ -64,6 +83,8 @@
             "sourceKeys": {},
             "type": "list",
             "elementType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "custom",
               "customType": [
                 "Account"
@@ -81,7 +102,10 @@
                 "type": "primitive",
                 "primitiveType": "String"
               },
-              "modifier": {}
+              "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {}
+              }
             },
             {
               "kind": "parameter",
@@ -92,20 +116,30 @@
                 "sourceKeys": {},
                 "type": "set",
                 "elementType": {
+                  "kind": "type",
+                  "sourceKeys": {},
                   "type": "primitive",
                   "primitiveType": "Id"
                 }
               },
-              "modifier": {}
+              "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {}
+              }
             }
           ],
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "interfaceMethod",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
+          "sourceKeys": {},
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "groupContacts"
           },
           "name": "groupContacts",
           "returnType": {
@@ -113,12 +147,18 @@
             "sourceKeys": {},
             "type": "map",
             "keyType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "primitive",
               "primitiveType": "Id"
             },
             "valueType": {
+              "kind": "type",
+              "sourceKeys": {},
               "type": "list",
               "elementType": {
+                "kind": "type",
+                "sourceKeys": {},
                 "type": "custom",
                 "customType": [
                   "Contact"
@@ -136,22 +176,32 @@
                 "sourceKeys": {},
                 "type": "list",
                 "elementType": {
+                  "kind": "type",
+                  "sourceKeys": {},
                   "type": "custom",
                   "customType": [
                     "Account"
                   ]
                 }
               },
-              "modifier": {}
+              "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {}
+              }
             }
           ],
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         },
         {
           "kind": "interfaceMethod",
-          "sourceKeys": {
-            "base": {},
-            "name": {}
+          "sourceKeys": {},
+          "nameRef": {
+            "kind": "declarationName",
+            "sourceKeys": {},
+            "name": "save"
           },
           "name": "save",
           "returnType": {
@@ -176,10 +226,16 @@
                   "SObject"
                 ]
               },
-              "modifier": {}
+              "modifier": {
+                "kind": "modifiers",
+                "sourceKeys": {}
+              }
             }
           ],
-          "modifier": {}
+          "modifier": {
+            "kind": "modifiers",
+            "sourceKeys": {}
+          }
         }
       ],
       "extend": [
@@ -201,6 +257,8 @@
         }
       ],
       "modifier": {
+        "kind": "modifiers",
+        "sourceKeys": {},
         "keyword": [
           {
             "kind": "modifier",
@@ -213,6 +271,32 @@
   },
   "sourceObject": [
     {
+      "context": "Account",
+      "start": {
+        "offset": 198,
+        "line": 7,
+        "column": 9
+      },
+      "end": {
+        "offset": 205,
+        "line": 7,
+        "column": 16
+      }
+    },
+    {
+      "context": "Account",
+      "start": {
+        "offset": 299,
+        "line": 9,
+        "column": 46
+      },
+      "end": {
+        "offset": 306,
+        "line": 9,
+        "column": 53
+      }
+    },
+    {
       "context": "Comparable",
       "start": {
         "offset": 94,
@@ -223,6 +307,32 @@
         "offset": 104,
         "line": 2,
         "column": 51
+      }
+    },
+    {
+      "context": "Contact",
+      "start": {
+        "offset": 270,
+        "line": 9,
+        "column": 17
+      },
+      "end": {
+        "offset": 277,
+        "line": 9,
+        "column": 24
+      }
+    },
+    {
+      "context": "Database.SaveResult save(SObject record);",
+      "start": {
+        "offset": 324,
+        "line": 11,
+        "column": 4
+      },
+      "end": {
+        "offset": 365,
+        "line": 11,
+        "column": 45
       }
     },
     {
@@ -249,6 +359,45 @@
         "offset": 343,
         "line": 11,
         "column": 23
+      }
+    },
+    {
+      "context": "Id",
+      "start": {
+        "offset": 237,
+        "line": 7,
+        "column": 48
+      },
+      "end": {
+        "offset": 239,
+        "line": 7,
+        "column": 50
+      }
+    },
+    {
+      "context": "Id",
+      "start": {
+        "offset": 261,
+        "line": 9,
+        "column": 8
+      },
+      "end": {
+        "offset": 263,
+        "line": 9,
+        "column": 10
+      }
+    },
+    {
+      "context": "Integer count();",
+      "start": {
+        "offset": 171,
+        "line": 5,
+        "column": 4
+      },
+      "end": {
+        "offset": 187,
+        "line": 5,
+        "column": 20
       }
     },
     {
@@ -291,6 +440,32 @@
       }
     },
     {
+      "context": "List<Account> accounts",
+      "start": {
+        "offset": 294,
+        "line": 9,
+        "column": 41
+      },
+      "end": {
+        "offset": 316,
+        "line": 9,
+        "column": 63
+      }
+    },
+    {
+      "context": "List<Account> findAccounts(String name, Set<Id> ownerIds);",
+      "start": {
+        "offset": 193,
+        "line": 7,
+        "column": 4
+      },
+      "end": {
+        "offset": 251,
+        "line": 7,
+        "column": 62
+      }
+    },
+    {
       "context": "List<Account> findAccounts(String name, Set<Id> ownerIds);",
       "start": {
         "offset": 193,
@@ -327,6 +502,32 @@
         "offset": 307,
         "line": 9,
         "column": 54
+      }
+    },
+    {
+      "context": "List<Contact>",
+      "start": {
+        "offset": 265,
+        "line": 9,
+        "column": 12
+      },
+      "end": {
+        "offset": 278,
+        "line": 9,
+        "column": 25
+      }
+    },
+    {
+      "context": "Map<Id, List<Contact>> groupContacts(List<Account> accounts);",
+      "start": {
+        "offset": 257,
+        "line": 9,
+        "column": 4
+      },
+      "end": {
+        "offset": 318,
+        "line": 9,
+        "column": 65
       }
     },
     {
@@ -382,6 +583,19 @@
       }
     },
     {
+      "context": "SObject record",
+      "start": {
+        "offset": 349,
+        "line": 11,
+        "column": 29
+      },
+      "end": {
+        "offset": 363,
+        "line": 11,
+        "column": 43
+      }
+    },
+    {
       "context": "SObject",
       "start": {
         "offset": 349,
@@ -405,6 +619,19 @@
         "offset": 117,
         "line": 2,
         "column": 64
+      }
+    },
+    {
+      "context": "SchedulableContext context",
+      "start": {
+        "offset": 137,
+        "line": 3,
+        "column": 17
+      },
+      "end": {
+        "offset": 163,
+        "line": 3,
+        "column": 43
       }
     },
     {
@@ -447,6 +674,19 @@
       }
     },
     {
+      "context": "Set<Id> ownerIds",
+      "start": {
+        "offset": 233,
+        "line": 7,
+        "column": 44
+      },
+      "end": {
+        "offset": 249,
+        "line": 7,
+        "column": 60
+      }
+    },
+    {
       "context": "Set<Id>",
       "start": {
         "offset": 233,
@@ -457,6 +697,19 @@
         "offset": 240,
         "line": 7,
         "column": 51
+      }
+    },
+    {
+      "context": "String name",
+      "start": {
+        "offset": 220,
+        "line": 7,
+        "column": 31
+      },
+      "end": {
+        "offset": 231,
+        "line": 7,
+        "column": 42
       }
     },
     {
@@ -551,6 +804,32 @@
       }
     },
     {
+      "context": "public interface ParserInterface extends Comparable, Schedulable {\n    void execute(SchedulableContext context);\n\n    Integer count();\n\n    List<Account> findAccounts(String name, Set<Id> ownerIds);\n\n    Map<Id, List<Contact>> groupContacts(List<Account> accounts);\n\n    Database.SaveResult save(SObject record);\n}",
+      "start": {
+        "offset": 53,
+        "line": 2,
+        "column": 0
+      },
+      "end": {
+        "offset": 367,
+        "line": 12,
+        "column": 1
+      }
+    },
+    {
+      "context": "public interface ParserInterface extends Comparable, Schedulable {\n    void execute(SchedulableContext context);\n\n    Integer count();\n\n    List<Account> findAccounts(String name, Set<Id> ownerIds);\n\n    Map<Id, List<Contact>> groupContacts(List<Account> accounts);\n\n    Database.SaveResult save(SObject record);\n}",
+      "start": {
+        "offset": 53,
+        "line": 2,
+        "column": 0
+      },
+      "end": {
+        "offset": 367,
+        "line": 12,
+        "column": 1
+      }
+    },
+    {
       "context": "public",
       "start": {
         "offset": 53,
@@ -574,6 +853,19 @@
         "offset": 348,
         "line": 11,
         "column": 28
+      }
+    },
+    {
+      "context": "void execute(SchedulableContext context);",
+      "start": {
+        "offset": 124,
+        "line": 3,
+        "column": 4
+      },
+      "end": {
+        "offset": 165,
+        "line": 3,
+        "column": 45
       }
     },
     {

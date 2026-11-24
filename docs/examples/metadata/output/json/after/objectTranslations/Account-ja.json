@@ -7,7 +7,7 @@
     "base": {
       "kind": "objectTranslation",
       "sourceKeys": {
-        "objectKey": "objectTranslation_f215b3174c987177",
+        "objectKey": "objectTranslation_6884ea4aa01da1bf",
         "sourceKey": "objectTranslation_99876454374dab6d"
       },
       "objectApiName": "Account",
@@ -63,6 +63,11 @@
       ],
       "caseValues": [
         {
+          "kind": "caseValue",
+          "sourceKeys": {
+            "objectKey": "caseValue_365b22197c5d252c",
+            "sourceKey": "caseValue_c432bfb9d588c771"
+          },
           "value": "取引先",
           "plural": false
         }
@@ -201,7 +206,27 @@
         ]
       },
       {
-        "objectKey": "objectTranslation_f215b3174c987177",
+        "objectKey": "caseValue_365b22197c5d252c",
+        "context": "<caseValues>\n        <plural>false</plural>\n        <value>取引先</value>\n    </caseValues>",
+        "source": [
+          {
+            "sourceKey": "caseValue_c432bfb9d588c771",
+            "filePath": "Account-ja/Account-ja.objectTranslation-meta.xml",
+            "start": {
+              "offset": 117,
+              "line": 3,
+              "column": 4
+            },
+            "end": {
+              "offset": 205,
+              "line": 6,
+              "column": 17
+            }
+          }
+        ]
+      },
+      {
+        "objectKey": "objectTranslation_6884ea4aa01da1bf",
         "context": "<CustomObjectTranslation xmlns=\"http://soap.sforce.com/2006/04/metadata\">\n    <caseValues>\n        <plural>false</plural>\n        <value>取引先</value>\n    </caseValues>\n    <validationRules>\n        <errorMessage>取引先名は必須です。</errorMessage>\n        <name>Name_Required</name>\n    </validationRules>\n</CustomObjectTranslation>",
         "source": [
           {

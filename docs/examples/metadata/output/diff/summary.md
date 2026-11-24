@@ -40,7 +40,7 @@
 - **changed** object Invoice__c (key) — Invoice__c/Invoice__c.object-meta.xml L2
   - **changed** field Account__c (key) — Invoice__c/fields/Account__c.field-meta.xml L2
     - **changed** deleteConstraint: "SetNull" → "Restrict"
-    - **changed** lookupFilter: {"active":true,"errorMessage":"有効な取引先を選んでください","isOptional":false,"filterItems":… → {"active":true,"errorMessage":"有効な取引先 (Gold 以上) を選んでください","isOptional":false,"fi…
+    - **changed** lookupFilter: {"active":true,"errorMessage":"有効な取引先を選んでください","isOptional":false,"filterItems":… → {"active":true,"errorMessage":"有効な取引先 (Gold 以上) を選んでください","isOptional":false,"fi… — Invoice__c/fields/Account__c.field-meta.xml L6
   - **changed** field Amount__c (key) — Invoice__c/fields/Amount__c.field-meta.xml L2
     - **added** inlineHelpText: "税込みの金額"
     - **changed** precision: 18 → 16
@@ -59,7 +59,7 @@
       - **removed** picklistValueSelection Sent — Invoice__c/recordTypes/Standard.recordType-meta.xml L12
       - **added** picklistValueSelection Overdue — Invoice__c/recordTypes/Standard.recordType-meta.xml L12
   - **changed** fieldSet Summary (key) — Invoice__c/fieldSets/Summary.fieldSet-meta.xml L2
-    - **moved** displayedFields (identical)
+    - **moved** fieldSetItem (identical) — Invoice__c/fieldSets/Summary.fieldSet-meta.xml L10
   - **changed** webLink Send_Invoice (key) — Invoice__c/webLinks/Send_Invoice.webLink-meta.xml L2
     - **changed** fxTemplate: {"parts":["/apex/SendInvoice?id=",{"kind":"fxMerge","sourceKeys":{"objectKey":"f… → {"parts":["/lightning/cmp/c__sendInvoice?c__id=",{"kind":"fxMerge","sourceKeys":… — Invoice__c/webLinks/Send_Invoice.webLink-meta.xml L10
   - **changed** sharingReason Approver__c (key) — Invoice__c/sharingReasons/Approver__c.sharingReason-meta.xml L2
