@@ -6,6 +6,7 @@ import type {
     MethodDeclarationJson,
 } from '../types/apex/declaration';
 import type { StatementJson } from '../types/apex/statement';
+import { unitInfoOf } from './apex';
 import { type ClassifiedStatement, buildCodeFlow } from './codeFlow';
 import type { CodeFlow, MetadataSnapshot, SnapshotInput } from './types';
 
@@ -47,17 +48,6 @@ export const sourceTextsOf = (result: ApexUnitParseResult): Map<string, SourceTe
 
 type Node = { kind?: string; sourceKeys?: { sourceKey?: string } };
 
-/** 木の中にその種類のノードがあるか (SOQL・SOSL を探す) */
-const contains = (value: unknown, kinds: Set<string>): boolean => {
-    if (Array.isArray(value)) return value.some((item) => contains(item, kinds));
-    if (typeof value !== 'object' || value === null) return false;
-    if (kinds.has((value as Node).kind ?? '')) return true;
-    return Object.entries(value).some(
-        ([key, child]) => key !== 'sourceKeys' && contains(child, kinds),
-    );
-};
-
-const QUERY_KINDS = new Set(['soql', 'sosl']);
 const DML_KINDS = new Set(['insert', 'update', 'delete', 'upsert', 'merge', 'undelete']);
 const STATEMENT_KINDS = new Set([
     'blockStatement',
@@ -83,20 +73,37 @@ const STATEMENT_KINDS = new Set([
     'while',
 ]);
 
-/** 文の中の呼び出しから、データの操作・外部の呼び出しを見分ける (Database.query・Database.insert・HTTP など) */
-const simpleKindOf = (statement: StatementJson, text: string) => {
+type SimpleKind = 'dml' | 'query' | 'event' | 'callout';
+
+/**
+ * 文の位置 → その文の中のデータの操作・外部の呼び出し。文字の並びでなく、解析の結果
+ * (semantic/facts.ts。SOQL・SOSL、DML の文、レシーバーの型を標準の型に照合した Database.query・Database.insert・
+ * EventBus.publish・Http の send) で決める
+ */
+const statementKindsOf = (result: ApexUnitParseResult): Map<string, Set<SimpleKind>> => {
+    const info = unitInfoOf(result);
+    const kinds = new Map<string, Set<SimpleKind>>();
+    const add = (statement: { sourceKey: string } | undefined, kind: SimpleKind) => {
+        if (!statement) return;
+        if (!kinds.has(statement.sourceKey)) kinds.set(statement.sourceKey, new Set());
+        kinds.get(statement.sourceKey)!.add(kind);
+    };
+    for (const query of info.queries) add(query.context.statement, 'query');
+    for (const dml of info.dml) add(dml.context.statement, 'dml');
+    for (const call of info.calls) {
+        if (call.callType === 'dml') add(call.context.statement, 'dml');
+        else if (call.callType === 'publish') add(call.context.statement, 'event');
+        else if (call.callType === 'callout') add(call.context.statement, 'callout');
+    }
+    return kinds;
+};
+
+/** 文の中の呼び出しから、データの操作・外部の呼び出しを見分ける */
+const simpleKindOf = (statement: StatementJson, kinds: ReadonlySet<SimpleKind> | undefined) => {
     if (DML_KINDS.has(statement.kind)) return 'dml' as const;
-    if (
-        contains(statement, QUERY_KINDS) ||
-        /\b(Database\.(query|countQuery|getQueryLocator)|Search\.query)\s*\(/i.test(text)
-    ) {
-        return 'query' as const;
+    for (const kind of ['query', 'dml', 'event', 'callout'] as const) {
+        if (kinds?.has(kind)) return kind;
     }
-    if (/\bDatabase\.(insert|update|delete|upsert|merge|undelete|convertLead)\s*\(/i.test(text)) {
-        return 'dml' as const;
-    }
-    if (/\bEventBus\.publish\s*\(/i.test(text)) return 'event' as const;
-    if (/\.send\s*\(|\bnew\s+Http\s*\(|['"]callout:/i.test(text)) return 'callout' as const;
     return 'process' as const;
 };
 
@@ -113,6 +120,7 @@ const classifierOf = (result: ApexUnitParseResult) => {
         node?.sourceKeys?.sourceKey ? sources.get(node.sourceKeys.sourceKey) : undefined;
     const textOf = (node: Node | undefined, fallback: string) => source(node)?.text ?? fallback;
     const lineOf = (node: Node | undefined) => source(node)?.line;
+    const statementKinds = statementKindsOf(result);
 
     const classify = (statement: StatementJson): ClassifiedStatement<StatementJson> => {
         const text = textOf(statement, statement.kind);
@@ -190,7 +198,15 @@ const classifierOf = (result: ApexUnitParseResult) => {
             case 'runAs':
                 return { type: 'block', body: statement.block };
             default:
-                return { type: 'simple', kind: simpleKindOf(statement, text), text, line };
+                return {
+                    type: 'simple',
+                    kind: simpleKindOf(
+                        statement,
+                        statementKinds.get(statement.sourceKeys.sourceKey),
+                    ),
+                    text,
+                    line,
+                };
         }
     };
     return classify;

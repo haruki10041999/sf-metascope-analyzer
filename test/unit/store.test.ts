@@ -255,6 +255,101 @@ describe('UnitStore (保存の置き場)', () => {
         );
     });
 
+    it('writes definitions and references as symbol / reference rows and finds them by name (P3)', async () => {
+        const processor = await RepositoryProcessor.create(savingRoot, root);
+        await processor.save();
+        const db = databaseOf(processor);
+        const backend = processor.store.backend;
+        const unitKeys = (db.prepare('SELECT key FROM unit').all() as { key: string }[]).map(
+            (r) => r.key,
+        );
+        // 行の数は、保存した定義・参照の数と同じ
+        const count = (sql: string) => (db.prepare(sql).get() as { n: number }).n;
+        const graphUnits = processor.after
+            .entries()
+            .flatMap(([type, results]) => results.map((result) => ({ type, result })));
+        const { unitDependenciesOf } = await import('../../src/analyzer/unit/dependencies');
+        const totals = graphUnits.reduce(
+            (sum, { type, result }) => {
+                const dependencies = unitDependenciesOf(type, result);
+                return {
+                    symbols: sum.symbols + dependencies.definitions.length,
+                    references: sum.references + dependencies.references.length,
+                };
+            },
+            { symbols: 0, references: 0 },
+        );
+        assert.equal(count('SELECT count(*) AS n FROM symbol'), totals.symbols);
+        assert.equal(count('SELECT count(*) AS n FROM reference'), totals.references);
+
+        // 参照先の名前で引く (大小を区別しない)。AccountTrigger は Account を triggers で参照する
+        const hits = await backend.findReferences({
+            unitKeys,
+            targetType: 'object',
+            target: 'ACCOUNT',
+        });
+        assert.ok(
+            hits.some(
+                (h) =>
+                    h.unitType === 'apexTrigger' && h.kind === 'triggers' && h.target === 'Account',
+            ),
+        );
+        assert.ok(
+            hits.every((h) => h.targetType === 'object' && h.target.toLowerCase() === 'account'),
+        );
+        // 定義を名前で引く
+        const symbols = await backend.findSymbols({
+            unitKeys,
+            name: 'accountservice.sync',
+            kind: 'apexMethod',
+        });
+        assert.deepEqual(
+            symbols.map((s) => [s.unitType, s.kind, s.name]),
+            [['apexClass', 'apexMethod', 'AccountService.sync']],
+        );
+        assert.ok(symbols[0]!.sourceKey);
+        // 目録の単位に絞る (ない key では何も引かない)
+        assert.deepEqual(
+            await backend.findReferences({ unitKeys: [], targetType: 'object', target: 'Account' }),
+            [],
+        );
+    });
+
+    it('writes the definitions and references of units changed after the save before finding them (P3)', async () => {
+        const processor = await RepositoryProcessor.create(savingRoot, root);
+        await processor.save();
+        const classes = path.join(root, 'force-app', 'main', 'default', 'classes');
+        const added = path.join(classes, 'UsesInvoice.cls');
+        await writeFile(
+            added,
+            'public class UsesInvoice {\n    void run() { insert new Invoice__c(); }\n}\n',
+        );
+        try {
+            await processor.reset();
+            const afterKeys = processor.after
+                .entries()
+                .flatMap(([, results]) => results.map((r) => manifestUnitOf(r)!.key));
+            const find = () =>
+                processor.store.backend.findReferences({
+                    unitKeys: afterKeys,
+                    targetType: 'object',
+                    target: 'Invoice__c',
+                });
+            // 保存のあとに足した単位の参照は、まだ表にない
+            assert.ok(!(await find()).some((h) => h.member?.startsWith('UsesInvoice')));
+            // 足りない単位 (足した 1 つ) だけを書く
+            assert.equal(await processor.store.writeMissingDependencies(processor.after), 1);
+            assert.ok(
+                (await find()).some((h) => h.member === 'UsesInvoice.run' && h.kind === 'inserts'),
+            );
+            // 書いたものは書き直さない
+            assert.equal(await processor.store.writeMissingDependencies(processor.after), 0);
+        } finally {
+            await rm(added);
+        }
+        await processor.reset();
+    });
+
     it('skips reading files whose size and modified time are unchanged (S5)', async () => {
         // 1 時間前に書いたことにする (hash を取った時点で更新されたばかりのファイルは信用しないため)
         const old = new Date(Date.now() - 60 * 60 * 1000);

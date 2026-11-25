@@ -82,30 +82,17 @@ const parseSide = async (side: Side): Promise<Parsed> =>
 /** 解析に使うリポジトリの解析結果 (オブジェクトと、Apex のサンプルのクラス名) */
 const lwcSamples = (side: Side) => LwcParser.parseLwcBundles(sourceOf(side, 'lwc'));
 
-const namesOf = (parsed: Parsed, type: string) =>
-    (parsed[type] ?? []).map((r) => r.result.id.slice(type.length + 1));
-
 /** Apex (classes・triggers・scripts/apex) */
 const apexSamples = (side: Side) => ApexParser.parseApexUnits(repositoryOf(side));
 
 const objectSamples = (side: Side) =>
     MetadataParser.parseObjects(path.join(sourceRoot(side), 'objects'));
 
-const contextOf = async (side: Side, parsed: Parsed): Promise<MetadataContext> => {
+const contextOf = async (side: Side): Promise<MetadataContext> => {
     const objects = await objectSamples(side);
-    const labels = (parsed.customLabels ?? []).flatMap((r) =>
-        r.dataType === 'customLabels'
-            ? ((r.result.base as { labels?: { fullName: string }[] }).labels ?? []).map(
-                  (l) => l.fullName,
-              )
-            : [],
-    );
+    // 参照先がリポジトリにあるかは依存関係のグラフで見る。ここは種類の中の決まりの確かめに使うものだけ
     return {
         ...lwcContextOf(await lwcSamples(side)),
-        flows: namesOf(parsed, 'flow'),
-        layouts: namesOf(parsed, 'layout'),
-        flexiPages: namesOf(parsed, 'flexiPage'),
-        customLabels: labels,
         objects: objects.flatMap((r) =>
             r.dataType === 'object' ? [analyzeObject(r.result.base)] : [],
         ),
@@ -172,16 +159,13 @@ const summarizeFiles = (side: Side, parsed: Parsed): string[] => {
     return lines;
 };
 
-const summarizePermissions = (parsed: Parsed, context: MetadataContext): string[] => {
-    const analysis = analyzePermissions(
-        {
-            permissionSets: parsed.permissionSet as never,
-            mutingPermissionSets: parsed.mutingPermissionSet as never,
-            profiles: parsed.profile as never,
-            permissionSetGroups: parsed.permissionSetGroup as never,
-        },
-        context,
-    );
+const summarizePermissions = (parsed: Parsed): string[] => {
+    const analysis = analyzePermissions({
+        permissionSets: parsed.permissionSet as never,
+        mutingPermissionSets: parsed.mutingPermissionSet as never,
+        profiles: parsed.profile as never,
+        permissionSetGroups: parsed.permissionSetGroup as never,
+    });
     const lines = [
         '### 権限 (analyzePermissions)',
         '',
@@ -405,8 +389,8 @@ const main = async () => {
             }
         }
         summary.push(...summarizeFiles(side, parsed));
-        const context = await contextOf(side, parsed);
-        summary.push(...summarizePermissions(parsed, context));
+        const context = await contextOf(side);
+        summary.push(...summarizePermissions(parsed));
         summary.push(...(await summarizeLabels(side, parsed)));
         summary.push(...summarizeFlows(parsed, context));
         summary.push(...summarizePages(parsed, context));

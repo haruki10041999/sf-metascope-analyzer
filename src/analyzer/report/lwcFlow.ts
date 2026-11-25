@@ -2,13 +2,15 @@ import type { LwcBundleParseResult } from '../parser/Lwc/parser';
 import type { LwcComponentJson, LwcMemberJson } from '../types/lwc/component';
 import type { LwcModuleJson } from '../types/lwc/module';
 import type { LwcJsStatementJson } from '../types/lwc/statement';
+import { analyzeLwcCallsIn } from '../processor/Lwc/calls';
+import { walkJson } from '../processor/commons/node';
+import { type LwcImportTables, type LwcNodeJson, makeLwcImportTables } from '../types';
 import { type ClassifiedStatement, buildCodeFlow } from './codeFlow';
 import type { CodeFlow, MetadataSnapshot, SnapshotInput } from './types';
 
 // lwc.methodFlow: LWC の JS / TS のメソッド・関数の処理フロー (docs/todo.md 3.2.1 の 4)。
 // apex.methodFlow と同じ組み立て (codeFlow.ts) で、文の分類だけ JS に合わせる。
-// - Apex のメソッドの呼び出し (@salesforce/apex から import した名前・refreshApex) は call
-// - dispatchEvent・ShowToastEvent・メッセージチャネルの publish は event、NavigationMixin.Navigate は navigate、fetch は callout
+// - 文の分類は呼び出しの解析 (Lwc/calls.ts) の結果で決める (simpleKindOf)
 // - switch の case は次の case に続く (fall-through) ので、本体のない case は次の case とまとめ、最後の break は switch を抜けるだけとする
 
 export type LwcFlowFilter = {
@@ -41,18 +43,40 @@ const sourceTextsOf = (bundle: Bundle): Map<string, SourceText> => {
     return map;
 };
 
-const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+type SimpleKind = 'call' | 'navigate' | 'event' | 'callout';
 
-/** 文の中の呼び出しから、Apex の呼び出し・イベント・画面の遷移・外部の呼び出しを見分ける */
-const simpleKindOf = (text: string, apexNames: RegExp | null) => {
-    if ((apexNames && apexNames.test(text)) || /\brefreshApex\s*\(/.test(text)) {
-        return 'call' as const;
+/**
+ * 文の中の呼び出しから、Apex の呼び出し・イベント・画面の遷移・外部の呼び出しを見分ける。
+ * 文字の並びでなく、呼び出しの解析 (Lwc/calls.ts の callType。import 元と名前で決まる) の結果で決める
+ * - call: @salesforce/apex から import したメソッド・refreshApex
+ * - navigate: this[NavigationMixin.Navigate](...)
+ * - event: this.dispatchEvent・new ShowToastEvent・メッセージチャネルの publish
+ * - callout: fetch(...)
+ */
+const simpleKindOf = (statement: LwcJsStatementJson, tables: LwcImportTables) => {
+    const { calls, events } = analyzeLwcCallsIn([statement], tables);
+    const kinds = new Set<SimpleKind>();
+    for (const call of calls) {
+        if (call.callType === 'apex' || call.callType === 'refreshApex') kinds.add('call');
+        else if (call.callType === 'navigate' && call.target === 'Navigate') kinds.add('navigate');
+        else if (call.callType === 'dispatchEvent') kinds.add('event');
+        else if (call.callType === 'messageService' && call.imported === 'publish') {
+            kinds.add('event');
+        }
     }
-    if (/\bNavigationMixin\.Navigate\b/.test(text)) return 'navigate' as const;
-    if (/\bdispatchEvent\s*\(|\bnew\s+ShowToastEvent\s*\(|\bpublish\s*\(/.test(text)) {
-        return 'event' as const;
+    if (events.some((event) => event.eventClass === 'ShowToastEvent')) kinds.add('event');
+    walkJson<LwcNodeJson>(statement as LwcNodeJson, {
+        enter: {
+            jsCall: (node) => {
+                if (node.callee.kind === 'jsIdentifier' && node.callee.name === 'fetch') {
+                    kinds.add('callout');
+                }
+            },
+        },
+    });
+    for (const kind of ['call', 'navigate', 'event', 'callout'] as const) {
+        if (kinds.has(kind)) return kind;
     }
-    if (/\bfetch\s*\(/.test(text)) return 'callout' as const;
     return 'process' as const;
 };
 
@@ -73,13 +97,7 @@ const classifierOf = (bundle: Bundle, module: LwcModuleJson) => {
     };
     const textOf = (node: Node | undefined, fallback: string) => source(node)?.text ?? fallback;
     const lineOf = (node: Node | undefined) => source(node)?.line;
-    // @salesforce/apex から import した名前 (getAccounts(...) の呼び出しを見分ける)
-    const apexLocals = module.imports.flatMap((i) =>
-        i.apex ? i.specifiers.map((s) => s.local) : [],
-    );
-    const apexNames = apexLocals.length
-        ? new RegExp(`\\b(${apexLocals.map(escape).join('|')})\\s*\\(`)
-        : null;
+    const tables = makeLwcImportTables(module.imports);
 
     const classify = (statement: LwcJsStatementJson): ClassifiedStatement<LwcJsStatementJson> => {
         const text = textOf(statement as Node, statement.kind);
@@ -181,7 +199,7 @@ const classifierOf = (bundle: Bundle, module: LwcModuleJson) => {
             case 'jsUnsupportedStatement':
                 return { type: 'skip' };
             default:
-                return { type: 'simple', kind: simpleKindOf(text, apexNames), text, line };
+                return { type: 'simple', kind: simpleKindOf(statement, tables), text, line };
         }
     };
     return { classify, textOf };

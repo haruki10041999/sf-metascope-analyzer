@@ -359,7 +359,15 @@ export const ReferenceUsageRowSchema = z.object({
 export const FindingRowSchema = z
     .object({
         ...rowBaseShape,
-        source: z.enum(['permission', 'label', 'flow', 'layout', 'flexiPage', 'reference']),
+        source: z.enum([
+            'permission',
+            'label',
+            'flow',
+            'layout',
+            'flexiPage',
+            'reference',
+            'repository',
+        ]),
         code: z.string(),
         severity: z.enum(['error', 'warning', 'info']),
         unit: z.string().describe('Unit that raised the finding.'),

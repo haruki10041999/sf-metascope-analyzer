@@ -114,8 +114,10 @@ describe('Apex dependency fixes (段階 A0)', () => {
         assert.ok(
             refs.includes('reads childRelationshipField:Account.Contacts.LastName (soql.subquery)'),
         );
+        // 標準の関係の先 (Owner.Name) は項目にしない (関係の名前 Owner は項目ではない。
+        // スキーマを引く参照の解決で決める。docs/plan.md 10 章 P2)
         assert.ok(
-            refs.includes('reads childRelationshipField:Account.Contacts.Owner (soql.subquery)'),
+            !refs.some((ref) => ref.includes('childRelationshipField:Account.Contacts.Owner')),
         );
         // サブクエリの項目は親のオブジェクトの項目にしない
         assert.ok(!refs.includes('reads field:Account.LastName (soql.select)'));

@@ -1,4 +1,5 @@
-import type { ConvertKeys } from '../../types';
+import { type ConvertKeys, type JsonType, isJsonType } from '../../types';
+import { type WalkHandlers, walkJson } from '../commons/node';
 
 // メタデータの JSON の共通の走査 (docs/json-redesign-plan.md の段階 M1、docs/metadata-json-review.md 7.1 の #2)。
 // LWC の walker (processor/Lwc/walker.ts) と同じ形: 処理 (Visitor) を登録して JSON を 1 回だけたどる。
@@ -138,31 +139,88 @@ const enterContext = (node: Json, context: MetadataWalkContext): MetadataWalkCon
         : { ...context, member, statement };
 };
 
-/** JSON (単位のルート、または中のノード) をたどる */
+/**
+ * JSON (単位のルート、または中のノード) をたどる。
+ * kind と sourceKeys を持つノードは共通の走査 (commons/node.ts の walkJson) で辿り、ノードの中の値の木
+ * (kind のないオブジェクト・文字列) は、そのノードに入るときに辿る。値の木の中で出会ったノードは、そこまでの文脈
+ * (path・member など) を覚えておき、walkJson が辿るときに使う。ノードの中では、値の木と文字列を先に、
+ * 子のノードを後に訪ねる
+ */
 export const walkMetadataJson = (
     value: unknown,
     visitor: MetadataVisitor,
     context: MetadataWalkContext,
 ): void => {
-    if (Array.isArray(value)) {
-        for (const item of value) walkMetadataJson(item, visitor, context);
-        return;
-    }
-    if (!isRecord(value)) return;
-    const inner = enterContext(value, context);
-    let enter = visitor.record?.(value, inner) !== false;
-    const kind = str(value.kind);
-    const handler = kind ? visitor.kinds?.[kind] : undefined;
-    if (handler && handler(value, inner) === false) enter = false;
-    if (!enter) return;
-    for (const [key, child] of Object.entries(value)) {
-        if (key === 'sourceKeys') continue;
-        if (typeof child === 'string') {
-            visitor.value?.(key, child, value, inner);
-        } else if (typeof child === 'object' && child !== null) {
-            walkMetadataJson(child, visitor, { ...inner, path: [...inner.path, key] });
+    /** 値の木の中で出会ったノード → そこまでの文脈 */
+    const contextOf = new WeakMap<object, MetadataWalkContext>();
+    /** 中に入らなかった値の木の下のノード (walkJson でも辿らない) */
+    const skipped = new WeakSet<object>();
+    const skipNodesIn = (child: unknown): void => {
+        if (Array.isArray(child)) return child.forEach(skipNodesIn);
+        if (!isRecord(child)) return;
+        if (isJsonType(child)) {
+            skipped.add(child);
+            return;
         }
-    }
+        for (const [key, item] of Object.entries(child))
+            if (key !== 'sourceKeys') skipNodesIn(item);
+    };
+
+    /** オブジェクト 1 つ (record と kind ごとの処理)。false なら中に入らない */
+    const enterRecord = (node: Json, inner: MetadataWalkContext): boolean => {
+        let enter = visitor.record?.(node, inner) !== false;
+        const kind = str(node.kind);
+        const handler = kind ? visitor.kinds?.[kind] : undefined;
+        if (handler && handler(node, inner) === false) enter = false;
+        return enter;
+    };
+
+    /**
+     * オブジェクトのプロパティ (文字列は value、オブジェクト・配列は値の木)。
+     * 出会ったノードは文脈を覚え、found があれば足す (根が値の木のとき、あとで walkJson で辿る)
+     */
+    const properties = (node: Json, inner: MetadataWalkContext, found?: JsonType<string>[]) => {
+        for (const [key, child] of Object.entries(node)) {
+            if (key === 'sourceKeys') continue;
+            if (typeof child === 'string') {
+                visitor.value?.(key, child, node, inner);
+            } else if (typeof child === 'object' && child !== null) {
+                tree(child, { ...inner, path: [...inner.path, key] }, found);
+            }
+        }
+    };
+
+    const tree = (child: unknown, current: MetadataWalkContext, found?: JsonType<string>[]) => {
+        if (Array.isArray(child)) {
+            for (const item of child) tree(item, current, found);
+            return;
+        }
+        if (!isRecord(child)) return;
+        if (isJsonType(child)) {
+            contextOf.set(child, current);
+            found?.push(child);
+            return;
+        }
+        const inner = enterContext(child, current);
+        if (enterRecord(child, inner)) properties(child, inner, found);
+        else skipNodesIn(Object.values(child));
+    };
+
+    const handlers: WalkHandlers<JsonType<string>, MetadataWalkContext> = {
+        enterAny: (node, { state }) => {
+            if (skipped.has(node)) return 'skip';
+            const inner = enterContext(node, contextOf.get(node) ?? state);
+            if (!enterRecord(node, inner)) return 'skip';
+            properties(node, inner);
+            return { state: inner };
+        },
+    };
+
+    // 根 (配列・値の木のときは、中で出会ったノードを順に辿る)
+    const found: JsonType<string>[] = [];
+    tree(value, context, found);
+    for (const node of found)
+        if (!skipped.has(node)) walkJson(node, handlers, contextOf.get(node)!);
 };
 
 /** 値の木 (や JSON) の中の、プロパティ name の文字列をすべて集める (書いた順) */

@@ -11,15 +11,10 @@ import type {
     PermissionSetJson,
     ProfileJson,
 } from '../../types';
-import {
-    MetadataContext,
-    MetadataFinding,
-    ReferenceProblem,
-    makeReferenceChecker,
-} from './references';
+import type { MetadataFinding } from './references';
 
 // 権限の解析。方針: docs/metadata-implementation.md 10 章
-// 権限の表 (誰が何をできるか)、権限セットグループの実際の権限 (含む権限セットの和 − ミュート)、参照先の確認、矛盾、強い権限。
+// 権限の表 (誰が何をできるか)、権限セットグループの実際の権限 (含む権限セットの和 − ミュート)、矛盾、強い権限。
 // ファイルに書いてある行だけを扱い、書いていない権限を「なし」とは扱わない (SFDX の Profile は一部だけを持つことが多いため)
 
 export type PermissionHolderType = 'permissionSet' | 'mutingPermissionSet' | 'profile';
@@ -73,15 +68,11 @@ export type PermissionGroupInfo = {
     effective: PermissionTable;
 };
 
+/**
+ * 権限の解析の指摘。参照先 (オブジェクト・項目・Apex・Flow・レイアウト・Lightning ページ・権限セット) が
+ * リポジトリにあるかは、依存関係のグラフの指摘 (referenceFindingsOf) で見る。ここは権限の中の決まりだけ
+ */
 export type PermissionAnalysisCode =
-    | 'UNKNOWN_OBJECT'
-    | 'UNKNOWN_FIELD'
-    | 'UNKNOWN_APEX_CLASS'
-    | 'UNKNOWN_FLOW'
-    | 'UNKNOWN_LAYOUT'
-    | 'UNKNOWN_FLEXIPAGE'
-    | 'UNKNOWN_PERMISSION_SET'
-    | 'UNKNOWN_MUTING_PERMISSION_SET'
     | 'FIELD_EDIT_WITHOUT_READ'
     | 'FIELD_WITHOUT_OBJECT_READ'
     | 'OBJECT_PERMISSION_DEPENDENCY'
@@ -270,24 +261,8 @@ export const combinePermissions = (
     };
 };
 
-/** 権限の解析。context (リポジトリの解析結果) を渡すと、参照先も確かめる */
-export const analyzePermissions = (
-    inputs: PermissionInputs,
-    context: MetadataContext = {},
-): PermissionAnalysis => {
-    // 権限セットグループが含む権限セットは、渡した権限セット (と context) で確かめる
-    const namesOf = (results: { result: { id: string } }[] | undefined, prefix: string) =>
-        results?.map((r) => r.result.id.slice(prefix.length));
-    const permissionSetNames =
-        context.permissionSets ?? namesOf(inputs.permissionSets, 'permissionSet_');
-    const mutingNames =
-        context.mutingPermissionSets ??
-        namesOf(inputs.mutingPermissionSets, 'mutingPermissionSet_');
-    const check = makeReferenceChecker({
-        ...context,
-        ...(permissionSetNames ? { permissionSets: permissionSetNames } : {}),
-        ...(mutingNames ? { mutingPermissionSets: mutingNames } : {}),
-    });
+/** 権限の解析 (権限の表・権限セットグループの実際の権限・矛盾・強い権限。参照先があるかは依存関係のグラフで見る) */
+export const analyzePermissions = (inputs: PermissionInputs): PermissionAnalysis => {
     const findings: PermissionFinding[] = [];
     const holders: PermissionHolderInfo[] = [];
 
@@ -323,18 +298,6 @@ export const analyzePermissions = (
                 filePath: result.filePath,
                 sourceKeys,
             });
-        const addProblem = (problem: ReferenceProblem | undefined, sourceKeys: ConvertKeys) => {
-            if (problem) {
-                add(
-                    problem.code as PermissionAnalysisCode,
-                    'warning',
-                    problem.target,
-                    problem.message,
-                    sourceKeys,
-                );
-            }
-        };
-
         const table = toTable(json);
         holders.push({
             type,
@@ -343,35 +306,6 @@ export const analyzePermissions = (
             filePath: result.filePath,
             sourceKeys: json.sourceKeys,
             ...table,
-        });
-
-        // 参照先
-        rowsOf(json, 'objectPermissions').forEach((row) =>
-            addProblem(check.object(String(row.object)), row.sourceKeys),
-        );
-        rowsOf(json, 'fieldPermissions').forEach((row) =>
-            addProblem(check.field(String(row.field)), row.sourceKeys),
-        );
-        rowsOf(json, 'classAccesses').forEach((row) =>
-            addProblem(check.apexClass(String(row.apexClass)), row.sourceKeys),
-        );
-        rowsOf(json, 'flowAccesses').forEach((row) =>
-            addProblem(check.flow(String(row.flow)), row.sourceKeys),
-        );
-        rowsOf(json, 'recordTypeVisibilities').forEach((row) =>
-            addProblem(check.object(String(row.recordType).split('.')[0]!), row.sourceKeys),
-        );
-        rowsOf(json, 'loginFlows').forEach((row) => {
-            if (row.flow) addProblem(check.flow(String(row.flow)), row.sourceKeys);
-        });
-        rowsOf(json, 'profileActionOverrides').forEach((row) => {
-            if (String(row.type).toLowerCase() === 'flexipage' && row.content) {
-                addProblem(check.flexiPage(String(row.content)), row.sourceKeys);
-            }
-        });
-        rowsOf(json, 'layoutAssignments').forEach((row) => {
-            addProblem(check.layout(String(row.layout)), row.sourceKeys);
-            addProblem(check.object(String(row.layout).split('-')[0]!), row.sourceKeys);
         });
 
         // ミュート権限セットの true は「外す」なので、矛盾・強い権限は見ない
@@ -448,23 +382,6 @@ export const analyzePermissions = (
         const holder = `permissionSetGroup:${json.name}`;
         const included = json.permissionSets ?? [];
         const muting = json.mutingPermissionSets ?? [];
-        const problems = [
-            ...included.map((name) => check.permissionSet(name)),
-            ...muting.map((name) => check.mutingPermissionSet(name)),
-        ];
-        problems.forEach((problem) => {
-            if (problem) {
-                findings.push({
-                    code: problem.code as PermissionAnalysisCode,
-                    severity: 'warning',
-                    holder,
-                    target: problem.target,
-                    message: problem.message,
-                    filePath: result.filePath,
-                    sourceKeys: json.sourceKeys,
-                });
-            }
-        });
         const pick = (map: Map<string, PermissionHolderInfo>, names: string[]) =>
             names.flatMap((name) => {
                 const info = map.get(name.toLowerCase());

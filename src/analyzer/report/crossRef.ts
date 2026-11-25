@@ -3,7 +3,7 @@ import { analyzeFlows } from '../processor/Metadata/flowAnalysis';
 import { analyzeFlexiPages, analyzeLayouts } from '../processor/Metadata/pageAnalysis';
 import { analyzePermissions } from '../processor/Metadata/permissionAnalysis';
 import type { DependencyGraph } from '../processor/dependency/graph';
-import { toLevel } from '../processor/dependency/graph';
+import { referenceFindingsOf, toLevel } from '../processor/dependency/graph';
 import { dependencyGraphOf } from '../unit/dependencies';
 import type { Repository } from '../unit/repository';
 import { compareKeyed, contextOf } from './commons';
@@ -139,23 +139,6 @@ export const getReferenceUsages = (
         .map((c) => ({ ...(c.after ?? c.before)!, ...(c.status ? { status: c.status } : {}) }))
         .filter((row) => !args.refTypes || args.refTypes.includes(row.refType));
 
-/**
- * 参照先がリポジトリにあるかの指摘 (種類ごとの解析も出すもの)。グラフの指摘 (source: reference) と重ならないよう、
- * 種類ごとの解析からは除く
- */
-const REFERENCE_CODES = new Set([
-    'UNKNOWN_OBJECT',
-    'UNKNOWN_FIELD',
-    'UNKNOWN_APEX_CLASS',
-    'UNKNOWN_FLOW',
-    'UNKNOWN_LWC',
-    'UNKNOWN_LAYOUT',
-    'UNKNOWN_FLEXIPAGE',
-    'UNKNOWN_PERMISSION_SET',
-    'UNKNOWN_MUTING_PERMISSION_SET',
-    'UNKNOWN_CUSTOM_LABEL',
-]);
-
 /** ある時点の解析の指摘をすべて集める */
 const findingsOf = (repository: Repository): FindingRow[] => {
     const snapshot = snapshotOf(repository);
@@ -184,19 +167,16 @@ const findingsOf = (repository: Repository): FindingRow[] => {
     const graph = dependencyGraphOf(repository);
     const paths = filePaths(repository);
     const typeFindings = [
-        ...analyzePermissions(
-            {
-                ...(snapshot.permissionSets ? { permissionSets: snapshot.permissionSets } : {}),
-                ...(snapshot.mutingPermissionSets
-                    ? { mutingPermissionSets: snapshot.mutingPermissionSets }
-                    : {}),
-                ...(snapshot.profiles ? { profiles: snapshot.profiles } : {}),
-                ...(snapshot.permissionSetGroups
-                    ? { permissionSetGroups: snapshot.permissionSetGroups }
-                    : {}),
-            },
-            context,
-        ).findings.map((f) => row('permission', f.holder, f)),
+        ...analyzePermissions({
+            ...(snapshot.permissionSets ? { permissionSets: snapshot.permissionSets } : {}),
+            ...(snapshot.mutingPermissionSets
+                ? { mutingPermissionSets: snapshot.mutingPermissionSets }
+                : {}),
+            ...(snapshot.profiles ? { profiles: snapshot.profiles } : {}),
+            ...(snapshot.permissionSetGroups
+                ? { permissionSetGroups: snapshot.permissionSetGroups }
+                : {}),
+        }).findings.map((f) => row('permission', f.holder, f)),
         ...analyzeFlows(snapshot.flows ?? [], context).findings.map((f) => row('flow', f.flow, f)),
         ...analyzeLayouts(snapshot.layouts ?? [], context).findings.map((f) =>
             row('layout', f.layout, f),
@@ -204,22 +184,28 @@ const findingsOf = (repository: Repository): FindingRow[] => {
         ...analyzeFlexiPages(snapshot.flexiPages ?? [], context).findings.map((f) =>
             row('flexiPage', f.flexiPage, f),
         ),
-    ].filter((f) => !REFERENCE_CODES.has(f.code));
-    const referenceFindings = graph.findings.map((f) => {
-        const unitNode = graph.nodes.get(toLevel(graph, f.from, 'unit'));
-        const target = graph.nodes.get(f.target)!;
-        const site = graph.nodes.get(f.from);
-        return row('reference', unitNode?.name ?? f.from, {
+    ];
+    // 参照先がリポジトリにあるかは、グラフの指摘だけで見る (種類ごとの解析は出さない)
+    const referenceFindings = referenceFindingsOf(graph).map((f) =>
+        row('reference', f.unitName, {
             code: f.code,
             severity: f.severity,
-            target: target.name,
+            target: f.target.name,
             message: f.message,
-            ...(unitNode?.unit
-                ? { filePath: paths.get(`${unitNode.unit.type}:${unitNode.unit.id}`) ?? '' }
-                : {}),
-            ...(site?.sourceKeys ? { sourceKeys: site.sourceKeys } : {}),
-        });
-    });
+            ...(f.unit ? { filePath: paths.get(`${f.unit.type}:${f.unit.id}`) ?? '' } : {}),
+            ...(f.sourceKeys ? { sourceKeys: f.sourceKeys } : {}),
+        }),
+    );
+    // パッケージディレクトリの重なり (同じ種類・同じ名前の単位が 2 つ以上の場所にある。解析には 1 つだけを使う)
+    const overlapFindings = repository.overlaps.map((overlap) =>
+        row('repository', overlap.id, {
+            code: 'DUPLICATE_UNIT',
+            severity: 'warning',
+            target: `${overlap.type}:${overlap.id}`,
+            message: `同じ ${overlap.type} の ${overlap.id} が ${[overlap.kept, ...overlap.skipped].join('・')} にある。解析には ${overlap.kept} を使う`,
+            filePath: paths.get(`${overlap.type}:${overlap.id}`) ?? overlap.kept,
+        }),
+    );
     // 使われていないラベル (翻訳からの参照は使用に数えない)
     const unusedLabels = labelsOf(repository, graph)
         .filter((label) => !label.usages.some((usage) => usage.origin !== 'translations'))
@@ -232,7 +218,7 @@ const findingsOf = (repository: Repository): FindingRow[] => {
                 sourceKeys: label.sourceKeys,
             }),
         );
-    return [...typeFindings, ...unusedLabels, ...referenceFindings];
+    return [...typeFindings, ...unusedLabels, ...referenceFindings, ...overlapFindings];
 };
 
 /**

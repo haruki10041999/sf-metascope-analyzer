@@ -1,5 +1,5 @@
 import type { ApexUnitJson, ApexUnitParseResult } from '../parser/Apex/unit';
-import { analyzeApexUnit } from '../processor/Apex/calls';
+import { type ApexUnitFacts, analyzeApexUnit, apexUnitFactsOf } from '../processor/Apex/semantic';
 import {
     type ApexOutlineMember,
     apexInterfaceKeyOf,
@@ -149,12 +149,15 @@ type AccessItem = Omit<
     key: string;
 };
 
-/** 解析結果ごとの呼び出し・DML・クエリ (provider を呼ぶたびに走査し直さない) */
-const unitInfos = new WeakMap<object, ReturnType<typeof analyzeApexUnit>>();
-export const unitInfoOf = (result: ApexUnitParseResult) => {
+/** 解析結果ごとの呼び出し・DML・クエリ (provider を呼ぶたびに解析し直さない。semantic/facts.ts) */
+const unitInfos = new WeakMap<object, ApexUnitFacts>();
+export const unitInfoOf = (result: ApexUnitParseResult): ApexUnitFacts => {
     let info = unitInfos.get(result);
     if (!info) {
-        info = analyzeApexUnit(result);
+        const analysis = analyzeApexUnit(result);
+        info = analysis
+            ? apexUnitFactsOf(analysis)
+            : { calls: [], dml: [], queries: [], triggerContexts: [] };
         unitInfos.set(result, info);
     }
     return info;
@@ -197,11 +200,11 @@ const accessItemsOf = (unit: Unit): AccessItem[] => {
     };
     const common = (context: {
         member?: string | undefined;
-        loopDepth: number;
+        inLoop: boolean;
         isTest: boolean;
     }) => ({
         ...(context.member ? { member: context.member } : {}),
-        inLoop: context.loopDepth > 0,
+        inLoop: context.inLoop,
         inTest: context.isTest,
     });
     for (const query of info.queries) {

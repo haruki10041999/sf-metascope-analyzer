@@ -1,26 +1,16 @@
-export type ApexStandardObjectField = {
-    readonly name: string;
-    /** 資料に明記された導入 API バージョン。 */
-    readonly introducedInApiVersion?: number;
-};
-
 export type ApexStandardObject = {
     readonly name: string;
-    /** 資料で確認された項目名の例。 */
-    readonly fieldExamples?: readonly ApexStandardObjectField[];
 };
 
-// 依存関係グラフの既存一覧と docs/reference/apex-standard-examples.md の項目例。
+/** 照合した Object Reference の API バージョン (docs/reference/apex-standard-reference.md の「照合の記録」) */
+export const APEX_STANDARD_OBJECTS_REFERENCE_API_VERSION = 68;
+
+// よく使う標準オブジェクト (依存関係のグラフもこの一覧を使う。docs/plan.md 10 章 P2)。
+// 2026-11-25 に Object Reference for the Salesforce Platform (Version 68.0, Winter '27) の PDF で、
+// すべてが標準オブジェクトとして載っていることを確かめた。全件の一覧ではない (載っていない名前を「標準でない」としない)。
+// オブジェクトの名前だけを持つ (項目・導入版は持たない。項目はスキーマを引く参照の解決で扱う)
 const STANDARD_OBJECTS: readonly ApexStandardObject[] = [
-    {
-        name: 'Account',
-        fieldExamples: [
-            { name: 'AccountNumber' },
-            { name: 'AccountScore', introducedInApiVersion: 61 },
-            { name: 'AccountSource', introducedInApiVersion: 24 },
-            { name: 'AnnualRevenue' },
-        ],
-    },
+    { name: 'Account' },
     { name: 'Contact' },
     { name: 'Lead' },
     { name: 'Opportunity' },
@@ -80,3 +70,14 @@ export const APEX_STANDARD_OBJECTS: ReadonlyMap<string, ApexStandardObject> = ne
 /** オブジェクトの API 名を照合する。未収録のオブジェクトは undefined を返す。 */
 export const findApexStandardObject = (name: string): ApexStandardObject | undefined =>
     APEX_STANDARD_OBJECTS.get(name.toLowerCase());
+
+/**
+ * カスタムのオブジェクト・メタデータ型などの API 名の接尾辞
+ * (__c: カスタムオブジェクト、__mdt: カスタムメタデータ型、__e: プラットフォームイベント、__x: 外部オブジェクト、
+ * __b: ビッグオブジェクト、__kav: ナレッジ記事のバージョン、__dlm: Data Cloud のデータモデル、
+ * __share・__history・__feed・__changeevent: カスタムオブジェクトに付く標準の付属オブジェクト)
+ */
+const CUSTOM_OBJECT_SUFFIX = /__(c|mdt|e|x|b|kav|dlm|share|history|feed|changeevent)$/i;
+
+/** カスタムのオブジェクトの API 名か (接尾辞で判断する。名前空間の接頭辞 ns__ があってもよい) */
+export const isApexCustomObjectName = (name: string): boolean => CUSTOM_OBJECT_SUFFIX.test(name);

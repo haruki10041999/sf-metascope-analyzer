@@ -16,7 +16,7 @@ import {
     type JsonType,
     type PermissionRowSpec,
 } from '../types';
-import { changedProps, compareKeyed, contextOf, readable, rowBase } from './commons';
+import { changedProps, compareKeyed, readable, rowBase } from './commons';
 import type {
     AccessFlags,
     ApexAccessRow,
@@ -161,19 +161,16 @@ const analyze = (snapshot: MetadataSnapshot | undefined): PermissionAnalysis | u
 
 const analyzeSnapshot = (snapshot: MetadataSnapshot | undefined) =>
     snapshot
-        ? analyzePermissions(
-              {
-                  ...(snapshot.permissionSets ? { permissionSets: snapshot.permissionSets } : {}),
-                  ...(snapshot.mutingPermissionSets
-                      ? { mutingPermissionSets: snapshot.mutingPermissionSets }
-                      : {}),
-                  ...(snapshot.profiles ? { profiles: snapshot.profiles } : {}),
-                  ...(snapshot.permissionSetGroups
-                      ? { permissionSetGroups: snapshot.permissionSetGroups }
-                      : {}),
-              },
-              contextOf(snapshot),
-          )
+        ? analyzePermissions({
+              ...(snapshot.permissionSets ? { permissionSets: snapshot.permissionSets } : {}),
+              ...(snapshot.mutingPermissionSets
+                  ? { mutingPermissionSets: snapshot.mutingPermissionSets }
+                  : {}),
+              ...(snapshot.profiles ? { profiles: snapshot.profiles } : {}),
+              ...(snapshot.permissionSetGroups
+                  ? { permissionSetGroups: snapshot.permissionSetGroups }
+                  : {}),
+          })
         : undefined;
 
 const refKey = (ref: PermissionHolderRef) => `${ref.type}:${ref.name}`;

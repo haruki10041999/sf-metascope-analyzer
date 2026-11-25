@@ -1,5 +1,5 @@
 import type { ConvertKeys, FormulaValue, FxJson, ValueTree } from '../../types';
-import { formulaNameOf } from '../../types/metadata/criteria';
+import { type CriterionJson, criterionTextsOf, formulaNameOf } from '../../types/metadata/criteria';
 import { type FormulaReference, formulaReferencesOf } from '../dependency/formula';
 import type { DependencyKind, DependencyTargetType } from '../dependency/types';
 
@@ -100,6 +100,30 @@ const rowRefs = (
             kind,
         );
     });
+
+/** Lightning ページの表示条件の {!Record.X}・Record.X */
+const RECORD_FIELD = /\{!Record\.(\w+)\}/g;
+
+/**
+ * Lightning ページの部品・項目の表示条件 (visibilityRule) の、ページのオブジェクトの項目
+ * (左辺・右辺の Record.<項目> と {!Record.<項目>})。以前は画面の解析 (pageAnalysis.ts) だけが確かめていた
+ */
+const visibilityRuleRefs = (node: Json, object: string): MetadataRefInfo[] => {
+    const rule = isRecord(node.visibilityRule) ? node.visibilityRule : undefined;
+    const criteria = (Array.isArray(rule?.criteria) ? rule.criteria : []) as CriterionJson[];
+    return criteria.flatMap((criterion) => {
+        const { left, right } = criterionTextsOf(criterion);
+        return [left, right].flatMap((text) => {
+            const direct = text.match(/^Record\.(\w+)$/);
+            const fields = direct
+                ? [direct[1]!]
+                : [...text.matchAll(RECORD_FIELD)].map((m) => m[1]!);
+            return fields.flatMap((field) =>
+                ref('field', `${object}.${field}`, 'visibilityRule', node, 'reads'),
+            );
+        });
+    });
+};
 
 /** c:name / c__name の部品名 (名前空間 c のもの)。ほかの名前空間は undefined */
 const localComponent = (tag: string): string | undefined => tag.match(/^c(?::|__)(\w+)$/)?.[1];
@@ -396,6 +420,12 @@ const EXTRACTORS: Record<string, (source: RefSource) => MetadataRefInfo[]> = {
                       'field',
                       'places',
                       (item) => `${object}.${item.replace(/^Record\./, '')}`,
+                  )
+                : []),
+            // 部品・項目の表示条件の項目
+            ...(object
+                ? [...rows(json, 'components'), ...rows(json, 'fields')].flatMap((node) =>
+                      visibilityRuleRefs(node, object),
                   )
                 : []),
             // c:<名前> (自分の名前空間の LWC / Aura)

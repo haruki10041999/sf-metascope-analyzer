@@ -7494,7 +7494,8 @@ args:
           "flow",
           "layout",
           "flexiPage",
-          "reference"
+          "reference",
+          "repository"
         ]
       },
       "code": {

@@ -5,6 +5,7 @@ import {
     flowInterfaceOf,
 } from '../processor/Metadata/flowAnalysis';
 import { analyzeFlowRefs } from '../processor/Metadata/flowRefs';
+import type { ReferenceFinding } from '../processor/dependency/graph';
 import { FLOW_START, type FlowEdge, type FlowJson } from '../types';
 import { changedProps, compareKeyed, contextOf, readable, rowBase } from './commons';
 import type {
@@ -180,19 +181,38 @@ export const getFlowDiffs = (input: SnapshotInput): FlowDiffRow[] =>
         ];
     });
 
-/** flow.references: 参照する項目・Apex・サブフロー・LWC・ラベル (after の時点)。参照先がなければ problem に指摘の code */
-export const getFlowReferences = (input: SnapshotInput): FlowReferenceRow[] => {
+/**
+ * flow.references: 参照する項目・Apex・サブフロー・LWC・ラベル (after の時点)。問題があれば problem に指摘の code。
+ * 参照先がリポジトリにないか (UNKNOWN_FIELD など) は依存関係のグラフの指摘 (referenceFindings)、
+ * Apex アクション・画面の LWC の決まり (APEX_NOT_INVOCABLE など) は Flow の解析の指摘から引く
+ */
+export const getFlowReferences = (
+    input: SnapshotInput,
+    referenceFindings: readonly ReferenceFinding[] = [],
+): FlowReferenceRow[] => {
     const analysis = analyzeFlows(input.after.flows ?? [], contextOf(input.after));
-    const problems = new Map(
-        analysis.findings.map((f) => [`${f.flow}:${f.target}:${f.sourceKeys?.sourceKey}`, f.code]),
-    );
+    // Flow の名前 (小文字)・行の sourceKey・参照先の名前 (小文字) → 指摘の code
+    const keyOf = (flow: string, sourceKey: string | undefined, target: string) =>
+        `${flow.toLowerCase()}:${sourceKey}:${target.toLowerCase()}`;
+    const problems = new Map([
+        ...referenceFindings
+            .filter((f) => f.unit?.type === 'flow')
+            .map((f): [string, string] => [
+                keyOf(f.unitName, f.sourceKeys?.sourceKey, f.target.name),
+                f.code,
+            ]),
+        ...analysis.findings.map((f): [string, string] => [
+            keyOf(f.flow, f.sourceKeys?.sourceKey, f.target),
+            f.code,
+        ]),
+    ]);
     return (flowsOf(input.after) ?? []).flatMap(({ json, filePath }) => {
         // 使っているものは解析で出す (Metadata/flowRefs.ts。段階 M3 で JSON の references から移した)
         return analyzeFlowRefs(json)
             .filter((ref) => ref.refType !== 'element' && ref.refType !== 'globalVariable')
             .map((ref) => {
                 const sourceKeys = ref.sourceKeys!;
-                const problem = problems.get(`${json.name}:${ref.target}:${sourceKeys.sourceKey}`);
+                const problem = problems.get(keyOf(json.name, sourceKeys.sourceKey, ref.target));
                 return {
                     filePath,
                     sourceKeys,

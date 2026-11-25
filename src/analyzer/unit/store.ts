@@ -5,7 +5,7 @@ import { SAVE_FORMAT_VERSION as LAYOUT_VERSION } from '../parser/commons';
 import type { SourceText } from '../types';
 
 import { DERIVED_VERSION, primeUnitDependencies, unitDependenciesOf } from './dependencies';
-import { Repository, locateUnits, readUnitSources } from './repository';
+import { Repository, locateUnits, packageDirectoriesOf, readUnitSources } from './repository';
 import type { SourceTree } from './sourceTree';
 import type {
     FileStatEntry,
@@ -267,7 +267,7 @@ export class UnitStore {
             this.sources = sources;
             this.tree = tree;
         }
-        return Repository.of(tree.root, units);
+        return Repository.of(tree.root, units, await packageDirectoriesOf(tree));
     }
 
     /**
@@ -319,6 +319,41 @@ export class UnitStore {
         }
     }
 
+    /**
+     * repository の単位のうち、今の版の定義・参照が置き場にないものを作って書く (symbol・reference の表で引けるようにする。
+     * docs/plan.md 10 章 P3)。保存 (save) は before の単位だけを書くので、保存したあとに作業ツリーで変えた単位
+     * (after だけにある単位) は、表で引く前にこれを呼ぶ。定義・参照はメモリでも使い回す (unitDependenciesOf)。
+     * 書いた単位の数を返す
+     */
+    async writeMissingDependencies(repository: Repository): Promise<number> {
+        await this.writer?.flush();
+        return this.backend.batch(async () => {
+            let written = 0;
+            for (const unitType of this.types) {
+                for (const result of repository.get(unitType.type)) {
+                    const unit = manifestUnitOf(result);
+                    if (!unit || this.freshDerived.has(unit.key)) continue;
+                    // 解析結果が置き場にない単位 (git の範囲で読んだ木など) は書かない (定義・参照は解析結果の行に付ける)
+                    if (
+                        !(await this.backend.hasParsed(
+                            unit.type,
+                            unit.key,
+                            unitFormatVersionOf(unitType),
+                        ))
+                    )
+                        continue;
+                    await this.writeDerived(
+                        unitType,
+                        unit.key,
+                        unitDependenciesOf(unit.type, result),
+                    );
+                    written++;
+                }
+            }
+            return written;
+        });
+    }
+
     /** ファイルの大きさ・更新時刻・hash を書く (S5。最後に読んだ木にあるファイルだけ) */
     private async saveFileStats(): Promise<void> {
         if (!this.fileStats || !this.tree?.statFile) return;
@@ -364,6 +399,8 @@ export class UnitStore {
                 if (!texts) return undefined;
                 const parsed = await this.parse(unitType, unit.location, texts);
                 this.stats.parsed++;
+                // 置き場に解析結果がない (保存で消えた) ので、定義・参照も書き直す
+                this.freshDerived.delete(unit.key);
                 result = { ...parsed, filePath: path.join(this.root, parsed.filePath) };
                 // 単位のファイルの中身も渡す (位置からソースの文字列を作れるものは、文字列を持たずに済ませる)
                 const hashes = new Map(unit.files.map((file) => [file.path, file.hash]));

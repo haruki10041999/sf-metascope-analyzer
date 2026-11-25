@@ -12,7 +12,11 @@ import type {
     NodeHit,
     NodeKindCount,
     NodeQuery,
+    ReferenceHit,
+    ReferenceQuery,
     StoreBackend,
+    SymbolHit,
+    SymbolQuery,
     UnitSourceFile,
 } from './storeBackend';
 import { type SpanRow, flattenUnit, rebuildUnit } from './storeTree';
@@ -23,7 +27,9 @@ import type { UnitParseResult } from './unitType';
 //   meta (置き場所の版) / source (hash → LF にそろえた中身) / snapshot (before の目録)
 //   unit (番号・key・種類・解析結果の版・根) / unit_file (単位のファイルと hash)
 //   node (JsonType を 1 行。子は親の中身の {"$node": 番号}) / span (sourceObject の位置)
-//   derived (定義・参照) / file_stat (作業ツリーのファイルの大きさ・更新時刻・hash)
+//   derived (定義・参照) / symbol (定義の行) / reference (参照の行) / file_stat (作業ツリーのファイルの大きさ・更新時刻・hash)
+// - symbol・reference は derived と同じ中身を行にしたもの (docs/plan.md 6.2。単位をまたぐ名前の引き当て・被依存を SQL で引く)。
+//   位置は node の番号でなく sourceKey で持つ (node.source_key と突き合わせられる)
 // - node・span・unit_file は単位を整数の番号 (unit.id) で引く (64 文字の key を行ごとに持たない)。
 //   node・span は WITHOUT ROWID (主キーの木 1 つにする)
 // - 保存 (begin → 書く → commit) は 1 つのトランザクション。途中で止まれば前の目録が残る
@@ -61,7 +67,8 @@ CREATE TABLE IF NOT EXISTS node (
     span_position INTEGER,
     PRIMARY KEY (unit_id, node_id)
 ) STRICT, WITHOUT ROWID;
-CREATE INDEX IF NOT EXISTS node_kind ON node (kind);
+CREATE INDEX IF NOT EXISTS node_unit_kind ON node (kind, unit_id);
+CREATE INDEX IF NOT EXISTS node_parent ON node (unit_id, parent_id);
 CREATE TABLE IF NOT EXISTS span (
     unit_id INTEGER NOT NULL,
     entry INTEGER NOT NULL,
@@ -85,6 +92,30 @@ CREATE TABLE IF NOT EXISTS derived (
     derived_version INTEGER NOT NULL,
     data BLOB NOT NULL
 ) STRICT;
+CREATE TABLE IF NOT EXISTS symbol (
+    unit_id INTEGER NOT NULL,
+    seq INTEGER NOT NULL,
+    kind TEXT NOT NULL,
+    name TEXT NOT NULL,
+    name_lc TEXT NOT NULL,
+    source_key TEXT,
+    PRIMARY KEY (unit_id, seq)
+) STRICT, WITHOUT ROWID;
+CREATE INDEX IF NOT EXISTS symbol_name ON symbol (name_lc, kind);
+CREATE TABLE IF NOT EXISTS reference (
+    unit_id INTEGER NOT NULL,
+    seq INTEGER NOT NULL,
+    target_type TEXT NOT NULL,
+    target TEXT NOT NULL,
+    target_lc TEXT NOT NULL,
+    kind TEXT NOT NULL,
+    via TEXT NOT NULL,
+    member TEXT,
+    statement_key TEXT,
+    expression_key TEXT,
+    PRIMARY KEY (unit_id, seq)
+) STRICT, WITHOUT ROWID;
+CREATE INDEX IF NOT EXISTS reference_target ON reference (target_type, target_lc);
 CREATE TABLE IF NOT EXISTS file_stat (
     path TEXT PRIMARY KEY,
     size INTEGER NOT NULL,
@@ -103,6 +134,8 @@ const TABLES = [
     'node',
     'span',
     'derived',
+    'symbol',
+    'reference',
     'file_stat',
 ];
 
@@ -118,7 +151,7 @@ const deflate = (text: string): Uint8Array => zlib.deflateRawSync(text, { level:
 const inflate = (data: Uint8Array): string => zlib.inflateRawSync(data).toString('utf8');
 
 /** 単位の番号で引く子の表 */
-const CHILD_TABLES = ['unit_file', 'node', 'span', 'derived'];
+const CHILD_TABLES = ['unit_file', 'node', 'span', 'derived', 'symbol', 'reference'];
 
 /** 前の版の置き場 (msgpack のファイル) の名前。開いたときに消す (移行しない) */
 const LEGACY_ENTRIES = ['manifest.msgpack', 'stats.msgpack', 'parsed', 'sources', 'derived'];
@@ -369,9 +402,91 @@ export class SqliteStoreBackend implements StoreBackend {
         // 定義・参照は解析結果の行に付ける (解析結果がなければ書かない)
         const unitId = this.unitIdOf(type, key, formatVersion);
         if (unitId === undefined) return;
-        this.statement(
-            'INSERT OR REPLACE INTO derived (unit_id, format_version, derived_version, data) VALUES (?, ?, ?, ?)',
-        ).run(unitId, formatVersion, derivedVersion, deflate(JSON.stringify(data)));
+        this.atomically(() => {
+            this.statement(
+                'INSERT OR REPLACE INTO derived (unit_id, format_version, derived_version, data) VALUES (?, ?, ?, ?)',
+            ).run(unitId, formatVersion, derivedVersion, deflate(JSON.stringify(data)));
+            this.statement('DELETE FROM symbol WHERE unit_id = ?').run(unitId);
+            this.statement('DELETE FROM reference WHERE unit_id = ?').run(unitId);
+            const symbol = this.statement(
+                'INSERT INTO symbol (unit_id, seq, kind, name, name_lc, source_key) VALUES (?, ?, ?, ?, ?, ?)',
+            );
+            data.definitions.forEach((definition, seq) =>
+                symbol.run(
+                    unitId,
+                    seq,
+                    definition.defType,
+                    definition.name,
+                    definition.name.toLowerCase(),
+                    definition.sourceKeys?.sourceKey ?? null,
+                ),
+            );
+            const reference = this.statement(
+                `INSERT INTO reference (unit_id, seq, target_type, target, target_lc, kind, via, member,
+                    statement_key, expression_key) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            );
+            data.references.forEach((ref, seq) =>
+                reference.run(
+                    unitId,
+                    seq,
+                    ref.refType,
+                    ref.target,
+                    ref.target.toLowerCase(),
+                    ref.kind,
+                    ref.via,
+                    ref.from.member ?? null,
+                    ref.from.statement?.sourceKey ?? null,
+                    ref.from.expression?.sourceKey ?? null,
+                ),
+            );
+        });
+    }
+
+    async findReferences(query: ReferenceQuery): Promise<ReferenceHit[]> {
+        const rows = this.statement(
+            `SELECT u.key AS unit_key, u.type AS unit_type, r.target_type, r.target, r.kind, r.via,
+                r.member, r.statement_key, r.expression_key
+            FROM reference r JOIN unit u ON u.id = r.unit_id
+            WHERE u.key IN (SELECT value FROM json_each(?1))
+                AND r.target_type = ?2 AND r.target_lc = ?3
+            ORDER BY u.key, r.seq`,
+        ).all(
+            JSON.stringify(query.unitKeys),
+            query.targetType,
+            query.target.toLowerCase(),
+        ) as Row[];
+        return rows.map((row) => ({
+            unitKey: row.unit_key as string,
+            unitType: row.unit_type as string,
+            targetType: row.target_type as string,
+            target: row.target as string,
+            kind: row.kind as string,
+            via: row.via as string,
+            member: row.member as string | null,
+            statementKey: row.statement_key as string | null,
+            expressionKey: row.expression_key as string | null,
+        }));
+    }
+
+    async findSymbols(query: SymbolQuery): Promise<SymbolHit[]> {
+        const rows = this.statement(
+            `SELECT u.key AS unit_key, u.type AS unit_type, s.kind, s.name, s.source_key
+            FROM symbol s JOIN unit u ON u.id = s.unit_id
+            WHERE u.key IN (SELECT value FROM json_each(?1))
+                AND s.name_lc = ?2 AND (?3 IS NULL OR s.kind = ?3)
+            ORDER BY u.key, s.seq`,
+        ).all(
+            JSON.stringify(query.unitKeys),
+            query.name.toLowerCase(),
+            query.kind ?? null,
+        ) as Row[];
+        return rows.map((row) => ({
+            unitKey: row.unit_key as string,
+            unitType: row.unit_type as string,
+            kind: row.kind as string,
+            name: row.name as string,
+            sourceKey: row.source_key as string | null,
+        }));
     }
 
     async readSource(hash: string): Promise<string | undefined> {

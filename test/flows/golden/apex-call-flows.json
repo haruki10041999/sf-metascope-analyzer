@@ -285,7 +285,7 @@
       {
         "from": "parser",
         "to": "Database",
-        "label": "insert",
+        "label": "insert Account",
         "kind": "dml",
         "depth": 1,
         "line": 104
@@ -293,7 +293,7 @@
       {
         "from": "parser",
         "to": "Database",
-        "label": "update",
+        "label": "update Account",
         "kind": "dml",
         "depth": 1,
         "line": 116
@@ -301,7 +301,7 @@
       {
         "from": "parser",
         "to": "Database",
-        "label": "upsert",
+        "label": "upsert Account",
         "kind": "dml",
         "depth": 1,
         "line": 118
@@ -309,7 +309,7 @@
       {
         "from": "parser",
         "to": "Database",
-        "label": "insert",
+        "label": "insert Account",
         "kind": "dml",
         "depth": 1,
         "line": 122
@@ -317,7 +317,7 @@
       {
         "from": "parser",
         "to": "Database",
-        "label": "merge",
+        "label": "merge Account",
         "kind": "dml",
         "depth": 1,
         "line": 124
@@ -325,7 +325,7 @@
       {
         "from": "parser",
         "to": "Database",
-        "label": "delete",
+        "label": "delete Account",
         "kind": "dml",
         "depth": 1,
         "line": 126
@@ -333,7 +333,7 @@
       {
         "from": "parser",
         "to": "Database",
-        "label": "undelete",
+        "label": "undelete Account",
         "kind": "dml",
         "depth": 1,
         "line": 128
@@ -341,7 +341,7 @@
       {
         "from": "parser",
         "to": "Database",
-        "label": "insert",
+        "label": "insert Account",
         "kind": "dml",
         "depth": 1,
         "line": 141

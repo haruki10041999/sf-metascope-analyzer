@@ -23,8 +23,9 @@ const unitDependencies = new WeakMap<object, UnitDependencies>();
  * 上げると、保存した定義・参照 (UnitStore の derived) を捨てて、保存した解析結果から作り直す (parse はやり直さない)。
  * 版の履歴:
  * - 1: 定義・参照を保存するようにした (2026-11-17)
+ * - 2: Apex の参照を新しい解析 (processor/Apex/semantic) で取り出す。定義・参照を symbol・reference の表にも書く (2026-11-25)
  */
-export const DERIVED_VERSION = 1;
+export const DERIVED_VERSION = 2;
 
 /** 保存した定義・参照を、解析結果に使う (UnitStore が、版の合う保存したものを読んだとき) */
 export const primeUnitDependencies = (result: object, dependencies: UnitDependencies): void => {

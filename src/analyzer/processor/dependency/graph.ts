@@ -1,4 +1,5 @@
 import type { ConvertKeys } from '../../types';
+import { findApexStandardObject } from '../Apex/semantic/standardObjects';
 
 import type {
     ChildRelationship,
@@ -66,62 +67,12 @@ export type GraphUnit = { type: string; id: string; dependencies: UnitDependenci
 // 名前の突き合わせ
 // ---------------------------------------------------------------------------
 
-/** よく使う標準オブジェクト (リポジトリになくても「ない」とは言わない。Apex の型がオブジェクトかの判断にも使う) */
-const STANDARD_OBJECTS = new Set(
-    [
-        'Account',
-        'Contact',
-        'Lead',
-        'Opportunity',
-        'OpportunityLineItem',
-        'Case',
-        'User',
-        'Task',
-        'Event',
-        'Campaign',
-        'CampaignMember',
-        'Contract',
-        'Order',
-        'OrderItem',
-        'Product2',
-        'Pricebook2',
-        'PricebookEntry',
-        'Asset',
-        'Quote',
-        'QuoteLineItem',
-        'Group',
-        'GroupMember',
-        'Profile',
-        'PermissionSet',
-        'PermissionSetAssignment',
-        'UserRole',
-        'RecordType',
-        'Attachment',
-        'Note',
-        'ContentDocument',
-        'ContentVersion',
-        'ContentDocumentLink',
-        'FeedItem',
-        'EmailMessage',
-        'Organization',
-        'BusinessHours',
-        'Holiday',
-        'Folder',
-        'Document',
-        'Solution',
-        'Idea',
-        'Entitlement',
-        'ServiceContract',
-        'WorkOrder',
-        'Individual',
-        'AsyncApexJob',
-        'CronTrigger',
-        'ApexClass',
-        'ApexTrigger',
-        'StaticResource',
-        'SObject',
-    ].map((name) => name.toLowerCase()),
-);
+/**
+ * オブジェクトとして扱う標準の名前 (リポジトリになくても「ない」とは言わない。Apex の型がオブジェクトかの判断にも使う)。
+ * 一覧は Apex の解析と共通 (processor/Apex/semantic/standardObjects.ts)。SObject は汎用の型だが、オブジェクトとして扱う
+ */
+const isStandardObjectName = (name: string): boolean =>
+    name.toLowerCase() === 'sobject' || findApexStandardObject(name) !== undefined;
 
 const CUSTOM_SUFFIX = /__(c|mdt|e|x|b|share|history|feed|r)$/i;
 /**
@@ -284,8 +235,7 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
         }
         const object = lookup('object', name);
         if (object) return { type: 'object', name: nodes.get(object)!.name, id: object };
-        if (isCustom(name) || STANDARD_OBJECTS.has(name.toLowerCase()))
-            return { type: 'object', name };
+        if (isCustom(name) || isStandardObjectName(name)) return { type: 'object', name };
         return { type: 'apexType', name };
     };
 
@@ -459,6 +409,42 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
 
     return { nodes, edges, findings: dedupeFindings(findings) };
 };
+
+/**
+ * ない参照先の指摘を、「参照している単位 + 行の sourceKeys」の形にしたもの (docs/plan.md 10 章 P3)。
+ * 参照先がリポジトリにあるかの確かめは、グラフのこの指摘に一本化した (種類ごとの解析は、その種類の中の決まりだけを見る)
+ */
+export type ReferenceFinding = {
+    code: string;
+    severity: DependencyFinding['severity'];
+    message: string;
+    /** 参照先 (ノードの id・種類・名前) */
+    target: { id: string; type: string; name: string };
+    /** 参照している単位 (種類と id)。分からなければ持たない */
+    unit?: { type: string; id: string };
+    /** 参照している単位のノードの名前 (AccountService・Invoice_Status_Update など) */
+    unitName: string;
+    /** 参照している行 (文・式・メンバーの宣言) の位置 */
+    sourceKeys?: ConvertKeys;
+};
+
+/** グラフの、ない参照先の指摘 */
+export const referenceFindingsOf = (graph: DependencyGraph): ReferenceFinding[] =>
+    graph.findings.map((finding) => {
+        const unitNode = graph.nodes.get(toLevel(graph, finding.from, 'unit'));
+        const site = graph.nodes.get(finding.from);
+        const target = graph.nodes.get(finding.target)!;
+        const unit = site?.unit ?? unitNode?.unit;
+        return {
+            code: finding.code,
+            severity: finding.severity,
+            message: finding.message,
+            target: { id: target.id, type: target.type, name: target.name },
+            ...(unit ? { unit } : {}),
+            unitName: unitNode?.name ?? finding.from,
+            ...(site?.sourceKeys ? { sourceKeys: site.sourceKeys } : {}),
+        };
+    });
 
 const dedupeFindings = (findings: DependencyFinding[]) => {
     const seen = new Set<string>();

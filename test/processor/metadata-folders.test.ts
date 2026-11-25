@@ -5,6 +5,7 @@ import path from 'node:path';
 import { after, before, describe, it } from 'node:test';
 
 import { ApexParser } from '../../src/analyzer/parser/Apex/parser';
+import { Repository, WorkingTree, dependencyGraphOf } from '../../src/analyzer/unit';
 import { buildDependencyGraph, getDependents } from '../../src/analyzer/processor/dependency/graph';
 import { getUnitDependencies } from '../../src/analyzer/processor/dependency/units';
 import { analyzeFlowRefs } from '../../src/analyzer/processor/Metadata/flowRefs';
@@ -57,6 +58,29 @@ const base = <J>(results: MetadataFileParseResult[], id: string) =>
     results.find((r) => r.result.id === id)!.result.base as J;
 
 const NS = 'xmlns="http://soap.sforce.com/2006/04/metadata"';
+
+/**
+ * 解析結果から作った依存関係のグラフの指摘 ('<code>:<参照先>')。参照先がリポジトリにあるかは、
+ * 種類ごとの解析でなくグラフで見る (docs/plan.md 10 章 P3)
+ */
+const graphFindingsOf = (results: { dataType: string; result: { id: string } }[]) =>
+    buildDependencyGraph(
+        results.map((result) => ({
+            type: result.dataType,
+            id: result.result.id,
+            dependencies: getUnitDependencies(result.dataType, result),
+        })),
+    ).findings.map((f) => `${f.code}:${f.target}`);
+
+/**
+ * サンプルのリポジトリ (after) 全体のグラフの指摘。参照先の種類の単位がリポジトリにあるときだけ「ない」と言えるので
+ * (LWC・オブジェクトの単位がなければ確かめない)、画面・Flow の参照はリポジトリ全体で確かめる
+ */
+let afterFindings: Promise<string[]> | undefined;
+const repositoryFindings = () =>
+    (afterFindings ??= Repository.load(new WorkingTree(path.join(SAMPLES, 'after'))).then(
+        (repository) => dependencyGraphOf(repository).findings.map((f) => `${f.code}:${f.target}`),
+    ));
 
 describe('MetadataFolderParser', () => {
     it('フォルダ単位で読み、ファイルごとに <種類>_<名前> の結果を作る。読めないファイルは error', async () => {
@@ -174,13 +198,14 @@ describe('権限', () => {
     });
 
     it('権限セットグループの実際の権限は、含む権限セットの和からミュートを除いたもの', async () => {
-        const analysis = analyzePermissions({
+        const inputs = {
             permissionSets: (await PermissionSetParser.parseAll(root('after'))) as never,
             mutingPermissionSets: (await MutingPermissionSetParser.parseAll(
                 root('after'),
             )) as never,
             permissionSetGroups: (await PermissionSetGroupParser.parseAll(root('after'))) as never,
-        });
+        };
+        const analysis = analyzePermissions(inputs);
         const effective = analysis.groups[0]!.effective;
         const invoice = effective.objects.find((o) => o.object === 'Invoice__c')!;
         assert.deepEqual(
@@ -202,12 +227,14 @@ describe('権限', () => {
             },
         );
         assert.ok(!effective.userPermissions.includes('ModifyAllData'));
-        // 含む権限セットがない
-        assert.deepEqual(
-            analysis.findings
-                .filter((f) => f.code === 'UNKNOWN_PERMISSION_SET')
-                .map((f) => f.target),
-            ['Invoice_Viewer'],
+        // 含む権限セットがない (参照先があるかは、依存関係のグラフで見る)
+        assert.ok(!analysis.findings.some((f) => f.code.startsWith('UNKNOWN_')));
+        assert.ok(
+            graphFindingsOf([
+                ...inputs.permissionSets,
+                ...inputs.mutingPermissionSets,
+                ...inputs.permissionSetGroups,
+            ]).includes('UNKNOWN_PERMISSION_SET:permissionSet:Invoice_Viewer'),
         );
     });
 
@@ -379,7 +406,6 @@ describe('Flow', () => {
 
     it('到達できない要素・ない要素への参照・LWC の target を見つける', async () => {
         const analysis = analyzeFlows((await FlowParser.parseAll(root('after'))) as never, {
-            lwcBundles: ['accountList'],
             lwcMeta: {
                 accountList: {
                     isExposed: true,
@@ -392,9 +418,10 @@ describe('Flow', () => {
             'LWC_NOT_FLOW_SCREEN:accountList',
             'NO_FAULT_PATH:Call_Status',
             'UNKNOWN_FLOW_ELEMENT:Unknown_Var',
-            'UNKNOWN_LWC:missingChart',
             'UNREACHABLE_ELEMENT:Orphan',
         ]);
+        // 画面の LWC がない (参照先があるかは、依存関係のグラフで見る)
+        assert.ok((await repositoryFindings()).includes('UNKNOWN_LWC:lwc:missingChart'));
         assert.deepEqual(analysis.automation, [
             {
                 object: 'Invoice__c',
@@ -461,17 +488,15 @@ describe('画面', () => {
                 },
             ],
         });
-        // Invoice__c はオブジェクトがないので、レイアウトごとに 1 回だけ出す
+        // 項目・オブジェクトがあるかは、依存関係のグラフで見る (レイアウトの解析は出さない)
         assert.deepEqual(
             layouts.findings.map((f) => `${f.code}:${f.target}`),
-            [
-                'UNKNOWN_FIELD:Account.Missing__c',
-                'UNKNOWN_OBJECT:Invoice__c',
-                'UNKNOWN_OBJECT:Invoice__c',
-            ],
+            [],
         );
+        // Invoice__c はサンプルのリポジトリにあるので、グラフでは指摘しない (以前はレイアウトの解析に Account だけを渡していた)
+        const layoutFindings = await repositoryFindings();
+        assert.ok(layoutFindings.includes('UNKNOWN_FIELD:field:Account.Missing__c'));
         const pages = analyzeFlexiPages((await FlexiPageParser.parseAll(root('after'))) as never, {
-            lwcBundles: ['accountList', 'accountRow'],
             lwcMeta: {
                 accountList: {
                     isExposed: true,

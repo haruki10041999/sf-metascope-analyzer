@@ -2,12 +2,7 @@ import type { FlowParseResult } from '../../parser/Metadata/flow';
 import { FLOW_START, type ConvertKeys, type FlowJson, type FlowResourceJson } from '../../types';
 import { type FlowRefInfo, analyzeFlowRefs } from './flowRefs';
 import type { LabelUsage } from './labelAnalysis';
-import {
-    MetadataContext,
-    MetadataFinding,
-    ReferenceProblem,
-    makeReferenceChecker,
-} from './references';
+import { MetadataContext, MetadataFinding, ReferenceProblem } from './references';
 
 // Flow の解析。方針: docs/metadata-implementation.md 10 章
 // Flow の一覧、オブジェクトごとの自動化、図 (要素と接続)、到達できない要素・失敗時の経路のない処理、参照先の確認
@@ -47,15 +42,13 @@ export type ObjectAutomation = {
     >[];
 };
 
+/**
+ * Flow の解析の指摘。参照先 (オブジェクト・項目・Apex・サブフロー・LWC・ラベル) がリポジトリにあるかは、
+ * 依存関係のグラフの指摘 (referenceFindingsOf) で見る。ここは Flow の中の決まりだけ
+ */
 export type FlowAnalysisCode =
-    | 'UNKNOWN_OBJECT'
-    | 'UNKNOWN_FIELD'
-    | 'UNKNOWN_APEX_CLASS'
     | 'APEX_NOT_INVOCABLE'
-    | 'UNKNOWN_FLOW'
-    | 'UNKNOWN_LWC'
     | 'LWC_NOT_FLOW_SCREEN'
-    | 'UNKNOWN_CUSTOM_LABEL'
     | 'UNKNOWN_FLOW_ELEMENT'
     | 'UNREACHABLE_ELEMENT'
     | 'NO_FAULT_PATH';
@@ -112,16 +105,14 @@ export const getFlowLabelUsages = (results: FlowParseResult[]): LabelUsage[] =>
             })),
     );
 
-/** Flow の解析。context (リポジトリの解析結果) を渡すと、参照先も確かめる */
+/** Flow の解析。context (リポジトリの解析結果) を渡すと、Apex アクション・画面の LWC の決まりも確かめる */
 export const analyzeFlows = (
     results: FlowParseResult[],
     context: MetadataContext = {},
 ): FlowAnalysis => {
     const flows = readableFlows(results);
-    const check = makeReferenceChecker({
-        ...context,
-        flows: context.flows ?? flows.map(({ json }) => json.name),
-    });
+    const apexClasses = context.apexClasses?.map((name) => name.toLowerCase());
+    const invocable = context.invocableApexClasses?.map((name) => name.toLowerCase());
     const findings: FlowFinding[] = [];
     const infos: FlowInfo[] = [];
     const graphs: FlowGraph[] = [];
@@ -226,18 +217,15 @@ export const analyzeFlows = (
         );
         const problemOf = (ref: FlowRefInfo, kind: string): ReferenceProblem | undefined => {
             switch (ref.refType) {
-                case 'object':
-                    return check.object(ref.target);
-                case 'field':
-                    return check.field(ref.target);
                 case 'apexClass': {
-                    const unknown = check.apexClass(ref.target);
-                    if (unknown) return unknown;
                     // Apex アクション (actionCalls) は @InvocableMethod を持つクラスだけを呼べる
-                    const invocable = context.invocableApexClasses?.map((n) => n.toLowerCase());
+                    // (リポジトリにないクラスは、グラフの UNKNOWN_APEX_CLASS で見るので、ここでは見ない)
+                    const target = ref.target.toLowerCase();
+                    const exists = !apexClasses || apexClasses.includes(target);
                     return kind === 'flowActionCall' &&
+                        exists &&
                         invocable &&
-                        !invocable.includes(ref.target.toLowerCase())
+                        !invocable.includes(target)
                         ? {
                               code: 'APEX_NOT_INVOCABLE',
                               target: ref.target,
@@ -245,13 +233,8 @@ export const analyzeFlows = (
                           }
                         : undefined;
                 }
-                case 'flow':
-                    return check.flow(ref.target);
-                case 'customLabel':
-                    return check.customLabel(ref.target);
                 case 'lwc': {
-                    const unknown = check.lwc(ref.target);
-                    if (unknown) return unknown;
+                    // js-meta.xml が分かる (リポジトリにある) LWC だけ
                     const meta = context.lwcMeta?.[ref.target];
                     return meta && !meta.targets.includes('lightning__FlowScreen')
                         ? {

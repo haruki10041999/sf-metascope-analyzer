@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { referenceFindingsOf } from '../processor/dependency/graph';
+import { dependencyGraphOf } from '../unit/dependencies';
 
 import { getApexDataAccess, getApexOutline } from './apex';
 import { getLwcComponents, getLwcDetail, getLwcWireframe } from './lwc';
@@ -370,7 +372,11 @@ export const PROVIDER_DEFINITIONS = {
         shape: 'rows',
         args: noArgs,
         output: rows(schemas.FlowReferenceRowSchema),
-        run: (input) => getFlowReferences(snapshotInputOf(input)),
+        run: (input) =>
+            getFlowReferences(
+                snapshotInputOf(input),
+                referenceFindingsOf(dependencyGraphOf(input.after)),
+            ),
     }),
     'flow.interface': define({
         description:

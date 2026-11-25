@@ -291,6 +291,7 @@ export const apexQueriesOf = (analysis: ApexBodyAnalysis): ApexQuery[] => {
                             case 'typeOf': {
                                 // TYPEOF の多態の関係と、WHEN の型ごとの項目
                                 addField(node.field, { ...state, via: 'typeOf' }, node.sourceKeys);
+                                // ELSE の項目は型が決まらないので、多態の関係をたどるパス (What.Name) として持つ
                                 for (const block of node.block) {
                                     const object =
                                         block.object === 'else'
@@ -298,8 +299,8 @@ export const apexQueriesOf = (analysis: ApexBodyAnalysis): ApexQuery[] => {
                                             : block.object.join('.');
                                     for (const field of block.field) {
                                         query.fields.push({
-                                            object: object ?? node.field.join('.'),
-                                            path: [...field],
+                                            object: object ?? mainObject,
+                                            path: object ? [...field] : [...node.field, ...field],
                                             via: 'typeOf',
                                             sourceKeys: block.sourceKeys,
                                         });

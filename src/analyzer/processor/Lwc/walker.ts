@@ -23,6 +23,8 @@ import type {
     LwcTypeJson,
     LwcWireConfigJson,
 } from '../../types';
+import type { LwcNodeJson } from '../../types';
+import { type WalkHandlers, walkJson } from '../commons/node';
 
 // LWC の JS / TS の JSON の走査 (docs/lwc-json-types.md 6 章の段階 6・8.8)。
 // Apex の解析の walker (docs/apex-json-analysis.md 2.1) と同じ形: kind ごとの処理 (Visitor) を登録して JSON を 1 回だけたどる。
@@ -158,46 +160,53 @@ const enterContext = (node: Record<string, unknown>, context: LwcWalkContext): L
     return context;
 };
 
-/** JSON の部分木を走査する (前順。kind を持つノードごとに visitor を呼ぶ) */
+/**
+ * JSON の部分木を走査する (前順。kind を持つノードごとに visitor を呼ぶ)。
+ * 共通の走査 (commons/node.ts の walkJson) の上で、文脈 (LwcWalkContext) を子に引き継ぐ。
+ * 根が配列・kind のない入れ物のときは、その中のノードを順に辿る
+ */
 export const walkLwcJson = (
     root: unknown,
     visitor: LwcVisitor,
     context: LwcWalkContext = initialLwcWalkContext(),
 ): void => {
-    const walk = (value: unknown, current: LwcWalkContext): void => {
-        if (Array.isArray(value)) {
-            value.forEach((item) => walk(item, current));
-            return;
-        }
-        if (!isRecord(value)) return;
-        let next = current;
-        if (typeof value.kind === 'string') {
-            const handler = (visitor as Record<string, unknown>)[value.kind];
+    const handlers: WalkHandlers<LwcNodeJson, LwcWalkContext> = {
+        enterAny: (node, { state }) => {
+            // try の節 (jsTryClause) だけ inTry にする (catch・finally の節は外側の値のまま)
+            const current =
+                node.kind === 'jsTryClause' && node.condition === 'try'
+                    ? { ...state, inTry: true }
+                    : state;
+            const handler = (visitor as Record<string, unknown>)[node.kind];
             if (
                 typeof handler === 'function' &&
                 (handler as (node: unknown, context: LwcWalkContext) => boolean | void)(
-                    value,
+                    node,
                     current,
                 ) === false
             ) {
-                return;
+                return 'skip';
             }
-            // 型の中身は kind を持たない
-            if (value.kind === 'lwcType') return;
-            next = enterContext(value, current);
-            if (value.kind === 'jsTry') {
-                // try の節だけ inTry にする
-                for (const clause of value.block as { condition: string }[]) {
-                    walk(clause, { ...next, inTry: clause.condition === 'try' || next.inTry });
-                }
-                return;
-            }
-        }
-        for (const [key, child] of Object.entries(value)) {
-            if (key !== 'sourceKeys') walk(child, next);
-        }
+            // 型の中には入らない
+            if (node.kind === 'lwcType') return 'skip';
+            const next = enterContext(node as unknown as Record<string, unknown>, current);
+            return { state: next };
+        },
     };
-    walk(root, context);
+    const visit = (value: unknown): void => {
+        if (Array.isArray(value)) {
+            value.forEach(visit);
+            return;
+        }
+        if (!isRecord(value)) return;
+        // kind を持つものはノード (以前の走査と同じ。sourceKeys のない部分の JSON も辿れるように)
+        if (typeof value.kind === 'string') {
+            walkJson<LwcNodeJson, LwcWalkContext>(value as LwcNodeJson, handlers, context);
+            return;
+        }
+        for (const [key, child] of Object.entries(value)) if (key !== 'sourceKeys') visit(child);
+    };
+    visit(root);
 };
 
 /** 本体の中身 (文の並びと、アロー関数の式の本体) を走査する。引数・修飾子には入らない */

@@ -88,7 +88,7 @@ const indexOf = (snapshot: MetadataSnapshot): MemberIndex => {
         };
         for (const call of info.calls) {
             const from = call.context.member ?? unit;
-            const inLoop = call.context.loopDepth > 0;
+            const inLoop = call.context.inLoop;
             const base = { ...where(call.sourceKeys), inLoop };
             switch (call.callType) {
                 case 'method': {
@@ -138,7 +138,7 @@ const indexOf = (snapshot: MetadataSnapshot): MemberIndex => {
         for (const dml of info.dml) {
             push(dml.context.member, {
                 ...where(dml.sourceKeys),
-                inLoop: dml.context.loopDepth > 0,
+                inLoop: dml.context.inLoop,
                 kind: 'dml',
                 to: 'Database',
                 label: `${dml.operation}${dml.object ? ` ${dml.object}` : ''}`,
@@ -147,7 +147,7 @@ const indexOf = (snapshot: MetadataSnapshot): MemberIndex => {
         for (const query of info.queries) {
             push(query.context.member, {
                 ...where(query.sourceKeys),
-                inLoop: query.context.loopDepth > 0,
+                inLoop: query.context.inLoop,
                 kind: 'query',
                 to: 'Database',
                 label: `${query.language === 'sosl' ? 'FIND' : query.language === 'dynamic' ? 'query' : 'SELECT'}${query.objects.length ? ` ${query.objects.join(', ')}` : ''}`,

@@ -157,6 +157,8 @@ export type ApexVariableDeclaration = DeclarationBase & {
     hasInitializer: boolean;
     /** 見える範囲のノードの sourceKey (引数はメソッド、ローカル変数はそれを並べたブロックの持ち主、for-each・catch・when はその節) */
     scopeKey: string;
+    /** トリガー・匿名 Apex の直下の変数 (パーサーでは field のノード。意味はローカル変数) */
+    topLevel?: true;
 };
 
 export type ApexDeclaration =
@@ -188,7 +190,19 @@ export type ApexBodyStatementJson =
 export type ApexExecutableBody = {
     /** 本体の ID (本体を持つ宣言の ID と同じ) */
     id: string;
-    kind: 'method' | 'constructor' | 'initializer' | 'getter' | 'setter' | 'trigger' | 'anonymous';
+    /**
+     * fieldInitializer: クラスのフィールドの初期値 (`static String EP = 'callout:X';` の右辺など)。
+     * ID はクラスの宣言の ID、文はフィールドの宣言 (初期値を持つものだけ)
+     */
+    kind:
+        | 'method'
+        | 'constructor'
+        | 'initializer'
+        | 'getter'
+        | 'setter'
+        | 'trigger'
+        | 'anonymous'
+        | 'fieldInitializer';
     /** 本体を持つ宣言の名前の並び (自分を含む) */
     path: string[];
     /** 本体の文 (トリガー・匿名 Apex は、中のクラス・メソッドなどの宣言を除いた文) */
@@ -312,7 +326,7 @@ export const apexDeclarationsOf = (source: ParsedApexSource): ApexDeclarations =
         type: TypeJson,
         state: State,
         scopeKey: string,
-        extra: { isFinal?: boolean; hasInitializer?: boolean } = {},
+        extra: { isFinal?: boolean; hasInitializer?: boolean; topLevel?: true } = {},
     ) =>
         declarations.push({
             ...base(node, name, state),
@@ -321,6 +335,7 @@ export const apexDeclarationsOf = (source: ParsedApexSource): ApexDeclarations =
             isFinal: extra.isFinal ?? false,
             hasInitializer: extra.hasInitializer ?? false,
             scopeKey,
+            ...(extra.topLevel ? { topLevel: true } : {}),
         });
 
     walkJson<ApexNodeJson, State>(
@@ -339,6 +354,20 @@ export const apexDeclarationsOf = (source: ParsedApexSource): ApexDeclarations =
                         memberCount: node.block.filter((member) => member.kind !== 'notSet').length,
                         isTest: modifiers.annotations.some((a) => a.toLowerCase() === 'istest'),
                     });
+                    // フィールドの初期値は、クラスごとに 1 つの本体にまとめる (書いた順)
+                    const initialized = node.block.filter(
+                        (member): member is ApexBodyStatementJson & { kind: 'field' } =>
+                            member.kind === 'field' &&
+                            member.variants.some((variant) => variant.init !== undefined),
+                    );
+                    if (initialized.length > 0) {
+                        addBody(
+                            declaration.id,
+                            'fieldInitializer',
+                            [...state.path, node.name],
+                            initialized,
+                        );
+                    }
                     return { state: inside(state, declaration.id, node.name, null) };
                 },
                 interface: (node, { state }) => {
@@ -518,6 +547,7 @@ export const apexDeclarationsOf = (source: ParsedApexSource): ApexDeclarations =
                             {
                                 isFinal: apexModifierInfoOf(modifierOf(parent)).isFinal,
                                 hasInitializer: node.init !== undefined,
+                                topLevel: true,
                             },
                         );
                         return;

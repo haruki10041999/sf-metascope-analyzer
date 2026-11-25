@@ -11,6 +11,7 @@ import {
     makeApexMethodCallNameOf,
     apexCallsOf,
     namePathOf,
+    type ApexExpressionRef,
 } from '../../src/analyzer/processor/Apex/semantic/call';
 import {
     type ApexDeclaration,
@@ -23,6 +24,12 @@ import {
     definitionCandidatesOf,
 } from '../../src/analyzer/processor/Apex/semantic/statement';
 import { type ApexQuery, apexQueriesOf } from '../../src/analyzer/processor/Apex/semantic/query';
+import {
+    apexTypeRefOf,
+    apexTypeResolverOf,
+    apexTypeTextOf,
+} from '../../src/analyzer/processor/Apex/semantic/type';
+import { resolveApexStandardName } from '../../src/analyzer/processor/Apex/semantic/standardNames';
 import type { CallJson, DotMethodCallJson, MethodDeclarationJson } from '../../src/analyzer/types';
 
 // 作り直し中の Apex の walker (src/analyzer/processor/Apex/semantic/)。
@@ -284,6 +291,8 @@ public with sharing virtual class A extends Base implements I, J {
         assert.deepEqual(
             bodies.map((b) => `${b.kind}:${b.path.join('.')}`),
             [
+                // フィールドの初期値 (MAX = 10)
+                'fieldInitializer:A',
                 'setter:A.name.setter',
                 'initializer:A.initializer',
                 'constructor:A.A',
@@ -690,7 +699,8 @@ describe('semantic/query.ts の apexQueriesOf', () => {
         assert.deepEqual(fieldsOf(query), [
             'typeOf:Event.What',
             'typeOf:Account.Phone',
-            'typeOf:What.Name',
+            // ELSE は型が決まらないので、多態の関係をたどるパス
+            'typeOf:Event.What.Name',
         ]);
         assert.equal(query?.inLoop, true);
     });
@@ -715,5 +725,260 @@ describe('semantic/query.ts の apexQueriesOf', () => {
             query?.binds.map((b) => `${b.via}:${b.ref.kind === 'name' ? b.ref.name : b.ref.kind}`),
             ['find:term'],
         );
+    });
+});
+
+describe('semantic/type.ts の式の型', () => {
+    const CLASS = `public class A {
+        public class Item { public String label; public Item next; public Item child() { return null; } }
+        public enum Level { LOW, HIGH }
+        static Integer counter;
+        List<Item> items;
+        Map<Id, Account> byId;
+        Item[] arr;
+        String name { get; set { name = value; } }
+        Item find(String k) { return null; }
+        Item find(Integer k) { return null; }
+        Integer pick(Integer a) { return a; }
+        String pick(String a, String b) { return a; }
+        Object choose(Integer a) { return a; }
+        String choose(String a) { return a; }
+        void use(Object o) {}
+        void run(Account acc, List<Account> accounts) {
+            use(items[0].label);
+            use(arr[0].next.child());
+            use(byId.get(acc.Id));
+            use(byId.values());
+            use(byId.keySet());
+            use(accounts.get(0).Name);
+            use(find('x'));
+            use(pick(1));
+            use(choose(1));
+            use(Level.HIGH);
+            use(A.counter);
+            use(new Item());
+            use((Item) acc);
+            use([SELECT Id FROM Account]);
+            use(Database.query('x'));
+            use(this.items);
+            use(accounts.size());
+            use(Schema.Account.SObjectType);
+        }
+    }`;
+
+    const resolve = async (bodyPath: string) => {
+        const declarations = apexDeclarationsOf(await parseSource(CLASS));
+        const analysis = analyzeApexBodies(declarations).find(
+            (a) => a.body.path.join('.') === bodyPath,
+        );
+        assert.ok(analysis);
+        const calls = apexCallsOf(analysis);
+        return {
+            declarations,
+            analysis,
+            calls,
+            resolver: apexTypeResolverOf(declarations, analysis, calls),
+        };
+    };
+
+    it('変数・メンバー・添字・呼び出しの連鎖・コレクションのメソッドの型を求める', async () => {
+        const { calls, resolver } = await resolve('A.run');
+        const uses = calls.filter((c) => c.name === 'use');
+        assert.deepEqual(
+            uses.map((c) => apexTypeTextOf(resolver.typeOf(c.argRefs[0] as ApexExpressionRef))),
+            [
+                'String',
+                // 単位の中の型は書いた名前のまま (宣言の ID で区別する)
+                'Item',
+                'Account',
+                'List<Account>',
+                'Set<Id>',
+                // SObject の項目 (項目の型はスキーマを引く参照の解決で決める)
+                'unknown(sObjectField: Account.Name)',
+                // 引数の数で 2 つに絞れるが、戻り値の型が同じなので決まる
+                'Item',
+                'Integer',
+                // 引数の数では絞れず、戻り値の型も違う
+                'unknown(ambiguousOverload: choose)',
+                'A.Level',
+                'Integer',
+                'Item',
+                'Item',
+                'List<Account>',
+                // 名前空間を省いた System.Database の標準メソッド
+                'unknown(standardMethod: System.Database.query)',
+                'List<Item>',
+                'Integer',
+                'unknown(standardMember: Schema.Account.SObjectType)',
+            ],
+        );
+    });
+
+    it('単位の中の型には宣言の ID を付け、名前空間つきの名前は書いたまま持つ', async () => {
+        const { declarations, calls, resolver } = await resolve('A.run');
+        const item = declarations.declarations.find((d) => d.kind === 'class' && d.name === 'Item');
+        const [first] = calls.filter((c) => c.name === 'use');
+        const type = resolver.typeOf(first?.argRefs[0] as ApexExpressionRef);
+        assert.equal(type.kind, 'primitive');
+        const created = calls.find((c) => c.kind === 'new');
+        assert.ok(created);
+        const createdType = resolver.returnTypeOf(created);
+        assert.ok(createdType.kind === 'named');
+        assert.equal(createdType.declarationId, item?.id);
+    });
+
+    it('setter の value はプロパティの型', async () => {
+        const { resolver } = await resolve('A.name.setter');
+        assert.equal(
+            apexTypeTextOf(
+                resolver.typeOf({
+                    kind: 'name',
+                    name: 'value',
+                    target: { kind: 'implicit', name: 'value' },
+                }),
+            ),
+            'String',
+        );
+    });
+
+    it('List・配列・System.List を同じ形にし、Schema.Account と Account を区別する', async () => {
+        const source = await parseSource(
+            'public class B { void m(List<Account> a, Account[] b, System.List<Account> c, List<Schema.Account> d) {} }',
+            'B',
+        );
+        const params = apexDeclarationsOf(source).declarations.flatMap((d) =>
+            d.kind === 'parameter' ? [apexTypeTextOf(apexTypeRefOf(d.type))] : [],
+        );
+        assert.deepEqual(params, [
+            'List<Account>',
+            'List<Account>',
+            'List<Account>',
+            'List<Schema.Account>',
+        ]);
+    });
+});
+
+describe('semantic/type.ts の継承', () => {
+    it('同じ単位の中の親クラスのメソッド・メンバーと、super の経由を解決する', async () => {
+        const source = await parseSource(
+            `public class C {
+                public virtual class Base { public String label; public Base self() { return this; } }
+                public class Child extends Base {
+                    void run() { use(self().label); use(super.self()); use(this.label); }
+                    void use(Object o) {}
+                }
+            }`,
+            'C',
+        );
+        const declarations = apexDeclarationsOf(source);
+        const analysis = analyzeApexBodies(declarations).find(
+            (a) => a.body.path.join('.') === 'C.Child.run',
+        );
+        assert.ok(analysis);
+        const calls = apexCallsOf(analysis);
+        const resolver = apexTypeResolverOf(declarations, analysis, calls);
+        const base = declarations.declarations.find(
+            (d) => d.kind === 'method' && d.name === 'self',
+        );
+        assert.deepEqual(
+            calls
+                .filter((c) => c.name === 'use')
+                .map((c) => apexTypeTextOf(resolver.typeOf(c.argRefs[0] as ApexExpressionRef))),
+            ['String', 'Base', 'String'],
+        );
+        const self = calls.find((c) => c.name === 'self' && c.receiver === null);
+        assert.ok(self);
+        assert.deepEqual(
+            resolver.methodCandidatesOf(self).map((m) => m.id),
+            [base?.id],
+        );
+    });
+});
+
+describe('semantic/standardNames.ts', () => {
+    /** 照合の結果を「種類:名前|残りのメンバー」の形にする */
+    const show = (path: string[], isUserType?: (p: readonly string[]) => boolean) => {
+        const name = resolveApexStandardName(path, isUserType ? { isUserType } : {});
+        if (!name) return 'none';
+        const head =
+            name.kind === 'type'
+                ? `type:${name.type.qualifiedName}`
+                : name.kind === 'sObject'
+                  ? `sObject:${name.object}:${name.listed ? 'listed' : 'custom'}`
+                  : `namespace:${name.namespace}`;
+        return `${head}|${name.members.join('.')}`;
+    };
+
+    it('名前空間の型と、名前空間を省いた System の型を区別する', () => {
+        // Database.Batchable は Database 名前空間のインターフェース、Database.query の Database は System.Database
+        assert.equal(show(['Database', 'Batchable']), 'type:Database.Batchable|');
+        assert.equal(show(['Database', 'query']), 'type:System.Database|query');
+        assert.equal(show(['System', 'Database']), 'type:System.Database|');
+        assert.equal(show(['String']), 'type:System.String|');
+        assert.equal(show(['schema', 'sobjecttype']), 'type:Schema.SObjectType|');
+        // 入れ子の型
+        assert.equal(
+            show(['Messaging', 'InboundEmail', 'Header']),
+            'type:Messaging.InboundEmail.Header|',
+        );
+    });
+
+    it('SObject と、カスタムのオブジェクトの接尾辞', () => {
+        assert.equal(show(['Account', 'Name']), 'sObject:Account:listed|Name');
+        assert.equal(
+            show(['Schema', 'Account', 'SObjectType']),
+            'sObject:Account:listed|SObjectType',
+        );
+        assert.equal(show(['Invoice__c']), 'sObject:Invoice__c:custom|');
+        assert.equal(show(['ns__Setting__mdt']), 'sObject:ns__Setting__mdt:custom|');
+    });
+
+    it('ユーザーの型を優先し、一覧にない名前は判定しない', () => {
+        const userDatabase = (p: readonly string[]) => p.join('.').toLowerCase() === 'database';
+        // ユーザーの Database クラスがあれば、名前空間を省いた Database は標準にしない
+        assert.equal(show(['Database', 'query'], userDatabase), 'none');
+        // 名前空間を書いた型は標準のまま
+        assert.equal(show(['Database', 'Batchable'], userDatabase), 'type:Database.Batchable|');
+        assert.equal(show(['System', 'Database'], userDatabase), 'type:System.Database|');
+        // 名前空間だけが一致 (型が動的に作られる Flowtesting など)
+        assert.equal(show(['Flowtesting', 'MyFlowTest']), 'namespace:Flowtesting|MyFlowTest');
+        assert.equal(show(['MyService']), 'none');
+    });
+
+    it('変数の型・静的な参照に標準の型の情報を付け、単位の中の同じ名前の型を優先する', async () => {
+        const source = await parseSource(
+            `public class D {
+                public class Database { public Integer count() { return 0; } }
+                void run(HttpRequest req) {
+                    use(req.getBody());
+                    use(Database.count());
+                    use(System.Database.query('x'));
+                    use(Messaging.InboundEmail.Header.class);
+                }
+                void use(Object o) {}
+            }`,
+            'D',
+        );
+        const declarations = apexDeclarationsOf(source);
+        const analysis = analyzeApexBodies(declarations).find(
+            (a) => a.body.path.join('.') === 'D.run',
+        );
+        assert.ok(analysis);
+        const calls = apexCallsOf(analysis);
+        const resolver = apexTypeResolverOf(declarations, analysis, calls);
+        const types = calls
+            .filter((c) => c.name === 'use')
+            .map((c) => apexTypeTextOf(resolver.typeOf(c.argRefs[0] as ApexExpressionRef)));
+        assert.deepEqual(types.slice(0, 3), [
+            'unknown(standardMethod: System.HttpRequest.getBody)',
+            // 単位の中の Database クラス
+            'Integer',
+            'unknown(standardMethod: System.Database.query)',
+        ]);
+        const req = calls.find((c) => c.name === 'getBody');
+        assert.ok(req?.receiver);
+        const reqType = resolver.typeOf(req.receiver);
+        assert.ok(reqType.kind === 'named');
+        assert.deepEqual(reqType.standard, { kind: 'type', qualifiedName: 'System.HttpRequest' });
     });
 });

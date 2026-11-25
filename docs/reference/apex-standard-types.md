@@ -30,5 +30,5 @@ Salesforce の公式 [Apex Reference Guide PDF](https://resources.docs.salesforc
 ## 依存関係解析での使い方
 
 - `Schema.SObjectType` のような名前空間付きの型名を照合できる。照合時は大文字・小文字を区別せず、出力には公式表記を保持する。
-- `List<Account>` の walker 出力にある `path: ['list']` はコレクションの構造であり、`list.Account` という名前空間付き型名ではない。型の構造と名前空間を区別して解決する。
-- 名前空間を省略した型名は、この表への単純一致だけで標準型と決めず、スコープ・名前衝突などを解決する。該当がない名前や、生成型・表の未調査部分は `unknown` として扱う。
+- `List<Account>` はコレクションの構造であり、`list.Account` という名前空間付き型名ではない。型の構造（`ApexTypeRef`）と名前空間を区別して解決する（[semantic/type.ts](../../src/analyzer/processor/Apex/semantic/type.ts)）。
+- 名前空間を省略した型名は、この表への単純一致だけで標準型と決めず、単位の中の宣言・リポジトリの定義を先に探す。名前の並びは先頭から最も長く一致する型に当てる（`Database.Batchable` は Database 名前空間の型、`Database.query` の `Database` は `System.Database`）。該当がない名前や、生成型・表の未調査部分は `unknown` として扱う（[semantic/standardNames.ts](../../src/analyzer/processor/Apex/semantic/standardNames.ts)）。

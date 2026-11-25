@@ -15,14 +15,16 @@
 
 ## オブジェクトと項目
 
-| オブジェクト | 項目の例                                                          | バージョンについて確認できたこと                                  | 出典                                                                                                                       |
-| ------------ | ----------------------------------------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `Account`    | `AccountNumber`, `AccountScore`, `AccountSource`, `AnnualRevenue` | `AccountScore`: API 61.0 で導入。`AccountSource`: API 24.0 で導入 | [Account](https://developer.salesforce.com/docs/platform/object-reference/references/standard-objects/object-account.html) |
+| オブジェクト | 項目の例                                          | バージョンについて確認できたこと                      | 出典                                                                                                                                                                                                                                           |
+| ------------ | ------------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Account`    | `AccountNumber`, `AccountSource`, `AnnualRevenue` | 導入版は Object Reference（Version 68.0）に記載がない | [Account](https://developer.salesforce.com/docs/platform/object-reference/references/standard-objects/object-account.html)、[Object Reference の PDF](https://resources.docs.salesforce.com/latest/latest/en-us/sfdc/pdf/object_reference.pdf) |
 
 導入版は公式資料に明記されたものだけを掲載している。掲載した項目であっても組織や権限による利用可否は別途確認が必要。
+
+2026-11-25 の照合で直したこと：以前は `AccountScore` を「API 61.0 で導入」、`AccountSource` を「API 24.0 で導入」と記載していた。Object Reference for the Salesforce Platform（Version 68.0、2026-11-06 更新）の PDF では、Account の項目の表に `AccountScore` がなく（PDF 全体にも出てこない）、`AccountSource` には導入版の記載がない。根拠を確認できないため、`AccountScore` を例から外し、導入版の記載を消した（[照合の記録](./apex-standard-reference.md#照合の記録)）。
 
 ## 依存関係解析での使い方
 
 例えば `String.valueOf(123).trim().toUpperCase()` では、公式資料上 `String.valueOf`、`trim`、`toUpperCase` は `String` を返す。呼び出しの結果型を順に解決できれば、後続の `trim` と `toUpperCase` も `System.String` のメソッドとして扱える。
 
-ただし、現在の [Apex walker](../../src/analyzer/processor/Apex/walker.ts) の名前抽出だけではメソッド呼び出しをまたげない。利用者が定義したクラス・変数との名前衝突、オーバーロード、動的な型、組織固有のオブジェクトや API バージョンも解決が必要。未解決の参照を、一覧に載っていないという理由だけで欠落としない。
+新しい解析（[semantic/type.ts](../../src/analyzer/processor/Apex/semantic/type.ts)）は呼び出しの連鎖をたどるが、標準 API はメソッドの単位で照合しない方針（[計画](../plan.md) の 2.2）なので、`String.valueOf(…)` の戻り値は `unknown`（`standardMethod`）になる。戻り値の型を持つかは計画の 9 章で決める。利用者が定義したクラス・変数との名前衝突、オーバーロード、動的な型、組織固有のオブジェクトや API バージョンも解決が必要。未解決の参照を、一覧に載っていないという理由だけで欠落としない。

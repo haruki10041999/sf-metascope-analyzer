@@ -2890,10 +2890,16 @@
       {
         "id": "n8",
         "kind": "process",
-        "label": "Map<String, Object> binds = new Map<String, Object>{\nList<SObject> accountsD = Database.queryWithBinds(",
-        "detail": "Map<String, Object> binds = new Map<String, Object>{\n            'accountName' => 'Acme'\n        };\nList<SObject> accountsD = Database.queryWithBinds(\n            'SELECT Id FROM Account WHERE Name = :accountName',\n            binds,\n            AccessLevel.USER_MODE\n        );",
-        "line": 503,
-        "count": 2
+        "label": "Map<String, Object> binds = new Map<String, Object>{",
+        "detail": "Map<String, Object> binds = new Map<String, Object>{\n            'accountName' => 'Acme'\n        };",
+        "line": 503
+      },
+      {
+        "id": "n9",
+        "kind": "query",
+        "label": "List<SObject> accountsD = Database.queryWithBinds(",
+        "detail": "List<SObject> accountsD = Database.queryWithBinds(\n            'SELECT Id FROM Account WHERE Name = :accountName',\n            binds,\n            AccessLevel.USER_MODE\n        );",
+        "line": 507
       }
     ],
     "edges": [
@@ -2929,6 +2935,11 @@
       },
       {
         "from": "n8",
+        "to": "n9",
+        "kind": "normal"
+      },
+      {
+        "from": "n9",
         "to": "n2",
         "kind": "normal"
       }

@@ -5,7 +5,7 @@ import {
     type MetadataContext,
 } from '../processor/Metadata/references';
 import { isSameValue } from '../processor/commons/diff/commons';
-import type { CustomLabelsJson, JsonType } from '../types';
+import type { JsonType } from '../types';
 import type { MetadataSnapshot, RowBase, ValueChange, ViewStatus } from './types';
 
 // provider で共通の部品
@@ -26,7 +26,6 @@ export const readable = <J>(
             : [],
     );
 
-/** 解析結果から、参照先の確かめに使う MetadataContext を作る (snapshot.context にあるものはそちらを使う) */
 /** スナップショットごとの MetadataContext (provider ごとに作り直さない。大きいリポジトリでオブジェクトの解析などが重い) */
 const contexts = new WeakMap<MetadataSnapshot, MetadataContext>();
 
@@ -39,12 +38,8 @@ export const contextOf = (snapshot: MetadataSnapshot | undefined): MetadataConte
     return context;
 };
 
+/** 解析結果から、種類の中の決まりの確かめに使う MetadataContext を作る (snapshot.context にあるものはそちらを使う) */
 const buildContext = (snapshot: MetadataSnapshot): MetadataContext => {
-    const names = (results: { result: { id: string } }[] | undefined, type: string) =>
-        results ? { [type]: results.map((r) => nameOf(r, type)) } : {};
-    const labels = readable<CustomLabelsJson>(snapshot.customLabels, 'customLabels').flatMap(
-        ({ json }) => (json.labels ?? []).map((label) => label.fullName),
-    );
     return {
         ...(snapshot.objects
             ? {
@@ -55,21 +50,6 @@ const buildContext = (snapshot: MetadataSnapshot): MetadataContext => {
             : {}),
         ...(snapshot.apex ? apexContextOf(snapshot.apex) : {}),
         ...(snapshot.lwc ? lwcContextOf(snapshot.lwc) : {}),
-        ...(snapshot.flows ? { flows: snapshot.flows.map((r) => nameOf(r, 'flow')) } : {}),
-        ...(snapshot.layouts ? { layouts: snapshot.layouts.map((r) => nameOf(r, 'layout')) } : {}),
-        ...(snapshot.flexiPages
-            ? { flexiPages: snapshot.flexiPages.map((r) => nameOf(r, 'flexiPage')) }
-            : {}),
-        ...(snapshot.customLabels ? { customLabels: labels } : {}),
-        ...(snapshot.permissionSets
-            ? { permissionSets: names(snapshot.permissionSets, 'permissionSet').permissionSet! }
-            : {}),
-        ...(snapshot.mutingPermissionSets
-            ? {
-                  mutingPermissionSets: names(snapshot.mutingPermissionSets, 'mutingPermissionSet')
-                      .mutingPermissionSet!,
-              }
-            : {}),
         ...snapshot.context,
     };
 };

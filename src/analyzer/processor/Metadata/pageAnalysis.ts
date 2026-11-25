@@ -1,16 +1,6 @@
 import type { FlexiPageParseResult, LayoutParseResult } from '../../parser/Metadata/page';
-import {
-    type ConvertKeys,
-    type FlexiPageJson,
-    type LayoutJson,
-    criterionTextsOf,
-} from '../../types';
-import {
-    MetadataContext,
-    MetadataFinding,
-    ReferenceProblem,
-    makeReferenceChecker,
-} from './references';
+import type { ConvertKeys, FlexiPageJson, LayoutJson } from '../../types';
+import type { MetadataContext, MetadataFinding } from './references';
 
 // 画面 (ページレイアウト・Lightning ページ) の解析。方針: docs/metadata-implementation.md 10 章
 
@@ -28,9 +18,8 @@ export type LayoutInfo = {
     sourceKeys: ConvertKeys;
 };
 
+/** レイアウトの解析の指摘。項目・オブジェクトがリポジトリにあるかは、依存関係のグラフの指摘で見る */
 export type LayoutAnalysisCode =
-    | 'UNKNOWN_OBJECT'
-    | 'UNKNOWN_FIELD'
     | 'FIELD_NOT_ON_LAYOUT'
     | 'REQUIRED_FIELD_NOT_ON_LAYOUT'
     | 'REQUIRED_FIELD_READONLY'
@@ -45,22 +34,6 @@ export type LayoutAnalysis = {
     findings: LayoutFinding[];
 };
 
-const addProblem = <F extends MetadataFinding>(
-    findings: F[],
-    problem: ReferenceProblem | undefined,
-    base: Omit<F, 'code' | 'severity' | 'target' | 'message'>,
-) => {
-    if (problem) {
-        findings.push({
-            ...base,
-            code: problem.code,
-            severity: 'warning',
-            target: problem.target,
-            message: problem.message,
-        } as F);
-    }
-};
-
 /**
  * ページレイアウトの解析。context.objects を渡すと、項目がオブジェクトにあるか、
  * どのレイアウトにもないカスタム項目 (レイアウトのあるオブジェクトのみ) も確かめる
@@ -69,7 +42,6 @@ export const analyzeLayouts = (
     results: LayoutParseResult[],
     context: MetadataContext = {},
 ): LayoutAnalysis => {
-    const check = makeReferenceChecker(context);
     const objects = new Map(
         (context.objects ?? []).map((object) => [object.apiName.toLowerCase(), object]),
     );
@@ -90,16 +62,10 @@ export const analyzeLayouts = (
             filePath: result.filePath,
             sourceKeys: json.sourceKeys,
         });
-        // オブジェクトがないときはレイアウトに 1 回だけ出し、項目は確かめない (項目ごとに同じ指摘が並ぶため)
-        const unknownObject = check.object(json.objectApiName);
-        addProblem(findings, unknownObject, { ...base, sourceKeys: json.sourceKeys });
         for (const item of json.items ?? []) {
             if (!item.field) continue;
             const field = `${json.objectApiName}.${item.field}`;
             layoutsByField[field] = [...(layoutsByField[field] ?? []), json.name];
-            if (!unknownObject) {
-                addProblem(findings, check.field(field), { ...base, sourceKeys: item.sourceKeys });
-            }
         }
 
         // 項目の必須とレイアウトの behavior の食い違い (メタデータのある項目だけ)
@@ -212,13 +178,12 @@ export type FlexiPageInfo = {
     sourceKeys: ConvertKeys;
 };
 
+/**
+ * Lightning ページの解析の指摘。オブジェクト・項目 (表示条件の項目も)・LWC がリポジトリにあるかは、
+ * 依存関係のグラフの指摘で見る。ここは置いた LWC の公開・target・プロパティだけ
+ */
 export type FlexiPageAnalysisCode =
-    | 'UNKNOWN_OBJECT'
-    | 'UNKNOWN_FIELD'
-    | 'UNKNOWN_LWC'
-    | 'LWC_NOT_EXPOSED'
-    | 'LWC_TARGET_MISMATCH'
-    | 'UNKNOWN_LWC_PROPERTY';
+    'LWC_NOT_EXPOSED' | 'LWC_TARGET_MISMATCH' | 'UNKNOWN_LWC_PROPERTY';
 
 export type FlexiPageFinding = MetadataFinding<FlexiPageAnalysisCode> & { flexiPage: string };
 
@@ -228,8 +193,6 @@ export type FlexiPageAnalysis = {
     findings: FlexiPageFinding[];
 };
 
-const RECORD_FIELD = /\{!Record\.(\w+)\}/g;
-
 /**
  * Lightning ページの解析。context.lwcBundles / lwcMeta (lwcContextOf で作る) を渡すと、
  * 置いている LWC があるか・公開されているか・ページの種類の target を持つか・渡すプロパティが targetConfigs にあるかも確かめる
@@ -238,7 +201,6 @@ export const analyzeFlexiPages = (
     results: FlexiPageParseResult[],
     context: MetadataContext = {},
 ): FlexiPageAnalysis => {
-    const check = makeReferenceChecker(context);
     const findings: FlexiPageFinding[] = [];
     const pages: FlexiPageInfo[] = [];
     const placements: LwcPlacement[] = [];
@@ -267,34 +229,8 @@ export const analyzeFlexiPages = (
             filePath: result.filePath,
             sourceKeys: json.sourceKeys,
         });
-        if (object) {
-            addProblem(findings, check.object(object), { ...base, sourceKeys: json.sourceKeys });
-        }
-
-        /** Record.<項目> と表示条件の {!Record.<項目>} を、ページのオブジェクトの項目として確かめる */
-        const checkRecordFields = (texts: string[], sourceKeys: ConvertKeys) => {
-            if (!object) return;
-            texts.forEach((text) => {
-                const direct = text.match(/^Record\.(\w+)$/);
-                const fields = direct
-                    ? [direct[1]!]
-                    : [...text.matchAll(RECORD_FIELD)].map((m) => m[1]!);
-                fields.forEach((field) =>
-                    addProblem(findings, check.field(`${object}.${field}`), {
-                        ...base,
-                        sourceKeys,
-                    }),
-                );
-            });
-        };
 
         for (const component of json.components ?? []) {
-            const ruleTexts = (component.visibilityRule?.criteria ?? []).flatMap((c) => {
-                const { left, right } = criterionTextsOf(c);
-                return [left, right];
-            });
-            checkRecordFields(ruleTexts, component.sourceKeys);
-
             const [namespace, name] = component.componentName.split(':');
             if (namespace !== 'c' || !name) continue;
             const properties = Object.keys(component.attributes ?? {});
@@ -307,11 +243,7 @@ export const analyzeFlexiPages = (
                 identifier: component.identifier,
                 properties,
             });
-            const unknown = check.lwc(name);
-            if (unknown) {
-                add('UNKNOWN_LWC', name, unknown.message, component.sourceKeys);
-                continue;
-            }
+            // js-meta.xml が分かる (リポジトリにある) LWC だけ
             const meta = context.lwcMeta?.[name];
             if (!meta) continue;
             if (!meta.isExposed) {
@@ -343,18 +275,6 @@ export const analyzeFlexiPages = (
                         ),
                     );
             }
-        }
-        for (const field of json.fields ?? []) {
-            checkRecordFields(
-                [
-                    field.fieldItem,
-                    ...(field.visibilityRule?.criteria ?? []).flatMap((c) => {
-                        const { left, right } = criterionTextsOf(c);
-                        return [left, right];
-                    }),
-                ],
-                field.sourceKeys,
-            );
         }
     }
 

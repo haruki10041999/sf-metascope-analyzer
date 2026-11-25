@@ -54,6 +54,48 @@ export type NodeHit = {
     endLine: number | null;
 };
 
+/** 参照の検索 (reference 表。参照先の種類と名前で引く。名前の大小は区別しない) */
+export type ReferenceQuery = {
+    /** 探す単位の key */
+    unitKeys: readonly string[];
+    /** 参照先の種類 (object・field・apexClass・customLabel など) */
+    targetType: string;
+    /** 参照先の名前 (Invoice__c.Amount__c など) */
+    target: string;
+};
+
+/** 見つかった参照 1 つ (参照している単位と場所) */
+export type ReferenceHit = {
+    unitKey: string;
+    unitType: string;
+    targetType: string;
+    /** 参照先の名前 (書いたまま) */
+    target: string;
+    kind: string;
+    via: string;
+    member: string | null;
+    statementKey: string | null;
+    expressionKey: string | null;
+};
+
+/** 定義の検索 (symbol 表。名前で引く。名前の大小は区別しない) */
+export type SymbolQuery = {
+    unitKeys: readonly string[];
+    /** 定義の名前 (AccountService・AccountService.sync・Invoice__c.Amount__c など) */
+    name: string;
+    /** 定義の種類 (apexClass・apexMethod・field など)。省略ですべて */
+    kind?: string;
+};
+
+export type SymbolHit = {
+    unitKey: string;
+    unitType: string;
+    kind: string;
+    name: string;
+    /** 定義している宣言の位置 (なければ null) */
+    sourceKey: string | null;
+};
+
 /** ノードの種類ごとの数 */
 export type NodeKindCount = { unitType: string; kind: string; count: number };
 
@@ -105,6 +147,10 @@ export interface StoreBackend {
     rollback(): Promise<void>;
     readFileStats(): Promise<Map<string, FileStatEntry>>;
     writeFileStats(entries: [string, FileStatEntry][]): Promise<void>;
+    /** 参照を参照先で引く (unitKeys の単位だけ。単位の key・書いた順) */
+    findReferences(query: ReferenceQuery): Promise<ReferenceHit[]>;
+    /** 定義を名前で引く (unitKeys の単位だけ。単位の key・書いた順) */
+    findSymbols(query: SymbolQuery): Promise<SymbolHit[]>;
     /** ノードを探す (unitKeys の単位だけ。単位・ファイル・位置の順)。total は limit をかける前の数 */
     findNodes(query: NodeQuery): Promise<{ total: number; nodes: NodeHit[] }>;
     /** unitKeys の単位のノードの、単位の種類・ノードの種類ごとの数 (多い順) */

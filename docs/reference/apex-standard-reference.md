@@ -24,6 +24,16 @@
 
 2026-11-20 の公式資料では Winter '27 / API 68.0 が最新として表示されている（[Apex Release Notes](https://developer.salesforce.com/docs/platform/apex-ref/references/apex-ref/apex-releasenotes.html)）。これは参照資料の版であり、ここに挙げた各名前が過去のすべての API バージョンで使用可能であるという意味ではない。
 
+## 照合の記録
+
+公式資料の HTML（developer.salesforce.com）は自動の取得を 403 で断るため、同じ内容の PDF（resources.docs.salesforce.com）を取得してテキストにし、コードの一覧と照合している。手順は [Salesforce のリリースの更新のスキル](../../.claude/skills/salesforce-release-update/SKILL.md)。
+
+| 照合日     | 資料                                                | 版                                          | 結果                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ---------- | --------------------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-11-25 | Apex Reference Guide の PDF                         | Version 68.0, Winter '27（2026-10-28 更新） | コードの標準型 2,504 件（`standardTypes.ts`）と [標準型一覧](./apex-standard-types.md) は一致。2,503 件は PDF の本文に出てくる。`Slack.UserMappingService` だけは PDF になく、Slack SDK の公式資料で確認したもの（一覧の備考のとおり）。目次の名前空間 80 件と `industriesNlpSvc`（目次に「Namespace」が付かない）の 81 件は、コードの名前空間と一致。メソッド名の例と `String.equals(secondString)` の非推奨も記載どおり |
+| 2026-11-25 | Object Reference for the Salesforce Platform の PDF | Version 68.0, Winter '27（2026-11-06 更新） | `standardObjects.ts` の標準オブジェクト 50 件はすべて掲載。Account の `AccountNumber`・`AccountSource`・`AnnualRevenue` は掲載、**`AccountScore` は掲載なし**。**導入版（`AccountScore` 61.0・`AccountSource` 24.0）の記載なし** → 例から外し、導入版の記載を消した                                                                                                                                                       |
+| 2026-11-25 | Metadata API Developer Guide の PDF                 | Version 68.0, Winter '27（2026-11-20 更新） | 依存関係のグラフの package.xml の種類名 56 件（`graph.ts` の `METADATA_TYPE_NAMES`）はすべて掲載（`MatchingRules` は package.xml で一括指定するときの複数形として掲載）                                                                                                                                                                                                                                                   |
+
 ## 残る調査
 
 - 型一覧の未収録領域と各型の公開条件を調査し、必要に応じてメソッド名、非推奨・導入版を確認する。
