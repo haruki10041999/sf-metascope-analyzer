@@ -3,8 +3,11 @@ import {
     type GraphUnit,
     buildDependencyGraph,
 } from '../processor/dependency/graph';
+import type { IdParseResult } from '../processor/commons/diff/unit';
 import type { UnitDependencies } from '../processor/dependency/types';
 import { getUnitDependencies } from '../processor/dependency/units';
+import type { ApexUnitParseResult } from '../parser/Apex/unit';
+import { type ApexDeclarationIndex, apexRepositoryIndexOf } from '../processor/Apex/semantic';
 
 import type { Repository } from './repository';
 
@@ -24,8 +27,14 @@ const unitDependencies = new WeakMap<object, UnitDependencies>();
  * 版の履歴:
  * - 1: 定義・参照を保存するようにした (2026-11-17)
  * - 2: Apex の参照を新しい解析 (processor/Apex/semantic) で取り出す。定義・参照を symbol・reference の表にも書く (2026-11-25)
+ * - 3: Apex の定義・参照に、単位をまたげば解決できるかもしれない参照の数 (pendingResolution) を足した。
+ *      親クラスから引き継いだフィールドを、同じ名前の型より先に引く (2026-11-26)
+ * - 4: 参照に確かさ (resolution) を持たせ、候補の参照 (candidates) も残す。オーバーロード・継承した
+ *      メンバーの解決を足した (2026-11-26)
+ * - 5: ほかの単位の型のメンバー・メソッドの名前だけの参照も、単位をまたげば解決できるかもしれない参照 (pendingResolution)
+ *      に数える (インターフェースの実装クラスへの呼び出しの候補を、グラフで作るため。2026-11-26)
  */
-export const DERIVED_VERSION = 2;
+export const DERIVED_VERSION = 9;
 
 /** 保存した定義・参照を、解析結果に使う (UnitStore が、版の合う保存したものを読んだとき) */
 export const primeUnitDependencies = (result: object, dependencies: UnitDependencies): void => {
@@ -33,7 +42,7 @@ export const primeUnitDependencies = (result: object, dependencies: UnitDependen
 };
 
 /** 単位 1 つの定義・参照 (同じ解析結果には、作ったものを使い回す) */
-export const unitDependenciesOf = (type: string, result: object): UnitDependencies => {
+export const unitDependenciesOf = (type: string, result: IdParseResult): UnitDependencies => {
     let dependencies = unitDependencies.get(result);
     if (!dependencies) {
         dependencies = getUnitDependencies(type, result);
@@ -42,15 +51,34 @@ export const unitDependenciesOf = (type: string, result: object): UnitDependenci
     return dependencies;
 };
 
-/** リポジトリのすべての単位の定義・参照 */
-export const getRepositoryDependencies = (repository: Repository): GraphUnit[] =>
-    repository.entries().flatMap(([type, results]) =>
-        results.map((result) => ({
-            type,
-            id: result.result.id,
-            dependencies: unitDependenciesOf(type, result),
-        })),
+const APEX_UNIT_TYPES = new Set(['apexClass', 'apexTrigger', 'anonymousApex']);
+
+/**
+ * リポジトリのすべての単位の定義・参照 (グラフの入力)。
+ * Apex の単位のうち、単位の中だけでは解決できなかった参照があるもの (pendingResolution) は、リポジトリの
+ * クラスの宣言の索引を渡して解析し直す (ほかのクラスの型・親クラス・メソッドの戻り値をたどる。docs/plan.md 10 章 P4)。
+ * 解析し直した結果はほかの単位に依存するので、保存しない (グラフはリポジトリごとに作り直す)
+ */
+export const getRepositoryDependencies = (repository: Repository): GraphUnit[] => {
+    let index: ApexDeclarationIndex | undefined;
+    const indexOf = () =>
+        (index ??= apexRepositoryIndexOf(repository.get('apexClass') as ApexUnitParseResult[]));
+    return repository.entries().flatMap(([type, results]) =>
+        results.map((result) => {
+            const local = unitDependenciesOf(type, result);
+            const dependencies =
+                APEX_UNIT_TYPES.has(type) && (local.pendingResolution ?? 0) > 0
+                    ? getUnitDependencies(type, result, {
+                          repository: {
+                              index: indexOf(),
+                              unit: (result as ApexUnitParseResult).result.base.name,
+                          },
+                      })
+                    : local;
+            return { type, id: result.result.id, dependencies };
+        }),
     );
+};
 
 /** リポジトリの依存関係のグラフ (ノード・辺・ない参照の指摘) */
 export const analyzeDependencies = (repository: Repository): DependencyGraph =>

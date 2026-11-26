@@ -1,11 +1,16 @@
 import type { ApexUnitParseResult } from '../parser/Apex/unit';
-import { unitInfoOf } from './apex';
+import {
+    analyzeApexUnit,
+    apexRepositoryIndexOf,
+    apexUnitFactsOf,
+} from '../processor/Apex/semantic';
 import { sourceTextsOf } from './apexFlow';
 import type { CallSequence, CallSequenceMessage, MetadataSnapshot, SnapshotInput } from './types';
 
 // apex.callFlow: メソッド (・トリガー) から、呼び出しをクラスをまたいでたどったシーケンス図 (docs/todo.md 3.2.1 の 5)。
 // 呼び出し・SOQL / SOSL・DML・非同期の開始・外部の呼び出し・イベントの発行を、ソースの順に並べる。
 // リポジトリにあるクラスのメソッドを呼べば、その中を depth 段までたどる (再帰はたどらない)。
+// インターフェース・親クラスの型の変数で呼んだときは、実装・継承しているクラスのメソッドもたどる (単位をまたいで解決する)。
 // SOQL・DML は Database へのメッセージにする。標準のメソッドの呼び出し (String.valueOf・List.add など) は出さない
 
 export type ApexCallFlowFilter = {
@@ -52,7 +57,20 @@ const indexOf = (snapshot: MetadataSnapshot): MemberIndex => {
     const types = new Map<string, string>();
     const members = new Set<string>();
     const index: MemberIndex = { items: new Map(), members: [] };
-    const infos = units.map((result) => ({ result, info: unitInfoOf(result) }));
+    // 単位をまたいで解決した呼び出し (ほかのクラスの戻り値の先・インターフェースの実装クラス)。
+    // ほかの単位に依存するので、スナップショットごとに作る (この索引と一緒に覚える)
+    const repository = apexRepositoryIndexOf(units);
+    const infos = units.map((result) => {
+        const analysis = analyzeApexUnit(result, {
+            repository: { index: repository, unit: result.result.base.name },
+        });
+        return {
+            result,
+            info: analysis
+                ? apexUnitFactsOf(analysis)
+                : { calls: [], dml: [], queries: [], triggerContexts: [] },
+        };
+    });
     for (const { result, info } of infos) {
         const unit = result.result.base.name;
         types.set(unit.toLowerCase(), unit);
@@ -104,6 +122,19 @@ const indexOf = (snapshot: MetadataSnapshot): MemberIndex => {
                         label: `${call.method}()`,
                         ...(members.has(target.toLowerCase()) ? { target } : {}),
                     });
+                    // インターフェース・親クラスの型で呼んだときの、実装・継承しているクラスのメソッド
+                    for (const dispatched of call.dispatchTargets ?? []) {
+                        const to = dispatched.slice(0, dispatched.lastIndexOf('.'));
+                        push(call.context.member, {
+                            ...base,
+                            kind: 'call',
+                            to,
+                            label: `${call.method}() (${owner} の実装)`,
+                            ...(members.has(dispatched.toLowerCase())
+                                ? { target: dispatched }
+                                : {}),
+                        });
+                    }
                     break;
                 }
                 case 'async':

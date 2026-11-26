@@ -9,6 +9,12 @@ import { FLOW_START } from '../../types';
 
 import { metadataRecordsOf, walkMetadataJson } from './walker';
 import { formulaNameOf } from '../../types/metadata/criteria';
+import {
+    type JsonRecord,
+    isRecord,
+    jsonRecordsOf as rows,
+    nonEmptyStringOf as str,
+} from '../commons/json';
 
 // Flow の要素・資源・起動が使っているもの (docs/json-redesign-plan.md の段階 M3)。
 // 段階 M2 までは parse が XML から取り出して JSON (references) に持っていた。LWC の calls・events と同じく、
@@ -54,16 +60,7 @@ export type FlowRefInfo = {
     sourceKeys?: ConvertKeys;
 };
 
-type Json = Record<string, unknown>;
-
-const isRecord = (value: unknown): value is Json =>
-    typeof value === 'object' && value !== null && !Array.isArray(value);
-
-const str = (value: unknown): string | undefined =>
-    typeof value === 'string' && value !== '' ? value : undefined;
-
-const rows = (json: unknown, name: string): Json[] =>
-    isRecord(json) && Array.isArray(json[name]) ? (json[name] as unknown[]).filter(isRecord) : [];
+type Json = JsonRecord;
 
 const MERGE_FIELD = /\{!([^}]+)\}/g;
 

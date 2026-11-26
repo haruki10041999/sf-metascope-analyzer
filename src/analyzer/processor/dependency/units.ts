@@ -1,14 +1,18 @@
 import { isAriaAttribute, isGlobalHtmlAttribute } from '@lwc/shared';
 
 import type { ApexUnitParseResult } from '../../parser/Apex/unit';
+import type { IdParseResult } from '../commons/diff/unit';
+import type { ApexSemanticOptions } from '../Apex/semantic/analyze';
 import type { LwcBundleParseResult } from '../../parser/Lwc/parser';
 import type { MetadataFileParseResult } from '../../parser/Metadata/folder';
 import type { ObjectTranslationParseResult } from '../../parser/Metadata/objectTranslation';
 import type { ObjectParseResult } from '../../parser/Metadata/parser';
-import type { ConvertKeys, LwcJsExpressionJson } from '../../types';
+import { type ConvertKeys, type LwcJsExpressionJson, LIGHTNING_UI_API_PREFIX } from '../../types';
 import { analyzeLwcModuleCalls, type LwcCallInfo } from '../Lwc/calls';
+import { lwcMetricsOf } from '../Lwc/metrics';
 import { lwcStringValueOf } from '../Lwc/walker';
 import { analyzeMetadataRefs } from '../Metadata/refs';
+import { withCertainties } from './certainty';
 
 import { getApexDependencies } from './apex';
 import { type FormulaReferenceAt, formulaReferencesOf } from './formula';
@@ -17,25 +21,19 @@ import { criterionFieldsOf, formulaNameOf } from '../../types/metadata/criteria'
 import type {
     ChildRelationship,
     DependencyKind,
+    UnitBodyMetrics,
     UnitDefinition,
     UnitDependencies,
     UnitReference,
 } from './types';
+import { type JsonRecord, isRecord, jsonRecordsOf as rows, stringOf as str } from '../commons/json';
 
 // 単位の種類ごとの定義と参照 (Apex は apex.ts)。どれも UnitDependencies の形にする。方針: docs/analysis-plan.md 3 章
 
-type Json = Record<string, unknown>;
-
-const isRecord = (value: unknown): value is Json =>
-    typeof value === 'object' && value !== null && !Array.isArray(value);
+type Json = JsonRecord;
 
 const keysOf = (node: unknown): ConvertKeys | undefined =>
     isRecord(node) && isRecord(node.sourceKeys) ? (node.sourceKeys as ConvertKeys) : undefined;
-
-const str = (value: unknown): string | undefined => (typeof value === 'string' ? value : undefined);
-
-const rows = (json: Json, name: string): Json[] =>
-    Array.isArray(json[name]) ? (json[name] as unknown[]).filter(isRecord) : [];
 
 const reference = (
     refType: string,
@@ -417,7 +415,7 @@ export const getLwcDependencies = (unit: LwcBundleParseResult): UnitDependencies
     definitions.push({ defType: 'lwc', name: bundle });
     // 本体の決まった形の呼び出し (動的 import・ナビゲーション・querySelector) は JSON に持たないので、
     // 解析 (Lwc/calls.ts) で出し、本体の中身 (直下の文はモジュール) をたどり終えたところで参照にする
-    const bodyCalls = new Map<unknown, LwcCallInfo[]>();
+    const bodyCalls = new Map<object, LwcCallInfo[]>();
     const modules = Array.isArray(unit.result.base.modules) ? unit.result.base.modules : [];
     for (const { module } of modules) {
         if (!module) continue;
@@ -599,12 +597,24 @@ export const getLwcDependencies = (unit: LwcBundleParseResult): UnitDependencies
                     );
             }
         }
+        // @wire のアダプターが Apex のメソッド (cacheable=true でないと動かない。グラフで APEX_METHOD_NOT_CACHEABLE)
+        if (node.kind === 'lwcDecorator' && isRecord(node.wire) && isRecord(node.wire.apex)) {
+            const className = str(node.wire.apex.className);
+            const methodName = str(node.wire.apex.methodName);
+            if (className && methodName)
+                references.push(
+                    reference('apexMethod', `${className}.${methodName}`, 'calls', 'wire', {
+                        statement: keys,
+                        expression: keysOf(node.wire) ?? keys,
+                    }),
+                );
+        }
         // @wire の設定の文字列のリテラル (lightning/uiRecordApi の fields: ['Account.Name'] など)。
         // import した項目 (fields: [NAME_FIELD]) は import の参照になるので、ここでは文字列だけ
         if (
             node.kind === 'lwcDecorator' &&
             isRecord(node.wire) &&
-            str(node.wire.adapterSource)?.startsWith('lightning/ui')
+            str(node.wire.adapterSource)?.startsWith(LIGHTNING_UI_API_PREFIX)
         ) {
             for (const config of rows(node.wire, 'config')) {
                 const key = str(config.key) ?? '';
@@ -669,7 +679,28 @@ export const getLwcDependencies = (unit: LwcBundleParseResult): UnitDependencies
         if (calls) callReferences(calls);
     };
     walk(unit.result.base);
-    return { definitions, references: dedupe(references) };
+    const metrics = modules.flatMap((entry) =>
+        entry.module
+            ? lwcMetricsOf(entry.module).map((m): UnitBodyMetrics => ({
+                  body: `${entry.fileName}:${[m.owner, m.member].filter(Boolean).join('.') || m.ownerKind}`,
+                  values: {
+                      cyclomatic: m.cyclomatic,
+                      cognitive: m.cognitive,
+                      statements: m.statements,
+                      maxNesting: m.maxNesting,
+                      calls: m.calls,
+                      apexCalls: m.apexCalls,
+                      apexCallsInLoop: m.apexCallsInLoop,
+                      events: m.events,
+                  },
+              }))
+            : [],
+    );
+    return {
+        definitions,
+        references: dedupe(references),
+        ...(metrics.length ? { metrics } : {}),
+    };
 };
 
 // ---------------------------------------------------------------------------
@@ -744,29 +775,42 @@ export const getMetadataFileDependencies = (unit: MetadataFileParseResult): Unit
 // 単位の種類ごとの入口
 // ---------------------------------------------------------------------------
 
-/** 単位の種類 (UnitType.type) と解析結果から、定義と参照 */
-export const getUnitDependencies = (type: string, result: unknown): UnitDependencies => {
+/**
+ * 単位の種類 (UnitType.type) と解析結果から、定義と参照。
+ * apex は Apex の単位をまたぐ解決の索引 (グラフを作るときだけ渡す。保存する定義・参照は単位の中だけで決める)
+ */
+export const getUnitDependencies = (
+    type: string,
+    result: IdParseResult,
+    apex: ApexSemanticOptions = {},
+): UnitDependencies => {
     switch (type) {
         case 'apexClass':
         case 'apexTrigger':
-            return getApexDependencies(result as ApexUnitParseResult);
+            return getApexDependencies(result as ApexUnitParseResult, apex);
         case 'anonymousApex': {
             // 匿名 Apex は、スクリプトそのものを単位のノードにする (中で宣言したクラスはメンバー)
             const unit = result as ApexUnitParseResult;
-            const { definitions, references } = getApexDependencies(unit);
+            const dependencies = getApexDependencies(unit, apex);
             return {
-                definitions: [{ defType: 'anonymousApex', name: unit.result.id }, ...definitions],
-                references,
+                ...dependencies,
+                definitions: [
+                    { defType: 'anonymousApex', name: unit.result.id },
+                    ...dependencies.definitions,
+                ],
             };
         }
+        // LWC・メタデータは名前だけで取り出すので、公式の一覧で分かる確かさを付ける (certainty.ts)
         case 'lwc':
-            return getLwcDependencies(result as LwcBundleParseResult);
+            return withCertainties(getLwcDependencies(result as LwcBundleParseResult));
         case 'object':
-            return getObjectUnitDependencies(result as ObjectParseResult);
+            return withCertainties(getObjectUnitDependencies(result as ObjectParseResult));
         case 'objectTranslation':
-            return getObjectTranslationDependencies(result as ObjectTranslationParseResult);
+            return withCertainties(
+                getObjectTranslationDependencies(result as ObjectTranslationParseResult),
+            );
         default:
-            return getMetadataFileDependencies(result as MetadataFileParseResult);
+            return withCertainties(getMetadataFileDependencies(result as MetadataFileParseResult));
     }
 };
 

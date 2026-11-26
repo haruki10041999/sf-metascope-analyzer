@@ -46,6 +46,7 @@ import type {
     PermissionSetJson,
     ProfileJson,
 } from '../../src/analyzer/types';
+import type { IdParseResult } from '../../src/analyzer/processor/commons/diff/unit';
 import { p1Shape } from '../converter/lwcShape';
 
 // フォルダ単位のメタデータ (権限・ラベル・Flow・画面)。方針: docs/metadata-implementation.md 10 章
@@ -63,7 +64,7 @@ const NS = 'xmlns="http://soap.sforce.com/2006/04/metadata"';
  * 解析結果から作った依存関係のグラフの指摘 ('<code>:<参照先>')。参照先がリポジトリにあるかは、
  * 種類ごとの解析でなくグラフで見る (docs/plan.md 10 章 P3)
  */
-const graphFindingsOf = (results: { dataType: string; result: { id: string } }[]) =>
+const graphFindingsOf = (results: IdParseResult[]) =>
     buildDependencyGraph(
         results.map((result) => ({
             type: result.dataType,

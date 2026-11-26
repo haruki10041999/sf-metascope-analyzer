@@ -2,8 +2,11 @@ import { z } from 'zod';
 import { referenceFindingsOf } from '../processor/dependency/graph';
 import { dependencyGraphOf } from '../unit/dependencies';
 
-import { getApexDataAccess, getApexOutline } from './apex';
-import { getLwcComponents, getLwcDetail, getLwcWireframe } from './lwc';
+import { getApexDataAccess, getApexMetrics, getApexOutline } from './apex';
+import { getApexEntryPoints } from './apexEntryPoints';
+import { getApexUnusedMethods } from './apexUnused';
+import { getApexTests, getApexTriggerHandlers, getObjectUsage } from './crossProject';
+import { getLwcComponents, getLwcDetail, getLwcMetrics, getLwcWireframe } from './lwc';
 import { getApexCallFlows } from './apexCallFlow';
 import { getApexMethodFlows } from './apexFlow';
 import { getFeatureScope } from './feature';
@@ -436,6 +439,99 @@ export const PROVIDER_DEFINITIONS = {
         output: z.array(schemas.CallSequenceSchema),
         run: (input, args) => getApexCallFlows(snapshotInputOf(input), args),
     }),
+    'apex.metrics': define({
+        description:
+            'Apex の実行本体 (メソッド・コンストラクター・アクセサー・初期化ブロック・トリガー・匿名 Apex) ごとのメトリクス: 循環的複雑度・認知的複雑度・文の数・最大のネスト・SOQL / SOSL / DML の数 (ループの中のものも)・呼び出しの数と呼び出し先。構文から数える。前回と比べると、値が変わった本体が分かる。',
+        category: 'code',
+        shape: 'rows',
+        args: z.object({
+            classes: names('Class, trigger or anonymous Apex names'),
+            includeTests: z
+                .boolean()
+                .exactOptional()
+                .describe('false hides bodies in tests. Default true.'),
+            minComplexity: z
+                .number()
+                .int()
+                .min(1)
+                .exactOptional()
+                .describe('Only bodies whose cyclomatic or cognitive complexity is at least this.'),
+        }),
+        output: rows(schemas.ApexMetricsRowSchema),
+        run: (input, args) => getApexMetrics(snapshotInputOf(input), args),
+    }),
+    'apex.unusedMethods': define({
+        description:
+            'ほかから呼ばれていない Apex のメソッド (掃除の候補)。呼ばれているかは単位をまたいで解決した依存関係で決める。unused は呼び出しも候補もないもの、candidateOnly はインターフェース・親クラスの型の変数からの呼び出しの候補からだけ呼ばれうるもの。テスト・@AuraEnabled・@InvocableMethod・@RemoteAction・REST・global・webservice・標準のインターフェースの実装・Visualforce のコントローラーなど、プラットフォームや画面から直接呼ばれうるものは出さない。',
+        category: 'code',
+        shape: 'rows',
+        args: z.object({
+            classes: names('Class names'),
+            includeCandidates: z
+                .boolean()
+                .exactOptional()
+                .describe('false hides candidateOnly methods. Default true.'),
+        }),
+        output: rows(schemas.ApexUnusedMethodRowSchema),
+        run: (input, args) => getApexUnusedMethods(input, args),
+    }),
+    'apex.entryPoints': define({
+        description:
+            'Apex の外 (画面・Flow・外部のシステム・非同期の実行) から呼ばれるメソッドの一覧 (公開 API)。REST (@RestResource の urlMapping と @HttpGet など)・@AuraEnabled (cacheable)・@InvocableMethod (label)・@RemoteAction・webservice・@future (callout)。usedBy はそのメソッドを呼ぶほかの単位 (LWC・Flow など)。',
+        category: 'code',
+        shape: 'rows',
+        args: z.object({
+            classes: names('Class names'),
+            kinds: z
+                .array(
+                    z.enum(['rest', 'aura', 'invocable', 'remoteAction', 'webservice', 'future']),
+                )
+                .exactOptional()
+                .describe('Kinds of entry points to list.'),
+        }),
+        output: rows(schemas.ApexEntryPointRowSchema),
+        run: (input, args) => getApexEntryPoints(input, args),
+    }),
+    'apex.triggerHandlers': define({
+        description:
+            'Apex のトリガーから呼び出しをたどって届くクラス (ハンドラーと、そこから呼ぶクラス)。段数と経路つき。単位をまたいで解決した依存関係から作る。',
+        category: 'code',
+        shape: 'rows',
+        args: z.object({
+            triggers: names('Trigger names'),
+            depth: z
+                .number()
+                .int()
+                .min(1)
+                .max(10)
+                .exactOptional()
+                .describe('How many calls to follow (default 3).'),
+        }),
+        output: rows(schemas.ApexTriggerHandlerRowSchema),
+        run: (input, args) => getApexTriggerHandlers(input, args),
+    }),
+    'apex.tests': define({
+        description:
+            'Apex のクラス・トリガーごとの、届くテストクラス (テストから呼び出しをたどるか、途中の DML で動くトリガーを通って届くか)。tests が空ならテストがない。untestedOnly でテストのないものだけ。',
+        category: 'code',
+        shape: 'rows',
+        args: z.object({
+            classes: names('Class or trigger names'),
+            depth: z
+                .number()
+                .int()
+                .min(1)
+                .max(10)
+                .exactOptional()
+                .describe('How many calls to follow (default 3).'),
+            untestedOnly: z
+                .boolean()
+                .exactOptional()
+                .describe('Only classes and triggers no test reaches.'),
+        }),
+        output: rows(schemas.ApexTestRowSchema),
+        run: (input, args) => getApexTests(input, args),
+    }),
     'apex.dataAccess': define({
         description:
             'Apex がどこで (クラス・メソッド) どのオブジェクト・項目を読み書きするか (SOQL・SOSL・動的なクエリ・DML)。ループの中か (ガバナ制限の原因になりやすい)・テストの中かも出す。DML の項目は、同じメソッドで代入している項目。',
@@ -469,6 +565,23 @@ export const PROVIDER_DEFINITIONS = {
         args: z.object({ components: names('Component names (accountList or c/accountList)') }),
         output: rows(schemas.LwcComponentRowSchema),
         run: (input, args) => getLwcComponents(snapshotInputOf(input), args),
+    }),
+    'lwc.metrics': define({
+        description:
+            'LWC の JS / TS の本体 (メソッド・getter / setter・関数・直下の文) ごとのメトリクス: 循環的複雑度・認知的複雑度・文の数・最大のネスト・呼び出しの数と呼び出し先・Apex の呼び出し (ループの中のものも)・イベントの発行。数え方は apex.metrics と共通。前回と比べると、値が変わった本体が分かる。',
+        category: 'code',
+        shape: 'rows',
+        args: z.object({
+            components: names('Component names (accountList or c/accountList)'),
+            minComplexity: z
+                .number()
+                .int()
+                .min(1)
+                .exactOptional()
+                .describe('Only bodies whose cyclomatic or cognitive complexity is at least this.'),
+        }),
+        output: rows(schemas.LwcMetricsRowSchema),
+        run: (input, args) => getLwcMetrics(snapshotInputOf(input), args),
     }),
     'lwc.detail': define({
         description:
@@ -567,6 +680,15 @@ export const PROVIDER_DEFINITIONS = {
         output: rows(schemas.LwcInterfaceRowSchema),
         run: (input, args) => getLwcInterface(snapshotInputOf(input), args),
     }),
+    'object.usage': define({
+        description:
+            'オブジェクトごとの、使っている単位 (Apex・LWC・Flow・権限など) と操作 (照会・作成・更新・削除・項目の読み書き) の表。単位 1 つ・オブジェクト 1 つで 1 行。依存関係のグラフから作る。',
+        category: 'object',
+        shape: 'rows',
+        args: z.object({ objects: names('Object API names') }),
+        output: rows(schemas.ObjectUsageRowSchema),
+        run: (input, args) => getObjectUsage(input, args),
+    }),
     'automation.byObject': define({
         description:
             'オブジェクトごとの自動化 (レコードトリガーフロー・Apex トリガー・入力規則) と順序。',
@@ -622,7 +744,7 @@ export const PROVIDER_DEFINITIONS = {
     }),
     'metadata.findings': define({
         description:
-            '解析の指摘 (権限・ラベル・Flow・画面・参照)。前回と比べると、新しく出た指摘は added、なくなった指摘は removed。',
+            '解析の指摘 (権限・ラベル・Flow・画面・参照・Apex の書き方 (SeeAllData・不要な @TestVisible・callout=true のない @future の callout・WITH SECURITY_ENFORCED))。前回と比べると、新しく出た指摘は added、なくなった指摘は removed。',
         category: 'crossRef',
         shape: 'rows',
         args: noArgs,

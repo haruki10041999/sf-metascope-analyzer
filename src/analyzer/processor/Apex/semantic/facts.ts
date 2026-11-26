@@ -52,6 +52,11 @@ export type ApexCallFact = {
     method: string;
     /** 引数の式 (JSON のノードそのもの) */
     args: BaseExpressionJson[];
+    /**
+     * 実行時に呼ばれうるメソッド (<クラス>.<メソッド>)。インターフェース・親クラスの型の変数で呼んだとき、
+     * 実装・継承しているクラスのもの。なければ持たない
+     */
+    dispatchTargets?: string[];
     context: ApexFactContext;
 };
 
@@ -76,6 +81,8 @@ export type ApexQueryFact = {
     language: 'soql' | 'sosl' | 'dynamic';
     /** 対象のオブジェクト (SOQL の FROM、SOSL の RETURNING。動的なものはなし) */
     objects: string[];
+    /** WITH USER_MODE・SYSTEM_MODE・SECURITY_ENFORCED (SOQL・SOSL。書いていなければなし) */
+    accessMode?: 'USER_MODE' | 'SYSTEM_MODE' | 'SECURITY_ENFORCED';
     context: ApexFactContext;
 };
 
@@ -159,7 +166,7 @@ const accessLevelOf = (call: ApexResolvedCall): string | undefined => {
 
 /** 解析の結果から、単位の呼び出し・DML・クエリ・トリガーの文脈を作る */
 export const apexUnitFactsOf = (analysis: ApexSemanticAnalysis): ApexUnitFacts => {
-    const names = apexMemberNamesOf(analysis.declarations);
+    const names = apexMemberNamesOf(analysis.declarations, analysis.repository?.index);
     const facts: ApexUnitFacts = { calls: [], dml: [], queries: [], triggerContexts: [] };
     for (const semantics of analysis.bodies) bodyFacts(semantics);
     return facts;
@@ -195,12 +202,17 @@ export const apexUnitFactsOf = (analysis: ApexSemanticAnalysis): ApexUnitFacts =
             }
             const owner = ownerOf(call);
             const callType = callTypeOf(call);
+            const dispatchTargets = call.dispatchIds.flatMap((id) => {
+                const name = names.memberOf(names.byId.get(id));
+                return name ? [name] : [];
+            });
             facts.calls.push({
                 sourceKeys: call.sourceKeys,
                 callType,
                 ...(owner ? { owner } : {}),
                 method: call.name,
                 args: call.args,
+                ...(dispatchTargets.length ? { dispatchTargets } : {}),
                 context,
             });
             if (callType === 'dml' && DML_OPERATIONS.has(call.name.toLowerCase())) {
@@ -245,6 +257,7 @@ export const apexUnitFactsOf = (analysis: ApexSemanticAnalysis): ApexUnitFacts =
                 sourceKeys: query.sourceKeys,
                 language: query.kind,
                 objects: query.objects.map((o) => o.name),
+                ...(query.facts.accessMode ? { accessMode: query.facts.accessMode } : {}),
                 context: contextOf(query.inLoop, query.sourceKeys),
             });
         }

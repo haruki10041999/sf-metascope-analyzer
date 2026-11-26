@@ -7,6 +7,7 @@ import { type ApexUnitType, parseApexUnitFiles } from '../../src/analyzer/parser
 import { getLegacyApexDependencies as getApexDependencies } from '../../src/analyzer/processor/dependency/apexLegacy';
 import type { UnitReference } from '../../src/analyzer/processor/dependency/types';
 import {
+    type ApexSemanticReference,
     analyzeApexUnit,
     apexSemanticDependenciesOf,
 } from '../../src/analyzer/processor/Apex/semantic';
@@ -34,7 +35,7 @@ const EXPECTED_ONLY_OLD = new Set([
     'field|Contact.Account|reads|soql.select|',
 ]);
 
-const keyOf = (reference: UnitReference) =>
+const keyOf = (reference: Pick<UnitReference, 'refType' | 'target' | 'kind' | 'via' | 'from'>) =>
     [
         reference.refType,
         reference.target,
@@ -99,16 +100,25 @@ describe('semantic/dependencies.ts の apexSemanticDependenciesOf', () => {
         );
     });
 
-    it('依存関係には、解決した・標準・名前だけの参照だけを入れる', async () => {
+    it('依存関係には分からない参照を入れず、確かさ (resolution) を付ける (名前だけは付けない)', async () => {
         for (const file of sampleFiles()) {
             const { next } = await compare(file);
             if (!next) continue;
             const converted = new Set(next.dependencies.references.map(keyOf));
+            // 変換した参照の確かさは、変換前の解決の状態と同じ (名前だけは付けない)
+            for (const reference of next.dependencies.references) {
+                const original: ApexSemanticReference | undefined = next.references.find(
+                    (r) =>
+                        keyOf(r) === keyOf(reference) &&
+                        r.from.expression?.sourceKey === reference.from.expression?.sourceKey &&
+                        r.resolution.status !== 'unknown',
+                );
+                assert.ok(original, `${file}: ${keyOf(reference)} の変換前の参照がない`);
+                const status: string = original.resolution.status;
+                assert.equal(reference.resolution, status === 'byName' ? undefined : status);
+            }
             for (const reference of next.references) {
-                if (
-                    reference.resolution.status === 'candidates' ||
-                    reference.resolution.status === 'unknown'
-                ) {
+                if (reference.resolution.status === 'unknown') {
                     // 同じ参照が別の場所で解決していることはあるので、場所まで含めて比べる
                     const sameSite = next.dependencies.references.some(
                         (r) =>
@@ -141,13 +151,13 @@ describe('semantic/dependencies.ts の apexSemanticDependenciesOf', () => {
         ]) {
             assert.ok(keys.has(key), key);
         }
-        // 標準の関係の先は、変換せずに理由つきで持つ
+        // 関係のパスは、1 段目の参照項目 (OwnerId) と、グラフがスキーマでたどるパス全体 (fieldPath) の参照にする
         const owner = next.references.find((r) => r.target === 'Account.Owner.Name');
-        assert.deepEqual(owner?.resolution, {
-            status: 'unknown',
-            reason: 'relationshipPath',
-            detail: 'Owner.Name',
-        });
+        assert.equal(owner?.refType, 'fieldPath');
+        assert.deepEqual(owner?.resolution, { status: 'byName' });
+        assert.ok(
+            next.references.some((r) => r.refType === 'field' && r.target === 'Account.OwnerId'),
+        );
     });
 
     it('匿名 Apex の DML の対象を、変数の型から決める', async () => {

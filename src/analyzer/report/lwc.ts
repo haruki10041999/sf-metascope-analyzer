@@ -10,17 +10,19 @@ import type {
     LwcMemberJson,
     LwcTemplateNodeJson,
 } from '../types';
+import { type LwcBodyMetrics, lwcMetricsOf } from '../processor/Lwc/metrics';
 import { type Compared, changedProps, compareKeyed, rowBase } from './commons';
 import type {
     LwcComponentRow,
     LwcDetailRow,
+    LwcMetricsRow,
     LwcWireframe,
     MetadataSnapshot,
     SnapshotInput,
     WireframeNode,
 } from './types';
 
-// LWC のドキュメント・理解のための provider (lwc.components / lwc.detail)。方針: docs/report-components-plan.md 2.4 章。
+// LWC のドキュメント・理解のための provider (lwc.components / lwc.detail / lwc.metrics)。方針: docs/report-components-plan.md 2.4 章。
 // 既定は今の状態のすべて (status なし)。比べる時点があれば (diff / compare)、行に status と変わったプロパティの名前を付ける
 
 /** 絞り込みの引数 (accountList でも c/accountList でもよい) */
@@ -355,6 +357,104 @@ export const getLwcDetail = (
                     ...item,
                 };
             });
+    });
+};
+
+// ---------------------------------------------------------------------------
+// lwc.metrics (本体ごとのメトリクス。数え方は Apex と共通の processor/commons/metrics.ts)
+// ---------------------------------------------------------------------------
+
+/** メトリクスの数の項目 (比べるときに変わったかを見る) */
+const LWC_METRIC_VALUES = [
+    'cyclomatic',
+    'cognitive',
+    'statements',
+    'maxNesting',
+    'calls',
+    'apexCalls',
+    'apexCallsInLoop',
+    'events',
+] as const;
+
+type KeyedMetrics = LwcBodyMetrics & { key: string; module: string };
+
+/** バンドルのモジュールごとの本体のメトリクス (鍵はファイル・持ち主・メンバー。同じなら出てくる順の番号) */
+const metricsOfBundle = (bundle: Bundle): KeyedMetrics[] => {
+    const counts = new Map<string, number>();
+    return bundle.json.modules.flatMap((entry) =>
+        entry.module
+            ? lwcMetricsOf(entry.module).map((metrics) => {
+                  const base = `${entry.fileName}:${metrics.ownerKind}:${metrics.owner ?? ''}:${metrics.member ?? ''}`;
+                  const n = (counts.get(base) ?? 0) + 1;
+                  counts.set(base, n);
+                  return {
+                      ...metrics,
+                      module: entry.fileName,
+                      key: n === 1 ? base : `${base}#${n}`,
+                  };
+              })
+            : [],
+    );
+};
+
+/**
+ * lwc.metrics: LWC の JS / TS の本体 (メソッド・getter / setter・関数・直下の文) ごとの循環的複雑度・認知的複雑度・
+ * 文の数・ネスト・呼び出し・Apex の呼び出し (ループの中のもの)・イベントの発行。比べるときは、本体ごとに増えた・減った・値が変わった
+ */
+export const getLwcMetrics = (
+    input: SnapshotInput,
+    filter: LwcFilter & {
+        /** 循環的複雑度・認知的複雑度のどちらかがこれ以上の本体だけ */
+        minComplexity?: number;
+    } = {},
+): LwcMetricsRow[] => {
+    const hasBefore = input.before !== undefined;
+    return compareBundles(input, filter, () => true).flatMap((compared: Compared<Bundle>) => {
+        const bundle = (compared.after ?? compared.before)!;
+        return compareKeyed(
+            compared.before ? metricsOfBundle(compared.before) : hasBefore ? [] : undefined,
+            compared.after ? metricsOfBundle(compared.after) : [],
+            (m) => m.key,
+            hasBefore,
+            (b, a) =>
+                LWC_METRIC_VALUES.every((name) => b[name] === a[name]) &&
+                b.callees.join('|') === a.callees.join('|'),
+        )
+            .map((row): LwcMetricsRow => {
+                const metrics = (row.after ?? row.before)!;
+                const changed =
+                    row.status === 'changed'
+                        ? [...LWC_METRIC_VALUES, 'callees' as const].filter(
+                              (name) =>
+                                  JSON.stringify(row.before![name]) !==
+                                  JSON.stringify(row.after![name]),
+                          )
+                        : [];
+                return {
+                    ...rowBase(row, undefined, bundle.result.filePath),
+                    ...(changed.length ? { changedProperties: changed } : {}),
+                    component: bundle.key,
+                    module: metrics.module,
+                    ownerKind: metrics.ownerKind,
+                    ...(metrics.owner !== null ? { owner: metrics.owner } : {}),
+                    ...(metrics.member !== undefined ? { member: metrics.member } : {}),
+                    cyclomatic: metrics.cyclomatic,
+                    cognitive: metrics.cognitive,
+                    statements: metrics.statements,
+                    maxNesting: metrics.maxNesting,
+                    calls: metrics.calls,
+                    callees: metrics.callees,
+                    apexCalls: metrics.apexCalls,
+                    apexCallsInLoop: metrics.apexCallsInLoop,
+                    events: metrics.events,
+                };
+            })
+            .filter(
+                (row) =>
+                    filter.minComplexity === undefined ||
+                    row.cyclomatic >= filter.minComplexity ||
+                    row.cognitive >= filter.minComplexity,
+            );
     });
 };
 

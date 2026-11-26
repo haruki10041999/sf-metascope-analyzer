@@ -248,3 +248,173 @@ describe('dependency graph targets (参照と定義の突き合わせ)', () => {
         assert.deepEqual(refsOf('Opportunity'), []);
     });
 });
+
+describe('リポジトリにない参照先の分類 (確かめた標準だけ standard。docs/plan.md 10 章 P2)', () => {
+    it('標準の一覧に当たらないオブジェクト・型・項目・子リレーションは unknown', () => {
+        const graph = buildDependencyGraph([
+            defUnit('object', 'object', 'Invoice__c'),
+            refUnit('apexClass', 'Uses', [
+                { refType: 'object', target: 'Contact', via: 'type' },
+                { refType: 'object', target: 'NotAnObject', via: 'type' },
+                { refType: 'apexType', target: 'String', via: 'type' },
+                { refType: 'apexType', target: 'Database.SaveResult', via: 'type' },
+                { refType: 'apexType', target: 'AggregateResult', via: 'type' },
+                { refType: 'apexType', target: 'MissingHelper', via: 'type' },
+                { refType: 'field', target: 'Contact.Email', via: 'soql.select' },
+                { refType: 'field', target: 'Invoice__c.Name', via: 'soql.select' },
+                { refType: 'field', target: 'Invoice__c.Status', via: 'soql.select' },
+                { refType: 'field', target: 'NotAnObject.Status', via: 'soql.select' },
+                { refType: 'childRelationship', target: 'Account.Contacts', via: 'soql.from' },
+                { refType: 'childRelationship', target: 'Thing.Children', via: 'soql.from' },
+            ]),
+        ]);
+        const originOf = (id: string) => graph.nodes.get(id)?.origin;
+        assert.equal(originOf('object:Contact'), 'standard');
+        assert.equal(originOf('object:NotAnObject'), 'unknown');
+        assert.equal(originOf('apexType:String'), 'standard');
+        assert.equal(originOf('apexType:Database.SaveResult'), 'standard');
+        assert.equal(originOf('apexType:AggregateResult'), 'standard');
+        assert.equal(originOf('apexType:MissingHelper'), 'unknown');
+        // 標準オブジェクトの項目と、どのオブジェクトにもある項目 (Name) は standard
+        assert.equal(originOf('field:Contact.Email'), 'standard');
+        assert.equal(originOf('field:Invoice__c.Name'), 'standard');
+        assert.equal(originOf('field:Invoice__c.Status'), 'unknown');
+        assert.equal(originOf('field:NotAnObject.Status'), 'unknown');
+        assert.equal(originOf('childRelationship:Account.Contacts'), 'standard');
+        assert.equal(originOf('childRelationship:Thing.Children'), 'unknown');
+    });
+});
+
+describe('辺の確かさ (DependencyEdge.resolution。missing はリポジトリの定義と突き合わせて決める)', () => {
+    it('リポジトリにあれば resolved、リポジトリにも標準にもなければ missing、標準なら standard、分からなければ byName', () => {
+        const graph = buildDependencyGraph([
+            defUnit('object', 'object', 'Invoice__c'),
+            refUnit('apexClass', 'Uses', [
+                { refType: 'object', target: 'Invoice__c', via: 'type' },
+                { refType: 'object', target: 'Gone__c', via: 'type' },
+                { refType: 'object', target: 'Contact', via: 'type' },
+                { refType: 'object', target: 'NotAnObject', via: 'type' },
+            ]),
+        ]);
+        const resolutionOf = (to: string) =>
+            graph.edges.find((e) => e.to === to)?.resolution ?? 'byName';
+        assert.equal(resolutionOf('object:Invoice__c'), 'resolved');
+        assert.equal(resolutionOf('object:Gone__c'), 'missing');
+        assert.equal(resolutionOf('object:Contact'), 'standard');
+        assert.equal(resolutionOf('object:NotAnObject'), 'byName');
+    });
+});
+
+describe('SOQL の関係のパス (fieldPath。スキーマで項目までたどる)', () => {
+    it('カスタムの参照項目と標準の関係をたどって、2 段目からの参照項目と最後の項目を参照にする', async () => {
+        const unit = await parseApexUnitFiles({
+            unitType: 'class',
+            name: 'Paths',
+            filePath: 'Paths.cls',
+            source: {
+                fileName: 'Paths.cls',
+                source: [
+                    'public class Paths {',
+                    '    void run() {',
+                    '        List<Line__c> lines = [SELECT Invoice__r.Account__r.Owner.Name, Invoice__r.What.Name FROM Line__c];',
+                    '        List<Contact> contacts = [SELECT Account.Owner.Email, Name FROM Contact];',
+                    '    }',
+                    '}',
+                ].join('\n'),
+            },
+        });
+        const dependencies = getApexDependencies(unit);
+        const refs = dependencies.references
+            .filter((r) => r.refType === 'field' || r.refType === 'fieldPath')
+            .map((r) => `${r.refType}:${r.target}`);
+        // 単位の参照は 1 段目の参照項目とパス全体 (同じ参照項目は 1 つ)
+        assert.deepEqual(refs.sort(), [
+            'field:Contact.AccountId',
+            'field:Contact.Name',
+            'field:Line__c.Invoice__c',
+            'fieldPath:Contact.Account.Owner.Email',
+            'fieldPath:Line__c.Invoice__r.Account__r.Owner.Name',
+            'fieldPath:Line__c.Invoice__r.What.Name',
+        ]);
+        // リポジトリのオブジェクトの参照項目 (Line__c.Invoice__c → Invoice__c、Invoice__c.Account__c → Account)
+        const objectUnit = (name: string, lookups: [string, string][]): GraphUnit => ({
+            type: 'object',
+            id: name,
+            dependencies: {
+                definitions: [
+                    { defType: 'object', name },
+                    ...lookups.map(([field]) => ({ defType: 'field', name: `${name}.${field}` })),
+                ],
+                references: [],
+                childRelationships: lookups.map(([field, parent]) => ({
+                    parent,
+                    name: `${name}s__r`,
+                    child: name,
+                    field: `${name}.${field}`,
+                })),
+            },
+        });
+        const graph = buildDependencyGraph([
+            { type: 'apexClass', id: 'Paths', dependencies },
+            objectUnit('Line__c', [['Invoice__c', 'Invoice__c']]),
+            objectUnit('Invoice__c', [['Account__c', 'Account']]),
+        ]);
+        const fields = [
+            ...new Set(
+                graph.edges
+                    .filter((e) => e.to.startsWith('field:'))
+                    .map((e) => e.to.slice('field:'.length)),
+            ),
+        ].sort();
+        assert.deepEqual(fields, [
+            'Account.OwnerId',
+            'Contact.AccountId',
+            'Contact.Name',
+            'Invoice__c.Account__c',
+            // 多態の関係 (What) の参照項目までは参照にし、その先 (What.Name) は参照にしない
+            'Invoice__c.WhatId',
+            'Line__c.Invoice__c',
+            // Account.OwnerId の先の User.Name・User.Email
+            'User.Email',
+            'User.Name',
+        ]);
+    });
+
+    it('Apex の変数のメンバーの連鎖 (a.Owner.Name・this.acc.Owner.ManagerId) も、関係のパスとしてたどる', async () => {
+        const unit = await parseApexUnitFiles({
+            unitType: 'class',
+            name: 'Members',
+            filePath: 'Members.cls',
+            source: {
+                fileName: 'Members.cls',
+                source: [
+                    'public class Members {',
+                    '    Account acc;',
+                    '    void run(Account a, Invoice__c i) {',
+                    '        String n = a.Owner.Name;',
+                    '        Id m = this.acc.Owner.ManagerId;',
+                    '        String o = i.Account__r.Name;',
+                    '    }',
+                    '}',
+                ].join('\n'),
+            },
+        });
+        const dependencies = getApexDependencies(unit);
+        const refs = dependencies.references
+            .filter((r) => r.refType === 'field' || r.refType === 'fieldPath')
+            .map((r) => `${r.refType}:${r.target}`);
+        assert.deepEqual([...new Set(refs)].sort(), [
+            'field:Account.OwnerId',
+            'field:Invoice__c.Account__c',
+            'fieldPath:Account.Owner.ManagerId',
+            'fieldPath:Account.Owner.Name',
+            'fieldPath:Invoice__c.Account__r.Name',
+        ]);
+        // 関係の名前そのもの (Account.Owner) を項目にしない
+        assert.ok(!dependencies.references.some((r) => r.target === 'Account.Owner'));
+        const graph = buildDependencyGraph([{ type: 'apexClass', id: 'Members', dependencies }]);
+        const fields = new Set(graph.edges.map((e) => e.to));
+        assert.ok(fields.has('field:User.Name'));
+        assert.ok(fields.has('field:User.ManagerId'));
+    });
+});

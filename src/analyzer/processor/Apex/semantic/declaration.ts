@@ -1,5 +1,6 @@
 import type {
     AccessorContentJson,
+    AnnotationArgJson,
     ApexNodeJson,
     BlockMemberJson,
     ConvertKeys,
@@ -38,6 +39,12 @@ export type ApexModifierInfo = {
     sharing: 'with' | 'without' | 'inherited' | null;
     /** アノテーションの名前 (書いたまま。@ は付けない) */
     annotations: string[];
+    /**
+     * アノテーションの引数 (名前 (小文字) → 引数の名前 (小文字) → 値)。引数のあるアノテーションだけ。
+     * 値はリテラルの値 (文字列・数は文字列、true / false は真偽値、null は null)。
+     * 名前のない引数 (@RestResource('/x') など) の名前は ''
+     */
+    annotationArgs: Record<string, Record<string, string | boolean | null>>;
 };
 
 type DeclarationBase = {
@@ -251,7 +258,39 @@ export const apexModifierInfoOf = (
         isTestMethod: keywords.has('testmethod'),
         sharing,
         annotations: items.filter((item) => item.kind === 'annotation').map((item) => item.name),
+        annotationArgs: annotationArgsOf(items),
     };
+};
+
+/** アノテーションの引数 (ApexModifierInfo.annotationArgs) */
+const annotationArgsOf = (
+    items: readonly { kind: string; name: string }[],
+): ApexModifierInfo['annotationArgs'] => {
+    const result: ApexModifierInfo['annotationArgs'] = {};
+    for (const item of items) {
+        const args = (item as { arg?: AnnotationArgJson[] }).arg;
+        if (item.kind !== 'annotation' || !args?.length) continue;
+        const values = (result[item.name.toLowerCase()] ??= {});
+        for (const arg of args) {
+            const value = arg.value as { value?: string | boolean } | undefined;
+            values[(arg.key ?? '').toLowerCase()] = value?.value ?? null;
+        }
+    }
+    return result;
+};
+
+/** アノテーションがあるか (名前は大文字小文字を区別しない) */
+export const hasApexAnnotation = (modifiers: ApexModifierInfo, name: string): boolean =>
+    modifiers.annotations.some((a) => a.toLowerCase() === name.toLowerCase());
+
+/** アノテーションの引数が true か (@AuraEnabled(cacheable=true) など。文字列の 'true' も true) */
+export const isApexAnnotationArgTrue = (
+    modifiers: ApexModifierInfo,
+    name: string,
+    key: string,
+): boolean => {
+    const value = modifiers.annotationArgs[name.toLowerCase()]?.[key.toLowerCase()];
+    return value === true || (typeof value === 'string' && value.toLowerCase() === 'true');
 };
 
 /** メンバーの宣言に付く修飾子 (クラスのブロック・トリガー・匿名 Apex の要素は modifier を持つ) */

@@ -263,7 +263,7 @@ const targetsOf = (json: ApexUnitJson): FlowTarget[] => {
     if (!source) return [];
     switch (source.fileType) {
         case 'cls': {
-            const declaration = source.content as unknown as ClassDeclarationJson;
+            const declaration = source.content;
             return declaration.kind === 'class'
                 ? targetsOfClass(declaration, declaration.name)
                 : [];

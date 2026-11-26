@@ -4,6 +4,7 @@ import type { Repository } from '../unit/repository';
 import { type UnitParseResult, findUnitType, unitName } from '../unit/unitType';
 import { compareKeyed } from './commons';
 import type { MetadataPropertyRow, MetadataTypeRow, MetadataUnitRow, ReportInput } from './types';
+import { recordOf as record, stringOf as text } from '../processor/commons/json';
 
 // すべての種類の単位の土台の provider (metadata.units / metadata.types / metadata.properties)。
 // 専用の provider がない種類 (53 種類のうち約 38) でも、一覧と設定値をドキュメントにできるようにする
@@ -32,14 +33,6 @@ const unitsOf = (repository: Repository | undefined, filter: MetadataFilter): Un
             })),
         )
         .filter((unit) => !filter.names || filter.names.includes(unit.name));
-
-const record = (value: unknown): Record<string, unknown> | undefined =>
-    typeof value === 'object' && value !== null && !Array.isArray(value)
-        ? (value as Record<string, unknown>)
-        : undefined;
-
-const text = (value: unknown): string | undefined =>
-    typeof value === 'string' ? value : undefined;
 
 /** 単位のラベルと説明 (メタデータの label・masterLabel、Apex・LWC の -meta.xml) */
 const labelOf = (base: Record<string, unknown> | undefined) => {

@@ -48,8 +48,9 @@ export type SaveDataInfo = {
  *    定義・参照 (derived) を圧縮した BLOB にした (NPSP で 450 MB → docs/implementation-roadmap.md 8 章の M3)
  * 11: node 表の structure_keys の列をなくした (JSON はすべて JsonType になり、StructureJsonType がなくなった。docs/plan.md 4.3 の 6)
  * 12: 定義・参照の行の表 (symbol・reference) を足し、node の索引を (kind, unit_id)・(unit_id, parent_id) にした (docs/plan.md 6.2)
+ * 13: reference 表に参照の確かさ (resolution) の列を足した
  */
-export const SAVE_FORMAT_VERSION = 12;
+export const SAVE_FORMAT_VERSION = 13;
 
 /** 末尾が '/' でないと相対 URL が親ディレクトリ基準で解決されるため、必ず付ける */
 const toDirectoryUrl = (baseDir: string) => pathToFileURL(path.join(baseDir, path.sep));

@@ -9,7 +9,7 @@ import {
     lwcInterfaceKeyOf,
     lwcInterfaceOf,
 } from '../processor/Lwc/interface';
-import type { LwcBundleJson } from '../types';
+import type { ConvertKeys, LwcBundleJson } from '../types';
 
 import { changedProps, compareKeyed, readable, rowBase } from './commons';
 import type { ApexInterfaceRow, LwcInterfaceRow, SnapshotInput } from './types';
@@ -19,7 +19,7 @@ import type { ApexInterfaceRow, LwcInterfaceRow, SnapshotInput } from './types';
 // before を渡さなければ、after の公開の形の一覧
 
 /** 単位を名前で対応付け、単位ごとに公開の形を比べる */
-const compareInterfaces = <J, M extends { sourceKeys?: unknown }>(
+const compareInterfaces = <J, M extends { sourceKeys?: ConvertKeys }>(
     before: { id: string; filePath: string; json: J }[] | undefined,
     after: { id: string; filePath: string; json: J }[],
     hasBefore: boolean,
@@ -72,8 +72,8 @@ export const getApexInterface = (
     args: { onlyChanged?: boolean } = {},
 ): ApexInterfaceRow[] =>
     compareInterfaces<ApexUnitJson, ApexInterfaceMember>(
-        input.before ? readable<ApexUnitJson>(input.before.apex, 'apexUnit') : undefined,
-        readable<ApexUnitJson>(input.after.apex, 'apexUnit'),
+        input.before ? readable(input.before.apex, 'apexUnit') : undefined,
+        readable(input.after.apex, 'apexUnit'),
         input.before !== undefined,
         apexInterfaceOf,
         apexInterfaceKeyOf,
@@ -91,8 +91,8 @@ export const getLwcInterface = (
     args: { onlyChanged?: boolean } = {},
 ): LwcInterfaceRow[] =>
     compareInterfaces<LwcBundleJson, LwcInterfaceMember>(
-        input.before ? readable<LwcBundleJson>(input.before.lwc, 'lwcBundle') : undefined,
-        readable<LwcBundleJson>(input.after.lwc, 'lwcBundle'),
+        input.before ? readable(input.before.lwc, 'lwcBundle') : undefined,
+        readable(input.after.lwc, 'lwcBundle'),
         input.before !== undefined,
         lwcInterfaceOf,
         lwcInterfaceKeyOf,

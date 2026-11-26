@@ -29,8 +29,10 @@ export type ApexResolvedCall = ApexCallSite & {
     argTypes: ApexTypeRef[];
     /** 戻り値の型 (分からなければ理由つきの unknown) */
     returnType: ApexTypeRef;
-    /** 呼び出し先の候補 (単位の中のメソッドの宣言の ID。1 件なら確定) */
+    /** 呼び出し先の候補 (メソッドの宣言の ID。1 件なら確定。ほかの単位のものは <単位名>#<sourceKey>) */
     candidateIds: string[];
+    /** 実行時に呼ばれうるメソッド (インターフェース・親クラスの型の変数で呼んだとき、実装・継承しているクラスのもの) */
+    dispatchIds: string[];
 };
 
 /** フィールド・プロパティ・項目の参照 `x.a` (メソッドの呼び出しは calls) */
@@ -42,6 +44,26 @@ export type ApexResolvedMemberAccess = {
     member: string;
     /** read: 読む / write: 代入の左辺 (`x.a = 1`) / readWrite: 複合代入・増減 (`x.a += 1`・`x.a++`) */
     access: 'read' | 'write' | 'readWrite';
+    /** ほかのメンバーの参照のレシーバー (`a.Owner.Name` の `a.Owner`)。SObject なら関係をたどる途中の段 */
+    isReceiver?: boolean;
+    /**
+     * メンバーの参照の連鎖 (`a.Owner.Name`) のいちばん外の段のとき、根元の候補 (連鎖の区切りごと。内側から) の型と、
+     * そこからのメンバーの名前の並び。`this.acc.Owner.Name` なら this → [acc, Owner, Name]、this.acc → [Owner, Name]。
+     * 内側から最初に SObject になる根元から、関係のパスとして参照にする
+     */
+    chain?: { rootType: ApexTypeRef; members: string[] }[];
+};
+
+/**
+ * 親クラスから引き継いだフィールド・プロパティを、修飾のない名前で読み書きしたところ
+ * (statement.ts では見つからない名前。ほかの単位の親クラスは、リポジトリの宣言の索引を渡したときだけ分かる)
+ */
+export type ApexInheritedAccess = {
+    sourceKeys: ConvertKeys;
+    name: string;
+    access: ApexVariableAccess['access'];
+    /** 引き継いだフィールド・プロパティの宣言の ID */
+    declarationId: string;
 };
 
 /** DML の文 (insert・update・upsert・delete・undelete・merge) */
@@ -65,6 +87,8 @@ export type ApexBodySemantics = {
     definitions: ApexDefinition[];
     calls: ApexResolvedCall[];
     memberAccesses: ApexResolvedMemberAccess[];
+    /** 親クラスから引き継いだフィールド・プロパティの、修飾のない名前での読み書き */
+    inheritedAccesses: ApexInheritedAccess[];
     dml: ApexResolvedDml[];
     queries: ApexQuery[];
     /** 式・文のノードの sourceKey → それを含む一番内側の文のキー (参照の場所に使う) */
@@ -80,6 +104,8 @@ export type ApexSemanticAnalysis = {
     fileName: string;
     declarations: ApexDeclaration[];
     bodies: ApexBodySemantics[];
+    /** 単位をまたぐ解決に使った、リポジトリの宣言の索引 (渡したときだけ) */
+    repository?: ApexSemanticOptions['repository'];
 };
 
 export type ApexSemanticOptions = ApexTypeResolverOptions;
@@ -172,11 +198,33 @@ export const analyzeApexUnit = (
                         const incremented =
                             parent?.kind === 'unary' &&
                             (parent.operator === '++' || parent.operator === '--');
+                        // 項目の参照のレシーバー (a.Owner.Name の a.Owner)。メソッドの呼び出しのレシーバー
+                        // (acc.Name.trim() の acc.Name) は関係をたどる途中ではない
+                        const isReceiver =
+                            parent?.kind === 'memberAccess' &&
+                            parent.type === 'object' &&
+                            parent.object === node;
+                        // 連鎖の根元の候補 (a.Owner.Name の a、a.Owner) と、そこからのメンバーの並び (内側から)
+                        const prefixes: { root: typeof object; members: string[] }[] = [];
+                        const members = [node.member];
+                        for (let root = object; root.kind === 'member'; root = root.object) {
+                            members.unshift(root.member);
+                            prefixes.unshift({ root: root.object, members: [...members] });
+                        }
                         memberAccesses.push({
                             sourceKeys: node.sourceKeys,
                             object,
                             objectType: resolver.typeOf(object),
                             member: node.member,
+                            ...(isReceiver ? { isReceiver } : {}),
+                            ...(!isReceiver && prefixes.length > 0
+                                ? {
+                                      chain: prefixes.map((prefix) => ({
+                                          rootType: resolver.typeOf(prefix.root),
+                                          members: prefix.members,
+                                      })),
+                                  }
+                                : {}),
                             access:
                                 assigned && parent.kind === 'assignment'
                                     ? parent.operator === '='
@@ -227,8 +275,23 @@ export const analyzeApexUnit = (
                 argTypes: call.argRefs.map((ref) => resolver.typeOf(ref)),
                 returnType: resolver.returnTypeOf(call),
                 candidateIds: resolver.methodCandidatesOf(call).map((d) => d.id),
+                dispatchIds: resolver.dispatchCandidatesOf(call).map((d) => d.id),
             })),
             memberAccesses,
+            inheritedAccesses: analysis.accesses.flatMap((access): ApexInheritedAccess[] => {
+                if (access.target.kind !== 'unresolved') return [];
+                const member = resolver.inheritedMemberOf(access.name);
+                return member
+                    ? [
+                          {
+                              sourceKeys: access.sourceKeys,
+                              name: access.name,
+                              access: access.access,
+                              declarationId: member.id,
+                          },
+                      ]
+                    : [];
+            }),
             dml,
             queries: apexQueriesOf(analysis),
             statementOf,
@@ -241,5 +304,6 @@ export const analyzeApexUnit = (
         fileName: source.fileName,
         declarations: declarations.declarations,
         bodies,
+        ...(options.repository ? { repository: options.repository } : {}),
     };
 };

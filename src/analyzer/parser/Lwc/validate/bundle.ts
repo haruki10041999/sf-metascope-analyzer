@@ -7,6 +7,7 @@
 import { analyzeLwcModuleCalls, type LwcCallInfo } from '../../../processor/Lwc/calls';
 import { lwcHeritageOf } from '../../../processor/Lwc/walker';
 import {
+    LWC_DYNAMIC_COMPONENT_CAPABILITY,
     findSpanSourceInfo,
     hash,
     type ConvertKeys,
@@ -29,8 +30,6 @@ export type LwcBundleCheckCode =
 
 /** メンバーを足さない (テンプレートから参照されるメンバーを持たない) と分かっている mixin */
 const KNOWN_MIXINS = ['NavigationMixin'];
-
-const DYNAMIC_COMPONENT_CAPABILITY = 'lightning__dynamicComponent';
 
 type Finding = {
     code: LwcBundleCheckCode;
@@ -200,12 +199,12 @@ export const validateBundle = (
 
         // js-meta.xml が読めなかった (null) ときは見ない
         const capabilities = bundle.meta?.capabilities ?? [];
-        if (bundle.meta !== null && !capabilities.includes(DYNAMIC_COMPONENT_CAPABILITY)) {
+        if (bundle.meta !== null && !capabilities.includes(LWC_DYNAMIC_COMPONENT_CAPABILITY)) {
             dynamics.forEach((sourceKeys) =>
                 findings.push({
                     code: 'TEMPLATE_DYNAMIC_DISABLED',
                     contextType: 'lwc:component',
-                    message: `lwc:component を使うには js-meta.xml の capabilities に ${DYNAMIC_COMPONENT_CAPABILITY} が要る`,
+                    message: `lwc:component を使うには js-meta.xml の capabilities に ${LWC_DYNAMIC_COMPONENT_CAPABILITY} が要る`,
                     sourceKeys,
                 }),
             );

@@ -4,6 +4,7 @@ import {
     type FxSyntax,
     tryParseFormulaSyntax,
 } from '../../types/metadata/formula';
+import { isRecord } from '../commons/json';
 
 // 数式 (数式項目・入力規則・既定値・Flow の数式・ワークフローの条件など) の参照の取り出し。
 // 数式の JSON (fx*。段階 M4) の名前 (fxName) から取る。値の木の中の数式 (文字列) は、同じ parser で木にしてから取る。
@@ -75,14 +76,11 @@ const KEYWORDS = new Set(['true', 'false', 'null', 'and', 'or', 'not']);
 /** 数式の参照 1 つと、その名前のノード (数式の JSON から取ったときだけ) */
 export type FormulaReferenceAt = FormulaReference & { expression?: ConvertKeys };
 
-const isNodeRecord = (value: unknown): value is Record<string, unknown> =>
-    typeof value === 'object' && value !== null && !Array.isArray(value);
-
 /** 数式の木 (JSON か位置つきの木) の名前のノード (書いた順) */
 const namesOf = (node: unknown, out: Record<string, unknown>[] = []): Record<string, unknown>[] => {
     if (Array.isArray(node)) {
         node.forEach((item) => namesOf(item, out));
-    } else if (isNodeRecord(node)) {
+    } else if (isRecord(node)) {
         if (node.kind === 'fxName') out.push(node);
         for (const [key, child] of Object.entries(node)) {
             if (key !== 'sourceKeys') namesOf(child, out);
@@ -106,7 +104,7 @@ export const formulaReferencesOf = (
     for (const name of namesOf(tree)) {
         const path = (name.path as string[]).join('.');
         if (KEYWORDS.has(path.toLowerCase())) continue;
-        const keys = isNodeRecord(name.sourceKeys) ? (name.sourceKeys as ConvertKeys) : undefined;
+        const keys = isRecord(name.sourceKeys) ? (name.sourceKeys as ConvertKeys) : undefined;
         for (const reference of referencesOfName(path, object)) {
             references.push(keys ? { ...reference, expression: keys } : reference);
         }

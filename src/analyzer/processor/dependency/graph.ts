@@ -1,11 +1,14 @@
 import type { ConvertKeys } from '../../types';
-import { findApexStandardObject } from '../Apex/semantic/standardObjects';
+import { resolveApexStandardName } from '../Apex/semantic/standardNames';
+import { findStandardObject } from '../commons/standardObjects';
+import { METADATA_TYPE_NAMES } from '../Metadata/standardTypes';
 
 import type {
     ChildRelationship,
     DependencyKind,
     UnitDefinition,
     UnitDependencies,
+    ReferenceCertainty,
     UnitReference,
 } from './types';
 
@@ -33,6 +36,8 @@ export type DependencyNode = {
     /** 定義している単位 (単位の種類と id)。リポジトリにあるときだけ */
     unit?: { type: string; id: string };
     sourceKeys?: ConvertKeys;
+    /** 定義の性質 (UnitDefinition.traits。同じ名前の定義が複数あれば合わせたもの) */
+    traits?: string[];
 };
 
 export type DependencyEdge = {
@@ -42,6 +47,11 @@ export type DependencyEdge = {
     via: string;
     /** 参照している単位 */
     unit: { type: string; id: string };
+    /**
+     * 確かさ (リポジトリの定義と突き合わせたあと)。参照先がリポジトリにあれば resolved、リポジトリにも標準にもなければ
+     * missing、標準なら standard。それ以外 (managed・unknown) は単位の参照の確かさのまま (持たなければ byName)
+     */
+    resolution?: Exclude<ReferenceCertainty, 'candidates'>;
 };
 
 export type DependencyFinding = {
@@ -58,6 +68,12 @@ export type DependencyGraph = {
     nodes: Map<string, DependencyNode>;
     edges: DependencyEdge[];
     findings: DependencyFinding[];
+    /**
+     * 候補の参照 (resolution: candidates。オーバーロード・インターフェースの実装クラスなど) の辺。
+     * 確定した依存ではないので edges・被依存・指摘には入れない。使われているかの判定などで「使われうる」に使う。
+     * 参照先がグラフにあるものだけ (メンバーの細かさ)
+     */
+    candidateEdges: DependencyEdge[];
 };
 
 /** 単位 1 つの入力 */
@@ -69,10 +85,10 @@ export type GraphUnit = { type: string; id: string; dependencies: UnitDependenci
 
 /**
  * オブジェクトとして扱う標準の名前 (リポジトリになくても「ない」とは言わない。Apex の型がオブジェクトかの判断にも使う)。
- * 一覧は Apex の解析と共通 (processor/Apex/semantic/standardObjects.ts)。SObject は汎用の型だが、オブジェクトとして扱う
+ * 一覧は Apex の解析と共通 (processor/commons/standardObjects.ts)。SObject は汎用の型だが、オブジェクトとして扱う
  */
 const isStandardObjectName = (name: string): boolean =>
-    name.toLowerCase() === 'sobject' || findApexStandardObject(name) !== undefined;
+    name.toLowerCase() === 'sobject' || findStandardObject(name) !== undefined;
 
 const CUSTOM_SUFFIX = /__(c|mdt|e|x|b|share|history|feed|r)$/i;
 /**
@@ -83,6 +99,57 @@ const isNamespaced = (name: string) =>
     /^[A-Za-z][A-Za-z0-9]*__[A-Za-z]/.test(name) &&
     (/__.*__/.test(name) || !CUSTOM_SUFFIX.test(name));
 const isCustom = (name: string) => CUSTOM_SUFFIX.test(name);
+
+/**
+ * どのオブジェクトにもある (カスタムオブジェクトにもある) 標準の項目。一覧にない標準の項目は、オブジェクトが標準の一覧に
+ * あれば standard、なければ unknown (確かめていない名前を standard にしない。docs/plan.md 10 章 P2)
+ */
+const COMMON_STANDARD_FIELDS = new Set(
+    [
+        'Id',
+        'Name',
+        'OwnerId',
+        'RecordTypeId',
+        'CurrencyIsoCode',
+        'CreatedDate',
+        'CreatedById',
+        'LastModifiedDate',
+        'LastModifiedById',
+        'SystemModstamp',
+        'IsDeleted',
+        'LastActivityDate',
+        'LastViewedDate',
+        'LastReferencedDate',
+        // カスタムメタデータ型
+        'DeveloperName',
+        'MasterLabel',
+        'Label',
+        'QualifiedApiName',
+        'NamespacePrefix',
+        'Language',
+    ].map((name) => name.toLowerCase()),
+);
+
+/**
+ * 標準の関係のうち、名前と参照先のオブジェクトが違うもの (SOQL の関係のパスをたどるのに使う)。
+ * Owner は User か Group (キュー) だが、項目の参照としては User にする。What・Who などの多態は入れない (そこで止める)
+ */
+const STANDARD_RELATIONSHIP_TARGETS: Readonly<Record<string, string>> = {
+    owner: 'User',
+    createdby: 'User',
+    lastmodifiedby: 'User',
+    manager: 'User',
+    delegatedapprover: 'User',
+    recordtype: 'RecordType',
+};
+
+/** Apex の標準の型 (名前空間・型の一覧にある。System を省いたものも) か */
+const isApexStandardTypeName = (name: string): boolean => {
+    // AggregateResult は集計の SOQL の結果の型 (Apex の資料の SObject の章。型の一覧・オブジェクトの一覧のどちらにもない)
+    if (/^(schema\.)?aggregateresult$/i.test(name)) return true;
+    const resolved = resolveApexStandardName(name.split('.'));
+    return resolved !== undefined && resolved.kind !== 'sObject';
+};
 
 const nodeId = (type: string, name: string) => `${type}:${name}`;
 const keyOf = (type: string, name: string) => `${type}:${name.toLowerCase()}`;
@@ -113,12 +180,21 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
     /** 定義のある種類 (その種類の参照は「ない」と言える) */
     const definedTypes = new Set<string>();
     const edges: DependencyEdge[] = [];
+    /** 候補の参照 (確定した辺の後で、グラフにある参照先だけを辺にする) */
+    const candidates: {
+        unit: { type: string; id: string };
+        unitNode: string;
+        reference: UnitReference;
+    }[] = [];
     const findings: DependencyFinding[] = [];
 
     const addNode = (node: DependencyNode) => {
         const existing = nodes.get(node.id);
         if (!existing || (existing.origin !== 'repository' && node.origin === 'repository')) {
             nodes.set(node.id, node);
+        } else if (node.traits?.length && existing.origin === 'repository') {
+            // オーバーロードなど、同じ名前の定義の性質は合わせる
+            existing.traits = [...new Set([...(existing.traits ?? []), ...node.traits])];
         }
         return node.id;
     };
@@ -167,6 +243,7 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
                 parent: parent === nodeId(member.defType, member.name) ? unitNode : parent,
                 unit: unitRef,
                 ...(member.sourceKeys ? { sourceKeys: member.sourceKeys } : {}),
+                ...(member.traits?.length ? { traits: [...member.traits] } : {}),
             });
             define(member.defType, member.name, id);
             definedTypes.add(member.defType);
@@ -185,6 +262,52 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
             );
         }
     }
+
+    /** 参照項目 (<子>.<項目> (小文字)) → 参照先のオブジェクト (リポジトリのオブジェクトの子リレーションから) */
+    const lookupTargets = new Map<string, string>();
+    for (const relationship of childRelationships.values()) {
+        lookupTargets.set(relationship.field.toLowerCase(), relationship.parent);
+    }
+
+    /**
+     * SOQL の関係のパス (fieldPath: Contact.Account.Owner.Name) を、2 段目からの参照項目と最後の項目の参照にする
+     * (1 段目の参照項目は単位の参照にある)。関係の先のオブジェクトは、リポジトリの参照項目 (子リレーションの表) か、
+     * 標準の関係 (STANDARD_RELATIONSHIP_TARGETS・標準オブジェクトの名前)。決まらない関係 (多態など) から先は参照にしない
+     */
+    const expandFieldPath = (reference: UnitReference): UnitReference[] => {
+        if (reference.refType !== 'fieldPath') return [reference];
+        const [object = '', ...path] = reference.target.split('.');
+        const expanded: UnitReference[] = [];
+        let current = object;
+        for (let i = 0; i < path.length - 1; i++) {
+            const relationship = path[i]!;
+            const field = /__r$/i.test(relationship)
+                ? relationship.replace(/__r$/i, '__c')
+                : `${relationship}Id`;
+            if (i > 0)
+                expanded.push({ ...reference, refType: 'field', target: `${current}.${field}` });
+            const next =
+                lookupTargets.get(`${current}.${field}`.toLowerCase()) ??
+                (/__r$/i.test(relationship)
+                    ? undefined
+                    : (STANDARD_RELATIONSHIP_TARGETS[relationship.toLowerCase()] ??
+                      (relationship.toLowerCase() === 'parent' ||
+                      relationship.toLowerCase() === 'masterrecord'
+                          ? current
+                          : isStandardObjectName(relationship) &&
+                              relationship.toLowerCase() !== 'sobject'
+                            ? relationship
+                            : undefined)));
+            if (!next) return expanded;
+            current = next;
+        }
+        expanded.push({
+            ...reference,
+            refType: 'field',
+            target: `${current}.${path[path.length - 1]}`,
+        });
+        return expanded;
+    };
 
     /**
      * サブクエリの子リレーション (Account.Contacts) と、その項目 (Account.Contacts.LastName)。
@@ -207,7 +330,10 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
             isNamespaced(name) || isNamespaced(parent)
                 ? 'managed'
                 : !custom
-                  ? 'standard'
+                  ? // 標準の子リレーションは、親が標準のオブジェクトのときだけ standard (名前そのものは一覧で確かめない)
+                    isStandardObjectName(parent)
+                      ? 'standard'
+                      : 'unknown'
                   : refType === 'childRelationship' && definedTypes.has('object')
                     ? 'missing'
                     : 'unknown';
@@ -282,7 +408,11 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
                     type: 'apexType',
                     name: owner.name,
                     level: 'unit',
-                    origin: isNamespaced(owner.name) ? 'managed' : 'standard',
+                    origin: isNamespaced(owner.name)
+                        ? 'managed'
+                        : isApexStandardTypeName(owner.name)
+                          ? 'standard'
+                          : 'unknown',
                 });
             }
         }
@@ -320,19 +450,26 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
         });
 
     const originOf = (refType: string, target: string): NodeOrigin => {
-        if (refType === 'globalVariable' || refType === 'apexType') return 'standard';
+        if (refType === 'globalVariable') return 'standard';
         // c 以外の名前空間の部品 (Flow の画面の forceContent:fileUpload など) は標準
         if (refType === 'aura' && /^\w+:/.test(target) && !/^c:/i.test(target)) return 'standard';
         const [head] = target.split('.');
         if (isNamespaced(head ?? target) || isNamespaced(target.split('.').pop() ?? ''))
             return 'managed';
+        // Apex の型: 標準の型の一覧にあるものだけ standard
+        if (refType === 'apexType') return isApexStandardTypeName(target) ? 'standard' : 'unknown';
         if (refType === 'object') {
-            if (!isCustom(target)) return 'standard';
+            if (!isCustom(target)) return isStandardObjectName(target) ? 'standard' : 'unknown';
             return definedTypes.has('object') ? 'missing' : 'unknown';
         }
         if (refType === 'field') {
-            const [object, field = ''] = target.split('.');
-            if (!isCustom(field)) return 'standard';
+            const [object = '', field = ''] = target.split('.');
+            // 標準の項目: 標準のオブジェクトの項目か、どのオブジェクトにもある項目
+            if (!isCustom(field))
+                return isStandardObjectName(object) ||
+                    COMMON_STANDARD_FIELDS.has(field.toLowerCase())
+                    ? 'standard'
+                    : 'unknown';
             // オブジェクトが (定義として) リポジトリにあるのに項目がない
             return object && lookup('object', object)
                 ? 'missing'
@@ -354,7 +491,11 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
     for (const unit of units) {
         const unitNode = unitNodeOf.get(`${unit.type}:${unit.id}`)!;
         const unitRef = { type: unit.type, id: unit.id };
-        for (const reference of unit.dependencies.references) {
+        for (const reference of unit.dependencies.references.flatMap(expandFieldPath)) {
+            if (reference.resolution === 'candidates') {
+                candidates.push({ unit: unitRef, unitNode, reference });
+                continue;
+            }
             const { member, statement, expression } = reference.from;
             const memberNode = member
                 ? (lookup('apexMethod', member) ??
@@ -389,8 +530,16 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
                 });
             }
             const to = resolveTarget(reference, unitNode);
-            edges.push({ from, to, kind: reference.kind, via: reference.via, unit: unitRef });
             const target = nodes.get(to)!;
+            const resolution = edgeResolutionOf(target.origin, reference.resolution);
+            edges.push({
+                from,
+                to,
+                kind: reference.kind,
+                via: reference.via,
+                unit: unitRef,
+                ...(resolution ? { resolution } : {}),
+            });
             // 子のコンポーネント自体がないときの @api (<バンドル>.<プロパティ>) は、UNKNOWN_LWC と同じ原因なので重ねて出さない
             const ownerMissing =
                 target.type === 'lwcProperty' && !lookup('lwc', target.name.split('.')[0]!);
@@ -404,10 +553,35 @@ export const buildDependencyGraph = (units: readonly GraphUnit[]): DependencyGra
                     message: `${target.type} ${target.name} is not in the repository (${unit.type} ${unit.id}, ${reference.via})`,
                 });
             }
+            const lightningFinding = lightningApexFindingOf(target, reference.via);
+            if (lightningFinding) {
+                findings.push({
+                    ...lightningFinding,
+                    severity: 'warning',
+                    target: to,
+                    from,
+                    message: `${lightningFinding.message} (${unit.type} ${unit.id})`,
+                });
+            }
         }
     }
 
-    return { nodes, edges, findings: dedupeFindings(findings) };
+    // 候補の参照: 参照先がグラフにある (定義がある) ものだけを、メンバーの細かさで辺にする
+    const candidateEdges: DependencyEdge[] = [];
+    for (const { unit, unitNode, reference } of candidates) {
+        const member = reference.from.member;
+        const from =
+            (member &&
+                (lookup('apexMethod', member) ??
+                    lookup('apexProperty', member) ??
+                    lookup('apexClass', member) ??
+                    lookup('apexTrigger', member))) ||
+            unitNode;
+        const to = lookup(reference.refType, reference.target);
+        if (to) candidateEdges.push({ from, to, kind: reference.kind, via: reference.via, unit });
+    }
+
+    return { nodes, edges, findings: dedupeFindings(findings), candidateEdges };
 };
 
 /**
@@ -429,6 +603,40 @@ export type ReferenceFinding = {
 };
 
 /** グラフの、ない参照先の指摘 */
+/**
+ * LWC から使う Apex のメソッドの決まり (@salesforce/apex の import は @AuraEnabled、@wire は cacheable=true)。
+ * リポジトリにあるメソッドだけ見る (ないものは UNKNOWN_APEX_MEMBER)
+ */
+const lightningApexFindingOf = (
+    target: DependencyNode,
+    via: string,
+): { code: string; message: string } | undefined => {
+    if (target.type !== 'apexMethod' || target.origin !== 'repository') return undefined;
+    const traits = target.traits ?? [];
+    if (via === 'import' && !traits.includes('auraEnabled'))
+        return {
+            code: 'APEX_METHOD_NOT_AURA_ENABLED',
+            message: `apexMethod ${target.name} is imported from @salesforce/apex but is not @AuraEnabled`,
+        };
+    if (via === 'wire' && traits.includes('auraEnabled') && !traits.includes('cacheable'))
+        return {
+            code: 'APEX_METHOD_NOT_CACHEABLE',
+            message: `apexMethod ${target.name} is used with @wire but is not @AuraEnabled(cacheable=true)`,
+        };
+    return undefined;
+};
+
+/** 辺の確かさ (DependencyEdge.resolution)。参照先のノードの由来で決め、決まらなければ単位の参照の確かさ */
+const edgeResolutionOf = (
+    origin: NodeOrigin,
+    resolution: UnitReference['resolution'],
+): DependencyEdge['resolution'] => {
+    if (origin === 'repository') return 'resolved';
+    if (origin === 'missing') return 'missing';
+    if (origin === 'standard') return 'standard';
+    return resolution === 'candidates' ? undefined : resolution;
+};
+
 export const referenceFindingsOf = (graph: DependencyGraph): ReferenceFinding[] =>
     graph.findings.map((finding) => {
         const unitNode = graph.nodes.get(toLevel(graph, finding.from, 'unit'));
@@ -776,66 +984,6 @@ const unitEdgesAll = (graph: DependencyGraph): Map<string, Set<string>> => {
         out.set(from, (out.get(from) ?? new Set()).add(to));
     }
     return new Map([...out].sort(([a], [b]) => a.localeCompare(b)));
-};
-
-/** 単位の種類 → メタデータ API の型の名前 (package.xml) */
-const METADATA_TYPE_NAMES: Record<string, string> = {
-    apexClass: 'ApexClass',
-    apexTrigger: 'ApexTrigger',
-    lwc: 'LightningComponentBundle',
-    aura: 'AuraDefinitionBundle',
-    object: 'CustomObject',
-    field: 'CustomField',
-    objectTranslation: 'CustomObjectTranslation',
-    permissionSet: 'PermissionSet',
-    mutingPermissionSet: 'MutingPermissionSet',
-    permissionSetGroup: 'PermissionSetGroup',
-    profile: 'Profile',
-    customLabels: 'CustomLabels',
-    customLabel: 'CustomLabel',
-    flow: 'Flow',
-    layout: 'Layout',
-    flexiPage: 'FlexiPage',
-    customMetadata: 'CustomMetadata',
-    customTab: 'CustomTab',
-    customApplication: 'CustomApplication',
-    globalValueSet: 'GlobalValueSet',
-    standardValueSet: 'StandardValueSet',
-    customPermission: 'CustomPermission',
-    quickAction: 'QuickAction',
-    sharingRules: 'SharingRules',
-    staticResource: 'StaticResource',
-    report: 'Report',
-    dashboard: 'Dashboard',
-    translations: 'Translations',
-    namedCredential: 'NamedCredential',
-    remoteSiteSetting: 'RemoteSiteSetting',
-    workflow: 'Workflow',
-    approvalProcess: 'ApprovalProcess',
-    queue: 'Queue',
-    group: 'Group',
-    role: 'Role',
-    apexPage: 'ApexPage',
-    apexComponent: 'ApexComponent',
-    emailTemplate: 'EmailTemplate',
-    messageChannel: 'LightningMessageChannel',
-    externalCredential: 'ExternalCredential',
-    customNotificationType: 'CustomNotificationType',
-    reportType: 'ReportType',
-    assignmentRules: 'AssignmentRules',
-    autoResponseRules: 'AutoResponseRules',
-    escalationRules: 'EscalationRules',
-    pathAssistant: 'PathAssistant',
-    duplicateRule: 'DuplicateRule',
-    matchingRules: 'MatchingRules',
-    platformEventChannel: 'PlatformEventChannel',
-    platformEventChannelMember: 'PlatformEventChannelMember',
-    platformEventSubscriberConfig: 'PlatformEventSubscriberConfig',
-    cspTrustedSite: 'CspTrustedSite',
-    externalDataSource: 'ExternalDataSource',
-    settings: 'Settings',
-    workflowAlert: 'WorkflowAlert',
-    matchingRule: 'MatchingRule',
 };
 
 /** ノード (単位・項目など) の package.xml。種類ごとに名前の順。apiVersion は sfdx-project.json の sourceApiVersion など */

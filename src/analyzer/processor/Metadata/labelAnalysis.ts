@@ -2,6 +2,7 @@ import type { ApexUnitParseResult } from '../../parser/Apex/unit';
 import type { LwcBundleParseResult } from '../../parser/Lwc/parser';
 import type { ConvertKeys } from '../../types';
 import { apexDottedNameOf, walkApexParseResult } from '../Apex/walker';
+import { isRecord } from '../commons/json';
 
 // カスタム表示ラベルの使用箇所 (LWC の @salesforce/label/c.<名前>、Apex の System.Label.<名前> / Label.<名前>、
 // Flow の $Label.<名前>)。使われていないラベル・ないラベルへの参照は、依存関係のグラフで見る
@@ -19,9 +20,6 @@ export type LabelUsage = {
     /** 使っているところ (import・式など) の sourceKeys */
     sourceKeys?: ConvertKeys;
 };
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-    typeof value === 'object' && value !== null && !Array.isArray(value);
 
 /** JSON をたどり、kind を持つノードごとに visit を呼ぶ */
 export const walkJsonNodes = (

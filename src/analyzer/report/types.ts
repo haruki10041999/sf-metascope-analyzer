@@ -112,6 +112,13 @@ export type ObjectDiagram = z.infer<typeof schemas.ObjectDiagramSchema>;
 // Apex
 export type ApexOutlineRow = z.infer<typeof schemas.ApexOutlineRowSchema>;
 export type ApexDataAccessRow = z.infer<typeof schemas.ApexDataAccessRowSchema>;
+export type ApexMetricsRow = z.infer<typeof schemas.ApexMetricsRowSchema>;
+export type ApexUnusedMethodRow = z.infer<typeof schemas.ApexUnusedMethodRowSchema>;
+export type ObjectUsageRow = z.infer<typeof schemas.ObjectUsageRowSchema>;
+export type ApexEntryPointRow = z.infer<typeof schemas.ApexEntryPointRowSchema>;
+export type ApexTriggerHandlerRow = z.infer<typeof schemas.ApexTriggerHandlerRowSchema>;
+export type ApexTestRow = z.infer<typeof schemas.ApexTestRowSchema>;
+export type LwcMetricsRow = z.infer<typeof schemas.LwcMetricsRowSchema>;
 
 // LWC
 export type LwcComponentRow = z.infer<typeof schemas.LwcComponentRowSchema>;

@@ -24,7 +24,7 @@ import type {
 type FlowNode = { id: string; filePath: string; json: FlowJson };
 
 const flowsOf = (snapshot: MetadataSnapshot | undefined) =>
-    snapshot ? readable<FlowJson>(snapshot.flows, 'flow') : undefined;
+    snapshot ? readable(snapshot.flows, 'flow') : undefined;
 
 const compareFlows = (input: SnapshotInput) =>
     compareKeyed<FlowNode>(

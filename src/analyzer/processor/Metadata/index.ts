@@ -11,3 +11,4 @@ export * from './automation';
 export * from './refs';
 export * from './walker';
 export * from './markup';
+export * from './standardTypes';

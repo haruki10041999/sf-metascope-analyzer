@@ -1,3 +1,4 @@
+import { isAriaAttribute, isGlobalHtmlAttribute } from '@lwc/shared';
 import type { LwcBundleParseResult } from '../../parser/Lwc/parser';
 import {
     findSpanSourceInfo,
@@ -13,12 +14,18 @@ import {
     type LwcModifiersJson,
     type LwcSourceJson,
     type LwcTemplateNodeJson,
+    SLDS_ICONS,
+    SLDS_ICONS_REFERENCE_VERSION,
+    LIGHTNING_COMPONENT_ATTRIBUTES,
+    LWC_COMPONENTS_REFERENCE_SOURCE,
+    VERIFIED_LIGHTNING_COMPONENTS,
 } from '../../types';
 
 import type { ObjectInfo } from '../Metadata/analysis';
 
 import { LWC_TOAST_EVENT_NAME, analyzeLwcModuleCalls, lwcInitReferencesOf } from './calls';
 import { lwcHeritageOf, walkLwcJson } from './walker';
+import { isCustomObjectName } from '../commons/standardObjects';
 
 // LWC のバンドルをまたぐ解析 (docs/lwc-implementation.md)。
 // 子コンポーネントの @api・イベント・slot、lightning-* のカタログ、メタデータ (オブジェクト・項目) への参照を突き合わせる。
@@ -46,7 +53,14 @@ export type LwcAnalysisCode =
     | 'UNKNOWN_OBJECT'
     | 'UNKNOWN_FIELD'
     /** @wire の設定の '$x' (プロパティに追従する値) の x が、コンポーネントのプロパティにない */
-    | 'UNKNOWN_WIRE_PARAM';
+    | 'UNKNOWN_WIRE_PARAM'
+    /** icon-name などの <種類>:<名前> が、SLDS のアイコンにない (standardSldsIcons.ts。SLDS の版が古いと誤検出がありうる) */
+    | 'UNKNOWN_SLDS_ICON'
+    /**
+     * 照合済みの基本コンポーネント (lightning-*) に、その属性がない (書き間違いなど。standardComponentAttributes.ts。
+     * 言語サーバーの版が古いと、新しい属性を誤検出しうる)
+     */
+    | 'UNKNOWN_LIGHTNING_ATTRIBUTE';
 
 /** 突き合わせで見つかったこと。誤検出がありうるので、すべて warning として扱う */
 export type LwcAnalysisFinding = {
@@ -267,9 +281,6 @@ const filePathOf = (sourceObject: LwcSourceJson[], sourceKeys: ConvertKeys) => {
 
 const sortUnique = (values: string[]) => [...new Set(values)].sort();
 
-/** カスタムのオブジェクト・項目 (リポジトリにメタデータがあるはずのもの) の API 名か */
-const isCustomName = (apiName: string) => /__(c|mdt|e|b|x)$/i.test(apiName);
-
 /**
  * バンドルをまたぐ解析。objects (メタデータの解析結果) を渡すと、メタデータへの参照も突き合わせる。
  * オブジェクトがリポジトリにないとき (標準オブジェクトでフォルダがないなど) は、項目を確かめられないので何も出さない
@@ -320,7 +331,7 @@ export const analyzeLwcBundles = (
             const [objectName, fieldName] = dependency.value.split('.');
             const object = objectsByName.get(objectName!.toLowerCase());
             if (!object) {
-                if (isCustomName(objectName!)) {
+                if (isCustomObjectName(objectName!)) {
                     find(
                         'UNKNOWN_OBJECT',
                         objectName!,
@@ -333,7 +344,7 @@ export const analyzeLwcBundles = (
             if (
                 dependency.refType === 'field' &&
                 fieldName &&
-                (isCustomName(fieldName) || isCustomName(objectName!)) &&
+                (isCustomObjectName(fieldName) || isCustomObjectName(objectName!)) &&
                 !object.fields.some((f) => f.apiName.toLowerCase() === fieldName.toLowerCase())
             ) {
                 find(
@@ -378,6 +389,47 @@ export const analyzeLwcBundles = (
                         );
                     } else if (spec.dataAccess) {
                         dataAccess.push(ref.module);
+                    }
+                    // 照合済みの基本コンポーネントの属性 (書き間違い)。HTML の全体の属性・aria-*・data-*・on*・slot・key・
+                    // ディレクティブ (lwc:* など) は見ない
+                    const known = LIGHTNING_COMPONENT_ATTRIBUTES[element.tag];
+                    if (known && VERIFIED_LIGHTNING_COMPONENTS.has(element.tag)) {
+                        for (const attribute of element.attributes) {
+                            const name = attribute.name;
+                            if (
+                                known.includes(name) ||
+                                isGlobalHtmlAttribute(name) ||
+                                isAriaAttribute(name) ||
+                                name.startsWith('data-') ||
+                                name.startsWith('on') ||
+                                name.includes(':') ||
+                                ['slot', 'key', 'class', 'style', 'part'].includes(name)
+                            ) {
+                                continue;
+                            }
+                            find(
+                                'UNKNOWN_LIGHTNING_ATTRIBUTE',
+                                `${element.tag}.${name}`,
+                                `<${element.tag}> に属性 ${name} がない (${LWC_COMPONENTS_REFERENCE_SOURCE} の一覧)`,
+                                attribute.sourceKeys,
+                            );
+                        }
+                    }
+                    // SLDS のアイコン (icon-name="utility:add" など。静的な値で、種類が SLDS のものだけ)
+                    for (const metadataRef of element.metadataRefs ?? []) {
+                        if (metadataRef.refType !== 'icon' || !metadataRef.value) continue;
+                        const [category = '', name = ''] = metadataRef.value.split(':');
+                        const icons = (SLDS_ICONS as Readonly<Record<string, readonly string[]>>)[
+                            category
+                        ];
+                        if (icons && !icons.includes(name)) {
+                            find(
+                                'UNKNOWN_SLDS_ICON',
+                                metadataRef.value,
+                                `<${element.tag}> の ${metadataRef.attribute} の ${metadataRef.value} は SLDS (${SLDS_ICONS_REFERENCE_VERSION}) のアイコンにない`,
+                                metadataRef.sourceKeys,
+                            );
+                        }
                     }
                 } else if (ref?.source === 'package') {
                     packages.push(ref.module);

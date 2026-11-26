@@ -6,9 +6,6 @@ import { describe, it } from 'node:test';
 import type { ApexSourceJson } from '../../src/analyzer/parser';
 import { parseApexUnitFiles } from '../../src/analyzer/parser/Apex/unit';
 import {
-    makeApexDotMethodCallNameOf,
-    makeApexDotObjectCallNameOf,
-    makeApexMethodCallNameOf,
     apexCallsOf,
     namePathOf,
     type ApexExpressionRef,
@@ -30,7 +27,6 @@ import {
     apexTypeTextOf,
 } from '../../src/analyzer/processor/Apex/semantic/type';
 import { resolveApexStandardName } from '../../src/analyzer/processor/Apex/semantic/standardNames';
-import type { CallJson, DotMethodCallJson, MethodDeclarationJson } from '../../src/analyzer/types';
 
 // 作り直し中の Apex の walker (src/analyzer/processor/Apex/semantic/)。
 // 入力は今のパーサーの JSON (最小のソースと、サンプルの ParserTest.cls)。docs/plan.md の P0・P2
@@ -51,100 +47,6 @@ const parseSource = async (
     assert.ok(parsed && parsed.fileType !== 'error');
     return parsed;
 };
-
-/** JSON の木から、kind が一致するノードを書いた順に集める */
-const nodesOf = <T extends { kind: string }>(value: unknown, kind: T['kind']): T[] => {
-    const found: T[] = [];
-    const walk = (v: unknown): void => {
-        if (Array.isArray(v)) {
-            v.forEach(walk);
-            return;
-        }
-        if (typeof v !== 'object' || v === null) return;
-        if ((v as { kind?: unknown }).kind === kind) found.push(v as T);
-        Object.values(v).forEach(walk);
-    };
-    walk(value);
-    return found;
-};
-
-/** メソッド本体の最初の式文の式 */
-const expressionOf = async (expression: string): Promise<unknown> => {
-    const source = await parseSource(`public class A { void m() { ${expression}; } }`);
-    const method = nodesOf<MethodDeclarationJson>(source.content, 'method')[0];
-    assert.ok(method?.block);
-    return method.block[0];
-};
-
-describe('walker/call.ts', () => {
-    it('splits a method call into the receiver path and the method name', async () => {
-        const [call] = nodesOf<DotMethodCallJson>(await expressionOf('a.b.c()'), 'memberAccess');
-        assert.ok(call);
-        assert.deepEqual(makeApexDotMethodCallNameOf(call), {
-            kind: 'method',
-            path: ['a', 'b'],
-            name: 'c',
-        });
-        // メソッドの呼び出しはフィールドの参照ではない
-        assert.equal(makeApexDotObjectCallNameOf(call), undefined);
-    });
-
-    it('keeps calls inside the receiver chain (hoge.fuga(tmp()).aaa())', async () => {
-        const calls = nodesOf<DotMethodCallJson>(
-            await expressionOf('hoge.fuga(tmp()).aaa()'),
-            'memberAccess',
-        );
-        // 書いた順: 外側の aaa、その中の fuga
-        assert.deepEqual(
-            calls.map((call) => makeApexDotMethodCallNameOf(call)),
-            [
-                { kind: 'method', path: ['hoge', 'fuga'], name: 'aaa' },
-                { kind: 'method', path: ['hoge'], name: 'fuga' },
-            ],
-        );
-        const [tmp] = nodesOf<CallJson>(calls[1], 'call');
-        assert.ok(tmp);
-        assert.deepEqual(makeApexMethodCallNameOf(tmp), { kind: 'method', name: 'tmp' });
-    });
-
-    it('reads a field access as an object name and ignores it as a method call', async () => {
-        const source = await parseSource('public class A { void m() { Object x = a.b.c; } }');
-        const [access] = nodesOf<DotMethodCallJson>(source.content, 'memberAccess');
-        assert.ok(access);
-        assert.deepEqual(makeApexDotObjectCallNameOf(access), {
-            kind: 'object',
-            name: ['a', 'b', 'c'],
-        });
-        assert.equal(makeApexDotMethodCallNameOf(access), undefined);
-    });
-
-    it('marks this(...) and super(...) as constructor calls', async () => {
-        const source = await parseSource(
-            'public class A extends B { A() { this(1); } A(Integer i) { super(i); } }',
-        );
-        assert.deepEqual(
-            nodesOf<CallJson>(source.content, 'call').map((call) => makeApexMethodCallNameOf(call)),
-            [
-                { kind: 'constructor', target: 'this' },
-                { kind: 'constructor', target: 'super' },
-            ],
-        );
-    });
-
-    it('stops the receiver path at expressions without a name (items[0].get())', async () => {
-        const [call] = nodesOf<DotMethodCallJson>(
-            await expressionOf('items[0].get(1)'),
-            'memberAccess',
-        );
-        assert.ok(call);
-        // 添字の式はまだ名前にしない (レシーバーの式を持つ形は P2 で作る)
-        assert.deepEqual(makeApexDotMethodCallNameOf(call), {
-            kind: 'method',
-            path: [],
-            name: 'get',
-        });
-    });
-});
 
 /** 宣言を「種類:パス.名前」の形にする */
 const keyOf = (d: ApexDeclaration) => `${d.kind}:${[...d.path, d.name].join('.')}`;
@@ -798,8 +700,8 @@ describe('semantic/type.ts の式の型', () => {
                 // 引数の数で 2 つに絞れるが、戻り値の型が同じなので決まる
                 'Item',
                 'Integer',
-                // 引数の数では絞れず、戻り値の型も違う
-                'unknown(ambiguousOverload: choose)',
+                // 引数の数では絞れないが、引数の型 (Integer) で choose(Integer) に決まる
+                'Object',
                 'A.Level',
                 'Integer',
                 'Item',

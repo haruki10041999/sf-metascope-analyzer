@@ -7,7 +7,7 @@ import { FLOW_START, type FlowJson } from '../../types';
 
 import { analyzeFlowRefs } from './flowRefs';
 import { markupTagsOf, mergeTextsOf } from './markup';
-import { isCustomName } from './references';
+import { isCustomObjectName } from '../commons/standardObjects';
 import {
     initialMetadataWalkContext,
     isFormulaNode,
@@ -16,6 +16,12 @@ import {
     metadataValuesOf,
     walkMetadataJson,
 } from './walker';
+import {
+    isRecord as isJsonRecord,
+    jsonRecordsOf,
+    jsonStringsOf as strings,
+    nonEmptyStringOf as str,
+} from '../commons/json';
 
 // フォルダ単位のメタデータの参照の取り出し (docs/json-redesign-plan.md の段階 M2、docs/metadata-json-review.md 7.1 の #1・#3)。
 // 今まで 4 か所 (referenceAnalysis.ts の EXTRACTORS、units.ts の A_TYPE_REFERENCES・permissionReferences・
@@ -48,16 +54,9 @@ export type MetadataRefInfo = {
 /** 種類ごとの取り出しに渡すもの */
 type RefSource = { json: Json; name: string; dataType: string };
 
-const isRecord = (value: unknown): value is Json =>
-    typeof value === 'object' && value !== null && !Array.isArray(value);
-const str = (value: unknown): string | undefined =>
-    typeof value === 'string' && value !== '' ? value : undefined;
-const rows = (json: Json, name: string): Json[] =>
-    Array.isArray(json[name]) ? (json[name] as unknown[]).filter(isRecord) : [];
-const strings = (json: Json, name: string): string[] =>
-    Array.isArray(json[name])
-        ? (json[name] as unknown[]).filter((v): v is string => typeof v === 'string')
-        : [];
+/** JSON のオブジェクトか (sourceKeys を持ちうるノード・行として扱う) */
+const isRecord = isJsonRecord as (value: unknown) => value is Json;
+const rows = (json: Json, name: string): Json[] => jsonRecordsOf<Json>(json, name);
 
 /** 行・ノードの参照 (文と式はそのノード) */
 const ref = (
@@ -154,7 +153,9 @@ const expressionRefs = (
         ),
         ...(() => {
             const field = expression.trim().match(/^(\w+)\.(\w+)$/);
-            return field && (!objectName || field[1] === objectName) && isCustomName(field[1]!)
+            return field &&
+                (!objectName || field[1] === objectName) &&
+                isCustomObjectName(field[1]!)
                 ? ref('field', `${field[1]}.${field[2]}`, via, node)
                 : [];
         })(),
@@ -595,7 +596,7 @@ const EXTRACTORS: Record<string, (source: RefSource) => MetadataRefInfo[]> = {
             ...rows(json, 'columns').flatMap((column) => {
                 const field = String(column.field);
                 const [owner] = field.split('.');
-                return field.includes('.') && isCustomName(owner!)
+                return field.includes('.') && isCustomObjectName(owner!)
                     ? ref('field', field, 'columns', column)
                     : [];
             }),

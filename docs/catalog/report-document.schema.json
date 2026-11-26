@@ -80,14 +80,21 @@
                             "apex.outline",
                             "apex.methodFlow",
                             "apex.callFlow",
+                            "apex.metrics",
+                            "apex.unusedMethods",
+                            "apex.entryPoints",
+                            "apex.triggerHandlers",
+                            "apex.tests",
                             "apex.dataAccess",
                             "apex.interface",
                             "lwc.components",
+                            "lwc.metrics",
                             "lwc.detail",
                             "lwc.methodFlow",
                             "lwc.eventFlow",
                             "lwc.wireframe",
                             "lwc.interface",
+                            "object.usage",
                             "automation.byObject",
                             "layout.detail",
                             "flexiPage.detail",
@@ -1323,6 +1330,287 @@
                         "if": {
                             "properties": {
                                 "provider": {
+                                    "const": "apex.metrics"
+                                }
+                            },
+                            "required": [
+                                "provider"
+                            ]
+                        },
+                        "then": {
+                            "properties": {
+                                "args": {
+                                    "type": "object",
+                                    "properties": {
+                                        "classes": {
+                                            "description": "Class, trigger or anonymous Apex names to include. Omit for all.",
+                                            "anyOf": [
+                                                {
+                                                    "description": "Class, trigger or anonymous Apex names to include. Omit for all.",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                {
+                                                    "$ref": "#/$defs/dynamicValue"
+                                                }
+                                            ]
+                                        },
+                                        "includeTests": {
+                                            "description": "false hides bodies in tests. Default true.",
+                                            "anyOf": [
+                                                {
+                                                    "description": "false hides bodies in tests. Default true.",
+                                                    "type": "boolean"
+                                                },
+                                                {
+                                                    "$ref": "#/$defs/dynamicValue"
+                                                }
+                                            ]
+                                        },
+                                        "minComplexity": {
+                                            "description": "Only bodies whose cyclomatic or cognitive complexity is at least this.",
+                                            "anyOf": [
+                                                {
+                                                    "description": "Only bodies whose cyclomatic or cognitive complexity is at least this.",
+                                                    "type": "integer",
+                                                    "minimum": 1,
+                                                    "maximum": 9007199254740991
+                                                },
+                                                {
+                                                    "$ref": "#/$defs/dynamicValue"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "if": {
+                            "properties": {
+                                "provider": {
+                                    "const": "apex.unusedMethods"
+                                }
+                            },
+                            "required": [
+                                "provider"
+                            ]
+                        },
+                        "then": {
+                            "properties": {
+                                "args": {
+                                    "type": "object",
+                                    "properties": {
+                                        "classes": {
+                                            "description": "Class names to include. Omit for all.",
+                                            "anyOf": [
+                                                {
+                                                    "description": "Class names to include. Omit for all.",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                {
+                                                    "$ref": "#/$defs/dynamicValue"
+                                                }
+                                            ]
+                                        },
+                                        "includeCandidates": {
+                                            "description": "false hides candidateOnly methods. Default true.",
+                                            "anyOf": [
+                                                {
+                                                    "description": "false hides candidateOnly methods. Default true.",
+                                                    "type": "boolean"
+                                                },
+                                                {
+                                                    "$ref": "#/$defs/dynamicValue"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "if": {
+                            "properties": {
+                                "provider": {
+                                    "const": "apex.entryPoints"
+                                }
+                            },
+                            "required": [
+                                "provider"
+                            ]
+                        },
+                        "then": {
+                            "properties": {
+                                "args": {
+                                    "type": "object",
+                                    "properties": {
+                                        "classes": {
+                                            "description": "Class names to include. Omit for all.",
+                                            "anyOf": [
+                                                {
+                                                    "description": "Class names to include. Omit for all.",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                {
+                                                    "$ref": "#/$defs/dynamicValue"
+                                                }
+                                            ]
+                                        },
+                                        "kinds": {
+                                            "description": "Kinds of entry points to list.",
+                                            "anyOf": [
+                                                {
+                                                    "description": "Kinds of entry points to list.",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                            "rest",
+                                                            "aura",
+                                                            "invocable",
+                                                            "remoteAction",
+                                                            "webservice",
+                                                            "future"
+                                                        ]
+                                                    }
+                                                },
+                                                {
+                                                    "$ref": "#/$defs/dynamicValue"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "if": {
+                            "properties": {
+                                "provider": {
+                                    "const": "apex.triggerHandlers"
+                                }
+                            },
+                            "required": [
+                                "provider"
+                            ]
+                        },
+                        "then": {
+                            "properties": {
+                                "args": {
+                                    "type": "object",
+                                    "properties": {
+                                        "triggers": {
+                                            "description": "Trigger names to include. Omit for all.",
+                                            "anyOf": [
+                                                {
+                                                    "description": "Trigger names to include. Omit for all.",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                {
+                                                    "$ref": "#/$defs/dynamicValue"
+                                                }
+                                            ]
+                                        },
+                                        "depth": {
+                                            "description": "How many calls to follow (default 3).",
+                                            "anyOf": [
+                                                {
+                                                    "description": "How many calls to follow (default 3).",
+                                                    "type": "integer",
+                                                    "minimum": 1,
+                                                    "maximum": 10
+                                                },
+                                                {
+                                                    "$ref": "#/$defs/dynamicValue"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "if": {
+                            "properties": {
+                                "provider": {
+                                    "const": "apex.tests"
+                                }
+                            },
+                            "required": [
+                                "provider"
+                            ]
+                        },
+                        "then": {
+                            "properties": {
+                                "args": {
+                                    "type": "object",
+                                    "properties": {
+                                        "classes": {
+                                            "description": "Class or trigger names to include. Omit for all.",
+                                            "anyOf": [
+                                                {
+                                                    "description": "Class or trigger names to include. Omit for all.",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                {
+                                                    "$ref": "#/$defs/dynamicValue"
+                                                }
+                                            ]
+                                        },
+                                        "depth": {
+                                            "description": "How many calls to follow (default 3).",
+                                            "anyOf": [
+                                                {
+                                                    "description": "How many calls to follow (default 3).",
+                                                    "type": "integer",
+                                                    "minimum": 1,
+                                                    "maximum": 10
+                                                },
+                                                {
+                                                    "$ref": "#/$defs/dynamicValue"
+                                                }
+                                            ]
+                                        },
+                                        "untestedOnly": {
+                                            "description": "Only classes and triggers no test reaches.",
+                                            "anyOf": [
+                                                {
+                                                    "description": "Only classes and triggers no test reaches.",
+                                                    "type": "boolean"
+                                                },
+                                                {
+                                                    "$ref": "#/$defs/dynamicValue"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "if": {
+                            "properties": {
+                                "provider": {
                                     "const": "apex.dataAccess"
                                 }
                             },
@@ -1440,6 +1728,56 @@
                                                     "items": {
                                                         "type": "string"
                                                     }
+                                                },
+                                                {
+                                                    "$ref": "#/$defs/dynamicValue"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "if": {
+                            "properties": {
+                                "provider": {
+                                    "const": "lwc.metrics"
+                                }
+                            },
+                            "required": [
+                                "provider"
+                            ]
+                        },
+                        "then": {
+                            "properties": {
+                                "args": {
+                                    "type": "object",
+                                    "properties": {
+                                        "components": {
+                                            "description": "Component names (accountList or c/accountList) to include. Omit for all.",
+                                            "anyOf": [
+                                                {
+                                                    "description": "Component names (accountList or c/accountList) to include. Omit for all.",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                {
+                                                    "$ref": "#/$defs/dynamicValue"
+                                                }
+                                            ]
+                                        },
+                                        "minComplexity": {
+                                            "description": "Only bodies whose cyclomatic or cognitive complexity is at least this.",
+                                            "anyOf": [
+                                                {
+                                                    "description": "Only bodies whose cyclomatic or cognitive complexity is at least this.",
+                                                    "type": "integer",
+                                                    "minimum": 1,
+                                                    "maximum": 9007199254740991
                                                 },
                                                 {
                                                     "$ref": "#/$defs/dynamicValue"
@@ -1692,6 +2030,42 @@
                                                 {
                                                     "description": "true returns only the changed rows (when comparing with diff / compare).",
                                                     "type": "boolean"
+                                                },
+                                                {
+                                                    "$ref": "#/$defs/dynamicValue"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "if": {
+                            "properties": {
+                                "provider": {
+                                    "const": "object.usage"
+                                }
+                            },
+                            "required": [
+                                "provider"
+                            ]
+                        },
+                        "then": {
+                            "properties": {
+                                "args": {
+                                    "type": "object",
+                                    "properties": {
+                                        "objects": {
+                                            "description": "Object API names to include. Omit for all.",
+                                            "anyOf": [
+                                                {
+                                                    "description": "Object API names to include. Omit for all.",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
                                                 },
                                                 {
                                                     "$ref": "#/$defs/dynamicValue"
@@ -2450,14 +2824,21 @@
                                                 "apex.outline",
                                                 "apex.methodFlow",
                                                 "apex.callFlow",
+                                                "apex.metrics",
+                                                "apex.unusedMethods",
+                                                "apex.entryPoints",
+                                                "apex.triggerHandlers",
+                                                "apex.tests",
                                                 "apex.dataAccess",
                                                 "apex.interface",
                                                 "lwc.components",
+                                                "lwc.metrics",
                                                 "lwc.detail",
                                                 "lwc.methodFlow",
                                                 "lwc.eventFlow",
                                                 "lwc.wireframe",
                                                 "lwc.interface",
+                                                "object.usage",
                                                 "automation.byObject",
                                                 "layout.detail",
                                                 "flexiPage.detail",
@@ -3693,6 +4074,287 @@
                                             "if": {
                                                 "properties": {
                                                     "provider": {
+                                                        "const": "apex.metrics"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "provider"
+                                                ]
+                                            },
+                                            "then": {
+                                                "properties": {
+                                                    "args": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "classes": {
+                                                                "description": "Class, trigger or anonymous Apex names to include. Omit for all.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "Class, trigger or anonymous Apex names to include. Omit for all.",
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "includeTests": {
+                                                                "description": "false hides bodies in tests. Default true.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "false hides bodies in tests. Default true.",
+                                                                        "type": "boolean"
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "minComplexity": {
+                                                                "description": "Only bodies whose cyclomatic or cognitive complexity is at least this.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "Only bodies whose cyclomatic or cognitive complexity is at least this.",
+                                                                        "type": "integer",
+                                                                        "minimum": 1,
+                                                                        "maximum": 9007199254740991
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "if": {
+                                                "properties": {
+                                                    "provider": {
+                                                        "const": "apex.unusedMethods"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "provider"
+                                                ]
+                                            },
+                                            "then": {
+                                                "properties": {
+                                                    "args": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "classes": {
+                                                                "description": "Class names to include. Omit for all.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "Class names to include. Omit for all.",
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "includeCandidates": {
+                                                                "description": "false hides candidateOnly methods. Default true.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "false hides candidateOnly methods. Default true.",
+                                                                        "type": "boolean"
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "if": {
+                                                "properties": {
+                                                    "provider": {
+                                                        "const": "apex.entryPoints"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "provider"
+                                                ]
+                                            },
+                                            "then": {
+                                                "properties": {
+                                                    "args": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "classes": {
+                                                                "description": "Class names to include. Omit for all.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "Class names to include. Omit for all.",
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "kinds": {
+                                                                "description": "Kinds of entry points to list.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "Kinds of entry points to list.",
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "string",
+                                                                            "enum": [
+                                                                                "rest",
+                                                                                "aura",
+                                                                                "invocable",
+                                                                                "remoteAction",
+                                                                                "webservice",
+                                                                                "future"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "if": {
+                                                "properties": {
+                                                    "provider": {
+                                                        "const": "apex.triggerHandlers"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "provider"
+                                                ]
+                                            },
+                                            "then": {
+                                                "properties": {
+                                                    "args": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "triggers": {
+                                                                "description": "Trigger names to include. Omit for all.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "Trigger names to include. Omit for all.",
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "depth": {
+                                                                "description": "How many calls to follow (default 3).",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "How many calls to follow (default 3).",
+                                                                        "type": "integer",
+                                                                        "minimum": 1,
+                                                                        "maximum": 10
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "if": {
+                                                "properties": {
+                                                    "provider": {
+                                                        "const": "apex.tests"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "provider"
+                                                ]
+                                            },
+                                            "then": {
+                                                "properties": {
+                                                    "args": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "classes": {
+                                                                "description": "Class or trigger names to include. Omit for all.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "Class or trigger names to include. Omit for all.",
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "depth": {
+                                                                "description": "How many calls to follow (default 3).",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "How many calls to follow (default 3).",
+                                                                        "type": "integer",
+                                                                        "minimum": 1,
+                                                                        "maximum": 10
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "untestedOnly": {
+                                                                "description": "Only classes and triggers no test reaches.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "Only classes and triggers no test reaches.",
+                                                                        "type": "boolean"
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "if": {
+                                                "properties": {
+                                                    "provider": {
                                                         "const": "apex.dataAccess"
                                                     }
                                                 },
@@ -3810,6 +4472,56 @@
                                                                         "items": {
                                                                             "type": "string"
                                                                         }
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "if": {
+                                                "properties": {
+                                                    "provider": {
+                                                        "const": "lwc.metrics"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "provider"
+                                                ]
+                                            },
+                                            "then": {
+                                                "properties": {
+                                                    "args": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "components": {
+                                                                "description": "Component names (accountList or c/accountList) to include. Omit for all.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "Component names (accountList or c/accountList) to include. Omit for all.",
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "minComplexity": {
+                                                                "description": "Only bodies whose cyclomatic or cognitive complexity is at least this.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "Only bodies whose cyclomatic or cognitive complexity is at least this.",
+                                                                        "type": "integer",
+                                                                        "minimum": 1,
+                                                                        "maximum": 9007199254740991
                                                                     },
                                                                     {
                                                                         "$ref": "#/$defs/dynamicValue"
@@ -4062,6 +4774,42 @@
                                                                     {
                                                                         "description": "true returns only the changed rows (when comparing with diff / compare).",
                                                                         "type": "boolean"
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "if": {
+                                                "properties": {
+                                                    "provider": {
+                                                        "const": "object.usage"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "provider"
+                                                ]
+                                            },
+                                            "then": {
+                                                "properties": {
+                                                    "args": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "objects": {
+                                                                "description": "Object API names to include. Omit for all.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "Object API names to include. Omit for all.",
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "string"
+                                                                        }
                                                                     },
                                                                     {
                                                                         "$ref": "#/$defs/dynamicValue"
@@ -4836,14 +5584,21 @@
                                 "apex.outline",
                                 "apex.methodFlow",
                                 "apex.callFlow",
+                                "apex.metrics",
+                                "apex.unusedMethods",
+                                "apex.entryPoints",
+                                "apex.triggerHandlers",
+                                "apex.tests",
                                 "apex.dataAccess",
                                 "apex.interface",
                                 "lwc.components",
+                                "lwc.metrics",
                                 "lwc.detail",
                                 "lwc.methodFlow",
                                 "lwc.eventFlow",
                                 "lwc.wireframe",
                                 "lwc.interface",
+                                "object.usage",
                                 "automation.byObject",
                                 "layout.detail",
                                 "flexiPage.detail",
@@ -6079,6 +6834,287 @@
                             "if": {
                                 "properties": {
                                     "provider": {
+                                        "const": "apex.metrics"
+                                    }
+                                },
+                                "required": [
+                                    "provider"
+                                ]
+                            },
+                            "then": {
+                                "properties": {
+                                    "args": {
+                                        "type": "object",
+                                        "properties": {
+                                            "classes": {
+                                                "description": "Class, trigger or anonymous Apex names to include. Omit for all.",
+                                                "anyOf": [
+                                                    {
+                                                        "description": "Class, trigger or anonymous Apex names to include. Omit for all.",
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    {
+                                                        "$ref": "#/$defs/dynamicValue"
+                                                    }
+                                                ]
+                                            },
+                                            "includeTests": {
+                                                "description": "false hides bodies in tests. Default true.",
+                                                "anyOf": [
+                                                    {
+                                                        "description": "false hides bodies in tests. Default true.",
+                                                        "type": "boolean"
+                                                    },
+                                                    {
+                                                        "$ref": "#/$defs/dynamicValue"
+                                                    }
+                                                ]
+                                            },
+                                            "minComplexity": {
+                                                "description": "Only bodies whose cyclomatic or cognitive complexity is at least this.",
+                                                "anyOf": [
+                                                    {
+                                                        "description": "Only bodies whose cyclomatic or cognitive complexity is at least this.",
+                                                        "type": "integer",
+                                                        "minimum": 1,
+                                                        "maximum": 9007199254740991
+                                                    },
+                                                    {
+                                                        "$ref": "#/$defs/dynamicValue"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "if": {
+                                "properties": {
+                                    "provider": {
+                                        "const": "apex.unusedMethods"
+                                    }
+                                },
+                                "required": [
+                                    "provider"
+                                ]
+                            },
+                            "then": {
+                                "properties": {
+                                    "args": {
+                                        "type": "object",
+                                        "properties": {
+                                            "classes": {
+                                                "description": "Class names to include. Omit for all.",
+                                                "anyOf": [
+                                                    {
+                                                        "description": "Class names to include. Omit for all.",
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    {
+                                                        "$ref": "#/$defs/dynamicValue"
+                                                    }
+                                                ]
+                                            },
+                                            "includeCandidates": {
+                                                "description": "false hides candidateOnly methods. Default true.",
+                                                "anyOf": [
+                                                    {
+                                                        "description": "false hides candidateOnly methods. Default true.",
+                                                        "type": "boolean"
+                                                    },
+                                                    {
+                                                        "$ref": "#/$defs/dynamicValue"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "if": {
+                                "properties": {
+                                    "provider": {
+                                        "const": "apex.entryPoints"
+                                    }
+                                },
+                                "required": [
+                                    "provider"
+                                ]
+                            },
+                            "then": {
+                                "properties": {
+                                    "args": {
+                                        "type": "object",
+                                        "properties": {
+                                            "classes": {
+                                                "description": "Class names to include. Omit for all.",
+                                                "anyOf": [
+                                                    {
+                                                        "description": "Class names to include. Omit for all.",
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    {
+                                                        "$ref": "#/$defs/dynamicValue"
+                                                    }
+                                                ]
+                                            },
+                                            "kinds": {
+                                                "description": "Kinds of entry points to list.",
+                                                "anyOf": [
+                                                    {
+                                                        "description": "Kinds of entry points to list.",
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "rest",
+                                                                "aura",
+                                                                "invocable",
+                                                                "remoteAction",
+                                                                "webservice",
+                                                                "future"
+                                                            ]
+                                                        }
+                                                    },
+                                                    {
+                                                        "$ref": "#/$defs/dynamicValue"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "if": {
+                                "properties": {
+                                    "provider": {
+                                        "const": "apex.triggerHandlers"
+                                    }
+                                },
+                                "required": [
+                                    "provider"
+                                ]
+                            },
+                            "then": {
+                                "properties": {
+                                    "args": {
+                                        "type": "object",
+                                        "properties": {
+                                            "triggers": {
+                                                "description": "Trigger names to include. Omit for all.",
+                                                "anyOf": [
+                                                    {
+                                                        "description": "Trigger names to include. Omit for all.",
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    {
+                                                        "$ref": "#/$defs/dynamicValue"
+                                                    }
+                                                ]
+                                            },
+                                            "depth": {
+                                                "description": "How many calls to follow (default 3).",
+                                                "anyOf": [
+                                                    {
+                                                        "description": "How many calls to follow (default 3).",
+                                                        "type": "integer",
+                                                        "minimum": 1,
+                                                        "maximum": 10
+                                                    },
+                                                    {
+                                                        "$ref": "#/$defs/dynamicValue"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "if": {
+                                "properties": {
+                                    "provider": {
+                                        "const": "apex.tests"
+                                    }
+                                },
+                                "required": [
+                                    "provider"
+                                ]
+                            },
+                            "then": {
+                                "properties": {
+                                    "args": {
+                                        "type": "object",
+                                        "properties": {
+                                            "classes": {
+                                                "description": "Class or trigger names to include. Omit for all.",
+                                                "anyOf": [
+                                                    {
+                                                        "description": "Class or trigger names to include. Omit for all.",
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    {
+                                                        "$ref": "#/$defs/dynamicValue"
+                                                    }
+                                                ]
+                                            },
+                                            "depth": {
+                                                "description": "How many calls to follow (default 3).",
+                                                "anyOf": [
+                                                    {
+                                                        "description": "How many calls to follow (default 3).",
+                                                        "type": "integer",
+                                                        "minimum": 1,
+                                                        "maximum": 10
+                                                    },
+                                                    {
+                                                        "$ref": "#/$defs/dynamicValue"
+                                                    }
+                                                ]
+                                            },
+                                            "untestedOnly": {
+                                                "description": "Only classes and triggers no test reaches.",
+                                                "anyOf": [
+                                                    {
+                                                        "description": "Only classes and triggers no test reaches.",
+                                                        "type": "boolean"
+                                                    },
+                                                    {
+                                                        "$ref": "#/$defs/dynamicValue"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "if": {
+                                "properties": {
+                                    "provider": {
                                         "const": "apex.dataAccess"
                                     }
                                 },
@@ -6196,6 +7232,56 @@
                                                         "items": {
                                                             "type": "string"
                                                         }
+                                                    },
+                                                    {
+                                                        "$ref": "#/$defs/dynamicValue"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "if": {
+                                "properties": {
+                                    "provider": {
+                                        "const": "lwc.metrics"
+                                    }
+                                },
+                                "required": [
+                                    "provider"
+                                ]
+                            },
+                            "then": {
+                                "properties": {
+                                    "args": {
+                                        "type": "object",
+                                        "properties": {
+                                            "components": {
+                                                "description": "Component names (accountList or c/accountList) to include. Omit for all.",
+                                                "anyOf": [
+                                                    {
+                                                        "description": "Component names (accountList or c/accountList) to include. Omit for all.",
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    {
+                                                        "$ref": "#/$defs/dynamicValue"
+                                                    }
+                                                ]
+                                            },
+                                            "minComplexity": {
+                                                "description": "Only bodies whose cyclomatic or cognitive complexity is at least this.",
+                                                "anyOf": [
+                                                    {
+                                                        "description": "Only bodies whose cyclomatic or cognitive complexity is at least this.",
+                                                        "type": "integer",
+                                                        "minimum": 1,
+                                                        "maximum": 9007199254740991
                                                     },
                                                     {
                                                         "$ref": "#/$defs/dynamicValue"
@@ -6448,6 +7534,42 @@
                                                     {
                                                         "description": "true returns only the changed rows (when comparing with diff / compare).",
                                                         "type": "boolean"
+                                                    },
+                                                    {
+                                                        "$ref": "#/$defs/dynamicValue"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "if": {
+                                "properties": {
+                                    "provider": {
+                                        "const": "object.usage"
+                                    }
+                                },
+                                "required": [
+                                    "provider"
+                                ]
+                            },
+                            "then": {
+                                "properties": {
+                                    "args": {
+                                        "type": "object",
+                                        "properties": {
+                                            "objects": {
+                                                "description": "Object API names to include. Omit for all.",
+                                                "anyOf": [
+                                                    {
+                                                        "description": "Object API names to include. Omit for all.",
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
                                                     },
                                                     {
                                                         "$ref": "#/$defs/dynamicValue"
@@ -7096,14 +8218,21 @@
                                                 "apex.outline",
                                                 "apex.methodFlow",
                                                 "apex.callFlow",
+                                                "apex.metrics",
+                                                "apex.unusedMethods",
+                                                "apex.entryPoints",
+                                                "apex.triggerHandlers",
+                                                "apex.tests",
                                                 "apex.dataAccess",
                                                 "apex.interface",
                                                 "lwc.components",
+                                                "lwc.metrics",
                                                 "lwc.detail",
                                                 "lwc.methodFlow",
                                                 "lwc.eventFlow",
                                                 "lwc.wireframe",
                                                 "lwc.interface",
+                                                "object.usage",
                                                 "automation.byObject",
                                                 "layout.detail",
                                                 "flexiPage.detail",
@@ -8339,6 +9468,287 @@
                                             "if": {
                                                 "properties": {
                                                     "provider": {
+                                                        "const": "apex.metrics"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "provider"
+                                                ]
+                                            },
+                                            "then": {
+                                                "properties": {
+                                                    "args": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "classes": {
+                                                                "description": "Class, trigger or anonymous Apex names to include. Omit for all.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "Class, trigger or anonymous Apex names to include. Omit for all.",
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "includeTests": {
+                                                                "description": "false hides bodies in tests. Default true.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "false hides bodies in tests. Default true.",
+                                                                        "type": "boolean"
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "minComplexity": {
+                                                                "description": "Only bodies whose cyclomatic or cognitive complexity is at least this.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "Only bodies whose cyclomatic or cognitive complexity is at least this.",
+                                                                        "type": "integer",
+                                                                        "minimum": 1,
+                                                                        "maximum": 9007199254740991
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "if": {
+                                                "properties": {
+                                                    "provider": {
+                                                        "const": "apex.unusedMethods"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "provider"
+                                                ]
+                                            },
+                                            "then": {
+                                                "properties": {
+                                                    "args": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "classes": {
+                                                                "description": "Class names to include. Omit for all.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "Class names to include. Omit for all.",
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "includeCandidates": {
+                                                                "description": "false hides candidateOnly methods. Default true.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "false hides candidateOnly methods. Default true.",
+                                                                        "type": "boolean"
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "if": {
+                                                "properties": {
+                                                    "provider": {
+                                                        "const": "apex.entryPoints"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "provider"
+                                                ]
+                                            },
+                                            "then": {
+                                                "properties": {
+                                                    "args": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "classes": {
+                                                                "description": "Class names to include. Omit for all.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "Class names to include. Omit for all.",
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "kinds": {
+                                                                "description": "Kinds of entry points to list.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "Kinds of entry points to list.",
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "string",
+                                                                            "enum": [
+                                                                                "rest",
+                                                                                "aura",
+                                                                                "invocable",
+                                                                                "remoteAction",
+                                                                                "webservice",
+                                                                                "future"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "if": {
+                                                "properties": {
+                                                    "provider": {
+                                                        "const": "apex.triggerHandlers"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "provider"
+                                                ]
+                                            },
+                                            "then": {
+                                                "properties": {
+                                                    "args": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "triggers": {
+                                                                "description": "Trigger names to include. Omit for all.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "Trigger names to include. Omit for all.",
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "depth": {
+                                                                "description": "How many calls to follow (default 3).",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "How many calls to follow (default 3).",
+                                                                        "type": "integer",
+                                                                        "minimum": 1,
+                                                                        "maximum": 10
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "if": {
+                                                "properties": {
+                                                    "provider": {
+                                                        "const": "apex.tests"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "provider"
+                                                ]
+                                            },
+                                            "then": {
+                                                "properties": {
+                                                    "args": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "classes": {
+                                                                "description": "Class or trigger names to include. Omit for all.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "Class or trigger names to include. Omit for all.",
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "depth": {
+                                                                "description": "How many calls to follow (default 3).",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "How many calls to follow (default 3).",
+                                                                        "type": "integer",
+                                                                        "minimum": 1,
+                                                                        "maximum": 10
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "untestedOnly": {
+                                                                "description": "Only classes and triggers no test reaches.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "Only classes and triggers no test reaches.",
+                                                                        "type": "boolean"
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "if": {
+                                                "properties": {
+                                                    "provider": {
                                                         "const": "apex.dataAccess"
                                                     }
                                                 },
@@ -8456,6 +9866,56 @@
                                                                         "items": {
                                                                             "type": "string"
                                                                         }
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "if": {
+                                                "properties": {
+                                                    "provider": {
+                                                        "const": "lwc.metrics"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "provider"
+                                                ]
+                                            },
+                                            "then": {
+                                                "properties": {
+                                                    "args": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "components": {
+                                                                "description": "Component names (accountList or c/accountList) to include. Omit for all.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "Component names (accountList or c/accountList) to include. Omit for all.",
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "minComplexity": {
+                                                                "description": "Only bodies whose cyclomatic or cognitive complexity is at least this.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "Only bodies whose cyclomatic or cognitive complexity is at least this.",
+                                                                        "type": "integer",
+                                                                        "minimum": 1,
+                                                                        "maximum": 9007199254740991
                                                                     },
                                                                     {
                                                                         "$ref": "#/$defs/dynamicValue"
@@ -8708,6 +10168,42 @@
                                                                     {
                                                                         "description": "true returns only the changed rows (when comparing with diff / compare).",
                                                                         "type": "boolean"
+                                                                    },
+                                                                    {
+                                                                        "$ref": "#/$defs/dynamicValue"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "if": {
+                                                "properties": {
+                                                    "provider": {
+                                                        "const": "object.usage"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "provider"
+                                                ]
+                                            },
+                                            "then": {
+                                                "properties": {
+                                                    "args": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "objects": {
+                                                                "description": "Object API names to include. Omit for all.",
+                                                                "anyOf": [
+                                                                    {
+                                                                        "description": "Object API names to include. Omit for all.",
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "string"
+                                                                        }
                                                                     },
                                                                     {
                                                                         "$ref": "#/$defs/dynamicValue"

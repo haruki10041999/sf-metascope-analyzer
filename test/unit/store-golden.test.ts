@@ -23,6 +23,7 @@ describe('保存の置き場の形 (store のゴールデン)', () => {
             assert.deepEqual(current.counts, golden.counts);
             assert.deepEqual(current.nodeKinds, golden.nodeKinds);
             assert.deepEqual(current.symbols, golden.symbols);
+            assert.deepEqual(current.metrics, golden.metrics);
             assert.deepEqual(current.references, golden.references);
         });
     }

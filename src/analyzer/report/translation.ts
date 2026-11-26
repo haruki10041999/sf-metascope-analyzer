@@ -3,7 +3,6 @@ import {
     type TranslationCoverageItem,
     analyzeTranslationCoverages,
 } from '../processor/Metadata/translation';
-import type { CustomObjectJson, CustomObjectTranslationJson } from '../types';
 import { changedProps, compareKeyed, readable, rowBase } from './commons';
 import type {
     MetadataSnapshot,
@@ -27,12 +26,8 @@ const coveragesOf = (
     filter: TranslationFilter,
 ): Coverage[] | undefined => {
     if (!snapshot) return undefined;
-    const translations = readable<CustomObjectTranslationJson>(
-        snapshot.objectTranslations,
-        'objectTranslation',
-    );
-    const objects = (s: MetadataSnapshot) =>
-        readable<CustomObjectJson>(s.objects, 'object').map((o) => o.json);
+    const translations = readable(snapshot.objectTranslations, 'objectTranslation');
+    const objects = (s: MetadataSnapshot) => readable(s.objects, 'object').map((o) => o.json);
     const filePaths = new Map(
         translations.map((t) => [`${t.json.objectApiName}-${t.json.locale}`, t.filePath]),
     );
@@ -41,10 +36,9 @@ const coveragesOf = (
         objects(snapshot),
         before
             ? {
-                  translations: readable<CustomObjectTranslationJson>(
-                      before.objectTranslations,
-                      'objectTranslation',
-                  ).map((t) => t.json),
+                  translations: readable(before.objectTranslations, 'objectTranslation').map(
+                      (t) => t.json,
+                  ),
                   objects: objects(before),
               }
             : undefined,

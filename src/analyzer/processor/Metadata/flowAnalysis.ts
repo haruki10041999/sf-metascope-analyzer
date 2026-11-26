@@ -1,5 +1,11 @@
 import type { FlowParseResult } from '../../parser/Metadata/flow';
-import { FLOW_START, type ConvertKeys, type FlowJson, type FlowResourceJson } from '../../types';
+import {
+    FLOW_START,
+    LWC_FLOW_SCREEN_TARGET,
+    type ConvertKeys,
+    type FlowJson,
+    type FlowResourceJson,
+} from '../../types';
 import { type FlowRefInfo, analyzeFlowRefs } from './flowRefs';
 import type { LabelUsage } from './labelAnalysis';
 import { MetadataContext, MetadataFinding, ReferenceProblem } from './references';
@@ -78,7 +84,7 @@ const BUILTIN_ELEMENTS = new Set(['$Record', '$Record__Prior']);
 
 const readableFlows = (results: FlowParseResult[]) =>
     results.flatMap((result) =>
-        result.dataType === 'flow' ? [{ result, json: result.result.base as FlowJson }] : [],
+        result.dataType === 'flow' ? [{ result, json: result.result.base }] : [],
     );
 
 /**
@@ -236,7 +242,7 @@ export const analyzeFlows = (
                 case 'lwc': {
                     // js-meta.xml が分かる (リポジトリにある) LWC だけ
                     const meta = context.lwcMeta?.[ref.target];
-                    return meta && !meta.targets.includes('lightning__FlowScreen')
+                    return meta && !meta.targets.includes(LWC_FLOW_SCREEN_TARGET)
                         ? {
                               code: 'LWC_NOT_FLOW_SCREEN',
                               target: ref.target,

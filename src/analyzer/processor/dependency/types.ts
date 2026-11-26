@@ -22,6 +22,11 @@ export type DependencyTargetType =
     | 'childRelationship'
     /** <親のオブジェクト>.<子リレーションの名前>.<項目> (サブクエリの項目。子のオブジェクトの項目はグラフで決める) */
     | 'childRelationshipField'
+    /**
+     * <オブジェクト>.<関係>.<関係>...<項目> (SOQL の関係のパス Contact.Account.Owner.Name)。グラフが参照項目の定義と
+     * 標準の関係をたどって、2 段目からの参照項目と最後の項目の参照にする (1 段目の参照項目は単位の参照で別に持つ)
+     */
+    | 'fieldPath'
     | 'customLabel'
     | 'customPermission'
     | 'staticResource'
@@ -69,6 +74,30 @@ export type ReferenceSite = {
     expression?: ConvertKeys;
 };
 
+/**
+ * 参照の解決の結果 (Apex・LWC・メタデータで共通の語。docs/plan.md 2.2)。
+ * - resolved: 宣言に決まった (同じ単位の中・単位をまたぐ解決でほかの単位の中)
+ * - standard: 標準の型・SObject・標準のメソッドに決まった (メソッドの単位では照合しない)
+ * - byName: 名前だけ分かる (ほかの単位の型・オブジェクト・項目。グラフで定義と突き合わせる)
+ * - candidates: 候補が複数あって決まらない (オーバーロード・インターフェースの実装クラスなど)
+ * - missing: リポジトリにも標準にもない (グラフでリポジトリの定義と突き合わせて決める)
+ * - unknown: 決められない (理由つき。依存関係には入れない)
+ */
+export type ReferenceResolution =
+    | { status: 'resolved'; declarationId?: string }
+    | { status: 'standard'; qualifiedName?: string }
+    | { status: 'byName' }
+    | { status: 'candidates'; declarationIds: string[] }
+    | { status: 'missing' }
+    | { status: 'unknown'; reason: string; detail?: string };
+
+/**
+ * 依存関係に入れる参照の確かさ (unknown は入れない。持たない参照は byName)。
+ * missing (リポジトリにも標準にもない) はリポジトリの定義と突き合わせて決めるので、単位の参照 (UnitReference) は持たず、
+ * グラフの辺 (DependencyEdge.resolution) だけが持つ
+ */
+export type ReferenceCertainty = 'resolved' | 'standard' | 'byName' | 'candidates' | 'missing';
+
 /** 参照 1 つ */
 export type UnitReference = {
     refType: DependencyTargetType;
@@ -78,6 +107,11 @@ export type UnitReference = {
     /** どこで (要素名・構文の名前。soql.select / dml.insert / extends など) */
     via: string;
     from: ReferenceSite;
+    /**
+     * 確かさ。持たなければ byName (名前だけ。LWC・メタデータの参照は今はすべてこれ)。
+     * candidates の参照はグラフの確定した辺にしない (DependencyGraph.candidateEdges)
+     */
+    resolution?: Exclude<ReferenceCertainty, 'byName' | 'missing'>;
 };
 
 /** 定義 1 つ (単位が定義しているもの) */
@@ -87,6 +121,11 @@ export type UnitDefinition = {
     name: string;
     /** 定義している宣言 */
     sourceKeys?: ConvertKeys;
+    /**
+     * 定義の性質 (グラフのノードの DependencyNode.traits になる)。
+     * Apex のメソッド: auraEnabled (@AuraEnabled)・cacheable (@AuraEnabled(cacheable=true))
+     */
+    traits?: string[];
 };
 
 /**
@@ -104,10 +143,33 @@ export type ChildRelationship = {
     field: string;
 };
 
+/**
+ * 実行本体 1 つのメトリクス (保存の置き場の metric 表に書き、SQL で集計できるようにする。docs/plan.md 6.2)。
+ * 数え方は Apex が semantic/metrics.ts、LWC が Lwc/metrics.ts (どちらも commons/metrics.ts の構文の数え方)
+ */
+export type UnitBodyMetrics = {
+    /**
+     * 本体の名前。Apex: <型>.<シグネチャ> (AccountService.sync(Id)。メソッド・コンストラクター以外は名前の並び)、
+     * LWC: <ファイル>:<持ち主>.<メンバー> (accountList.js:AccountList.connectedCallback)
+     */
+    body: string;
+    /** 本体の宣言の位置 */
+    sourceKey?: string;
+    /** メトリクスの名前 → 値 (cyclomatic・cognitive・statements・maxNesting・calls・soqlInLoop など) */
+    values: Record<string, number>;
+};
+
 /** 単位 1 つの定義と参照 */
 export type UnitDependencies = {
     definitions: UnitDefinition[];
     references: UnitReference[];
+    /** 実行本体ごとのメトリクス (Apex・LWC だけ。単位をまたぐ解決をしない、保存する定義・参照のときだけ作る) */
+    metrics?: UnitBodyMetrics[];
     /** 子リレーション (オブジェクトの単位だけ) */
     childRelationships?: ChildRelationship[];
+    /**
+     * 単位をまたげば解決できるかもしれない参照の数 (Apex だけ。ほかのクラスの型・親クラスのメンバー・メソッドの戻り値)。
+     * 1 以上なら、グラフを作るときにリポジトリの宣言を渡して解析し直す (unit/dependencies.ts。docs/plan.md 10 章 P4)
+     */
+    pendingResolution?: number;
 };

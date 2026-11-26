@@ -1,11 +1,13 @@
-import type { ApexNodeJson } from '../../../types';
-import { walkJson } from '../../commons/node';
+import type { ConvertKeys } from '../../../types';
+import { type SyntaxMetricsSpec, syntaxMetricsOf } from '../../commons/metrics';
 import type { ApexSemanticAnalysis } from './analyze';
 import type { ApexExecutableBody } from './declaration';
 import { type ApexUnitFacts, apexUnitFactsOf } from './facts';
 import { apexMemberNamesOf } from './members';
+import { apexTypeRefOf, apexTypeTextOf } from './type';
 
 // 実行本体ごとのメトリクス (docs/plan.md 10 章 P4 の段 1)。処理フローの箱からではなく、構文 (文・式の木) から数える。
+// 構文の数え方は言語によらない部品 (commons/metrics.ts の syntaxMetricsOf) に Apex の kind の表を渡す。
 // SOQL・SOSL・DML・呼び出しは facts.ts の事実を本体ごとにまとめる。
 // - 循環的複雑度 = 1 + if・else if の分岐 + for・for-each・while・do + catch + switch の when (else を除く)
 //   + 論理演算子の && と || + 三項演算子
@@ -22,8 +24,14 @@ export type ApexBodyMetrics = {
     kind: ApexExecutableBody['kind'];
     /** 本体を持つ宣言の名前の並び (AccountService.sync・AccountService.name の get など) */
     path: string[];
+    /** メソッド・コンストラクターの名前と引数の型 (calc(Integer, String))。オーバーロードを分ける */
+    signature?: string;
     /** dependencies.ts の参照の member と同じ名前 (匿名 Apex は なし) */
     member?: string;
+    /** 本体を持つ宣言の位置 */
+    sourceKeys?: ConvertKeys;
+    /** テストの中か (@IsTest のクラス・メソッド、testMethod) */
+    isTest: boolean;
     cyclomatic: number;
     cognitive: number;
     /** 文の数 (ブロック { } は数えない) */
@@ -43,128 +51,56 @@ export type ApexBodyMetrics = {
     callees: string[];
 };
 
-const LOOP_KINDS = new Set(['for', 'forEach', 'while', 'doWhile']);
-const NESTING_STATEMENTS = new Set([...LOOP_KINDS, 'if', 'switch', 'try']);
-const STATEMENT_KINDS = new Set([
-    'break',
-    'continue',
-    'delete',
-    'doWhile',
-    'expression',
-    'field',
-    'for',
-    'forEach',
-    'if',
-    'insert',
-    'localVariable',
-    'merge',
-    'return',
-    'runAs',
-    'switch',
-    'throw',
-    'try',
-    'undelete',
-    'update',
-    'upsert',
-    'while',
-]);
-
-/** 認知的複雑度の入れ子の深さと、文の入れ子の深さ */
-type Depth = { cognitive: number; statements: number };
+/** Apex の kind の表 (数え方は commons/metrics.ts。言語によらない) */
+const APEX_SYNTAX: SyntaxMetricsSpec = {
+    ifKind: 'if',
+    loopKinds: new Set(['for', 'forEach', 'while', 'doWhile']),
+    switchKind: 'switch',
+    switchCases: (node) =>
+        (node.when as { condition: { condition: unknown } }[]).map((when) => ({
+            isDefault: when.condition.condition === 'else',
+        })),
+    tryKind: 'try',
+    tryClauseKind: 'tryClause',
+    logicalKind: 'logical',
+    conditionalKind: 'conditional',
+    statementKinds: new Set([
+        'break',
+        'continue',
+        'delete',
+        'doWhile',
+        'expression',
+        'field',
+        'for',
+        'forEach',
+        'if',
+        'insert',
+        'localVariable',
+        'merge',
+        'return',
+        'runAs',
+        'switch',
+        'throw',
+        'try',
+        'undelete',
+        'update',
+        'upsert',
+        'while',
+    ]),
+};
 
 /** 解析の結果から、実行本体ごとのメトリクス */
 export const apexMetricsOf = (
     analysis: ApexSemanticAnalysis,
     facts: ApexUnitFacts = apexUnitFactsOf(analysis),
 ): ApexBodyMetrics[] => {
-    const names = apexMemberNamesOf(analysis.declarations);
+    const names = apexMemberNamesOf(analysis.declarations, analysis.repository?.index);
     return analysis.bodies.map((semantics) => {
         const body = semantics.body;
-        let cyclomatic = 1;
-        let cognitive = 0;
-        let statements = 0;
-        let maxNesting = 0;
-
-        for (const statement of body.statements) {
-            walkJson<ApexNodeJson, Depth>(
-                statement as ApexNodeJson,
-                {
-                    enterAny: (node, { state }) => {
-                        if (STATEMENT_KINDS.has(node.kind)) statements++;
-                        if (NESTING_STATEMENTS.has(node.kind)) {
-                            maxNesting = Math.max(maxNesting, state.statements + 1);
-                            return { state: { ...state, statements: state.statements + 1 } };
-                        }
-                        return undefined;
-                    },
-                    enter: {
-                        if: (node, { state }) => {
-                            node.conditionBlock.forEach((branch, index) => {
-                                if (branch.condition !== 'else') cyclomatic++;
-                                // 最初の if は入れ子の深さも足す。else if・else は +1 だけ
-                                cognitive += index === 0 ? 1 + state.cognitive : 1;
-                            });
-                            return {
-                                state: {
-                                    cognitive: state.cognitive + 1,
-                                    statements: state.statements + 1,
-                                },
-                            };
-                        },
-                        conditional: (_node, { state }) => {
-                            cyclomatic++;
-                            cognitive += 1 + state.cognitive;
-                            return { state: { ...state, cognitive: state.cognitive + 1 } };
-                        },
-                        switch: (node, { state }) => {
-                            cyclomatic += node.when.filter(
-                                (when) => when.condition.condition !== 'else',
-                            ).length;
-                            cognitive += 1 + state.cognitive;
-                            return {
-                                state: {
-                                    cognitive: state.cognitive + 1,
-                                    statements: state.statements + 1,
-                                },
-                            };
-                        },
-                        tryClause: (node, { state }) => {
-                            if (node.condition !== 'catch') return undefined;
-                            cyclomatic++;
-                            cognitive += 1 + state.cognitive;
-                            return { state: { ...state, cognitive: state.cognitive + 1 } };
-                        },
-                        logical: (node, { parent }) => {
-                            if (node.operator === '??') return undefined;
-                            cyclomatic++;
-                            // 同じ演算子の続きは 1 つ (親が同じ演算子なら数えない)
-                            const outer = parent?.kind === 'logical' ? parent.operator : undefined;
-                            if (outer !== node.operator) cognitive++;
-                            return undefined;
-                        },
-                        ...Object.fromEntries(
-                            [...LOOP_KINDS].map((kind) => [
-                                kind,
-                                (_node: ApexNodeJson, { state }: { state: Depth }) => {
-                                    cyclomatic++;
-                                    cognitive += 1 + state.cognitive;
-                                    return {
-                                        state: {
-                                            cognitive: state.cognitive + 1,
-                                            statements: state.statements + 1,
-                                        },
-                                    };
-                                },
-                            ]),
-                        ),
-                    },
-                },
-                { cognitive: 0, statements: 0 },
-            );
-        }
+        const syntax = syntaxMetricsOf(body.statements, APEX_SYNTAX);
 
         // 再帰 (自分の宣言に決まった呼び出し)
-        cognitive += semantics.calls.filter(
+        const recursion = semantics.calls.filter(
             (call) => call.candidateIds.length === 1 && call.candidateIds[0] === body.id,
         ).length;
 
@@ -179,16 +115,31 @@ export const apexMetricsOf = (
         const sosl = count(queries.filter((q) => q.language === 'sosl'));
         const dml = count(inBody(facts.dml));
         const calls = inBody(facts.calls);
-        const member = names.memberOf(names.byId.get(body.id));
+        const declaration = names.byId.get(body.id);
+        const signature =
+            body.kind === 'method' || body.kind === 'constructor'
+                ? `${body.path[body.path.length - 1]}(${body.parameterIds
+                      .map((id) => names.byId.get(id))
+                      .map((p) =>
+                          p && 'type' in p && typeof p.type === 'object'
+                              ? apexTypeTextOf(apexTypeRefOf(p.type))
+                              : '?',
+                      )
+                      .join(', ')})`
+                : undefined;
+        const member = names.memberOf(declaration);
         return {
             bodyId: body.id,
             kind: body.kind,
             path: body.path,
+            ...(signature ? { signature } : {}),
             ...(member ? { member } : {}),
-            cyclomatic,
-            cognitive,
-            statements,
-            maxNesting,
+            ...(declaration ? { sourceKeys: declaration.sourceKeys } : {}),
+            isTest: names.isTestOf(declaration),
+            cyclomatic: syntax.cyclomatic,
+            cognitive: syntax.cognitive + recursion,
+            statements: syntax.statements,
+            maxNesting: syntax.maxNesting,
             soql: soql.all,
             soqlInLoop: soql.inLoop,
             sosl: sosl.all,

@@ -1,5 +1,6 @@
 import { type ConvertKeys, type JsonType, isJsonType } from '../../types';
 import { type WalkHandlers, walkJson } from '../commons/node';
+import { type JsonRecord, isRecord, nonEmptyStringOf as str } from '../commons/json';
 
 // メタデータの JSON の共通の走査 (docs/json-redesign-plan.md の段階 M1、docs/metadata-json-review.md 7.1 の #2)。
 // LWC の walker (processor/Lwc/walker.ts) と同じ形: 処理 (Visitor) を登録して JSON を 1 回だけたどる。
@@ -10,7 +11,7 @@ import { type WalkHandlers, walkJson } from '../commons/node';
 // - 文脈は、単位 (種類と名前)・数式の基準のオブジェクト・メンバー (直前の name / fullName)・直前の境界ノードの sourceKeys・
 //   プロパティ名の並び (path)
 
-type Json = Record<string, unknown>;
+type Json = JsonRecord;
 
 /** 走査中の文脈 */
 export type MetadataWalkContext = {
@@ -59,12 +60,6 @@ export const composeMetadataVisitors = (...visitors: MetadataVisitor[]): Metadat
         value: all(visitors.map((v) => v.value)),
     };
 };
-
-const isRecord = (value: unknown): value is Json =>
-    typeof value === 'object' && value !== null && !Array.isArray(value);
-
-const str = (value: unknown): string | undefined =>
-    typeof value === 'string' && value !== '' ? value : undefined;
 
 const keysOf = (node: Json): ConvertKeys | undefined =>
     isRecord(node.sourceKeys) ? (node.sourceKeys as ConvertKeys) : undefined;

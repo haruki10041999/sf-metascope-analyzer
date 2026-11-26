@@ -1,3 +1,4 @@
+import { type UnitBaseJsonMap, type UnitBaseType, unitBaseOf } from '../parser/unitBase';
 import { analyzeObject } from '../processor/Metadata/analysis';
 import {
     apexContextOf,
@@ -14,17 +15,16 @@ import type { MetadataSnapshot, RowBase, ValueChange, ViewStatus } from './types
 export const nameOf = (result: { result: { id: string } }, type: string): string =>
     result.result.id.slice(type.length + 1);
 
-/** 読めた解析結果の JSON */
-export const readable = <J>(
+/** 読めた解析結果の JSON (中身の型は種類から引く。parser/unitBase.ts) */
+export const readable = <K extends UnitBaseType>(
     results:
         { dataType: string; filePath: string; result: { id: string; base: unknown } }[] | undefined,
-    dataType: string,
-): { id: string; filePath: string; json: J }[] =>
-    (results ?? []).flatMap((r) =>
-        r.dataType === dataType
-            ? [{ id: r.result.id, filePath: r.filePath, json: r.result.base as J }]
-            : [],
-    );
+    dataType: K,
+): { id: string; filePath: string; json: UnitBaseJsonMap[K] }[] =>
+    (results ?? []).flatMap((r) => {
+        const json = unitBaseOf(r, dataType);
+        return json ? [{ id: r.result.id, filePath: r.filePath, json }] : [];
+    });
 
 /** スナップショットごとの MetadataContext (provider ごとに作り直さない。大きいリポジトリでオブジェクトの解析などが重い) */
 const contexts = new WeakMap<MetadataSnapshot, MetadataContext>();

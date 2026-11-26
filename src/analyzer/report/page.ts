@@ -20,7 +20,7 @@ import type {
 // after の構成に、before との違い (status・変更前の位置) を重ねる。after にないもの (removed) は、変更前の位置に置く
 
 const layoutsOf = (snapshot: MetadataSnapshot | undefined) =>
-    snapshot ? readable<LayoutJson>(snapshot.layouts, 'layout') : undefined;
+    snapshot ? readable(snapshot.layouts, 'layout') : undefined;
 
 const sameIgnoring =
     <T extends object>(...keys: string[]) =>
@@ -167,7 +167,7 @@ export const getLayoutDetails = (input: SnapshotInput, names?: string[]): Layout
 };
 
 const pagesOf = (snapshot: MetadataSnapshot | undefined) =>
-    snapshot ? readable<FlexiPageJson>(snapshot.flexiPages, 'flexiPage') : undefined;
+    snapshot ? readable(snapshot.flexiPages, 'flexiPage') : undefined;
 
 type PageItem =
     | ({ itemType: 'component' } & FlexiPageComponentJson)

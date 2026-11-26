@@ -29,6 +29,8 @@ export type StoreDump = {
     nodeKinds: Record<string, Record<string, number>>;
     /** 定義の行 (単位・種類・名前・宣言の位置があるか) */
     symbols: string[];
+    /** 本体ごとのメトリクス (<単位> | <本体> <名前>=<値> ...) */
+    metrics: string[];
     /** 参照の行 (単位・member・種類・参照先・via) */
     references: string[];
 };
@@ -52,12 +54,20 @@ export const storeDumpOf = (backend: SqliteStoreBackend): StoreDump => {
         ]),
     );
     const counts = Object.fromEntries(
-        ['unit', 'unit_file', 'source', 'node', 'span', 'derived', 'symbol', 'reference'].map(
-            (table) => [
-                table,
-                (db.prepare(`SELECT count(*) AS n FROM ${table}`).get() as Row).n as number,
-            ],
-        ),
+        [
+            'unit',
+            'unit_file',
+            'source',
+            'node',
+            'span',
+            'derived',
+            'symbol',
+            'reference',
+            'metric',
+        ].map((table) => [
+            table,
+            (db.prepare(`SELECT count(*) AS n FROM ${table}`).get() as Row).n as number,
+        ]),
     );
     const nodeKinds: Record<string, Record<string, number>> = {};
     for (const row of all('SELECT unit_id, kind, count(*) AS n FROM node GROUP BY unit_id, kind')) {
@@ -78,6 +88,17 @@ export const storeDumpOf = (backend: SqliteStoreBackend): StoreDump => {
                 (r) =>
                     `${unitOf.get(r.unit_id as number)} | ${r.kind} ${r.name}${r.source_key ? '' : ' (位置なし)'}`,
             )
+            .sort(),
+        metrics: Object.entries(
+            all(
+                'SELECT unit_id, seq, body, name, value FROM metric ORDER BY unit_id, seq, name',
+            ).reduce<Record<string, string[]>>((acc, r) => {
+                const key = `${unitOf.get(r.unit_id as number)} | ${r.body as string}#${r.seq as number}`;
+                (acc[key] ??= []).push(`${r.name as string}=${r.value as number}`);
+                return acc;
+            }, {}),
+        )
+            .map(([key, values]) => `${key.replace(/#\d+$/, '')} ${values.join(' ')}`)
             .sort(),
         references: [
             ...new Set(

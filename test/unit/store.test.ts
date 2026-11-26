@@ -281,6 +281,19 @@ describe('UnitStore (保存の置き場)', () => {
         );
         assert.equal(count('SELECT count(*) AS n FROM symbol'), totals.symbols);
         assert.equal(count('SELECT count(*) AS n FROM reference'), totals.references);
+        // 本体ごとのメトリクス (metric 表。名前で引き、値の大きい順)
+        const metrics = await backend.findMetrics({ unitKeys, name: 'cyclomatic', min: 2 });
+        assert.ok(metrics.length > 0);
+        assert.ok(metrics.every((m) => m.name === 'cyclomatic' && m.value >= 2));
+        assert.ok(metrics.some((m) => m.unitType === 'apexClass' && m.body.includes('(')));
+        assert.deepEqual(
+            metrics.map((m) => m.value),
+            metrics.map((m) => m.value).sort((a, b) => b - a),
+        );
+        assert.equal(
+            (await backend.findMetrics({ unitKeys, name: 'cyclomatic', limit: 1 })).length,
+            1,
+        );
 
         // 参照先の名前で引く (大小を区別しない)。AccountTrigger は Account を triggers で参照する
         const hits = await backend.findReferences({
@@ -291,7 +304,11 @@ describe('UnitStore (保存の置き場)', () => {
         assert.ok(
             hits.some(
                 (h) =>
-                    h.unitType === 'apexTrigger' && h.kind === 'triggers' && h.target === 'Account',
+                    h.unitType === 'apexTrigger' &&
+                    h.kind === 'triggers' &&
+                    h.target === 'Account' &&
+                    // 確かさ: 標準オブジェクトなので standard
+                    h.resolution === 'standard',
             ),
         );
         assert.ok(

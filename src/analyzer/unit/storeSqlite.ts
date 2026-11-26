@@ -15,6 +15,8 @@ import type {
     ReferenceHit,
     ReferenceQuery,
     StoreBackend,
+    MetricHit,
+    MetricQuery,
     SymbolHit,
     SymbolQuery,
     UnitSourceFile,
@@ -113,9 +115,20 @@ CREATE TABLE IF NOT EXISTS reference (
     member TEXT,
     statement_key TEXT,
     expression_key TEXT,
+    resolution TEXT,
     PRIMARY KEY (unit_id, seq)
 ) STRICT, WITHOUT ROWID;
 CREATE INDEX IF NOT EXISTS reference_target ON reference (target_type, target_lc);
+CREATE TABLE IF NOT EXISTS metric (
+    unit_id INTEGER NOT NULL,
+    seq INTEGER NOT NULL,
+    body TEXT NOT NULL,
+    source_key TEXT,
+    name TEXT NOT NULL,
+    value REAL NOT NULL,
+    PRIMARY KEY (unit_id, seq, name)
+) STRICT, WITHOUT ROWID;
+CREATE INDEX IF NOT EXISTS metric_name ON metric (name, value);
 CREATE TABLE IF NOT EXISTS file_stat (
     path TEXT PRIMARY KEY,
     size INTEGER NOT NULL,
@@ -136,6 +149,7 @@ const TABLES = [
     'derived',
     'symbol',
     'reference',
+    'metric',
     'file_stat',
 ];
 
@@ -151,7 +165,7 @@ const deflate = (text: string): Uint8Array => zlib.deflateRawSync(text, { level:
 const inflate = (data: Uint8Array): string => zlib.inflateRawSync(data).toString('utf8');
 
 /** 単位の番号で引く子の表 */
-const CHILD_TABLES = ['unit_file', 'node', 'span', 'derived', 'symbol', 'reference'];
+const CHILD_TABLES = ['unit_file', 'node', 'span', 'derived', 'symbol', 'reference', 'metric'];
 
 /** 前の版の置き場 (msgpack のファイル) の名前。開いたときに消す (移行しない) */
 const LEGACY_ENTRIES = ['manifest.msgpack', 'stats.msgpack', 'parsed', 'sources', 'derived'];
@@ -184,9 +198,11 @@ export class SqliteStoreBackend implements StoreBackend {
         }
         this.db = new DatabaseSync(path.join(dir, DATABASE_FILE));
         openBackends.add(this);
-        // busy_timeout: 書き込みのスレッド (storeWriter.ts) と同時に書こうとしたら待つ
+        // busy_timeout: 書き込みのスレッド (storeWriter.ts) と同時に書こうとしたら待つ。journal_mode の切り替えも
+        // ロックを取るので、先に busy_timeout を設定する (閉じたばかりの書き込みのスレッドがまだ握っていると、
+        // 待たずに database is locked になる)
         this.db.exec(
-            'PRAGMA journal_mode = WAL; PRAGMA synchronous = NORMAL; PRAGMA busy_timeout = 60000;',
+            'PRAGMA busy_timeout = 60000; PRAGMA journal_mode = WAL; PRAGMA synchronous = NORMAL;',
         );
         this.db.exec(SCHEMA);
         const version = (
@@ -408,6 +424,15 @@ export class SqliteStoreBackend implements StoreBackend {
             ).run(unitId, formatVersion, derivedVersion, deflate(JSON.stringify(data)));
             this.statement('DELETE FROM symbol WHERE unit_id = ?').run(unitId);
             this.statement('DELETE FROM reference WHERE unit_id = ?').run(unitId);
+            this.statement('DELETE FROM metric WHERE unit_id = ?').run(unitId);
+            const metric = this.statement(
+                'INSERT INTO metric (unit_id, seq, body, source_key, name, value) VALUES (?, ?, ?, ?, ?, ?)',
+            );
+            (data.metrics ?? []).forEach((body, seq) => {
+                for (const [name, value] of Object.entries(body.values)) {
+                    metric.run(unitId, seq, body.body, body.sourceKey ?? null, name, value);
+                }
+            });
             const symbol = this.statement(
                 'INSERT INTO symbol (unit_id, seq, kind, name, name_lc, source_key) VALUES (?, ?, ?, ?, ?, ?)',
             );
@@ -423,7 +448,7 @@ export class SqliteStoreBackend implements StoreBackend {
             );
             const reference = this.statement(
                 `INSERT INTO reference (unit_id, seq, target_type, target, target_lc, kind, via, member,
-                    statement_key, expression_key) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                    statement_key, expression_key, resolution) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             );
             data.references.forEach((ref, seq) =>
                 reference.run(
@@ -437,6 +462,7 @@ export class SqliteStoreBackend implements StoreBackend {
                     ref.from.member ?? null,
                     ref.from.statement?.sourceKey ?? null,
                     ref.from.expression?.sourceKey ?? null,
+                    ref.resolution ?? 'byName',
                 ),
             );
         });
@@ -445,7 +471,7 @@ export class SqliteStoreBackend implements StoreBackend {
     async findReferences(query: ReferenceQuery): Promise<ReferenceHit[]> {
         const rows = this.statement(
             `SELECT u.key AS unit_key, u.type AS unit_type, r.target_type, r.target, r.kind, r.via,
-                r.member, r.statement_key, r.expression_key
+                r.member, r.statement_key, r.expression_key, r.resolution
             FROM reference r JOIN unit u ON u.id = r.unit_id
             WHERE u.key IN (SELECT value FROM json_each(?1))
                 AND r.target_type = ?2 AND r.target_lc = ?3
@@ -465,6 +491,31 @@ export class SqliteStoreBackend implements StoreBackend {
             member: row.member as string | null,
             statementKey: row.statement_key as string | null,
             expressionKey: row.expression_key as string | null,
+            resolution: row.resolution as ReferenceHit['resolution'],
+        }));
+    }
+
+    async findMetrics(query: MetricQuery): Promise<MetricHit[]> {
+        const rows = this.statement(
+            `SELECT u.key AS unit_key, u.type AS unit_type, m.body, m.source_key, m.name, m.value
+            FROM metric m JOIN unit u ON u.id = m.unit_id
+            WHERE u.key IN (SELECT value FROM json_each(?1))
+                AND m.name = ?2 AND (?3 IS NULL OR m.value >= ?3)
+            ORDER BY m.value DESC, u.key, m.seq
+            LIMIT ?4`,
+        ).all(
+            JSON.stringify(query.unitKeys),
+            query.name,
+            query.min ?? null,
+            query.limit ?? -1,
+        ) as Row[];
+        return rows.map((row) => ({
+            unitKey: row.unit_key as string,
+            unitType: row.unit_type as string,
+            body: row.body as string,
+            sourceKey: row.source_key as string | null,
+            name: row.name as string,
+            value: row.value as number,
         }));
     }
 

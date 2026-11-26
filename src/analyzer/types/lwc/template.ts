@@ -8,7 +8,7 @@ import {
     getLightningComponentSpec,
     getLightningMetadataRef,
     type LwcMetadataRefType,
-} from './lightning';
+} from './standardComponents';
 import {
     makeSpanJson,
     type SourceFile,

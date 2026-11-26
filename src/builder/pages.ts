@@ -1,4 +1,5 @@
 import type { ReportDocument, ReportIssue } from '../report/document';
+import { stateRefOf } from '../report/embedding';
 
 // 1 件 1 ページに分ける (docs/todo.md 3.2.2 の「ドキュメントのサイト」)。
 // page を持つ要素 (for で広げた 1 件ずつ) と子を、別の HTML (pages/<file>.html) にする。
@@ -18,16 +19,13 @@ export type SplitPage = {
     state: State;
 };
 
-const STATE_PATH = /^\/(data|compared)\/([^/]+)$/;
-
 /** props の中で指しているデータの名前 */
 const referencesOf = (value: unknown, out: Set<string>): Set<string> => {
     if (Array.isArray(value)) {
         for (const item of value) referencesOf(item, out);
     } else if (typeof value === 'object' && value !== null) {
-        const path = (value as { $state?: unknown }).$state;
-        const match = typeof path === 'string' ? path.match(STATE_PATH) : null;
-        if (match) out.add(match[2]!);
+        const ref = stateRefOf(value);
+        if (ref) out.add(ref.name);
         for (const child of Object.values(value)) referencesOf(child, out);
     }
     return out;

@@ -1,4 +1,4 @@
-import { findApexStandardObject, isApexCustomObjectName } from './standardObjects';
+import { findStandardObject, isCustomObjectName } from '../../commons/standardObjects';
 import {
     type ApexStandardType,
     findApexStandardNamespace,
@@ -36,8 +36,8 @@ export type ApexStandardNameOptions = {
 
 /** SObject の名前か (標準オブジェクトの一覧か、カスタムの接尾辞) */
 const sObjectOf = (name: string): { listed: boolean } | undefined => {
-    if (findApexStandardObject(name)) return { listed: true };
-    if (isApexCustomObjectName(name)) return { listed: false };
+    if (findStandardObject(name)) return { listed: true };
+    if (isCustomObjectName(name)) return { listed: false };
     return undefined;
 };
 

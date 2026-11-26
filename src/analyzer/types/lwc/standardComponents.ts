@@ -1,4 +1,8 @@
-// 基本コンポーネント (lightning-*) のカタログ (docs/lwc-implementation.md)。
+// 基本コンポーネント (lightning-*) のカタログ (Salesforce の公式情報。docs/lwc-implementation.md)。
+// リリースのたびに .claude/skills/salesforce-release-update で見直す。Component Reference は自動で取れる公式資料 (PDF) がないので、
+// Salesforce が公開している LWC の言語サーバー (@salesforce/lwc-language-server) の transformed-lwc-standard.json で照合する。
+// 照合の結果 (照合済みの名前)・属性の一覧は standardComponentAttributes.ts (スキルが作る)。JSON に載らない子のコンポーネント
+// (lightning-modal-body など) は未照合のまま持つ (載っていない名前を「ない」と言わない)。
 // 基本コンポーネントのソースはリポジトリにないので、解析に要る情報だけを手で持つ。
 // npm の lightning-base-components からは作らない (alpha の版しかない・利用規約・レコードフォーム系が含まれない)。
 // 各部品の @api の全部は持たない (プロパティ名の書き間違いの検出が要るようになったら足す)

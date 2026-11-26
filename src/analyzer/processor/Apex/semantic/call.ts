@@ -3,84 +3,10 @@ import type {
     BaseExpressionJson,
     CallJson,
     ConvertKeys,
-    DotMethodCallJson,
     TypeJson,
 } from '../../../types';
 import { walkJson } from '../../commons/node';
 import type { ApexBodyAnalysis, ApexNameTarget } from './statement';
-
-/** フィールド・プロパティの参照 `a.b.c` (memberAccess の type: 'object') */
-export type ApexDotObjectCallName = {
-    kind: 'object';
-    /** レシーバーから参照するメンバーまでの名前 (`a.b.c` は ['a', 'b', 'c']) */
-    name: string[];
-};
-
-/** メソッドの呼び出し `a.b.c()` (memberAccess の type: 'method') */
-export type ApexDotMethodCallName = {
-    kind: 'method';
-    /** レシーバーの名前の並び (`a.b.c()` は ['a', 'b']) */
-    path: string[];
-    /** 呼び出すメソッドの名前 (`a.b.c()` は 'c') */
-    name: string;
-};
-
-/** 名前だけの呼び出し `f()`、コンストラクターの呼び出し `this(...)` / `super(...)` */
-export type ApexMethodCallName =
-    { kind: 'method'; name: string } | { kind: 'constructor'; target: 'this' | 'super' };
-
-/**
- * レシーバーの式を名前の並びにする。識別子・メンバーの参照・メソッドの呼び出しをたどり、
- * 名前にできない式 (添字・new・リテラルなど) では止める (それより前の名前だけを返す)。
- * 式の構造をそのまま持つ形は、下の apexCallsOf (ApexExpressionRef)
- */
-const receiverPathOf = (expression: BaseExpressionJson, path: string[]): void => {
-    switch (expression.kind) {
-        case 'identifier':
-            path.push(expression.name);
-            return;
-        case 'this':
-        case 'super':
-            path.push(expression.kind);
-            return;
-        case 'memberAccess':
-            receiverPathOf(expression.object, path);
-            path.push(expression.member);
-            return;
-        case 'call':
-            if (expression.callee.kind === 'identifier') path.push(expression.callee.name);
-            return;
-        default:
-            return;
-    }
-};
-
-export const makeApexDotObjectCallNameOf = (
-    call: DotMethodCallJson,
-): ApexDotObjectCallName | undefined => {
-    if (call.type !== 'object') {
-        return undefined;
-    }
-    const name: string[] = [];
-    receiverPathOf(call, name);
-    return { kind: 'object', name };
-};
-
-export const makeApexDotMethodCallNameOf = (
-    call: DotMethodCallJson,
-): ApexDotMethodCallName | undefined => {
-    if (call.type !== 'method') {
-        return undefined;
-    }
-    const path: string[] = [];
-    receiverPathOf(call.object, path);
-    return { kind: 'method', path, name: call.member };
-};
-
-export const makeApexMethodCallNameOf = (call: CallJson): ApexMethodCallName =>
-    call.callee.kind === 'identifier'
-        ? { kind: 'method', name: call.callee.name }
-        : { kind: 'constructor', target: call.callee.kind };
 
 // ---------------------------------------------------------------------------
 // 呼び出しの位置の収集 (docs/plan.md 10 章 P2)。

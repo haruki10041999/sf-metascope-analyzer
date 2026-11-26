@@ -1,4 +1,4 @@
-import type { CustomLabelsJson, CustomObjectJson, FlowElementJson, FlowJson } from '../types';
+import type { CustomObjectJson, FlowElementJson } from '../types';
 import { compareKeyed, readable } from './commons';
 import { type Value, leafOf, propertiesOf } from './metadata';
 import type {
@@ -8,15 +8,11 @@ import type {
     ObjectMemberRow,
     SnapshotInput,
 } from './types';
+import { recordOf as record } from '../processor/commons/json';
 
 // 宣言単位の provider (docs/todo.md 2.2): オブジェクトの子 (object.members)・Flow の要素 (flow.elements)・
 // ラベルの定義 (label.definitions)。中身は「場所 = 値」の一覧 (details) で持つ (metadata.properties と同じ書き方)。
 // 既定は今の状態のすべて。比べるときは status と、変わった中身 (changedDetails)
-
-const record = (value: unknown): Record<string, unknown> | undefined =>
-    typeof value === 'object' && value !== null && !Array.isArray(value)
-        ? (value as Record<string, unknown>)
-        : undefined;
 
 const text = (value: unknown): string | undefined => {
     const leaf = leafOf(value);
@@ -59,7 +55,7 @@ const MEMBER_KEYS = {
     sharingReason: 'sharingReasons',
     actionOverride: 'actionOverrides',
     searchLayout: 'searchLayouts',
-} as const;
+} as const satisfies Record<string, keyof CustomObjectJson>;
 
 export type ObjectMemberType = keyof typeof MEMBER_KEYS;
 
@@ -76,9 +72,12 @@ const NAME_COLUMNS = [
 
 const membersOf = (object: CustomObjectJson, types: readonly ObjectMemberType[] | undefined) => {
     const items: MemberItem[] = [];
-    for (const [memberType, key] of Object.entries(MEMBER_KEYS) as [ObjectMemberType, string][]) {
+    for (const [memberType, key] of Object.entries(MEMBER_KEYS) as [
+        ObjectMemberType,
+        (typeof MEMBER_KEYS)[ObjectMemberType],
+    ][]) {
         if (types && !types.includes(memberType)) continue;
-        const value = (object as unknown as Record<string, unknown>)[key];
+        const value: unknown = object[key];
         if (memberType === 'searchLayout') {
             // 検索レイアウトは、一覧の種類ごとに 1 行 (項目・ボタンの並び)
             for (const [list, fields] of Object.entries(record(value) ?? {})) {
@@ -115,7 +114,7 @@ const membersOf = (object: CustomObjectJson, types: readonly ObjectMemberType[] 
 
 const objectsOf = (snapshot: MetadataSnapshot | undefined, objects: string[] | undefined) =>
     snapshot
-        ? readable<CustomObjectJson>(snapshot.objects, 'object').filter(
+        ? readable(snapshot.objects, 'object').filter(
               (o) => !objects || objects.includes(o.json.apiName),
           )
         : undefined;
@@ -182,7 +181,7 @@ export const getFlowElements = (
     const hasBefore = input.before !== undefined;
     const rowsOf = (snapshot: MetadataSnapshot | undefined) =>
         snapshot
-            ? readable<FlowJson>(snapshot.flows, 'flow')
+            ? readable(snapshot.flows, 'flow')
                   .filter((f) => !filter.flows || filter.flows.includes(f.json.name))
                   .flatMap((f) =>
                       (f.json.elements ?? [])
@@ -262,7 +261,7 @@ export const getLabelDefinitions = (
         if (!snapshot) return undefined;
         const translations = labelTranslationsOf(snapshot);
         const languages = [...translations.keys()].sort();
-        return readable<CustomLabelsJson>(snapshot.customLabels, 'customLabels').flatMap((file) =>
+        return readable(snapshot.customLabels, 'customLabels').flatMap((file) =>
             (file.json.labels ?? [])
                 .filter((label) => !filter.labels || filter.labels.includes(label.fullName))
                 .filter(

@@ -195,18 +195,33 @@ export type UnitContentDiff =
     | ApexClassMetaJsonDiff
     | ApexTriggerMetaJsonDiff;
 
-/** FileStructureType の result (base は fileType を除いた JSON) */
-type UnitResult = { base: unknown; sourceObject?: Sources['before'] | undefined };
+/**
+ * ファイルの種類 (ソースの fileType・-meta.xml の kind) → 中身の JSON の型 (ソースは fileType を除いたもの)。
+ * 呼び出し側の中身の型を、種類で確かめる (docs/plan.md 10 章 P2「解析の結果の base: unknown」)
+ */
+export type ApexContentJsonMap = {
+    cls: TypeDeclarationJson;
+    trigger: Omit<TriggerUnitJson, 'fileType'>;
+    anonymous: Omit<AnonymousUnitJson, 'fileType'>;
+    apexClassMeta: ApexClassMetaJson;
+    apexTriggerMeta: ApexTriggerMetaJson;
+};
+
+/** 差分を作る中身と、その位置 */
+type UnitResult<J> = { base: J; sourceObject?: Sources['before'] | undefined };
 
 /**
- * ファイルの中身の差分。dataType が同じで、どちらも読めたときだけ作る。
- * base は fileType を除いた CompilationUnitJson / TriggerUnitJson / AnonymousUnitJson。
+ * ファイルの中身の差分。種類が同じで、どちらも読めたときだけ作る。
+ * 中身はソースなら fileType を除いた CompilationUnitJson / TriggerUnitJson / AnonymousUnitJson、-meta.xml ならその JSON
  */
-export const makeUnitContentDiff = (
-    dataType: string,
-    before: UnitResult,
-    after: UnitResult,
+export const makeUnitContentDiff = <K extends keyof ApexContentJsonMap>(
+    dataType: K,
+    before: UnitResult<ApexContentJsonMap[K]>,
+    after: UnitResult<ApexContentJsonMap[K]>,
 ): UnitContentDiff | undefined => {
+    // dataType で中身の型を絞る (型の引数 K は switch で絞れないので、ここで種類ごとの型として取り出す)
+    const pair = <T extends keyof ApexContentJsonMap>(_: T) =>
+        [before.base, after.base] as unknown as [ApexContentJsonMap[T], ApexContentJsonMap[T]];
     const sources: Sources = {
         before: before.sourceObject ?? [],
         after: after.sourceObject ?? [],
@@ -214,34 +229,28 @@ export const makeUnitContentDiff = (
 
     switch (dataType) {
         case 'cls':
-            return makeTypeDeclarationDiff(
-                before.base as TypeDeclarationJson,
-                after.base as TypeDeclarationJson,
-                sources,
-            );
-        case 'trigger':
+            return makeTypeDeclarationDiff(...pair('cls'), sources);
+        case 'trigger': {
+            const [b, a] = pair('trigger');
             return makeTriggerUnitDiff(
-                { fileType: 'trigger', ...(before.base as Omit<TriggerUnitJson, 'fileType'>) },
-                { fileType: 'trigger', ...(after.base as Omit<TriggerUnitJson, 'fileType'>) },
+                { fileType: 'trigger', ...b },
+                { fileType: 'trigger', ...a },
                 sources,
             );
-        case 'anonymous':
+        }
+        case 'anonymous': {
+            const [b, a] = pair('anonymous');
             return makeAnonymousUnitDiff(
-                { fileType: 'anonymous', ...(before.base as Omit<AnonymousUnitJson, 'fileType'>) },
-                { fileType: 'anonymous', ...(after.base as Omit<AnonymousUnitJson, 'fileType'>) },
+                { fileType: 'anonymous', ...b },
+                { fileType: 'anonymous', ...a },
                 sources,
             );
+        }
         // クラス・トリガーのメタデータ (-meta.xml)
         case 'apexClassMeta':
-            return makeApexClassMetaDiff(
-                before.base as ApexClassMetaJson,
-                after.base as ApexClassMetaJson,
-            );
+            return makeApexClassMetaDiff(...pair('apexClassMeta'));
         case 'apexTriggerMeta':
-            return makeApexTriggerMetaDiff(
-                before.base as ApexTriggerMetaJson,
-                after.base as ApexTriggerMetaJson,
-            );
+            return makeApexTriggerMetaDiff(...pair('apexTriggerMeta'));
         default:
             return undefined;
     }

@@ -1,5 +1,13 @@
 import type { ApexUnitJson, ApexUnitParseResult } from '../parser/Apex/unit';
-import { type ApexUnitFacts, analyzeApexUnit, apexUnitFactsOf } from '../processor/Apex/semantic';
+import { unitBaseOf } from '../parser/unitBase';
+import {
+    type ApexBodyMetrics,
+    type ApexSemanticAnalysis,
+    type ApexUnitFacts,
+    analyzeApexUnit,
+    apexMetricsOf,
+    apexUnitFactsOf,
+} from '../processor/Apex/semantic';
 import {
     type ApexOutlineMember,
     apexInterfaceKeyOf,
@@ -9,9 +17,15 @@ import { isSameValue } from '../processor/commons/diff/commons';
 import { unitDependenciesOf } from '../unit/dependencies';
 import type { TriggerUnitJson } from '../types';
 import { type Compared, changedProps, compareKeyed, rowBase } from './commons';
-import type { ApexDataAccessRow, ApexOutlineRow, MetadataSnapshot, SnapshotInput } from './types';
+import type {
+    ApexDataAccessRow,
+    ApexMetricsRow,
+    ApexOutlineRow,
+    MetadataSnapshot,
+    SnapshotInput,
+} from './types';
 
-// Apex のドキュメント・理解のための provider (apex.outline / apex.dataAccess)。
+// Apex のドキュメント・理解のための provider (apex.outline / apex.dataAccess / apex.metrics)。
 // 方針: docs/report-components-plan.md 2.3 章、順番は docs/apex-json-analysis.md 7 章 (クラスの概要 → データアクセス)。
 // 既定は今の状態のすべて (status なし)。比べる時点があれば (diff / compare)、行に status と変わったプロパティの名前を付ける
 
@@ -23,8 +37,10 @@ type Unit = { result: ApexUnitParseResult; json: ApexUnitJson };
 const unitsOf = (snapshot: MetadataSnapshot | undefined, filter: ApexFilter): Unit[] | undefined =>
     snapshot
         ? (snapshot.apex ?? [])
-              .filter((r) => r.dataType === 'apexUnit' && r.result.base)
-              .map((r) => ({ result: r, json: r.result.base as ApexUnitJson }))
+              .flatMap((r) => {
+                  const json = unitBaseOf(r, 'apexUnit');
+                  return json ? [{ result: r, json }] : [];
+              })
               .filter((u) => !filter.classes || filter.classes.includes(u.json.name))
         : undefined;
 
@@ -149,18 +165,131 @@ type AccessItem = Omit<
     key: string;
 };
 
-/** 解析結果ごとの呼び出し・DML・クエリ (provider を呼ぶたびに解析し直さない。semantic/facts.ts) */
+/** 解析結果ごとの新しい解析 (provider を呼ぶたびに解析し直さない。ソースがない・構文エラーの単位は null) */
+const analyses = new WeakMap<object, ApexSemanticAnalysis | null>();
+export const analysisOf = (result: ApexUnitParseResult): ApexSemanticAnalysis | undefined => {
+    let analysis = analyses.get(result);
+    if (analysis === undefined) {
+        analysis = analyzeApexUnit(result) ?? null;
+        analyses.set(result, analysis);
+    }
+    return analysis ?? undefined;
+};
+
+/** 解析結果ごとの呼び出し・DML・クエリ (semantic/facts.ts) */
 const unitInfos = new WeakMap<object, ApexUnitFacts>();
 export const unitInfoOf = (result: ApexUnitParseResult): ApexUnitFacts => {
     let info = unitInfos.get(result);
     if (!info) {
-        const analysis = analyzeApexUnit(result);
+        const analysis = analysisOf(result);
         info = analysis
             ? apexUnitFactsOf(analysis)
             : { calls: [], dml: [], queries: [], triggerContexts: [] };
         unitInfos.set(result, info);
     }
     return info;
+};
+
+/** 解析結果ごとの、実行本体のメトリクス (semantic/metrics.ts) */
+const unitMetrics = new WeakMap<object, ApexBodyMetrics[]>();
+const metricsOf = (result: ApexUnitParseResult): ApexBodyMetrics[] => {
+    let metrics = unitMetrics.get(result);
+    if (!metrics) {
+        const analysis = analysisOf(result);
+        metrics = analysis ? apexMetricsOf(analysis, unitInfoOf(result)) : [];
+        unitMetrics.set(result, metrics);
+    }
+    return metrics;
+};
+
+/**
+ * 比べるときの本体の鍵 (種類・名前・引数の型)。それでも同じもの (初期化ブロックが 2 つなど) は、出てくる順の番号を付ける
+ */
+const metricsKeyed = (metrics: ApexBodyMetrics[]) => {
+    const counts = new Map<string, number>();
+    return metrics.map((m) => {
+        const last = m.signature ?? m.path[m.path.length - 1] ?? '';
+        const base = `${m.kind}:${[...m.path.slice(0, -1), last].join('.')}`;
+        const n = (counts.get(base) ?? 0) + 1;
+        counts.set(base, n);
+        return { ...m, key: n === 1 ? base : `${base}#${n}` };
+    });
+};
+
+/** メトリクスの数の項目 (比べるときに変わったかを見る) */
+const METRIC_VALUES = [
+    'cyclomatic',
+    'cognitive',
+    'statements',
+    'maxNesting',
+    'soql',
+    'soqlInLoop',
+    'sosl',
+    'soslInLoop',
+    'dml',
+    'dmlInLoop',
+    'calls',
+] as const;
+
+/**
+ * apex.metrics: 実行本体 (メソッド・コンストラクター・アクセサー・初期化ブロック・トリガー・匿名 Apex) ごとの
+ * 循環的複雑度・認知的複雑度・文の数・ネスト・SOQL / DML (ループの中のもの)・呼び出し。
+ * 比べるときは、本体ごとに増えた・減った・値が変わった
+ */
+export const getApexMetrics = (
+    input: SnapshotInput,
+    filter: ApexFilter & {
+        includeTests?: boolean;
+        /** 循環的複雑度・認知的複雑度のどちらかがこれ以上の本体だけ */
+        minComplexity?: number;
+    } = {},
+): ApexMetricsRow[] => {
+    const hasBefore = input.before !== undefined;
+    return compareUnits(input, filter, ['class', 'trigger', 'anonymous']).flatMap((unit) => {
+        const json = (unit.after ?? unit.before)!.json;
+        return compareRows<ApexBodyMetrics & { key: string }>(
+            unit,
+            hasBefore,
+            (u) => metricsKeyed(metricsOf(u.result)),
+            (m) => m.key,
+            (b, a) =>
+                METRIC_VALUES.every((name) => b[name] === a[name]) &&
+                isSameValue(b.callees, a.callees),
+        )
+            .map((row): ApexMetricsRow => {
+                const metrics = (row.after ?? row.before)!;
+                const changed =
+                    row.status === 'changed'
+                        ? [...METRIC_VALUES, 'callees' as const].filter(
+                              (name) => !isSameValue(row.before![name], row.after![name]),
+                          )
+                        : [];
+                return {
+                    ...rowBase(
+                        row,
+                        metrics.sourceKeys ? { sourceKeys: metrics.sourceKeys } : undefined,
+                        filePathOf(unit),
+                    ),
+                    ...(changed.length ? { changedProperties: changed } : {}),
+                    className: json.name,
+                    unitType: json.unitType as ApexMetricsRow['unitType'],
+                    ...(metrics.member ? { member: metrics.member } : {}),
+                    bodyKind: metrics.kind,
+                    name: metrics.path.join('.'),
+                    ...(metrics.signature ? { signature: metrics.signature } : {}),
+                    inTest: metrics.isTest,
+                    ...Object.fromEntries(METRIC_VALUES.map((name) => [name, metrics[name]])),
+                    callees: metrics.callees,
+                } as ApexMetricsRow;
+            })
+            .filter(
+                (row) =>
+                    (filter.includeTests !== false || !row.inTest) &&
+                    (filter.minComplexity === undefined ||
+                        row.cyclomatic >= filter.minComplexity ||
+                        row.cognitive >= filter.minComplexity),
+            );
+    });
 };
 
 /** 単位のクエリ・DML (依存関係の参照で、クエリが読む項目と、同じメソッドで代入する項目を足す) */
@@ -225,6 +354,7 @@ const accessItemsOf = (unit: Unit): AccessItem[] => {
                 ...(object ? { object } : {}),
                 fields: object ? fields.filter((f) => f.startsWith(`${object}.`)) : [],
                 via: query.language,
+                ...(query.accessMode ? { accessLevel: query.accessMode } : {}),
             });
         }
     }

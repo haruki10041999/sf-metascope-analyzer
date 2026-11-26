@@ -608,31 +608,31 @@ const quote = (value: string): string =>
 /** 数式の木 (か位置つきの木、読めなかった文字列) を数式の文字列にする */
 export const formulaTextOf = (value: FormulaValue | FxSyntax): string => {
     if (typeof value === 'string') return value;
-    const node = value as unknown as Record<string, unknown> & { kind: string };
-    const text = (child: unknown) => formulaTextOf(child as FxJson);
+    // 位置つきの木 (FxSyntax) も、フィールドの名前と形は JSON と同じなので、JSON の型で読む
+    const node = value as FxJson;
     switch (node.kind) {
         case 'fxName':
-            return (node.path as string[]).join('.');
+            return node.path.join('.');
         case 'fxCall':
-            return `${String(node.name)}(${(node.arg as unknown[]).map(text).join(', ')})`;
+            return `${node.name}(${node.arg.map(formulaTextOf).join(', ')})`;
         case 'fxString':
-            return quote(String(node.value));
+            return quote(node.value);
         case 'fxNumber':
-            return String(node.value);
+            return node.value;
         case 'fxBoolean':
             return node.value ? 'TRUE' : 'FALSE';
         case 'fxNull':
             return 'NULL';
         case 'fxBinary':
-            return `${text(node.left)} ${String(node.operator)} ${text(node.right)}`;
+            return `${formulaTextOf(node.left)} ${node.operator} ${formulaTextOf(node.right)}`;
         case 'fxUnary':
-            return `${String(node.operator)}${text(node.argument)}`;
+            return `${node.operator}${formulaTextOf(node.argument)}`;
         case 'fxParen':
-            return `(${text(node.expression)})`;
+            return `(${formulaTextOf(node.expression)})`;
         case 'fxConditional':
-            return `${text(node.test)} ? ${text(node.consequent)} : ${text(node.alternate)}`;
+            return `${formulaTextOf(node.test)} ? ${formulaTextOf(node.consequent)} : ${formulaTextOf(node.alternate)}`;
         case 'fxMerge':
-            return `{${node.once ? '#' : '!'}${text(node.expression)}}`;
+            return `{${node.once ? '#' : '!'}${formulaTextOf(node.expression)}}`;
         default:
             return '';
     }

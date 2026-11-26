@@ -21,14 +21,18 @@ Salesforce は年 3 回（Spring・Summer・Winter）リリースし、そのた
 
 ## 対象
 
-| 系統         | リポジトリの一覧                                                                                                                                                                                                               | 照合する公式資料（PDF）                                       | 照合のしかた                         |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------- | ------------------------------------ |
-| Apex         | `src/analyzer/processor/Apex/semantic/standardTypes.ts`、`docs/reference/apex-standard-types*.md`、`apex-standard-namespaces.md`                                                                                               | Apex Reference Guide（`salesforce_apex_reference_guide.pdf`） | `check-release.cjs apex`             |
-| Apex         | `docs/reference/apex-standard-examples.md`（メソッド名の例・非推奨）                                                                                                                                                           | 同上                                                          | 本文を検索                           |
-| オブジェクト | `src/analyzer/processor/Apex/semantic/standardObjects.ts`（依存関係のグラフも使う）                                                                                                                                            | Object Reference（`object_reference.pdf`）                    | `check-release.cjs objects`          |
-| メタデータ   | `src/analyzer/processor/dependency/graph.ts` の `METADATA_TYPE_NAMES`・`toPackageXml` の既定の版                                                                                                                               | Metadata API Developer Guide（`api_meta.pdf`）                | `check-release.cjs metadata`         |
-| メタデータ   | `src/analyzer/parser/Metadata/folders.ts`（読むフォルダーと種類）                                                                                                                                                              | 同上                                                          | 新しい種類は「判断が要ること」に書く |
-| LWC          | `src/analyzer/types/lwc/lightning.ts`（基本コンポーネント）、`src/analyzer/processor/Metadata/pageAnalysis.ts` の `FLEXI_PAGE_TARGETS`、`src/analyzer/processor/Lwc/calls.ts` のモジュール名（`lightning/*`・`@salesforce/*`） | 自動で取れる公式資料がない（下の注意）                        | レポートに「未確認」と書く           |
+| 系統         | リポジトリの一覧                                                                                                                                                 | 照合する公式資料（PDF）                                                                               | 照合のしかた                                                                |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Apex         | `src/analyzer/processor/Apex/semantic/standardTypes.ts`、`docs/reference/apex-standard-types*.md`、`apex-standard-namespaces.md`                                 | Apex Reference Guide（`salesforce_apex_reference_guide.pdf`）                                         | `check-release.cjs apex`                                                    |
+| Apex         | `docs/reference/apex-standard-examples.md`（メソッド名の例・非推奨）                                                                                             | 同上                                                                                                  | 本文を検索                                                                  |
+| Apex         | `src/analyzer/processor/Apex/semantic/standardInterfaces.ts`（標準のインターフェースのうち、プラットフォームが呼ぶメソッド。使われていないメソッドの判定で使う） | 同上                                                                                                  | 各インターフェースの「<名前> Methods」の節を本文で検索                      |
+| オブジェクト | `src/analyzer/processor/commons/standardObjects.ts`（依存関係のグラフも使う）                                                                                    | Object Reference（`object_reference.pdf`）                                                            | `check-release.cjs objects`                                                 |
+| メタデータ   | `src/analyzer/processor/Metadata/standardTypes.ts` の `METADATA_TYPE_NAMES`、`dependency/graph.ts` の `toPackageXml` の既定の版                                  | Metadata API Developer Guide（`api_meta.pdf`）                                                        | `check-release.cjs metadata`                                                |
+| メタデータ   | `src/analyzer/parser/Metadata/folders.ts`（読むフォルダーと種類）                                                                                                | 同上                                                                                                  | 新しい種類は「判断が要ること」に書く                                        |
+| LWC          | `src/analyzer/types/lwc/standardTargets.ts`（capability・target・Lightning ページの種類）                                                                        | Metadata API Developer Guide（`api_meta.pdf`）の LightningComponentBundle・FlexiPageType              | `check-release.cjs lwc`                                                     |
+| LWC          | `src/analyzer/types/lwc/standardComponents.ts`（基本コンポーネント）、生成の `standardComponentAttributes.ts`（照合済みの名前・属性）                            | LWC の言語サーバー `@salesforce/lwc-language-server` の `lib/resources/transformed-lwc-standard.json` | `check-release.cjs lwc-components`（`--write` で生成のファイルを作り直す）  |
+| LWC          | `src/analyzer/types/lwc/standardModules.ts`（`lightning/*`・`@salesforce/*`）                                                                                    | `lightning/*` は同上。`@salesforce/*` は自動で取れる資料がない                                        | `lwc-components` の `modules`。`@salesforce/*` はレポートに「未確認」と書く |
+| SLDS         | 生成の `src/analyzer/types/lwc/standardSldsIcons.ts`（アイコン名）                                                                                               | `@salesforce-ux/design-system` の `metadata/icons/<種類>-icons-metadata.json`                         | `check-release.cjs slds`（`--write` で作り直す）                            |
 
 PDF の URL は `https://resources.docs.salesforce.com/latest/latest/en-us/sfdc/pdf/<ファイル名>`。`latest` は最新の公開版を指す。
 
@@ -60,8 +64,9 @@ PDF の URL は `https://resources.docs.salesforce.com/latest/latest/en-us/sfdc/
     - `standardTypes.ts` の `STANDARD_TYPES_BY_NAMESPACE`（名前空間の中は名前の順。例外は `'exception'`、利用条件は `status`）
     - `docs/reference/apex-standard-types-*.md` の該当する表（完全修飾名・種別・PDF のページ・備考）と、`apex-standard-types.md` の件数・内訳
     - 新しい名前空間は `apex-standard-namespaces.md` にも足す
-3. `APEX_STANDARD_TYPES_REFERENCE_API_VERSION` と、`apex-standard-types.md`・`apex-standard-reference.md` に書いた版・日付を新しい版にする。
-4. 本文の「Release Notes」の節（目次の先頭近く）に、そのリリースで足された・変わった型やメソッドがあれば、レポートの「リリースノートの要点」に書く。`apex-standard-examples.md` に載せたメソッドが非推奨・削除になっていれば直す。
+3. `standardInterfaces.ts` の `APEX_PLATFORM_CALLBACKS` のインターフェースごとに、本文の「<名前> Methods」の節（`grep -n -A12 "^Schedulable Methods$"` など）でメソッドの名前を確かめる。増えた・消えたメソッドがあれば直し、`APEX_STANDARD_INTERFACES_REFERENCE_API_VERSION` を新しい版にする（表にないインターフェースは足さなくてよい。足すときは節でメソッドの名前を確かめてから）。
+4. `APEX_STANDARD_TYPES_REFERENCE_API_VERSION` と、`apex-standard-types.md`・`apex-standard-reference.md` に書いた版・日付を新しい版にする。
+5. 本文の「Release Notes」の節（目次の先頭近く）に、そのリリースで足された・変わった型やメソッドがあれば、レポートの「リリースノートの要点」に書く。`apex-standard-examples.md` に載せたメソッドが非推奨・削除になっていれば直す。
 
 ### 3. 標準オブジェクト
 
@@ -69,22 +74,58 @@ PDF の URL は `https://resources.docs.salesforce.com/latest/latest/en-us/sfdc/
 2. `objectsWithoutHeading` があれば、本文で検索して確かめる。資料から消えていれば一覧から外し、レポートに理由を書く。
 3. `standardObjects.ts` は「よく使う」オブジェクトの一覧で、全件ではない。新しい標準オブジェクトは自動では足さない（解析で使う見込みがあるものを「判断が要ること」に書く）。
 4. `standardObjects.ts` はオブジェクトの名前だけを持つ。**項目・導入版などの情報や、それを持つための型は足さない**（利用者の決定。項目はスキーマを引く参照の解決で扱う）。資料の項目の変化に気づいたら、レポートに書くだけにする。
-5. `APEX_STANDARD_OBJECTS_REFERENCE_API_VERSION` を新しい版にする。
+5. 出力の `customObjectSuffixes` で、カスタムのオブジェクトの接尾辞（`standardObjects.ts` の `CUSTOM_OBJECT_SUFFIXES`）を、資料の「Salesforce Object Types」の表の Suffix と照合する。`addCandidates`（表にあって一覧にない。項目の接尾辞 `__latitude__s`・`__longitude__s`・`__pc`・`__pr`・`__r` は除いてある）は、表の Object Type を確かめて**追加する**（コメントに表の Object Type を書く）。`notInTable` は消さずに本文で確かめる。`tableFound: false` は表の形が変わったので、本文で Suffix の表を探して読み方を直す。
+6. `STANDARD_OBJECTS_REFERENCE_API_VERSION` を新しい版にする（接尾辞も同じ資料なので、同じ版）。
 
 ### 4. メタデータ
 
-1. `check-release.cjs metadata <Metadata API のテキスト>` を実行する。`typeNamesWithoutHeading` の名前は、本文で使い方を確かめる（`MatchingRules` は package.xml で一括指定するときの複数形で、見出しにはない。既知）。
+1. `check-release.cjs metadata <Metadata API のテキスト>` を実行する（一覧は `processor/Metadata/standardTypes.ts` の `METADATA_TYPE_NAMES`）。照合したら `METADATA_TYPES_REFERENCE_API_VERSION` を新しい版にする。`typeNamesWithoutHeading` の名前は、本文で使い方を確かめる（`MatchingRules` は package.xml で一括指定するときの複数形で、見出しにはない。既知）。
 2. 資料の「Metadata Types」の一覧と `parser/Metadata/folders.ts` を比べ、新しい種類や名前の変わった種類をレポートに書く。新しい種類を読むには解析の実装が要るので、**一覧の更新ではなく「判断が要ること」に入れる**。
 3. `toPackageXml` の既定の API バージョン（`'62.0'` など）は、古いままでも誤りではない（古い組織への配置で使える）。新しい版との差をレポートに書くだけにする。
 
 ### 5. LWC
 
-LWC の公式資料（Component Reference・開発者ガイド・リリースノート）は、自動で取れる PDF の場所が見つかっていない（2026-11-25 時点。`lwc.pdf`・リリースノートの PDF は 404、developer.salesforce.com の HTML は 403）。そのため:
+LWC の標準の一覧は `src/analyzer/types/lwc/` の 3 つのファイル（`standardTargets.ts`・`standardComponents.ts`・`standardModules.ts`）にある（パーサーの検証と解析で共通に使うので、型の層に置く）。
 
-- 一覧（基本コンポーネント・target・モジュール名）は変更しない。
-- レポートの「未確認」に、確認すべき項目（新しい基本コンポーネント、`lightning__*` の target、`lightning/*` のモジュール、非推奨になったもの）を書く。
+1. `check-release.cjs lwc <Metadata API のテキスト>` を実行する。照合できるのは Metadata API Developer Guide に載っているものだけ:
+    - `capabilities.addCandidates`: LightningComponentBundle の capability の「Valid values」にあって一覧にない → **追加する**（`verified: true`）
+    - `capabilities.notInValidValues`: 一覧にあって Valid values にない → 消さずに本文で確かめ、「判断が要ること」に書く
+    - `targets.unverifiedButMentioned`: 未照合（`verified: false`）の target が資料に出てきた → 本文で target として書かれていることを確かめて `verified: true` にする
+    - `targets.verifiedButNotMentioned`: 照合済みの target が資料から消えた → 消さずに「判断が要ること」に書く
+    - `targets.mentionedNotListed`: 資料に出てくる target で一覧にないもの → `LWC_TARGETS` は解析で使う target だけなので自動では足さない。レポートに書く（既知: `lightningCommunity__Theme_Layout`。Experience Builder のテーマのレイアウト）
+    - `pageTypesNotMentioned`: `FLEXI_PAGE_TARGETS` のページの種類で、資料（FlexiPageType）に出てこないもの → 本文で確かめる
+2. `LWC_STANDARD_TARGETS_REFERENCE_API_VERSION` を新しい版にする。
+
+3. 基本コンポーネントと `lightning/*` のモジュールは、Salesforce が公開している LWC の言語サーバーの JSON で照合する。npm のパッケージを取得し、展開したフォルダーの JSON を渡す（ダウンロードしたものは新しい空のフォルダーに置く）:
+    ```bash
+    V=$(npm view @salesforce/lwc-language-server version)
+    (cd "$D" && npm pack "@salesforce/lwc-language-server@$V" && tar -xzf salesforce-lwc-language-server-$V.tgz)
+    LWC_LANGUAGE_SERVER_VERSION="@salesforce/lwc-language-server $V" node .claude/skills/salesforce-release-update/scripts/check-release.cjs lwc-components "$D/package/lib/resources/transformed-lwc-standard.json" --write
+    ```
+    - `components.addCandidates`: JSON にあって一覧（`LIGHTNING_COMPONENTS`）にないもの → 解析で使う情報（`dataAccess`・`metadataAttributes`）を本文の説明で確かめてから足す。使い道がなければ「判断が要ること」に書く（既知: `lightningsnapin-*`）
+    - `components.notInJson`: 一覧にあって JSON にないもの → 消さない（親のコンポーネントの中で使う子のコンポーネント `lightning-modal-body` などは JSON に載らない）。JSON から消えたものが前回の照合済みにあれば「判断が要ること」に書く
+    - `modules.notInJson`: `LIGHTNING_MODULES` のモジュールが JSON から消えた → 消さずに「判断が要ること」に書く
+    - `--write` で `standardComponentAttributes.ts`（照合済みの名前・属性・全体の属性）を作り直す。LWC の解析が属性の書き間違い（`UNKNOWN_LIGHTNING_ATTRIBUTE`）を見つけるのに使うので、JSON から消えた属性・増えた属性はレポートに書く`LIGHTNING_MODULES_REFERENCE_SOURCE`（`standardModules.ts`）も新しい版にする
+4. target の一覧そのもの・`@salesforce/*` のモジュールは、LWC の開発者ガイドにしかない。これらは自動で取れる PDF の場所が見つかっていない（2026-11-26 時点。`lwc.pdf`・`lwc_dev_guide.pdf` などは 404、`lightning.pdf` は Aura の開発者ガイド、developer.salesforce.com の HTML は 403）。そのため:
+
+- 未照合の target・`@salesforce/*` のモジュールは変更しない。
+- レポートの「未確認」に、確認すべき項目（`lightning__*` の target、`@salesforce/*` のモジュール、非推奨になったもの）を書く。
 - 利用者が資料の本文やリンクを渡してくれたときだけ、その内容で照合して直す。
 - 取得できる公式資料が見つかったら、このスキルの「対象」の表と手順を更新する。
+
+### 5.1 SLDS
+
+SLDS（Lightning Design System）のアイコン名は、npm の `@salesforce-ux/design-system` の `metadata/icons/<種類>-icons-metadata.json`（action・custom・doctype・standard・utility。キーがアイコン名）で照合する。LWC の解析が `icon-name` などの値を確かめるのに使う（`UNKNOWN_SLDS_ICON`）。
+
+```bash
+V=$(npm view @salesforce-ux/design-system version)
+(cd "$D" && npm pack "@salesforce-ux/design-system@$V" && tar -xzf salesforce-ux-design-system-$V.tgz)
+SLDS_VERSION=$V node .claude/skills/salesforce-release-update/scripts/check-release.cjs slds "$D/package/metadata/icons" --write
+```
+
+- 出力の `added`・`removed` を、種類ごとの件数とともにレポートに書く（消えたアイコンを使っている LWC は `UNKNOWN_SLDS_ICON` になる）。
+- `--write` で `standardSldsIcons.ts`（`SLDS_ICONS_REFERENCE_VERSION` を含む）を作り直す。
+- CSS のクラス（`slds-*`）とスタイリングフック（`--slds-*`）は、まだ一覧を持たない（使い道を決めてから足す）。
 
 ### 6. 確かめる
 

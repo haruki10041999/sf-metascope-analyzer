@@ -78,9 +78,6 @@ export const lwcContextOf = (bundles: LwcBundleParseResult[]): Pick<MetadataCont
     };
 };
 
-/** カスタムのオブジェクト・項目 (リポジトリにメタデータがあるはずのもの) の API 名か */
-export const isCustomName = (apiName: string): boolean => /__(c|mdt|e|b|x)$/i.test(apiName);
-
 /** 種類の中の決まりの確かめで見つかった問題 */
 export type ReferenceProblem = { code: string; target: string; message: string };
 

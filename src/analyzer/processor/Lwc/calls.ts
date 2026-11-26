@@ -10,7 +10,12 @@ import type {
     LwcModuleJson,
     LwcTypeJson,
 } from '../../types';
-import { lwcMemberBodyContentsOf, makeLwcImportTables } from '../../types';
+import {
+    LIGHTNING_MODULES,
+    SALESFORCE_APEX_MODULE,
+    lwcMemberBodyContentsOf,
+    makeLwcImportTables,
+} from '../../types';
 
 import {
     lwcDottedNameOf,
@@ -175,7 +180,7 @@ const IMPORT_CALL_RULES: {
 }[] = [
     {
         callType: 'lds',
-        source: (source) => source === 'lightning/uiRecordApi',
+        source: (source) => source === LIGHTNING_MODULES.uiRecordApi,
         names: new Set([
             'createRecord',
             'updateRecord',
@@ -186,12 +191,12 @@ const IMPORT_CALL_RULES: {
     },
     {
         callType: 'refreshApex',
-        source: (source) => source === '@salesforce/apex',
+        source: (source) => source === SALESFORCE_APEX_MODULE,
         names: new Set(['refreshApex']),
     },
     {
         callType: 'messageService',
-        source: (source) => source === 'lightning/messageService',
+        source: (source) => source === LIGHTNING_MODULES.messageService,
         names: new Set([
             'publish',
             'subscribe',
@@ -202,7 +207,7 @@ const IMPORT_CALL_RULES: {
     },
     {
         callType: 'platformResource',
-        source: (source) => source === 'lightning/platformResourceLoader',
+        source: (source) => source === LIGHTNING_MODULES.platformResourceLoader,
         names: new Set(['loadScript', 'loadStyle']),
     },
     {
@@ -316,9 +321,9 @@ const PROMISE_METHODS = new Set(['then', 'catch', 'finally']);
  * 呼び出しの結果 (Promise) の扱い方を、呼び出しのノードごとに集める (await・then・catch・finally・return)。
  * x().then(a).catch(b) は x() に then と catch、await x().then(a) は x() に awaited と then を付ける
  */
-const promiseUsesIn = (roots: unknown[]): Map<unknown, LwcPromiseUseInfo> => {
-    const uses = new Map<unknown, LwcPromiseUseInfo>();
-    const useOf = (node: unknown) => {
+const promiseUsesIn = (roots: unknown[]): Map<object, LwcPromiseUseInfo> => {
+    const uses = new Map<object, LwcPromiseUseInfo>();
+    const useOf = (node: object) => {
         let use = uses.get(node);
         if (!use) {
             use = { awaited: false, then: false, catch: false, finally: false, returned: false };
@@ -622,7 +627,7 @@ export const analyzeLwcCallsIn = (roots: unknown[], tables: LwcImportTables): Lw
             // new ShowToastEvent({ title, message, variant, mode }) (lightning/platformShowToastEvent の import)
             const binding = calleeName ? tables.bindings.get(calleeName) : undefined;
             if (
-                binding?.source === 'lightning/platformShowToastEvent' &&
+                binding?.source === LIGHTNING_MODULES.platformShowToastEvent &&
                 binding.imported === 'ShowToastEvent'
             ) {
                 const [options] = node.arg;

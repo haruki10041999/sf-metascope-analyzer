@@ -5,6 +5,7 @@ import type {
     ReportFor,
     ReportIssue,
 } from '../report/document';
+import { sameJsonValue, valueAtPath } from './values';
 
 // 文書の for / if / $note をビルドのときに展開する (docs/todo.md 3.2.1 の 2)。
 // json-render の repeat・visible は画面に出すときに決まるため、行ごとに provider の引数を変えられない。
@@ -45,14 +46,7 @@ const lookup = (scope: Scope, head: string, rest: string): unknown => {
     const parts = rest.split('.').filter(Boolean);
     if (parts.length === 1 && parts[0] === '$index') return variable.index;
     if (parts.length === 1 && parts[0] === '$number') return variable.index + 1;
-    let value = variable.row;
-    for (const part of parts) {
-        value =
-            typeof value === 'object' && value !== null
-                ? (value as Record<string, unknown>)[part]
-                : undefined;
-    }
-    return value;
+    return valueAtPath(variable.row, parts);
 };
 
 /** 文字列の中に埋めるときの書き方 (配列は「、」ではなく「, 」でつなぐ) */
@@ -93,8 +87,6 @@ const fill = (value: unknown, context: FillContext): unknown => {
     }
     return value;
 };
-
-const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
 
 /** 空 (null・undefined・''・[]・false) でない */
 const present = (value: unknown) =>
@@ -250,14 +242,14 @@ export const expandReportDocument = (
             return result !== undefined && hasRows(result);
         }
         const value = fill(condition.value, context);
-        if ('eq' in condition) return same(value, fill(condition.eq, context));
-        if ('neq' in condition) return !same(value, fill(condition.neq, context));
+        if ('eq' in condition) return sameJsonValue(value, fill(condition.eq, context));
+        if ('neq' in condition) return !sameJsonValue(value, fill(condition.neq, context));
         if (condition.gt !== undefined) return Number(value) > condition.gt;
         if (condition.gte !== undefined) return Number(value) >= condition.gte;
         if (condition.lt !== undefined) return Number(value) < condition.lt;
         if (condition.lte !== undefined) return Number(value) <= condition.lte;
         if (condition.in !== undefined) {
-            return condition.in.some((item) => same(value, fill(item, context)));
+            return condition.in.some((item) => sameJsonValue(value, fill(item, context)));
         }
         if (condition.exists !== undefined) return present(value) === condition.exists;
         return present(value);

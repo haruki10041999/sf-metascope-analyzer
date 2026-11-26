@@ -1,4 +1,4 @@
-import type { UnitDependencies } from '../processor/dependency/types';
+import type { ReferenceCertainty, UnitDependencies } from '../processor/dependency/types';
 import type { FileStat } from './sourceTree';
 import type { UnitParseResult } from './unitType';
 
@@ -76,6 +76,8 @@ export type ReferenceHit = {
     member: string | null;
     statementKey: string | null;
     expressionKey: string | null;
+    /** 確かさ (resolved・standard・byName・candidates。dependency/types.ts の ReferenceCertainty) */
+    resolution: ReferenceCertainty;
 };
 
 /** 定義の検索 (symbol 表。名前で引く。名前の大小は区別しない) */
@@ -94,6 +96,27 @@ export type SymbolHit = {
     name: string;
     /** 定義している宣言の位置 (なければ null) */
     sourceKey: string | null;
+};
+
+/** メトリクスの検索 (metric 表。名前で引き、値の大きい順) */
+export type MetricQuery = {
+    unitKeys: readonly string[];
+    /** メトリクスの名前 (cyclomatic・cognitive・soqlInLoop など。UnitBodyMetrics.values のキー) */
+    name: string;
+    /** この値以上のものだけ */
+    min?: number;
+    /** 件数の上限 */
+    limit?: number;
+};
+
+export type MetricHit = {
+    unitKey: string;
+    unitType: string;
+    /** 本体の名前 (UnitBodyMetrics.body) */
+    body: string;
+    sourceKey: string | null;
+    name: string;
+    value: number;
 };
 
 /** ノードの種類ごとの数 */
@@ -151,6 +174,8 @@ export interface StoreBackend {
     findReferences(query: ReferenceQuery): Promise<ReferenceHit[]>;
     /** 定義を名前で引く (unitKeys の単位だけ。単位の key・書いた順) */
     findSymbols(query: SymbolQuery): Promise<SymbolHit[]>;
+    /** 本体のメトリクスを名前で引く (unitKeys の単位だけ。値の大きい順) */
+    findMetrics(query: MetricQuery): Promise<MetricHit[]>;
     /** ノードを探す (unitKeys の単位だけ。単位・ファイル・位置の順)。total は limit をかける前の数 */
     findNodes(query: NodeQuery): Promise<{ total: number; nodes: NodeHit[] }>;
     /** unitKeys の単位のノードの、単位の種類・ノードの種類ごとの数 (多い順) */

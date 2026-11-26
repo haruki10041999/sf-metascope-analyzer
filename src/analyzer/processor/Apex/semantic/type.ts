@@ -264,16 +264,97 @@ export type ApexTypeResolver = {
     typeOf: (ref: ApexExpressionRef) => ApexTypeRef;
     /** 呼び出しの戻り値の型 */
     returnTypeOf: (call: ApexCallSite) => ApexTypeRef;
-    /** 呼び出し先のメソッドの宣言の候補 (単位の中のもの。1 つに決まれば 1 件) */
+    /** 呼び出し先のメソッドの宣言の候補 (書いた型で決まるもの。1 つに決まれば 1 件) */
     methodCandidatesOf: (call: ApexCallSite) => ApexDeclaration[];
+    /**
+     * 実行時に呼ばれうるメソッド (レシーバーの型がインターフェース・親クラスのとき、実装・継承しているクラスが
+     * 同じ名前・同じ引数の数で書いたメソッド。methodCandidatesOf のものは含めない)
+     */
+    dispatchCandidatesOf: (call: ApexCallSite) => ApexDeclaration[];
+    /**
+     * 修飾のない名前を、親クラス (ほかの単位の親クラスも) から引き継いだフィールド・プロパティに当てる。
+     * 本体を所有する型そのもののメンバーは含めない (statement.ts が解決する)
+     */
+    inheritedMemberOf: (name: string) => ApexDeclaration | undefined;
 };
 
 export type ApexTypeResolverOptions = {
     /**
      * リポジトリのほかの単位に定義された型か (名前の並び)。名前空間を書かない標準の型より優先する。
-     * 単位をまたぐ解決 (P3 のシンボル表) ができるまでは渡さなくてよい
+     * repository を渡すときは要らない (その型は宣言から分かる)
      */
     isRepositoryType?: (path: readonly string[]) => boolean;
+    /**
+     * リポジトリのほかの単位の宣言 (repository.ts の apexRepositoryIndexOf で作る) と、自分の単位名 (索引から除く)。
+     * 渡すと、ほかのクラスの型・親クラス・メンバー・メソッドの戻り値をたどる (単位をまたぐ解決。docs/plan.md 10 章 P4)
+     */
+    repository?: { index: ApexDeclarationIndex; unit: string };
+};
+
+/**
+ * 宣言の索引 (ID・型の名前・持ち主で引く)。ほかの単位の宣言の ID は「<単位名>#<sourceKey>」で、単位の中の宣言と区別する
+ */
+export type ApexDeclarationIndex = {
+    get(id: string): ApexDeclaration | undefined;
+    /** 型の宣言 (クラス・インターフェース・enum)。名前 (最後の名前の小文字) で引く */
+    typesNamed(nameKey: string): readonly ApexDeclaration[];
+    /** 持ち主の宣言の ID → 中の宣言 (書いた順) */
+    childrenOf(ownerId: string): readonly ApexDeclaration[];
+    /** すべての型の宣言 (実装・継承しているクラスの逆引きを作るのに使う) */
+    types(): readonly ApexDeclaration[];
+};
+
+const isTypeKind = (d: ApexDeclaration) =>
+    d.kind === 'class' || d.kind === 'interface' || d.kind === 'enum';
+
+/** 宣言の一覧の索引 */
+export const apexDeclarationIndexOf = (
+    declarations: readonly ApexDeclaration[],
+): ApexDeclarationIndex => {
+    const byId = new Map<string, ApexDeclaration>();
+    const types = new Map<string, ApexDeclaration[]>();
+    const children = new Map<string, ApexDeclaration[]>();
+    for (const d of declarations) {
+        byId.set(d.id, d);
+        if (isTypeKind(d)) types.set(d.nameKey, [...(types.get(d.nameKey) ?? []), d]);
+        if (d.ownerId) {
+            const list = children.get(d.ownerId);
+            if (list) list.push(d);
+            else children.set(d.ownerId, [d]);
+        }
+    }
+    return {
+        get: (id) => byId.get(id),
+        typesNamed: (nameKey) => types.get(nameKey) ?? [],
+        childrenOf: (ownerId) => children.get(ownerId) ?? [],
+        types: () => [...types.values()].flat(),
+    };
+};
+
+/** 基本の型の広げられる先 (小文字。Integer は Long・Decimal・Double に渡せる) */
+const WIDENING: Readonly<Record<string, readonly string[]>> = {
+    integer: ['long', 'decimal', 'double'],
+    long: ['decimal', 'double'],
+    decimal: ['double'],
+    double: ['decimal'],
+    // Id と String は互いに渡せる (実行時に変換する)
+    id: ['string'],
+    string: ['id'],
+};
+
+/** 引数の式の型が、引数の宣言の型に合うか */
+type Compatibility = 'exact' | 'compatible' | 'incompatible';
+
+/** 単位の宣言ごとの、型 → それを継承・実装している型 (本体ごとに作り直さない) */
+const subtypeIndexes = new WeakMap<object, Map<string, string[]>>();
+
+/** ほかの単位の宣言の ID の区切り (<単位名>#<sourceKey>) */
+export const APEX_EXTERNAL_ID_SEPARATOR = '#';
+
+/** ほかの単位の宣言なら、その単位名。単位の中の宣言なら undefined */
+export const apexExternalUnitOf = (id: string): string | undefined => {
+    const index = id.indexOf(APEX_EXTERNAL_ID_SEPARATOR);
+    return index < 0 ? undefined : id.slice(0, index);
 };
 
 /**
@@ -286,11 +367,27 @@ export const apexTypeResolverOf = (
     calls: readonly ApexCallSite[],
     options: ApexTypeResolverOptions = {},
 ): ApexTypeResolver => {
-    const byId = new Map(declarations.map((d) => [d.id, d]));
+    // 単位の中の宣言と、ほかの単位の宣言 (自分の単位のものは除く) を、同じ索引の形で引く
+    const local = apexDeclarationIndexOf(declarations);
+    const repository = options.repository;
+    const isOwnUnit = (d: ApexDeclaration) => apexExternalUnitOf(d.id) === repository?.unit;
+    const byId = {
+        get: (id: string): ApexDeclaration | undefined => {
+            const found = local.get(id);
+            if (found || !repository) return found;
+            const external = repository.index.get(id);
+            return external && !isOwnUnit(external) ? external : undefined;
+        },
+    };
+    const childrenOf = (ownerId: string): readonly ApexDeclaration[] =>
+        apexExternalUnitOf(ownerId) === undefined
+            ? local.childrenOf(ownerId)
+            : (repository?.index.childrenOf(ownerId) ?? []);
+    const typesNamed = (nameKey: string): ApexDeclaration[] => [
+        ...local.typesNamed(nameKey),
+        ...(repository?.index.typesNamed(nameKey).filter((d) => !isOwnUnit(d)) ?? []),
+    ];
     const callsById = new Map(calls.map((c) => [c.id, c]));
-    const typeDeclarations = declarations.filter(
-        (d) => d.kind === 'class' || d.kind === 'interface' || d.kind === 'enum',
-    );
 
     /** 本体を所有する型の並び (内側から) */
     const ownerTypes: string[] = [];
@@ -300,19 +397,37 @@ export const apexTypeResolverOf = (
         current = current.ownerId ? byId.get(current.ownerId) : undefined;
     }
 
-    /** 名前の型を、単位の中の型の宣言に当てる (名前の並びの末尾が、宣言の [パス..., 名前] の末尾と一致するもの) */
-    const typeDeclarationOf = (name: readonly string[]): ApexDeclaration | undefined => {
+    /**
+     * 名前の型を、型の宣言に当てる。context は名前を書いた単位 (ほかの単位の宣言の型を解決するときは、その単位名)。
+     * 同じ単位の型は、名前の並びの末尾が宣言の [パス..., 名前] の末尾と一致するもの (内部クラスは短い名前で見える)。
+     * ほかの単位の型は、名前の並び全体が一致するもの (AccountService・AccountService.Wrapper) だけ
+     */
+    const typeDeclarationOf = (
+        name: readonly string[],
+        context?: string,
+    ): ApexDeclaration | undefined => {
         const wanted = name.map((n) => n.toLowerCase());
-        const candidates = typeDeclarations.filter((d) => {
+        const matches = (d: ApexDeclaration) => {
             const qualified = [...d.path, d.name].map((n) => n.toLowerCase());
+            if (apexExternalUnitOf(d.id) !== context) {
+                return (
+                    qualified.length === wanted.length && wanted.every((n, i) => qualified[i] === n)
+                );
+            }
             return (
                 qualified.length >= wanted.length &&
                 wanted.every((n, i) => qualified[qualified.length - wanted.length + i] === n)
             );
-        });
+        };
+        const candidates = typesNamed(wanted[wanted.length - 1] ?? '').filter(matches);
         if (candidates.length <= 1) return candidates[0];
+        // 同じ単位の型を先にする
+        const same = candidates.filter((d) => apexExternalUnitOf(d.id) === context);
+        if (same.length === 1) return same[0];
         // 同じ名前の内部クラスが複数あれば、本体を所有する型の中のものを優先する
-        return candidates.find((d) => d.ownerId && ownerTypes.includes(d.ownerId));
+        return (same.length ? same : candidates).find(
+            (d) => d.ownerId && ownerTypes.includes(d.ownerId),
+        );
     };
 
     /** 名前の並びを、標準の型・SObject に当てる (単位の中の型・リポジトリの型を優先する) */
@@ -334,33 +449,35 @@ export const apexTypeResolverOf = (
         return undefined;
     };
 
-    /** 名前の型に、単位の中の宣言の ID か、標準の型の情報を付ける */
-    const withDeclaration = (type: ApexTypeRef): ApexTypeRef => {
+    /** 名前の型に、型の宣言の ID か、標準の型の情報を付ける (context は名前を書いた単位。typeDeclarationOf) */
+    const withDeclaration = (type: ApexTypeRef, context?: string): ApexTypeRef => {
+        const inner = (t: ApexTypeRef) => withDeclaration(t, context);
         switch (type.kind) {
             case 'named': {
-                const declaration = typeDeclarationOf(type.name);
+                const declaration = typeDeclarationOf(type.name, context);
                 const standard = declaration ? undefined : standardTypeOf(type.name);
                 return {
                     ...type,
-                    args: type.args.map(withDeclaration),
+                    // ほかの単位の型は、宣言のある単位の中で書いた名前でなく、完全な名前にする
+                    ...(declaration && apexExternalUnitOf(declaration.id) !== undefined
+                        ? { name: [...declaration.path, declaration.name] }
+                        : {}),
+                    args: type.args.map(inner),
                     ...(declaration ? { declarationId: declaration.id } : {}),
                     ...(standard ? { standard } : {}),
                 };
             }
             case 'list':
             case 'set':
-                return { ...type, element: withDeclaration(type.element) };
+                return { ...type, element: inner(type.element) };
             case 'map':
-                return {
-                    ...type,
-                    key: withDeclaration(type.key),
-                    value: withDeclaration(type.value),
-                };
+                return { ...type, key: inner(type.key), value: inner(type.value) };
             default:
                 return type;
         }
     };
-    const typeRefOf = (type: TypeJson | 'void') => withDeclaration(apexTypeRefOf(type));
+    const typeRefOf = (type: TypeJson | 'void', context?: string) =>
+        withDeclaration(apexTypeRefOf(type), context);
 
     const typeOfDeclaration = (declaration: ApexDeclaration | undefined): ApexTypeRef => {
         if (!declaration) return unknownType('unresolvedName');
@@ -374,7 +491,7 @@ export const apexTypeResolverOf = (
             case 'forEachVariable':
             case 'catchVariable':
             case 'whenVariable':
-                return typeRefOf(declaration.type);
+                return typeRefOf(declaration.type, apexExternalUnitOf(declaration.id));
             case 'enumConstant': {
                 const owner = byId.get(declaration.ownerId ?? '');
                 return owner
@@ -402,21 +519,21 @@ export const apexTypeResolverOf = (
         return chain;
     };
 
-    /** 型の宣言のメンバー (フィールド・プロパティ・enum の定数・内部の型)。同じ単位の中の親クラスもたどる */
+    /** 型の宣言のメンバー (フィールド・プロパティ・enum の定数・内部の型)。親クラスもたどる (自分から親の順) */
     const memberOf = (typeId: string, name: string): ApexDeclaration | undefined => {
         const key = name.toLowerCase();
-        const chain = inheritanceOf(typeId);
-        return declarations.find(
-            (d) =>
-                chain.includes(d.ownerId ?? '') &&
-                d.nameKey === key &&
-                (d.kind === 'field' ||
-                    d.kind === 'property' ||
-                    d.kind === 'enumConstant' ||
-                    d.kind === 'class' ||
-                    d.kind === 'interface' ||
-                    d.kind === 'enum'),
-        );
+        return inheritanceOf(typeId)
+            .flatMap(childrenOf)
+            .find(
+                (d) =>
+                    d.nameKey === key &&
+                    (d.kind === 'field' ||
+                        d.kind === 'property' ||
+                        d.kind === 'enumConstant' ||
+                        d.kind === 'class' ||
+                        d.kind === 'interface' ||
+                        d.kind === 'enum'),
+            );
     };
 
     const staticOf = (declaration: ApexDeclaration): ApexTypeRef => ({
@@ -434,7 +551,7 @@ export const apexTypeResolverOf = (
         const declaration = byId.get(typeId);
         const extended = declaration?.kind === 'class' ? declaration.extends[0] : undefined;
         if (!extended) return unknownType('noSuperclass');
-        const type = typeRefOf(extended);
+        const type = typeRefOf(extended, apexExternalUnitOf(typeId));
         return type.kind === 'named' && type.declarationId
             ? type
             : unknownType('noSuperclass', apexTypeTextOf(type));
@@ -457,11 +574,9 @@ export const apexTypeResolverOf = (
         const key = name.toLowerCase();
         for (const typeId of typeIds) {
             for (const owner of inheritanceOf(typeId)) {
-                const found = declarations.filter(
+                const found = childrenOf(owner).filter(
                     (d) =>
-                        d.ownerId === owner &&
-                        d.nameKey === key &&
-                        (d.kind === 'method' || d.kind === 'interfaceMethod'),
+                        d.nameKey === key && (d.kind === 'method' || d.kind === 'interfaceMethod'),
                 );
                 if (found.length > 0) return found;
             }
@@ -481,6 +596,105 @@ export const apexTypeResolverOf = (
         return receiver;
     };
 
+    /** 型が継承・実装している型 (自分を含む。単位をまたいでたどる) */
+    const supertypesOf = (typeId: string): Set<string> => {
+        const found = new Set<string>();
+        const queue = [typeId];
+        while (queue.length) {
+            const id = queue.shift()!;
+            if (found.has(id)) continue;
+            found.add(id);
+            const declaration = byId.get(id);
+            if (declaration?.kind !== 'class' && declaration?.kind !== 'interface') continue;
+            for (const supertype of [...declaration.extends, ...declaration.implements]) {
+                const ref = typeRefOf(supertype, apexExternalUnitOf(id));
+                if (ref.kind === 'named' && ref.declarationId) queue.push(ref.declarationId);
+            }
+        }
+        return found;
+    };
+
+    /**
+     * 引数の式の型が、引数の宣言の型に合うか。確実に合わないと言えるときだけ incompatible
+     * (式の型が分からない・ほかのパッケージの型などは compatible)
+     */
+    const compatibilityOf = (arg: ApexTypeRef, param: ApexTypeRef): Compatibility => {
+        if (arg.kind === 'unknown' || param.kind === 'unknown') return 'compatible';
+        if (apexTypeTextOf(arg).toLowerCase() === apexTypeTextOf(param).toLowerCase()) {
+            return 'exact';
+        }
+        // Object にはなんでも、null はどの型にも渡せる
+        if (param.kind === 'primitive' && param.name.toLowerCase() === 'object')
+            return 'compatible';
+        if (param.kind === 'named' && param.name.join('.').toLowerCase() === 'object') {
+            return 'compatible';
+        }
+        if (arg.kind === 'null') return 'compatible';
+        if (arg.kind === 'primitive' && param.kind === 'primitive') {
+            return WIDENING[arg.name.toLowerCase()]?.includes(param.name.toLowerCase())
+                ? 'compatible'
+                : 'incompatible';
+        }
+        if (arg.kind === 'primitive' || param.kind === 'primitive') {
+            // 基本の型と、コレクション・単位の型は合わない (名前だけの型は分からないので合うとする)
+            const other = arg.kind === 'primitive' ? param : arg;
+            return other.kind === 'list' ||
+                other.kind === 'set' ||
+                other.kind === 'map' ||
+                (other.kind === 'named' && (other.declarationId || other.standard))
+                ? 'incompatible'
+                : 'compatible';
+        }
+        if ((arg.kind === 'list' || arg.kind === 'set') && param.kind === arg.kind) {
+            const element = compatibilityOf(arg.element, param.element);
+            return element === 'exact' ? 'compatible' : element;
+        }
+        if (arg.kind === 'map' && param.kind === 'map') {
+            const results = [
+                compatibilityOf(arg.key, param.key),
+                compatibilityOf(arg.value, param.value),
+            ];
+            return results.includes('incompatible') ? 'incompatible' : 'compatible';
+        }
+        if (arg.kind === 'list' || arg.kind === 'set' || arg.kind === 'map') {
+            return param.kind === 'list' || param.kind === 'set' || param.kind === 'map'
+                ? 'incompatible'
+                : 'compatible';
+        }
+        if (arg.kind === 'named' && param.kind === 'named') {
+            // SObject には、どの SObject も渡せる
+            if (
+                param.standard?.kind === 'sObject' &&
+                param.name.join('.').toLowerCase() === 'sobject' &&
+                arg.standard?.kind === 'sObject'
+            ) {
+                return 'compatible';
+            }
+            // リポジトリの型どうしは、継承・実装の関係で決める
+            if (arg.declarationId && param.declarationId) {
+                return supertypesOf(arg.declarationId).has(param.declarationId)
+                    ? 'compatible'
+                    : 'incompatible';
+            }
+            // 標準の型どうし (公式の名前が違う)
+            if (arg.standard?.kind === 'type' && param.standard?.kind === 'type') {
+                return 'incompatible';
+            }
+        }
+        return 'compatible';
+    };
+
+    /** メソッドの i 番目の引数の宣言の型 (分からなければ unknown) */
+    const parameterTypeOf = (method: ApexDeclaration, index: number): ApexTypeRef => {
+        if (method.kind !== 'method' && method.kind !== 'interfaceMethod') {
+            return unknownType('expression');
+        }
+        const parameter = byId.get(method.parameterIds[index] ?? '');
+        return parameter?.kind === 'parameter'
+            ? typeRefOf(parameter.type, apexExternalUnitOf(method.id))
+            : unknownType('unresolvedName');
+    };
+
     const methodCandidatesOf = (call: ApexCallSite): ApexDeclaration[] => {
         if (call.kind !== 'method') return [];
         const types = searchTypesOf(call);
@@ -491,7 +705,73 @@ export const apexTypeResolverOf = (
                 ? m.parameterIds.length === call.args.length
                 : false,
         );
-        return byArity;
+        if (byArity.length <= 1) return byArity;
+        // 引数の数で決まらなければ、引数の型で絞る (確実に合わないものを外し、型がぴったり合う引数の多いものを選ぶ)
+        const argTypes = call.argRefs.map((ref) => typeOf(ref));
+        const scored = byArity.flatMap((method) => {
+            const results = argTypes.map((arg, i) =>
+                compatibilityOf(arg, parameterTypeOf(method, i)),
+            );
+            return results.includes('incompatible')
+                ? []
+                : [{ method, exact: results.filter((r) => r === 'exact').length }];
+        });
+        if (scored.length === 0) return byArity;
+        const best = Math.max(...scored.map((s) => s.exact));
+        return scored.filter((s) => s.exact === best).map((s) => s.method);
+    };
+
+    /** 型 → それを継承・実装している型 (単位の中とリポジトリのクラス。単位ごとに 1 回だけ作る) */
+    const subtypeIndex = (): Map<string, string[]> => {
+        const cached = subtypeIndexes.get(declarations);
+        if (cached) return cached;
+        const index = new Map<string, string[]>();
+        const types = [
+            ...local.types(),
+            ...(repository?.index.types().filter((d) => !isOwnUnit(d)) ?? []),
+        ];
+        for (const type of types) {
+            if (type.kind !== 'class') continue;
+            for (const supertype of [...type.extends, ...type.implements]) {
+                const ref = typeRefOf(supertype, apexExternalUnitOf(type.id));
+                if (ref.kind !== 'named' || !ref.declarationId) continue;
+                index.set(ref.declarationId, [...(index.get(ref.declarationId) ?? []), type.id]);
+            }
+        }
+        subtypeIndexes.set(declarations, index);
+        return index;
+    };
+
+    const dispatchCandidatesOf = (call: ApexCallSite): ApexDeclaration[] => {
+        // 書いたレシーバーの型 (インターフェース・クラスのインスタンス) のメソッドだけ。静的な呼び出し・super は除く
+        if (call.kind !== 'method' || !call.receiver || call.receiver.kind === 'super') return [];
+        const receiver = typeOf(call.receiver);
+        if (receiver.kind !== 'named' || !receiver.declarationId) return [];
+        const declared = methodCandidatesOf(call);
+        if (declared.length === 0) return [];
+        const key = call.name.toLowerCase();
+        const index = subtypeIndex();
+        const found: ApexDeclaration[] = [];
+        const seen = new Set<string>();
+        const queue = [...(index.get(receiver.declarationId) ?? [])];
+        while (queue.length) {
+            const typeId = queue.shift()!;
+            if (seen.has(typeId)) continue;
+            seen.add(typeId);
+            queue.push(...(index.get(typeId) ?? []));
+            for (const method of childrenOf(typeId)) {
+                if (
+                    method.kind === 'method' &&
+                    method.nameKey === key &&
+                    method.parameterIds.length === call.args.length &&
+                    !method.modifiers.isStatic &&
+                    !declared.includes(method)
+                ) {
+                    found.push(method);
+                }
+            }
+        }
+        return found;
     };
 
     const returnTypeOf = (call: ApexCallSite): ApexTypeRef => {
@@ -525,7 +805,7 @@ export const apexTypeResolverOf = (
         if (candidates.length === 0) return unknownType('methodNotFound', call.name);
         const returnTypes = candidates.map((m) =>
             m.kind === 'method' || m.kind === 'interfaceMethod'
-                ? typeRefOf(m.returnType)
+                ? typeRefOf(m.returnType, apexExternalUnitOf(m.id))
                 : unknownType('expression'),
         );
         const texts = new Set(returnTypes.map(apexTypeTextOf));
@@ -585,6 +865,18 @@ export const apexTypeResolverOf = (
                 if (target.kind === 'implicit') {
                     // setter の value はプロパティの型
                     return typeOfDeclaration(byId.get(analysis.body.id));
+                }
+                // 親クラスから引き継いだフィールド・プロパティ (ほかの単位の親クラスも)。
+                // 変数・フィールドは型の名前より先に見える (repo と Repo は大小を区別しない)
+                const inherited = ownerTypes
+                    .map((typeId) => memberOf(typeId, ref.name))
+                    .find((member) => member !== undefined);
+                if (inherited) {
+                    return inherited.kind === 'class' ||
+                        inherited.kind === 'interface' ||
+                        inherited.kind === 'enum'
+                        ? staticOf(inherited)
+                        : typeOfDeclaration(inherited);
                 }
                 // 単位の中の型の名前なら、型そのもの。次に標準の型・SObject
                 const declaration = typeDeclarationOf([ref.name]);
@@ -657,5 +949,18 @@ export const apexTypeResolverOf = (
         }
     };
 
-    return { typeOf, returnTypeOf, methodCandidatesOf };
+    const inheritedMemberOf = (name: string): ApexDeclaration | undefined => {
+        const key = name.toLowerCase();
+        for (const typeId of ownerTypes) {
+            for (const parent of inheritanceOf(typeId).slice(1)) {
+                const member = childrenOf(parent).find(
+                    (d) => d.nameKey === key && (d.kind === 'field' || d.kind === 'property'),
+                );
+                if (member) return member;
+            }
+        }
+        return undefined;
+    };
+
+    return { typeOf, returnTypeOf, methodCandidatesOf, dispatchCandidatesOf, inheritedMemberOf };
 };

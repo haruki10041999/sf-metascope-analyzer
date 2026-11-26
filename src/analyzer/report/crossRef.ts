@@ -1,4 +1,5 @@
-import type { CustomLabelsJson } from '../types';
+import type { ApexUnitParseResult } from '../parser/Apex/unit';
+import { apexRuleFindingsOf } from '../processor/Apex/semantic';
 import { analyzeFlows } from '../processor/Metadata/flowAnalysis';
 import { analyzeFlexiPages, analyzeLayouts } from '../processor/Metadata/pageAnalysis';
 import { analyzePermissions } from '../processor/Metadata/permissionAnalysis';
@@ -6,7 +7,8 @@ import type { DependencyGraph } from '../processor/dependency/graph';
 import { referenceFindingsOf, toLevel } from '../processor/dependency/graph';
 import { dependencyGraphOf } from '../unit/dependencies';
 import type { Repository } from '../unit/repository';
-import { compareKeyed, contextOf } from './commons';
+import { analysisOf, unitInfoOf } from './apex';
+import { compareKeyed, contextOf, readable } from './commons';
 import { snapshotOf } from './snapshot';
 import type { FindingRow, LabelUsageRow, ReferenceUsageRow, ReportInput } from './types';
 
@@ -45,9 +47,9 @@ const labelsOf = (repository: Repository, graph: DependencyGraph) => {
         });
         usages.set(key, byUnit);
     }
-    return (snapshotOf(repository).customLabels ?? []).flatMap((file) =>
-        file.dataType === 'customLabels'
-            ? ((file.result.base as CustomLabelsJson).labels ?? []).flatMap((label) =>
+    return readable(snapshotOf(repository).customLabels, 'customLabels').flatMap(({ json }) =>
+        json.labels
+            ? json.labels.flatMap((label) =>
                   label.kind === 'customLabel'
                       ? [
                             {
@@ -185,6 +187,17 @@ const findingsOf = (repository: Repository): FindingRow[] => {
             row('flexiPage', f.flexiPage, f),
         ),
     ];
+    // Apex の単位の中で決まる指摘 (processor/Apex/semantic/rules.ts)
+    const apexFindings = (['apexClass', 'apexTrigger'] as const).flatMap((type) =>
+        (repository.get(type) as ApexUnitParseResult[]).flatMap((result) => {
+            const analysis = analysisOf(result);
+            if (!analysis) return [];
+            const filePath = paths.get(`${type}:${result.result.id}`) ?? '';
+            return apexRuleFindingsOf(analysis, unitInfoOf(result)).map((f) =>
+                row('apex', result.result.base.name, { ...f, filePath }),
+            );
+        }),
+    );
     // 参照先がリポジトリにあるかは、グラフの指摘だけで見る (種類ごとの解析は出さない)
     const referenceFindings = referenceFindingsOf(graph).map((f) =>
         row('reference', f.unitName, {
@@ -218,7 +231,13 @@ const findingsOf = (repository: Repository): FindingRow[] => {
                 sourceKeys: label.sourceKeys,
             }),
         );
-    return [...typeFindings, ...unusedLabels, ...referenceFindings, ...overlapFindings];
+    return [
+        ...typeFindings,
+        ...apexFindings,
+        ...unusedLabels,
+        ...referenceFindings,
+        ...overlapFindings,
+    ];
 };
 
 /**

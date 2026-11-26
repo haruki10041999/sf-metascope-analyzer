@@ -2,6 +2,7 @@
 // 入力は IR v2 (lwc_IR) のノード。v2 の木にはエラーのノードがないので、部分木の検査はしない
 import { makeJsonType, type JsonType } from '../commons/json';
 import type { commons } from '../lwc_IR';
+import { LWC_MODULE, SALESFORCE_SCOPED_MODULES } from './standardModules';
 
 import { nameOf, type LwcJsonContext, type LwcNode } from './commons';
 
@@ -44,21 +45,10 @@ export type LwcImportJson = JsonType<'lwcImport'> & {
     component?: string;
 };
 
-const SALESFORCE_CATEGORIES: [string, LwcImportCategory][] = [
-    ['@salesforce/apex/', 'apex'],
-    ['@salesforce/apexContinuation/', 'apex'],
-    ['@salesforce/schema/', 'schema'],
-    ['@salesforce/label/', 'label'],
-    ['@salesforce/customPermission/', 'customPermission'],
-    ['@salesforce/resourceUrl/', 'resourceUrl'],
-    ['@salesforce/contentAssetUrl/', 'contentAssetUrl'],
-    ['@salesforce/messageChannel/', 'messageChannel'],
-    ['@salesforce/user/', 'user'],
-];
-
 export const getImportCategory = (source: string): LwcImportCategory => {
-    if (source === 'lwc') return 'lwc';
-    const salesforce = SALESFORCE_CATEGORIES.find(([prefix]) => source.startsWith(prefix));
+    if (source === LWC_MODULE) return 'lwc';
+    // @salesforce のスコープ付きモジュール (一覧は standardModules.ts)
+    const salesforce = SALESFORCE_SCOPED_MODULES.find(([prefix]) => source.startsWith(prefix));
     if (salesforce) return salesforce[1];
     if (source.startsWith('c/')) return 'component';
     if (source.startsWith('lightning/')) return 'lightning';

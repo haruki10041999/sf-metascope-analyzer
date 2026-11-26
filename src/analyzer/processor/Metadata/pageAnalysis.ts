@@ -1,5 +1,5 @@
 import type { FlexiPageParseResult, LayoutParseResult } from '../../parser/Metadata/page';
-import type { ConvertKeys, FlexiPageJson, LayoutJson } from '../../types';
+import { type ConvertKeys, FLEXI_PAGE_TARGETS } from '../../types';
 import type { MetadataContext, MetadataFinding } from './references';
 
 // 画面 (ページレイアウト・Lightning ページ) の解析。方針: docs/metadata-implementation.md 10 章
@@ -51,7 +51,7 @@ export const analyzeLayouts = (
 
     for (const result of results) {
         if (result.dataType !== 'layout') continue;
-        const json = result.result.base as LayoutJson;
+        const json = result.result.base;
         const base = { layout: json.name, filePath: result.filePath };
         const fields = (json.items ?? []).flatMap((item) => (item.field ? [item.field] : []));
         layouts.push({
@@ -140,18 +140,7 @@ export const analyzeLayouts = (
 // Lightning ページ
 // ---------------------------------------------------------------------------
 
-/** ページの種類 → LWC の js-meta.xml の target */
-export const FLEXI_PAGE_TARGETS: Record<string, string> = {
-    RecordPage: 'lightning__RecordPage',
-    AppPage: 'lightning__AppPage',
-    HomePage: 'lightning__HomePage',
-    UtilityBar: 'lightning__UtilityBar',
-    CommAppPage: 'lightningCommunity__Page',
-    CommObjectPage: 'lightningCommunity__Page',
-    CommRecordPage: 'lightningCommunity__Page',
-    CommRelatedListPage: 'lightningCommunity__Page',
-    CommThemeLayoutPage: 'lightningCommunity__Page',
-};
+// ページの種類 → target の対応は types/lwc/standardTargets.ts の FLEXI_PAGE_TARGETS
 
 /** LWC を置いているところ */
 export type LwcPlacement = {
@@ -207,7 +196,7 @@ export const analyzeFlexiPages = (
 
     for (const result of results) {
         if (result.dataType !== 'flexiPage') continue;
-        const json = result.result.base as FlexiPageJson;
+        const json = result.result.base;
         const base = { flexiPage: json.name, filePath: result.filePath };
         const add = (
             code: FlexiPageAnalysisCode,

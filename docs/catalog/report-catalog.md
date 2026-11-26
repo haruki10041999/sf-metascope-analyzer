@@ -87,21 +87,28 @@
 | `apex.outline` | rows | DataTable・StatusSummary | Apex のクラス・トリガーのすべてのクラス・メンバー (メソッド・コンストラクタ・プロパティ・項目・内側の型。private とテストも) と、トリガーの対象とイベント。コードの理解・クラスの仕様書のため。外から使えるものだけは apex.interface。 |
 | `apex.methodFlow` | diagram | CodeFlowchart | Apex のメソッド・コンストラクター・トリガー・匿名 Apex の処理フロー (分岐・繰り返し・try / catch・SOQL / SOSL・DML・外部の呼び出し・return)。箱の文字はソースの元の文。CodeFlowchart で描く。for でメソッドごとに描くときは where に member と signature ("${m.name}(${m.params})") を書く。 |
 | `apex.callFlow` | diagram | SequenceDiagram | Apex のメソッド (・トリガー) から呼び出しをクラスをまたいでたどったシーケンス図 (起点ごとに 1 つ)。呼び出し・SOQL / SOSL・DML・非同期の開始・外部の呼び出し・イベントの発行をソースの順に並べ、リポジトリのクラスのメソッドは depth 段まで中をたどる。SequenceDiagram で描く。lwc.eventFlow の Apex の箱 (Class.method) を members に渡すと、画面から Apex の中までつながる。 |
+| `apex.metrics` | rows | DataTable・StatusSummary | Apex の実行本体 (メソッド・コンストラクター・アクセサー・初期化ブロック・トリガー・匿名 Apex) ごとのメトリクス: 循環的複雑度・認知的複雑度・文の数・最大のネスト・SOQL / SOSL / DML の数 (ループの中のものも)・呼び出しの数と呼び出し先。構文から数える。前回と比べると、値が変わった本体が分かる。 |
+| `apex.unusedMethods` | rows | DataTable・StatusSummary | ほかから呼ばれていない Apex のメソッド (掃除の候補)。呼ばれているかは単位をまたいで解決した依存関係で決める。unused は呼び出しも候補もないもの、candidateOnly はインターフェース・親クラスの型の変数からの呼び出しの候補からだけ呼ばれうるもの。テスト・@AuraEnabled・@InvocableMethod・@RemoteAction・REST・global・webservice・標準のインターフェースの実装・Visualforce のコントローラーなど、プラットフォームや画面から直接呼ばれうるものは出さない。 |
+| `apex.entryPoints` | rows | DataTable・StatusSummary | Apex の外 (画面・Flow・外部のシステム・非同期の実行) から呼ばれるメソッドの一覧 (公開 API)。REST (@RestResource の urlMapping と @HttpGet など)・@AuraEnabled (cacheable)・@InvocableMethod (label)・@RemoteAction・webservice・@future (callout)。usedBy はそのメソッドを呼ぶほかの単位 (LWC・Flow など)。 |
+| `apex.triggerHandlers` | rows | DataTable・StatusSummary | Apex のトリガーから呼び出しをたどって届くクラス (ハンドラーと、そこから呼ぶクラス)。段数と経路つき。単位をまたいで解決した依存関係から作る。 |
+| `apex.tests` | rows | DataTable・StatusSummary | Apex のクラス・トリガーごとの、届くテストクラス (テストから呼び出しをたどるか、途中の DML で動くトリガーを通って届くか)。tests が空ならテストがない。untestedOnly でテストのないものだけ。 |
 | `apex.dataAccess` | rows | DataTable・StatusSummary | Apex がどこで (クラス・メソッド) どのオブジェクト・項目を読み書きするか (SOQL・SOSL・動的なクエリ・DML)。ループの中か (ガバナ制限の原因になりやすい)・テストの中かも出す。DML の項目は、同じメソッドで代入している項目。 |
 | `apex.interface` | rows | DataTable・StatusSummary | Apex の外から使えるクラス・メンバー (global・public・@AuraEnabled など)。前回と比べると、公開メソッドの追加・削除・引数や戻り値の型の変化が分かる。 |
 | `lwc.components` | rows | DataTable・StatusSummary | LWC のコンポーネントの一覧 (ラベル・公開先・@api・発行するイベント・使う子コンポーネントと基本コンポーネント・Apex・オブジェクト・突き合わせの指摘の数)。コンポーネント一覧のドキュメントのため。 |
+| `lwc.metrics` | rows | DataTable・StatusSummary | LWC の JS / TS の本体 (メソッド・getter / setter・関数・直下の文) ごとのメトリクス: 循環的複雑度・認知的複雑度・文の数・最大のネスト・呼び出しの数と呼び出し先・Apex の呼び出し (ループの中のものも)・イベントの発行。数え方は apex.metrics と共通。前回と比べると、値が変わった本体が分かる。 |
 | `lwc.detail` | rows | DataTable・StatusSummary | LWC のコンポーネントの中身 (親から使える @api・メソッド・イベント・slot、@wire とアダプター、Apex のメソッド、使うコンポーネント、オブジェクトと項目、ラベルなどの import、突き合わせの指摘)。1 行 1 項目。 |
 | `lwc.methodFlow` | diagram | CodeFlowchart | LWC の JS / TS のメソッド・関数 (フィールドのアロー関数・getter / setter・モジュールの関数) の処理フロー (分岐・繰り返し・try / catch・Apex の呼び出し・イベントの発行 (dispatchEvent・トースト・メッセージチャネル)・画面の遷移・fetch・return)。箱の文字はソースの元の文。CodeFlowchart で描く。 |
 | `lwc.eventFlow` | diagram | EventFlow | LWC の、利用者の操作から処理までの流れ (1 つの図)。テンプレートのイベント・@wire・表示のとき (connectedCallback など) から、ハンドラー → 自分のメソッド → Apex の呼び出し・refreshApex・イベントの発行・トースト・画面の遷移・メッセージチャネルへ。子コンポーネントが発行したイベントは、親のテンプレートの on<イベント> につなぐ。EventFlow で描く。 |
 | `lwc.wireframe` | diagram | LwcWireframe | LWC の画面の骨組み (ワイヤーフレーム)。テンプレートから描き、JS は実行しない。分岐 (lwc:if など) はタブ、繰り返し (for:each) は 1 件分、子コンポーネントは展開して入れ子に描く。画面の仕様書のため。 |
 | `lwc.interface` | rows | DataTable・StatusSummary | LWC の親から使えるもの (@api のプロパティ・メソッド、発行するイベント、slot)。前回と比べると、増えた・減ったものが分かる。 |
+| `object.usage` | rows | DataTable・StatusSummary | オブジェクトごとの、使っている単位 (Apex・LWC・Flow・権限など) と操作 (照会・作成・更新・削除・項目の読み書き) の表。単位 1 つ・オブジェクト 1 つで 1 行。依存関係のグラフから作る。 |
 | `automation.byObject` | object | AutomationView | オブジェクトごとの自動化 (レコードトリガーフロー・Apex トリガー・入力規則) と順序。 |
 | `layout.detail` | object | LayoutView | ページレイアウトのセクションと項目・関連リスト・アクション (差分付き)。 |
 | `flexiPage.detail` | object | FlexiPageView | Lightning ページのリージョンと部品 (LWC・標準の部品) とプロパティ。 |
 | `lwc.placements` | rows | DataTable・StatusSummary | LWC がどの Lightning ページのどのリージョンに置かれているか。 |
 | `crossRef.labels` | rows | DataTable・StatusSummary | カスタム表示ラベルの使われている場所 (Apex・LWC・Flow など) と未使用のラベル。 |
 | `crossRef.references` | rows | DataTable・StatusSummary | 参照先 (項目・クラス・コンポーネントなど) ごとの、参照している単位 (逆引き)。 |
-| `metadata.findings` | rows | DataTable・StatusSummary | 解析の指摘 (権限・ラベル・Flow・画面・参照)。前回と比べると、新しく出た指摘は added、なくなった指摘は removed。 |
+| `metadata.findings` | rows | DataTable・StatusSummary | 解析の指摘 (権限・ラベル・Flow・画面・参照・Apex の書き方 (SeeAllData・不要な @TestVisible・callout=true のない @future の callout・WITH SECURITY_ENFORCED))。前回と比べると、新しく出た指摘は added、なくなった指摘は removed。 |
 | `feature.scope` | rows | DataTable・StatusSummary | 機能のまとまり: 起点 (object:Invoice__c・apexClass:AccountService・lwc:accountList など) から依存関係を両方向にたどった、関わる単位 (種類・名前・起点との関係・段数・ファイル)。雛形 feature_overview は、この範囲の単位で種類ごとのドキュメントを組む。 |
 | `dependency.dependents` | rows | DataTable・StatusSummary | ノードを使っているもの (逆引き。「この項目を使っているもの」)。 |
 | `dependency.dependencies` | rows | DataTable・StatusSummary | ノードが使っているもの。 |
@@ -5141,6 +5148,622 @@ args:
 }
 ```
 
+### apex.metrics
+
+Apex の実行本体 (メソッド・コンストラクター・アクセサー・初期化ブロック・トリガー・匿名 Apex) ごとのメトリクス: 循環的複雑度・認知的複雑度・文の数・最大のネスト・SOQL / SOSL / DML の数 (ループの中のものも)・呼び出しの数と呼び出し先。構文から数える。前回と比べると、値が変わった本体が分かる。
+
+分類: code。出力の形: rows。描ける部品: DataTable・StatusSummary
+
+args:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "classes": {
+      "description": "Class, trigger or anonymous Apex names to include. Omit for all.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "includeTests": {
+      "description": "false hides bodies in tests. Default true.",
+      "type": "boolean"
+    },
+    "minComplexity": {
+      "description": "Only bodies whose cyclomatic or cognitive complexity is at least this.",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    }
+  }
+}
+```
+
+出力:
+
+```json
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string",
+        "enum": [
+          "added",
+          "removed",
+          "changed",
+          "unchanged"
+        ],
+        "description": "Change since the saved state (only when comparing two points)."
+      },
+      "filePath": {
+        "description": "File of the row (relative to the repository).",
+        "type": "string"
+      },
+      "sourceKeys": {
+        "type": "object",
+        "properties": {
+          "objectKey": {
+            "type": "string"
+          },
+          "sourceKey": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "objectKey",
+          "sourceKey"
+        ],
+        "additionalProperties": false,
+        "description": "Position keys of the source node."
+      },
+      "changedProperties": {
+        "description": "Names of changed properties (only when comparing and the row changed).",
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "className": {
+        "type": "string",
+        "description": "Class, trigger or anonymous Apex name (the unit)."
+      },
+      "unitType": {
+        "type": "string",
+        "enum": [
+          "class",
+          "trigger",
+          "anonymous"
+        ]
+      },
+      "member": {
+        "description": "Method etc. (Class.method). Getter and setter share the property name.",
+        "type": "string"
+      },
+      "bodyKind": {
+        "type": "string",
+        "enum": [
+          "method",
+          "constructor",
+          "initializer",
+          "getter",
+          "setter",
+          "trigger",
+          "anonymous",
+          "fieldInitializer"
+        ],
+        "description": "Kind of the executable body."
+      },
+      "name": {
+        "type": "string",
+        "description": "Names of the declaration that owns the body, joined by dots."
+      },
+      "signature": {
+        "description": "Method or constructor name with parameter types (calc(Integer)). Tells overloads apart.",
+        "type": "string"
+      },
+      "inTest": {
+        "type": "boolean",
+        "description": "In a test class or test method."
+      },
+      "cyclomatic": {
+        "type": "number",
+        "description": "Cyclomatic complexity (counted from the syntax)."
+      },
+      "cognitive": {
+        "type": "number",
+        "description": "Cognitive complexity (SonarSource rules)."
+      },
+      "statements": {
+        "type": "number",
+        "description": "Number of statements (blocks are not counted)."
+      },
+      "maxNesting": {
+        "type": "number",
+        "description": "Deepest nesting of if / loop / switch / try statements."
+      },
+      "calls": {
+        "type": "number",
+        "description": "Calls counted by the language analysis."
+      },
+      "callees": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Called targets (sorted, unique)."
+      },
+      "soql": {
+        "type": "number",
+        "description": "SOQL queries, including Database.query etc."
+      },
+      "soqlInLoop": {
+        "type": "number"
+      },
+      "sosl": {
+        "type": "number"
+      },
+      "soslInLoop": {
+        "type": "number"
+      },
+      "dml": {
+        "type": "number",
+        "description": "DML statements and Database.insert etc."
+      },
+      "dmlInLoop": {
+        "type": "number"
+      }
+    },
+    "required": [
+      "className",
+      "unitType",
+      "bodyKind",
+      "name",
+      "inTest",
+      "cyclomatic",
+      "cognitive",
+      "statements",
+      "maxNesting",
+      "calls",
+      "callees",
+      "soql",
+      "soqlInLoop",
+      "sosl",
+      "soslInLoop",
+      "dml",
+      "dmlInLoop"
+    ],
+    "additionalProperties": false,
+    "description": "Metrics of one executable body of Apex. Comparing two points: changed values."
+  }
+}
+```
+
+### apex.unusedMethods
+
+ほかから呼ばれていない Apex のメソッド (掃除の候補)。呼ばれているかは単位をまたいで解決した依存関係で決める。unused は呼び出しも候補もないもの、candidateOnly はインターフェース・親クラスの型の変数からの呼び出しの候補からだけ呼ばれうるもの。テスト・@AuraEnabled・@InvocableMethod・@RemoteAction・REST・global・webservice・標準のインターフェースの実装・Visualforce のコントローラーなど、プラットフォームや画面から直接呼ばれうるものは出さない。
+
+分類: code。出力の形: rows。描ける部品: DataTable・StatusSummary
+
+args:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "classes": {
+      "description": "Class names to include. Omit for all.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "includeCandidates": {
+      "description": "false hides candidateOnly methods. Default true.",
+      "type": "boolean"
+    }
+  }
+}
+```
+
+出力:
+
+```json
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string",
+        "enum": [
+          "added",
+          "removed",
+          "changed",
+          "unchanged"
+        ],
+        "description": "Change since the saved state (only when comparing two points)."
+      },
+      "filePath": {
+        "description": "File of the row (relative to the repository).",
+        "type": "string"
+      },
+      "sourceKeys": {
+        "type": "object",
+        "properties": {
+          "objectKey": {
+            "type": "string"
+          },
+          "sourceKey": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "objectKey",
+          "sourceKey"
+        ],
+        "additionalProperties": false,
+        "description": "Position keys of the source node."
+      },
+      "className": {
+        "type": "string",
+        "description": "Class (the unit)."
+      },
+      "member": {
+        "type": "string",
+        "description": "Method (Class.method, Outer.Inner.method). Overloads are judged together."
+      },
+      "access": {
+        "type": "string",
+        "enum": [
+          "global",
+          "public",
+          "protected",
+          "private"
+        ]
+      },
+      "isStatic": {
+        "type": "boolean"
+      },
+      "overloads": {
+        "type": "number",
+        "description": "Number of methods with this name."
+      },
+      "verdict": {
+        "type": "string",
+        "enum": [
+          "unused",
+          "candidateOnly"
+        ],
+        "description": "unused: no call and no candidate call / candidateOnly: only possible calls through an interface or a superclass type."
+      }
+    },
+    "required": [
+      "className",
+      "member",
+      "access",
+      "isStatic",
+      "overloads",
+      "verdict"
+    ],
+    "additionalProperties": false,
+    "description": "An Apex method nothing calls (a clean-up candidate). Entry points (tests, @AuraEnabled, @InvocableMethod, @RemoteAction, REST, global, webservice, standard interface implementations, Visualforce controllers) are not listed."
+  }
+}
+```
+
+### apex.entryPoints
+
+Apex の外 (画面・Flow・外部のシステム・非同期の実行) から呼ばれるメソッドの一覧 (公開 API)。REST (@RestResource の urlMapping と @HttpGet など)・@AuraEnabled (cacheable)・@InvocableMethod (label)・@RemoteAction・webservice・@future (callout)。usedBy はそのメソッドを呼ぶほかの単位 (LWC・Flow など)。
+
+分類: code。出力の形: rows。描ける部品: DataTable・StatusSummary
+
+args:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "classes": {
+      "description": "Class names to include. Omit for all.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "kinds": {
+      "description": "Kinds of entry points to list.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "rest",
+          "aura",
+          "invocable",
+          "remoteAction",
+          "webservice",
+          "future"
+        ]
+      }
+    }
+  }
+}
+```
+
+出力:
+
+```json
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string",
+        "enum": [
+          "added",
+          "removed",
+          "changed",
+          "unchanged"
+        ],
+        "description": "Change since the saved state (only when comparing two points)."
+      },
+      "filePath": {
+        "description": "File of the row (relative to the repository).",
+        "type": "string"
+      },
+      "sourceKeys": {
+        "type": "object",
+        "properties": {
+          "objectKey": {
+            "type": "string"
+          },
+          "sourceKey": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "objectKey",
+          "sourceKey"
+        ],
+        "additionalProperties": false,
+        "description": "Position keys of the source node."
+      },
+      "className": {
+        "type": "string",
+        "description": "Class (the unit)."
+      },
+      "member": {
+        "type": "string",
+        "description": "Method (Class.method, Outer.Inner.method)."
+      },
+      "kind": {
+        "type": "string",
+        "enum": [
+          "rest",
+          "aura",
+          "invocable",
+          "remoteAction",
+          "webservice",
+          "future"
+        ],
+        "description": "rest: @Http* in a @RestResource class / aura: @AuraEnabled / invocable: @InvocableMethod / remoteAction: @RemoteAction / webservice: webservice / future: @future."
+      },
+      "httpMethod": {
+        "description": "rest: GET / POST / PUT / PATCH / DELETE.",
+        "type": "string"
+      },
+      "urlMapping": {
+        "description": "rest: urlMapping of @RestResource.",
+        "type": "string"
+      },
+      "cacheable": {
+        "description": "aura: @AuraEnabled(cacheable=true).",
+        "type": "boolean"
+      },
+      "label": {
+        "description": "invocable: label of @InvocableMethod.",
+        "type": "string"
+      },
+      "callout": {
+        "description": "future: @future(callout=true).",
+        "type": "boolean"
+      },
+      "usedBy": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Other units that call the method in the repository (<type>:<name>, e.g. lwc:accountList, flow:Invoice_Flow)."
+      }
+    },
+    "required": [
+      "className",
+      "member",
+      "kind",
+      "usedBy"
+    ],
+    "additionalProperties": false,
+    "description": "An entry point of Apex called from outside Apex (screens, Flow, external systems, async execution). One row per kind."
+  }
+}
+```
+
+### apex.triggerHandlers
+
+Apex のトリガーから呼び出しをたどって届くクラス (ハンドラーと、そこから呼ぶクラス)。段数と経路つき。単位をまたいで解決した依存関係から作る。
+
+分類: code。出力の形: rows。描ける部品: DataTable・StatusSummary
+
+args:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "triggers": {
+      "description": "Trigger names to include. Omit for all.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "depth": {
+      "description": "How many calls to follow (default 3).",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10
+    }
+  }
+}
+```
+
+出力:
+
+```json
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "trigger": {
+        "type": "string"
+      },
+      "object": {
+        "description": "Object of the trigger.",
+        "type": "string"
+      },
+      "events": {
+        "description": "Trigger events (before insert ...).",
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "handler": {
+        "type": "string",
+        "description": "Class reached by following calls from the trigger."
+      },
+      "depth": {
+        "type": "number",
+        "description": "1 for classes the trigger calls directly."
+      },
+      "path": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Classes from the trigger to the handler."
+      }
+    },
+    "required": [
+      "trigger",
+      "handler",
+      "depth",
+      "path"
+    ],
+    "additionalProperties": false,
+    "description": "A class an Apex trigger reaches by calls (its handler and what it calls)."
+  }
+}
+```
+
+### apex.tests
+
+Apex のクラス・トリガーごとの、届くテストクラス (テストから呼び出しをたどるか、途中の DML で動くトリガーを通って届くか)。tests が空ならテストがない。untestedOnly でテストのないものだけ。
+
+分類: code。出力の形: rows。描ける部品: DataTable・StatusSummary
+
+args:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "classes": {
+      "description": "Class or trigger names to include. Omit for all.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "depth": {
+      "description": "How many calls to follow (default 3).",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10
+    },
+    "untestedOnly": {
+      "description": "Only classes and triggers no test reaches.",
+      "type": "boolean"
+    }
+  }
+}
+```
+
+出力:
+
+```json
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "unitType": {
+        "type": "string",
+        "enum": [
+          "class",
+          "trigger"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "tests": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "test": {
+              "type": "string",
+              "description": "Test class."
+            },
+            "via": {
+              "type": "string",
+              "enum": [
+                "call",
+                "dml"
+              ],
+              "description": "call: reached by calls / dml: reached through a trigger fired by DML on the way."
+            },
+            "depth": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "test",
+            "via",
+            "depth"
+          ],
+          "additionalProperties": false
+        },
+        "description": "Test classes that reach this class or trigger. Empty means untested."
+      }
+    },
+    "required": [
+      "unitType",
+      "name",
+      "tests"
+    ],
+    "additionalProperties": false,
+    "description": "Which test classes exercise an Apex class or trigger."
+  }
+}
+```
+
 ### apex.dataAccess
 
 Apex がどこで (クラス・メソッド) どのオブジェクト・項目を読み書きするか (SOQL・SOSL・動的なクエリ・DML)。ループの中か (ガバナ制限の原因になりやすい)・テストの中かも出す。DML の項目は、同じメソッドで代入している項目。
@@ -5283,7 +5906,7 @@ args:
         "description": "In a test class or test method."
       },
       "accessLevel": {
-        "description": "USER_MODE / SYSTEM_MODE etc.",
+        "description": "DML: USER_MODE / SYSTEM_MODE (AccessLevel), USER / SYSTEM (as user / as system). Query: WITH USER_MODE / SYSTEM_MODE / SECURITY_ENFORCED.",
         "type": "string"
       },
       "allOrNone": {
@@ -5597,6 +6220,167 @@ args:
     ],
     "additionalProperties": false,
     "description": "One Lightning web component (bundle)."
+  }
+}
+```
+
+### lwc.metrics
+
+LWC の JS / TS の本体 (メソッド・getter / setter・関数・直下の文) ごとのメトリクス: 循環的複雑度・認知的複雑度・文の数・最大のネスト・呼び出しの数と呼び出し先・Apex の呼び出し (ループの中のものも)・イベントの発行。数え方は apex.metrics と共通。前回と比べると、値が変わった本体が分かる。
+
+分類: code。出力の形: rows。描ける部品: DataTable・StatusSummary
+
+args:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "components": {
+      "description": "Component names (accountList or c/accountList) to include. Omit for all.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "minComplexity": {
+      "description": "Only bodies whose cyclomatic or cognitive complexity is at least this.",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    }
+  }
+}
+```
+
+出力:
+
+```json
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string",
+        "enum": [
+          "added",
+          "removed",
+          "changed",
+          "unchanged"
+        ],
+        "description": "Change since the saved state (only when comparing two points)."
+      },
+      "filePath": {
+        "description": "File of the row (relative to the repository).",
+        "type": "string"
+      },
+      "sourceKeys": {
+        "type": "object",
+        "properties": {
+          "objectKey": {
+            "type": "string"
+          },
+          "sourceKey": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "objectKey",
+          "sourceKey"
+        ],
+        "additionalProperties": false,
+        "description": "Position keys of the source node."
+      },
+      "changedProperties": {
+        "description": "Names of changed properties (only when comparing and the row changed).",
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "component": {
+        "type": "string",
+        "description": "Component (namespace/name)."
+      },
+      "module": {
+        "type": "string",
+        "description": "JS / TS file of the component (accountList.js)."
+      },
+      "ownerKind": {
+        "type": "string",
+        "enum": [
+          "lwcComponent",
+          "lwcClass",
+          "lwcDeclaration",
+          "module"
+        ],
+        "description": "Component member, other class member, top-level declaration or top-level statements."
+      },
+      "owner": {
+        "description": "Component, class or declaration name.",
+        "type": "string"
+      },
+      "member": {
+        "description": "Member name (static for a static block).",
+        "type": "string"
+      },
+      "cyclomatic": {
+        "type": "number",
+        "description": "Cyclomatic complexity (counted from the syntax)."
+      },
+      "cognitive": {
+        "type": "number",
+        "description": "Cognitive complexity (SonarSource rules)."
+      },
+      "statements": {
+        "type": "number",
+        "description": "Number of statements (blocks are not counted)."
+      },
+      "maxNesting": {
+        "type": "number",
+        "description": "Deepest nesting of if / loop / switch / try statements."
+      },
+      "calls": {
+        "type": "number",
+        "description": "Calls counted by the language analysis."
+      },
+      "callees": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Called targets (sorted, unique)."
+      },
+      "apexCalls": {
+        "type": "number",
+        "description": "Imperative calls of Apex methods imported from @salesforce/apex."
+      },
+      "apexCallsInLoop": {
+        "type": "number",
+        "description": "Apex calls in a loop (more round trips to the server)."
+      },
+      "events": {
+        "type": "number",
+        "description": "this.dispatchEvent calls."
+      }
+    },
+    "required": [
+      "component",
+      "module",
+      "ownerKind",
+      "cyclomatic",
+      "cognitive",
+      "statements",
+      "maxNesting",
+      "calls",
+      "callees",
+      "apexCalls",
+      "apexCallsInLoop",
+      "events"
+    ],
+    "additionalProperties": false,
+    "description": "Metrics of one body (method, getter, function ...) of an LWC module. Comparing two points: changed values."
   }
 }
 ```
@@ -6415,6 +7199,105 @@ args:
     ],
     "additionalProperties": false,
     "description": "What a parent can use from an LWC: @api property/method, dispatched event, slot."
+  }
+}
+```
+
+### object.usage
+
+オブジェクトごとの、使っている単位 (Apex・LWC・Flow・権限など) と操作 (照会・作成・更新・削除・項目の読み書き) の表。単位 1 つ・オブジェクト 1 つで 1 行。依存関係のグラフから作る。
+
+分類: object。出力の形: rows。描ける部品: DataTable・StatusSummary
+
+args:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "objects": {
+      "description": "Object API names to include. Omit for all.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
+```
+
+出力:
+
+```json
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "object": {
+        "type": "string",
+        "description": "Object API name."
+      },
+      "objectOrigin": {
+        "type": "string",
+        "description": "repository / standard / missing / unknown (from the dependency graph)."
+      },
+      "unitType": {
+        "type": "string",
+        "description": "Type of the unit that uses the object (apexClass, lwc, flow ...)."
+      },
+      "unit": {
+        "type": "string"
+      },
+      "operations": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "enum": [
+            "query",
+            "read",
+            "insert",
+            "update",
+            "upsert",
+            "delete",
+            "undelete",
+            "merge",
+            "write",
+            "publish",
+            "trigger",
+            "grant",
+            "place",
+            "use"
+          ]
+        },
+        "description": "Operations on the object and its fields (trigger: the trigger is on it / grant: permissions / place: layouts and pages)."
+      },
+      "fieldsRead": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Fields the unit reads or queries (Object.Field)."
+      },
+      "fieldsWritten": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Fields the unit assigns."
+      }
+    },
+    "required": [
+      "object",
+      "objectOrigin",
+      "unitType",
+      "unit",
+      "operations",
+      "fieldsRead",
+      "fieldsWritten"
+    ],
+    "additionalProperties": false,
+    "description": "How one unit uses one object (a CRUD-like usage table)."
   }
 }
 ```
@@ -7434,7 +8317,7 @@ args:
 
 ### metadata.findings
 
-解析の指摘 (権限・ラベル・Flow・画面・参照)。前回と比べると、新しく出た指摘は added、なくなった指摘は removed。
+解析の指摘 (権限・ラベル・Flow・画面・参照・Apex の書き方 (SeeAllData・不要な @TestVisible・callout=true のない @future の callout・WITH SECURITY_ENFORCED))。前回と比べると、新しく出た指摘は added、なくなった指摘は removed。
 
 分類: crossRef。出力の形: rows。描ける部品: DataTable・StatusSummary
 
@@ -7495,7 +8378,8 @@ args:
           "layout",
           "flexiPage",
           "reference",
-          "repository"
+          "repository",
+          "apex"
         ]
       },
       "code": {

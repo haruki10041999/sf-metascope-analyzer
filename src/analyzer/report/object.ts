@@ -31,7 +31,7 @@ type ObjectNode = { id: string; filePath: string; json: CustomObjectJson };
 export type ObjectFilter = { objects?: string[] };
 
 const objectsOf = (snapshot: MetadataSnapshot | undefined) =>
-    snapshot ? readable<CustomObjectJson>(snapshot.objects, 'object') : undefined;
+    snapshot ? readable(snapshot.objects, 'object') : undefined;
 
 /** オブジェクトを API 名で対応付ける (API 名の順) */
 const compareObjects = (input: SnapshotInput, filter: ObjectFilter = {}) =>

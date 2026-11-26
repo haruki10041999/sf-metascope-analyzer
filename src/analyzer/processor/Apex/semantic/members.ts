@@ -5,8 +5,8 @@ import type { ApexDeclaration } from './declaration';
 // - member: クラス、クラス.メソッド、トリガー名 (匿名 Apex は なし)
 
 export type ApexMemberNames = {
-    /** 宣言の ID → 宣言 */
-    byId: ReadonlyMap<string, ApexDeclaration>;
+    /** 宣言の ID → 宣言 (ほかの単位の宣言も、索引を渡せば引ける) */
+    byId: { get(id: string): ApexDeclaration | undefined };
     /** 宣言を所有する宣言 */
     ownerOf: (declaration: ApexDeclaration) => ApexDeclaration | undefined;
     /** 宣言の名前の並びを . でつないだもの */
@@ -22,8 +22,13 @@ export type ApexMemberNames = {
 const isTypeDeclaration = (declaration: ApexDeclaration) =>
     declaration.kind === 'class' || declaration.kind === 'interface' || declaration.kind === 'enum';
 
-export const apexMemberNamesOf = (declarations: readonly ApexDeclaration[]): ApexMemberNames => {
-    const byId = new Map(declarations.map((d) => [d.id, d]));
+export const apexMemberNamesOf = (
+    declarations: readonly ApexDeclaration[],
+    /** ほかの単位の宣言 (単位をまたぐ解決の索引) */
+    external?: { get(id: string): ApexDeclaration | undefined },
+): ApexMemberNames => {
+    const local = new Map(declarations.map((d) => [d.id, d]));
+    const byId = { get: (id: string) => local.get(id) ?? external?.get(id) };
     const unitRoot = declarations.find((d) => d.kind === 'trigger' || d.kind === 'anonymous');
     const ownerOf = (declaration: ApexDeclaration) =>
         declaration.ownerId ? byId.get(declaration.ownerId) : undefined;

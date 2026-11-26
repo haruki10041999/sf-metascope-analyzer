@@ -1,14 +1,19 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
+import { parseApexUnitFiles } from '../../src/analyzer/parser/Apex/unit';
 import { parseLwcBundleFolder } from '../../src/analyzer/parser/Lwc/bundle';
 import type { LwcBundleFile } from '../../src/analyzer/parser/Lwc/folder';
+import { getApexDependencies } from '../../src/analyzer/processor/dependency/apex';
 import {
     type GraphUnit,
     buildDependencyGraph,
 } from '../../src/analyzer/processor/dependency/graph';
 import type { UnitReference } from '../../src/analyzer/processor/dependency/types';
-import { getLwcDependencies } from '../../src/analyzer/processor/dependency/units';
+import {
+    getLwcDependencies,
+    getUnitDependencies,
+} from '../../src/analyzer/processor/dependency/units';
 
 // LWC の参照の残り (docs/json-gaps.md 4.2): js-meta.xml の targetConfigs・子の @api・apexContinuation・@wire の文字列。
 // ファイルシステムに触らず、メモリ上のバンドルを解析して確かめる
@@ -226,5 +231,92 @@ export default class Nav extends NavigationMixin(LightningElement) {
     it('references fields from fieldNames of @wire config', () => {
         assert.ok(refs.includes('reads field:Contact.Name (wire.fields)'), refs.join('\n'));
         assert.ok(refs.includes('reads field:Contact.Account (wire.fields)'));
+    });
+
+    it('参照に確かさを付ける: 標準オブジェクトの一覧に載っているオブジェクトだけ standard (項目・カスタムは名前だけ)', () => {
+        const bundle = parseBundle('certain', {
+            'certain.js': [
+                "import { LightningElement } from 'lwc';",
+                "import ACCOUNT from '@salesforce/schema/Account';",
+                "import NAME from '@salesforce/schema/Account.Name';",
+                "import INVOICE from '@salesforce/schema/Invoice__c';",
+                'export default class Certain extends LightningElement {}',
+            ].join('\n'),
+            'certain.html': '<template></template>',
+        });
+        const certaintyOf = (target: string) =>
+            getUnitDependencies('lwc', bundle).references.find((r) => r.target === target)
+                ?.resolution ?? 'byName';
+        assert.equal(certaintyOf('Account'), 'standard');
+        assert.equal(certaintyOf('Account.Name'), 'byName');
+        assert.equal(certaintyOf('Invoice__c'), 'byName');
+    });
+});
+
+describe('LWC から使う Apex のメソッドの決まり (@AuraEnabled・@wire の cacheable)', () => {
+    const apexUnitOf = async (lines: string[]): Promise<GraphUnit> => {
+        const unit = await parseApexUnitFiles({
+            unitType: 'class',
+            name: 'AccountController',
+            filePath: 'AccountController.cls',
+            source: { fileName: 'AccountController.cls', source: lines.join('\n') },
+        });
+        assert.deepEqual(unit.resolvedError, []);
+        return {
+            type: 'apexClass',
+            id: 'AccountController',
+            dependencies: getApexDependencies(unit),
+        };
+    };
+    const lwc = parseBundle('accounts', {
+        'accounts.js': [
+            "import { LightningElement, wire } from 'lwc';",
+            "import getAccounts from '@salesforce/apex/AccountController.getAccounts';",
+            "import save from '@salesforce/apex/AccountController.save';",
+            "import helper from '@salesforce/apex/AccountController.helper';",
+            'export default class Accounts extends LightningElement {',
+            '    @wire(getAccounts, { limitSize: 10 }) accounts;',
+            '    @wire(save) saved;',
+            '    run() { return helper(); }',
+            '}',
+        ].join('\n'),
+        'accounts.html': '<template></template>',
+    });
+    const lwcUnit: GraphUnit = {
+        type: 'lwc',
+        id: lwc.result.id,
+        dependencies: getLwcDependencies(lwc),
+    };
+
+    it('@wire の Apex のメソッドを参照にする (via wire)', () => {
+        assert.ok(
+            lwcUnit.dependencies.references
+                .map(show)
+                .includes('calls apexMethod:AccountController.getAccounts (wire)'),
+        );
+    });
+
+    it('import は @AuraEnabled、@wire は cacheable=true でないと指摘する', async () => {
+        const apex = await apexUnitOf([
+            'public with sharing class AccountController {',
+            '    @AuraEnabled(cacheable=true)',
+            '    public static List<Account> getAccounts(Integer limitSize) { return [SELECT Id FROM Account LIMIT :limitSize]; }',
+            '    @AuraEnabled',
+            '    public static void save() {}',
+            '    public static void helper() {}',
+            '}',
+        ]);
+        const graph = buildDependencyGraph([apex, lwcUnit]);
+        assert.deepEqual(graph.nodes.get('apexMethod:AccountController.getAccounts')?.traits, [
+            'auraEnabled',
+            'cacheable',
+        ]);
+        const findings = graph.findings
+            .filter((f) => f.code.startsWith('APEX_METHOD_'))
+            .map((f) => `${f.code} ${f.target}`);
+        assert.deepEqual(findings, [
+            'APEX_METHOD_NOT_AURA_ENABLED apexMethod:AccountController.helper',
+            'APEX_METHOD_NOT_CACHEABLE apexMethod:AccountController.save',
+        ]);
     });
 });

@@ -1,8 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import type { ObjectParseResult } from '../parser/Metadata/parser';
-import type { ObjectTranslationParseResult } from '../parser/Metadata/objectTranslation';
+import { unitBaseOf } from '../parser/unitBase';
 import type { DependencyGraph } from '../processor/dependency/graph';
 import {
     type ObjectDependency,
@@ -33,7 +32,7 @@ import { GitTree, WorkingTree } from './sourceTree';
 import { UnitWorker } from '../worker/unitWorker';
 
 import { UnitStore } from './store';
-import { type AnyUnitType, UNIT_TYPES } from './unitType';
+import { type AnyUnitType, UNIT_TYPES, type UnitParseResult } from './unitType';
 
 // 保存しておいた前回の解析結果 (before) と、リポジトリの今の状態 (after) を Repository で持ち、
 // 差分・表示用のデータ・レポートの入力・依存関係のグラフを作る。方針: docs/analysis-plan.md 2 章・1.4
@@ -73,17 +72,20 @@ export type ComparedInput = { input: RepositoryInput; compared: string };
 /** git のコミットの解析結果をメモリに残す数 */
 const COMMIT_CACHE_SIZE = 4;
 
-const objectsOf = (results: readonly unknown[]) =>
-    (results as ObjectParseResult[]).flatMap((result) =>
-        result.dataType === 'object' ? [result.result.base] : [],
-    );
+/** 読めたオブジェクトの JSON (中身の型は種類から引く。parser/unitBase.ts) */
+const objectsOf = (results: readonly UnitParseResult[]) =>
+    results.flatMap((result) => {
+        const json = unitBaseOf(result, 'object');
+        return json ? [json] : [];
+    });
 
-const translationsOf = (results: readonly unknown[]) =>
-    (results as ObjectTranslationParseResult[]).flatMap((result) =>
-        result.dataType === 'objectTranslation' ? [result.result.base] : [],
-    );
+const translationsOf = (results: readonly UnitParseResult[]) =>
+    results.flatMap((result) => {
+        const json = unitBaseOf(result, 'objectTranslation');
+        return json ? [json] : [];
+    });
 
-const objectInfosOf = (results: readonly unknown[]): ObjectInfo[] =>
+const objectInfosOf = (results: readonly UnitParseResult[]): ObjectInfo[] =>
     objectsOf(results).map(analyzeObject);
 
 export class RepositoryProcessor {

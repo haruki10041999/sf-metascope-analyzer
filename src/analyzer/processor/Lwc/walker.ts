@@ -25,6 +25,7 @@ import type {
 } from '../../types';
 import type { LwcNodeJson } from '../../types';
 import { type WalkHandlers, walkJson } from '../commons/node';
+import { isRecord } from '../commons/json';
 
 // LWC の JS / TS の JSON の走査 (docs/lwc-json-types.md 6 章の段階 6・8.8)。
 // Apex の解析の walker (docs/apex-json-analysis.md 2.1) と同じ形: kind ごとの処理 (Visitor) を登録して JSON を 1 回だけたどる。
@@ -120,9 +121,6 @@ const MEMBER_KINDS = new Set([
 const LOOP_KINDS = new Set(['jsFor', 'jsForIn', 'jsForOf', 'jsWhile', 'jsDoWhile']);
 const NESTING_KINDS = new Set([...LOOP_KINDS, 'jsIf', 'jsSwitch', 'jsTry']);
 const FUNCTION_KINDS = new Set(['jsFunction', 'jsObjectMethod', 'jsFunctionDeclaration']);
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-    typeof value === 'object' && value !== null && !Array.isArray(value);
 
 /** ノードに入るときの文脈 */
 const enterContext = (node: Record<string, unknown>, context: LwcWalkContext): LwcWalkContext => {

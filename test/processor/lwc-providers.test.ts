@@ -6,6 +6,7 @@ import {
     type MetadataSnapshot,
     getLwcComponents,
     getLwcDetail,
+    getLwcMetrics,
     getLwcWireframe,
     snapshotOf,
 } from '../../src/analyzer/report';
@@ -107,5 +108,49 @@ describe('LWC の provider', () => {
             detail.find((r) => r.category === 'wire' && r.name === 'wiredAccounts')!.status,
             'changed',
         );
+    });
+
+    it('lwc.metrics: 本体ごとの複雑度・Apex の呼び出し・イベント。比べると増えた・減った本体', () => {
+        const rows = getLwcMetrics(one(), { components: ['accountList'] });
+        const handleDelete = rows.find((r) => r.member === 'handleDelete')!;
+        assert.deepEqual(
+            [
+                handleDelete.component,
+                handleDelete.module,
+                handleDelete.ownerKind,
+                handleDelete.owner,
+            ],
+            ['c/accountList', 'accountList.ts', 'lwcComponent', 'AccountList'],
+        );
+        assert.deepEqual(
+            [
+                handleDelete.cyclomatic,
+                handleDelete.cognitive,
+                handleDelete.apexCalls,
+                handleDelete.events,
+            ],
+            [2, 1, 1, 1],
+        );
+        // コンポーネント以外のクラス・直下の関数も本体にする (c/utils)
+        const utils = getLwcMetrics(one(), { components: ['utils'] });
+        assert.ok(
+            utils.some(
+                (r) => r.ownerKind === 'lwcClass' && r.owner === 'RowCache' && r.member === 'put',
+            ),
+        );
+        assert.ok(utils.some((r) => r.ownerKind === 'lwcDeclaration' && r.owner === 'toRows'));
+        // 複雑度で絞る
+        assert.ok(
+            getLwcMetrics(one(), { minComplexity: 3 }).every(
+                (r) => r.cyclomatic >= 3 || r.cognitive >= 3,
+            ),
+        );
+        // 比べると、増えた本体 (handleSave)・減った本体 (isTable)
+        const statusOf = (member: string) =>
+            getLwcMetrics(compared(), { components: ['accountList'] }).find(
+                (r) => r.member === member,
+            )?.status;
+        assert.equal(statusOf('handleSave'), 'added');
+        assert.equal(statusOf('isTable'), 'removed');
     });
 });

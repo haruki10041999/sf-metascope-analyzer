@@ -179,4 +179,50 @@ export default class Nav extends NavigationMixin(LightningElement) {
         assert.ok(refs.includes('uses aura:invoiceApp (navigation)'), refs.join('\n'));
         assert.equal(refs.filter((r) => r.endsWith('(navigation)')).length, 2);
     });
+
+    it('SLDS にないアイコン名 (icon-name の <種類>:<名前>) を UNKNOWN_SLDS_ICON にする (式の値・ほかの種類は見ない)', () => {
+        const bundle = parseBundle('icons', {
+            'icons.js': `import { LightningElement } from 'lwc';
+export default class Icons extends LightningElement {
+    name = 'utility:add';
+}
+`,
+            'icons.html': `<template>
+    <lightning-icon icon-name="utility:add"></lightning-icon>
+    <lightning-icon icon-name="standard:account"></lightning-icon>
+    <lightning-icon icon-name="utility:not_a_real_icon"></lightning-icon>
+    <lightning-button-icon icon-name={name}></lightning-button-icon>
+    <lightning-icon icon-name="mycompany:logo"></lightning-icon>
+</template>`,
+        });
+        const [analysis] = analyzeLwcBundles([bundle]);
+        assert.deepEqual(
+            analysis!.findings.filter((f) => f.code === 'UNKNOWN_SLDS_ICON').map((f) => f.target),
+            ['utility:not_a_real_icon'],
+        );
+    });
+
+    it('照合済みの基本コンポーネントにない属性 (書き間違い) を UNKNOWN_LIGHTNING_ATTRIBUTE にする', () => {
+        const bundle = parseBundle('attrs', {
+            'attrs.js': `import { LightningElement } from 'lwc';
+export default class Attrs extends LightningElement {
+    value = '';
+    handleChange() {}
+}
+`,
+            'attrs.html': `<template>
+    <lightning-input lable="Name" label="Name" value={value} onchange={handleChange}
+        class="wide" data-id="name" aria-describedby="help" title="t" lwc:ref="input"></lightning-input>
+    <lightning-modal-body unknown-attribute="x"></lightning-modal-body>
+</template>`,
+        });
+        const [analysis] = analyzeLwcBundles([bundle]);
+        assert.deepEqual(
+            analysis!.findings
+                .filter((f) => f.code === 'UNKNOWN_LIGHTNING_ATTRIBUTE')
+                .map((f) => f.target),
+            // lightning-modal-body は照合済みでない (言語サーバーの一覧に載らない子のコンポーネント) ので見ない
+            ['lightning-input.lable'],
+        );
+    });
 });

@@ -2,12 +2,14 @@ import type { ApexNodeJson, ConvertKeys, TypeJson } from '../../../types';
 import { walkJson } from '../../commons/node';
 import type {
     DependencyKind,
+    ReferenceResolution,
     ReferenceSite,
     UnitDefinition,
     UnitDependencies,
     UnitReference,
 } from '../../dependency/types';
 import type { ApexBodySemantics, ApexSemanticAnalysis } from './analyze';
+import { type ApexModifierInfo, hasApexAnnotation, isApexAnnotationArgTrue } from './declaration';
 import { type ApexExpressionRef, namePathOf } from './call';
 import { apexMemberNamesOf } from './members';
 import { apexNamedReferencesOf } from './namedReferences';
@@ -21,28 +23,18 @@ import type { ApexTypeRef } from './type';
 // - 名前を文字列で渡すもの (Label・Page・Flow・カスタム設定・Type.forName など) は、まだ今の抽出が受け持つ
 //   (docs/plan.md 10 章 P2 の「古い処理からの移行」)
 
-/**
- * 参照の解決の結果。
- * - resolved: 単位の中の宣言に決まった
- * - standard: 標準の型・SObject・標準のメソッドに決まった (メソッドの単位では照合しない)
- * - byName: 名前だけ分かる (ほかの単位の型・オブジェクト・項目。グラフで定義と突き合わせる)
- * - candidates: 候補が複数あって決まらない
- * - unknown: 決められない (理由つき)
- */
-export type ApexReferenceResolution =
-    | { status: 'resolved'; declarationId?: string }
-    | { status: 'standard'; qualifiedName?: string }
-    | { status: 'byName' }
-    | { status: 'candidates'; declarationIds: string[] }
-    | { status: 'unknown'; reason: string; detail?: string };
+/** 参照の解決の結果 (共通の語。dependency/types.ts の ReferenceResolution) */
+export type ApexReferenceResolution = ReferenceResolution;
 
-/** 参照 1 つ (今の参照の形に、解決の結果を足したもの) */
-export type ApexSemanticReference = UnitReference & { resolution: ApexReferenceResolution };
+/** 参照 1 つ (今の参照の形に、詳しい解決の結果を足したもの) */
+export type ApexSemanticReference = Omit<UnitReference, 'resolution'> & {
+    resolution: ApexReferenceResolution;
+};
 
 export type ApexSemanticDependencies = {
     /** すべての参照 (変換しないものを含む) */
     references: ApexSemanticReference[];
-    /** 今の依存関係の形 (resolved・standard・byName の参照と、定義) */
+    /** 今の依存関係の形 (resolved・standard・byName・candidates の参照と、定義。unknown は入れない) */
     dependencies: UnitDependencies;
 };
 
@@ -70,7 +62,19 @@ const QUERY_VIA: Readonly<Record<string, string>> = {
 /** Flow.Interview.X の型は Flow X の参照 (new は namedReferences.ts) */
 const FLOW_INTERVIEW = /^(?:System\.)?Flow\.Interview\.(\w+)$/i;
 
-const CONVERTED = new Set(['resolved', 'standard', 'byName']);
+/** 依存関係に入れる確かさ (candidates はグラフの確定した辺にはしないが、使われているかの判定などに残す) */
+const CONVERTED = new Set(['resolved', 'standard', 'byName', 'candidates']);
+
+/** 単位をまたげば解決できるかもしれない、分からない理由 (ほかのクラスの名前・メンバー・メソッド・親クラス) */
+const PENDING_REASONS = new Set([
+    'unresolvedName',
+    'externalMember',
+    'externalMethod',
+    'unknownReceiver',
+    'memberNotFound',
+    'methodNotFound',
+    'noSuperclass',
+]);
 
 /** 解析の結果から参照を集め、今の依存関係の形に変換する */
 export const apexSemanticDependenciesOf = (
@@ -82,7 +86,7 @@ export const apexSemanticDependenciesOf = (
         qualifiedOf,
         memberOf,
         ownerTypeOf: ownerTypeOfDeclaration,
-    } = apexMemberNamesOf(analysis.declarations);
+    } = apexMemberNamesOf(analysis.declarations, analysis.repository?.index);
     const typeDeclarations = analysis.declarations.filter(
         (d) => d.kind === 'class' || d.kind === 'interface' || d.kind === 'enum',
     );
@@ -206,10 +210,12 @@ export const apexSemanticDependenciesOf = (
             case 'method':
             case 'interfaceMethod':
                 if (owner && member) {
+                    const traits = apexMethodTraitsOf(declaration);
                     definitions.push({
                         defType: 'apexMethod',
                         name: member,
                         sourceKeys: declaration.sourceKeys,
+                        ...(traits.length ? { traits } : {}),
                     });
                 }
                 typeRefs(declaration.returnType, 'returnType', member, declaration.sourceKeys);
@@ -319,12 +325,30 @@ export const apexSemanticDependenciesOf = (
         }
         for (const access of semantics.memberAccesses) {
             if (named.handled.has(access.sourceKeys.sourceKey)) continue;
+            if (sObjectPathRefs(access, site(access.sourceKeys))) continue;
             memberRefs(
                 access.object,
                 access.objectType,
                 access.member,
                 access.access,
                 site(access.sourceKeys),
+            );
+        }
+        // 親クラスから引き継いだフィールド・プロパティ (修飾のない名前)。this.x と同じ語彙の参照にする
+        for (const inherited of semantics.inheritedAccesses) {
+            const declaration = byId.get(inherited.declarationId);
+            const owner = declaration ? ownerOf(declaration) : undefined;
+            if (!declaration || !owner) continue;
+            const writes = inherited.access === 'write' || inherited.access === 'readWrite';
+            add(
+                {
+                    refType: 'apexTypeMember',
+                    target: `${qualifiedOf(owner)}.${declaration.name}`,
+                    kind: writes ? 'writes' : 'reads',
+                    via: writes ? 'assignment' : 'member',
+                },
+                site(inherited.sourceKeys),
+                { status: 'resolved', declarationId: inherited.declarationId },
             );
         }
         for (const dml of semantics.dml) {
@@ -441,6 +465,22 @@ export const apexSemanticDependenciesOf = (
             return;
         }
 
+        // 実行時に呼ばれうるメソッド (インターフェース・親クラスの型の変数で呼んだとき、実装・継承しているクラスのもの)。
+        // どれが呼ばれるかは決まらないので候補の参照にする (依存関係には入れない。docs/plan.md 2.2)
+        for (const id of call.dispatchIds) {
+            const method = byId.get(id);
+            add(
+                {
+                    refType: 'apexMethod',
+                    target: method ? (memberOf(method) ?? call.name) : call.name,
+                    kind: 'calls',
+                    via: 'dispatch',
+                },
+                from,
+                { status: 'candidates', declarationIds: call.dispatchIds },
+            );
+        }
+
         // 単位の中のメソッド
         if (call.candidateIds.length === 1) {
             const method = byId.get(call.candidateIds[0]!);
@@ -457,10 +497,20 @@ export const apexSemanticDependenciesOf = (
             return;
         }
         if (call.candidateIds.length > 1) {
-            add({ refType: 'apexMethod', target: call.name, kind: 'calls', via: 'call' }, from, {
-                status: 'candidates',
-                declarationIds: call.candidateIds,
-            });
+            // 候補ごとに、完全な名前 (Outer.method) の候補の参照にする (グラフで引けるように)
+            for (const id of call.candidateIds) {
+                const method = byId.get(id);
+                add(
+                    {
+                        refType: 'apexMethod',
+                        target: method ? (memberOf(method) ?? call.name) : call.name,
+                        kind: 'calls',
+                        via: 'call',
+                    },
+                    from,
+                    { status: 'candidates', declarationIds: call.candidateIds },
+                );
+            }
             return;
         }
         if (!call.receiver || call.receiver.kind === 'this' || call.receiver.kind === 'super') {
@@ -528,6 +578,54 @@ export const apexSemanticDependenciesOf = (
                     (argType ? unknownOf(argType) : { status: 'unknown', reason: 'noArgument' }),
             );
         }
+    }
+
+    /** 型が SObject (標準オブジェクト・カスタムオブジェクト。リポジトリのクラスではない) なら、その名前 */
+    function sObjectNameOf(type: ApexTypeRef): string | undefined {
+        return type.kind === 'named' && !type.declarationId && type.standard?.kind === 'sObject'
+            ? type.name.join('.')
+            : undefined;
+    }
+
+    /**
+     * SObject の関係をたどるメンバーの参照 (`a.Owner.Name`・`i.Account__r.Name`)。SOQL の関係のパスと同じく、
+     * 途中の段 (`a.Owner`) は参照項目 (Account.OwnerId)、いちばん外の段は関係のパス全体 (fieldPath: Account.Owner.Name。
+     * グラフがスキーマでたどる) の参照にする。参照にしたら true
+     */
+    function sObjectPathRefs(
+        access: ApexBodySemantics['memberAccesses'][number],
+        from: ReferenceSite,
+    ): boolean {
+        const kind: DependencyKind = access.access === 'read' ? 'reads' : 'writes';
+        if (access.isReceiver) {
+            const object = sObjectNameOf(access.objectType);
+            if (!object) return false;
+            add(
+                {
+                    refType: 'field',
+                    target: `${object}.${lookupFieldOf(access.member)}`,
+                    kind: 'reads',
+                    via: 'member',
+                },
+                from,
+                { status: 'byName' },
+            );
+            return true;
+        }
+        const root = access.chain?.find((prefix) => sObjectNameOf(prefix.rootType));
+        const object = root && sObjectNameOf(root.rootType);
+        if (!root || !object) return false;
+        add(
+            {
+                refType: 'fieldPath',
+                target: `${object}.${root.members.join('.')}`,
+                kind,
+                via: access.access === 'read' ? 'member' : 'assignment',
+            },
+            from,
+            { status: 'byName' },
+        );
+        return true;
     }
 
     function memberRefs(
@@ -624,24 +722,50 @@ export const apexSemanticDependenciesOf = (
             const via = `${prefix}.${QUERY_VIA[field.via] ?? field.via}`;
             // TYPEOF の多態の関係 (Event.What) そのものは項目ではない (WhatId の関係)
             const polymorphic = field.via === 'typeOf' && field.object === mainObject;
-            const name = polymorphic ? undefined : fieldNameOf(field.path);
-            add(
-                {
-                    refType: 'field',
-                    target: `${field.object}.${name ?? field.path.join('.')}`,
-                    kind: 'reads',
-                    via,
-                },
-                queryFrom,
-                name === undefined
-                    ? {
-                          status: 'unknown',
-                          reason: 'relationshipPath',
-                          detail: field.path.join('.'),
-                      }
-                    : { status: 'byName' },
-            );
+            if (polymorphic) {
+                add(
+                    {
+                        refType: 'field',
+                        target: `${field.object}.${field.path.join('.')}`,
+                        kind: 'reads',
+                        via,
+                    },
+                    queryFrom,
+                    { status: 'unknown', reason: 'relationshipPath', detail: field.path.join('.') },
+                );
+                continue;
+            }
+            // 関係のパス (Account.Owner.Name・Account__r.Name) は、1 段目の参照項目 (AccountId・Account__c) と、
+            // パス全体 (グラフがスキーマでたどる) の 2 つの参照にする
+            const name = field.path.length > 1 ? lookupFieldOf(field.path[0]!) : field.path[0];
+            if (name !== undefined)
+                add(
+                    { refType: 'field', target: `${field.object}.${name}`, kind: 'reads', via },
+                    queryFrom,
+                    { status: 'byName' },
+                );
+            if (field.path.length > 1)
+                add(
+                    {
+                        refType: 'fieldPath',
+                        target: `${field.object}.${field.path.join('.')}`,
+                        kind: 'reads',
+                        via,
+                    },
+                    queryFrom,
+                    { status: 'byName' },
+                );
         }
+    }
+
+    /**
+     * 関係の名前から、その参照項目の名前。カスタムの関係 (Account__r) は Account__c、標準の関係 (Owner・Account) は
+     * 名前 + Id (OwnerId・AccountId。標準の参照項目の決まり)
+     */
+    function lookupFieldOf(relationship: string): string {
+        return /__r$/i.test(relationship)
+            ? relationship.replace(/__r$/i, '__c')
+            : `${relationship}Id`;
     }
 
     /**
@@ -655,14 +779,40 @@ export const apexSemanticDependenciesOf = (
         return /__r$/i.test(first) ? first.replace(/__r$/i, '__c') : undefined;
     }
 
+    // 単位をまたげば解決できるかもしれない参照 (リポジトリの索引を渡して解析したときは数えない)。
+    // 単位の中にない親クラス・単位の中にないメソッドの呼び出しと、ほかの単位の型のメンバー・メソッド (名前だけの参照。
+    // 戻り値の型・インターフェースの実装クラスへの呼び出しは、単位をまたいで解決して分かる) も数える
+    const pendingResolution = analysis.repository
+        ? 0
+        : references.filter(
+              (r) =>
+                  (r.resolution.status === 'unknown' && PENDING_REASONS.has(r.resolution.reason)) ||
+                  ((r.refType === 'apexMethod' || r.refType === 'apexTypeMember') &&
+                      r.resolution.status === 'byName'),
+          ).length +
+          typeDeclarations.filter(
+              (d) =>
+                  d.kind === 'class' &&
+                  d.extends.length > 0 &&
+                  resolutionOfTypeName(namedTypesOf(d.extends[0]!)[0] ?? []).status === 'byName',
+          ).length;
+
     return {
         references,
         dependencies: {
+            ...(pendingResolution > 0 ? { pendingResolution } : {}),
             definitions,
             references: dedupe(
                 references
                     .filter((r) => CONVERTED.has(r.resolution.status) && r.target !== '')
-                    .map(({ resolution: _resolution, ...reference }) => reference),
+                    .map(({ resolution, ...reference }): UnitReference => ({
+                        ...reference,
+                        ...(resolution.status === 'byName' ||
+                        resolution.status === 'unknown' ||
+                        resolution.status === 'missing'
+                            ? {}
+                            : { resolution: resolution.status }),
+                    })),
             ),
         },
     };
@@ -685,4 +835,13 @@ const dedupe = (references: UnitReference[]): UnitReference[] => {
         seen.add(key);
         return true;
     });
+};
+
+/** Apex のメソッドの定義の性質 (UnitDefinition.traits。LWC から使えるか) */
+const apexMethodTraitsOf = (declaration: { modifiers?: ApexModifierInfo }): string[] => {
+    const modifiers = declaration.modifiers;
+    if (!modifiers || !hasApexAnnotation(modifiers, 'AuraEnabled')) return [];
+    return isApexAnnotationArgTrue(modifiers, 'AuraEnabled', 'cacheable')
+        ? ['auraEnabled', 'cacheable']
+        : ['auraEnabled'];
 };

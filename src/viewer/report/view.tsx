@@ -1,16 +1,10 @@
 import { JSONUIProvider, Renderer } from '@json-render/react';
-import type { Spec } from '@json-render/core';
+import type { EmbeddedReport } from '../../report/embedding';
 
 import { registry } from './registry';
 
-/** HTML に入れる文書 (src/builder/reportBuilder.ts の EmbeddedReport と同じ形) */
-export type EmbeddedReport = {
-    title: string;
-    compared?: string;
-    /** ページに分けた文書の 1 ページのとき、目次 */
-    parent?: { title: string; href: string };
-    spec: Spec & { state: Record<string, unknown> };
-};
+/** HTML に入れる文書 (型はビルドと共通。src/report/embedding.ts) */
+export type { EmbeddedReport };
 
 /** レポート 1 つ (タイトルと、json-render の仕様を state とともに描く) */
 export const ReportView = ({ report }: { report: EmbeddedReport }) => (

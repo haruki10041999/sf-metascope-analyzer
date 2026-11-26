@@ -7,6 +7,7 @@ import type {
     MetadataSnapshot,
     SnapshotInput,
 } from './types';
+import { type JsonRecord, isRecord } from '../processor/commons/json';
 
 // lwc.eventFlow: 利用者の操作から処理までの流れ (docs/todo.md 3.2.1 の 5)。
 // テンプレートのイベント (<lightning-button onclick={handleSave}>)・@wire・表示のとき (connectedCallback など) を起点に、
@@ -21,10 +22,7 @@ export type LwcEventFlowFilter = {
 };
 
 type Bundle = Extract<LwcBundleParseResult, { dataType: 'lwcBundle' }>;
-type Json = Record<string, unknown>;
-
-const isRecord = (value: unknown): value is Json =>
-    typeof value === 'object' && value !== null && !Array.isArray(value);
+type Json = JsonRecord;
 
 /** 表示のときに呼ばれるメソッド (起点にする) */
 const LIFECYCLE = new Map([

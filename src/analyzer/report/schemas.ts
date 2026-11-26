@@ -367,6 +367,7 @@ export const FindingRowSchema = z
             'flexiPage',
             'reference',
             'repository',
+            'apex',
         ]),
         code: z.string(),
         severity: z.enum(['error', 'warning', 'info']),
@@ -599,6 +600,198 @@ export const ApexOutlineRowSchema = z
     })
     .describe('One class, member or trigger (any access, including private and tests).');
 
+/** 本体のメトリクスの、言語によらない項目 (apex.metrics・lwc.metrics で共通。数え方は processor/commons/metrics.ts) */
+const bodyMetricsShape = {
+    cyclomatic: z.number().describe('Cyclomatic complexity (counted from the syntax).'),
+    cognitive: z.number().describe('Cognitive complexity (SonarSource rules).'),
+    statements: z.number().describe('Number of statements (blocks are not counted).'),
+    maxNesting: z.number().describe('Deepest nesting of if / loop / switch / try statements.'),
+    calls: z.number().describe('Calls counted by the language analysis.'),
+    callees: z.array(z.string()).describe('Called targets (sorted, unique).'),
+};
+
+export const LwcMetricsRowSchema = z
+    .object({
+        ...rowBaseShape,
+        ...changedPropertiesShape,
+        component: z.string().describe('Component (namespace/name).'),
+        module: z.string().describe('JS / TS file of the component (accountList.js).'),
+        ownerKind: z
+            .enum(['lwcComponent', 'lwcClass', 'lwcDeclaration', 'module'])
+            .describe(
+                'Component member, other class member, top-level declaration or top-level statements.',
+            ),
+        owner: z.string().exactOptional().describe('Component, class or declaration name.'),
+        member: z.string().exactOptional().describe('Member name (static for a static block).'),
+        ...bodyMetricsShape,
+        apexCalls: z
+            .number()
+            .describe('Imperative calls of Apex methods imported from @salesforce/apex.'),
+        apexCallsInLoop: z
+            .number()
+            .describe('Apex calls in a loop (more round trips to the server).'),
+        events: z.number().describe('this.dispatchEvent calls.'),
+    })
+    .describe(
+        'Metrics of one body (method, getter, function ...) of an LWC module. Comparing two points: changed values.',
+    );
+
+export const ApexMetricsRowSchema = z
+    .object({
+        ...rowBaseShape,
+        ...changedPropertiesShape,
+        className: z.string().describe('Class, trigger or anonymous Apex name (the unit).'),
+        unitType: z.enum(['class', 'trigger', 'anonymous']),
+        member: z
+            .string()
+            .exactOptional()
+            .describe('Method etc. (Class.method). Getter and setter share the property name.'),
+        bodyKind: z
+            .enum([
+                'method',
+                'constructor',
+                'initializer',
+                'getter',
+                'setter',
+                'trigger',
+                'anonymous',
+                'fieldInitializer',
+            ])
+            .describe('Kind of the executable body.'),
+        name: z.string().describe('Names of the declaration that owns the body, joined by dots.'),
+        signature: z
+            .string()
+            .exactOptional()
+            .describe(
+                'Method or constructor name with parameter types (calc(Integer)). Tells overloads apart.',
+            ),
+        inTest: z.boolean().describe('In a test class or test method.'),
+        // 言語によらない項目 (calls は Apex ではメソッドの呼び出し。new は数えない。callees は Owner.method)
+        ...bodyMetricsShape,
+        soql: z.number().describe('SOQL queries, including Database.query etc.'),
+        soqlInLoop: z.number(),
+        sosl: z.number(),
+        soslInLoop: z.number(),
+        dml: z.number().describe('DML statements and Database.insert etc.'),
+        dmlInLoop: z.number(),
+    })
+    .describe('Metrics of one executable body of Apex. Comparing two points: changed values.');
+
+export const ApexUnusedMethodRowSchema = z
+    .object({
+        ...rowBaseShape,
+        className: z.string().describe('Class (the unit).'),
+        member: z
+            .string()
+            .describe('Method (Class.method, Outer.Inner.method). Overloads are judged together.'),
+        access: z.enum(['global', 'public', 'protected', 'private']),
+        isStatic: z.boolean(),
+        overloads: z.number().describe('Number of methods with this name.'),
+        verdict: z
+            .enum(['unused', 'candidateOnly'])
+            .describe(
+                'unused: no call and no candidate call / candidateOnly: only possible calls through an interface or a superclass type.',
+            ),
+    })
+    .describe(
+        'An Apex method nothing calls (a clean-up candidate). Entry points (tests, @AuraEnabled, @InvocableMethod, @RemoteAction, REST, global, webservice, standard interface implementations, Visualforce controllers) are not listed.',
+    );
+
+export const ApexEntryPointRowSchema = z
+    .object({
+        ...rowBaseShape,
+        className: z.string().describe('Class (the unit).'),
+        member: z.string().describe('Method (Class.method, Outer.Inner.method).'),
+        kind: z
+            .enum(['rest', 'aura', 'invocable', 'remoteAction', 'webservice', 'future'])
+            .describe(
+                'rest: @Http* in a @RestResource class / aura: @AuraEnabled / invocable: @InvocableMethod / remoteAction: @RemoteAction / webservice: webservice / future: @future.',
+            ),
+        httpMethod: z.string().exactOptional().describe('rest: GET / POST / PUT / PATCH / DELETE.'),
+        urlMapping: z.string().exactOptional().describe('rest: urlMapping of @RestResource.'),
+        cacheable: z.boolean().exactOptional().describe('aura: @AuraEnabled(cacheable=true).'),
+        label: z.string().exactOptional().describe('invocable: label of @InvocableMethod.'),
+        callout: z.boolean().exactOptional().describe('future: @future(callout=true).'),
+        usedBy: z
+            .array(z.string())
+            .describe(
+                'Other units that call the method in the repository (<type>:<name>, e.g. lwc:accountList, flow:Invoice_Flow).',
+            ),
+    })
+    .describe(
+        'An entry point of Apex called from outside Apex (screens, Flow, external systems, async execution). One row per kind.',
+    );
+
+export const ObjectUsageRowSchema = z
+    .object({
+        object: z.string().describe('Object API name.'),
+        objectOrigin: z
+            .string()
+            .describe('repository / standard / missing / unknown (from the dependency graph).'),
+        unitType: z
+            .string()
+            .describe('Type of the unit that uses the object (apexClass, lwc, flow ...).'),
+        unit: z.string(),
+        operations: z
+            .array(
+                z.enum([
+                    'query',
+                    'read',
+                    'insert',
+                    'update',
+                    'upsert',
+                    'delete',
+                    'undelete',
+                    'merge',
+                    'write',
+                    'publish',
+                    'trigger',
+                    'grant',
+                    'place',
+                    'use',
+                ]),
+            )
+            .describe(
+                'Operations on the object and its fields (trigger: the trigger is on it / grant: permissions / place: layouts and pages).',
+            ),
+        fieldsRead: z
+            .array(z.string())
+            .describe('Fields the unit reads or queries (Object.Field).'),
+        fieldsWritten: z.array(z.string()).describe('Fields the unit assigns.'),
+    })
+    .describe('How one unit uses one object (a CRUD-like usage table).');
+
+export const ApexTriggerHandlerRowSchema = z
+    .object({
+        trigger: z.string(),
+        object: z.string().exactOptional().describe('Object of the trigger.'),
+        events: z.array(z.string()).exactOptional().describe('Trigger events (before insert ...).'),
+        handler: z.string().describe('Class reached by following calls from the trigger.'),
+        depth: z.number().describe('1 for classes the trigger calls directly.'),
+        path: z.array(z.string()).describe('Classes from the trigger to the handler.'),
+    })
+    .describe('A class an Apex trigger reaches by calls (its handler and what it calls).');
+
+export const ApexTestRowSchema = z
+    .object({
+        unitType: z.enum(['class', 'trigger']),
+        name: z.string(),
+        tests: z
+            .array(
+                z.object({
+                    test: z.string().describe('Test class.'),
+                    via: z
+                        .enum(['call', 'dml'])
+                        .describe(
+                            'call: reached by calls / dml: reached through a trigger fired by DML on the way.',
+                        ),
+                    depth: z.number(),
+                }),
+            )
+            .describe('Test classes that reach this class or trigger. Empty means untested.'),
+    })
+    .describe('Which test classes exercise an Apex class or trigger.');
+
 export const ApexDataAccessRowSchema = z
     .object({
         ...rowBaseShape,
@@ -638,7 +831,12 @@ export const ApexDataAccessRowSchema = z
             .describe('statement: DML statement / database: Database.insert etc.'),
         inLoop: z.boolean().describe('Inside a loop (a common cause of governor limit errors).'),
         inTest: z.boolean().describe('In a test class or test method.'),
-        accessLevel: z.string().exactOptional().describe('USER_MODE / SYSTEM_MODE etc.'),
+        accessLevel: z
+            .string()
+            .exactOptional()
+            .describe(
+                'DML: USER_MODE / SYSTEM_MODE (AccessLevel), USER / SYSTEM (as user / as system). Query: WITH USER_MODE / SYSTEM_MODE / SECURITY_ENFORCED.',
+            ),
         allOrNone: z.boolean().exactOptional(),
     })
     .describe(

@@ -51,6 +51,10 @@
 - 名前を文字列などで渡す参照（`Label.X`・`Page.X`・`PageReference`・`Flow.Interview.X`・カスタム設定・`FeatureManagement`・`Type.forName`・`'callout:X'`・`EventBus.publish`・`Schema.SObjectType`・SOQL の `StaticResource` など）は `semantic/namedReferences.ts` が受け持つ。受け持った呼び出し・メンバーは一般の参照にしない。
 - 項目の初期化式は、クラスごとの本体 `fieldInitializer`（ID はクラスの宣言の ID）の文として解析する。
 - 単位の呼び出し・DML・クエリ・トリガーの文脈（report の `apex.dataAccess`・`apex.callFlow`・`apex.methodFlow` が使う）は `semantic/facts.ts` の `apexUnitFactsOf` が解析の結果から作る。呼び出しの種類（DML・動的なクエリ・非同期・EventBus・Http の send・assert・debug）は、レシーバーの型を標準の型に照合した結果（完全修飾名の最後の名前とメソッド名）で決める。文脈は member・ループの中か・テストの中か・いちばん内側の文。member の名前の決まりは `semantic/members.ts` を依存関係と共通に使う。
+- 参照の解決の状態（`resolved`・`standard`・`byName`・`candidates`・`unknown`）は Apex・LWC・メタデータで共通の語（`dependency/types.ts` の `ReferenceResolution`）。依存関係の参照（`UnitReference`）は確かさ（`resolution`）を持ち、持たなければ `byName`（LWC・メタデータの参照は今はすべてこれ）。`unknown` は依存関係に入れない。`candidates`（決まらないオーバーロード・インターフェースの実装クラスなど）は依存関係に残すが、グラフの確定した辺・被依存・指摘にはせず `DependencyGraph.candidateEdges` に持つ（使われているかの判定で「使われうる」に使う）。`reference` 表にも `resolution` の列を持つ。
+- Salesforce の公式情報の一覧は、系統ごとに標準のファイルにまとめる: Apex の標準型 `processor/Apex/semantic/standardTypes.ts`、標準オブジェクト `processor/commons/standardObjects.ts`、メタデータの種類 `processor/Metadata/standardTypes.ts`、LWC の capability・target・Lightning ページの種類 `types/lwc/standardTargets.ts`・基本コンポーネント `types/lwc/standardComponents.ts`（照合済みの名前と属性は生成の `standardComponentAttributes.ts`）・モジュール `types/lwc/standardModules.ts`、SLDS のアイコン名 `types/lwc/standardSldsIcons.ts`（生成）、Apex のプラットフォームが呼ぶインターフェースのメソッド `processor/Apex/semantic/standardInterfaces.ts`、カスタムのオブジェクトの接尾辞 `CUSTOM_OBJECT_SUFFIXES`（`standardObjects.ts`）（LWC はパーサーの検証でも使うので型の層に置く）。PDF のない LWC の基本コンポーネント・`lightning/*` は LWC の言語サーバー（`@salesforce/lwc-language-server`）の JSON、SLDS は `@salesforce-ux/design-system` の JSON（どちらも Salesforce が公開している npm のパッケージ）で照合し、件数の多いもの（属性・アイコン名）はスキルのスクリプトが作る。どれも照合した資料の API バージョンの定数を持ち、公式資料で照合できないもの（LWC の未照合の target・基本コンポーネント・モジュール）は `verified: false` か「未照合」と書く。リリースのたびに `.claude/skills/salesforce-release-update` で照合する。
+- 標準オブジェクトの一覧とカスタムの名前の判定（`isCustomObjectName`）は `processor/commons/standardObjects.ts` の 1 か所にし、Apex・LWC・メタデータの解析とグラフで共通に使う（以前は LWC・メタデータが別の接尾辞の一覧を持っていた）。
+- 単位をまたぐ解決（ほかのクラスの型・親クラス・メソッドの戻り値）は、リポジトリのクラスの宣言の索引（`semantic/repository.ts`。ID は `<単位名>#<sourceKey>`）を型の解決に渡して行う。ほかの単位の型は完全な名前（`Repo`・`Repo.Wrapper`）でだけ当て、内部クラスの短い名前では当てない。保存する定義・参照（`derived`・`symbol`・`reference`）は単位の中だけで決め、単位をまたげば解決できるかもしれない参照の数（`pendingResolution`）を持たせる。グラフを作るときに、それが 1 以上の Apex の単位だけを索引を渡して解析し直す（結果はほかの単位に依存するので保存しない）。
 - Apex の処理フローの文の分類（クエリ・DML・イベント・外部の呼び出し）は、文の文字のパターンでなく、文の中の事実（`facts.ts` の文脈の文）で決める。`new Http()` や `'callout:X'` の文字だけの文は、外部の呼び出しにしない（呼び出しは `send`）。
 - SOQL・SOSL の中の参照（オブジェクト・項目・子リレーション）の位置（`from.expression`）は、いちばん外のクエリの位置にする（以前の抽出と同じ。`apex.dataAccess` がクエリごとに項目をまとめる）。項目ごとの位置は `semantic/query.ts` の結果が持つ。
 - 式の型は `ApexTypeRef` にそろえる。`Foo[]`・`List<Foo>`・`System.List<Foo>` は同じ list の形、`Schema.Account` と `Account` は書いたまま区別する。同じ単位の中の型に当たれば宣言の ID を持つ。標準 API は、型の構造で決まるコレクションのメソッド（`get`・`values`・`keySet` など）だけを表で持ち、ほかは理由つきの `unknown` にする（`semantic/type.ts`）。
@@ -95,6 +99,7 @@
 
 ### 2.5 LWC
 
+- 基本コンポーネント（`lightning-*`）の属性とアイコン名は、公式の一覧（`standardComponentAttributes.ts`・`standardSldsIcons.ts`）で確かめる。属性は照合済みのコンポーネントだけで、HTML の全体の属性・`aria-*`・`data-*`・`on*`・`slot`・`key`・ディレクティブは見ない（`UNKNOWN_LIGHTNING_ATTRIBUTE`）。アイコンは静的な値で種類が SLDS のものだけ（`UNKNOWN_SLDS_ICON`）。どちらも一覧の版が古いと新しいものを誤検出しうるので warning にし、指摘の文に照合した版を書く。
 - JS / TS は Babel で読む。TypeScript Compiler API は使わず、型の推論はしない（型注釈だけを使う）。型の推論が必要になったら、TypeScript Compiler API（5 系）を足す。
 - HTML・CSS は中間表現を作らず、parse5・postcss の木から直接 JSON にする。
 - コメント（JSDoc・HTML・CSS）は JSON に入れない。
@@ -387,7 +392,7 @@ CREATE INDEX node_parent ON node (unit_id, parent_id);
 ### 型・走査
 
 - [ ] walker の責務の範囲: 収集だけにして「依存先の解決」を別の層にするか、解決・変換・値解析まで同じフォルダに置くか。動的クエリの復元をどちらに置くか。
-- [ ] 収集結果と未解決の参照の出力の型（スキーマ）。既存の依存グラフとのつなぎ方と一緒に決める。
+- [x] 収集結果と未解決の参照の出力の型（スキーマ）。既存の依存グラフとのつなぎ方と一緒に決める。→ 参照ごとに解決の状態（`ApexReferenceResolution`）を持ち、依存関係には resolved・standard・byName だけを入れる（2.2）
 - [ ] `MetadataNodeJson`（メタデータの全ノードの共用体）が TS2590 にならない作り方。
 - [ ] LWC の型の解決の置き場所の名前（`processor/Lwc/typeReferences.ts` か `typeResolution.ts`）。
 
@@ -396,7 +401,7 @@ CREATE INDEX node_parent ON node (unit_id, parent_id);
 - [ ] 動的クエリの部分的な復元: 一部が分からなくても「安全に確定できる参照」だけを解析するか、クエリ全体が確定できるときだけ解析するか。前者なら「安全に確定できる」条件も決める。
 - [ ] 復元した文字列の上の位置と、元の Apex の位置の対応のしかた。
 - [ ] 標準メソッドの戻り値: 型・クラスの単位までしか照合しない方針のまま、よく使うもの（`Database.query`・`Schema` など、SObject・List を返す主なメソッド）だけ戻り値の型の表を持つか。
-- [ ] 文字列の引数をメタデータ参照として扱う API の一覧（Label・Flow・カスタムメタデータなど）の範囲。
+- [x] 文字列の引数をメタデータ参照として扱う API の一覧（Label・Flow・カスタムメタデータなど）の範囲。→ `semantic/namedReferences.ts` の一覧（2.2）。値の追跡が要るものは 10 章 P4 の「文字列を経由するメタデータ参照」
 - [ ] 標準オブジェクト・項目をどの情報源で確かめるか。
 - [ ] `apex.findings` のルールの選別: 候補（10 章の Todo）のうち、「メタデータとまたがるルールに絞る」方針に合うものを残す。PMD との分担。
 - [ ] findings の有効・無効の切り替えの場所: 設定ファイルか、provider の引数か、両方か。
@@ -435,18 +440,18 @@ CREATE INDEX node_parent ON node (unit_id, parent_id);
 
 Apex の walker（ファイルごと）:
 
-- [ ] SOQL の関係のパス（`Owner.Name`・`Account.Owner.Name`）を、スキーマ（リポジトリのオブジェクトの定義・標準オブジェクトの一覧）で対象の項目まで解決する。`semantic/query.ts` は書いた名前の並びと、読む対象のオブジェクトまでを持つ（中）
-- [ ] リポジトリの型の一覧（P3 のシンボル表）を `apexTypeResolverOf` の `isRepositoryType` に渡し、名前空間を書かない標準の型より優先する。単位の中の宣言との衝突・省略した名前（`String` → `System.String`）・全件の標準型での照合は `semantic/standardNames.ts` で済み（高）
-- [ ] `graph.ts` が、確認していないリレーション・型・項目を名前から `standard` に分類しているのを、`unknown` と分ける（中）
+- [x] SOQL の関係のパス（`Owner.Name`・`Account.Owner.Name`）を、スキーマ（リポジトリのオブジェクトの定義・標準オブジェクトの一覧）で対象の項目まで解決する。`semantic/query.ts` は書いた名前の並びと、読む対象のオブジェクトまでを持つ（中）（2026-11-26。単位の参照は 1 段目の参照項目（`AccountId`・`Account__c`）とパス全体 `fieldPath`。グラフが参照項目の定義（子リレーションの表）と標準の関係（Owner → User など）でたどり、2 段目からの参照項目と最後の項目の参照にする。多態の関係から先は参照にしない）
+- [x] リポジトリの型の一覧を `apexTypeResolverOf` に渡し、名前空間を書かない標準の型より優先する（2026-11-26。`isRepositoryType` でなく、宣言の索引 `repository` を渡す形にした）。単位の中の宣言との衝突・省略した名前（`String` → `System.String`）・全件の標準型での照合は `semantic/standardNames.ts` で済み（高）
+- [x] `graph.ts` が、確認していないリレーション・型・項目を名前から `standard` に分類しているのを、`unknown` と分ける（中）（2026-11-26。オブジェクトは標準オブジェクトの一覧、Apex の型は標準の型の一覧、項目は標準オブジェクトの項目かどのオブジェクトにもある項目、子リレーションは親が標準オブジェクトのときだけ standard）
 
 参照の収集と照合:
 
-- [ ] 古い名前の並びの関数（`semantic/call.ts` の `makeApex…CallNameOf`）を、移行が済んだら消す。参照の収集（型・`extends`・`implements`・`new`・呼び出し・`x.a` の読み書き・SOQL・SOSL・DML・式の中の型）は `semantic/dependencies.ts` で済み（低）
-- [ ] 呼び出しの解決の 6 つの経路（5.2）を、単位をまたいで使えるようにし、`hoge.fuga(tmp()).aaa()` と `service.fetch().save()`（`Service` が別のクラス）で確かめる。単位の中の解決は `semantic/type.ts` で済み（経路 1〜5 と、6 の引数の数での絞り込み）。単位の外の型は今は `unknown`（`externalMethod`・`externalMember`）になるので、P3 のシンボル表から宣言を引く（高）
-- [ ] `this.x`、`super.x`、`obj.x`、`Type.x` をレシーバーに応じて解決する。修飾のない識別子（スコープ → 引数 → 内側から外側の型のメンバー）は `semantic/statement.ts` で解決済み。継承したメンバーは、親クラスの宣言を引けるようになってから足す（高）
-- [ ] 継承とオーバーロードは、宣言型と引数で候補を絞る。1 つに決まらなければ、候補と理由を残す。同じ単位の中の親クラスと、引数の数での絞り込みは済み（`methodCandidatesOf`・`ambiguousOverload`）。残りは引数の型での絞り込みと、ほかの単位の親クラス・インターフェース（高）
-- [ ] リポジトリの宣言・オブジェクト・項目・子リレーションを、単位をまたぐ解決の入力として渡せる形にする。標準カタログに一致したら、型・オブジェクトの根拠として使う（`Database.Batchable` と `System.Database` を別の型として照合する）（中）
-- [ ] 参照の解決の結果に `missing`（リポジトリにも標準にもない）を足す。今は `resolved`・`standard`・`byName`・`candidates`・`unknown`（理由つき）まで（`ApexReferenceResolution`）。`missing` はリポジトリの定義（P3 のシンボル表）と突き合わせて決める（中）
+- [x] 古い名前の並びの関数（`semantic/call.ts` の `makeApex…CallNameOf`）を、移行が済んだら消す。参照の収集（型・`extends`・`implements`・`new`・呼び出し・`x.a` の読み書き・SOQL・SOSL・DML・式の中の型）は `semantic/dependencies.ts` で済み（低）（2026-11-26。テストだけが使っていたので、型・関数・テストと一緒に消した）
+- [x] 呼び出しの解決の 6 つの経路（5.2）を、単位をまたいで使えるようにし（2026-11-26。`semantic/repository.ts` の宣言の索引。`apex-semantic-repository.test.ts`）、`hoge.fuga(tmp()).aaa()` と `service.fetch().save()`（`Service` が別のクラス）で確かめる。単位の中の解決は `semantic/type.ts` で済み（経路 1〜5 と、6 の引数の数での絞り込み）。単位の外の型は今は `unknown`（`externalMethod`・`externalMember`）になるので、P3 のシンボル表から宣言を引く（高）
+- [x] `this.x`、`super.x`、`obj.x`、`Type.x` をレシーバーに応じて解決する。修飾のない識別子（スコープ → 引数 → 内側から外側の型のメンバー）は `semantic/statement.ts` で解決済み。継承したメンバー（ほかの単位の親クラスも）は、修飾のない名前を型の名前より先に親クラスのフィールド・プロパティで引く（2026-11-26）。親クラスのフィールド・プロパティそのものの修飾のない読み書きも、参照（`apexTypeMember:<親>.<名前>`）にした（2026-11-26。`inheritedMemberOf`・`inheritedAccesses`。自分のクラスのフィールドの修飾のない読み書きは、今までどおり参照にしない）（高）
+- [x] 継承とオーバーロードは、宣言型と引数で候補を絞る。1 つに決まらなければ、候補と理由を残す。同じ単位の中の親クラスと、引数の数での絞り込みは済み（`methodCandidatesOf`・`ambiguousOverload`）。ほかの単位の親クラスは済み（2026-11-26）。インターフェースの実装クラス・上書きしている子クラスを候補にするのも済み（2026-11-26）。残りは引数の型での絞り込み（高）（2026-11-26。引数の型での絞り込みも済み: 確実に合わないものを外し、型がぴったり合う引数の多いものを選ぶ。分からない型では外さない）
+- [x] リポジトリの宣言・オブジェクト・項目・子リレーションを、単位をまたぐ解決の入力として渡せる形にする。標準カタログに一致したら、型・オブジェクトの根拠として使う（`Database.Batchable` と `System.Database` を別の型として照合する）（中）（2026-11-26。宣言は `semantic/repository.ts` の索引。オブジェクト・項目・子リレーションはグラフの参照項目の表で、SOQL と変数のメンバーの連鎖（`a.Owner.Name`・`this.acc.Owner.ManagerId`）の関係のパス `fieldPath` をたどる。`Database.Batchable` と `System.Database` は標準の型の一覧で別の型として照合済み）
+- [x] 参照の解決の結果に `missing`（リポジトリにも標準にもない）を足す。今は `resolved`・`standard`・`byName`・`candidates`・`unknown`（理由つき）まで（`ApexReferenceResolution`）。`missing` はリポジトリの定義（P3 のシンボル表）と突き合わせて決める（中）（2026-11-26。`ReferenceCertainty` に `missing`。単位の参照は持たず、グラフの辺 `DependencyEdge.resolution` が参照先のノードの由来から resolved・missing・standard を決める）
 - [x] `apexSemanticDependenciesOf` の出力で今のグラフを作り、依存関係のゴールデンとの差が「取りこぼしの拾い直し」だけであることを確かめる。基準（`docs/examples/analysis/output/baseline-*.json`）で、消えた辺は以前の抽出の誤りの 4 本だけ、指摘は変わらない（12.1.1）（高）
 
 古い処理からの移行:
@@ -472,13 +477,13 @@ Apex の walker（ファイルごと）:
 
 `unknown` を型に置き換える（P1・P2 と一緒に。2026-11-20 時点で引数 319・型属性 146 か所。直す前に数え直す）:
 
-- [ ] `unknown` の一覧を数え直すスクリプトを置き、P1・P2 のあとにも数え直せるようにする（中）
-- [ ] 解析の走査: `processor/Apex/walker.ts`・`calls.ts`・`commons.ts`、`processor/dependency/apex.ts`・`units.ts`（`getUnitDependencies(result: unknown)`）・`formula.ts`、`processor/Lwc/walker.ts`・`calls.ts`・`analysis.ts`、`processor/Metadata/walker.ts`・`refs.ts`・`flowRefs.ts`・`labelAnalysis.ts`・`markup.ts`・`references.ts`・`permissionAnalysis.ts`（P2 の `walk` に移すか、P5 で消す）（高）
+- [x] `unknown` の一覧を数え直すスクリプトを置き、P1・P2 のあとにも数え直せるようにする（中）（2026-11-26。`docs/examples/analysis/scripts/unknowns.ts`。@babel/parser で読み、置いた場所（引数・属性・戻り値・変数・キャスト・型の別名・型引数）と、そのままか型の中かで数える。2026-11-26 時点で src の 575 か所: 引数 261（そのまま 213）・属性 88（69）・キャスト 126・戻り値 48・型の別名 30・変数 16・ほか 6）
+- [ ] 解析の走査: `processor/Apex/walker.ts`・`calls.ts`・`commons.ts`、`processor/dependency/apex.ts`・`units.ts`（`getUnitDependencies(result: unknown)`）・`formula.ts`、`processor/Lwc/walker.ts`・`calls.ts`・`analysis.ts`、`processor/Metadata/walker.ts`・`refs.ts`・`flowRefs.ts`・`labelAnalysis.ts`・`markup.ts`・`references.ts`・`permissionAnalysis.ts`（P2 の `walk` に移すか、P5 で消す）（高）（2026-11-26 途中: JSON を調べる関数（`isRecord`・`str`・`rows`・`strings`）を `processor/commons/json.ts` にまとめ、`getUnitDependencies` の入力を `IdParseResult`、ノードを鍵にする表を `Map<object, …>` にした。src 全体で 575 → 556 か所。残りは JSON をそのまま辿る関数（`walk(node: unknown)` など）で、`walkJson` に移すときに直す）
 - [ ] Diff の共通部品: `processor/commons/diff`（`gumtree/tree.ts` の `GumTreeNode.raw` など、`typed.ts`、`commons.ts`、`present.ts`、`change.ts`、`list.ts`、`unit.ts`、`formula.ts`）と、言語ごとの Diff（`Apex/diff/statement.ts`・`unitBody.ts`・`query/soqlFunction.ts`、`Lwc/diff/body.ts`・`template.ts`、`Metadata/diff/markup.ts`・`record.ts`）。P1 のあとノードの共用体で型を付ける（中）
-- [ ] 解析の結果の `base: unknown`: `UnitResult.base`、`IdParseResult.result.base`、`report/commons.ts`、`report/permission.ts`、`unit/processor.ts` の `objectsOf`・`translationsOf`・`objectInfosOf`。単位の種類から型を引く（中）
-- [ ] レポートの解析: `report/lwcEventFlow.ts`、`report/metadata.ts`、`report/members.ts`、`report/lwc.ts` の `keysOf`、`report/commons.ts`、`apexFlow.ts`・`lwcFlow.ts` の `sourceTextsOf`、`report/code.ts` の `compareInterfaces`（中）
-- [ ] 型の層: `types/metadata/criteria.ts`（`Record<string, unknown>` の交差）、`types/metadata/formula.ts`（インデックスシグネチャ）、`types/apex/commons/source.ts`、`types/lwc/commons.ts` の `unwrapExpression`（中）
-- [ ] ビルダー・viewer の行と状態の型: `viewer/report/components/rowsTable.tsx` の `Row`、`builder/reportBuilder.ts` の `filterRows`・`fieldOf`・`sameValue`・`SourceResult.value`、`builder/sources.ts` の `attachSources`、`report/document.ts` の `ReportCondition`、`builder/expand.ts` の `Scope.row`、`builder/pages.ts` の `State.data`、2 か所に別々に書かれた `EmbeddedReport.spec.state`（`reportBuilder.ts`・`viewer/report/view.tsx`）と 3 か所の `$state` の判定（中）
+- [x] 解析の結果の `base: unknown`: `UnitResult.base`、`IdParseResult.result.base`、`report/commons.ts`、`report/permission.ts`、`unit/processor.ts` の `objectsOf`・`translationsOf`・`objectInfosOf`。単位の種類から型を引く（中）（2026-11-26: 種類 → 中身の型の表 `parser/unitBase.ts`（`UnitBaseJsonMap`・`unitBaseOf`・`isUnitOfType`）を作り、`report/commons.ts` の `readable`（型を種類から引く。呼び出し側の `readable<型>` 13 か所を外した）・`report/crossRef.ts`・`report/apex.ts`・`unit/processor.ts` の `objectsOf`・`translationsOf`・`objectInfosOf`・メタデータの解析のキャストを置き換えた。`base` のキャストは 21 → 15 か所。Apex の Diff（`Apex/diff/unitBody.ts`）はファイルの種類 → 中身の型の表 `ApexContentJsonMap` で、呼び出し側の型を確かめる。`units.ts` に残る `base as Json` は JSON をそのまま辿るためのもので、「解析の走査」で `walkJson` に移すときに直す）
+- [x] レポートの解析: `report/lwcEventFlow.ts`、`report/metadata.ts`、`report/members.ts`、`report/lwc.ts` の `keysOf`、`report/commons.ts`、`apexFlow.ts`・`lwcFlow.ts` の `sourceTextsOf`、`report/code.ts` の `compareInterfaces`（中）（2026-11-26。`compareInterfaces` の `sourceKeys` を `ConvertKeys`、`members.ts` のオブジェクトの属性を `keyof CustomObjectJson` で引く、`apexFlow.ts` の `as unknown as ClassDeclarationJson` を `kind` で絞る形にし、各ファイルの `record`・`isRecord`・`text` を `processor/commons/json.ts`（`recordOf`）に寄せた。`readable` は種類から型を引く（`parser/unitBase.ts`）。残る `unknown` は、メタデータの値の木をそのまま辿る関数（`propertiesOf`・`leafOf`）・位置のキーの型ガード（`keysOf`）・ソースと `-meta.xml` の位置が混ざった配列を読む `sourceTextsOf` で、型ガードの入力として残す）
+- [x] 型の層: `types/metadata/criteria.ts`（`Record<string, unknown>` の交差）、`types/metadata/formula.ts`（インデックスシグネチャ）、`types/apex/commons/source.ts`、`types/lwc/commons.ts` の `unwrapExpression`（中）（2026-11-26。`formulaTextOf` を `Record<string, unknown>` とキャストで読むのをやめ、数式の JSON の型 `FxJson` で `kind` ごとに絞る形にした（位置つきの木 `FxSyntax` も形は同じ）。残る `unknown` は、値の木のノード `KindedTreeJson`（要素名がそのままプロパティ）・組み立て中の `FxSyntax`・JSON を辿る `gatherSourceKeys`・Babel のノードを確かめる `unwrapExpression` で、型ガードの入力として残す）
+- [x] ビルダー・viewer の行と状態の型: `viewer/report/components/rowsTable.tsx` の `Row`、`builder/reportBuilder.ts` の `filterRows`・`fieldOf`・`sameValue`・`SourceResult.value`、`builder/sources.ts` の `attachSources`、`report/document.ts` の `ReportCondition`、`builder/expand.ts` の `Scope.row`、`builder/pages.ts` の `State.data`、2 か所に別々に書かれた `EmbeddedReport.spec.state`（`reportBuilder.ts`・`viewer/report/view.tsx`）と 3 か所の `$state` の判定（中）（2026-11-26。2 か所に書かれた `EmbeddedReport` と 3 か所の `$state` の判定を `src/report/embedding.ts`（`EmbeddedReport`・`stateRefOf`・`dataNameOf`）に、2 か所ずつの行の値のたどり方と比べ方を `src/builder/values.ts`（`valueAtPath`・`sameJsonValue`）にまとめた。行・state・where の値は provider の出力と文書に書いた値で、形が決まらないので `unknown` のまま扱う（provider ごとの形は `provider の引数と viewer の部品` の項目で、registry と schemas から引く））
 - [ ] provider の引数と viewer の部品: `Source`・`DataSource` の `args`・`where`（registry と schemas の引数の型から引く）、`MatrixView.data`、`AnyComponent.props`、`details.tsx`・`status.tsx` の `status`、`builder/inputs.ts` の `compare`・`diff`、`report/llmCatalog.ts` の `ProviderEntry.example`（低）
 - [ ] テスト: JSON・Diff の形を手書きしているテスト（`metadata-bc`・`metadata-folders`・`gumtree-diff`・`lwc-statement`・`worker`・`test/ir/golden.ts`）を、公開している JSON・Diff の型に置き換える（低）
 - [ ] そのままでよい `unknown`（`catch`、外部ライブラリの例外の型ガード、`isRecord`・`hash`・`sortKeys` などの汎用の関数、型ガードの入力、SQLite の行、zod で検証する provider の引数、文書の入口、JSON Schema、MCP の結果、テストの補助、偽の MCP サーバー、サンプルのリポジトリの LWC）には、理由のコメントを付けて残す（低）
@@ -490,7 +495,7 @@ Apex の walker（ファイルごと）:
 - [x] `node` の索引を `(kind, unit_id)` と `(unit_id, parent_id)` にする（`SAVE_FORMAT_VERSION` 12）（中）
 - [x] `DERIVED_VERSION` を上げ、定義・参照を表に書き直す（2。Apex の取り出しを新しい解析にしたことも含む）（中）
 - [x] 保存した後に作業ツリーで変えた単位（after だけにある単位）の定義・参照も表に入れる。読み込みのたびには作らず（今までどおりグラフが要るときに作る）、表で引く前に `UnitStore.writeMissingDependencies(repository)` で、置き場に今の版の定義・参照がない単位だけを書く（2026-11-25）（高）
-- [ ] walker の結果の保存は、P2 の間は行わず、ここで行う（調整）（中）
+- [x] walker の結果の保存は、P2 の間は行わず、ここで行う（調整）（中）（2026-11-25。新しい解析の定義・参照を derived・symbol・reference に保存）
 - [ ] 被依存（`get_dependents`・`dependency.dependents`・`crossRef.*`）を `reference_target` の索引で引く。推移的な影響を再帰 CTE で求める。**NPSP で計測してから決める**（2026-11-25 時点。今のグラフは、名前のそろえ方・子リレーションの解決・メンバーから単位へのまとめ上げをしてから辿るので、SQL に移すにはそれを表の側で再現する必要がある。サンプルではメモリのグラフで足りている）（高）
 - [ ] `Repository` を、目録だけを持ち、木を必要なときに読み込む形（LRU）にする（高）
 - [ ] `store.subtree(unitId, nodeId)` で、本体の部分木だけを組み立てる（中）
@@ -500,22 +505,26 @@ Apex の walker（ファイルごと）:
 - [x] パッケージディレクトリの重なり（同じ種類・同じ名前の単位が複数のパッケージディレクトリにあるとき）の扱いを、新しい `Repository` の目録で持つ（2026-11-25。`Repository.overlaps`。解析には `packageDirectories` に先に書いたものを使い、`metadata.findings` に `DUPLICATE_UNIT` を出す）（中）
 - [ ] 重なりのとき Salesforce がどう扱うか（デプロイで弾くか、どちらかが勝つか）を公式資料で確かめ、指摘の重さ（今は warning）と、どちらを使うかの決まりを合わせる（低）
 - [ ] 1 回目の provider の時間を短くする（`crossRef.labels` 1.4 秒など）。`reference` 表で引く形にしたあとで測り直す（低）
-- [ ] メトリクスの結果を `metric` 表に保存する（中）
+- [x] メトリクスの結果を `metric` 表に保存する（中）（2026-11-26。本体ごとに `metric(unit_id, seq, body, source_key, name, value)`。Apex・LWC の派生データ `UnitDependencies.metrics` と一緒に書き、`findMetrics` で名前・値の大きい順に引く）
 - [x] **サンプルのコードから SQLite の生成物を作る**（2026-11-25。`docs/examples/analysis/scripts/store.ts` → `output/store-<side>.json`。node 表は単位ごとの種類の数にし、symbol・reference は行のまま。ゴールデンは `test/unit/store-golden.test.ts`）: `docs/examples/repository/before`・`after` を読み込んで `metascope.db` を作るスクリプトを置き、生成物（または表ごとの中身を書き出した JSON）を `docs/examples/` に置く。node・span・symbol・reference の表の中身を目で確かめる材料と、保存の形のゴールデンのテストに使う。P1・P3 で表の形が変わるたびに作り直す（中）
 - [ ] 起動の時間・メモリの最大・`get_dependents` と `crossRef.labels` の 1 回目の時間が、P0 より悪くならないこと（高）
 - [ ] DB の大きさが増えすぎないこと。`reference` 表の行の数を見て、`via` などを整数のコードにするか決める（中）
 
 ### P4: 解析（段 1）
 
-- [ ] **型の解決**: リポジトリの中の継承と、メソッドの戻り値の型をたどる（`getAccounts()[0].Name` を参照にする）（高）
-- [ ] **インターフェース・継承を通した呼び出しの解決**: `handler.handle()` で型がインターフェース・親クラスのとき、実装しているクラスを候補として返す。`apex.callFlow` と呼び出しグラフで使う（高）
-- [ ] **オーバーロードの区別**: 引数の数（分かれば型）で、同じ名前のどのメソッドを呼んでいるかを決める（中）
-- [ ] **プロジェクトをまたぐ解析**: シンボル表、使われていないメソッド、SObject の利用表、トリガーとハンドラーの対応、テストクラスとテスト対象の対応（中）
-- [ ] **メトリクス**: 構文から数える（処理フローの箱からは数えない）。Apex の数え方は `semantic/metrics.ts` の `apexMetricsOf` で済み（2026-11-25。認知的複雑度は SonarSource の定義に合わせた）。残りは provider（`apex.metrics`）・`metric` 表への保存・LWC（調整）（中）
+- [x] **型の解決**: リポジトリの中の継承と、メソッドの戻り値の型をたどる（`getAccounts()[0].Name` を参照にする）（2026-11-26。保存する定義・参照は単位の中だけで決め、`pendingResolution` のある Apex の単位だけを、グラフを作るときに索引を渡して解析し直す。NPSP での時間は未計測）（高）
+- [x] **インターフェース・継承を通した呼び出しの解決**: `handler.handle()` で型がインターフェース・親クラスのとき、実装しているクラスを候補として返す。`apex.callFlow` と呼び出しグラフで使う（高）（2026-11-26。`dispatchCandidatesOf`。実装・上書きしているメソッドは実行時の候補（`dispatchIds`）として持ち、依存関係には候補の参照（via: dispatch）で残してグラフの確定した辺には入れない。`apex.callFlow` は単位をまたいで解析し、実装クラスへもたどる）
+- [x] **オーバーロードの区別**: 引数の数（分かれば型）で、同じ名前のどのメソッドを呼んでいるかを決める（中）（2026-11-26。`methodCandidatesOf`。基本の型の広げ方・Id と String・SObject・継承と実装・コレクションで判定。`apex-semantic-overload.test.ts`）
+- [x] **プロジェクトをまたぐ解析**: シンボル表、使われていないメソッド、SObject の利用表、トリガーとハンドラーの対応、テストクラスとテスト対象の対応。使われていないメソッドは済み（2026-11-26。provider `apex.unusedMethods`。呼ばれているかは単位をまたいで解決したグラフの辺で決め、候補の呼び出しからだけ呼ばれうるものは candidateOnly。入口（テスト・@AuraEnabled などのアノテーション・global・webservice・プラットフォームが呼ぶ標準のインターフェースのメソッド・Visualforce のコントローラー）は出さない）（中）。SObject の利用表は `object.usage`、トリガーとハンドラーは `apex.triggerHandlers`、テストとテスト対象は `apex.tests`（テストの DML で動くトリガーを通る届き方も数える）（2026-11-26。`report/crossProject.ts`。どれも単位をまたいで解決したグラフから作り、候補の呼び出しはたどらない）
+- [x] **メトリクス**: 構文から数える（処理フローの箱からは数えない）。Apex の数え方は `semantic/metrics.ts` の `apexMetricsOf` で済み（2026-11-25。認知的複雑度は SonarSource の定義に合わせた）。provider は `apex.metrics`（本体ごとの行。オーバーロードはシグネチャで分け、比べると値が変わった項目を出す）。LWC は `processor/Lwc/metrics.ts` と provider `lwc.metrics`（2026-11-26。構文の数え方は Apex と共通の `processor/commons/metrics.ts` の `syntaxMetricsOf` に言語ごとの kind の表を渡す。行の共通の項目はスキーマの断片 `bodyMetricsShape`）。`metric` 表への保存も済み（2026-11-26）（中）
     - 循環的複雑度 = 1 + if の分岐 + for・while・do + catch + switch の when（else を除く）+ 条件式の `&&`・`||` + 三項演算子
     - ほかに、認知的複雑度、文の数、最大のネスト、SOQL・SOSL・DML の数（ループの中のものを別に数える）、呼び出しの数（呼び出し先の一覧も持つ）
     - 対象はメソッド・コンストラクター・アクセサー・初期化ブロック
-- [ ] **JSON にあるが使っていない情報**: `@AuraEnabled(cacheable)` と LWC の `@wire` の突き合わせ（Apex の署名をキーにする）、公開 API（`@RestResource` など）の一覧、`@TestVisible`・SeeAllData、`@future(callout)`、`WITH SECURITY_ENFORCED`（中）
+- [x] **JSON にあるが使っていない情報**: `@AuraEnabled(cacheable)` と LWC の `@wire` の突き合わせ（Apex の署名をキーにする）、公開 API（`@RestResource` など）の一覧、`@TestVisible`・SeeAllData、`@future(callout)`、`WITH SECURITY_ENFORCED`（中）
+    - [x] アノテーションの引数を宣言に持つ（`ApexModifierInfo.annotationArgs`）。Apex のメソッドの定義に `auraEnabled`・`cacheable` の性質（`UnitDefinition.traits` → グラフのノードの `traits`）
+    - [x] LWC の `@wire` のアダプターが Apex のメソッドなら参照（via `wire`）。グラフで `APEX_METHOD_NOT_AURA_ENABLED`（import したメソッドが `@AuraEnabled` でない）・`APEX_METHOD_NOT_CACHEABLE`（`@wire` のメソッドが `cacheable=true` でない）
+    - [x] 公開 API の一覧: `apex.entryPoints`（REST の urlMapping と HTTP メソッド・`@AuraEnabled`・`@InvocableMethod`・`@RemoteAction`・`webservice`・`@future`。呼んでいるほかの単位つき）
+    - [x] 単位の中で決まる指摘（`semantic/rules.ts`。`metadata.findings` の source `apex`）: `SEE_ALL_DATA`・`TEST_VISIBLE_NOT_NEEDED`・`FUTURE_CALLOUT_NOT_ALLOWED`・`QUERY_SECURITY_ENFORCED`。`apex.dataAccess` のクエリの行に `WITH` のアクセスモード（`accessLevel`）
 
 ### P4: 解析（段 2）
 
@@ -529,8 +538,8 @@ Apex の walker（ファイルごと）:
 - [ ] **分岐と終了**: 三項・短絡・`if / else` を評価する。合流で、すべての経路の定数が一致すれば値を保ち、違う・一部が分からなければ `unknown` にする。代入元の集合は両方の経路から残す。片方が `return` したら、残った経路の値を使う（高）
 - [ ] **呼び出し・メンバー・標準型と依存参照の解決**: `this.x` と同じ名前のローカル変数、クラスと標準 API の名前の衝突、呼び出しのチェーン、解決できない名前を確かめる（高）
 - [ ] **クエリ・DML と値の追跡をつなぐ**（高）
-    - [ ] 静的クエリ: `FROM`・項目・関係・バインド式と、SOSL の `RETURNING` を集める。子サブクエリは、メタデータで子リレーションを引けるときに実オブジェクトへ解決する
-    - [ ] DML: 文と `Database` の呼び出しを同じ操作として表し、対象の型と位置を持つ
+    - [x] 静的クエリ: `FROM`・項目・関係・バインド式と、SOSL の `RETURNING` を集める。子サブクエリは、メタデータで子リレーションを引けるときに実オブジェクトへ解決する（`semantic/query.ts`。子サブクエリはグラフが子リレーションから実オブジェクトに解決する）
+    - [x] DML: 文と `Database` の呼び出しを同じ操作として表し、対象の型と位置を持つ（`semantic/facts.ts` の DML の事実。via で文と Database のメソッドを分ける）
     - [ ] `Database.query(q)` で確定した文字列から対象を取り出し、分からない文字列なら元の引数と位置を残す
 - [ ] **動的 SOQL・SOSL の復元**: 最初の段は、文字列のリテラル、同じメソッドの中で値が確定するローカル変数、それらの連結。復元した文字列を今のパーサーにかけ、静的クエリと同じ取り出しに渡す。復元した文字列の位置と元の Apex の位置を区別する。分岐・再代入を含む広いデータフローは、定数伝播ができてから広げる（調整）（高）
 - [ ] **文字列を経由するメタデータ参照**: `Type.forName`、`Label.get`、`Schema.getGlobalDescribe().get('X')`・`describeSObjects`、`rec.get('Field__c')` / `put`、変数で渡した `FeatureManagement.checkPermission` を、確定した文字列で今の処理に渡す（調整: 優先度を上げた）（高）
@@ -550,7 +559,7 @@ Apex の walker（ファイルごと）:
 
 - [ ] **★ガバナ制限のリスク**: ループの中の SOQL・DML を、CFG の到達性と呼び出しグラフで判定する（中）
 - [ ] **★CRUD/FLS・共有の検査**: `with sharing` の有無、`stripInaccessible`、`WITH USER_MODE` / `SECURITY_ENFORCED`、`accessLevel` のない DML（中）
-- [ ] **★テストと本体の対応**: `@isTest` から呼び出しグラフをたどる（中）
+- [x] **★テストと本体の対応**: `@isTest` から呼び出しグラフをたどる（中）（2026-11-26。`apex.tests`。呼び出しと、途中の DML で動くトリガーを通る経路）
 - [ ] **★オブジェクトごとの自動化の実行順**（トリガー・Flow・入力規則）（中）
 - [ ] **Apex の変更の影響**: 2 時点の解析の結果を比べて、変わったメソッドのメトリクスの増減、SOQL の項目・条件の増減、呼び出しグラフを逆にたどった影響の範囲（メソッド・トリガー・テスト）、メタデータの Diff で削除・変更された項目を使う Apex、after にだけある findings を出す（公開 API の変化は `apex.interface` で済んでいる）（中）
 - [ ] **`apex.findings` のルールの候補**（9 章で選別する）（中〜低）
@@ -723,7 +732,7 @@ LWC・Aura・Visualforce:
 ### 調査
 
 - [ ] Salesforce のリリースの更新のスキルを定期実行にする（リリースの公開に合わせて 2 月・6 月・10 月ごろ、または月 1 回。`/schedule` など）（低）
-- [ ] LWC の公式資料（Component Reference・開発者ガイド・リリースノート）を自動で取れる場所を探し、スキルの照合の対象にする（今は PDF が見つからず、HTML は 403）（中）
+- [x] LWC の公式資料（Component Reference・開発者ガイド・リリースノート）を自動で取れる場所を探し、スキルの照合の対象にする（今は PDF が見つからず、HTML は 403）（中）（2026-11-26。基本コンポーネントは `@salesforce/lwc-language-server` の `transformed-lwc-standard.json`（スキルの `lwc-components`）、SLDS のアイコンは `@salesforce-ux/design-system` のメタデータ（`slds`）で照合する。開発者ガイド・リリースノートは対象外のまま）
 - [ ] package.xml の既定の API バージョン（`graph.ts` の `toPackageXml` の `'62.0'`）を、新しくするか `sourceApiVersion` を必ず渡すかを決める（低）
 
 - [ ] 標準 API の調査の残り: 型の一覧の未収録の領域と、各型の公開条件。必要ならメソッド名・非推奨・導入版。型の解決に要るなら、オーバーロード・引数・戻り値の型（中）

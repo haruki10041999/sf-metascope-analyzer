@@ -15,7 +15,8 @@ import {
     runReportProvider,
 } from '../analyzer/report';
 import { REPORT_DATA_BINDINGS, type ReportComponentName, acceptsData } from '../report/catalog';
-import { COMPARED_PROP } from '../report/embedding';
+import { COMPARED_PROP, type EmbeddedReport, dataNameOf } from '../report/embedding';
+import { sameJsonValue, valueAtPath } from './values';
 import { expandShorthand } from '../report/shorthand';
 import {
     type DataComparison,
@@ -37,14 +38,8 @@ import { attachSources } from './sources';
 // 4. 事前にビルドした viewer の HTML (dist/viewer/report/index.html) に差し込む。実行時に Vite は使わない
 
 /** HTML に入れる文書 (viewer の src/viewer/report/main.tsx が読む形) */
-export type EmbeddedReport = {
-    title: string;
-    /** 何と何を比べたか (保存した基準 → 作業ツリー、main...HEAD など) */
-    compared?: string;
-    /** ページに分けた文書の 1 ページのとき、目次 (タイトルと、このページからの相対パス) */
-    parent?: { title: string; href: string };
-    spec: Spec & { state: Record<string, unknown> };
-};
+/** HTML に埋め込む文書 (型は viewer と共通。src/report/embedding.ts) */
+export type { EmbeddedReport };
 
 /** resolveReport の選び方 (機密を伏せるかと、比べた 2 つの時点の説明) */
 export type ResolveReportOptions = ReportRunOptions & {
@@ -109,11 +104,7 @@ const withComparedLabels = (
     const elements: ReportDocument['spec']['elements'] = {};
     for (const [key, element] of Object.entries(spec.elements)) {
         const binding = REPORT_DATA_BINDINGS[element.type as ReportComponentName];
-        const value = binding ? (element.props[binding.prop] as { $state?: unknown }) : undefined;
-        const name =
-            typeof value?.$state === 'string'
-                ? value.$state.match(/^\/data\/([^/]+)$/)?.[1]
-                : undefined;
+        const name = binding ? dataNameOf(element.props[binding.prop]) : undefined;
         elements[key] =
             name && name in comparedOf
                 ? {
@@ -158,26 +149,15 @@ const sourceRunner = (
 };
 
 /** 行の項目 (a.b の形も) */
-const fieldOf = (row: unknown, field: string): unknown => {
-    let value = row;
-    for (const part of field.split('.')) {
-        value =
-            typeof value === 'object' && value !== null
-                ? (value as Record<string, unknown>)[part]
-                : undefined;
-    }
-    return value;
-};
-
-const sameValue = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
+const fieldOf = (row: unknown, field: string): unknown => valueAtPath(row, field.split('.'));
 
 /** where の項目がすべて合う行だけにする (値が配列なら、そのどれか) */
 const filterRows = (rows: unknown[], where: Record<string, unknown>): unknown[] =>
     rows.filter((row) =>
         Object.entries(where).every(([field, expected]) =>
             Array.isArray(expected)
-                ? expected.some((item) => sameValue(fieldOf(row, field), item))
-                : sameValue(fieldOf(row, field), expected),
+                ? expected.some((item) => sameJsonValue(fieldOf(row, field), item))
+                : sameJsonValue(fieldOf(row, field), expected),
         ),
     );
 
@@ -300,11 +280,7 @@ export const resolveReport = (
     for (const [key, element] of Object.entries(doc.spec.elements)) {
         const binding = REPORT_DATA_BINDINGS[element.type as ReportComponentName];
         if (!binding) continue;
-        const value = element.props[binding.prop] as { $state?: unknown } | undefined;
-        const name =
-            typeof value?.$state === 'string'
-                ? value.$state.match(/^\/data\/([^/]+)$/)?.[1]
-                : undefined;
+        const name = dataNameOf(element.props[binding.prop]);
         const provider = name ? doc.data[name]?.provider : undefined;
         if (!provider || !isReportProviderName(provider)) continue;
         const shape = providerDefinitionOf(provider).shape;

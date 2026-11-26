@@ -278,8 +278,7 @@ export const analyzePermissions = (inputs: PermissionInputs): PermissionAnalysis
     ];
 
     for (const result of all) {
-        const json = result.result.base as
-            PermissionSetJson | MutingPermissionSetJson | ProfileJson;
+        const json = result.result.base;
         const type = json.kind;
         const holder = `${type}:${json.name}`;
         const add = (
