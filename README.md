@@ -34,6 +34,8 @@ npx sf-metascope report new apex_specification --out apex.json  # 雛形の文�
 npx sf-metascope report validate apex.json --repo <リポジトリ>   # 文書を確かめる
 npx sf-metascope report build apex.json --repo <リポジトリ> --out reports
 npx sf-metascope report data apex.outline --repo <リポジトリ>    # provider のデータを見る (列を決めるため)
+npx sf-metascope report notes apex.json --repo <リポジトリ> --missing   # notes に書くべきキー (未記入だけ)
+npx sf-metascope report export apex.json --repo <リポジトリ> --out csv   # データをデータの名前ごとの CSV に書き出す
 ```
 
 - `--diff`（保存した基準と比べる）・`--compare main` / `--compare main...HEAD`（git の範囲）・`--param <名前>=<値>`（文書の引数）も使えます。
@@ -48,6 +50,7 @@ npx sf-metascope report data apex.outline --repo <リポジトリ>    # provider
 | `list_report_components` / `describe_report_component`                                                | レポートの書き方の決まりと部品・provider の一覧 / 部品の props                                         |
 | `list_report_providers` / `describe_report_provider` / `get_report_data`                              | レポートのデータの provider の一覧 / 引数と出力のスキーマ / データ（各行の `status` が前回からの差分） |
 | `validate_report_spec` / `build_report`                                                               | レポートの文書（`{ title, data, spec }`）の検証 / 1 つの HTML の作成（`<保存先>/reports/`）            |
+| `list_note_keys`                                                                                      | 文書の notes のキーの一覧（for の行で決まるキーも展開して数える。書いてあるか・使っていないキー）      |
 | `save_baseline`                                                                                       | 今の状態を、次に比べる基準として保存する                                                               |
 | `get_dependents` / `get_dependencies` / `get_change_impact` / `get_missing_references` / `list_units` | 依存関係（使っているもの・変更の影響・ない参照先）                                                     |
 | `list_node_kinds` / `find_nodes`                                                                      | 解析結果のノード（メソッド・SOQL・フローの要素など）の種類と数 / 種類などで探し、ファイルと行を返す    |

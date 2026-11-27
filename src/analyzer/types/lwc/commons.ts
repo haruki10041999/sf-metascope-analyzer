@@ -99,6 +99,30 @@ export class LwcJsonContext {
     }
 
     /**
+     * いくつかのノードをまとめた JSON (getter と setter をまとめた lwcProperty) の sourceKeys。
+     * objectKey はまとめたノードすべての objectKey から作り (どれかの中身が変われば変わる)、位置は最初のもの (keys) を借りる
+     */
+    combinedKeys(keys: ConvertKeys, nodes: readonly LwcNode[]): ConvertKeys {
+        const objectKey = hash([keys.objectKey, ...nodes.map((n) => this.keysOf(n).objectKey)]);
+        const position = this.sourceObjects
+            .get(keys.objectKey)
+            ?.source.find((s) => s.sourceKey === keys.sourceKey);
+        if (position) {
+            const existing = this.sourceObjects.get(objectKey);
+            if (!existing) {
+                this.sourceObjects.set(objectKey, {
+                    objectKey,
+                    context: this.sourceObjects.get(keys.objectKey)?.context ?? '',
+                    source: [position],
+                });
+            } else if (!existing.source.some((s) => s.sourceKey === position.sourceKey)) {
+                existing.source.push(position);
+            }
+        }
+        return { objectKey, sourceKey: keys.sourceKey };
+    }
+
+    /**
      * ファイルの根 (モジュール) の JSON。位置はファイルの先頭 (長さ 0) にする
      * (ファイル全体の位置にすると、ファイル全体のソースを位置の一覧に持ってしまうため)。objectKey は中身から作る
      */

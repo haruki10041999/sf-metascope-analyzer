@@ -27,7 +27,6 @@ import {
     NodeDiff,
     OptionalDiff,
     Pairing,
-    SourceKeysDiff,
     Sources,
     ValueDiff,
     getObjectKey,
@@ -37,7 +36,6 @@ import {
     makeNodeDiff,
     makeOptionalDiff,
     makeSequenceDiff,
-    makeSourceKeysDiff,
     makeValueDiff,
     orderUnorderedPairings,
     pairAsSequence,
@@ -200,8 +198,10 @@ export type FieldVariantDiff = TypedListItemDiff<
     VariantJson,
     {
         status: 'changed';
-        name: ValueDiff<string>;
-        init: OptionalDiff<Init, BaseExpressionJsonDiff>;
+        fields: {
+            name: ValueDiff<string>;
+            init: OptionalDiff<Init, BaseExpressionJsonDiff>;
+        };
     }
 >;
 
@@ -241,10 +241,12 @@ const makeVariantsDiff = (
         return makePairedItem(
             {
                 status: 'changed' as const,
-                name: makeValueDiff(b.name, a.name),
-                init: makeOptionalDiff(b.init, a.init, (bi, ai) =>
-                    makeExpressionDiff(bi, ai, sources),
-                ),
+                fields: {
+                    name: makeValueDiff(b.name, a.name),
+                    init: makeOptionalDiff(b.init, a.init, (bi, ai) =>
+                        makeExpressionDiff(bi, ai, sources),
+                    ),
+                },
             },
             'changed',
             p.match,
@@ -605,16 +607,8 @@ export const makeClassMemberDiff = (
 
 type Index = { before: number; after: number };
 
-/** notSet は集合なので unchanged だけ */
-type UnchangedOtherDiff = {
-    kind: NotSetBlockJson['kind'];
-    status: 'unchanged';
-    sourceKeys: SourceKeysDiff<ConvertKeys>;
-    value: Body<NotSetBlockJson>;
-};
-
 export type ClassBodyDiff =
-    | ((MemberDeclarationJsonDiff | InitializerBlockJsonDiff | UnchangedOtherDiff) & {
+    | ((MemberDeclarationJsonDiff | InitializerBlockJsonDiff | NotSetBlockJsonDiff) & {
           index: Index;
       })
     | {
@@ -738,15 +732,14 @@ export const makeClassBodyDiff = (
         }
 
         if (getGroup(b) === 'other') {
-            const other = b as NotSetBlockJson;
             return {
-                kind: other.kind,
-                status: 'unchanged',
-                sourceKeys: makeSourceKeysDiff<ConvertKeys>(
-                    other.sourceKeys,
-                    (a as typeof other).sourceKeys,
+                ...makeNodeDiff(
+                    'notSet',
+                    b as NotSetBlockJson,
+                    a as NotSetBlockJson,
+                    p.match,
+                    () => undefined,
                 ),
-                value: toBody(other),
                 index,
             };
         }

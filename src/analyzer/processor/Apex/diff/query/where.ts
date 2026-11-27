@@ -17,11 +17,13 @@ export type LogicalConditionJsonDiff =
     | ValueDiff<LogicalCondition>
     | {
           status: 'changed';
-          operator: import('../../../commons/diff/commons').OptionalDiff<
-              'AND' | 'OR' | 'NOT',
-              ValueDiff<'AND' | 'OR' | 'NOT'>
-          >;
-          condition: TypedListDiff<ConditionItem, never> | ValueDiff<ConditionItem[]>;
+          fields: {
+              operator: import('../../../commons/diff/commons').OptionalDiff<
+                  'AND' | 'OR' | 'NOT',
+                  ValueDiff<'AND' | 'OR' | 'NOT'>
+              >;
+              condition: TypedListDiff<ConditionItem, never> | ValueDiff<ConditionItem[]>;
+          };
       };
 
 /** AND / OR の項は B. 集合 */
@@ -40,11 +42,13 @@ export const makeLogicalConditionDiff = (
 
     return {
         status: 'changed',
-        operator: makeOptionalDiff(before.operator, after.operator, makeValueDiff),
-        condition:
-            before.operator === 'NOT' || after.operator === 'NOT'
-                ? makeValueDiff(before.condition, after.condition)
-                : makeConditionItemsDiff(before.condition, after.condition),
+        fields: {
+            operator: makeOptionalDiff(before.operator, after.operator, makeValueDiff),
+            condition:
+                before.operator === 'NOT' || after.operator === 'NOT'
+                    ? makeValueDiff(before.condition, after.condition)
+                    : makeConditionItemsDiff(before.condition, after.condition),
+        },
     };
 };
 

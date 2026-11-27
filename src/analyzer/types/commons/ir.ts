@@ -48,10 +48,6 @@ const keyBodyJson = (value: unknown): string | undefined => {
     return `{${parts.join(',')}}`;
 };
 
-export const isRecord = (value: unknown): value is Record<string, unknown> => {
-    return value !== null && typeof value === 'object' && !Array.isArray(value);
-};
-
 export type SourceKeys = {
     objectKey: string;
     sourceKey: string;

@@ -1,5 +1,9 @@
 import { createHash } from 'node:crypto';
 
+// どの JSON にも使う汎用の関数 (isRecord・hash・sortKeys)。入力は形の決まらない JSON なので unknown で受ける
+// (そのままでよい unknown。docs/plan.md 10 章 P2)
+
+/** JSON のオブジェクト (配列・null でないもの) か */
 export const isRecord = (value: unknown): value is Record<string, unknown> => {
     return value !== null && typeof value === 'object' && !Array.isArray(value);
 };

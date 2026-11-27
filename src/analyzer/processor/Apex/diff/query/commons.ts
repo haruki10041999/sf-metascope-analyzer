@@ -33,17 +33,18 @@ export const makeUnorderedValueListDiff = <T>(before: T[], after: T[]): TypedLis
 export type FieldTerm = FieldBody | SoqlFunctionBody;
 
 /** 項目と SOQL 関数の差分。種類 (type) が違うものは ReplacementDiff */
+/** 項目の項の差分。同じ種類 (項目どうし・関数どうし) なら fields に中の差分、違えば丸ごと */
 export type FieldTermDiff =
-    | ({ status: 'changed' } & FieldJsonDiff)
-    | ({ status: 'changed' } & SoqlFunctionJsonDiff)
+    | { status: 'changed'; fields: FieldJsonDiff }
+    | { status: 'changed'; fields: SoqlFunctionJsonDiff }
     | ReplacementDiff<FieldTerm>;
 
 export const makeFieldTermDiff = (before: FieldTerm, after: FieldTerm): FieldTermDiff => {
     if (before.type === 'field' && after.type === 'field') {
-        return { status: 'changed', ...makeFieldDiff(before, after) };
+        return { status: 'changed', fields: makeFieldDiff(before, after) };
     }
     if (before.type === 'soqlFunction' && after.type === 'soqlFunction') {
-        return { status: 'changed', ...makeSoqlFunctionDiff(before, after) };
+        return { status: 'changed', fields: makeSoqlFunctionDiff(before, after) };
     }
     return makeReplacementDiff(before, after);
 };

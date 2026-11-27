@@ -3,6 +3,7 @@ import path from 'node:path';
 import { describe, it } from 'node:test';
 
 import { METADATA_FOLDER_PARSERS } from '../../src/analyzer/parser/Metadata/folders';
+import { unitBaseOf } from '../../src/analyzer/parser/unitBase';
 import { WorkingTree, findUnitType, readUnitSources } from '../../src/analyzer/unit';
 import { UnitWorker, runUnitTask } from '../../src/analyzer/worker';
 
@@ -38,17 +39,16 @@ describe('UnitWorker: Apex', () => {
             'trigger_ParserTrigger',
         ]);
 
-        const unit = (await worker.parse(
+        const unit = await worker.parse(
             'apexClass',
             repository('after'),
             'force-app/main/default/classes/AccountService.cls',
-        )) as unknown as {
-            dataType: string;
-            result: { base: { source?: { fileType: string }; meta?: { meta: { kind: string } } } };
-        };
+        );
         assert.equal(unit.dataType, 'apexUnit');
-        assert.equal(unit.result.base.source?.fileType, 'cls');
-        assert.equal(unit.result.base.meta?.meta.kind, 'apexClassMeta');
+        // 中身の型は種類から引く (parser/unitBase.ts)
+        const base = unitBaseOf(unit, 'apexUnit');
+        assert.equal(base?.source?.fileType, 'cls');
+        assert.equal(base?.meta?.meta?.kind, 'apexClassMeta');
         await worker.close();
     });
 });
@@ -140,18 +140,8 @@ describe('UnitWorker: LWC', () => {
         );
         const accountList = results.find((r) => r.ok && r.result.result.id === 'accountList');
         assert.ok(accountList?.ok);
-        const base = (
-            accountList.result as unknown as {
-                result: {
-                    base: {
-                        modules: unknown[];
-                        templates: unknown[];
-                        stylesheets: unknown[];
-                        meta?: { kind: string };
-                    };
-                };
-            }
-        ).result.base;
+        const base = unitBaseOf(accountList.result, 'lwcBundle');
+        assert.ok(base);
         assert.deepEqual(
             [base.modules.length, base.templates.length, base.stylesheets.length, base.meta?.kind],
             [1, 1, 1, 'lwcBundleMeta'],

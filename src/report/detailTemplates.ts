@@ -1,4 +1,9 @@
-import type { ReportProviderName } from '../analyzer/report/registry';
+import {
+    type ReportProviderArgs,
+    type ReportProviderName,
+    type ReportProviderSource,
+    providerSource,
+} from '../analyzer/report/registry';
 
 import type { ReportDocument } from './document';
 
@@ -9,11 +14,8 @@ import type { ReportDocument } from './document';
 // 文章は notes に書き、{ "$note": キー } で引く。キーの形は各関数のコメントと MCP のプロンプトの注意に書く
 
 type Element = ReportDocument['spec']['elements'][string];
-type Source = {
-    provider: ReportProviderName;
-    args?: Record<string, unknown>;
-    where?: Record<string, unknown>;
-};
+/** データの宣言 (provider ごとに引数の名前と型を確かめる) */
+type Source = ReportProviderSource;
 type Column = [key: string, label: string];
 
 const el = (
@@ -272,10 +274,10 @@ export const lwcOverviewDetail = (): ReportDocument =>
  * レコードタイプと選択リスト値・そのほかの定義 (行のあるものだけ)。notes のキー: オブジェクトの API 名
  */
 export const objectSections = (): Record<string, Element> => {
-    const of = (provider: ReportProviderName, extra: Record<string, unknown> = {}): Source => ({
-        provider,
-        args: { objects: ['${o.object}'], ...extra },
-    });
+    const of = (
+        provider: ReportProviderName,
+        extra: ReportProviderArgs<ReportProviderName> = {},
+    ): Source => providerSource(provider, { objects: ['${o.object}'], ...extra });
     const elements: Record<string, Element> = {
         object: card(
             '${o.object}',

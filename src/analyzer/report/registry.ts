@@ -891,3 +891,33 @@ export const requiresComparison = (name: ReportProviderName): boolean =>
 /** 比べる時点がないのに、比べる時点が要る provider を使ったときの説明 */
 export const comparisonRequiredMessage = (name: string): string =>
     `Provider ${name} returns only changes and needs two points to compare: set "diff": true (saved baseline -> working tree; save_baseline saves the baseline) or "compare" (git range).`;
+
+/** provider の引数の型 (registry の args のスキーマの入力の形) */
+export type ReportProviderArgs<K extends ReportProviderName> = z.input<Definitions[K]['args']>;
+
+/**
+ * provider と、その引数 (雛形のデータの宣言。provider ごとに引数の名前と型を確かめる)。
+ * where は行の項目の値で絞る (行の形は provider ごとに違うので、値は確かめない)
+ */
+export type ReportProviderSource = {
+    [K in ReportProviderName]: {
+        provider: K;
+        args?: ReportProviderArgs<K>;
+        where?: Record<string, unknown>;
+    };
+}[ReportProviderName];
+
+/**
+ * データの宣言を作る (引数の型を provider から引く)。provider を変数で渡すと (同じ引数を複数の provider に渡す雛形の
+ * 部品)、引数はどれかの provider の引数の形であることだけを確かめる
+ */
+export const providerSource = <K extends ReportProviderName>(
+    provider: K,
+    args?: ReportProviderArgs<K>,
+    where?: Record<string, unknown>,
+): ReportProviderSource =>
+    ({
+        provider,
+        ...(args ? { args } : {}),
+        ...(where ? { where } : {}),
+    }) as ReportProviderSource;

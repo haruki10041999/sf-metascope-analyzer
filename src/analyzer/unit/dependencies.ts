@@ -34,7 +34,7 @@ const unitDependencies = new WeakMap<object, UnitDependencies>();
  * - 5: ほかの単位の型のメンバー・メソッドの名前だけの参照も、単位をまたげば解決できるかもしれない参照 (pendingResolution)
  *      に数える (インターフェースの実装クラスへの呼び出しの候補を、グラフで作るため。2026-11-26)
  */
-export const DERIVED_VERSION = 9;
+export const DERIVED_VERSION = 11;
 
 /** 保存した定義・参照を、解析結果に使う (UnitStore が、版の合う保存したものを読んだとき) */
 export const primeUnitDependencies = (result: object, dependencies: UnitDependencies): void => {

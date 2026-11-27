@@ -18,6 +18,11 @@
  * - typeArgument: 呼び出し・new の型引数 (`f<unknown>()`)
  * - other: そのほか (型の引数の制約・既定値など)
  * 書き方 (direct): `unknown` そのものか (true)、ほかの型の中か (`unknown[]`・`Record<string, unknown>`。false)
+ *
+ * 数はすべての unknown で、そのままでよいものも含む。そのままでよいもの (理由は置いた場所のコメントに書く):
+ * 型ガードの入力 (isRecord など。processor/commons/json.ts・types/commons/utils.ts)、catch の例外、
+ * JSON をそのまま辿る関数、SQLite の行 (unit/storeSqlite.ts)、zod で確かめる provider の引数・文書の値
+ * (report/document.ts)、JSON Schema (report/llmCatalog.ts)、MCP のツールの結果 (mcp/results.ts)、テストの補助
  */
 import fs from 'node:fs';
 import path from 'node:path';

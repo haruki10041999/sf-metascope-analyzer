@@ -134,6 +134,8 @@ const factsOf = async (file: string) => {
  * - member: トリガー・匿名 Apex の中のメソッドは、以前は単位名 (か なし)。新しい解析は 単位名.メソッド
  *   (依存関係の参照の member と同じ)
  * - object: 匿名 Apex の直下の変数の型が、以前は分からなかった (DML の対象)
+ * - 動的なクエリ (Database.query) の対象のオブジェクト: 以前は空。新しい解析は文字列を復元して確実なものを持つ
+ *   (semantic/dynamicQuery.ts)
  */
 const allowedDifference = (
     old: Fact,
@@ -141,7 +143,11 @@ const allowedDifference = (
     unitName: string,
     repositoryTypes: Set<string>,
 ) => {
-    if (old.kind !== next.kind || old.body !== next.body) return false;
+    const restoredDynamicQuery =
+        old.kind === 'query' &&
+        old.body.startsWith('dynamic||') &&
+        next.body.replace(/^dynamic\|[^|]*\|/, 'dynamic||') === old.body;
+    if (old.kind !== next.kind || (old.body !== next.body && !restoredDynamicQuery)) return false;
     const ownerOk =
         old.owner === next.owner ||
         (!repositoryTypes.has(old.owner ?? '') && !repositoryTypes.has(next.owner ?? ''));

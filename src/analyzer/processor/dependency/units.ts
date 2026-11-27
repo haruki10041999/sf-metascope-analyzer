@@ -7,9 +7,15 @@ import type { LwcBundleParseResult } from '../../parser/Lwc/parser';
 import type { MetadataFileParseResult } from '../../parser/Metadata/folder';
 import type { ObjectTranslationParseResult } from '../../parser/Metadata/objectTranslation';
 import type { ObjectParseResult } from '../../parser/Metadata/parser';
-import { type ConvertKeys, type LwcJsExpressionJson, LIGHTNING_UI_API_PREFIX } from '../../types';
+import {
+    type ConvertKeys,
+    type JsonType,
+    type LwcJsExpressionJson,
+    LIGHTNING_UI_API_PREFIX,
+} from '../../types';
 import { analyzeLwcModuleCalls, type LwcCallInfo } from '../Lwc/calls';
 import { lwcMetricsOf } from '../Lwc/metrics';
+import { walkJson } from '../commons/node';
 import { lwcStringValueOf } from '../Lwc/walker';
 import { analyzeMetadataRefs } from '../Metadata/refs';
 import { withCertainties } from './certainty';
@@ -490,13 +496,8 @@ export const getLwcDependencies = (unit: LwcBundleParseResult): UnitDependencies
             }
         }
     };
-    const walk = (node: unknown, statement?: ConvertKeys): void => {
-        if (Array.isArray(node)) {
-            node.forEach((child) => walk(child, statement));
-            return;
-        }
-        if (!isRecord(node)) return;
-        const keys = keysOf(node) ?? statement;
+    /** ノード 1 つの参照 (keys はそのノードか、いちばん近い祖先の位置) */
+    const visitNode = (node: Json, keys: ConvertKeys | undefined): void => {
         if (node.kind === 'lwcImport' && typeof node.source === 'string') {
             for (const { pattern, refType, kind, target } of LWC_IMPORTS) {
                 const match = node.source.match(pattern);
@@ -672,13 +673,24 @@ export const getLwcDependencies = (unit: LwcBundleParseResult): UnitDependencies
                 }
             }
         }
-        for (const [key, child] of Object.entries(node)) {
-            if (key !== 'sourceKeys') walk(child, keys);
-        }
-        const calls = bodyCalls.get(node);
-        if (calls) callReferences(calls);
     };
-    walk(unit.result.base);
+    // 共通の走査 (processor/commons/node.ts) で辿る。文脈は、いちばん近い祖先の位置 (文のキー)
+    walkJson<JsonType<string>, ConvertKeys | undefined>(
+        unit.result.base as JsonType<string>,
+        {
+            enterAny: (node, { state }) => {
+                const keys = keysOf(node) ?? state;
+                visitNode(node as Json, keys);
+                return { state: keys };
+            },
+            // 本体の決まった形の呼び出しは、本体の中身をたどり終えたところで参照にする
+            leaveAny: (node) => {
+                const calls = bodyCalls.get(node);
+                if (calls) callReferences(calls);
+            },
+        },
+        undefined,
+    );
     const metrics = modules.flatMap((entry) =>
         entry.module
             ? lwcMetricsOf(entry.module).map((m): UnitBodyMetrics => ({

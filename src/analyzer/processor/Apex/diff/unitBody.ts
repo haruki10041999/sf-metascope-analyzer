@@ -141,11 +141,18 @@ export const makeAnonymousUnitDiff = (
     };
 };
 
-/** トリガーの対象イベント (before insert など) は B. 集合 */
+/** トリガーの対象イベント (before insert など) は B. 集合。中身の差分は、ほかのノードと同じく項目ごとに持つ */
 export type TriggerCaseJsonDiff = ListItemDiff<
     'triggerCase',
     TriggerCaseJson,
-    NodeDiff<'triggerCase', TriggerCaseJson, undefined>
+    NodeDiff<
+        'triggerCase',
+        TriggerCaseJson,
+        {
+            actionType: ValueDiff<TriggerCaseJson['actionType']>;
+            timing: ValueDiff<TriggerCaseJson['timing']>;
+        }
+    >
 >;
 
 export const makeTriggerCasesDiff = (
@@ -157,7 +164,11 @@ export const makeTriggerCasesDiff = (
         'triggerCase',
         before,
         after,
-        (b, a, match) => makeNodeDiff('triggerCase', b, a, match, () => undefined),
+        (b, a, match) =>
+            makeNodeDiff('triggerCase', b, a, match, (bb, aa) => ({
+                actionType: makeValueDiff(bb.actionType, aa.actionType),
+                timing: makeValueDiff(bb.timing, aa.timing),
+            })),
         sources,
     );
 };

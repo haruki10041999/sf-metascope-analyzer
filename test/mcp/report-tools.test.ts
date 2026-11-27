@@ -142,6 +142,21 @@ describe('レポートの MCP のツール', () => {
         assert.ok(rows.length > 0);
     });
 
+    it('list_note_keys: for の行で決まるキーも展開して数え、書いてあるか・使っていないキーを返す', async () => {
+        const document = {
+            ...apexSpecificationTemplate(),
+            notes: { AccountService: '説明', NotUsed: 'x' },
+        };
+        const result = await json(tools, 'list_note_keys', { document });
+        assert.equal(result.ok, true, JSON.stringify(result.issues));
+        const keys = result.keys as { key: string; written: boolean; elements: string[] }[];
+        const service = keys.find((k) => k.key === 'AccountService');
+        assert.equal(service?.written, true);
+        assert.ok(service!.elements.length > 0);
+        assert.ok(keys.some((k) => !k.written));
+        assert.deepEqual(result.unused, ['NotUsed']);
+    });
+
     it('validate_report_spec と build_report: 雛形はそのまま通り、HTML を書く', async () => {
         // 差分の雛形 (release_review。diff: true) は保存した基準と比べる
         await json(tools, 'save_baseline', { reload: false });

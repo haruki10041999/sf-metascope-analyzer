@@ -1,16 +1,4 @@
-import { JsonType } from '../commons/json';
-
-import {
-    XmlFile,
-    XmlSourceRegistry,
-    PropertiesOf,
-    makeXmlJson,
-    readProperties,
-    readText,
-    nonEmptyEntry,
-    unknownChildNames,
-} from '../commons/xmlJson';
-import { XmlElement } from '../commons/xml';
+import { type SchemaChildJson, schemaChildJsonOf } from '../commons/xmlJson';
 
 export const WEB_LINK_SCHEMA = {
     masterLabel: 'string',
@@ -27,29 +15,6 @@ export const WEB_LINK_SCHEMA = {
 } as const;
 
 /** カスタムボタン・リンク (webLinks/*.webLink-meta.xml) */
-export type WebLinkJson = JsonType<'webLink'> & {
-    /** 読んでいない要素の名前 */
-    skippedElements?: string[];
-    fullName: string;
-} & PropertiesOf<typeof WEB_LINK_SCHEMA>;
+export type WebLinkJson = SchemaChildJson<'webLink', typeof WEB_LINK_SCHEMA>;
 
-export const makeWebLinkJson = (
-    element: XmlElement,
-    fullName: string,
-    file: XmlFile,
-    registry: XmlSourceRegistry,
-): WebLinkJson =>
-    makeXmlJson<WebLinkJson>(
-        'webLink',
-        {
-            fullName: readText(element, 'fullName') ?? fullName,
-            ...readProperties(element, WEB_LINK_SCHEMA, { file, registry }),
-            ...nonEmptyEntry(
-                'skippedElements',
-                unknownChildNames(element, ['fullName', ...Object.keys(WEB_LINK_SCHEMA)]),
-            ),
-        },
-        element,
-        file,
-        registry,
-    );
+export const makeWebLinkJson = schemaChildJsonOf('webLink', WEB_LINK_SCHEMA);

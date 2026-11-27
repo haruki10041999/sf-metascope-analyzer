@@ -29,7 +29,7 @@ import {
 const STEPS = [
     '1. list_report_components で、書き方の決まりと部品・provider の一覧を読む。',
     '2. 雛形の data にある provider を get_report_data で呼び、内容を読む (レポートの材料。数値・一覧は文書に書き写さない)。既定は今の状態のすべて。差分を見る文書 (diff: true) なら get_report_data にも diff: true を、ブランチの変更を見るなら compare ({ "from": "main" } など) を付ける。',
-    '3. 雛形の Narrative の markdown を、読んだ内容から書く。雛形は出発点なので、利用者の求めに合わせてカード・データ・部品を足したり消したりしてよい (list_report_providers・list_report_components で選ぶ)。行が 0 件のカードは消してよい。文書に個々のデータの名前 (クラス名・オブジェクト名など) を書かない (1 つずつ見せるときは for でデータの行を回し、件数が多ければ page で 1 件 1 ページに分ける)。雛形に for (行ごとの繰り返し) と { "$note": キー } があれば、文書の notes (キー → markdown) にキーごとの文章を書く (キーは for の行の値。get_report_data で行を読んで作る。書かなかったキーは「(未記入)」になり、validate_report_spec の warnings に出る)。',
+    '3. 雛形の Narrative の markdown を、読んだ内容から書く。雛形は出発点なので、利用者の求めに合わせてカード・データ・部品を足したり消したりしてよい (list_report_providers・list_report_components で選ぶ)。行が 0 件のカードは消してよい。文書に個々のデータの名前 (クラス名・オブジェクト名など) を書かない (1 つずつ見せるときは for でデータの行を回し、件数が多ければ page で 1 件 1 ページに分ける)。雛形に for (行ごとの繰り返し) と { "$note": キー } があれば、文書の notes (キー → markdown) にキーごとの文章を書く (キーは for の行の値。get_report_data で行を読んで作る。書かなかったキーは「(未記入)」になり、validate_report_spec の warnings に出る。書くべきキーの一覧は list_note_keys で分かる)。',
     '4. validate_report_spec で文書を確かめ、問題があれば直す。',
     '5. build_report で HTML を作り、書いたファイルのパスと要約を伝える。',
 ];

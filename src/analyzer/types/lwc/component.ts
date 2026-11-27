@@ -746,6 +746,8 @@ const makeAccessorJson = (
             },
         ),
     };
+    // 2 つ目のアクセサーをまとめたら、キーを両方の中身から作り直す (片方だけの変更でもキーが変わる)
+    if (existing) property.sourceKeys = context.combinedKeys(existing.sourceKeys, [target]);
     if (isGetter) {
         property.isGetter = true;
         property.getterContent = content;

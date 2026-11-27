@@ -14,10 +14,19 @@ import {
 import type { CompareRange } from '../analyzer/unit/gitRange';
 import type { RepositoryProcessor } from '../analyzer/unit/processor';
 import { closeAllStoreBackends } from '../analyzer/unit/storeSqlite';
-import { comparedInputOf, dataSummaryOf, inputForOf, reportOutputOf } from '../builder/inputs';
+import { isRecord } from '../analyzer/processor/commons/json';
+import {
+    comparedInputOf,
+    dataSummaryOf,
+    inputForOf,
+    reportOutputOf,
+    toFileName,
+} from '../builder/inputs';
+import { listNoteKeys } from '../builder/notes';
 import { resolveReport, writeReportSite } from '../builder/reportBuilder';
 import { makeProcessorLoader, resolveServerConfig } from '../mcp/context';
 import { DOCUMENT_SCHEMA_FILE } from '../report/documentSchema';
+import { tableColumnsOf, tableToCsv } from '../report/tableData';
 import { REPORT_TEMPLATES } from '../report/templateList';
 
 // コマンドライン (docs/todo.md 3.2 の CLI)。AI (MCP) を使わずに、自分のリポジトリでレポートを作る。
@@ -51,6 +60,8 @@ const USAGE = `使い方: sf-metascope report <コマンド> [引数]
   new <雛形> [--out <file>]          雛形の文書 (JSON) を書く (--out がなければ標準出力)
   validate <文書.json>               文書を確かめる (provider も実行し、データの件数を出す)
   build <文書.json> [--out <path>]   文書から HTML を作る (--out は .html のファイルかフォルダ。既定は <保存先>/reports)
+  notes <文書.json> [--missing]      notes のキーの一覧 (使っている要素と、書いてあるか。--missing で未記入だけ)
+  export <文書.json> [--out <dir>]   文書のデータ (行の並び) をデータの名前ごとの CSV に書き出す (既定は <保存先>/exports/<文書>)
   data <provider> [--args <json>]    provider のデータを JSON で出す
   providers                         provider の一覧
 
@@ -60,6 +71,26 @@ const USAGE = `使い方: sf-metascope report <コマンド> [引数]
   --compare <from>[...<to>]         git の範囲で比べる (main は main...作業ツリー、main...HEAD など)
   --param <名前>=<値>                文書の引数 (いくつでも。値は JSON として読めれば JSON)
 `;
+
+/**
+ * 文書のデータのうち行の並びを、データの名前ごとの CSV に書き出す (列は行のすべてのキー。位置などは除く)。
+ * 書いたファイルのパスを返す
+ */
+const writeDataCsvs = async (
+    state: Record<string, unknown>,
+    directory: string,
+): Promise<string[]> => {
+    await fs.mkdir(directory, { recursive: true });
+    const written: string[] = [];
+    for (const [name, value] of Object.entries((state.data ?? {}) as Record<string, unknown>)) {
+        if (!Array.isArray(value)) continue;
+        const rows = value.filter(isRecord);
+        const file = path.join(directory, `${toFileName(name)}.csv`);
+        await fs.writeFile(file, tableToCsv(rows, tableColumnsOf(rows)), 'utf8');
+        written.push(file);
+    }
+    return written;
+};
 
 /** 使い方の誤り (終了コード 2) */
 class UsageError extends Error {}
@@ -115,6 +146,7 @@ export const runCli = async (argv: string[], io: CliIo): Promise<number> => {
                 repo: { type: 'string' },
                 out: { type: 'string' },
                 diff: { type: 'boolean' },
+                missing: { type: 'boolean' },
                 compare: { type: 'string' },
                 param: { type: 'string', multiple: true },
                 args: { type: 'string' },
@@ -214,7 +246,9 @@ export const runCli = async (argv: string[], io: CliIo): Promise<number> => {
                 return 0;
             }
             case 'validate':
-            case 'build': {
+            case 'build':
+            case 'notes':
+            case 'export': {
                 if (!target) throw new UsageError('文書 (JSON) のファイルを書いてください');
                 const file = path.resolve(cwd, target);
                 let document: unknown;
@@ -234,6 +268,25 @@ export const runCli = async (argv: string[], io: CliIo): Promise<number> => {
                     document,
                 );
                 const inputFor = await inputForOf(loaded, document);
+                if (command === 'notes') {
+                    const notes = listNoteKeys(document, input, {
+                        compared,
+                        inputFor,
+                        ...(params ? { params } : {}),
+                    });
+                    if (!notes.ok) {
+                        io.stderr(json(notes));
+                        return 1;
+                    }
+                    io.stdout(
+                        json(
+                            values.missing
+                                ? { ...notes, keys: notes.keys.filter((k) => !k.written) }
+                                : notes,
+                        ),
+                    );
+                    return 0;
+                }
                 const resolved = resolveReport(document, input, {
                     compared,
                     inputFor,
@@ -253,6 +306,18 @@ export const runCli = async (argv: string[], io: CliIo): Promise<number> => {
                 };
                 if (command === 'validate') {
                     io.stdout(json(summary));
+                    return 0;
+                }
+                if (command === 'export') {
+                    const directory = values.out
+                        ? path.resolve(cwd, values.out)
+                        : path.join(
+                              loaded.savingRoot,
+                              'exports',
+                              toFileName(resolved.report.title),
+                          );
+                    const files = await writeDataCsvs(resolved.report.spec.state, directory);
+                    io.stdout(json({ ...summary, files }));
                     return 0;
                 }
                 const hasPages = Boolean(resolved.pages?.length);

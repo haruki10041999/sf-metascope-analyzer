@@ -7,7 +7,9 @@ import type {
     MetadataSnapshot,
     SnapshotInput,
 } from './types';
-import { type JsonRecord, isRecord } from '../processor/commons/json';
+import type { JsonRecord } from '../processor/commons/json';
+import { jsonNodesIn, walkJson } from '../processor/commons/node';
+import type { LwcNodeJson } from '../types';
 
 // lwc.eventFlow: 利用者の操作から処理までの流れ (docs/todo.md 3.2.1 の 5)。
 // テンプレートのイベント (<lightning-button onclick={handleSave}>)・@wire・表示のとき (connectedCallback など) を起点に、
@@ -33,36 +35,34 @@ const LIFECYCLE = new Map([
     ['errorCallback', '子でエラーが起きたとき'],
 ]);
 
-/** 木の中のすべての、その種類のノード */
-const nodesOfKind = (value: unknown, kind: string, out: Json[] = []): Json[] => {
-    if (Array.isArray(value)) {
-        for (const item of value) nodesOfKind(item, kind, out);
-    } else if (isRecord(value)) {
-        if (value.kind === kind) out.push(value);
-        for (const [key, child] of Object.entries(value)) {
-            if (key !== 'sourceKeys') nodesOfKind(child, kind, out);
-        }
+/** 値 (ノード・ノードの並び) の中のすべての、その種類のノード (共通の走査 walkJson で辿る) */
+const nodesOfKind = <K extends LwcNodeJson['kind']>(
+    value: unknown,
+    kind: K,
+): Extract<LwcNodeJson, { kind: K }>[] => {
+    const out: Extract<LwcNodeJson, { kind: K }>[] = [];
+    for (const root of jsonNodesIn(value) as LwcNodeJson[]) {
+        walkJson<LwcNodeJson>(root, {
+            enterAny: (node) => {
+                if (node.kind === kind) out.push(node as Extract<LwcNodeJson, { kind: K }>);
+            },
+        });
     }
     return out;
 };
 
 /** 本体の中の this.x() の x (自分のメソッドの呼び出し) */
 const thisCallsIn = (content: unknown): string[] =>
-    nodesOfKind(content, 'jsCall').flatMap((call) => {
-        const callee = call.callee as Json | undefined;
-        return callee?.kind === 'jsMemberAccess' &&
-            (callee.object as Json | undefined)?.kind === 'jsThis' &&
-            typeof callee.member === 'string'
+    nodesOfKind(content, 'jsCall').flatMap(({ callee }) =>
+        callee.kind === 'jsMemberAccess' && callee.object.kind === 'jsThis' && callee.member
             ? [callee.member]
-            : [];
-    });
+            : [],
+    );
 
 /** 式の中の this.x (呼ばずに渡した自分のメンバー) の x */
 const thisReferencesIn = (value: unknown): string[] =>
     nodesOfKind(value, 'jsMemberAccess').flatMap((access) =>
-        (access.object as Json | undefined)?.kind === 'jsThis' && typeof access.member === 'string'
-            ? [access.member]
-            : [],
+        access.object.kind === 'jsThis' && access.member ? [access.member] : [],
     );
 
 const literal = (value: unknown) => (typeof value === 'string' ? value : undefined);

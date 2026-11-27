@@ -23,7 +23,7 @@ export type GumTreeNode = {
     ordered: boolean;
     children: GumTreeNode[];
     parent: GumTreeNode | undefined;
-    /** 元の値 */
+    /** 元の値 (ノードのほか、文字列・数・値の木も入るので unknown。種類は source で分かる) */
     raw: unknown;
     /** 元の JsonType。仮想ノードは undefined */
     source: JsonNode | undefined;

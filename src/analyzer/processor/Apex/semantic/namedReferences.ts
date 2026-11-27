@@ -3,12 +3,14 @@ import type { DependencyKind } from '../../dependency/types';
 import { walkJson } from '../../commons/node';
 import type { ApexBodySemantics, ApexResolvedCall } from './analyze';
 import { type ApexExpressionRef, namePathOf } from './call';
+import { type ApexDataflow, apexDataflowOf } from './dataflow';
 import type { ApexReferenceResolution } from './dependencies';
 import type { ApexTypeRef } from './type';
 
 // 名前を文字列などで渡す標準の API の参照 (docs/plan.md 10 章 P2 の「古い処理からの移行」)。
 // 今の抽出 (dependency/apex.ts) と同じ参照を、新しい解析の結果 (呼び出し・メンバーの参照・式) から作る。
-// - 文字列はリテラルのときだけ (変数・連結は推測しない)
+// - 文字列はリテラルか、値の解析 (dataflow.ts の segmentsOf) ですべて確定した変数・連結・括弧のときだけ
+//   (一部でも分からなければ参照にしない。docs/plan.md 10 章 P4 段 2「文字列を経由するメタデータ参照」)
 // - Label・Page・Flow などの名前が変数でないことは、名前の解決の結果で確かめる (今の抽出は名前の頭文字で推測していた)
 // - handled に入れた呼び出し・メンバーの参照は、一般の参照 (apexTypeMember) にしない
 
@@ -59,9 +61,12 @@ const namesOf = (ref: ApexExpressionRef): string[] | undefined =>
 const literalOf = (expression: BaseExpressionJson | undefined): string | undefined =>
     expression?.kind === 'string' ? expression.value : undefined;
 
+/** 引数の文字列 (リテラルか、確定した値)。分からなければ undefined */
+type TextOf = (expression: BaseExpressionJson | undefined) => string | undefined;
+
 /** 名前空間の引数が「なし」('' か null) か */
-const isNoNamespace = (expression: BaseExpressionJson | undefined): boolean =>
-    literalOf(expression) === '' || expression?.kind === 'null';
+const isNoNamespace = (expression: BaseExpressionJson | undefined, textOf: TextOf): boolean =>
+    textOf(expression) === '' || expression?.kind === 'null';
 
 /**
  * 名前空間と名前を受け取る呼び出し (Type.forName('X') / Type.forName('', 'X') など) の名前。
@@ -70,9 +75,10 @@ const isNoNamespace = (expression: BaseExpressionJson | undefined): boolean =>
 const namespacedNameArg = (
     args: readonly BaseExpressionJson[],
     nameIndex: number,
+    textOf: TextOf,
 ): string | undefined => {
-    if (nameIndex > 0 && !isNoNamespace(args[0])) return undefined;
-    const name = literalOf(args[nameIndex]);
+    if (nameIndex > 0 && !isNoNamespace(args[0], textOf)) return undefined;
+    const name = textOf(args[nameIndex]);
     return name && QUALIFIED_WORD.test(name) ? name : undefined;
 };
 
@@ -83,11 +89,31 @@ const elementNameOf = (type: ApexTypeRef | undefined): string | undefined => {
     return type.kind === 'named' ? type.name.join('.') : undefined;
 };
 
+/** 型が決まったオブジェクト (標準オブジェクト・カスタムオブジェクト。汎用の SObject・リポジトリのクラスは除く) の名前 */
+const sObjectNameOf = (type: ApexTypeRef | undefined): string | undefined => {
+    if (type?.kind !== 'named' || type.declarationId || type.standard?.kind !== 'sObject')
+        return undefined;
+    const name = type.name.join('.');
+    return /^(schema\.)?sobject$/i.test(name) ? undefined : name.replace(/^schema\./i, '');
+};
+
 /** カスタム設定・カスタムメタデータ型の読み取りの呼び出し */
 type SettingsCall = { type: string; single: boolean; via: string; record?: string };
 
 /** 実行本体 1 つの、名前を渡す参照 */
 export const apexNamedReferencesOf = (semantics: ApexBodySemantics): ApexNamedReferences => {
+    // 引数の文字列: リテラルか、値の解析ですべて確定したもの (値の解析は、要るときだけ作る)
+    let flow: ApexDataflow | undefined;
+    const textOf: TextOf = (expression) => {
+        const literal = literalOf(expression);
+        if (literal !== undefined || !expression) return literal;
+        if (!['identifier', 'binary', 'parenthesized'].includes(expression.kind)) return undefined;
+        flow ??= apexDataflowOf(semantics);
+        const segments = flow.segmentsOf(expression);
+        return segments.every((segment) => 'text' in segment)
+            ? segments.map((segment) => ('text' in segment ? segment.text : '')).join('')
+            : undefined;
+    };
     const references: ApexNamedReference[] = [];
     const handled = new Set<string>();
     const callsById = new Map(semantics.calls.map((call) => [call.id, call]));
@@ -113,7 +139,7 @@ export const apexNamedReferencesOf = (semantics: ApexBodySemantics): ApexNamedRe
             return { type, single: member !== 'getall', via: 'customSetting' };
         }
         if (/__mdt$/i.test(type) && (member === 'getinstance' || member === 'getall')) {
-            const record = literalOf(call.args[0]);
+            const record = textOf(call.args[0]);
             return {
                 type,
                 single: member === 'getinstance',
@@ -136,8 +162,7 @@ export const apexNamedReferencesOf = (semantics: ApexBodySemantics): ApexNamedRe
             // new Flow.Interview.X(params) は Flow X の呼び出し
             if (flow) add('flow', flow[1]!, 'calls', 'Flow.Interview', keys);
             // new PageReference('/apex/X')
-            const url =
-                created && PAGE_REFERENCE.test(created) ? literalOf(call.args[0]) : undefined;
+            const url = created && PAGE_REFERENCE.test(created) ? textOf(call.args[0]) : undefined;
             const page = url?.match(APEX_PAGE_URL);
             if (page) add('apexPage', page[1]!, 'uses', 'PageReference', keys);
             continue;
@@ -163,7 +188,7 @@ export const apexNamedReferencesOf = (semantics: ApexBodySemantics): ApexNamedRe
         // X__mdt.getAll().get('Rec')
         if (call.name.toLowerCase() === 'get' && call.receiver.kind === 'call') {
             const owner = settingsCallOf(callsById.get(call.receiver.callId));
-            const record = literalOf(call.args[0]);
+            const record = textOf(call.args[0]);
             if (owner?.via === 'customMetadata' && record && WORD.test(record)) {
                 handled.add(call.id);
                 add(
@@ -177,6 +202,40 @@ export const apexNamedReferencesOf = (semantics: ApexBodySemantics): ApexNamedRe
             }
         }
 
+        // Schema.getGlobalDescribe().get('X'): オブジェクト X
+        if (call.name.toLowerCase() === 'get' && call.receiver.kind === 'call') {
+            const describe = callsById.get(call.receiver.callId);
+            const describeNames = describe?.receiver ? namesOf(describe.receiver) : undefined;
+            const object = textOf(call.args[0]);
+            if (
+                describe?.name.toLowerCase() === 'getglobaldescribe' &&
+                describeNames?.join('.').toLowerCase() === 'schema' &&
+                object &&
+                WORD.test(object)
+            ) {
+                handled.add(call.id);
+                add('object', object, 'uses', 'Schema.getGlobalDescribe', keys);
+                continue;
+            }
+        }
+        // rec.get('F') / rec.put('F', v): rec の型が決まったオブジェクトなら、項目の読み・書き
+        // (汎用の SObject は、どのオブジェクトか分からないので取らない)
+        {
+            const method = call.name.toLowerCase();
+            const object = sObjectNameOf(call.receiverType);
+            const field = textOf(call.args[0]);
+            if ((method === 'get' || method === 'put') && object && field && WORD.test(field)) {
+                handled.add(call.id);
+                add(
+                    'field',
+                    `${object}.${field}`,
+                    method === 'get' ? 'reads' : 'writes',
+                    `SObject.${method}`,
+                    keys,
+                );
+                continue;
+            }
+        }
         const names = namesOf(call.receiver);
         if (!names) continue;
         const owner = names
@@ -187,7 +246,7 @@ export const apexNamedReferencesOf = (semantics: ApexBodySemantics): ApexNamedRe
         switch (`${owner}.${call.name.toLowerCase()}`) {
             case 'pagereference.forresource': {
                 // forResource('Name') / forResource('Name', 'path/in/zip')
-                const name = literalOf(args[0]);
+                const name = textOf(args[0]);
                 if (name && WORD.test(name)) {
                     add('staticResource', name, 'uses', 'PageReference.forResource', keys);
                 }
@@ -195,14 +254,14 @@ export const apexNamedReferencesOf = (semantics: ApexBodySemantics): ApexNamedRe
             }
             case 'type.forname': {
                 // forName('X') / forName('Outer.Inner') / forName('', 'X')。名前空間のある (パッケージの) クラスは取らない
-                const name = namespacedNameArg(args, args.length >= 2 ? 1 : 0);
+                const name = namespacedNameArg(args, args.length >= 2 ? 1 : 0, textOf);
                 // 標準の型 (String など) もありうるので、クラスかはグラフで決める (apexType)
                 if (name) add('apexType', name, 'uses', 'Type.forName', keys);
                 break;
             }
             case 'flow.interview.createinterview': {
                 // createInterview('Name', params) / createInterview('', 'Name', params)
-                const name = namespacedNameArg(args, args.length >= 3 ? 1 : 0);
+                const name = namespacedNameArg(args, args.length >= 3 ? 1 : 0, textOf);
                 if (name && WORD.test(name)) {
                     add('flow', name, 'calls', 'Flow.Interview.createInterview', keys);
                 }
@@ -210,7 +269,7 @@ export const apexNamedReferencesOf = (semantics: ApexBodySemantics): ApexNamedRe
             }
             case 'label.get': {
                 // Label.get('', 'X') / Label.get('', 'X', 'ja')
-                const name = namespacedNameArg(args, 1);
+                const name = namespacedNameArg(args, 1, textOf);
                 if (name && WORD.test(name)) add('customLabel', name, 'uses', 'Label.get', keys);
                 break;
             }
@@ -223,7 +282,7 @@ export const apexNamedReferencesOf = (semantics: ApexBodySemantics): ApexNamedRe
                 break;
             }
             case 'featuremanagement.checkpermission': {
-                const permission = literalOf(args[0]);
+                const permission = textOf(args[0]);
                 if (permission !== undefined) {
                     add('customPermission', permission, 'uses', 'FeatureManagement', keys);
                 }

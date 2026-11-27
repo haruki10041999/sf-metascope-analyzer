@@ -32,21 +32,25 @@ const extractFindSearchTerm = (token: string): string => {
 export type SoslFieldJson = JsonType<'soslField'> & {
     field: string[] | SoqlFunctionJson;
     func?: 'TOLABEL' | 'CONVERT_CURRENCY' | 'FORMAT';
+    /** 関数のあとの別名 (TOLABEL(Status) statusLabel の statusLabel) */
+    alias?: string;
 };
 
 const makeSoslIdJson = (target: SoslIdTypeClass): string[] => {
     return target.getFields().value.map((v) => v.getFields().value);
 };
 
-// 関数のあとの別名 (TOLABEL(x) alias など) は、v1 と同じく JSON に出さない
 const makeSoslFieldJson = (target: SoslFieldTypeClass): SoslFieldJson => {
     const fields = target.getFields();
     const value = fields.value;
     const field = value.kind === 'soslId' ? makeSoslIdJson(value) : makeSoqlFunctionJson(value);
+    // 関数のあとの別名 (TOLABEL(x) alias など。関数のときだけ書ける)
+    const alias = 'alias' in fields && fields.alias ? makeSoslIdJson(fields.alias).join('.') : '';
 
     return makeNodeJson<SoslFieldJson>('soslField', target, {
         field: field,
         ...(fields.kind !== 'field' ? { func: fields.kind } : {}),
+        ...(alias ? { alias } : {}),
     });
 };
 

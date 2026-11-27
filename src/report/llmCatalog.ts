@@ -21,6 +21,7 @@ import { ReportDocument } from './document';
 
 export const REPORT_CATALOG_VERSION = 1;
 
+/** JSON Schema (zod から作ったもの。AI に見せるだけで中を読まないので、形は決めない) */
 type JsonSchema = Record<string, unknown>;
 
 export type ComponentEntry = {

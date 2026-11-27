@@ -168,6 +168,8 @@ describe('dependency graph targets (参照と定義の突き合わせ)', () => {
                     kind: 'lwcBundle',
                     component: {
                         kind: 'lwcComponent',
+                        // ノードは位置 (sourceKeys) を持つ (共通の走査はこれでノードを見分ける)
+                        sourceKeys: { objectKey: 'o_card', sourceKey: 's_card' },
                         block: [
                             { kind: 'lwcField', name: 'title', modifier: api },
                             { kind: 'lwcField', name: 'internal', modifier: {} },

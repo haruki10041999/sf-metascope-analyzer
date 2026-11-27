@@ -7,7 +7,7 @@
         "span": 4421,
         "derived": 79,
         "symbol": 215,
-        "reference": 592,
+        "reference": 602,
         "metric": 881
     },
     "nodeKinds": {
@@ -1392,6 +1392,9 @@
         "apexClass:force-app/main/default/classes/ParserTest.cls | ParserTest.dmlExample --uses--> apexType:Account (parameter)",
         "apexClass:force-app/main/default/classes/ParserTest.cls | ParserTest.dynamicSoqlExample --calls--> apexTypeMember:Database.query (call)",
         "apexClass:force-app/main/default/classes/ParserTest.cls | ParserTest.dynamicSoqlExample --calls--> apexTypeMember:Database.queryWithBinds (call)",
+        "apexClass:force-app/main/default/classes/ParserTest.cls | ParserTest.dynamicSoqlExample --queries--> object:Account (soql.dynamic)",
+        "apexClass:force-app/main/default/classes/ParserTest.cls | ParserTest.dynamicSoqlExample --reads--> field:Account.Id (soql.dynamic)",
+        "apexClass:force-app/main/default/classes/ParserTest.cls | ParserTest.dynamicSoqlExample --reads--> field:Account.Name (soql.dynamic)",
         "apexClass:force-app/main/default/classes/ParserTest.cls | ParserTest.dynamicSoqlExample --uses--> apexType:Account (type)",
         "apexClass:force-app/main/default/classes/ParserTest.cls | ParserTest.dynamicSoqlExample --uses--> apexType:SObject (type)",
         "apexClass:force-app/main/default/classes/ParserTest.cls | ParserTest.exceptionHandling --calls--> apexMethod:ParserTest.throwExample (call)",

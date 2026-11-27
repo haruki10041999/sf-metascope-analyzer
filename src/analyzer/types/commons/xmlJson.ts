@@ -210,3 +210,40 @@ export type SourceText = {
     filePath: string;
     source: string;
 };
+
+/**
+ * 名前 (fullName) と属性の表 (schema) だけで書ける子の JSON (オブジェクトの入力規則・Web リンク・共有の理由など)。
+ * 表にない要素は skippedElements に残る
+ */
+export type SchemaChildJson<K extends string, S extends PropertySchema> = JsonType<K> & {
+    /** 読んでいない要素の名前 */
+    skippedElements?: string[];
+    fullName: string;
+} & PropertiesOf<S>;
+
+/**
+ * 表 (kind と属性) から、子の JSON を作る関数を作る (docs/plan.md 10 章 P1「表で書けるもの」)。
+ * fullName は要素の <fullName>、なければファイル名から渡されたもの
+ */
+export const schemaChildJsonOf =
+    <K extends string, S extends PropertySchema>(kind: K, schema: S) =>
+    (
+        element: XmlElement,
+        fullName: string,
+        file: XmlFile,
+        registry: XmlSourceRegistry,
+    ): SchemaChildJson<K, S> =>
+        makeXmlJson<SchemaChildJson<K, S>>(
+            kind as SchemaChildJson<K, S>['kind'],
+            {
+                fullName: readText(element, 'fullName') ?? fullName,
+                ...readProperties(element, schema, { file, registry }),
+                ...nonEmptyEntry(
+                    'skippedElements',
+                    unknownChildNames(element, ['fullName', ...Object.keys(schema)]),
+                ),
+            } as Omit<SchemaChildJson<K, S>, 'kind' | 'sourceKeys'>,
+            element,
+            file,
+            registry,
+        );

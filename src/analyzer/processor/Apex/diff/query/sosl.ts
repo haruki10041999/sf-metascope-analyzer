@@ -40,6 +40,7 @@ export type SoslFieldJsonDiff = NodeDiff<
             NonNullable<SoslFieldJson['func']>,
             ValueDiff<NonNullable<SoslFieldJson['func']>>
         >;
+        alias: OptionalDiff<string, ValueDiff<string>>;
     }
 >;
 
@@ -63,6 +64,7 @@ export const makeSoslFieldDiff = (
         return {
             field,
             func: makeOptionalDiff(b.func, a.func, makeValueDiff),
+            alias: makeOptionalDiff(b.alias, a.alias, makeValueDiff),
         };
     });
 

@@ -1,4 +1,9 @@
-import type { ReportProviderName } from '../analyzer/report/registry';
+import {
+    type ReportProviderArgs,
+    type ReportProviderName,
+    type ReportProviderSource,
+    providerSource,
+} from '../analyzer/report/registry';
 
 import { apexSpecificationDetail, lwcOverviewDetail, objectSections } from './detailTemplates';
 import type { ReportDocument } from './document';
@@ -11,7 +16,8 @@ import type { ReportDocument } from './document';
 // provider の名前は ReportProviderName で型を確かめる。テストで、雛形がそのまま検証を通ることを確かめる
 
 type Element = ReportDocument['spec']['elements'][string];
-type DataSource = { provider: ReportProviderName; args?: Record<string, unknown> };
+/** データの宣言 (provider ごとに引数の名前と型を確かめる) */
+type DataSource = ReportProviderSource;
 
 const el = (type: string, props: Record<string, unknown>, children: string[] = []): Element => ({
     type,
@@ -81,8 +87,8 @@ export const objectDefinitionTemplate = (): ReportDocument => {
 const objectDefinitionList = (): ReportDocument => {
     const source = (
         provider: DataSource['provider'],
-        extra?: Record<string, unknown>,
-    ): DataSource => (extra ? { provider, args: extra } : { provider });
+        extra?: ReportProviderArgs<DataSource['provider']>,
+    ): DataSource => providerSource(provider, extra);
     return documentOf(
         'オブジェクト定義書',
         {
@@ -323,8 +329,7 @@ export const translationOverviewTemplate = (): ReportDocument => {
  */
 export const metadataInventoryTemplate = (types?: string[]): ReportDocument => {
     const args = types && types.length ? { types } : undefined;
-    const source = (provider: DataSource['provider']): DataSource =>
-        args ? { provider, args } : { provider };
+    const source = (provider: DataSource['provider']): DataSource => providerSource(provider, args);
     return documentOf(
         types && types.length ? `メタデータの棚卸し: ${types.join('・')}` : 'メタデータの棚卸し',
         {

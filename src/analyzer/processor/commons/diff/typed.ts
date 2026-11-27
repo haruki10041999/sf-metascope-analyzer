@@ -9,6 +9,7 @@ import {
 import { GumTreeDiff } from './gumtree';
 
 type DiffNode = JsonNode;
+/** kind のない入れ物 (形は言語・種類ごとに違うので、プロパティの値は unknown) */
 type DiffObject = Record<string, unknown>;
 
 // ---------------------------------------------------------------------------

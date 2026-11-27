@@ -125,6 +125,8 @@ export const expandReportDocument = (
     run: SourceRunner,
     /** 文書の引数の値 (build_report の params。文書の params の default より優先) */
     params: Record<string, unknown> = {},
+    /** $note を置き換えるたびに呼ぶ (キーと、置き換えた要素のキー。builder/notes.ts の listNoteKeys) */
+    onNote?: (name: string, elementKey: string) => void,
 ): ExpandResult => {
     const issues: ReportIssue[] = [];
     const warnings: ReportIssue[] = [];
@@ -173,6 +175,7 @@ export const expandReportDocument = (
     const contextOf = (scope: Scope, key: string): FillContext => ({
         scope,
         note: (name) => {
+            onNote?.(name, key);
             const text = document.notes?.[name];
             if (text !== undefined) return text;
             warnings.push({

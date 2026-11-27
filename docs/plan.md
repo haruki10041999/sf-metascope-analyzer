@@ -153,6 +153,26 @@
 
 P1 と P2 は、単位の系統ごと（SOQL → Apex → LWC → メタデータ）に交互に進めてかまいません。P3 は P1 の後なら、P2 と並行して進められます。
 
+### 3.1 残りの推奨の進め方（2026-11-27 時点）
+
+P4 の段 1 は終わり、P2 は残り 5 件（うち 2 件は P5 とまとめる削除）です。残りは、前提のつながりで次の順に進めます。A と B は独立しているので、どちらからでもよく、交互にも進められます。
+
+| 順  | まとまり                     | 中身（10 章の項目）                                                                                                                                                                     | 前提・理由                                                                                               |
+| --- | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| A   | 型の仕上げ（小さい）         | P1 の残り 6 件 → P2 の「Diff の共通部品」「テストの手書きの JSON・Diff」。P0 の一時ファイル `test/_count_nodes.tmp.ts` の扱いを決める                                                   | P1 のノードの共用体ができると、Diff の型を付けやすい。どれも低〜中で、まとめて片付く                     |
+| B   | 使う人に効く機能（独立）     | 部品と viewer の「表の並べ替えと列の出し分け」（高）、CLI の `report notes`（高）、CSV / Excel への書き出し                                                                             | 解析の作業と独立。文書を使う人にすぐ効く                                                                 |
+| C   | 値の解析（P4 段 2 の本体）   | CFG → スコープと値の追跡 → 分岐と終了 → ループと例外の経路 → 到達定義・定数伝播 → 動的 SOQL・SOSL の復元・文字列を経由するメタデータ参照 → ★ガバナ制限・★CRUD/FLS・共有の検査           | 10 章 P4 段 2 の並びのとおり。前の段の結果を次の段が使う。終わったら P2 の「LWC でも使えるか」を確かめる |
+| D   | 指摘の provider              | `apex.findings`・`lwc.findings`（8.3 の段 2）。C の結果のルールを載せる                                                                                                                 | 先に 9 章の「ルールの選別」「有効・無効の切り替えの場所」「SQLite に保存するか」を決める                 |
+| E   | 計測と SQLite（P0 → P3）     | NPSP を取得して `measure.ts` で基準を取る → 遅延読み込みの範囲を決める → `Repository` の遅延読み込み・被依存を `reference` 表で引く・provider の 2 段化                                 | NPSP のリポジトリの取得が要る。9 章の「遅延読み込みの範囲」「`derived` の BLOB を残すか」を計測で決める  |
+| F   | 古い処理を消す（P5）         | 古い Apex の walker・`apexLegacy.ts` と比較のテスト（P2 の 2 件を含む）、`snapshotInputOf` と `WeakMap` のキャッシュ                                                                    | `snapshotInputOf` は E の provider の 2 段化のあと。古い walker は C で使わないことを確かめてから        |
+| G   | 見せる部品・雛形・文書の整理 | P4 コンポーネント（図の自動配置の elkjs への移行 → `GraphView`・`Chart`（recharts）から。8.5）、新しい雛形、ビルドと文書・CLI と MCP の残り、文書の整理（消した文書への参照など）、調査 | C・D の結果を見せる部品は、その結果ができてから。`GraphView` の前に 9 章の「レイアウト」を決める         |
+
+A〜G と、provider と部品の一覧（[docs/report-inventory.md](report-inventory.md)）から出た追加・修正（H。C の解析を見せる provider と列。D・G と独立に進められる）の実装の方針（直すファイル・型と関数・新しい型と関数・テスト）は [docs/plan-details.md](plan-details.md) に書きました。
+
+決めることのうち、作業を止めるものは、E の途中の「遅延読み込みの範囲」「`derived` の BLOB」（NPSP の計測で決める）と、npm の公開の「公開するか」「ライセンス」（B-7）だけです。findings の 3 件・`graph` の形・依存の追加などは 2026-11-27 に推奨どおり決めました（9 章）。G の図・チャートのライブラリは elkjs と recharts（8.5）。
+
+テストは、変更ごとに型検査と関係するテストのファイルだけを流し、全体（`npm test`）は共通の部分（保存の形・依存関係のグラフ・走査・ゴールデン）を変えたときと、コミットの前の区切りに流します。
+
 ## 4. P1: JSON の型を `JsonType` にそろえる
 
 ### 4.1 理由
@@ -325,55 +345,57 @@ CREATE INDEX node_parent ON node (unit_id, parent_id);
 
 ### 8.1 今の部品（27）と足りないところ
 
-| 分類              | 部品                                                                                                                               | 足りないところ                                                                                                |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| 配置・文章（13）  | `Card`・`Stack`・`Grid`・`Separator`・`Tabs`・`Accordion`・`Heading`・`Text`・`Badge`・`Alert`・`Columns`・`PageLink`・`Narrative` | —                                                                                                             |
-| 表（3）           | `DataTable`・`StatusSummary`・`Matrix`                                                                                             | 数値を棒や閾値の色で見せる書式がない。並べ替えと書き出しがない                                                |
-| 図（7）           | `FlowDiagram`・`ObjectDiagram`・`LwcWireframe`・`CodeFlowchart`・`EventFlow`・`SequenceDiagram`・`DiagramText`                     | ノードと線の一般的なグラフを描く部品がない（依存関係は Mermaid の文字だけ）。ソースの行に印を付ける部品がない |
-| 専用のビュー（4） | `LayoutView`・`FlexiPageView`・`AutomationView`・`ImpactView`                                                                      | 指摘（findings）の一覧、実行順の表示がない                                                                    |
+| 分類              | 部品                                                                                                                               | 足りないところ                                                                                                                                                                                                                                                                   |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 配置・文章（13）  | `Card`・`Stack`・`Grid`・`Separator`・`Tabs`・`Accordion`・`Heading`・`Text`・`Badge`・`Alert`・`Columns`・`PageLink`・`Narrative` | —                                                                                                                                                                                                                                                                                |
+| 表（3）           | `DataTable`・`StatusSummary`・`Matrix`                                                                                             | 数値を棒や閾値の色で見せる書式がない。並べ替えと書き出しがない                                                                                                                                                                                                                   |
+| 図（7）           | `FlowDiagram`・`ObjectDiagram`・`LwcWireframe`・`CodeFlowchart`・`EventFlow`・`SequenceDiagram`・`DiagramText`                     | ノードと線の一般的なグラフを描く部品がない（依存関係は Mermaid の文字だけ）。ソースの行に印を付ける部品がない。自動配置（dagre）が平らな配置だけで、枠（入れ子）・接続口・線の回り込みができない（8.5 で elkjs に移す）。数の分布・割合を見せるチャートがない（8.5 で recharts） |
+| 専用のビュー（4） | `LayoutView`・`FlexiPageView`・`AutomationView`・`ImpactView`                                                                      | 指摘（findings）の一覧、実行順の表示がない                                                                                                                                                                                                                                       |
 
 ### 8.2 新しい部品
 
-| 部品                      | 描くもの                                                                                                                  | 主に使う provider                                                                                                         | 段  |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | --- |
-| `GraphView`               | ノードと線のグラフ（React Flow と dagre）。種類で色分けし、段数で絞り、押すとその単位のページへ。階層と放射の配置を選べる | `apex.callGraph`・`apex.classDependencies`・`lwc.componentTree`・`dependency.graph`・`dependency.cycles`・`feature.scope` | 1   |
-| `CodeView`                | ソースを行番号つきで表示し、行に印（読み・書き・指摘・スライスの範囲）を付ける。before / after の並列表示もできる         | `apex.variables`・`apex.dynamicQueries`・`apex.findings`・`apex.slice`                                                    | 2   |
-| `FindingsList`            | 指摘の一覧（重さ・ルール・場所）。行を開くと、根拠の経路を手順で見せる                                                    | `apex.findings`・`lwc.findings`・`metadata.findings`                                                                      | 2   |
-| `DataFlowGraph`           | 変数の代入から読み取りへの流れと、値の由来（動的クエリの文字列の組み立てなど）                                            | `apex.variables`・`apex.dynamicQueries`                                                                                   | 2   |
-| `ExecutionOrder`          | オブジェクトを保存したときの実行順（before トリガー → 入力規則 → after トリガー → Flow など）                             | `automation.executionOrder`                                                                                               | 2   |
-| `DependencyMatrix`        | 単位 × 単位の依存の行列（DSM）。循環とレイヤー違反に色を付ける                                                            | `architecture.layers`・`dependency.cycles`                                                                                | 3   |
-| `Treemap`・`ScatterChart` | 単位の大きさ・複雑度・変更頻度（ホットスポット）                                                                          | `apex.metrics`・`git.hotspots`                                                                                            | 3   |
-| `DiffTree`                | 構造の差分の木（補助）                                                                                                    | 差分の provider                                                                                                           | 3   |
+| 部品               | 描くもの                                                                                                                                                                                                                                                                             | 主に使う provider                                                                                                         | 段   |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- | ---- |
+| `GraphView`        | ノードと線のグラフ（React Flow と elkjs。8.5）。種類で色分けし、段数で絞り、押すとその単位のページへ。配置を選べる（階層・木・放射・力学）。クラスの枠の中にメソッドを入れる入れ子、直角の線、辺のラベル                                                                             | `apex.callGraph`・`apex.classDependencies`・`lwc.componentTree`・`dependency.graph`・`dependency.cycles`・`feature.scope` | 1    |
+| `CodeView`         | ソースを行番号つきで表示し、行に印（読み・書き・指摘・スライスの範囲）を付ける。before / after の並列表示もできる                                                                                                                                                                    | `apex.variables`・`apex.dynamicQueries`・`apex.findings`・`apex.slice`                                                    | 2    |
+| `FindingsList`     | 指摘の一覧（重さ・ルール・場所）。行を開くと、根拠の経路を手順で見せる                                                                                                                                                                                                               | `apex.findings`・`lwc.findings`・`metadata.findings`                                                                      | 2    |
+| `DataFlowGraph`    | 変数の代入から読み取りへの流れと、値の由来（動的クエリの文字列の組み立てなど）                                                                                                                                                                                                       | `apex.variables`・`apex.dynamicQueries`                                                                                   | 2    |
+| `ExecutionOrder`   | オブジェクトを保存したときの実行順（before トリガー → 入力規則 → after トリガー → Flow など）                                                                                                                                                                                        | `automation.executionOrder`                                                                                               | 2    |
+| `DependencyMatrix` | 単位 × 単位の依存の行列（DSM）。循環とレイヤー違反に色を付ける                                                                                                                                                                                                                       | `architecture.layers`・`dependency.cycles`                                                                                | 3    |
+| `Chart`            | 行のデータのチャート（recharts。8.5）。種類（棒・積み上げ棒・円・レーダー・散布・ツリーマップ・Sankey）と、列の割り当て（x・y・大きさ・色・まとまり）を props で選ぶ。閾値の線・ズーム・ツールチップ。単位の大きさ・複雑度・変更頻度（ホットスポット）の Treemap・散布図もこれで描く | `apex.metrics`・`lwc.metrics`・`apex.findings`・`object.usage`・`git.hotspots` など行の provider                          | 1〜3 |
+| `DiffTree`         | 構造の差分の木（補助）                                                                                                                                                                                                                                                               | 差分の provider                                                                                                           | 3    |
 
 今ある部品の拡張:
 
 - `DataTable`: 列の書式（`bar`・`threshold`・`badge`）。メトリクスの表を新しい部品なしで見せるため。
-- `CodeFlowchart`: 到達できない箱を灰色に、ループの中の SOQL・DML への経路を強調、制御依存の分岐に印。
+- `CodeFlowchart`: 到達できない箱を灰色に、ループの中の SOQL・DML への経路を強調、制御依存の分岐に印。ループ・try を枠（elkjs の入れ子）で囲み、戻りの線を枠の外へ回す（8.5）。
+- `FlowDiagram`・`ObjectDiagram`・`EventFlow`: 自動配置を elkjs に移し、`EventFlow` はコンポーネントごとの枠、`ObjectDiagram` は項目の行を接続口（port）にして参照の線を項目の行から出す（8.5）。
+- `StatusSummary`: 件数の割合を `Chart`（円・積み上げ棒）でも見せる。
 - `Matrix`: テスト × 本体の対応にも使えるよう、行列のデータの形を一般にする。
 - `AutomationView`: 実行順の表示を `ExecutionOrder` に任せる。
 
 ### 8.3 新しい provider
 
-| provider                                          | 出力          | 部品                               | 段  |
-| ------------------------------------------------- | ------------- | ---------------------------------- | --- |
-| `apex.symbols`                                    | rows          | DataTable                          | 1   |
-| `apex.callGraph`・`apex.classDependencies`        | graph         | GraphView                          | 1   |
-| `apex.metrics`                                    | rows          | DataTable（bar・threshold）        | 1   |
-| `crossRef.fieldUsage`・`lwc.fieldUsage`           | matrix        | Matrix                             | 1   |
-| `lwc.componentTree`                               | graph         | GraphView                          | 1   |
-| `lwc.apexCalls`                                   | rows          | DataTable                          | 1   |
-| `lwc.callGraph`（モジュールをまたぐ呼び出し）     | graph         | GraphView                          | 1   |
-| `dependency.graph`（`GraphView` 用の形を足す）    | graph         | GraphView                          | 1   |
-| `dependency.cycles`                               | rows・graph   | DataTable・GraphView               | 1   |
-| `apex.variables`                                  | rows          | DataTable・CodeView・DataFlowGraph | 2   |
-| `apex.dynamicQueries`                             | rows          | DataTable・DataFlowGraph           | 2   |
-| `apex.findings`・`lwc.findings`                   | rows          | FindingsList                       | 2   |
-| `apex.testMap`                                    | matrix        | Matrix                             | 2   |
-| `apex.impact`（2 時点の解析の比較）               | rows          | DataTable                          | 2   |
-| `automation.executionOrder`                       | object        | ExecutionOrder                     | 2   |
-| `apex.slice`                                      | rows          | CodeView                           | 3   |
-| `architecture.layers`・`architecture.communities` | matrix・graph | DependencyMatrix・GraphView        | 3   |
-| `git.hotspots`・`git.coupling`                    | rows          | Treemap・ScatterChart・DataTable   | 3   |
+| provider                                          | 出力          | 部品                                   | 段  |
+| ------------------------------------------------- | ------------- | -------------------------------------- | --- |
+| `apex.symbols`                                    | rows          | DataTable                              | 1   |
+| `apex.callGraph`・`apex.classDependencies`        | graph         | GraphView                              | 1   |
+| `apex.metrics`                                    | rows          | DataTable（bar・threshold）・Chart     | 1   |
+| `crossRef.fieldUsage`・`lwc.fieldUsage`           | matrix        | Matrix                                 | 1   |
+| `lwc.componentTree`                               | graph         | GraphView                              | 1   |
+| `lwc.apexCalls`                                   | rows          | DataTable                              | 1   |
+| `lwc.callGraph`（モジュールをまたぐ呼び出し）     | graph         | GraphView                              | 1   |
+| `dependency.graph`（`GraphView` 用の形を足す）    | graph         | GraphView                              | 1   |
+| `dependency.cycles`                               | rows・graph   | DataTable・GraphView                   | 1   |
+| `apex.variables`                                  | rows          | DataTable・CodeView・DataFlowGraph     | 2   |
+| `apex.dynamicQueries`                             | rows          | DataTable・DataFlowGraph               | 2   |
+| `apex.findings`・`lwc.findings`                   | rows          | FindingsList                           | 2   |
+| `apex.testMap`                                    | matrix        | Matrix                                 | 2   |
+| `apex.impact`（2 時点の解析の比較）               | rows          | DataTable                              | 2   |
+| `automation.executionOrder`                       | object        | ExecutionOrder                         | 2   |
+| `apex.slice`                                      | rows          | CodeView                               | 3   |
+| `architecture.layers`・`architecture.communities` | matrix・graph | DependencyMatrix・GraphView            | 3   |
+| `git.hotspots`・`git.coupling`                    | rows          | Chart（ツリーマップ・散布）・DataTable | 3   |
 
 ### 8.4 雛形
 
@@ -387,34 +409,80 @@ CREATE INDEX node_parent ON node (unit_id, parent_id);
 | `automation_overview`（追加） | オブジェクトごとの実行順                               | 2    |
 | `lwc_overview`（追加）        | コンポーネントの親子の図、Apex の呼び出しの一覧        | 1    |
 
+### 8.5 図とチャートのライブラリ（elkjs・recharts）
+
+2026-11-27 に決めた。図の自動配置は dagre をやめて **elkjs**（Eclipse Layout Kernel の JS 版）にそろえ、チャートは **recharts** を使う。どちらも、できることを最大限使う前提で部品を作る。
+
+**elkjs で使うもの**（共通の配置の部品 `src/viewer/layout/elkLayout.ts` にまとめ、図の部品はそこを通す）
+
+| 機能                                                                                             | 使い道                                                                                                                                                                                                                     |
+| ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 配置のアルゴリズムの切り替え（`layered`・`mrtree`・`radial`・`force`・`stress`・`rectpacking`）  | `layered`: 呼び出し・依存・Flow・処理フロー（向きのある流れ）。`mrtree`: LWC の親子・木。`radial`: 1 つの単位を中心にした周り。`force` / `stress`: 全体の俯瞰。`rectpacking`: つながっていない小さなグラフをまとめて並べる |
+| 入れ子（compound nodes）と `hierarchyHandling: INCLUDE_CHILDREN`                                 | クラスの枠の中のメソッド、コンポーネントの枠（`EventFlow`）、ループ・try の枠（`CodeFlowchart`）、Flow のサブフロー。枠をまたぐ線も含めて 1 回で配置する                                                                   |
+| 線の引き方（`edgeRouting`: `ORTHOGONAL`・`SPLINES`・`POLYLINE`）                                 | 処理フロー・Flow は直角、依存のグラフは曲線。戻りの線（ループ）が箱をまたがない                                                                                                                                            |
+| 接続口（ports）と `portConstraints`                                                              | ER 図で項目の行から参照の線を出す、分岐の箱の真・偽の口を左右に固定する                                                                                                                                                    |
+| 層の指定（`partitioning`）・層の制約（`layerConstraint`: FIRST / LAST）                          | レイヤー（画面 → サービス → データ）の段を固定する（`architecture.layers`）。起点・終点の箱を端に置く                                                                                                                      |
+| 元の順を保つ（`considerModelOrder`）・交差の減らし方・ノードの置き方（`nodePlacement.strategy`） | ソースの順に近い並びで、線の交差を減らす                                                                                                                                                                                   |
+| ラベルの配置（`edgeLabels.placement`・`nodeLabels.placement`）                                   | 辺の種類（calls・uses・extends）と、分岐の条件をラベルに                                                                                                                                                                   |
+| 非同期の配置（Promise）と Web Worker                                                             | 大きいグラフで画面を止めない。配置の間は「配置中」を出す                                                                                                                                                                   |
+| 配置のオプションのまとめ（`layoutOptions` を部品の props から渡す）                              | 文書を書く人・AI が、向き・アルゴリズム・線の引き方を部品の props で選べる                                                                                                                                                 |
+
+**recharts で使うもの**（行のデータのチャートは 1 つの部品 `Chart` にし、種類と列の割り当てを props で選ぶ）
+
+| 種類                                                 | 使い道                                                                                         |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `BarChart`（積み上げ・横向き）                       | 指摘のルール・重さごとの件数、メトリクスの分布（ヒストグラム）、オブジェクトごとの操作の件数   |
+| `PieChart`・`RadialBarChart`                         | 状態（added・removed・changed）の割合（`StatusSummary`）、テストのある・ないの割合             |
+| `ScatterChart`（`ZAxis` で点の大きさ）               | 複雑度 × 行数 × 変更頻度（ホットスポット）、複雑度 × 呼び出しの数                              |
+| `Treemap`                                            | 単位の大きさ（文の数）と複雑度の色。種類・名前空間でまとめる                                   |
+| `RadarChart`                                         | クラスごとの品質の形（複雑度・大きさ・ループの中の SOQL・指摘の数・テスト）                    |
+| `Sankey`                                             | 種類から種類への依存の量（LWC → Apex → オブジェクト）、権限の流れ（権限セット → オブジェクト） |
+| `ComposedChart`・`ReferenceLine`・`Brush`・`Tooltip` | 閾値の線（複雑度 10 など）、多い行のズーム、値のツールチップ                                   |
+| `LineChart`・`AreaChart`                             | 2 時点より多い比較ができるようになったら（今は 2 時点だけ）、メトリクスの推移                  |
+
 ## 9. 決めること
 
 ### 型・走査
 
-- [ ] walker の責務の範囲: 収集だけにして「依存先の解決」を別の層にするか、解決・変換・値解析まで同じフォルダに置くか。動的クエリの復元をどちらに置くか。
+- [x] walker の責務の範囲: 収集だけにして「依存先の解決」を別の層にするか、解決・変換・値解析まで同じフォルダに置くか。動的クエリの復元をどちらに置くか。→ 今の形のまま、解決・値の解析・動的クエリの復元も `processor/Apex/semantic/` にまとめる（2026-11-27 決定）
 - [x] 収集結果と未解決の参照の出力の型（スキーマ）。既存の依存グラフとのつなぎ方と一緒に決める。→ 参照ごとに解決の状態（`ApexReferenceResolution`）を持ち、依存関係には resolved・standard・byName だけを入れる（2.2）
-- [ ] `MetadataNodeJson`（メタデータの全ノードの共用体）が TS2590 にならない作り方。
-- [ ] LWC の型の解決の置き場所の名前（`processor/Lwc/typeReferences.ts` か `typeResolution.ts`）。
+- [x] `MetadataNodeJson`（メタデータの全ノードの共用体）が TS2590 にならない作り方。→ 必要になるまで作らない（2026-11-27 決定）
+- [x] LWC の型の解決の置き場所の名前（`processor/Lwc/typeReferences.ts` か `typeResolution.ts`）。→ `typeResolution.ts`（作るときに）（2026-11-27 決定）
 
 ### 解析の範囲
 
-- [ ] 動的クエリの部分的な復元: 一部が分からなくても「安全に確定できる参照」だけを解析するか、クエリ全体が確定できるときだけ解析するか。前者なら「安全に確定できる」条件も決める。
-- [ ] 復元した文字列の上の位置と、元の Apex の位置の対応のしかた。
-- [ ] 標準メソッドの戻り値: 型・クラスの単位までしか照合しない方針のまま、よく使うもの（`Database.query`・`Schema` など、SObject・List を返す主なメソッド）だけ戻り値の型の表を持つか。
+- [x] 動的クエリの部分的な復元: 一部が分からなくても「安全に確定できる参照」だけを解析するか、クエリ全体が確定できるときだけ解析するか。前者なら「安全に確定できる」条件も決める。→ 確実な部分だけ取り出す（2026-11-27 決定）。確実の条件: いちばん外の FROM のあとの名前が前後とも分かる文字で区切られているときだけオブジェクト、いちばん外の SELECT から FROM までに分からない部分がないときだけ項目。WHERE などの項目とサブクエリは取らない
+- [x] 復元した文字列の上の位置と、元の Apex の位置の対応のしかた。→ 元の呼び出し（Database.query(...)）の位置にまとめる（2026-11-27 決定）
+- [x] 標準メソッドの戻り値: 型・クラスの単位までしか照合しない方針のまま、よく使うもの（`Database.query`・`Schema` など、SObject・List を返す主なメソッド）だけ戻り値の型の表を持つか。→ 持つ（動的 SOQL の結果・DML の対象の型の精度を上げる）（2026-11-27 決定）
 - [x] 文字列の引数をメタデータ参照として扱う API の一覧（Label・Flow・カスタムメタデータなど）の範囲。→ `semantic/namedReferences.ts` の一覧（2.2）。値の追跡が要るものは 10 章 P4 の「文字列を経由するメタデータ参照」
-- [ ] 標準オブジェクト・項目をどの情報源で確かめるか。
-- [ ] `apex.findings` のルールの選別: 候補（10 章の Todo）のうち、「メタデータとまたがるルールに絞る」方針に合うものを残す。PMD との分担。
-- [ ] findings の有効・無効の切り替えの場所: 設定ファイルか、provider の引数か、両方か。
-- [ ] findings と動的クエリの復元結果を、SQLite に保存するか（symbol・reference・metric は保存すると決めた）。
+- [x] 標準オブジェクト・項目をどの情報源で確かめるか。→ 公式資料（Salesforce のリリースの更新のスキルで集める）を正にし、組織の設定・権限で変わる部分は分けて扱う（2026-11-27 決定）
+- [x] `apex.findings` のルールの選別: 候補（10 章の Todo）のうち、「メタデータとまたがるルールに絞る」方針に合うものを残す。PMD との分担。→ メタデータとまたがるルールと、この解析でしか分からないルール（呼び出しの先までのループの中の操作・CRUD/FLS・共有・動的 SOQL・届かない文など）に絞る。一般のコードの品質のルールは PMD に任せる。最初の表は `docs/plan-details.md` D-2（2026-11-27 決定）
+- [x] findings の有効・無効の切り替えの場所: 設定ファイルか、provider の引数か、両方か。→ 両方。設定ファイルでプロジェクトの既定、provider の引数 `rules` で文書ごとに上書き。設定ファイル（B-6）ができるまでは引数だけ（2026-11-27 決定）
+- [x] findings と動的クエリの復元結果を、SQLite に保存するか（symbol・reference・metric は保存すると決めた）。→ 今は保存しない（毎回、解析の結果から作る）。NPSP の計測（E-1）で遅いと分かったら `finding` 表を足す（2026-11-27 決定）
 
 ### 保存・部品
 
-- [ ] P3 で `Repository` を遅延読み込みにする範囲。MCP だけにするか、CLI のレポートの作成も含めるか。
-- [ ] `reference` 表に移したあと、`derived` の BLOB を消すか、グラフの付随情報のために残すか。
-- [ ] `GraphView` のレイアウト: 今の dagre で足りるか、`elkjs` を入れるか。
-- [ ] `Treemap`・`ScatterChart` を自前の SVG で描くか、`recharts` を入れるか。
-- [ ] `graph`（ノードと線）を、provider に共通の出力の種類として足すか。今の種類は rows・matrix・diagram・object。
-- [ ] 旧 `viewer/types/`（`ObjectView`・`DependencyView`）は今のレポートの viewer から使われていない。消すか。
+- [ ] P3 で `Repository` を遅延読み込みにする範囲。MCP だけにするか、CLI のレポートの作成も含めるか。→ NPSP の計測（E-1）のあとに決める（見込み: 効くのは主に MCP）
+- [ ] `reference` 表に移したあと、`derived` の BLOB を消すか、グラフの付随情報のために残すか。→ NPSP の計測（E-1）のあとに決める
+- [x] `GraphView` のレイアウト: 今の dagre で足りるか、`elkjs` を入れるか。→ **elkjs**（2026-11-27 決定）。dagre をやめ、今の図（`FlowDiagram`・`CodeFlowchart`・`EventFlow`・`ObjectDiagram`）も elkjs に移す（8.5）
+- [x] `Treemap`・`ScatterChart` を自前の SVG で描くか、`recharts` を入れるか。→ **recharts**（2026-11-27 決定）。Treemap・散布図だけでなく、行のデータのチャートを 1 つの部品 `Chart` にまとめる（8.5）
+- [x] `graph`（ノードと線）を、provider に共通の出力の種類として足すか。今の種類は rows・matrix・diagram・object。→ **足す**（2026-11-27 決定）。`GraphView` に渡す provider が 5 つ以上あり、elkjs の入れ子・接続口も同じ形で渡すため（`docs/plan-details.md` G-1）
+- [x] 旧 `viewer/types/`（`ObjectView`・`DependencyView`）は今のレポートの viewer から使われていない。消すか。→ 消す（2026-11-27 決定）。P5（F）で古い処理と一緒に消す
+- [x] 表の Excel（.xlsx）の書き出しのために依存（`exceljs` など）を足すか。今は CSV（BOM つき。Excel で開ける）だけ（2026-11-27 に追加）。→ 当面は CSV のまま。必要になったら `exceljs` を入れる（依存なしの OOXML の zip は手間が大きいのでやめる）（2026-11-27 決定）
+
+### 2026-11-27 に推奨どおり決めたこと（9 章の外で出たもの）
+
+- [x] Word（.docx）の書き出し: 依存を足さず、Markdown の書き出しだけにする（Word へはほかの道具で変える）。`docs/plan-details.md` B-8
+- [x] YAML の文書: 急がない。要望があれば `yaml` を入れて対応する。それまでは JSON だけ（B-10）
+- [x] 利用者の雛形の置き場所: `<保存先>/templates/*.json` を既定にし、設定ファイルの `templates` で上書きできる（B-5）
+- [x] Apex・LWC・Flow の解析の揃え: Flow のループの中の操作とメトリクスから作る。横断の `code.*` は 3 つの provider がそろってから（`docs/report-inventory.md` 6.3、`docs/plan-details.md` I）
+- [x] LWC の CFG: 「C の終わりに」の確かめの結果を見てから作るかを決める。それまでは、LWC のループの中の呼び出し・`then` の経路は今の深さの文脈の近似で出す
+
+### まだ決めていないこと
+
+- [ ] npm で公開するか（社内だけか）。公開するなら `docs/plan-details.md` B-7 を進める（2026-11-27: **保留**。B-7 は公開が決まるまで進めない）
+- [ ] ライセンス（MIT・Apache-2.0・ISC など）。`package.json` は今 `ISC`、`LICENSE` のファイルはない。公開するなら必須（2026-11-27: 公開するかと一緒に**保留**）
+- [x] `docs/report-inventory.md` 6.4・6.5 の候補の扱い。→ **すべて含める**（2026-11-27 決定）。10 章の項目として残し、優先は表の仮の優先のまま進める
 
 ## 10. やること（Todo）
 
@@ -425,16 +493,16 @@ CREATE INDEX node_parent ON node (unit_id, parent_id);
 
 - [ ] `measure.ts` で NPSP の基準を取る（最初の読み込み、起動し直した読み込み、メモリの最大、DB の大きさ、node 表の行の数、`crossRef.labels` の 1 回目、`get_dependents`）。ビルド版・8 スレッド・3 回の中央値で、12.2 に書く。このマシンには NPSP のリポジトリがないので、取得してから測る（サンプルの基準は 12.1 に記録済み）（高）
 - [ ] CI: GitHub で最初の実行を確かめる（Windows・Ubuntu × Node 24・26。`npm ci`・`npm audit`・Dependabot の設定は済み）（中）
-- [ ] 未追跡の一時ファイル `test/_count_nodes.tmp.ts` を消すか決める（git の履歴にないので、消すと戻せない）（低）
+- [x] 未追跡の一時ファイル `test/_count_nodes.tmp.ts` を消すか決める（git の履歴にないので、消すと戻せない）（低）（2026-11-27。消した。実際には前回のコミットに入っていたので、git から戻せる。同じことは保存の置き場のゴールデンと unknowns.ts で分かる）
 
 ### P1: JSON の型を `JsonType` にそろえる
 
-- [ ] LWC の getter と setter をまとめたプロパティ（`lwcProperty`）のキーを、両方のアクセサーを含む中身から作る。今は最初のアクセサーのキー（サンプルにないので網羅のテストでは見つからない）（低）
-- [ ] SOSL・項目の一覧の、関数のあとの別名（`TOLABEL(x) alias`）を JSON に出す（`types/apex/query/sosl.ts`・`select.ts` と `diff/query/sosl.ts`・`select.ts` に `alias` を通す）（低）
-- [ ] Apex の Diff の型の残りを直す: `triggerCase` に項目の差分を持たせる（`Apex/diff/unitBody.ts`）、`notSet` の変化を共通の差分にそろえる（`Apex/diff/modifier.ts`）（低）
-- [ ] オブジェクトの子のうち表で書けるもの（入力規則・Web リンク・共有の理由など）を `RecordSpec` に移す（`types/metadata/recordTypes.ts` にキーと属性を書く）（中）
+- [x] LWC の getter と setter をまとめたプロパティ（`lwcProperty`）のキーを、両方のアクセサーを含む中身から作る。今は最初のアクセサーのキー（サンプルにないので網羅のテストでは見つからない）（低）（2026-11-27。2 つ目のアクセサーをまとめるときに、両方の objectKey から作り直す（LwcJsonContext.combinedKeys）。LWC の JSON の版を 5 に上げた。test/converter/lwc-property-key.test.ts）
+- [x] SOSL・項目の一覧の、関数のあとの別名（`TOLABEL(x) alias`）を JSON に出す（`types/apex/query/sosl.ts`・`select.ts` と `diff/query/sosl.ts`・`select.ts` に `alias` を通す）（低）（2026-11-27。SELECT はすでに alias を持っていた。SOSL の soslField に alias を足し、Diff にも通した。Apex の JSON の版を 10 に上げた。サンプルにないので test/converter/sosl-alias.test.ts で確かめる）
+- [x] Apex の Diff の型の残りを直す: `triggerCase` に項目の差分を持たせる（`Apex/diff/unitBody.ts`）、`notSet` の変化を共通の差分にそろえる（`Apex/diff/modifier.ts`）（低）（2026-11-27。triggerCase の差分に actionType・timing の項目の差分を持たせ、notSet はすでにあった共通の NotSetBlockJsonDiff（makeNodeDiff）で作る形にした。サンプルの Diff は変わらない）
+- [x] オブジェクトの子のうち表で書けるもの（入力規則・Web リンク・共有の理由など）を `RecordSpec` に移す（`types/metadata/recordTypes.ts` にキーと属性を書く）（中）（2026-11-27。RecordSpec（makeMetadataJson で作る）に載せると JSON のキーが変わるので、表（kind と属性）から子の JSON を作る schemaChildJsonOf（types/commons/xmlJson.ts）を足し、名前と属性だけで書ける入力規則・Web リンク・共有の理由をそれで作る形にした。列・条件を別に読むリストビューなどは専用の関数のまま。出力は変わらない）
 - [ ] IR の型の後回しの 5 件（引数の rest、識別子の 3 分け、Flow と TS の型注釈、`.js` と `.ts` のノードの型、タプルの型など）を、その部分を触るときに `lwc_IR` のビジターと `types/lwc` の型を対で直す（低）
-- [ ] Apex のサンプルの全 Diff を、実行時の型（zod）で検査するテストを足す（中〜低）
+- [x] Apex のサンプルの全 Diff を、実行時の型（zod）で検査するテストを足す（中〜低）（2026-11-27。zod のスキーマは書かず、差分のノードが status ごとの決まった形（unchanged・added・removed は value、moved は value と match、changed は fields・before / after・子の差分を同じ段に並べる形のどれか、並びの index の形）を持つかを、サンプルの全 Diff で確かめる（test/processor/diff-samples.test.ts）。changed の形が 3 通りあるのは、P2 の「Diff の共通部品」でそろえる候補）
 
 ### P2: 型の正確な走査の土台
 
@@ -478,15 +546,15 @@ Apex の walker（ファイルごと）:
 `unknown` を型に置き換える（P1・P2 と一緒に。2026-11-20 時点で引数 319・型属性 146 か所。直す前に数え直す）:
 
 - [x] `unknown` の一覧を数え直すスクリプトを置き、P1・P2 のあとにも数え直せるようにする（中）（2026-11-26。`docs/examples/analysis/scripts/unknowns.ts`。@babel/parser で読み、置いた場所（引数・属性・戻り値・変数・キャスト・型の別名・型引数）と、そのままか型の中かで数える。2026-11-26 時点で src の 575 か所: 引数 261（そのまま 213）・属性 88（69）・キャスト 126・戻り値 48・型の別名 30・変数 16・ほか 6）
-- [ ] 解析の走査: `processor/Apex/walker.ts`・`calls.ts`・`commons.ts`、`processor/dependency/apex.ts`・`units.ts`（`getUnitDependencies(result: unknown)`）・`formula.ts`、`processor/Lwc/walker.ts`・`calls.ts`・`analysis.ts`、`processor/Metadata/walker.ts`・`refs.ts`・`flowRefs.ts`・`labelAnalysis.ts`・`markup.ts`・`references.ts`・`permissionAnalysis.ts`（P2 の `walk` に移すか、P5 で消す）（高）（2026-11-26 途中: JSON を調べる関数（`isRecord`・`str`・`rows`・`strings`）を `processor/commons/json.ts` にまとめ、`getUnitDependencies` の入力を `IdParseResult`、ノードを鍵にする表を `Map<object, …>` にした。src 全体で 575 → 556 か所。残りは JSON をそのまま辿る関数（`walk(node: unknown)` など）で、`walkJson` に移すときに直す）
-- [ ] Diff の共通部品: `processor/commons/diff`（`gumtree/tree.ts` の `GumTreeNode.raw` など、`typed.ts`、`commons.ts`、`present.ts`、`change.ts`、`list.ts`、`unit.ts`、`formula.ts`）と、言語ごとの Diff（`Apex/diff/statement.ts`・`unitBody.ts`・`query/soqlFunction.ts`、`Lwc/diff/body.ts`・`template.ts`、`Metadata/diff/markup.ts`・`record.ts`）。P1 のあとノードの共用体で型を付ける（中）
+- [x] 解析の走査: `processor/Apex/walker.ts`・`calls.ts`・`commons.ts`、`processor/dependency/apex.ts`・`units.ts`（`getUnitDependencies(result: unknown)`）・`formula.ts`、`processor/Lwc/walker.ts`・`calls.ts`・`analysis.ts`、`processor/Metadata/walker.ts`・`refs.ts`・`flowRefs.ts`・`labelAnalysis.ts`・`markup.ts`・`references.ts`・`permissionAnalysis.ts`（P2 の `walk` に移すか、P5 で消す）（高）（2026-11-26 途中: JSON を調べる関数（`isRecord`・`str`・`rows`・`strings`）を `processor/commons/json.ts` にまとめ、`getUnitDependencies` の入力を `IdParseResult`、ノードを鍵にする表を `Map<object, …>` にした。src 全体で 575 → 556 か所。残りは JSON をそのまま辿る関数（`walk(node: unknown)` など）で、`walkJson` に移すときに直す。2026-11-27: LWC の参照の取り出し（`dependency/units.ts`）・LWC のラベルの使用箇所（`Metadata/labelAnalysis.ts` の手書きの `walkJsonNodes` は消した）・`lwc.eventFlow`（`report/lwcEventFlow.ts`）を共通の `walkJson` で辿る形にした。ノードの並びを辿る根は `commons/node.ts` の `jsonNodesIn`。サンプルの依存関係・保存の置き場のゴールデンは変わらない。残るのは、P5 で消す古い Apex の walker（`Apex/walker.ts`・`calls.ts`・`commons.ts`）と、sourceKeys のない位置つきの数式の木も辿る `dependency/formula.ts` の `namesOf`・メタデータの値の木を辿る `report/metadata.ts` で、そのまま残す）
+- [x] Diff の共通部品: `processor/commons/diff`（`gumtree/tree.ts` の `GumTreeNode.raw` など、`typed.ts`、`commons.ts`、`present.ts`、`change.ts`、`list.ts`、`unit.ts`、`formula.ts`）と、言語ごとの Diff（`Apex/diff/statement.ts`・`unitBody.ts`・`query/soqlFunction.ts`、`Lwc/diff/body.ts`・`template.ts`、`Metadata/diff/markup.ts`・`record.ts`）。P1 のあとノードの共用体で型を付ける（中）（2026-11-27 メモ: changed の差分が、fields に入れる形と、kind のない入れ物（FieldVariantDiff・WHERE の条件の並びなど）で子の差分を同じ段に並べる形の 2 通りある。そろえるときは viewer・レポートの読み手も直す）（2026-11-27。changed の差分を fields・before / after の 2 通りにそろえた（平たい形だった FieldVariantDiff・LogicalConditionJsonDiff・FieldTermDiff を fields に入れる形に）。要らなかった as unknown as の 23 か所を外した。残る unknown は、どの値でも比べる関数・木の元の値（GumTreeNode.raw）・kind のない入れ物で、理由のコメントを付けた。src 全体で 525 → 501 か所）
 - [x] 解析の結果の `base: unknown`: `UnitResult.base`、`IdParseResult.result.base`、`report/commons.ts`、`report/permission.ts`、`unit/processor.ts` の `objectsOf`・`translationsOf`・`objectInfosOf`。単位の種類から型を引く（中）（2026-11-26: 種類 → 中身の型の表 `parser/unitBase.ts`（`UnitBaseJsonMap`・`unitBaseOf`・`isUnitOfType`）を作り、`report/commons.ts` の `readable`（型を種類から引く。呼び出し側の `readable<型>` 13 か所を外した）・`report/crossRef.ts`・`report/apex.ts`・`unit/processor.ts` の `objectsOf`・`translationsOf`・`objectInfosOf`・メタデータの解析のキャストを置き換えた。`base` のキャストは 21 → 15 か所。Apex の Diff（`Apex/diff/unitBody.ts`）はファイルの種類 → 中身の型の表 `ApexContentJsonMap` で、呼び出し側の型を確かめる。`units.ts` に残る `base as Json` は JSON をそのまま辿るためのもので、「解析の走査」で `walkJson` に移すときに直す）
 - [x] レポートの解析: `report/lwcEventFlow.ts`、`report/metadata.ts`、`report/members.ts`、`report/lwc.ts` の `keysOf`、`report/commons.ts`、`apexFlow.ts`・`lwcFlow.ts` の `sourceTextsOf`、`report/code.ts` の `compareInterfaces`（中）（2026-11-26。`compareInterfaces` の `sourceKeys` を `ConvertKeys`、`members.ts` のオブジェクトの属性を `keyof CustomObjectJson` で引く、`apexFlow.ts` の `as unknown as ClassDeclarationJson` を `kind` で絞る形にし、各ファイルの `record`・`isRecord`・`text` を `processor/commons/json.ts`（`recordOf`）に寄せた。`readable` は種類から型を引く（`parser/unitBase.ts`）。残る `unknown` は、メタデータの値の木をそのまま辿る関数（`propertiesOf`・`leafOf`）・位置のキーの型ガード（`keysOf`）・ソースと `-meta.xml` の位置が混ざった配列を読む `sourceTextsOf` で、型ガードの入力として残す）
 - [x] 型の層: `types/metadata/criteria.ts`（`Record<string, unknown>` の交差）、`types/metadata/formula.ts`（インデックスシグネチャ）、`types/apex/commons/source.ts`、`types/lwc/commons.ts` の `unwrapExpression`（中）（2026-11-26。`formulaTextOf` を `Record<string, unknown>` とキャストで読むのをやめ、数式の JSON の型 `FxJson` で `kind` ごとに絞る形にした（位置つきの木 `FxSyntax` も形は同じ）。残る `unknown` は、値の木のノード `KindedTreeJson`（要素名がそのままプロパティ）・組み立て中の `FxSyntax`・JSON を辿る `gatherSourceKeys`・Babel のノードを確かめる `unwrapExpression` で、型ガードの入力として残す）
 - [x] ビルダー・viewer の行と状態の型: `viewer/report/components/rowsTable.tsx` の `Row`、`builder/reportBuilder.ts` の `filterRows`・`fieldOf`・`sameValue`・`SourceResult.value`、`builder/sources.ts` の `attachSources`、`report/document.ts` の `ReportCondition`、`builder/expand.ts` の `Scope.row`、`builder/pages.ts` の `State.data`、2 か所に別々に書かれた `EmbeddedReport.spec.state`（`reportBuilder.ts`・`viewer/report/view.tsx`）と 3 か所の `$state` の判定（中）（2026-11-26。2 か所に書かれた `EmbeddedReport` と 3 か所の `$state` の判定を `src/report/embedding.ts`（`EmbeddedReport`・`stateRefOf`・`dataNameOf`）に、2 か所ずつの行の値のたどり方と比べ方を `src/builder/values.ts`（`valueAtPath`・`sameJsonValue`）にまとめた。行・state・where の値は provider の出力と文書に書いた値で、形が決まらないので `unknown` のまま扱う（provider ごとの形は `provider の引数と viewer の部品` の項目で、registry と schemas から引く））
-- [ ] provider の引数と viewer の部品: `Source`・`DataSource` の `args`・`where`（registry と schemas の引数の型から引く）、`MatrixView.data`、`AnyComponent.props`、`details.tsx`・`status.tsx` の `status`、`builder/inputs.ts` の `compare`・`diff`、`report/llmCatalog.ts` の `ProviderEntry.example`（低）
-- [ ] テスト: JSON・Diff の形を手書きしているテスト（`metadata-bc`・`metadata-folders`・`gumtree-diff`・`lwc-statement`・`worker`・`test/ir/golden.ts`）を、公開している JSON・Diff の型に置き換える（低）
-- [ ] そのままでよい `unknown`（`catch`、外部ライブラリの例外の型ガード、`isRecord`・`hash`・`sortKeys` などの汎用の関数、型ガードの入力、SQLite の行、zod で検証する provider の引数、文書の入口、JSON Schema、MCP の結果、テストの補助、偽の MCP サーバー、サンプルのリポジトリの LWC）には、理由のコメントを付けて残す（低）
+- [x] provider の引数と viewer の部品: `Source`・`DataSource` の `args`・`where`（registry と schemas の引数の型から引く）、`MatrixView.data`、`AnyComponent.props`、`details.tsx`・`status.tsx` の `status`、`builder/inputs.ts` の `compare`・`diff`、`report/llmCatalog.ts` の `ProviderEntry.example`（低）（2026-11-27。registry に provider ごとの引数の型 `ReportProviderArgs` と、provider と引数を組にした `ReportProviderSource`・`providerSource` を足し、雛形（`templates.ts`・`domainTemplates.ts`・`detailTemplates.ts`）のデータの宣言の `args` を provider ごとに確かめる（引数の名前・型の誤りが型チェックで分かる）。`comparedInputOf` の `compare` は `CompareRange`。`where`・`MatrixView.data`・`AnyComponent.props`・`status`・`ProviderEntry.example` は provider の行や部品の props で形が決まらないので `unknown` のまま）
+- [x] テスト: JSON・Diff の形を手書きしているテスト（`metadata-bc`・`metadata-folders`・`gumtree-diff`・`lwc-statement`・`worker`・`test/ir/golden.ts`）を、公開している JSON・Diff の型に置き換える（低）（2026-11-27。worker のテストは unitBaseOf、Profile の差分のテストは差分の型のまま読む changedFieldsOf（test/helpers/diff.ts）にした。型のまま読むと、一覧の差分が「一覧ごと added / removed」もありうることが分かり、テストで確かめる形にした。種類の名前で差分の関数を選ぶ表（METADATA_UNIT_DIFFS。中身は種類ごとに違う）を使うテスト・Flow の要素の差分を一般の形で読む所・JSON の形を比べる補助（lwcShape・IR のゴールデン）は、テストの補助として残す）
+- [x] そのままでよい `unknown`（`catch`、外部ライブラリの例外の型ガード、`isRecord`・`hash`・`sortKeys` などの汎用の関数、型ガードの入力、SQLite の行、zod で検証する provider の引数、文書の入口、JSON Schema、MCP の結果、テストの補助、偽の MCP サーバー、サンプルのリポジトリの LWC）には、理由のコメントを付けて残す（低）（2026-11-27。1 か所ずつではなく、種類ごとの置き場所に理由を書いた: 型ガードの入力 `processor/commons/json.ts`・`types/commons/utils.ts`、SQLite の行 `unit/storeSqlite.ts`、文書の値 `report/document.ts`、JSON Schema `report/llmCatalog.ts`、MCP のツールの結果 `mcp/results.ts`（3 か所に書かれた `text` をまとめた）。種類の一覧は `docs/examples/analysis/scripts/unknowns.ts` の説明。使われていない `types/commons/ir.ts` の `isRecord` は消した）
 
 ### P3: SQLite を使い切る
 
@@ -530,25 +598,25 @@ Apex の walker（ファイルごと）:
 
 実行本体の中のデータフロー（この順に進める）:
 
-- [ ] **CFG（値解析用）**: `StatementJson[]` と子の式を評価の順に評価点へ変換し、通常・真偽・ループ・例外・終了の辺を付ける。表示用の処理フロー（複数の文を 1 つの箱にまとめている）とは分け、評価点と元の位置を持つ。三項、短絡、`for` の更新式、`finally` を含む例で確かめる（高）
-- [ ] **スコープと値の追跡（直列）**: `Integer old = x++;` で、読み取り時の古い値と更新後の `x` を区別する。複数の宣言、引数、名前の衝突、ブロックを抜けるときを確かめる（高）
-    - [ ] スコープへの登録: 引数は本体の入口で登録する。`for` の初期化、拡張 `for` の反復変数、`catch` の例外変数、型付きの `when` の変数は、それぞれのスコープに登録する。setter には、プロパティの型を持つ暗黙の引数 `value` を登録する
-    - [ ] 式の評価: 初期化式・式文・条件・呼び出しの引数・`return` などで、同じ評価の処理を使う。式の結果と評価後の状態の両方を返す。`=` は書き込み、`+=`・`++` は古い値も読む。`x++` は更新前、`++x` は更新後の値を結果にする
-    - [ ] 例: `final Integer count = flag ? 1 : 0;` で、`flag` が分からなければ `unknown` にし、宣言の位置と初期化式から `1`・`0` の由来をたどれる
-- [ ] **分岐と終了**: 三項・短絡・`if / else` を評価する。合流で、すべての経路の定数が一致すれば値を保ち、違う・一部が分からなければ `unknown` にする。代入元の集合は両方の経路から残す。片方が `return` したら、残った経路の値を使う（高）
+- [x] **CFG（値解析用）**: `StatementJson[]` と子の式を評価の順に評価点へ変換し、通常・真偽・ループ・例外・終了の辺を付ける。表示用の処理フロー（複数の文を 1 つの箱にまとめている）とは分け、評価点と元の位置を持つ。三項、短絡、`for` の更新式、`finally` を含む例で確かめる（高）（2026-11-27。semantic/cfg.ts の apexCfgOf。評価点は文・条件・ループの頭・catch・finally・式の分岐の合流（短絡・三項）。辺は normal・true・false・loopBack・exception・return・break・continue・case。例外は try の中の文と条件から catch へ、throw は受け手へ（なければ出口へ）。finally は入ってくる経路をまとめ、出たあとは入ってきた経路の先すべてへ進む近似。break・continue は finally を通さない。reachableApexCfgNodes で届かない評価点が分かる。test/processor/apex-semantic-cfg.test.ts）
+- [x] **スコープと値の追跡（直列）**: `Integer old = x++;` で、読み取り時の古い値と更新後の `x` を区別する。複数の宣言、引数、名前の衝突、ブロックを抜けるときを確かめる（高）（2026-11-27。semantic/dataflow.ts の apexDataflowOf。statement.ts の宣言・定義・読みを CFG の評価点に結び、x++ は更新前・++x は更新後の値。test/processor/apex-semantic-dataflow.test.ts）
+    - [x] スコープへの登録: 引数は本体の入口で登録する。`for` の初期化、拡張 `for` の反復変数、`catch` の例外変数、型付きの `when` の変数は、それぞれのスコープに登録する。setter には、プロパティの型を持つ暗黙の引数 `value` を登録する（statement.ts の宣言で済み。setter の暗黙の value は、変数でなく implicit の名前として unknown）
+    - [x] 式の評価: 初期化式・式文・条件・呼び出しの引数・`return` などで、同じ評価の処理を使う。式の結果と評価後の状態の両方を返す。`=` は書き込み、`+=`・`++` は古い値も読む。`x++` は更新前、`++x` は更新後の値を結果にする（評価の処理は 1 つ（valueOfExpression）。状態は「評価点ごとの到達定義」として持ち、式が状態を返す形にはしなかった）
+    - [x] 例: `final Integer count = flag ? 1 : 0;` で、`flag` が分からなければ `unknown` にし、宣言の位置と初期化式から `1`・`0` の由来をたどれる（unknown:branches。届く定義は宣言の初期値）
+- [x] **分岐と終了**: 三項・短絡・`if / else` を評価する。合流で、すべての経路の定数が一致すれば値を保ち、違う・一部が分からなければ `unknown` にする。代入元の集合は両方の経路から残す。片方が `return` したら、残った経路の値を使う（高）（2026-11-27。合流は和集合、すべての経路で同じ定数なら定数。片方が return したら残りの経路の値）
 - [ ] **呼び出し・メンバー・標準型と依存参照の解決**: `this.x` と同じ名前のローカル変数、クラスと標準 API の名前の衝突、呼び出しのチェーン、解決できない名前を確かめる（高）
 - [ ] **クエリ・DML と値の追跡をつなぐ**（高）
     - [x] 静的クエリ: `FROM`・項目・関係・バインド式と、SOSL の `RETURNING` を集める。子サブクエリは、メタデータで子リレーションを引けるときに実オブジェクトへ解決する（`semantic/query.ts`。子サブクエリはグラフが子リレーションから実オブジェクトに解決する）
     - [x] DML: 文と `Database` の呼び出しを同じ操作として表し、対象の型と位置を持つ（`semantic/facts.ts` の DML の事実。via で文と Database のメソッドを分ける）
-    - [ ] `Database.query(q)` で確定した文字列から対象を取り出し、分からない文字列なら元の引数と位置を残す
-- [ ] **動的 SOQL・SOSL の復元**: 最初の段は、文字列のリテラル、同じメソッドの中で値が確定するローカル変数、それらの連結。復元した文字列を今のパーサーにかけ、静的クエリと同じ取り出しに渡す。復元した文字列の位置と元の Apex の位置を区別する。分岐・再代入を含む広いデータフローは、定数伝播ができてから広げる（調整）（高）
-- [ ] **文字列を経由するメタデータ参照**: `Type.forName`、`Label.get`、`Schema.getGlobalDescribe().get('X')`・`describeSObjects`、`rec.get('Field__c')` / `put`、変数で渡した `FeatureManagement.checkPermission` を、確定した文字列で今の処理に渡す（調整: 優先度を上げた）（高）
-- [ ] **ループと例外の経路**: `return`・`throw` を通常の後続の文から分ける。`break`・`continue` を対象のループにつなぐ。ループの戻りの辺では、状態が収束するまで評価する。代入の ID はソースの上の場所で固定する。`try` の例外の経路と `finally` へのつながりを別に確かめる。型付きの `when` のスコープを確かめる。通常の経路と例外の経路の書き込みを区別する（中）
-- [ ] **到達定義・定数伝播の実装**（高）
-    - [ ] 評価点ごとの読み取り先・書き込み先を宣言の ID に結び付ける（`x += y`・`x++` は読み取りと書き込みの両方。代入の右辺と入れ子の呼び出しも評価する）
-    - [ ] 前向きの解析: 代入で到達定義を更新し、合流で和集合を取る。入力は `semantic/statement.ts` の定義（`ApexDefinition`）と読み（`ApexVariableAccess`）。今の `definitionCandidatesOf` は分岐を考えない候補なので、CFG ができたら置き換える。到達できない地点・値が分からない地点・`null` と分かっている地点を区別する
-    - [ ] 状態が変わったノードの隣だけを評価し直し、ループは収束まで回す。最初は代入の場所の ID の有限集合と、`定数 / unknown` の値で始める
-    - [ ] 解析できない呼び出しは、戻り値と影響を受けうるメンバーを保守的に扱い、理由と位置を返す
+    - [x] `Database.query(q)` で確定した文字列から対象を取り出し、分からない文字列なら元の引数と位置を残す（2026-11-27。上と同じ）
+- [x] **動的 SOQL・SOSL の復元**: 最初の段は、文字列のリテラル、同じメソッドの中で値が確定するローカル変数、それらの連結。復元した文字列を今のパーサーにかけ、静的クエリと同じ取り出しに渡す。復元した文字列の位置と元の Apex の位置を区別する。分岐・再代入を含む広いデータフローは、定数伝播ができてから広げる（調整）（高）（2026-11-27。semantic/dynamicQuery.ts の apexDynamicQueriesOf。値の解析の文字列の形（dataflow.ts の segmentsOf。+ と += の連結をたどる）から、確実な部分だけ取り出す（いちばん外の FROM の、前後とも区切られた名前と、穴のない SELECT の項目）。位置は元の呼び出し。依存関係（via soql.dynamic）・事実（restoration・fields）・apex.dataAccess に入れた。SOSL は復元しない。test/processor/apex-semantic-dynamic-query.test.ts）
+- [x] **文字列を経由するメタデータ参照**: `Type.forName`、`Label.get`、`Schema.getGlobalDescribe().get('X')`・`describeSObjects`、`rec.get('Field__c')` / `put`、変数で渡した `FeatureManagement.checkPermission` を、確定した文字列で今の処理に渡す（調整: 優先度を上げた）（高）（2026-11-27。namedReferences.ts の文字列の引数を、リテラルか値の解析ですべて確定した変数・連結・括弧にした（一部でも分からなければ参照にしない）。Type.forName・Label.get・FeatureManagement.checkPermission・Flow.Interview.createInterview・PageReference.forResource・カスタムメタデータの getInstance がこれで変数を受ける。Schema.getGlobalDescribe().get('X') はオブジェクト、型の決まったオブジェクトの rec.get / put('F') は項目の読み・書き（汎用の SObject は取らない）。test/processor/apex-semantic-string-refs.test.ts）
+- [x] **ループと例外の経路**: `return`・`throw` を通常の後続の文から分ける。`break`・`continue` を対象のループにつなぐ。ループの戻りの辺では、状態が収束するまで評価する。代入の ID はソースの上の場所で固定する。`try` の例外の経路と `finally` へのつながりを別に確かめる。型付きの `when` のスコープを確かめる。通常の経路と例外の経路の書き込みを区別する（中）（2026-11-27。CFG と到達定義で済み。ループは収束まで回す。例外の辺は評価点の前と後の両方の定義を流す（通常の経路と例外の経路の書き込みは区別せず、安全側））
+- [x] **到達定義・定数伝播の実装**（高）（2026-11-27。apexDataflowOf の reachingDefinitions・valueOf）
+    - [x] 評価点ごとの読み取り先・書き込み先を宣言の ID に結び付ける（`x += y`・`x++` は読み取りと書き込みの両方。代入の右辺と入れ子の呼び出しも評価する）（評価点を作った順に、評価点の部分の位置を持ち主にする）
+    - [x] 前向きの解析: 代入で到達定義を更新し、合流で和集合を取る。入力は `semantic/statement.ts` の定義（`ApexDefinition`）と読み（`ApexVariableAccess`）。今の `definitionCandidatesOf` は分岐を考えない候補なので、CFG ができたら置き換える。到達できない地点・値が分からない地点・`null` と分かっている地点を区別する（済み。definitionCandidatesOf を呼んでいるところの置き換えは、使い道（C-6・C-7）を作るときに行う）
+    - [x] 状態が変わったノードの隣だけを評価し直し、ループは収束まで回す。最初は代入の場所の ID の有限集合と、`定数 / unknown` の値で始める（ワークリスト。値は定数か unknown（理由つき））
+    - [x] 解析できない呼び出しは、戻り値と影響を受けうるメンバーを保守的に扱い、理由と位置を返す（ローカル変数は呼び出しで書き換わらないので、戻り値を unknown:call にするだけで足りる。フィールドは今は追わない（「メンバーと参照型」の項目））
 - [ ] **定義と使用の対応・生存変数解析**: 分岐ごとの代入から使われる場所を引く。読まれる前に上書きされる代入を見つけ、その右辺の呼び出しも取り出す（`x = f(); x = 2;` でも `f()` の呼び出しと副作用の可能性は残す）（調整: 優先度を上げた）（高）
 - [ ] **到達性解析**: `return` のあとの文、定数の条件で実行されない分岐（中）
 - [ ] **メンバーと参照型**: フィールドやコレクションの要素は、ローカル変数への再代入とは別の書き込み先として表す。フィールドの初期化式は、初期化の時の情報として持つ。プロパティは getter・setter の呼び出しとして集める。`get;`・`set;` は保存値への読み書きとして扱い、本体があれば本体を解析する。`new Account(Name = 'Example')` の `Name = ...` は項目への書き込みとして扱う（中）
@@ -557,8 +625,8 @@ Apex の walker（ファイルごと）:
 
 チェックと横断:
 
-- [ ] **★ガバナ制限のリスク**: ループの中の SOQL・DML を、CFG の到達性と呼び出しグラフで判定する（中）
-- [ ] **★CRUD/FLS・共有の検査**: `with sharing` の有無、`stripInaccessible`、`WITH USER_MODE` / `SECURITY_ENFORCED`、`accessLevel` のない DML（中）
+- [x] **★ガバナ制限のリスク**: ループの中の SOQL・DML を、CFG の到達性と呼び出しグラフで判定する（中）（2026-11-27。semantic/loopOperations.ts の apexLoopOperationsOf。ループの中の直接の SOQL・SOSL・動的なクエリ・DML と、ループの中から同じ単位のメソッドを呼んだ先（何段でも）の操作（呼び出しの並びつき）。CFG で届かない文は除く。単位をまたぐ呼び出しの先は今は見ない。指摘にするのは D（9 章のルールの選別のあと））
+- [x] **★CRUD/FLS・共有の検査**: `with sharing` の有無、`stripInaccessible`、`WITH USER_MODE` / `SECURITY_ENFORCED`、`accessLevel` のない DML（中）（2026-11-27。semantic/security.ts の apexSecurityChecksOf。SOQL・DML ごとの守り方（userMode・securityEnforced・systemMode・stripInaccessible・none）と、含むクラスの共有の宣言。指摘にするのは D）
 - [x] **★テストと本体の対応**: `@isTest` から呼び出しグラフをたどる（中）（2026-11-26。`apex.tests`。呼び出しと、途中の DML で動くトリガーを通る経路）
 - [ ] **★オブジェクトごとの自動化の実行順**（トリガー・Flow・入力規則）（中）
 - [ ] **Apex の変更の影響**: 2 時点の解析の結果を比べて、変わったメソッドのメトリクスの増減、SOQL の項目・条件の増減、呼び出しグラフを逆にたどった影響の範囲（メソッド・トリガー・テスト）、メタデータの Diff で削除・変更された項目を使う Apex、after にだけある findings を出す（公開 API の変化は `apex.interface` で済んでいる）（中）
@@ -604,7 +672,7 @@ LWC・Aura・Visualforce:
 - [ ] **支配関係・制御依存**（低）
 - [ ] **プログラムスライシング**: `Database.query(q)` の文字列を組み立てた文と、対象を切り替える条件の一覧（低）
 - [ ] **テイント解析**: 外部入力から動的 SOQL の文字列への経路。クエリの文字列とバインドの値への流入を分けて記録する（低）
-- [ ] **SSA・記号実行**: 使うかを決める（低）
+- [x] **SSA・記号実行**: 使うかを決める（低）→ 使わない。今の到達定義で足りている。必要になったら見直す（2026-11-27 決定）
 - [ ] **★依存グラフの中心性・コミュニティ検出・レイヤー違反**（低）
 - [ ] **★git の変更頻度・同時変更**（低）
 - [ ] **名前の変更の推定**: 項目・メソッドなど、ファイルの中の要素で今は removed + added になるものを「名前の変更」と推定し、依存の差分でも使う（`commons/diff/list.ts` で候補を照合し、`commons/diff/change.ts` に改名の候補の型を足す）（低）
@@ -613,22 +681,23 @@ LWC・Aura・Visualforce:
 
 新しい部品:
 
+- [ ] 図の自動配置を elkjs に移す: 共通の `src/viewer/layout/elkLayout.ts`（アルゴリズム・入れ子・線の引き方・接続口・層の指定・非同期）を作り、`FlowDiagram`・`CodeFlowchart`・`EventFlow`・`ObjectDiagram` を移して `@dagrejs/dagre` を外す（8.5）（段 1・高）
 - [ ] `GraphView`（段 1・高）
 - [ ] `CodeView`（段 2・中）
 - [ ] `FindingsList`（段 2・中）
 - [ ] `DataFlowGraph`（段 2・中）
 - [ ] `ExecutionOrder`（段 2・中）
 - [ ] `DependencyMatrix`（段 3・低）
-- [ ] `Treemap`・`ScatterChart`（段 3・低）
+- [ ] `Chart`（recharts。棒・積み上げ・円・レーダー・散布・ツリーマップ・Sankey。8.5）（段 1・中）
 - [ ] `DiffTree`（段 3・低）
 
 今の部品の拡張と改修:
 
 - [ ] `DataTable` の列の書式（`bar`・`threshold`・`badge`）（段 1・中）
 - [ ] `CodeFlowchart`: 到達できない箱を灰色に、ループの中の SOQL・DML への経路を強調、制御依存の印（段 2〜3・中）
-- [ ] `CodeFlowchart` の改修: 繰り返しの戻り線が箱をまたいで交差する（dagre の線の向きを変える）、箱を押したときのソースを図の横に出す（`CodeView` を使う）、図の中を検索できるようにする（中）
+- [ ] `CodeFlowchart` の改修: 繰り返しの戻り線が箱をまたいで交差する（elkjs で、ループ・try を枠で囲み、直角の線で戻りの線を枠の外へ回す）、箱を押したときのソースを図の横に出す（`CodeView` を使う）、図の中を検索できるようにする（中）
 - [ ] `SequenceDiagram` の改修: 呼び出しの活性区間と返り値を描く、長い図を段ごとに折りたたむ、横に動かしたときに参加者の見出しを固定する（中）
-- [ ] `EventFlow`: 箱をコンポーネントごとの枠でまとめる（中）
+- [ ] `EventFlow`: 箱をコンポーネントごとの枠でまとめる（elkjs の入れ子）（中）
 - [ ] `FlowDiagram` と `CodeFlowchart` の箱の形と色をそろえる（低）
 - [ ] `Matrix` の行列のデータの形を一般にする（段 2・中）
 - [ ] `AutomationView` の実行順を `ExecutionOrder` に任せる（段 2・低）
@@ -638,6 +707,20 @@ LWC・Aura・Visualforce:
 - [ ] 段 1: `apex.symbols`、`apex.callGraph`・`apex.classDependencies`（`report/apexCallGraph.ts`。メソッドの辺を作り、クラスの辺にまとめる）（高）、`apex.metrics`（`report/apexMetrics.ts`）、`crossRef.fieldUsage`・`lwc.fieldUsage`（`report/fieldUsage.ts`）、`lwc.componentTree`（`report/lwcComponentTree.ts`）（高）、`lwc.apexCalls`（`report/lwc.ts` に `getLwcApexCalls`）、`lwc.callGraph`、`dependency.graph`（`GraphView` 用の形）、`dependency.cycles`
 - [ ] 段 2: `apex.variables`、`apex.dynamicQueries`、`apex.findings`・`lwc.findings`（`report/apexFindings.ts`・`lwcFindings.ts`）、`apex.testMap`、`apex.impact`、`automation.executionOrder`
 - [ ] 段 3: `apex.slice`、`architecture.layers`・`architecture.communities`、`git.hotspots`・`git.coupling`
+- [ ] C の解析を見せる provider（`docs/report-inventory.md` 5 章の提案。2026-11-27 追加）: `apex.loopOperations`（ループの中の SOQL・DML。呼び出しの先も）・`apex.security`（SOQL・DML ごとの守り方と共有の宣言）・`apex.unreachable`（届かない文）（`report/apexRisks.ts`）（中）
+- [ ] Apex・LWC・Flow の解析の揃え（`docs/report-inventory.md` 6 章。2026-11-27 追加）: Flow の解析（ループの中の操作・メトリクス・データアクセス・実行の文脈 `runInMode`・使われない資源）と `flow.metrics`・`flow.loopOperations`・`flow.dataAccess`・`flow.security`・`flow.unusedResources`（高〜中）、LWC の `lwc.loopOperations`・`lwc.dataAccess`（LDS の書き込み）・`lwc.unusedMembers`・`lwc.tests`（Jest）（中〜低）、横断の `code.loopOperations`・`code.security`・`code.tests`（中）
+- [ ] ほかの解析の手法（`docs/report-inventory.md` 6.4。2026-11-27 追加）: 保存の連鎖 `automation.cascade`・同じ項目への書き込みの重なり `automation.fieldWriteConflicts`（高）、ガバナ制限の見積もり `apex.governorEstimate`・非選択的なクエリ `apex.querySelectivity`・例外の伝わり方 `apex.exceptions`・非同期と外部接続 `apex.async`・`integration.callouts`・実効的なデータアクセス `security.effectiveAccess`・選択リストの値の使用箇所 `object.picklistUsage`・ハードコード `code.hardcoded`・結合度 `dependency.coupling`・変更からのテストの選び方 `change.testSelection`・トリガーの作りの決まり（D のルール）（中）、画面の文字のハードコード `code.hardcodedText`・コードの重複 `code.clones`・デプロイの順 `dependency.deploymentOrder`・API の版の分布 `metadata.apiVersions`（低）
+- [ ] そのほかの候補（`docs/report-inventory.md` 6.5。2026-11-27 追加。すべて含める（2026-11-27 決定）。作り方は `docs/plan-details.md` の I-6）
+    - [ ] 権限・共有のモデル: `permission.highRisk`・`sharing.model`（高）、`permission.redundancy`・`permission.sensitiveFields`・`permission.customPermissionUsage`・`security.guestExposure`（中）、`permission.unused`（低）
+    - [ ] セキュリティの残り: `apex.entryPoints` の列 `sharing`（高）、`security.xss`・`security.soqlInjection`（テイント解析の手前の近似）・`security.sensitiveLogging`・秘密情報のハードコード（中）、`integration.endpoints`・弱い暗号（低）
+    - [ ] テストの質: `apex.testQuality`（高）、`apex.coverageEstimate`・`TEST_IS_RUNNING_TEST`（中）
+    - [ ] 上限とデータモデル: `object.unusedFields`（高）、`object.limits`・`dependency.managed`・`object.fieldTypeChanges`（中）、`object.modelShape`・`object.formulaSize`・選択リストの列（低）
+    - [ ] コードの品質・保守: `NON_BULK_TRIGGER`（高）、`code.deprecated`・`code.unusedSymbols`・空の catch・`apex.classMetrics`・ループの中の describe（中）、残したデバッグ・`code.documentation`・`code.naming`・`code.todos`・ループの入れ子の深さ（低）
+    - [ ] LWC・画面: `lwc.accessibility`・テンプレートの決まり・`@wire` の使い方（中）、LWS との相性・`lwc.styles`・`page.load`（低）
+    - [ ] メタデータの種類の残り: `automation.legacy`（高）、`analytics.reports`・`customMetadata.references`・`event.flow`（中）、`staticResource.usage`・`action.list`・`site.detail`（低）
+    - [ ] 変更・運用: `change.breaking`（高）、`change.destructiveManifest`・`change.packageManifest`・`change.risk`（中）
+    - [ ] 解析の手法: ループの回数の推定・文字列の値の集合・コレクションの中身の追跡（低）
+- [ ] 今ある provider の列を足す（同じく提案）: `apex.dataAccess` に `restoration`・`enforcement`・`loopVia`、`apex.metrics` に `soqlInLoopViaCalls`・`dmlInLoopViaCalls`、`dependency.missing` に引数 `includeUnknown` と列 `origin`、`object.usage`・`crossRef.references` に `vias`、`apex.entryPoints` に `problem`（cacheable でない wire）、`metadata.findings` に `rule`・`member`・`line`・`evidence`（中）
 - [ ] 自動化の中身: 承認プロセス・割り当て / 自動応答 / エスカレーションルール・重複 / 一致ルールの条件とアクション（`report/automation.ts`）（中）
 - [ ] 権限の残り: システム権限・カスタム権限・タブの表示・レコードタイプの表示・ページレイアウトの割り当て・権限セットグループの構成（中）
 - [ ] 本文のテキストの表示: メール・Visualforce・Aura の JS（`report/sourceText.ts`）（中）
@@ -670,8 +753,8 @@ LWC・Aura・Visualforce:
 
 ### 部品と viewer（段階によらない）
 
-- [ ] 表の並べ替えと列の出し分け（高）
-- [ ] CSV / Excel への書き出し: 表ごとのボタン（`src/report/export/table.ts` を `report export` と共通にする）（高）
+- [x] 表の並べ替えと列の出し分け（高）（2026-11-27。RowsTable の見出しを押すと昇順 → 降順 → 元の順、「列」で出す列を選ぶ。並べ替えは src/report/tableData.ts の sortRows・compareCells・nextSort（空は最後、同じ値は元の順））
+- [x] CSV / Excel への書き出し: 表ごとのボタン（`src/report/export/table.ts` を `report export` と共通にする）（高）（2026-11-27。CSV は済み: 表ごとの「CSV」ボタンが、絞り込み・並べ替えのあとの全行と出している列を書き出す。tableToCsv（src/report/tableData.ts。BOM つき・RFC 4180）を CLI の report export と共通に使う。Excel（.xlsx）は依存を足すか 9 章で決める）
 - [ ] status のない「変化」の列を出さない（`AutomationView`・`LayoutView`・`FlexiPageView`）（中）
 - [ ] API 名とラベルの切り替え（中）
 - [ ] `PageLink` を表や複数の列で並べる（中）
@@ -682,7 +765,7 @@ LWC・Aura・Visualforce:
 - [ ] 部品の説明を日本語でも出す（低）
 - [ ] 印刷・PDF と静的な HTML（`src/builder/export/staticHtml.ts`）（中〜低）
 - [ ] 文書の中の検索（`components/reportSearch.tsx`）（低）
-- [ ] 見た目の調整: 色・ロゴ・表紙を、利用者がどこまで変えられるかを決める（theme のスキーマを `document.ts`・`documentSchema.ts` に足す）（中）
+- [ ] 見た目の調整: 色・ロゴ・表紙を、利用者がどこまで変えられるかを決める（theme のスキーマを `document.ts`・`documentSchema.ts` に足す）（中）（2026-11-27 決定: 色とロゴだけの theme から始める）
 
 ### ビルドと文書（段階によらない）
 
@@ -696,9 +779,9 @@ LWC・Aura・Visualforce:
 - [ ] ページの入れ子: クラスのページの中にメソッドのページ（`SplitPage` に親のページの ID）（低）
 - [ ] ページのファイル名: 大文字・小文字だけ違う名前（Windows で重なる）と、種類が違う同じ名前を区別する（中）
 - [ ] 部分の使い回し（`use` / `with`。スコープと循環の検出を付ける）（中）
-- [ ] YAML でも書ける（`src/report/readDocument.ts`）（中）
+- [ ] YAML でも書ける（`src/report/readDocument.ts`）（中）（2026-11-27 決定: 急がない。要望があれば `yaml` を入れる）
 - [ ] 文書の形の版（`"version": 1`）（中）
-- [ ] notes のキーの一覧を出す（MCP の `list_note_keys`、CLI の `report notes`。`src/builder/notes.ts` の `listNoteKeys`）（高）
+- [x] notes のキーの一覧を出す（MCP の `list_note_keys`、CLI の `report notes`。`src/builder/notes.ts` の `listNoteKeys`）（高）（2026-11-27。src/builder/notes.ts の listNoteKeys。ビルドと同じくデータを実行して for を展開し、置き換えた $note のキー（使っている要素・書いてあるか）と、使っていないキーを返す。MCP の list_note_keys・CLI の report notes）
 - [ ] notes を別のファイルに置く（中）
 - [ ] 文章の鮮度: データの指紋で「文章が古い可能性」を知らせる（中）
 - [ ] AI の注記（annotations。`components/annotations.tsx`）（中）
@@ -707,14 +790,14 @@ LWC・Aura・Visualforce:
 ### CLI と MCP（段階によらない）
 
 - [ ] `report watch`: 保存するたびに作り直す（`src/cli/reportWatch.ts`）（中）
-- [ ] `report export`: Excel・Markdown・Word への書き出し（`src/builder/export/`）（中）
-- [ ] `report notes`（高）
+- [ ] `report export`: Excel・Markdown・Word への書き出し（`src/builder/export/`）（中）（2026-11-27 途中: CSV だけ済み。report export <文書> [--out <フォルダ>] が、文書のデータの行の並びをデータの名前ごとの CSV に書く。Excel・Markdown・Word は残り）（2026-11-27 決定: 残りは Markdown だけ。Excel は当面 CSV のまま（必要になったら `exceljs`）、Word は作らない）
+- [x] `report notes`（高）（2026-11-27。report notes <文書> [--missing]）
 - [ ] CLI の引数を足す: `--threads`・`--quiet`・`--json`（低）
-- [ ] MCP で雛形を返すツール（`list_report_templates` と雛形の JSON）。利用者の雛形も同じ一覧に出す（高）
+- [ ] MCP で雛形を返すツール（`list_report_templates` と雛形の JSON）。利用者の雛形も同じ一覧に出す（高）（2026-11-27 決定: 利用者の雛形は `<保存先>/templates/*.json`。設定ファイルの `templates` で上書きできる）
 - [ ] 設定ファイル `sf-metascope.config.json`（対象のプロジェクトのルート。`src/config.ts`）と `config show`（高）
 - [ ] 初めての読み込みの進み具合: MCP の進捗の通知か `status` のツール（中）
 - [ ] 保存先の `.gitignore` を知らせる（中）
-- [ ] 配布の形: npm の公開、`bin`・`files`（`docs/catalog` の JSON Schema と雛形を含める）・`version`・`license` を整え、`LICENSE` を足す。`npm pack` の成果物をインストールして確かめる CI のステップを足す（高）
+- [ ] 配布の形: npm の公開、`bin`・`files`（`docs/catalog` の JSON Schema と雛形を含める）・`version`・`license` を整え、`LICENSE` を足す。`npm pack` の成果物をインストールして確かめる CI のステップを足す（高）（公開するか・ライセンスは 9 章「まだ決めていないこと」）
 - [ ] 作ったレポートの一覧と作り直し: `report rebuild --all`（`src/builder/reportManifest.ts`）（低）
 
 ### 品質（段階によらない）
@@ -733,7 +816,7 @@ LWC・Aura・Visualforce:
 
 - [ ] Salesforce のリリースの更新のスキルを定期実行にする（リリースの公開に合わせて 2 月・6 月・10 月ごろ、または月 1 回。`/schedule` など）（低）
 - [x] LWC の公式資料（Component Reference・開発者ガイド・リリースノート）を自動で取れる場所を探し、スキルの照合の対象にする（今は PDF が見つからず、HTML は 403）（中）（2026-11-26。基本コンポーネントは `@salesforce/lwc-language-server` の `transformed-lwc-standard.json`（スキルの `lwc-components`）、SLDS のアイコンは `@salesforce-ux/design-system` のメタデータ（`slds`）で照合する。開発者ガイド・リリースノートは対象外のまま）
-- [ ] package.xml の既定の API バージョン（`graph.ts` の `toPackageXml` の `'62.0'`）を、新しくするか `sourceApiVersion` を必ず渡すかを決める（低）
+- [ ] package.xml の既定の API バージョン（`graph.ts` の `toPackageXml` の `'62.0'`）を、新しくするか `sourceApiVersion` を必ず渡すかを決める（低）（2026-11-27 決定: `sfdx-project.json` の `sourceApiVersion` を渡し、ない場合だけ既定を使う。作業は残り）
 
 - [ ] 標準 API の調査の残り: 型の一覧の未収録の領域と、各型の公開条件。必要ならメソッド名・非推奨・導入版。型の解決に要るなら、オーバーロード・引数・戻り値の型（中）
 - [ ] 標準オブジェクトと項目の収集。公式資料の不足分と、組織の設定・権限で変わる部分を分ける（中）
@@ -746,13 +829,14 @@ LWC・Aura・Visualforce:
 - [ ] **まだ統合していない 14 ファイル**（冒頭の一覧）を読み、未完了の作業・方針・未確認のことをこの文書に移してから消す（高）
 - [ ] コードのコメントにある、消した文書への参照（`docs/*.md`。約 320 か所）を、この文書の節への参照に直すか消す（中）
 - [ ] `docs/catalog/generate.ts` と `docs/examples/*/scripts` の、消した文書への参照を直す（低）
-- [ ] IR のノード型の一覧を作り直す手段を決める（以前は TypeScript 5.9 の型チェッカーを別に入れたスクリプトで作った。リポジトリの typescript 7 には JS の API がない）（低）
+- [x] IR のノード型の一覧を作り直す手段を決める（以前は TypeScript 5.9 の型チェッカーを別に入れたスクリプトで作った。リポジトリの typescript 7 には JS の API がない）（低）→ 必要になるまで後回し（2026-11-27 決定）
 - [ ] JSON の型と Apex 構文の対応の説明（型の解決・実在は保証しないこと）を、P1 のあとで必要なら作り直す（低）
 
 ### P5: 古い処理を消す
 
 - [ ] 旧 `processor/Apex/walker.ts` と、`calls.ts` の新しい walker と重なる部分を消す。古い入口が import されていないことを確かめる（中）
 - [ ] `snapshotInputOf` と、解析結果を覚える `WeakMap` のキャッシュ（P3 の表に移したもの）を消す（中）
+- [ ] 古い表示用の型（9 章の「旧 `viewer/types/`」。実際の場所は `src/analyzer/processor/Metadata/view.ts` の `ObjectView`・`DependencyView` と `make*Views`。`unit/processor.ts` の `getObjectViews`・`getDependencyViews` が使う）を消す。`ViewStatus` は `report/types.ts` に移す（`docs/plan-details.md` F-1）（低）
 
 ## 11. 未確認のこと
 

@@ -27,20 +27,13 @@ import {
 
 import { REPORT_META_KEY, REPORT_UI_URI } from './appResources';
 import { type ProcessorSource, processorGetter } from './context';
+import { textResult as text } from './results';
+import { listNoteKeys } from '../builder/notes';
 
 // レポートの MCP のツール (docs/implementation-roadmap.md 4.5)。
 // カタログ (一覧・詳しい説明) → データの取得 → 文書の検証 → HTML の作成、の流れ。
 // 説明・スキーマはすべて登録表 (provider: analyzer/report/registry.ts、部品: report/catalog.ts) から作る。
 // AI に渡すデータなので、機密になりうる値は必ず伏せる (report/mask.ts。runReportProvider の既定)
-
-const text = (value: unknown) => ({
-    content: [
-        {
-            type: 'text' as const,
-            text: typeof value === 'string' ? value : JSON.stringify(value, null, 2),
-        },
-    ],
-});
 
 const reloadSchema = z
     .boolean()
@@ -214,6 +207,41 @@ export const registerReportTools = (
                 return text({ error: comparisonRequiredMessage(provider) });
             }
             return text(runReportProvider(provider, input, args));
+        },
+    );
+
+    server.registerTool(
+        'list_note_keys',
+        {
+            description:
+                '文書の notes のキーの一覧を返します ({ "$note": "<キー>" } で使っているキーと、notes に書いてあるか・使っている要素。for の行で決まるキーも、データを実行して展開して数えます)。unused は notes に書いてあるが使っていないキーです。文章を書く前に、どのキーを書けばよいかを確かめるのに使います',
+            inputSchema: {
+                document: documentSchema,
+                diff: diffSchema,
+                compare: compareSchema,
+                params: paramsSchema,
+                reload: reloadSchema,
+            },
+        },
+        async ({ document, diff, compare, params, reload }) => {
+            const processor = await processorOf();
+            if (reload) await processor.reset();
+            const comparedInput = await comparedInputOf(processor, compare, diff, document).catch(
+                (error: unknown) => toError(error),
+            );
+            if (comparedInput instanceof Error) return compareIssue(comparedInput);
+            const inputFor = await inputForOf(processor, document).catch((error: unknown) =>
+                toError(error),
+            );
+            if (inputFor instanceof Error) return compareIssue(inputFor);
+            const { input, compared } = comparedInput;
+            return text(
+                listNoteKeys(document, input, {
+                    compared,
+                    inputFor,
+                    ...(params ? { params } : {}),
+                }),
+            );
         },
     );
 

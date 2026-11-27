@@ -61,7 +61,7 @@ const quoteKeyString = (value: string): string =>
 export const isNode = (value: unknown): value is JsonNode =>
     typeof value === 'object' && value !== null && 'kind' in value && 'sourceKeys' in value;
 
-/** 値の比較用キー。ネストした JSON ノードも objectKey で比較する */
+/** 値の比較用キー。ネストした JSON ノードも objectKey で比較する (どの値も比べるので入力は unknown) */
 export const getValueKey = (value: unknown): string => {
     if (isNode(value)) {
         return `node:${getObjectKey(value)}`;

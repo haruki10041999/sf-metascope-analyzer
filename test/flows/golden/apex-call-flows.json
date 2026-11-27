@@ -684,7 +684,7 @@
       {
         "from": "ParserTest",
         "to": "Database",
-        "label": "query",
+        "label": "query Account",
         "kind": "query",
         "depth": 1,
         "line": 491
@@ -692,7 +692,7 @@
       {
         "from": "ParserTest",
         "to": "Database",
-        "label": "query",
+        "label": "query Account",
         "kind": "query",
         "depth": 1,
         "line": 498
@@ -700,7 +700,7 @@
       {
         "from": "ParserTest",
         "to": "Database",
-        "label": "query",
+        "label": "query Account",
         "kind": "query",
         "depth": 1,
         "line": 501
@@ -708,7 +708,7 @@
       {
         "from": "ParserTest",
         "to": "Database",
-        "label": "query",
+        "label": "query Account",
         "kind": "query",
         "depth": 1,
         "line": 507

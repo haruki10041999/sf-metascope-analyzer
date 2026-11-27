@@ -238,4 +238,55 @@ describe('diff samples (docs/examples/repository)', () => {
             [['enumConstant', 1, 'MEDIUM']],
         );
     });
+
+    it('すべての差分のノードが status ごとの決まった形を持つ (実行時の形の検査。docs/plan.md 10 章 P1)', () => {
+        const STATUSES = new Set(['unchanged', 'changed', 'added', 'removed', 'moved']);
+        const problems: string[] = [];
+        /** 差分の構造だけを辿る (value・before・after の中は元の JSON なので辿らない) */
+        const check = (value: unknown, path: string): void => {
+            if (Array.isArray(value)) {
+                value.forEach((item, i) => check(item, `${path}[${i}]`));
+                return;
+            }
+            if (!isRecord(value)) return;
+            if (typeof value.status === 'string') {
+                const where = `${path} (${String(value.kind ?? '')} ${value.status})`;
+                if (!STATUSES.has(value.status)) problems.push(`${where}: 知らない status`);
+                const has = (key: string) => Object.hasOwn(value, key);
+                switch (value.status) {
+                    case 'unchanged':
+                    case 'added':
+                    case 'removed':
+                        if (!has('value')) problems.push(`${where}: value がない`);
+                        break;
+                    case 'moved':
+                        if (!has('value') || !has('match'))
+                            problems.push(`${where}: value か match がない`);
+                        break;
+                    case 'changed':
+                        // 2 つの形: fields (プロパティごとの差分)・before / after (丸ごと)
+                        if (!isRecord(value.fields) && !(has('before') && has('after')))
+                            problems.push(`${where}: fields も before / after もない`);
+                        break;
+                }
+                // 並びの要素の位置: added / removed は数、それ以外は { before, after }
+                if (has('index')) {
+                    const index = value.index as unknown;
+                    const ok =
+                        value.status === 'added' || value.status === 'removed'
+                            ? typeof index === 'number'
+                            : isRecord(index) &&
+                              typeof index.before === 'number' &&
+                              typeof index.after === 'number';
+                    if (!ok) problems.push(`${where}: index の形が違う`);
+                }
+                if (value.status === 'changed' && isRecord(value.fields))
+                    check(value.fields, `${path}.fields`);
+                return;
+            }
+            for (const [key, child] of Object.entries(value)) check(child, `${path}.${key}`);
+        };
+        for (const diff of diffs) check(diff.content, diff.id);
+        assert.deepEqual(problems, []);
+    });
 });

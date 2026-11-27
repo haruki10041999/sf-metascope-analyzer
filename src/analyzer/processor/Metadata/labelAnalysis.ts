@@ -1,8 +1,8 @@
 import type { ApexUnitParseResult } from '../../parser/Apex/unit';
 import type { LwcBundleParseResult } from '../../parser/Lwc/parser';
-import type { ConvertKeys } from '../../types';
+import type { ConvertKeys, LwcNodeJson } from '../../types';
 import { apexDottedNameOf, walkApexParseResult } from '../Apex/walker';
-import { isRecord } from '../commons/json';
+import { walkJson } from '../commons/node';
 
 // カスタム表示ラベルの使用箇所 (LWC の @salesforce/label/c.<名前>、Apex の System.Label.<名前> / Label.<名前>、
 // Flow の $Label.<名前>)。使われていないラベル・ないラベルへの参照は、依存関係のグラフで見る
@@ -21,36 +21,27 @@ export type LabelUsage = {
     sourceKeys?: ConvertKeys;
 };
 
-/** JSON をたどり、kind を持つノードごとに visit を呼ぶ */
-export const walkJsonNodes = (
-    value: unknown,
-    visit: (node: Record<string, unknown> & { kind: string }) => void,
-): void => {
-    if (Array.isArray(value)) {
-        value.forEach((item) => walkJsonNodes(item, visit));
-        return;
-    }
-    if (!isRecord(value)) return;
-    if (typeof value.kind === 'string') visit(value as Record<string, unknown> & { kind: string });
-    Object.values(value).forEach((child) => walkJsonNodes(child, visit));
-};
-
 const LWC_LABEL_PREFIX = '@salesforce/label/';
 
 /** LWC の @salesforce/label/c.<名前> の import */
 export const getLwcLabelUsages = (bundles: LwcBundleParseResult[]): LabelUsage[] =>
     bundles.flatMap((bundle) => {
+        if (bundle.dataType !== 'lwcBundle') return [];
         const usages: LabelUsage[] = [];
-        walkJsonNodes(bundle.result.base, (node) => {
-            if (node.kind !== 'lwcImport' || node.category !== 'label') return;
-            const source = String(node.source);
-            const name = source.slice(LWC_LABEL_PREFIX.length).replace(/^c\./, '');
-            usages.push({
-                name,
-                origin: 'lwc',
-                unit: `lwc_${bundle.result.id}`,
-                sourceKeys: node.sourceKeys as ConvertKeys,
-            });
+        // 共通の走査 (processor/commons/node.ts) で、import のノードだけを見る
+        walkJson<LwcNodeJson>(bundle.result.base, {
+            enter: {
+                lwcImport: (node) => {
+                    if (node.category !== 'label') return;
+                    const name = node.source.slice(LWC_LABEL_PREFIX.length).replace(/^c\./, '');
+                    usages.push({
+                        name,
+                        origin: 'lwc',
+                        unit: `lwc_${bundle.result.id}`,
+                        sourceKeys: node.sourceKeys,
+                    });
+                },
+            },
         });
         return usages;
     });

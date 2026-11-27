@@ -133,7 +133,7 @@ type SourceResult = { value: unknown; compared?: string };
  * (for の行・if の hasRows・展開した要素のデータで、同じ宣言が何度も出てくるため)。
  * 失敗なら undefined を返し、問題を path の場所で積む (同じ宣言の 2 回目からは積まない)
  */
-const sourceRunner = (
+export const sourceRunner = (
     input: ReportInput,
     options: ResolveReportOptions,
     issues: ReportIssue[],

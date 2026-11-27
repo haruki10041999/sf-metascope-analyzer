@@ -15,15 +15,13 @@ import type { ResolveReportOptions } from './reportBuilder';
  */
 export const comparedInputOf = async (
     processor: RepositoryProcessor,
-    compare: unknown,
+    compare: CompareRange | undefined,
     diff: boolean | undefined,
     document?: unknown,
 ) => {
     const fromDocument = document as { compare?: unknown; diff?: unknown } | undefined;
     const documentRange = CompareRange.safeParse(fromDocument?.compare);
-    const range =
-        (compare as CompareRange | undefined) ??
-        (documentRange.success ? documentRange.data : undefined);
+    const range = compare ?? (documentRange.success ? documentRange.data : undefined);
     return processor.getComparedInput(range, {
         diff: diff ?? fromDocument?.diff === true,
     });

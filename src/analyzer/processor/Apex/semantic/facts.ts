@@ -3,6 +3,7 @@ import type { ApexBodySemantics, ApexResolvedCall, ApexSemanticAnalysis } from '
 import { namePathOf } from './call';
 import { apexMemberNamesOf } from './members';
 import type { ApexTypeRef } from './type';
+import { type ApexDynamicQuery, apexDynamicQueriesOf } from './dynamicQuery';
 
 // 単位の呼び出し・DML・クエリ・トリガーの文脈 (report の apex.dataAccess・呼び出しの流れが使う)。
 // 解析の結果 (analyze.ts) から作る。呼び出しの種類は、文字の並びでなく、レシーバーの型を標準の型に照合した結果で決める
@@ -81,6 +82,10 @@ export type ApexQueryFact = {
     language: 'soql' | 'sosl' | 'dynamic';
     /** 対象のオブジェクト (SOQL の FROM、SOSL の RETURNING。動的なものはなし) */
     objects: string[];
+    /** 動的なクエリの復元 (dynamicQuery.ts。complete・partial・none。静的なクエリはなし) */
+    restoration?: 'complete' | 'partial' | 'none';
+    /** 動的なクエリで、復元した SELECT の項目 (<オブジェクト>.<項目>) */
+    fields?: string[];
     /** WITH USER_MODE・SYSTEM_MODE・SECURITY_ENFORCED (SOQL・SOSL。書いていなければなし) */
     accessMode?: 'USER_MODE' | 'SYSTEM_MODE' | 'SECURITY_ENFORCED';
     context: ApexFactContext;
@@ -186,6 +191,12 @@ export const apexUnitFactsOf = (analysis: ApexSemanticAnalysis): ApexUnitFacts =
             };
         };
         const ownerType = names.ownerTypeOf(declaration);
+        // 動的なクエリの復元 (呼び出しがあるときだけ値の解析をする)
+        let restoredQueries: Map<string, ApexDynamicQuery> | undefined;
+        const dynamicQueries = () =>
+            (restoredQueries ??= new Map(
+                apexDynamicQueriesOf(semantics).map((q) => [q.callId, q]),
+            ));
 
         for (const call of semantics.calls) {
             if (call.kind === 'new') continue;
@@ -230,10 +241,17 @@ export const apexUnitFactsOf = (analysis: ApexSemanticAnalysis): ApexUnitFacts =
                 });
             }
             if (callType === 'dynamicQuery') {
+                const restored = dynamicQueries().get(call.id);
+                const objects = restored?.objects ?? [];
+                const fields = objects.flatMap((object) =>
+                    (restored?.fields ?? []).map((field) => `${object}.${field}`),
+                );
                 facts.queries.push({
                     sourceKeys: call.sourceKeys,
                     language: 'dynamic',
-                    objects: [],
+                    objects,
+                    ...(restored ? { restoration: restored.restoration } : {}),
+                    ...(fields.length ? { fields } : {}),
                     context,
                 });
             }

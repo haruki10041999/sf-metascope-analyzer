@@ -21,6 +21,7 @@ import {
 import type { RepositoryProcessor } from '../analyzer/unit/processor';
 
 import { type ProcessorSource, processorGetter } from './context';
+import { jsonResult as text } from './results';
 
 // 依存関係を問い合わせる MCP のツール。方針: docs/analysis-plan.md 3.5
 // 名前・種類・位置だけを返す (値は返さないので、機密の値 (5.7) は出ない)
@@ -29,10 +30,6 @@ const levelSchema = z.enum(['unit', 'member', 'site']).optional();
 
 /** true なら、リポジトリを読み直してから返す */
 const reloadSchema = z.boolean().optional();
-
-const text = (value: unknown) => ({
-    content: [{ type: 'text' as const, text: JSON.stringify(value, null, 2) }],
-});
 
 /**
  * リポジトリ (sfdx-project.json の packageDirectories・.forceignore の範囲) のグラフ。

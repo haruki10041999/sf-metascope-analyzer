@@ -4,14 +4,11 @@ import { z } from 'zod';
 import { type Repository, manifestUnitOf, unitName } from '../analyzer/unit';
 
 import { type ProcessorSource, processorGetter } from './context';
+import { jsonResult as text } from './results';
 
 // 保存の置き場 (SQLite) のノードの行を問い合わせる MCP のツール (docs/implementation-roadmap.md 5 章の Q4)。
 // ノード = 解析結果の JsonType 1 つ (Apex のメソッド・LWC のテンプレートの要素・フローの要素など)。
 // 依存関係のツールと同じく、名前・種類・位置だけを返す (中身は返さないので、機密の値は出ない)
-
-const text = (value: unknown) => ({
-    content: [{ type: 'text' as const, text: JSON.stringify(value, null, 2) }],
-});
 
 /** after = 今の状態 (既定)、before = 保存した基準 */
 const sideSchema = z.enum(['after', 'before']).optional();

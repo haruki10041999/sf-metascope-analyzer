@@ -10,6 +10,8 @@ import { expandShorthand } from './shorthand';
 // json-render の仕様 (spec) に、データの宣言 (data: 名前 → provider と引数) を足したもの。
 // ビルドが provider を実行して state.data.<名前> に入れ、仕様の部品は { "$state": "/data/<名前>" } で行を指す。
 // AI は行・数値を書かない (データの部品の rows は $state でしか書けない)
+// provider の引数・部品の props・when の値は文書を書く人が決め、形は provider と部品ごとに違うので、スキーマでは
+// z.unknown() で受ける (provider の引数は実行するときに registry のスキーマで確かめる。雛形は ReportProviderSource で型を確かめる)
 
 /** データの宣言 1 つ */
 export const ReportDataSource = z.object({

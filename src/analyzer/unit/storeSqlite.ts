@@ -180,6 +180,7 @@ export const closeAllStoreBackends = (): void => {
     for (const backend of [...openBackends]) backend.close();
 };
 
+/** SQLite の行 (node:sqlite の結果。列の型は SQL で決まるので、読むところで列ごとに型を付ける) */
 type Row = Record<string, unknown>;
 
 export class SqliteStoreBackend implements StoreBackend {

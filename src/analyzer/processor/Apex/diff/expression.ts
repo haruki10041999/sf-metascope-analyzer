@@ -252,7 +252,7 @@ export const makeDotMethodCallDiff = (
                 makeExpressionListDiff(x, y, sources),
             ),
         };
-    }) as unknown as DotMethodCallJsonDiff;
+    });
 
 const makeNewEntryDiff = (
     before: NewEntryJson,
@@ -262,7 +262,7 @@ const makeNewEntryDiff = (
     makeTypedObjectDiff(before, after, (b, a) => ({
         key: makeExpressionValueDiff(b.key, a.key, sources),
         value: makeExpressionValueDiff(b.value, a.value, sources),
-    })) as unknown as NewEntryJsonDiff;
+    }));
 
 /** classLiteral の型 (Type か 'void') */
 const makeClassTypeDiff = (before: TypeJson | 'void', after: TypeJson | 'void') =>

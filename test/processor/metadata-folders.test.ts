@@ -48,6 +48,7 @@ import type {
 } from '../../src/analyzer/types';
 import type { IdParseResult } from '../../src/analyzer/processor/commons/diff/unit';
 import { p1Shape } from '../converter/lwcShape';
+import { changedFieldsOf } from '../helpers/diff';
 
 // フォルダ単位のメタデータ (権限・ラベル・Flow・画面)。方針: docs/metadata-implementation.md 10 章
 // サンプルは docs/examples/repository (run-folders.ts と同じもの)
@@ -185,15 +186,17 @@ describe('権限', () => {
             (await ProfileParser.parseAll(root('after'))) as never,
         );
         assert.equal(diff!.status, 'changed');
-        const fields = (
-            diff!.content as unknown as { fields: Record<string, { status?: string }[]> }
-        ).fields;
+        // 差分の型のまま読む (Profile の差分の fields)
+        const fields = changedFieldsOf(diff!.content);
+        // 両方にある一覧は要素ごとの差分の並び (片方だけなら一覧ごと added / removed)
+        const { loginIpRanges, layoutAssignments } = fields;
+        assert.ok(Array.isArray(loginIpRanges) && Array.isArray(layoutAssignments));
         assert.deepEqual(
-            fields.loginIpRanges!.map((r) => r.status),
+            loginIpRanges.map((r) => r.status),
             ['unchanged', 'added'],
         );
         assert.deepEqual(
-            fields.layoutAssignments!.map((r) => r.status),
+            layoutAssignments.map((r) => r.status),
             ['unchanged', 'removed', 'added'],
         );
     });

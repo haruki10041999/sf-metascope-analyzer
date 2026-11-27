@@ -11,6 +11,7 @@ import type {
 import type { ApexBodySemantics, ApexSemanticAnalysis } from './analyze';
 import { type ApexModifierInfo, hasApexAnnotation, isApexAnnotationArgTrue } from './declaration';
 import { type ApexExpressionRef, namePathOf } from './call';
+import { apexDynamicQueriesOf } from './dynamicQuery';
 import { apexMemberNamesOf } from './members';
 import { apexNamedReferencesOf } from './namedReferences';
 import { resolveApexStandardName } from './standardNames';
@@ -365,6 +366,37 @@ export const apexSemanticDependenciesOf = (
             );
         }
         for (const query of semantics.queries) queryRefs(query, semantics, site);
+        // 動的 SOQL の復元 (dynamicQuery.ts)。確実な部分だけで、位置は元の呼び出し
+        for (const query of apexDynamicQueriesOf(semantics)) {
+            const from = site(query.sourceKeys);
+            for (const object of query.objects) {
+                add(
+                    { refType: 'object', target: object, kind: 'queries', via: 'soql.dynamic' },
+                    from,
+                    resolutionOfTypeName([object]),
+                );
+                for (const field of query.fields) {
+                    const path = field.split('.');
+                    add(
+                        path.length > 1
+                            ? {
+                                  refType: 'fieldPath',
+                                  target: `${object}.${field}`,
+                                  kind: 'reads',
+                                  via: 'soql.dynamic',
+                              }
+                            : {
+                                  refType: 'field',
+                                  target: `${object}.${field}`,
+                                  kind: 'reads',
+                                  via: 'soql.dynamic',
+                              },
+                        from,
+                        { status: 'byName' },
+                    );
+                }
+            }
+        }
     }
 
     /** 型から、オブジェクトの名前 (List・Set は要素、Map は値) */

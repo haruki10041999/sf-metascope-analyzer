@@ -6,23 +6,25 @@ import { type JsonType, isJsonType } from '../../types';
 
 type AnyNode = JsonType<string>;
 
+/**
+ * 値 (配列・値の木・辞書) の中の、いちばん外側のノード (最初に出会ったノードで止まる)。
+ * 文の並び・引数の並びなど、ノードの並びを walkJson で辿るときの根に使う
+ */
+export const jsonNodesIn = (value: unknown, out: AnyNode[] = []): AnyNode[] => {
+    if (Array.isArray(value)) {
+        for (const item of value) jsonNodesIn(item, out);
+    } else if (value !== null && typeof value === 'object') {
+        if (isJsonType(value)) out.push(value);
+        else for (const item of Object.values(value)) jsonNodesIn(item, out);
+    }
+    return out;
+};
+
 /** 子のノード。値の木・辞書・配列の中も辿り、最初に出会ったノードで止まる (ノードの中は孫として扱う) */
 export const childNodesOf = (node: AnyNode): AnyNode[] => {
     const children: AnyNode[] = [];
-    const collect = (value: unknown): void => {
-        if (Array.isArray(value)) {
-            for (const item of value) collect(item);
-            return;
-        }
-        if (value === null || typeof value !== 'object') return;
-        if (isJsonType(value)) {
-            children.push(value);
-            return;
-        }
-        for (const item of Object.values(value)) collect(item);
-    };
     for (const [key, value] of Object.entries(node)) {
-        if (key !== 'sourceKeys') collect(value);
+        if (key !== 'sourceKeys') jsonNodesIn(value, children);
     }
     return children;
 };

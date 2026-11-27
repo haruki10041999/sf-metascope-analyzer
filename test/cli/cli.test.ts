@@ -85,6 +85,33 @@ describe('コマンドライン', () => {
         assert.equal(JSON.parse(one.stdout).path, target);
     });
 
+    it('notes: notes のキーの一覧。--missing で未記入だけ', async () => {
+        const file = path.join(tmp, 'apex-notes.json');
+        await run('report', 'new', 'apex_specification', '--out', file);
+        const all = await run('report', 'notes', file);
+        assert.equal(all.code, 0, all.stderr);
+        const keys = JSON.parse(all.stdout).keys as { key: string; written: boolean }[];
+        assert.ok(keys.some((k) => k.key === 'AccountService'));
+        const missing = await run('report', 'notes', file, '--missing');
+        const missingKeys = JSON.parse(missing.stdout).keys as { written: boolean }[];
+        assert.equal(missingKeys.length, keys.filter((k) => !k.written).length);
+    });
+
+    it('export: 文書のデータの行の並びを、データの名前ごとの CSV に書き出す', async () => {
+        const file = path.join(tmp, 'system-export.json');
+        await run('report', 'new', 'system_overview', '--out', file);
+        const out = path.join(tmp, 'csv');
+        const exported = await run('report', 'export', file, '--out', out);
+        assert.equal(exported.code, 0, exported.stderr);
+        const files = JSON.parse(exported.stdout).files as string[];
+        assert.ok(files.length > 0);
+        assert.ok(files.every((f) => path.dirname(f) === out && f.endsWith('.csv')));
+        // 先頭は BOM、1 行目は列の見出し
+        const text = await fs.readFile(files[0]!, 'utf8');
+        assert.equal(text.charCodeAt(0), 0xfeff);
+        assert.ok(text.split('\r\n')[0]!.length > 1);
+    });
+
     it('文書の問題・引数の誤りは終了コード 1 で、問題を出す', async () => {
         const file = path.join(tmp, 'lwc.json');
         await run('report', 'new', 'lwc_overview', '--out', file);

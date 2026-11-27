@@ -4,6 +4,8 @@ import {
     XmlFile,
     XmlSourceRegistry,
     PropertiesOf,
+    type SchemaChildJson,
+    schemaChildJsonOf,
     makeXmlJson,
     nonEmptyEntry,
     readProperties,
@@ -63,29 +65,6 @@ export const SHARING_REASON_SCHEMA = {
 } as const;
 
 /** 共有の理由 (sharingReasons/*.sharingReason-meta.xml。Apex の共有で使う) */
-export type SharingReasonJson = JsonType<'sharingReason'> & {
-    /** 読んでいない要素の名前 */
-    skippedElements?: string[];
-    fullName: string;
-} & PropertiesOf<typeof SHARING_REASON_SCHEMA>;
+export type SharingReasonJson = SchemaChildJson<'sharingReason', typeof SHARING_REASON_SCHEMA>;
 
-export const makeSharingReasonJson = (
-    element: XmlElement,
-    fullName: string,
-    file: XmlFile,
-    registry: XmlSourceRegistry,
-): SharingReasonJson =>
-    makeXmlJson<SharingReasonJson>(
-        'sharingReason',
-        {
-            fullName: readText(element, 'fullName') ?? fullName,
-            ...readProperties(element, SHARING_REASON_SCHEMA),
-            ...nonEmptyEntry(
-                'skippedElements',
-                unknownChildNames(element, ['fullName', ...Object.keys(SHARING_REASON_SCHEMA)]),
-            ),
-        },
-        element,
-        file,
-        registry,
-    );
+export const makeSharingReasonJson = schemaChildJsonOf('sharingReason', SHARING_REASON_SCHEMA);

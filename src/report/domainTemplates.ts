@@ -1,4 +1,4 @@
-import type { ReportProviderName } from '../analyzer/report/registry';
+import type { ReportProviderName, ReportProviderSource } from '../analyzer/report/registry';
 
 import { featureOverviewDetail } from './detailTemplates';
 import type { ReportDocument } from './document';
@@ -8,7 +8,8 @@ import type { ReportDocument } from './document';
 // 雛形は出発点で、形は固定しない (利用者が自分で書く・AI に組ませる・雛形を直す、のどれでもよい)
 
 type Element = ReportDocument['spec']['elements'][string];
-type DataSource = { provider: ReportProviderName; args?: Record<string, unknown> };
+/** データの宣言 (provider ごとに引数の名前と型を確かめる) */
+type DataSource = ReportProviderSource;
 type Column = [key: string, label: string];
 
 const el = (type: string, props: Record<string, unknown>, children: string[] = []): Element => ({

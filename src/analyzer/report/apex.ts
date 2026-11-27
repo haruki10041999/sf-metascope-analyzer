@@ -343,7 +343,10 @@ const accessItemsOf = (unit: Unit): AccessItem[] => {
                 : query.language === 'sosl'
                   ? 'search'
                   : 'dynamicQuery';
-        const fields = [...(fieldsByQuery.get(query.sourceKeys.sourceKey) ?? [])].sort();
+        // 動的なクエリは、復元した SELECT の項目 (dynamicQuery.ts)
+        const fields = [
+            ...(fieldsByQuery.get(query.sourceKeys.sourceKey) ?? query.fields ?? []),
+        ].sort();
         const objects = query.objects.length ? query.objects : [undefined];
         for (const object of objects) {
             items.push({
